@@ -3,13 +3,14 @@ package fi.vm.sade.oppijanumerorekisteri.validators;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
+import org.springframework.validation.Errors;
+
 import java.util.Set;
 import java.util.function.Function;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
-import org.springframework.validation.Errors;
 
 /**
  * Apuluokka koodiston koodien validointiin.

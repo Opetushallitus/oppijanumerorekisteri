@@ -1,31 +1,28 @@
 package fi.vm.sade.oppijanumerorekisteri.aspects;
 
-import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.UnauthorizedException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
-
-import java.util.*;
-
-import static java.util.stream.Collectors.toList;
-import javax.servlet.http.HttpServletRequest;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
-import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -60,6 +57,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "unauthorized") // 401 Not authorized
     @ExceptionHandler(UnauthorizedException.class)
     public void unauthorized() {
+    }
+
+    @ResponseStatus(value = HttpStatus.CONFLICT, reason = "conflict") // 409 Conflict during data processing
+    @ExceptionHandler({ConflictException.class})
+    public void conflict() {
+        // functionality provided via annotations
     }
 
     @ExceptionHandler(org.hibernate.exception.ConstraintViolationException.class)

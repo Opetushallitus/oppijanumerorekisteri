@@ -5,6 +5,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
+import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.utils.KoodistoUtils;
@@ -18,8 +19,6 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -28,12 +27,21 @@ import static java.util.stream.Collectors.toSet;
 public class OppijaMappers {
 
     @Bean
-    public ClassMap<Henkilo, OppijaListDto> oppijaListDtoClassMap(MapperFactory mapperFactory) {
+    public ClassMap<Henkilo, OppijaListDto> oppijaListDtoClassMap(MapperFactory mapperFactory, TuontiRepository tuontiRepository) {
         return mapperFactory.classMap(Henkilo.class, OppijaListDto.class)
                 .byDefault()
                 .field("oidHenkilo", "oid")
                 .field("created", "luotu")
                 .field("modified", "muokattu")
+                .customize(new CustomMapper<Henkilo, OppijaListDto>() {
+                    @Override
+                    public void mapAtoB(Henkilo henkilo, OppijaListDto oppijaListDto, MappingContext context) {
+                        tuontiRepository.getServiceUserForImportedPerson(henkilo.getOidHenkilo()).ifPresent(serviceUser -> {
+                            oppijaListDto.setServiceUserOid(serviceUser.getOid());
+                            oppijaListDto.setServiceUserName(serviceUser.getName());
+                        });
+                    }
+                })
                 .toClassMap();
     }
 

@@ -5,9 +5,10 @@ import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysKayttooikeus;
 import fi.vm.sade.oppijanumerorekisteri.models.QAsiayhteysKayttooikeus;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.AsiayhteysKayttooikeusRepositoryCustom;
-import java.util.Optional;
-import javax.persistence.EntityManager;
 import org.springframework.data.jpa.repository.JpaContext;
+
+import javax.persistence.EntityManager;
+import java.util.Optional;
 
 public class AsiayhteysKayttooikeusRepositoryImpl implements AsiayhteysKayttooikeusRepositoryCustom {
 

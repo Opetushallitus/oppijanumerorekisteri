@@ -28,7 +28,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.validation.ConstraintViolationException;
+import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 
@@ -40,7 +42,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -285,7 +287,7 @@ public class Service2ServiceControllerTest  {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
-        verifyZeroInteractions(henkiloModificationService);
+        verifyNoInteractions(henkiloModificationService);
     }
 
     @Test
@@ -302,7 +304,7 @@ public class Service2ServiceControllerTest  {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
-        verifyZeroInteractions(henkiloModificationService);
+        verifyNoInteractions(henkiloModificationService);
     }
 
     @Test
@@ -319,7 +321,7 @@ public class Service2ServiceControllerTest  {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
-        verifyZeroInteractions(henkiloModificationService);
+        verifyNoInteractions(henkiloModificationService);
     }
 
     @Test
@@ -336,7 +338,7 @@ public class Service2ServiceControllerTest  {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
-        verifyZeroInteractions(henkiloModificationService);
+        verifyNoInteractions(henkiloModificationService);
     }
 
     @Test
@@ -360,4 +362,34 @@ public class Service2ServiceControllerTest  {
                 .andExpect(status().isOk()).andExpect(content().json("{}"));
     }
 
+    @Test
+    public void findByMunicipalAndDobNoAuth() throws Exception {
+        this.mvc.perform(get("/s2s/henkilo/list/foo/2021-11-05").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
+    public void findByMunicipalAndDob() throws Exception {
+        given(henkiloService.findByMunicipalAndBirthdate("foo", LocalDate.of(2021, 11, 5), 1))
+                .willReturn(Slice.of(1, 0, Collections.EMPTY_LIST));
+        mvc.perform(get("/s2s/henkilo/list/foo/2021-11-05").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"number\":1,\"size\":0,\"results\":[],\"last\":true,\"first\":true,\"numberOfElements\":0}"));
+        verify(henkiloService).findByMunicipalAndBirthdate("foo", LocalDate.of(2021, 11, 5), 1);
+    }
+
+    @Test
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
+    public void findByMunicipalAndDobIncorrectPage() throws Exception {
+        mvc.perform(get("/s2s/henkilo/list/foo/2021-11-05?page=0").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
+    public void findByMunicipalAndDobIncorrectDate() throws Exception {
+        mvc.perform(get("/s2s/henkilo/list/foo/juhannus").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
+    }
 }

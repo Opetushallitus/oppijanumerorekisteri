@@ -1,24 +1,26 @@
 spring:
   main:
     allow-bean-definition-overriding: true
+    allow-circular-references: true # HuoltajaCreateDtoMapper
   jackson:
     serialization:
       write-dates-as-timestamps: true
-  datasource:
-    driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:bootexample;MODE=PostgreSQL
   autoconfigure:
     exclude: org.spring
   cache:
     type: NONE
   flyway:
     enabled: false
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+
 host:
   host-cas: localhost
   host-virkailija: localhost
 oppijanumerorekisteri:
-  swagger:
-    enabled: false
   scheduling:
     enabled: false
 cas:
@@ -32,3 +34,5 @@ aws:
   henkiloModifiedTopic:
     enabled: true
     topicArn: test-topic-arn
+logback:
+  access: true

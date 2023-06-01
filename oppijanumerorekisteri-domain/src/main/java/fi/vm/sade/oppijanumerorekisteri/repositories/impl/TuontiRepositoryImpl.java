@@ -4,11 +4,12 @@ import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepositoryCustom;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
+import org.springframework.data.jpa.repository.JpaContext;
 
-import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
-import org.springframework.data.jpa.repository.JpaContext;
+import java.util.List;
+import java.util.Optional;
 
 public class TuontiRepositoryImpl implements TuontiRepositoryCustom {
 

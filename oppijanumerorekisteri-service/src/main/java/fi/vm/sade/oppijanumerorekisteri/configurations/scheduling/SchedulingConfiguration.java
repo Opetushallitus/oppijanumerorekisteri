@@ -21,9 +21,10 @@ public class SchedulingConfiguration {
     Scheduler scheduler(@Qualifier("dataSource") DataSource dataSource,
                         YksilointiTask yksilointiTask,
                         CasClientSessionCleanerTask casClientSessionCleanerTask,
-                        HenkilotietomuutosHetuSyncTask henkilotietomuutosHetuSyncTask) {
+                        HenkilotietomuutosHetuSyncTask henkilotietomuutosHetuSyncTask,
+                        DeathCleanupTask deathCleanupTask) {
         Scheduler scheduler = Scheduler.create(dataSource)
-                .startTasks(yksilointiTask, casClientSessionCleanerTask, henkilotietomuutosHetuSyncTask)
+                .startTasks(yksilointiTask, casClientSessionCleanerTask, henkilotietomuutosHetuSyncTask, deathCleanupTask)
                 .threads(1)
                 .build();
         scheduler.start();

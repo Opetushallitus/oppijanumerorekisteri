@@ -1,7 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.exceptions;
 
-import static java.util.Objects.requireNonNull;
 import org.springframework.validation.Errors;
+
+import static java.util.Objects.requireNonNull;
 
 public class UnprocessableEntityException extends OppijanumerorekisteriException {
 

@@ -1,0 +1,49 @@
+{
+  "id": 37337,
+  "kasiteltavia": 2,
+  "kasiteltyja": 2,
+  "kasitelty": true,
+  "henkilot": [
+    {
+      "tunniste": "tunniste1",
+      "henkilo": {
+        "oid": null,
+        "oppijanumero": null,
+        "luotu": null,
+        "muokattu": null,
+        "hetu": null,
+        "etunimet": null,
+        "kutsumanimi": null,
+        "sukunimi": null,
+        "syntymaaika": null,
+        "sukupuoli": null,
+        "aidinkieli": null,
+        "kansalaisuus": null,
+        "kotikunta": null,
+        "yhteystiedotRyhma": null,
+        "passivoitu": false
+      }
+    },
+    {
+      "tunniste": "tunniste2",
+      "henkilo": {
+        "oid": null,
+        "oppijanumero": null,
+        "luotu": null,
+        "muokattu": null,
+        "hetu": null,
+        "etunimet": null,
+        "kutsumanimi": null,
+        "sukunimi": null,
+        "syntymaaika": null,
+        "sukupuoli": null,
+        "aidinkieli": null,
+        "kansalaisuus": null,
+        "kotikunta": null,
+        "yhteystiedotRyhma": null,
+        "passivoitu": false
+      },
+      "conflict": true
+    }
+  ]
+}

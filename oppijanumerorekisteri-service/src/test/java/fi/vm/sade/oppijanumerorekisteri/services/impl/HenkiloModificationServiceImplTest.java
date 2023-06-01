@@ -11,10 +11,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.KielisyysRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
@@ -51,6 +48,9 @@ import static org.mockito.Mockito.*;
 public class HenkiloModificationServiceImplTest {
     @Autowired
     private OrikaConfiguration mapper;
+
+    @MockBean
+    private TuontiRepository tuontiRepository;
 
     @Spy
     @InjectMocks
@@ -199,6 +199,24 @@ public class HenkiloModificationServiceImplTest {
         assertThat(saved.getHetu()).isEqualTo("310817A983J");
         assertThat(saved.getSyntymaaika()).isEqualTo("2017-08-31");
         assertThat(saved.getSukupuoli()).isEqualTo("1");
+    }
+
+    @Test
+    public void updateHenkiloShouldNullifyEmptyHetu() {
+        when(henkiloDataRepositoryMock.findByOidHenkiloIsIn(any()))
+                .thenReturn(Lists.newArrayList(new Henkilo()));
+        when(henkiloDataRepositoryMock.save(any(Henkilo.class)))
+                .thenAnswer(returnsFirstArg());
+        HenkiloUpdateDto input = new HenkiloUpdateDto();
+
+        input.setHetu("");
+        HenkiloUpdateDto output = service.updateHenkilo(input);
+
+        assertThat(output.getHetu()).isEqualTo(null);
+        ArgumentCaptor<Henkilo> argumentCaptor = ArgumentCaptor.forClass(Henkilo.class);
+        verify(henkiloDataRepositoryMock).save(argumentCaptor.capture());
+        Henkilo saved = argumentCaptor.getValue();
+        assertThat(saved.getHetu()).isEqualTo(null);
     }
 
     @Test
@@ -596,7 +614,7 @@ public class HenkiloModificationServiceImplTest {
         Henkilo huoltaja = this.service.findOrCreateHuoltaja(huoltajaCreateDto, lapsi);
         verify(this.henkiloDataRepositoryMock, times(1)).findByHetu(eq("271198-9197"));
         verify(this.service, times(0)).createHenkilo(any(HuoltajaCreateDto.class));
-        verifyZeroInteractions(lapsi);
+        verifyNoInteractions(lapsi);
         assertThat(huoltaja)
                 .extracting(Henkilo::getEtunimet, Henkilo::getKutsumanimi, Henkilo::getSukunimi, Henkilo::getHetu, Henkilo::isYksiloityVTJ, Henkilo::getOidHenkilo, Henkilo::getSyntymaaika, Henkilo::getSukupuoli)
                 .containsExactly("etunimi", "etunimi", "sukunimi", "271198-9197", true, "oid", LocalDate.of(1998, 11, 27), "1");

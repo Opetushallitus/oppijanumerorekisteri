@@ -1,8 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.mappers;
 
-import java.time.LocalDate;
 import ma.glasnost.orika.converter.builtin.PassThroughConverter;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
 
 /**
  * Orika-konfiguraatio {@link LocalDate}:lle.

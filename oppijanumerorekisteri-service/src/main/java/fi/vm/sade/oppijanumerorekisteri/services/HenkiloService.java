@@ -57,7 +57,7 @@ public interface HenkiloService {
 
     HenkiloReadDto getByHetu(String hetu);
 
-    List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria criteria);
+    List<HenkiloViiteDto> findHenkiloViittees(Set<String> oids);
 
     List<String> findHenkiloOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince, Integer offset, Integer amount);
 
@@ -91,4 +91,10 @@ public interface HenkiloService {
     List<HenkiloPerustietoDto> getHenkiloPerustietoByHetus(List<String> hetus);
 
     HenkiloForceReadDto getByHetuForMuutostieto(String hetu);
+
+    Slice<HenkiloMunicipalDobDto> findByMunicipalAndBirthdate(String municipal, LocalDate dob, int page);
+
+    void removeContactInfo(String oid, String... removeTypes);
+
+    Set<String> setPassportNumbers(String oid, Set<String> passinumerot);
 }

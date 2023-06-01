@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.criteria;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
@@ -16,9 +17,11 @@ import javax.persistence.EntityManager;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static com.querydsl.core.types.dsl.Expressions.allOf;
 import static com.querydsl.core.types.dsl.Expressions.anyOf;
+import static java.util.stream.Collectors.toList;
 
 @Getter
 @Setter
@@ -36,27 +39,27 @@ public class OppijaTuontiCriteria {
     @ApiModelProperty(hidden = true)
     private Set<String> organisaatioOids;
 
-    private Boolean vainVirheet;
+    private boolean vainVirheet;
 
     private String nimiHaku;
 
-    public boolean setOrRetainOrganisaatioOids(Set<String> oids) {
+    public void setOrRetainOrganisaatioOids(Set<String> oids) {
         if (organisaatioOids == null || organisaatioOids.isEmpty()) {
             organisaatioOids = oids;
-            return true;
+        } else {
+            organisaatioOids.retainAll(oids);
         }
-        return organisaatioOids.retainAll(oids);
     }
 
     public boolean hasConditions() {
-        return tuontiId != null || muokattuJalkeen != null || this.organisaatioOids != null || Boolean.TRUE.equals(this.vainVirheet) || StringUtils.hasLength(this.nimiHaku);
+        return tuontiId != null || muokattuJalkeen != null || this.organisaatioOids != null || this.vainVirheet || StringUtils.hasLength(this.nimiHaku);
     }
 
     /**
      * Palauttaa kyselyn tästä hakukriteeristä.
      *
-     * @param entityManager
-     * @param qHenkilo
+     * @param entityManager entity manager instance
+     * @param qHenkilo      entity serializer
      * @return kysely
      */
     public JPAQuery<?> getQuery(EntityManager entityManager, QHenkilo qHenkilo) {
@@ -80,21 +83,22 @@ public class OppijaTuontiCriteria {
             query.join(qHenkilo.organisaatiot, qOrganisaatio);
             query.where(qOrganisaatio.oid.in(organisaatioOids));
         }
-        if (Boolean.TRUE.equals(vainVirheet)) {
-            query.where(qHenkilo.duplicate.isFalse(),  qHenkilo.passivoitu.isFalse());
-            query.where(anyOf(
+        if (vainVirheet) {
+            List<BooleanExpression> conditions = Stream.of(
                     allOf(
                             qHenkilo.hetu.isNull(),
                             qHenkilo.yksiloity.isFalse(),
-                            qHenkilo.yksiloityVTJ.isFalse()
-                    ),
+                            qHenkilo.yksiloityVTJ.isFalse()),
                     allOf(
                             qHenkilo.hetu.isNotNull(),
                             qHenkilo.yksiloity.isFalse(),
                             qHenkilo.yksiloityVTJ.isFalse(),
-                            qHenkilo.yksilointiYritetty.isTrue()
-                    )
-            ));
+                            qHenkilo.yksilointiYritetty.isTrue())
+            ).collect(toList());
+            query.where(allOf(
+                    qHenkilo.duplicate.isFalse(),
+                    qHenkilo.passivoitu.isFalse(),
+                    anyOf(conditions.toArray(new BooleanExpression[0]))));
         }
 
         if (StringUtils.hasLength(this.nimiHaku)) {
@@ -135,5 +139,4 @@ public class OppijaTuontiCriteria {
 
         return query;
     }
-
 }

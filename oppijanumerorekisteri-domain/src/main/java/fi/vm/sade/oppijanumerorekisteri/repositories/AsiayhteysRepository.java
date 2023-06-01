@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.AsiayhteysCriteria;
+
 import java.util.List;
 
 public interface AsiayhteysRepository {

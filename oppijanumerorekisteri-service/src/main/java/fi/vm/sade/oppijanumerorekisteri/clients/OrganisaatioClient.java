@@ -1,13 +1,13 @@
 package fi.vm.sade.oppijanumerorekisteri.clients;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioTilat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Rajapinta organisaatiopalvelun käyttöön.

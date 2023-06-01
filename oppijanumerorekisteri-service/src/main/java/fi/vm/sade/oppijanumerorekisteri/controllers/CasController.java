@@ -43,7 +43,7 @@ public class CasController {
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 
-    @ApiOperation("Yrittää asettaa vahvasti tunnistautuneelle henkilölle henkilötunnuksen")
+    @ApiOperation(value = "Yrittää asettaa vahvasti tunnistautuneelle henkilölle henkilötunnuksen", authorizations = @Authorization("onr"))
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
     @RequestMapping(value = "/henkilo/{oidHenkilo}/vahvaTunnistus", method = RequestMethod.PUT)
     public void setVahvaTunnistusHetu(@PathVariable String oidHenkilo,

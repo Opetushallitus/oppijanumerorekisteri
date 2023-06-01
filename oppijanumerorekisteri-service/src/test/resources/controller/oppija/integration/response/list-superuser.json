@@ -1,0 +1,37 @@
+{
+  "number": 1,
+  "size": 20,
+  "results": [
+    {
+      "oid": "tuonti1",
+      "oppijanumero": null,
+      "luotu": 1668412800000,
+      "muokattu": 1668412800000,
+      "syntymaaika": null,
+      "etunimet": "tuonti1",
+      "kutsumanimi": "tuonti1",
+      "sukunimi": "tuonti1",
+      "yksilointiTila": "VIRHE",
+      "serviceUserOid": "tuonti1",
+      "serviceUserName": "tuonti1 tuonti1"
+    },
+    {
+      "oid": "tuonti2",
+      "oppijanumero": null,
+      "luotu": 1668422800000,
+      "muokattu": 1668422800000,
+      "syntymaaika": null,
+      "etunimet": "tuonti2",
+      "kutsumanimi": "tuonti2",
+      "sukunimi": "tuonti2",
+      "yksilointiTila": "HETU_PUUTTUU",
+      "serviceUserOid": null,
+      "serviceUserName": null
+    }
+  ],
+  "totalElements": 2,
+  "numberOfElements": 2,
+  "totalPages": 1,
+  "first": true,
+  "last": true
+}

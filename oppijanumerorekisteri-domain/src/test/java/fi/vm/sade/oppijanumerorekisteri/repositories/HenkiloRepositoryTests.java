@@ -1,10 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import com.google.common.collect.Sets;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiTila;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.enums.CleanupStep;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
@@ -28,6 +26,7 @@ import javax.persistence.PersistenceException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.ZoneId;
 import java.util.*;
 
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi.*;
@@ -37,8 +36,7 @@ import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.Yhteystied
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -170,15 +168,15 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
     @Test
     public void findYhteystiedot() {
         populate(henkilo("1.2.3.4.5")
-            .withYhteystieto(ryhma("yhteystietotyyppi1")
-                    .alkupera("alkuperä")
-                .tieto(YHTEYSTIETO_KATUOSOITE, "Kotikatu 3")
-                .tieto(YHTEYSTIETO_POSTINUMERO, "12345")
-                .tieto(YHTEYSTIETO_KAUPUNKI, "Toijala")
-            )
-            .withYhteystieto(ryhma("yhteystietotyyppi2").alkupera("alkuperä")
-                .tieto(YHTEYSTIETO_SAHKOPOSTI, "tyo@osoite.com")
-            )
+                .withYhteystieto(ryhma("yhteystietotyyppi1")
+                        .alkupera("alkuperä")
+                        .tieto(YHTEYSTIETO_KATUOSOITE, "Kotikatu 3")
+                        .tieto(YHTEYSTIETO_POSTINUMERO, "12345")
+                        .tieto(YHTEYSTIETO_KAUPUNKI, "Toijala")
+                )
+                .withYhteystieto(ryhma("yhteystietotyyppi2").alkupera("alkuperä")
+                        .tieto(YHTEYSTIETO_SAHKOPOSTI, "tyo@osoite.com")
+                )
         );
 
         List<YhteystietoHakuDto> tiedot = this.dataRepository.findYhteystiedot(new YhteystietoCriteria());
@@ -191,7 +189,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         assertThat(tiedot.size()).isEqualTo(4);
 
         tiedot = this.dataRepository.findYhteystiedot(new YhteystietoCriteria().withHenkiloOid("1.2.3.4.5")
-                    .withRyhma("yhteystietotyyppi2"));
+                .withRyhma("yhteystietotyyppi2"));
         assertThat(tiedot.size()).isEqualTo(1);
         assertThat(tiedot.get(0).getArvo()).isEqualTo("tyo@osoite.com");
         assertThat(tiedot.get(0).getHenkiloOid()).isEqualTo("1.2.3.4.5");
@@ -314,12 +312,12 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         results = this.dataRepository.findOidsModifiedSince(new HenkiloCriteria(), now.minusHours(1), null, null);
         assertThat(results).hasSize(1);
         assertThat(results.get(0)).isEqualTo("MOMENT_AGO");
-        
+
         results = this.dataRepository.findOidsModifiedSince(HenkiloCriteria.builder()
                 .henkiloOids(new HashSet<>(asList("YESTERDAY", "LAST_WEEK"))).build(), yesterday, null, null);
         assertThat(results).hasSize(1);
         assertThat(results.get(0)).isEqualTo("YESTERDAY");
-        
+
         results = this.dataRepository.findOidsModifiedSince(new HenkiloCriteria(), lastWeek, null, null);
         assertThat(results).hasSize(3);
     }
@@ -437,7 +435,38 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         assertThat(dataRepository.countByYksilointiKeskeneraiset(criteria)).isEqualTo(0);
         assertThat(dataRepository.countByYksilointiVirheet(criteria)).isEqualTo(2);
         assertThat(dataRepository.countBy(criteria)).isEqualTo(2);
+    }
 
+    @Test
+    public void findByOppijaTuontiCriteriaSanitationTest() {
+        populate(tuonti(
+                henkilo("hetuton"),
+                henkilo("hetuton_yksiloity").yksiloity(),
+                henkilo("hetullinen").hetu("251098-9515"),
+                henkilo("hetullinen_yksilointi_yritetty").hetu("251098-991E").yksilointiYritetty(),
+                henkilo("hetullinen_yksiloity").hetu("251098-937P").yksiloityVtj(),
+                henkilo("passivoitu").passivoitu(),
+                henkilo("duplikaatti").duplikaatti()
+        ).aikaleima((new DateTime()).minusMonths(3).toDate())); // older than two months - subject to sanitation
+
+        OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
+        assertThat(dataRepository.findBy(criteria, Integer.MAX_VALUE, 0, null))
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getYksilointiTila)
+                .containsExactlyInAnyOrder(
+                        tuple("hetuton", YksilointiTila.HETU_PUUTTUU),
+                        tuple("hetuton_yksiloity", YksilointiTila.OK),
+                        tuple("hetullinen", YksilointiTila.KESKEN),
+                        tuple("hetullinen_yksilointi_yritetty", YksilointiTila.VIRHE),
+                        tuple("hetullinen_yksiloity", YksilointiTila.OK),
+                        tuple("passivoitu", YksilointiTila.OK),
+                        tuple("duplikaatti", YksilointiTila.OK));
+
+        criteria.setVainVirheet(true);
+        assertThat(dataRepository.findBy(criteria, Integer.MAX_VALUE, 0, null))
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getYksilointiTila)
+                .containsExactlyInAnyOrder(
+                        tuple("hetuton", YksilointiTila.HETU_PUUTTUU),
+                        tuple("hetullinen_yksilointi_yritetty", YksilointiTila.VIRHE));
     }
 
     private void persistHenkilo(Henkilo henkilo) {
@@ -458,6 +487,113 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
         Optional<Henkilo> optHenkilo = dataRepository.findByKaikkiHetut(TESTI_HETU);
         assertFalse(optHenkilo.isPresent());
+    }
+
+    @Test
+    public void findByMunicipalityAndDobEmpty() {
+        List<HenkiloMunicipalDobDto> henkilos = dataRepository.findByMunicipalAndBirthdate("foo", LocalDate.of(2021, 11, 5), Long.MAX_VALUE, 0L);
+        assertTrue(henkilos.isEmpty());
+    }
+
+    @Test
+    public void findByMunicipalityAndDob() {
+
+        String kunta = "foo";
+        LocalDate dob = LocalDate.of(2021, 11, 5);
+        Date dobDate = Date.from(dob.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        Henkilo testiHenkilo = Henkilo.builder()
+                .oidHenkilo(UUID.randomUUID().toString())
+                .etunimet("")
+                .kutsumanimi("")
+                .sukunimi("")
+                .hetu("")
+                .kotikunta(kunta)
+                .syntymaaika(dob)
+                .created(dobDate)
+                .modified(dobDate)
+                .build();
+
+        dataRepository.saveAndFlush(testiHenkilo);
+
+        List<HenkiloMunicipalDobDto> henkilos = dataRepository.findByMunicipalAndBirthdate(kunta, dob, Long.MAX_VALUE, 0L);
+        assertEquals("Incorrect result size", 1, henkilos.size());
+
+        henkilos = dataRepository.findByMunicipalAndBirthdate("bar", dob, Long.MAX_VALUE, 0L);
+        assertTrue("Result should be empty (municipality)", henkilos.isEmpty());
+
+        henkilos = dataRepository.findByMunicipalAndBirthdate(kunta, dob.plusDays(1), Long.MAX_VALUE, 0L);
+        assertTrue("Result should be empty (dob)", henkilos.isEmpty());
+
+        henkilos = dataRepository.findByMunicipalAndBirthdate(kunta, dob, Long.MAX_VALUE, 1L);
+        assertTrue("Result should be empty (offset)", henkilos.isEmpty());
+    }
+
+    @Test
+    public void findDeadWithIncompleteCleanup() {
+        LocalDate dod = LocalDate.of(2015, 12, 28);
+        Date dodDate = Date.from(dod.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        Henkilo testiHenkilo = Henkilo.builder()
+                .oidHenkilo(UUID.randomUUID().toString())
+                .etunimet("Ian Fraser")
+                .kutsumanimi("Lemmy")
+                .sukunimi("Kilmister")
+                .hetu("")
+                .kuolinpaiva(dod)
+                .created(dodDate)
+                .modified(dodDate)
+                .build();
+
+        dataRepository.saveAndFlush(testiHenkilo);
+
+        Collection<Henkilo> henkilos = dataRepository.findDeadWithIncompleteCleanup(CleanupStep.INITIATED);
+        assertEquals("Incorrect result size", 1, henkilos.size());
+    }
+
+    @Test
+    public void findDeadWithIncompleteCleanupAllDone() {
+        LocalDate dod = LocalDate.of(2015, 12, 28);
+        Date dodDate = Date.from(dod.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        Henkilo testiHenkilo = Henkilo.builder()
+                .oidHenkilo(UUID.randomUUID().toString())
+                .etunimet("Ian Fraser")
+                .kutsumanimi("Lemmy")
+                .sukunimi("Kilmister")
+                .hetu("")
+                .kuolinpaiva(dod)
+                .cleanupStep(CleanupStep.INITIATED)
+                .created(dodDate)
+                .modified(dodDate)
+                .build();
+
+        dataRepository.saveAndFlush(testiHenkilo);
+
+        Collection<Henkilo> henkilos = dataRepository.findDeadWithIncompleteCleanup(CleanupStep.INITIATED);
+        assertTrue("Incorrect result size", henkilos.isEmpty());
+    }
+
+    @Test
+    public void findDeadWithIncompleteCleanupNotDeadYet() {
+        LocalDate dod = LocalDate.now().plusDays(1);
+        Date dodDate = Date.from(dod.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        Henkilo testiHenkilo = Henkilo.builder()
+                .oidHenkilo(UUID.randomUUID().toString())
+                .etunimet("Ernesto")
+                .kutsumanimi("Che")
+                .sukunimi("Guevara")
+                .hetu("")
+                .kuolinpaiva(dod)
+                .created(dodDate)
+                .modified(dodDate)
+                .build();
+
+        dataRepository.saveAndFlush(testiHenkilo);
+
+        Collection<Henkilo> henkilos = dataRepository.findDeadWithIncompleteCleanup(CleanupStep.INITIATED);
+        assertTrue("Incorrect result size", henkilos.isEmpty());
     }
 
     @Test

@@ -3,25 +3,24 @@ package fi.vm.sade.oppijanumerorekisteri.validators;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
-import java.util.Arrays;
-import static java.util.Arrays.asList;
-import java.util.HashSet;
-import static java.util.stream.Collectors.toSet;
-import static java.util.stream.Stream.of;
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.validation.Errors;
+
+import java.util.Arrays;
+import java.util.HashSet;
+
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Stream.of;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 public class KoodiValidatorTest {
@@ -54,7 +53,7 @@ public class KoodiValidatorTest {
                 "field", "errorCode");
 
         verify(koodistoService).list(eq(Koodisto.SUKUPUOLI));
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -83,7 +82,7 @@ public class KoodiValidatorTest {
                 "field", "errorCode");
 
         verify(koodistoService).list(eq(Koodisto.YHTEYSTIETOJEN_ALKUPERA));
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test

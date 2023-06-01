@@ -4,13 +4,13 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.UnauthorizedException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UserHasNoOidException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.Optional;
-import org.springframework.security.core.Authentication;
-import org.springframework.util.StringUtils;
 
 @Component
 public class UserDetailsHelperImpl implements UserDetailsHelper {

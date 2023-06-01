@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import static java.util.Objects.requireNonNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +7,8 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import static java.util.Objects.requireNonNull;
 
 @Getter
 @Setter

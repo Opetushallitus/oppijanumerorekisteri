@@ -7,6 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
 import static fi.vm.sade.oppijanumerorekisteri.configurations.CacheConfiguration.CACHE_NAME_KOODISTOT;
 
 @Service

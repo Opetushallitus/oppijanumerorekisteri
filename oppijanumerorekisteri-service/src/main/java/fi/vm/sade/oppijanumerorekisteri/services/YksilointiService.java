@@ -3,6 +3,8 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 
+import java.util.Optional;
+
 public interface YksilointiService {
 
     /**
@@ -32,6 +34,14 @@ public interface YksilointiService {
      * @return Yksilöity henkilö
      */
     Henkilo hetuttomanYksilointi(String henkiloOid);
+
+    /**
+     * Check if two stings can be considered similar
+     * @param a string to compare
+     * @param b string to compare
+     * @return boolean indicating whether strings can be considered similar
+     */
+    boolean isSimilar(String a, String b);
 
     /**
      * Purkaa virkailijan käsin yksilöimän henkilön yksilöinnin
@@ -111,4 +121,16 @@ public interface YksilointiService {
      */
     void enableYksilointi(String oid, AsiayhteysKayttooikeusDto dto);
 
+    /**
+     * Tarkista löytyykö annetulla hetulla henkilö
+     * 1. oppijanumerorekisteristä
+     * 2. vtj:stä
+     *
+     * Mikäli löytyy, tarkistetaan että muut tiedot ovat oikein.
+     *
+     * @param details hetu sekä nimitiedot
+     * @return oppijanumero mikäli henkilö löytyy
+     * @throws RuntimeException poikkeustapaukset välitetään tyypitetyin poikkeuksin
+     */
+    Optional<String> exists(HenkiloExistenceCheckDto details);
 }

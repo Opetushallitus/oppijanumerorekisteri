@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Sets;
 import fi.vm.sade.javautils.http.OphHttpClient;
 import fi.vm.sade.javautils.http.OphHttpEntity;
 import fi.vm.sade.javautils.http.OphHttpRequest;
@@ -20,7 +19,6 @@ import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static fi.vm.sade.oppijanumerorekisteri.clients.impl.HttpClientUtil.ioExceptionToRestClientException;
@@ -30,10 +28,10 @@ import static fi.vm.sade.oppijanumerorekisteri.clients.impl.HttpClientUtil.noCon
 @RequiredArgsConstructor
 public class HakuappClientImpl implements HakuappClient {
 
-    private OphHttpClient httpClient;
     private final UrlConfiguration urlConfiguration;
     private final ObjectMapper objectMapper;
     private final AuthenticationProperties authenticationProperties;
+    private OphHttpClient httpClient;
 
     @PostConstruct
     public void setup() {
@@ -48,20 +46,21 @@ public class HakuappClientImpl implements HakuappClient {
     }
 
     @Override
-    public Map<String, List<HakemusDto>> fetchApplicationsByOid(Set<String> oids) {
+    public Map<String, List<HakemusDto>> fetchApplicationsByOid(List<String> oids) {
         String url = this.urlConfiguration.url("haku-app.applications");
         OphHttpRequest request = OphHttpRequest.Builder.post(url)
                 .setEntity(new OphHttpEntity.Builder()
-                        .content(ioExceptionToRestClientException(() -> objectMapper.writeValueAsString(Sets.newHashSet(oids))))
+                        .content(ioExceptionToRestClientException(() -> objectMapper.writeValueAsString(oids)))
                         .contentType(ContentType.APPLICATION_JSON)
                         .build())
                 .build();
         Map<String, List<Map<String, Object>>> applicationsByPersonOid = httpClient.<Map<String, List<Map<String, Object>>>>execute(request)
                 .expectedStatus(200)
-                .mapWith(json -> ioExceptionToRestClientException(() -> objectMapper.readValue(json, new TypeReference<Map<String, List<Map<String, Object>>>>() {})))
+                .mapWith(json -> ioExceptionToRestClientException(() -> objectMapper.readValue(json, new TypeReference<Map<String, List<Map<String, Object>>>>() {
+                })))
                 .orElseThrow(() -> noContentOrNotFoundException(url));
         Map<String, List<HakemusDto>> hakemuksetByHenkiloOid = new HashMap<>();
-        applicationsByPersonOid.keySet().forEach( henkiloOid -> {
+        applicationsByPersonOid.keySet().forEach(henkiloOid -> {
             List<Map<String, Object>> hakemukset = applicationsByPersonOid.get(henkiloOid);
             List<HakemusDto> hakemusList = hakemukset.stream().map(hakemusData -> {
                 hakemusData.put("service", "haku-app");

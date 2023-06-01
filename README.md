@@ -1,5 +1,23 @@
 # Oppijanumerorekisteri
 
+## Technologies & Frameworks
+
+Below is non-exhaustive list of the key technologies & frameworks used in the project.
+
+### Backend
+
+* Spring Boot
+* Spring Security (CAS)
+* Postgresql
+* QueryDSL
+* JPA / Hibernate5
+* Flyway
+* Orika
+* Lombok
+* Swagger
+* DB-scheduler
+* JSONPath
+
 ## Vaatimukset
 - PostgreSQL 10.6
 - Java 11

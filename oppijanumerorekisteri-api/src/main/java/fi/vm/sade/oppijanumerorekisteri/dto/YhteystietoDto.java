@@ -1,8 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Setter;
 import lombok.*;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -19,4 +21,9 @@ public class YhteystietoDto implements Serializable {
 
     private String yhteystietoArvo;
 
+    @JsonIgnore
+    @AssertTrue(message = "Invalid address data")
+    public boolean isYhteystietoArvoOk() {
+        return yhteystietoTyyppi.validate(yhteystietoArvo);
+    }
 }

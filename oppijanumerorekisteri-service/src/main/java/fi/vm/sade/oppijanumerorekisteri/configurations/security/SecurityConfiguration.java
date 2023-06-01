@@ -93,7 +93,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public SingleSignOutFilter singleSignOutFilter() {
         SingleSignOutFilter singleSignOutFilter = new SingleSignOutFilter();
-        singleSignOutFilter.setCasServerUrlPrefix(this.ophProperties.url("url-cas"));
         singleSignOutFilter.setIgnoreInitConfiguration(true);
         singleSignOutFilter.setSessionMappingStorage(sessionMappingStorage);
         return singleSignOutFilter;
@@ -119,8 +118,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .antMatchers("/buildversion.txt").permitAll()
                     .antMatchers("/actuator/**").permitAll()
                     .antMatchers("/swagger-ui.html").permitAll()
+                    .antMatchers("/swagger-ui/**").permitAll()
                     .antMatchers("/swagger-resources/**").permitAll()
-                    .antMatchers("/webjars/springfox-swagger-ui/**").permitAll()
                     .antMatchers("/v2/api-docs").permitAll()
                     .anyRequest().authenticated()
                 .and()

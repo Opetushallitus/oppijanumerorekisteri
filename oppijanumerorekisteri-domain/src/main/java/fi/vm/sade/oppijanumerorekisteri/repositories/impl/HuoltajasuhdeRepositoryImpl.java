@@ -1,25 +1,23 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 
-import fi.vm.sade.oppijanumerorekisteri.models.*;
+import com.querydsl.jpa.impl.JPAQuery;
+import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
+import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.QHenkiloHuoltajaSuhde;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HuoltajasuhdeRepository;
-
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
-
-import com.querydsl.jpa.impl.JPAQuery;
+import org.joda.time.DateTime;
 import org.springframework.data.jpa.repository.JpaContext;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import org.joda.time.DateTime;
-
-import java.util.*;
+import java.util.List;
 
 @Repository
 public class HuoltajasuhdeRepositoryImpl implements HuoltajasuhdeRepository {

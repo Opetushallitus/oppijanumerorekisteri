@@ -1,8 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.populator;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
-import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;

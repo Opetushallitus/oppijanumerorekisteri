@@ -1,12 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
-import javax.persistence.*;
+import lombok.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import javax.persistence.*;
 
 /**
  * Liitos {@link Tuonti oppijoiden tuonnin} ja {@link Henkilo henkilön} välillä.
@@ -31,6 +27,9 @@ public class TuontiRivi extends IdentifiableAndVersionedEntity {
      */
     @Column(name = "tunniste")
     private String tunniste;
+
+    @Column(name = "conflict")
+    private Boolean conflict;
 
     public TuontiRivi(Henkilo henkilo) {
         this.henkilo = henkilo;

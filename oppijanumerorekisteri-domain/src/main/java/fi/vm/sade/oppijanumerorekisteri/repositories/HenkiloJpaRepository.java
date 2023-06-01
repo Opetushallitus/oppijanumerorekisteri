@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.enums.CleanupStep;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
@@ -10,6 +11,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSort;
 import org.joda.time.DateTime;
 
+import java.time.LocalDate;
 import java.util.*;
 
 // High speed repository for jpa queries with querydsl.
@@ -192,4 +194,8 @@ public interface HenkiloJpaRepository {
      * @return hetulla löytynyt henkilö, tai tyhjä
      */
     Optional<Henkilo> findByKaikkiHetut(String hetu);
+
+    List<HenkiloMunicipalDobDto> findByMunicipalAndBirthdate(String municipal, LocalDate dob, long limit, long offset);
+
+    Collection<Henkilo> findDeadWithIncompleteCleanup(CleanupStep step);
 }

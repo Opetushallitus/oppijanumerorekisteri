@@ -1,0 +1,62 @@
+{
+  "content": [
+    {
+      "successful": 0,
+      "total": 1,
+      "inProgress": 0,
+      "author": null,
+      "oid": "",
+      "timestamp": 1668416400000,
+      "failures": 1,
+      "id": 2,
+      "conflicts": 0
+    },
+    {
+      "successful": 0,
+      "total": 1,
+      "inProgress": 1,
+      "author": null,
+      "oid": "",
+      "timestamp": 1668416400000,
+      "failures": 1,
+      "id": 3,
+      "conflicts": 0
+    },
+    {
+      "successful": 0,
+      "total": 1,
+      "inProgress": 0,
+      "author": "tuonti1, tuonti1",
+      "oid": "tuonti1",
+      "timestamp": 1668412800000,
+      "failures": 1,
+      "id": 1,
+      "conflicts": 0
+    }
+  ],
+  "pageable": {
+    "sort": {
+      "unsorted": false,
+      "sorted": true,
+      "empty": false
+    },
+    "pageNumber": 0,
+    "pageSize": 20,
+    "offset": 0,
+    "paged": true,
+    "unpaged": false
+  },
+  "totalPages": 1,
+  "totalElements": 3,
+  "last": true,
+  "numberOfElements": 3,
+  "first": true,
+  "size": 20,
+  "number": 0,
+  "sort": {
+    "unsorted": false,
+    "sorted": true,
+    "empty": false
+  },
+  "empty": false
+}

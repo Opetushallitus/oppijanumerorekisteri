@@ -2,11 +2,12 @@ package fi.vm.sade.oppijanumerorekisteri.models;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
-import java.util.Objects;
-import static java.util.Objects.requireNonNull;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Yksittäinen yhteystieto (esimerkiksi sähköpostiosoite tai puhelinnumero).

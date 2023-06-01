@@ -4,10 +4,7 @@ import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.SuspendableIdentificationException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.*;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
@@ -21,6 +18,7 @@ import fi.vm.sade.oppijanumerorekisteri.validators.KutsumanimiValidator;
 import fi.vm.sade.rajapinnat.vtj.api.Huoltaja;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.search.spell.JaroWinklerDistance;
 import org.apache.lucene.search.spell.StringDistance;
 import org.slf4j.Logger;
@@ -44,13 +42,13 @@ import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class YksilointiServiceImpl implements YksilointiService {
+    public static final String RYHMAALKUPERA_VTJ = "alkupera1";
     private static final Logger logger = LoggerFactory.getLogger(YksilointiService.class);
     private static final String KIELIKOODI_SV = "sv";
-
-    public static final String RYHMAALKUPERA_VTJ = "alkupera1";
     private static final String RYHMAKUVAUS_VTJ_SAHKOINEN_OSOITE = "yhteystietotyyppi8";
 
     private static final Predicate<String> stringNotEmpty = it -> !StringUtils.isEmpty(it);
@@ -76,6 +74,12 @@ public class YksilointiServiceImpl implements YksilointiService {
     private final KayttooikeusClient kayttooikeusClient;
 
     private final OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
+
+    private final StringDistance stringDistance = new JaroWinklerDistance();
+
+    static boolean isFakeHetu(String hetu) {
+        return hetu.charAt(7) == '9';
+    }
 
     private Henkilo getHenkiloByOid(String oid) {
         return henkiloRepository.findByOidHenkilo(oid)
@@ -126,11 +130,10 @@ public class YksilointiServiceImpl implements YksilointiService {
     private Date getUudelleenyritysAikaleima(Integer uusiYritysmaara) {
         LocalDateTime uusiAikaleima;
         // Limit the exponential result to ~month (41 days)
-        if (uusiYritysmaara > 9 ) {
+        if (uusiYritysmaara > 9) {
             uusiAikaleima = LocalDateTime.now().plusMonths(1L);
-        }
-        else {
-            Function<Integer, Integer> exponentialFunction = maara -> (int)Math.pow(maara, 5) + 10;
+        } else {
+            Function<Integer, Integer> exponentialFunction = maara -> (int) Math.pow(maara, 5) + 10;
             uusiAikaleima = LocalDateTime.now().plusMinutes(exponentialFunction.apply(uusiYritysmaara));
         }
         return Date.from(uusiAikaleima.atZone(ZoneId.systemDefault()).toInstant());
@@ -164,13 +167,12 @@ public class YksilointiServiceImpl implements YksilointiService {
             throw new SuspendableIdentificationException("Henkilön hetu ei ole oikea: " + henkilo.getHetu());
         }
 
-        String sensuroituHetu = sensuroiHetu(henkilo.getHetu());
         YksiloityHenkilo yksiloityHenkilo = vtjClient.fetchHenkilo(henkilo.getHetu())
                 .orElseThrow(() ->
-                        new SuspendableIdentificationException("Henkilöä ei löytynyt VTJ-palvelusta henkilötunnuksella: " + sensuroituHetu));
+                        new SuspendableIdentificationException("Henkilöä ei löytynyt VTJ-palvelusta henkilötunnuksella: " + henkilo.getHetu()));
 
         if (yksiloityHenkilo.isPassivoitu()) {
-            throw new SuspendableIdentificationException("Henkilön hetu on passivoitu: " + sensuroituHetu);
+            throw new SuspendableIdentificationException("Henkilön hetu on passivoitu: " + henkilo.getHetu());
         }
 
         yksilointivirheRepository.findByHenkilo(henkilo).ifPresent(yksilointivirheRepository::delete);
@@ -179,8 +181,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         if (this.yhtenevyysTarkistus(henkilo, yksiloityHenkilo)) {
             this.addYksilointitietosWhenNamesDoNotMatch(henkilo, yksiloityHenkilo);
             return henkiloModificationService.update(henkilo);
-        }
-        else {
+        } else {
             // If VTJ data differs from the user's data, VTJ must overwrite
             // those values since VTJ's data is considered more reliable
             LinkResult linked = this.paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
@@ -192,7 +193,7 @@ public class YksilointiServiceImpl implements YksilointiService {
                 yksilointitietoRepository.findByHenkilo(henkilo).ifPresent(yksilointitietoRepository::delete);
             }
             linked.forEachModified(henkiloModificationService::update);
-            logger.info("Henkilön yksilöinti onnistui hetulle: {}", sensuroituHetu);
+            logger.info("Henkilön yksilöinti onnistui hetulle: {}", henkilo.getHetu());
         }
 
         return henkilo;
@@ -204,10 +205,10 @@ public class YksilointiServiceImpl implements YksilointiService {
             return false;
         }
         Set<String> kaikkiSukunimet = Stream.concat(Stream.of(yksiloityHenkilo.getSukunimi()),
-                Optional.ofNullable(yksiloityHenkilo.getEntisetNimet()).orElseGet(Collections::emptyList)
-                        .stream()
-                        .filter(YksiloityHenkilo.EntinenNimi::isSukunimi)
-                        .map(YksiloityHenkilo.EntinenNimi::getArvo))
+                        Optional.ofNullable(yksiloityHenkilo.getEntisetNimet()).orElseGet(Collections::emptyList)
+                                .stream()
+                                .filter(YksiloityHenkilo.EntinenNimi::isSukunimi)
+                                .map(YksiloityHenkilo.EntinenNimi::getArvo))
                 .filter(Objects::nonNull)
                 .collect(toCollection(LinkedHashSet::new));
         boolean nimetEivatVastaa = !tarkistaNimet(henkilo, yksiloityHenkilo, kaikkiSukunimet);
@@ -240,20 +241,30 @@ public class YksilointiServiceImpl implements YksilointiService {
         return TextUtils.normalize(input).toLowerCase();
     }
 
+    private String name(String input) {
+        return Optional.ofNullable(input).map(this::normalize).orElse("");
+    }
+
+    @Override
+    public boolean isSimilar(String a, String b) {
+        return isSimilar(name(a), name(b), oppijanumerorekisteriProperties.getEtunimiThreshold());
+    }
+
+    private boolean isSimilar(String a, String b, float threshold) {
+        return stringDistance.getDistance(a, b) >= threshold;
+    }
+
     protected boolean tarkistaSukunimi(String henkilo1sukunimi, String henkilo2sukunimi) {
-        StringDistance stringDistance = new JaroWinklerDistance();
-        float distance = stringDistance.getDistance(henkilo1sukunimi, henkilo2sukunimi);
-        return distance >= oppijanumerorekisteriProperties.getSukunimiThreshold();
+        return isSimilar(henkilo1sukunimi, henkilo2sukunimi, oppijanumerorekisteriProperties.getSukunimiThreshold());
     }
 
     protected boolean tarkistaEtunimi(String henkilo1kutsumanimi, String henkilo2etunimet) {
-        StringDistance stringDistance = new JaroWinklerDistance();
         if (henkilo2etunimet.contains(henkilo1kutsumanimi)) {
             return true;
         }
         return Arrays.stream(henkilo2etunimet.split(" "))
-                .map(henkilo2etunimi -> stringDistance.getDistance(henkilo1kutsumanimi, henkilo2etunimi))
-                .anyMatch(distance -> distance > oppijanumerorekisteriProperties.getEtunimiThreshold());
+                .anyMatch(henkilo2etunimi ->
+                        isSimilar(henkilo1kutsumanimi, henkilo2etunimi, oppijanumerorekisteriProperties.getEtunimiThreshold()));
     }
 
     private void addYksilointitietosWhenNamesDoNotMatch(final Henkilo henkilo, final YksiloityHenkilo yksiloityHenkilo) {
@@ -290,7 +301,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     private String maaritaSukupuoli(YksiloityHenkilo yksiloityHenkilo) {
-        if(StringUtils.isEmpty(yksiloityHenkilo.getSukupuoli())) {
+        if (StringUtils.isEmpty(yksiloityHenkilo.getSukupuoli())) {
             if (yksiloityHenkilo.getHetu() == null) {
                 return null;
             }
@@ -361,7 +372,7 @@ public class YksilointiServiceImpl implements YksilointiService {
             return linked;
         }
 
-        updateIfYksiloityValueNotNull(henkilo.getEtunimet(), yksiloityHenkilo.getEtunimi(),henkilo::setEtunimet);
+        updateIfYksiloityValueNotNull(henkilo.getEtunimet(), yksiloityHenkilo.getEtunimi(), henkilo::setEtunimet);
         updateIfYksiloityValueNotNull(henkilo.getSukunimi(), yksiloityHenkilo.getSukunimi(), henkilo::setSukunimi);
         // Sometimes this might null or empty in VTJ data, in that case the original value is kept
         updateIfYksiloityValueNotNull(henkilo.getKutsumanimi(), yksiloityHenkilo.getKutsumanimi(), henkilo::setKutsumanimi);
@@ -414,7 +425,8 @@ public class YksilointiServiceImpl implements YksilointiService {
      * Käsittelee yksilöinnissä tapahtuvan hetumuutoksen. Jos uudella hetulla löytyy jo <strong>yksilöity</strong>
      * henkilö, merkitään yksilöinnissä oleva henkilö uuden hetu omaavan henkilön duplikaatiksi. Muuten uusi hetu
      * poistetaan toiselta henkilöltä ja merkitään yksilöinnissä olevan henkilön duplikaatiksi.
-     * @param henkilo yksilöinnissä oleva henkilö
+     *
+     * @param henkilo  yksilöinnissä oleva henkilö
      * @param uusiHetu yksilöinnissä olevan henkilön uusi hetu
      * @return mahdollisen linkityksen tulos
      */
@@ -498,11 +510,11 @@ public class YksilointiServiceImpl implements YksilointiService {
         if (hetu == null || hetu.isEmpty()) {
             throw new DataInconsistencyException("Henkilöllä " + henkiloOid + " ei ole hetua vaikka yksilöinti on suoritettu");
         }
-        String sensuroituHetu = sensuroiHetu(hetu);
-        YksiloityHenkilo yksiloityHenkilo = vtjClient.fetchHenkilo(hetu)
-                .orElseThrow(() -> new DataInconsistencyException("Henkilöä ei löydy VTJ:stä hetulla " + sensuroituHetu));
 
-        logger.info("Päivitetään tiedot VTJ:stä hetulle: {}", sensuroituHetu);
+        YksiloityHenkilo yksiloityHenkilo = vtjClient.fetchHenkilo(hetu)
+                .orElseThrow(() -> new DataInconsistencyException("Henkilöä ei löydy VTJ:stä hetulla " + hetu));
+
+        logger.info("Päivitetään tiedot VTJ:stä hetulle: {}", hetu);
         LinkResult linked = this.paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
         linked.forEachModified(henkiloModificationService::update);
     }
@@ -543,7 +555,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         henkilo.setYksiloity(false);
         henkilo.setTurvakielto(yksilointitieto.isTurvakielto());
 
-        if(!StringUtils.isEmpty(yksilointitieto.getKutsumanimi())) {
+        if (!StringUtils.isEmpty(yksilointitieto.getKutsumanimi())) {
             henkilo.setKutsumanimi(yksilointitieto.getKutsumanimi());
         }
 
@@ -652,18 +664,41 @@ public class YksilointiServiceImpl implements YksilointiService {
         henkiloModificationService.update(henkilo);
     }
 
+    @Override
+    public Optional<String> exists(final HenkiloExistenceCheckDto details) {
+        return henkiloRepository.findByHetu(details.getHetu())
+                .map(henkilo -> compareOnrDetails(henkilo, details))
+                .orElseGet(() ->
+                        vtjClient.fetchHenkilo(details.getHetu())
+                                .map(henkilo -> compareVtjDetails(henkilo, details))
+                                .orElseThrow(NotFoundException::new));
+    }
+
+    private Optional<String> compareOnrDetails(final Henkilo henkilo, final HenkiloExistenceCheckDto details) {
+        if (detailsMatch(henkilo.getEtunimet(), henkilo.getSukunimi(), details))
+            return Optional.of(henkilo.getOidHenkilo());
+        throw new ConflictException();
+    }
+
+    private Optional<String> compareVtjDetails(final YksiloityHenkilo henkilo, final HenkiloExistenceCheckDto details) {
+        if (detailsMatch(henkilo.getEtunimi(), henkilo.getSukunimi(), details))
+            return Optional.empty();
+        reportConflict(henkilo, details);
+        throw new ConflictException();
+    }
+
+    private void reportConflict(YksiloityHenkilo henkilo, HenkiloExistenceCheckDto details) {
+        log.info("VTJ name comparison failed! input: \"{}, {}\" vtj: \"{}, {}\"",
+                details.getEtunimet(), details.getSukunimi(),
+                henkilo.getEtunimi(), henkilo.getSukunimi());
+    }
+
+    private boolean detailsMatch(final String firstName, final String lastName, final HenkiloExistenceCheckDto details) {
+        return isSimilar(firstName, details.getEtunimet()) &&
+                isSimilar(lastName, details.getSukunimi());
+    }
+
     private boolean isOppija(String oid) {
         return kayttooikeusClient.getKayttajaByOid(oid).map(KayttajaReadDto::isOppija).orElse(true);
     }
-
-    static String sensuroiHetu(String hetu) {
-        if (hetu == null || hetu.length() < 7) return hetu;
-        // testihetut voi palauttaa sensuroimatta, muuten sensuroidaan välimerkki, numero ja tarkiste
-        return isFakeHetu(hetu) ? hetu : hetu.substring(0, 6) + "*****";
-    }
-
-    static boolean isFakeHetu(String hetu) {
-        return hetu.charAt(7) == '9';
-    }
-
 }

@@ -29,10 +29,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -87,7 +84,7 @@ public class HenkiloServiceImplTest {
         Throwable throwable = catchThrowable(() -> impl.getByHakutermi("haku1"));
 
         assertThat(throwable).isInstanceOf(NotFoundException.class);
-        verifyZeroInteractions(permissionChecker);
+        verifyNoInteractions(permissionChecker);
     }
 
     @Test
@@ -101,7 +98,7 @@ public class HenkiloServiceImplTest {
         Throwable throwable = catchThrowable(() -> impl.getByHakutermi("haku1"));
 
         assertThat(throwable).isInstanceOf(NotFoundException.class);
-        verifyZeroInteractions(permissionChecker);
+        verifyNoInteractions(permissionChecker);
     }
 
     @Test
@@ -152,7 +149,7 @@ public class HenkiloServiceImplTest {
         assertThat(throwable).isInstanceOf(NotFoundException.class);
         verify(henkiloRepository).findMasterBySlaveOid(eq(oid));
         verify(henkiloRepository).findByOidHenkilo(eq(oid));
-        verifyZeroInteractions(orikaConfiguration);
+        verifyNoInteractions(orikaConfiguration);
     }
 
     @Test
@@ -172,4 +169,18 @@ public class HenkiloServiceImplTest {
         assertThat(result).hasSize(0);
     }
 
+    @Test(expected = NotFoundException.class)
+    public void setPassportNumbersNotFoundTest() {
+        impl.setPassportNumbers("oid", Set.of("makkara"));
+    }
+
+    @Test
+    public void setPassportNumbersTest() {
+        Henkilo henkilo = mock(Henkilo.class);
+        when(henkiloRepository.findByOidHenkilo("oid")).thenReturn(Optional.of(henkilo));
+
+        impl.setPassportNumbers("oid", Set.of("makkara"));
+
+        verify(henkilo, times(1 )).setPassinumerot(any());
+    }
 }

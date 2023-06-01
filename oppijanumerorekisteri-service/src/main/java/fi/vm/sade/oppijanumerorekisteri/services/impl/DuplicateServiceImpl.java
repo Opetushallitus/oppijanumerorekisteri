@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
@@ -21,17 +20,20 @@ import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.utils.OptionalUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DuplicateServiceImpl implements DuplicateService {
@@ -46,33 +48,25 @@ public class DuplicateServiceImpl implements DuplicateService {
     @Override
     @Transactional(readOnly = true)
     public List<HenkiloDuplicateDto> findDuplicates(String oid) {
-        Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oid).orElseThrow( () -> new NotFoundException("User with oid " + oid + " was not found") );
+        Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oid).orElseThrow(() -> new NotFoundException("User with oid " + oid + " was not found"));
         HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(henkilo.getEtunimet(), henkilo.getKutsumanimi(), henkilo.getSukunimi(), henkilo.getSyntymaaika());
-        List<Henkilo> candidates = this.henkiloDataRepository.findDuplikaatit(criteria).stream().filter(duplicate -> filterDuplicate(henkilo, duplicate)).collect(toList());
+        List<String> linked = henkiloViiteRepository.findBySlaveOid(oid).stream().map(HenkiloViite::getMasterOid).collect(toList());
+        List<Henkilo> candidates = this.henkiloDataRepository.findDuplikaatit(criteria).stream()
+                .filter(duplicate -> filterDuplicate(henkilo, duplicate))
+                .filter(duplicate -> !linked.contains(duplicate.getOidHenkilo()))
+                .collect(toList());
         return getHenkiloDuplicateDtoList(candidates);
     }
 
-    public boolean filterDuplicate(Henkilo henkilo, Henkilo duplicate){
-        boolean notSameOid =  !duplicate.getOidHenkilo().equals(henkilo.getOidHenkilo());
+    public boolean filterDuplicate(Henkilo henkilo, Henkilo duplicate) {
+        boolean notSameOid = !duplicate.getOidHenkilo().equals(henkilo.getOidHenkilo());
         boolean ytjIdentifiedfilter = !henkilo.isYksiloityVTJ() || henkilo.getHetu() == null || !duplicate.isYksiloityVTJ();
-
         return notSameOid && ytjIdentifiedfilter;
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<HakemusDto> getApplications(String oid) {
-        Set<String> oids = Sets.newHashSet(oid);
-        Map<String, List<HakemusDto>> hakuAppHakemukset = hakuappClient.fetchApplicationsByOid(oids);
-        Map<String, List<HakemusDto>> ataruHakemukset = ataruClient.fetchApplicationsByOid(oids);
-        List<HakemusDto> hakemukset = new ArrayList<>();
-        if(hakuAppHakemukset.get(oid) != null) {
-            hakemukset.addAll(hakuAppHakemukset.get(oid));
-        }
-        if(ataruHakemukset.get(oid) != null) {
-            hakemukset.addAll(ataruHakemukset.get(oid));
-        }
-        return hakemukset;
+        return getApplications(List.of(oid)).getOrDefault(oid, Collections.emptyList());
     }
 
     @Override
@@ -86,23 +80,27 @@ public class DuplicateServiceImpl implements DuplicateService {
         String kayttajaOid = this.userDetailsHelper.getCurrentUserOid();
         List<HenkiloDuplicateDto> henkiloDuplicateDtos = this.mapper.mapAsList(candidates, HenkiloDuplicateDto.class)
                 .stream().filter(henkiloDuplicate -> !henkiloDuplicate.getOidHenkilo().equals(kayttajaOid)).collect(toList()); // remove current user from duplicate search results
-        Set<String> duplicateOids = henkiloDuplicateDtos.stream().map(HenkiloDuplicateDto::getOidHenkilo).collect(toSet());
-        Map<String, List<HakemusDto>> hakuAppHakemukset = hakuappClient.fetchApplicationsByOid(duplicateOids);
-        Map<String, List<HakemusDto>> ataruHakemukset = ataruClient.fetchApplicationsByOid(duplicateOids);
-
-        henkiloDuplicateDtos.forEach(duplicate -> {
-            String oidHenkilo = duplicate.getOidHenkilo();
-            List<HakemusDto> hakemusDtos = new ArrayList<>();
-            if (hakuAppHakemukset.get(oidHenkilo) != null) {
-                hakemusDtos.addAll(hakuAppHakemukset.get(oidHenkilo));
-            }
-            if (ataruHakemukset.get(oidHenkilo) != null) {
-                hakemusDtos.addAll(ataruHakemukset.get(oidHenkilo));
-            }
-            duplicate.setHakemukset(hakemusDtos);
-        });
-
+        List<String> duplicateOids = henkiloDuplicateDtos.stream().map(HenkiloDuplicateDto::getOidHenkilo).collect(toList());
+        Map<String, List<HakemusDto>> hakemukset = getApplications(duplicateOids);
+        henkiloDuplicateDtos.forEach(duplicate ->
+                duplicate.setHakemukset(hakemukset.getOrDefault(duplicate.getOidHenkilo(), Collections.emptyList()))
+        );
         return henkiloDuplicateDtos;
+    }
+
+    protected Map<String, List<HakemusDto>> getApplications(List<String> oids) {
+        try {
+            return oids.isEmpty() ? Collections.emptyMap() : Stream.concat(
+                            hakuappClient.fetchApplicationsByOid(oids).entrySet().stream(),
+                            ataruClient.fetchApplicationsByOid(oids).entrySet().stream())
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (haku, ataru) -> Stream.concat(haku.stream(), ataru.stream()).collect(toList())));
+        } catch (Exception e) {
+            log.error("Failed to fetch applications for oids: {}", oids, e);
+            return Collections.emptyMap();
+        }
     }
 
     @Override
@@ -111,7 +109,7 @@ public class DuplicateServiceImpl implements DuplicateService {
         return this.henkiloDataRepository.findByHetu(hetu)
                 .filter((henkiloWithSameHetu) -> !henkiloWithSameHetu.getOidHenkilo().equals(henkilo.getOidHenkilo()))
                 .map(oppijaWithSameHetu -> {
-                    String[] oppijaWithSameHetuHetuhistoria = oppijaWithSameHetu.getKaikkiHetut().toArray(new String[oppijaWithSameHetu.getKaikkiHetut().size()]);
+                    String[] oppijaWithSameHetuHetuhistoria = oppijaWithSameHetu.getKaikkiHetut().toArray(new String[0]);
                     oppijaWithSameHetu.clearHetut();
                     oppijaWithSameHetu.setHetu(null);
                     oppijaWithSameHetu.setYksiloity(false);
@@ -150,7 +148,7 @@ public class DuplicateServiceImpl implements DuplicateService {
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
     public LinkResult linkHenkilos(String henkiloOid, List<String> similarHenkiloOids) {
-        similarHenkiloOids = similarHenkiloOids.stream().filter( oid -> !henkiloOid.equals(oid)).distinct().collect(toList());
+        similarHenkiloOids = similarHenkiloOids.stream().filter(oid -> !henkiloOid.equals(oid)).distinct().collect(toList());
 
         Henkilo master = determineMasterHenkilo(henkiloOid, similarHenkiloOids);
         master.setPassivoitu(false);
@@ -190,8 +188,7 @@ public class DuplicateServiceImpl implements DuplicateService {
                 .flatMap(viite -> {
                     String masterOid = viite.getMasterOid();
                     this.henkiloViiteRepository.delete(viite);
-                    return this.henkiloDataRepository.findByOidHenkilo(masterOid)
-                            .map(Stream::of).orElse(Stream.empty());
+                    return this.henkiloDataRepository.findByOidHenkilo(masterOid).stream();
                 })
                 .collect(toList());
 
@@ -206,7 +203,7 @@ public class DuplicateServiceImpl implements DuplicateService {
         this.henkiloViiteRepository.save(viite);
 
         Henkilo duplicateHenkilo = this.henkiloDataRepository.findByOidHenkilo(slaveOid)
-                .orElseThrow( () -> new NotFoundException("Henkilo not found with given oid " + slaveOid) );
+                .orElseThrow(() -> new NotFoundException("Henkilo not found with given oid " + slaveOid));
         duplicateHenkilo.setDuplicate(true);
         duplicateHenkilo.setPassivoitu(true);
         duplicateHenkilo.clearHuoltajat();
@@ -216,7 +213,7 @@ public class DuplicateServiceImpl implements DuplicateService {
         this.kayttooikeusClient.passivoiHenkilo(duplicateHenkilo.getOidHenkilo(), kasittelijaOid.orElse(null));
 
         // Preserve two-level hierarchy, re-link slave's slaves to new master
-        this.henkiloViiteRepository.findByMasterOid(slaveOid).forEach( slavesSlave -> {
+        this.henkiloViiteRepository.findByMasterOid(slaveOid).forEach(slavesSlave -> {
             if (slavesSlave.getSlaveOid().equals(master.getOidHenkilo())) {
                 this.henkiloViiteRepository.delete(slavesSlave);
             } else {
@@ -255,7 +252,7 @@ public class DuplicateServiceImpl implements DuplicateService {
 
     private Henkilo determineMasterHenkilo(String henkiloOid, List<String> similarHenkiloOids) {
         Henkilo originalMaster = this.henkiloDataRepository.findByOidHenkilo(henkiloOid)
-                .orElseThrow( () -> new NotFoundException("User with oid " + henkiloOid + " was not found"));
+                .orElseThrow(() -> new NotFoundException("User with oid " + henkiloOid + " was not found"));
         List<Henkilo> candidates = this.henkiloDataRepository.findByOidHenkiloIsIn(similarHenkiloOids);
 
         /* Positively identified Henkilo MUST ALWAYS be the master
@@ -271,7 +268,7 @@ public class DuplicateServiceImpl implements DuplicateService {
         // if there is one identified henkilo, set him as master - otherwise master will be the henkilo whos oid was given as first parameter
         return candidates
                 .stream()
-                .reduce( originalMaster, (currentMaster, candidate) -> isHenkiloIdentified(candidate) ? candidate : currentMaster );
+                .reduce(originalMaster, (currentMaster, candidate) -> isHenkiloIdentified(candidate) ? candidate : currentMaster);
     }
 
     private boolean hasMoreThanOneIdentifiedHenkilo(List<Henkilo> henkilos) {
@@ -290,9 +287,9 @@ public class DuplicateServiceImpl implements DuplicateService {
     @Transactional(propagation = Propagation.MANDATORY)
     public LinkResult unlinkHenkilo(String oid, String slaveOid) {
         Henkilo master = this.henkiloDataRepository.findByOidHenkilo(oid)
-                .orElseThrow( () -> new NotFoundException("User with oid " + oid + " was not found"));
+                .orElseThrow(() -> new NotFoundException("User with oid " + oid + " was not found"));
         Henkilo slave = this.henkiloDataRepository.findByOidHenkilo(slaveOid)
-                .orElseThrow( () -> new NotFoundException("User with oid " + oid + " was not found"));
+                .orElseThrow(() -> new NotFoundException("User with oid " + oid + " was not found"));
         slave.setDuplicate(false);
         slave.setPassivoitu(false);
         this.henkiloViiteRepository.removeByMasterOidAndSlaveOid(oid, slaveOid);

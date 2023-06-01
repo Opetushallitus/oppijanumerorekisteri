@@ -10,10 +10,12 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDuplicateDto;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import org.assertj.core.groups.Tuple;
@@ -30,12 +32,16 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {OrikaConfiguration.class, DuplicateServiceImpl.class, KoodistoServiceMock.class}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class DuplicateServiceImplTest {
     @Autowired
     private OrikaConfiguration mapper;
+
+    @MockBean
+    private TuontiRepository tuontiRepository;
 
     @Autowired
     private DuplicateService duplicateService;
@@ -166,5 +172,37 @@ public class DuplicateServiceImplTest {
 
     }
 
+    @Test
+    public void findDuplicates() {
+        Henkilo subject = mock(Henkilo.class);
+        Henkilo duplicate = mock(Henkilo.class);
 
+        given(subject.getOidHenkilo()).willReturn("subject");
+        given(duplicate.getOidHenkilo()).willReturn("duplicate");
+        given(henkiloRepository.findByOidHenkilo(subject.getOidHenkilo())).willReturn(Optional.of(subject));
+        given(henkiloViiteRepository.findBySlaveOid(subject.getOidHenkilo())).willReturn(List.of());
+        given(henkiloRepository.findDuplikaatit(any())).willReturn(List.of(duplicate));
+
+        List<HenkiloDuplicateDto> result = duplicateService.findDuplicates(subject.getOidHenkilo());
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    public void filterMasterFromDuplicates() {
+        Henkilo subject = mock(Henkilo.class);
+        Henkilo duplicate = mock(Henkilo.class);
+        HenkiloViite reference = mock(HenkiloViite.class);
+
+        given(subject.getOidHenkilo()).willReturn("subject");
+        given(duplicate.getOidHenkilo()).willReturn("duplicate");
+        given(reference.getMasterOid()).willReturn("duplicate");
+        given(henkiloRepository.findByOidHenkilo(subject.getOidHenkilo())).willReturn(Optional.of(subject));
+        given(henkiloViiteRepository.findBySlaveOid(subject.getOidHenkilo())).willReturn(List.of(reference));
+        given(henkiloRepository.findDuplikaatit(any())).willReturn(List.of(duplicate));
+
+        List<HenkiloDuplicateDto> result = duplicateService.findDuplicates(subject.getOidHenkilo());
+
+        assertThat(result).isEmpty();
+    }
 }

@@ -1,11 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
  * {@link List}-toteutus jossa on määriteltynä "Bean Validation".

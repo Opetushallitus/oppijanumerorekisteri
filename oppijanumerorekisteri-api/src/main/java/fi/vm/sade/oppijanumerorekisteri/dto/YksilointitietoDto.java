@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import lombok.*;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Set;

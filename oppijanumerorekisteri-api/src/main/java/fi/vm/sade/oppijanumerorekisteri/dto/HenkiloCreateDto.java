@@ -2,9 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.dto;
 
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAsiointikieli;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.Setter;
 
 import javax.validation.Valid;
@@ -16,8 +14,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+@Generated
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class HenkiloCreateDto implements Serializable {

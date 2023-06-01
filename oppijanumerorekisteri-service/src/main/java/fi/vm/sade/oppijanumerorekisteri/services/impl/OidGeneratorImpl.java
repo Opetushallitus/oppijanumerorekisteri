@@ -1,8 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import fi.vm.sade.oidgenerator.OIDGenerator;
 import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
 import org.springframework.stereotype.Component;
-import fi.vm.sade.oidgenerator.OIDGenerator;
 
 @Component
 public class OidGeneratorImpl implements OidGenerator {

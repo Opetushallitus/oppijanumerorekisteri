@@ -8,6 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
@@ -40,8 +41,6 @@ public class OppijaServiceImplTest {
     private OppijaServiceImpl oppijaServiceImpl;
 
     @Mock
-    private HenkiloService henkiloServiceMock;
-    @Mock
     private HenkiloModificationService henkiloModificationServiceMock;
     @Mock
     private OrganisaatioService organisaatioServiceMock;
@@ -54,6 +53,8 @@ public class OppijaServiceImplTest {
     @Mock
     private OrganisaatioRepository organisaatioRepositoryMock;
     @Mock
+    private HenkiloViiteRepository henkiloViiteRepositoryMock;
+    @Mock
     private UserDetailsHelper userDetailsHelperMock;
     @Mock
     private PermissionChecker permissionCheckerMock;
@@ -63,6 +64,8 @@ public class OppijaServiceImplTest {
     private EmailService emailService;
     @Mock
     private OppijaTuontiCreatePostValidator oppijaTuontiCreatePostValidatorMock;
+    @Mock
+    private YksilointiService yksilointiService;
 
     @Before
     public void setup() {
@@ -76,22 +79,23 @@ public class OppijaServiceImplTest {
                 permissionCheckerMock,
                 objectMapperMock,
                 emailService,
-                oppijaTuontiCreatePostValidatorMock);
+                oppijaTuontiCreatePostValidatorMock,
+                yksilointiService);
 
         OppijaTuontiAsyncServiceImpl oppijaTuontiServiceAsyncImpl = new OppijaTuontiAsyncServiceImpl(
                 oppijaTuontiServiceImpl);
         oppijaServiceImpl = new OppijaServiceImpl(oppijaTuontiServiceImpl,
-                oppijaTuontiServiceAsyncImpl, henkiloServiceMock, henkiloModificationServiceMock,
+                oppijaTuontiServiceAsyncImpl, henkiloModificationServiceMock,
                 organisaatioServiceMock, mapperMock, henkiloRepositoryMock,
                 tuontiRepositoryMock,
-                organisaatioRepositoryMock, userDetailsHelperMock,
-                permissionCheckerMock);
+                organisaatioRepositoryMock, henkiloViiteRepositoryMock, userDetailsHelperMock,
+                permissionCheckerMock, objectMapperMock);
     }
 
     @Test
     public void listMastersShouldFilterOrganisaatioOids() {
-        Set<String> organisaatiot = Stream.of("oid1", "oid3").collect(toSet());
-        when(permissionCheckerMock.getOrganisaatioOids(any(), any())).thenReturn(organisaatiot);
+        Set<String> organisaatiot = Set.of("oid1", "oid3");
+        when(permissionCheckerMock.getAllOrganisaatioOids(any(), any(), any(), any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = OppijaTuontiCriteria.builder()
                 .organisaatioOids(Stream.of("oid1", "oid2").collect(toSet()))
                 .build();
@@ -108,8 +112,8 @@ public class OppijaServiceImplTest {
 
     @Test
     public void listMastersShouldSetOrganisaatioOidsWhenCriteriaNull() {
-        Set<String> organisaatiot = Stream.of("oid1", "oid3").collect(toSet());
-        when(permissionCheckerMock.getOrganisaatioOids(any(), any())).thenReturn(organisaatiot);
+        Set<String> organisaatiot = Set.of("oid1", "oid3");
+        when(permissionCheckerMock.getAllOrganisaatioOids(any(), any(), any(), any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = new OppijaTuontiCriteria();
         int page = 1;
         int count = 20;
@@ -119,13 +123,13 @@ public class OppijaServiceImplTest {
         ArgumentCaptor<OppijaTuontiCriteria> argumentCaptor = ArgumentCaptor.forClass(OppijaTuontiCriteria.class);
         verify(henkiloRepositoryMock).findBy(argumentCaptor.capture(), eq(count), eq(0), any());
         OppijaTuontiCriteria output = argumentCaptor.getValue();
-        assertThat(output.getOrganisaatioOids()).containsExactly("oid1", "oid3");
+        assertThat(output.getOrganisaatioOids()).containsExactlyInAnyOrder("oid1", "oid3");
     }
 
     @Test
     public void listMastersShouldSetOrganisaatioOidsWhenCriteriaEmpty() {
-        Set<String> organisaatiot = Stream.of("oid1", "oid3").collect(toSet());
-        when(permissionCheckerMock.getOrganisaatioOids(any(), any())).thenReturn(organisaatiot);
+        Set<String> organisaatiot = Set.of("oid1", "oid3");
+        when(permissionCheckerMock.getAllOrganisaatioOids(any(), any(), any(), any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = OppijaTuontiCriteria.builder().organisaatioOids(emptySet()).build();
         int page = 1;
         int count = 20;
@@ -135,13 +139,11 @@ public class OppijaServiceImplTest {
         ArgumentCaptor<OppijaTuontiCriteria> argumentCaptor = ArgumentCaptor.forClass(OppijaTuontiCriteria.class);
         verify(henkiloRepositoryMock).findBy(argumentCaptor.capture(), eq(count), eq(0), any());
         OppijaTuontiCriteria output = argumentCaptor.getValue();
-        assertThat(output.getOrganisaatioOids()).containsExactly("oid1", "oid3");
+        assertThat(output.getOrganisaatioOids()).containsExactlyInAnyOrder("oid1", "oid3");
     }
 
     @Test
     public void listMastersShouldSkipFindByWhenOrganisaatiotEmpty() {
-        Set<String> organisaatiot = emptySet();
-        when(permissionCheckerMock.getOrganisaatioOids(any(), any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = new OppijaTuontiCriteria();
         int page = 1;
         int count = 20;
@@ -149,7 +151,7 @@ public class OppijaServiceImplTest {
         Throwable throwable = catchThrowable(() -> oppijaServiceImpl.listMastersBy(input, page, count));
 
         assertThat(throwable).isInstanceOf(ValidationException.class);
-        verifyZeroInteractions(henkiloRepositoryMock);
+        verifyNoInteractions(henkiloRepositoryMock);
     }
 
     @Test
@@ -173,7 +175,7 @@ public class OppijaServiceImplTest {
                     OppijaReadDto dto = new OppijaReadDto();
                     dto.setOid(entity.getOidHenkilo());
                     return dto;
-        });
+                });
         OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
         int page = 1;
         int count = 20;

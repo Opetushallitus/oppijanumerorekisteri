@@ -14,6 +14,7 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
+import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
@@ -36,6 +37,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -54,8 +56,14 @@ import static org.mockito.Mockito.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {OrikaConfiguration.class, KoodistoServiceMock.class}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class HenkiloServiceTest {
+
+    private final String OID = "1.2.3.4.5";
+
     @Autowired
     private OrikaConfiguration mapper;
+
+    @MockBean
+    private TuontiRepository tuontiRepository;
 
     @Spy
     @InjectMocks
@@ -104,7 +112,7 @@ public class HenkiloServiceTest {
         Slice<HenkiloHakuDto> slice = service.list(criteria, 1, 20);
 
         assertThat(slice.getResults()).isEmpty();
-        verifyZeroInteractions(henkiloDataRepositoryMock);
+        verifyNoInteractions(henkiloDataRepositoryMock);
     }
 
     @Test
@@ -164,6 +172,13 @@ public class HenkiloServiceTest {
         verify(henkiloDataRepositoryMock).findBy(criteriaCaptor.capture(), eq(21L), eq(0L));
         HenkiloCriteria henkiloCriteria = criteriaCaptor.getValue();
         assertThat(henkiloCriteria.getHenkiloOids()).containsExactlyInAnyOrder("henkilo1", "henkilo3");
+    }
+
+    @Test
+    public void findByMunicipalAndBirthdate() {
+        Slice<HenkiloMunicipalDobDto> slice = service.findByMunicipalAndBirthdate("foo", LocalDate.of(2021, 11, 5), 1);
+        assertThat(slice.getResults()).isEmpty();
+        verify(henkiloDataRepositoryMock).findByMunicipalAndBirthdate(eq("foo"), any(LocalDate.class), eq(HenkiloServiceImpl.MAX_FETCH_PERSONS + 1L), eq(0L));
     }
 
     @Test
@@ -242,31 +257,31 @@ public class HenkiloServiceTest {
 
     private List<YhteystietoHakuDto> testYhteystiedot(String henkiloOid) {
         return asList(
-            YhteystietoHakuDto.builder().henkiloOid(henkiloOid)
-                    .ryhmaKuvaus("yhteystietotyyppi1")
-                    .yhteystietoTyyppi(YHTEYSTIETO_KATUOSOITE)
-                    .arvo("Siilikuja 6")
-                .build(),
-            YhteystietoHakuDto.builder().henkiloOid(henkiloOid)
-                    .ryhmaKuvaus("yhteystietotyyppi1")
-                    .yhteystietoTyyppi(YHTEYSTIETO_SAHKOPOSTI)
-                    .arvo("testaaja@pp.inet.fi")
-                .build(),
-            YhteystietoHakuDto.builder().henkiloOid(henkiloOid)
-                    .ryhmaKuvaus("yhteystietotyyppi2")
-                    .yhteystietoTyyppi(YHTEYSTIETO_KATUOSOITE)
-                    .arvo("Työkatu 3")
-                .build(),
-            YhteystietoHakuDto.builder().henkiloOid(henkiloOid)
-                    .ryhmaKuvaus("yhteystietotyyppi2")
-                    .yhteystietoTyyppi(YHTEYSTIETO_SAHKOPOSTI)
-                    .arvo("testaaja@oph.fi")
-                .build(),
-            YhteystietoHakuDto.builder().henkiloOid(henkiloOid)
-                    .ryhmaKuvaus("yhteystietotyyppi2")
-                    .yhteystietoTyyppi(YHTEYSTIETO_PUHELINNUMERO)
-                    .arvo("04512345678")
-                .build()
+                YhteystietoHakuDto.builder().henkiloOid(henkiloOid)
+                        .ryhmaKuvaus("yhteystietotyyppi1")
+                        .yhteystietoTyyppi(YHTEYSTIETO_KATUOSOITE)
+                        .arvo("Siilikuja 6")
+                        .build(),
+                YhteystietoHakuDto.builder().henkiloOid(henkiloOid)
+                        .ryhmaKuvaus("yhteystietotyyppi1")
+                        .yhteystietoTyyppi(YHTEYSTIETO_SAHKOPOSTI)
+                        .arvo("testaaja@pp.inet.fi")
+                        .build(),
+                YhteystietoHakuDto.builder().henkiloOid(henkiloOid)
+                        .ryhmaKuvaus("yhteystietotyyppi2")
+                        .yhteystietoTyyppi(YHTEYSTIETO_KATUOSOITE)
+                        .arvo("Työkatu 3")
+                        .build(),
+                YhteystietoHakuDto.builder().henkiloOid(henkiloOid)
+                        .ryhmaKuvaus("yhteystietotyyppi2")
+                        .yhteystietoTyyppi(YHTEYSTIETO_SAHKOPOSTI)
+                        .arvo("testaaja@oph.fi")
+                        .build(),
+                YhteystietoHakuDto.builder().henkiloOid(henkiloOid)
+                        .ryhmaKuvaus("yhteystietotyyppi2")
+                        .yhteystietoTyyppi(YHTEYSTIETO_PUHELINNUMERO)
+                        .arvo("04512345678")
+                        .build()
         );
     }
 
@@ -332,21 +347,23 @@ public class HenkiloServiceTest {
         given(this.oppijanumerorekisteriProperties.getHenkiloViiteSplitSize()).willReturn(5000);
         given(this.henkiloViiteRepositoryMock.findBy(any())).willReturn(singletonList(
                 new HenkiloViiteDto("OID", "MASTER")));
-        List<HenkiloViiteDto> results = this.service.findHenkiloViittees(new HenkiloCriteria());
+        List<HenkiloViiteDto> results = this.service.findHenkiloViittees(new HenkiloCriteria().getHenkiloOids());
         assertThat(results.size()).isEqualTo(1);
         assertThat(results.get(0).getHenkiloOid()).isEqualTo("OID");
         assertThat(results.get(0).getMasterOid()).isEqualTo("MASTER");
-        
+
         given(this.henkiloViiteRepositoryMock.findBy(any())).willReturn(emptyList());
-        results = this.service.findHenkiloViittees(new HenkiloCriteria());
+        results = this.service.findHenkiloViittees(new HenkiloCriteria().getHenkiloOids());
         assertThat(results.size()).isEqualTo(0);
 
         // Assert split works as intended
         given(this.oppijanumerorekisteriProperties.getHenkiloViiteSplitSize()).willReturn(1);
         given(this.henkiloViiteRepositoryMock.findBy(any())).willReturn(singletonList(
                 new HenkiloViiteDto("OID", "MASTER")));
-        HenkiloCriteria criteria = new HenkiloCriteria() {{setHenkiloOids(Sets.newHashSet("OID1", "OID2"));}};
-        results = this.service.findHenkiloViittees(criteria);
+        HenkiloCriteria criteria = new HenkiloCriteria() {{
+            setHenkiloOids(Sets.newHashSet("OID1", "OID2"));
+        }};
+        results = this.service.findHenkiloViittees(criteria.getHenkiloOids());
         assertThat(results).size().isEqualTo(2);
     }
 
@@ -367,5 +384,57 @@ public class HenkiloServiceTest {
         given(this.huoltajasuhdeRepository.findCurrentHuoltajatByHenkilo(oid)).willReturn(Collections.emptyList());
         List<HuoltajaDto> huoltajat = this.service.getHenkiloHuoltajat(oid);
         assertThat(huoltajat).isEmpty();
+    }
+
+    @Test
+    public void removeContactInfoUserNotFound() {
+        given(henkiloDataRepositoryMock.findByOidHenkilo(OID)).willReturn(Optional.empty());
+
+        service.removeContactInfo(OID, "foo");
+
+        verify(henkiloDataRepositoryMock, times(1)).findByOidHenkilo(OID);
+    }
+
+    @Test
+    public void removeContactInfoNone() {
+        Henkilo henkilo = mockHenkilo();
+        given(henkiloDataRepositoryMock.findByOidHenkilo(OID)).willReturn(Optional.of(henkilo));
+
+        service.removeContactInfo(OID, "qux");
+
+        verify(henkiloDataRepositoryMock, times(1)).findByOidHenkilo(OID);
+        assertThat(henkilo.getYhteystiedotRyhma()).size().isEqualTo(2);
+    }
+
+    @Test
+    public void removeContactInfoSome() {
+        Henkilo henkilo = mockHenkilo();
+        given(henkiloDataRepositoryMock.findByOidHenkilo(OID)).willReturn(Optional.of(henkilo));
+
+        service.removeContactInfo(OID, "foo");
+
+        verify(henkiloDataRepositoryMock, times(1)).findByOidHenkilo(OID);
+        assertThat(henkilo.getYhteystiedotRyhma()).size().isEqualTo(1);
+    }
+
+    @Test
+    public void removeContactInfoAll() {
+        Henkilo henkilo = mockHenkilo();
+        given(henkiloDataRepositoryMock.findByOidHenkilo(OID)).willReturn(Optional.of(henkilo));
+
+        service.removeContactInfo(OID, "foo", "bar");
+
+        verify(henkiloDataRepositoryMock, times(1)).findByOidHenkilo(OID);
+        assertThat(henkilo.getYhteystiedotRyhma()).isEmpty();
+    }
+
+    private Henkilo mockHenkilo() {
+        return Henkilo.builder()
+                .oidHenkilo(OID)
+                .yhteystiedotRyhma(Stream.of(
+                        YhteystiedotRyhma.builder().ryhmaKuvaus("foo").ryhmaAlkuperaTieto("").build(),
+                        YhteystiedotRyhma.builder().ryhmaKuvaus("bar").ryhmaAlkuperaTieto("").build()
+                ).collect(Collectors.toSet()))
+                .build();
     }
 }

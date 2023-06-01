@@ -6,11 +6,12 @@ import com.querydsl.jpa.JPQLQuery;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.Sort;
 import fi.vm.sade.oppijanumerorekisteri.repositories.impl.querydsl.QuerydslHelpers;
-import java.util.function.Function;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.function.Function;
 
 @Getter
 @Setter

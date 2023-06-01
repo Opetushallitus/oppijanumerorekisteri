@@ -1,11 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -19,4 +17,6 @@ public class OppijaTuontiRiviReadDto {
 
     private OppijaReadDto henkilo;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean conflict;
 }

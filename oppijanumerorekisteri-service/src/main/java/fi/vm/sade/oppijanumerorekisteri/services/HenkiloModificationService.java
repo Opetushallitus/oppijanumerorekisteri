@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,6 +15,8 @@ public interface HenkiloModificationService {
     Henkilo update(Henkilo henkilo);
 
     Henkilo disableHenkilo(String oid);
+
+    void removeAccessRights(String oid);
 
     FindOrCreateWrapper<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto);
 
@@ -39,4 +40,6 @@ public interface HenkiloModificationService {
     List<String> linkHenkilos(String henkiloOid, List<String> similarHenkiloOids);
 
     void unlinkHenkilo(String oid, String slaveOid);
+
+    List<String> forceLinkHenkilos(String master, List<String> duplicates);
 }

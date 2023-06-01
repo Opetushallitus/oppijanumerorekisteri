@@ -1,15 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.validation;
 
-import static java.util.Arrays.asList;
-import java.util.Collection;
-import static java.util.Collections.emptyList;
-import java.util.List;
-import javax.validation.ConstraintValidatorContext;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import org.hibernate.validator.internal.util.annotation.AnnotationDescriptor;
 import org.hibernate.validator.internal.util.annotation.AnnotationFactory;
 import org.junit.Before;
@@ -19,9 +13,16 @@ import org.mockito.Answers;
 import org.mockito.Mock;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.validation.ConstraintValidatorContext;
+import java.util.Collection;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @RunWith(SpringRunner.class)
 public class ValidateAtLeastOneNotNullValidatorTest {
@@ -64,7 +65,7 @@ public class ValidateAtLeastOneNotNullValidatorTest {
         boolean valid = validator.isValid(null, contextMock);
 
         assertThat(valid).isTrue();
-        verifyZeroInteractions(contextMock);
+        verifyNoInteractions(contextMock);
     }
 
     @Test
@@ -75,7 +76,7 @@ public class ValidateAtLeastOneNotNullValidatorTest {
         boolean valid = validator.isValid(TestClass.builder().build(), contextMock);
 
         assertThat(valid).isTrue();
-        verifyZeroInteractions(contextMock);
+        verifyNoInteractions(contextMock);
     }
 
     @Test
@@ -97,7 +98,7 @@ public class ValidateAtLeastOneNotNullValidatorTest {
         boolean valid = validator.isValid(TestClass.builder().integerValue(235).build(), contextMock);
 
         assertThat(valid).isTrue();
-        verifyZeroInteractions(contextMock);
+        verifyNoInteractions(contextMock);
     }
 
     @Test
@@ -108,7 +109,7 @@ public class ValidateAtLeastOneNotNullValidatorTest {
         boolean valid = validator.isValid(TestClass.builder().integerValue(764).build(), contextMock);
 
         assertThat(valid).isTrue();
-        verifyZeroInteractions(contextMock);
+        verifyNoInteractions(contextMock);
     }
 
     @Test

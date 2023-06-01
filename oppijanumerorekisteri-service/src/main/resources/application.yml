@@ -8,6 +8,7 @@ server:
 spring:
   main:
     banner-mode: "off"
+    allow-circular-references: true # HuoltajaCreateDtoMapper
   session:
     store-type: jdbc
   jackson:
@@ -61,6 +62,7 @@ logging:
     fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter: warn
     org.apache.http.client.protocol.ResponseProcessCookies: error
     io.swagger.models.parameters.AbstractSerializableParameter: error
+    fi.vm.sade.oppijanumerorekisteri.aspects.LogExecutionTimeAspect: debug
 dev:
   username: user
   password: password
@@ -100,6 +102,7 @@ oppijanumerorekisteri:
   scheduling:
     vtjsync:
       asiayhteysKaytossa: false
+  allow-fake-ssn: true
 aws:
   region: eu-west-1
   henkiloModifiedTopic:

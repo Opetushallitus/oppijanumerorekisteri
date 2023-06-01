@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.audit;
 
 public class AuditMessageFields {
+    public static final String OIDS = "oids";
     public static final String HENKILO_OID = "henkiloOid";
     public static final String PASSIVOITU = "passivoitu";
     public static final String TUNNISTETIETO = "tunnistetieto";

@@ -1,8 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
-import lombok.*;
 import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.Date;

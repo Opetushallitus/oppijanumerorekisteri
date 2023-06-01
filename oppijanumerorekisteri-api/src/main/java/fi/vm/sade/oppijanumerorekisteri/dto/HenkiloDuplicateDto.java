@@ -6,7 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -23,9 +25,13 @@ public class HenkiloDuplicateDto {
     private boolean passivoitu;
     private String email;
     private boolean yksiloity;
+    private boolean yksiloityVTJ;
     private KielisyysDto aidinkieli;
     private KielisyysDto asiointiKieli;
     private List<HakemusDto> hakemukset;
+    private Set<KansalaisuusReadDto> kansalaisuus;
+    private Set<String> passinumerot;
+    private Collection<String> emails;
 
     @Deprecated
     public HenkiloTyyppi getHenkiloTyyppi() {

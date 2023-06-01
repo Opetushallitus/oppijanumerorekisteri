@@ -254,6 +254,11 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     public Henkilo update(Henkilo henkilo) {
         setSyntymaaikaAndSukupuoliFromHetu(henkilo);
 
+        // varmistetaan että tyhjä hetu tallentuu nullina
+        if (StringUtils.isEmpty(henkilo.getHetu())) {
+            henkilo.setHetu(null);
+        }
+
         Date nyt = new Date();
         Optional<String> kayttajaOid = userDetailsHelper.findCurrentUserOid();
 
@@ -289,6 +294,13 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
         this.kayttooikeusClient.passivoiHenkilo(oid, kasittelija);
         return henkilo;
+    }
+
+    @Override
+    public void removeAccessRights(String oid) {
+        String kasittelija = SecurityContextHolder.getContext().getAuthentication().getName();
+        kayttooikeusClient.passivoiHenkilo(oid, kasittelija);
+        henkiloService.removeContactInfo(oid, YhteystietoryhmaUtils.TYYPPI_TYOOSOITE);
     }
 
     @Override
@@ -454,6 +466,29 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         this.duplicateService.unlinkHenkilo(oid, slaveOid).forEachModified(this::update);
     }
 
+    @Override
+    @Transactional
+    public List<String> forceLinkHenkilos(String master, List<String> duplicates) {
+        List<Henkilo> candidates = henkiloDataRepository.findByOidHenkiloIsIn(duplicates);
+        validateForceLinkCandidates(candidates);
+        puraYksiloinnit(candidates);
+        return linkHenkilos(master, duplicates);
+    }
+
+    private void validateForceLinkCandidates(List<Henkilo> candidates) {
+        candidates.stream().filter(henkilo ->
+                henkilo.isYksiloityVTJ() || henkilo.getHetu() != null
+        ).findAny().ifPresent(henkilo -> {
+            throw new ValidationException();
+        });
+    }
+
+    private void puraYksiloinnit(List<Henkilo> candidates) {
+        candidates.stream()
+                .filter(Henkilo::isYksiloity)
+                .forEach(henkilo -> henkilo.setYksiloity(false));
+    }
+
     private String getFreePersonOid() {
         final String newOid = oidGenerator.generateOID();
         if (this.henkiloService.getOidExists(newOid)) {
@@ -468,5 +503,4 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             henkilo.setSukupuoli(HetuUtils.sukupuoliFromHetu(henkilo.getHetu()));
         }
     }
-
 }

@@ -3,9 +3,9 @@ package fi.vm.sade.oppijanumerorekisteri.repositories;
 import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
 import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
+
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public interface TuontiRepositoryCustom {
 

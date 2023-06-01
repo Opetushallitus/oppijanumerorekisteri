@@ -73,6 +73,31 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
+    public Slice<HenkiloMunicipalDobDto> findByMunicipalAndBirthdate(final String municipal, final LocalDate dob, final int page) {
+        Long limit = MAX_FETCH_PERSONS + 1L;
+        Long offset = (page - 1L) * MAX_FETCH_PERSONS;
+        return Slice.of(page, MAX_FETCH_PERSONS, henkiloDataRepository.findByMunicipalAndBirthdate(municipal, dob, limit, offset));
+    }
+
+    @Override
+    @Transactional
+    public void removeContactInfo(String oid, String... removeTypes) {
+        Optional<Henkilo> henkilo = henkiloDataRepository.findByOidHenkilo(oid);
+        if ( henkilo.isPresent() ) {
+            henkilo.get().getYhteystiedotRyhma()
+                    .removeIf(contactInfo -> List.of(removeTypes).contains(contactInfo.getRyhmaKuvaus()));
+        }
+    }
+
+    @Override
+    @Transactional
+    public Set<String> setPassportNumbers(String oid, Set<String> passinumerot) {
+        getEntityByOid(oid).setPassinumerot(passinumerot);
+        return passinumerot;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Iterable<HenkiloHakuPerustietoDto> list(HenkiloHakuCriteriaDto criteria, Long offset, Long limit) {
         return this.henkiloDataRepository.findPerustietoBy(this.createHenkiloCriteria(criteria), limit, offset);
     }
@@ -261,21 +286,16 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria criteria) {
+    public List<HenkiloViiteDto> findHenkiloViittees(Set<String> oids) {
         List<HenkiloViiteDto> henkiloViiteDtoList = new ArrayList<>();
-        if(criteria.getHenkiloOids() != null) {
-            List<List<String>> henkiloOidListSplit = Lists.partition(
-                    new ArrayList<>(criteria.getHenkiloOids()),
-                    oppijanumerorekisteriProperties.getHenkiloViiteSplitSize());
-            henkiloOidListSplit.forEach(henkiloOidList -> {
-                criteria.setHenkiloOids(new HashSet<>(henkiloOidList));
-                henkiloViiteDtoList.addAll(this.henkiloViiteRepository.findBy(criteria));
-            });
+        if (oids != null) {
+            Lists.partition(
+                            new ArrayList<>(oids),
+                            oppijanumerorekisteriProperties.getHenkiloViiteSplitSize())
+                    .forEach(henkiloOidList -> henkiloViiteDtoList.addAll(this.henkiloViiteRepository.findBy(new HashSet<>(henkiloOidList))));
+        } else {
+            henkiloViiteDtoList.addAll(this.henkiloViiteRepository.findBy(Set.of()));
         }
-        else {
-            henkiloViiteDtoList.addAll(this.henkiloViiteRepository.findBy(criteria));
-        }
-
         return henkiloViiteDtoList;
     }
 

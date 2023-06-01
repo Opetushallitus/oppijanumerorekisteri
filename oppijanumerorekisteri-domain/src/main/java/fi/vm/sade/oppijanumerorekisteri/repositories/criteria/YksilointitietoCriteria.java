@@ -4,10 +4,11 @@ import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QYksilointitieto;
 import fi.vm.sade.oppijanumerorekisteri.models.Yksilointitieto;
-import javax.persistence.EntityManager;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import javax.persistence.EntityManager;
 
 @Getter
 @Setter

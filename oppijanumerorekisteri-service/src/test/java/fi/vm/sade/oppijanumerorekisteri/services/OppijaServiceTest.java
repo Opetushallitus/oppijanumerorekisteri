@@ -9,6 +9,7 @@ import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.OrganisaatioClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
@@ -30,13 +31,16 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static fi.vm.sade.oppijanumerorekisteri.AssertPublished.assertPublished;
+import static fi.vm.sade.oppijanumerorekisteri.services.Koodisto.MAAT_JA_VALTIOT_2;
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
@@ -116,6 +120,9 @@ public class OppijaServiceTest {
 
     @Test
     public void getOrCreateShouldCreateNewHenkilo() {
+        given(this.permissionChecker.getOrganisaatioOidsByKayttaja(any(), any(), any())).willReturn(Set.of("1.2.3.4"));
+        given(this.permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
+
         OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
                 .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
                                 .tunniste("tunniste1")
@@ -146,26 +153,28 @@ public class OppijaServiceTest {
 
     @Test
     public void getOrCreateShouldCreateNewHenkiloWithSameHetu() {
+        given(this.permissionChecker.getOrganisaatioOidsByKayttaja(any(), any(), any())).willReturn(Set.of("1.2.3.4"));
+        given(this.permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
         OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
                 .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
-                        .tunniste("tunniste1")
-                        .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
-                                .oid("oid1")
-                                .hetu("180897-945K")
-                                .etunimet("etu")
-                                .kutsumanimi("etu")
-                                .sukunimi("suku")
+                                .tunniste("tunniste1")
+                                .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
+                                        .oid("oid1")
+                                        .hetu("180897-945K")
+                                        .etunimet("etu")
+                                        .kutsumanimi("etu")
+                                        .sukunimi("suku")
+                                        .build())
+                                .build(), OppijaTuontiRiviCreateDto.builder()
+                                .tunniste("tunniste2")
+                                .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
+                                        .oid("oid1")
+                                        .hetu("180897-945K")
+                                        .etunimet("etu")
+                                        .kutsumanimi("etu")
+                                        .sukunimi("suku")
+                                        .build())
                                 .build())
-                        .build(), OppijaTuontiRiviCreateDto.builder()
-                        .tunniste("tunniste2")
-                        .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
-                                .oid("oid1")
-                                .hetu("180897-945K")
-                                .etunimet("etu")
-                                .kutsumanimi("etu")
-                                .sukunimi("suku")
-                                .build())
-                        .build())
                         .collect(toList()))
                 .build();
 
@@ -185,6 +194,9 @@ public class OppijaServiceTest {
 
     @Test
     public void getOrCreateShouldCreateNewHenkiloWithPassinumero() {
+        given(this.permissionChecker.getOrganisaatioOidsByKayttaja(any(), any(), any())).willReturn(Set.of("1.2.3.4"));
+        given(this.permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
+
         OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
                 .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
                                 .tunniste("tunniste1")
@@ -198,7 +210,7 @@ public class OppijaServiceTest {
                         .collect(toList()))
                 .build();
 
-        OppijaTuontiReadDto readDto = create(createDto);
+        create(createDto);
 
         List<Henkilo> henkilot = henkiloRepository.findAll();
         assertThat(henkilot).hasSize(1);
@@ -210,6 +222,9 @@ public class OppijaServiceTest {
 
     @Test
     public void getOrCreateShouldCreateNewHenkiloWithIdentification() {
+        given(this.permissionChecker.getOrganisaatioOidsByKayttaja(any(), any(), any())).willReturn(Set.of("1.2.3.4"));
+        given(this.permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
+
         OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
                 .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
                                 .tunniste("tunniste1")
@@ -223,7 +238,7 @@ public class OppijaServiceTest {
                         .collect(toList()))
                 .build();
 
-        OppijaTuontiReadDto readDto = create(createDto);
+        create(createDto);
 
         List<Henkilo> henkilot = henkiloRepository.findAll();
         assertThat(henkilot).hasSize(1);
@@ -237,19 +252,22 @@ public class OppijaServiceTest {
 
     @Test
     public void getOrCreateShouldCreateNewHenkiloWithSukupuoli() {
-        when(koodistoService.list(eq(Koodisto.SUKUPUOLI)))
+        given(this.permissionChecker.getOrganisaatioOidsByKayttaja(any(), any(), any())).willReturn(Set.of("1.2.3.4"));
+        given(this.permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
+
+        when(koodistoService.list(Koodisto.SUKUPUOLI))
                 .thenReturn(new KoodiTypeListBuilder(Koodisto.SUKUPUOLI).koodi("1").build());
         OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
                 .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
-                        .tunniste("tunniste1")
-                        .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
-                                .sahkoposti("example@example.com")
-                                .etunimet("etu")
-                                .kutsumanimi("etu")
-                                .sukunimi("suku")
-                                .sukupuoli(new KoodiUpdateDto("1"))
+                                .tunniste("tunniste1")
+                                .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
+                                        .sahkoposti("example@example.com")
+                                        .etunimet("etu")
+                                        .kutsumanimi("etu")
+                                        .sukunimi("suku")
+                                        .sukupuoli(new KoodiUpdateDto("1"))
+                                        .build())
                                 .build())
-                        .build())
                         .collect(toList()))
                 .build();
 
@@ -264,23 +282,26 @@ public class OppijaServiceTest {
 
     @Test
     public void getOrCreateShouldCreateNewHenkiloWithAidinkieli() {
+        given(this.permissionChecker.getOrganisaatioOidsByKayttaja(any(), any(), any())).willReturn(Set.of("1.2.3.4"));
+        given(this.permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
+
         when(koodistoService.list(eq(Koodisto.KIELI)))
                 .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI).koodi("FI").koodi("SV").build());
         OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
                 .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
-                        .tunniste("tunniste1")
-                        .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
-                                .sahkoposti("example@example.com")
-                                .etunimet("etu")
-                                .kutsumanimi("etu")
-                                .sukunimi("suku")
-                                .aidinkieli(new KoodiUpdateDto("SV"))
+                                .tunniste("tunniste1")
+                                .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
+                                        .sahkoposti("example@example.com")
+                                        .etunimet("etu")
+                                        .kutsumanimi("etu")
+                                        .sukunimi("suku")
+                                        .aidinkieli(new KoodiUpdateDto("SV"))
+                                        .build())
                                 .build())
-                        .build())
                         .collect(toList()))
                 .build();
 
-        OppijaTuontiReadDto readDto = create(createDto);
+        create(createDto);
 
         databaseService.runInTransaction(() -> {
             List<Henkilo> henkilot = henkiloRepository.findAll();
@@ -293,23 +314,26 @@ public class OppijaServiceTest {
 
     @Test
     public void getOrCreateShouldCreateNewHenkiloWithKansalaisuus() {
-        when(koodistoService.list(eq(Koodisto.MAAT_JA_VALTIOT_2)))
-                .thenReturn(new KoodiTypeListBuilder(Koodisto.MAAT_JA_VALTIOT_2).koodi("123").koodi("456").build());
+        given(this.permissionChecker.getOrganisaatioOidsByKayttaja(any(), any(), any())).willReturn(Set.of("1.2.3.4"));
+        given(this.permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
+
+        when(koodistoService.list(MAAT_JA_VALTIOT_2))
+                .thenReturn(new KoodiTypeListBuilder(MAAT_JA_VALTIOT_2).koodi("123").koodi("456").build());
         OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
                 .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
-                        .tunniste("tunniste1")
-                        .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
-                                .sahkoposti("example@example.com")
-                                .etunimet("etu")
-                                .kutsumanimi("etu")
-                                .sukunimi("suku")
-                                .kansalaisuus(Stream.of("123", "456").map(koodi -> new KoodiUpdateDto(koodi)).collect(toSet()))
+                                .tunniste("tunniste1")
+                                .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
+                                        .sahkoposti("example@example.com")
+                                        .etunimet("etu")
+                                        .kutsumanimi("etu")
+                                        .sukunimi("suku")
+                                        .kansalaisuus(Stream.of("123", "456").map(KoodiUpdateDto::new).collect(toSet()))
+                                        .build())
                                 .build())
-                        .build())
                         .collect(toList()))
                 .build();
 
-        OppijaTuontiReadDto readDto = create(createDto);
+        create(createDto);
 
         databaseService.runInTransaction(() -> {
             List<Henkilo> henkilot = henkiloRepository.findAll();
@@ -325,6 +349,9 @@ public class OppijaServiceTest {
 
     @Test
     public void getOrCreateShouldFindByOid() {
+        given(this.permissionChecker.getOrganisaatioOidsByKayttaja(any(), any(), any())).willReturn(Set.of("1.2.3.4"));
+        given(this.permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
+
         Henkilo henkilo = Henkilo.builder()
                 .oidHenkilo("oid2")
                 .etunimet("etu")
@@ -362,6 +389,9 @@ public class OppijaServiceTest {
 
     @Test
     public void getOrCreateShouldFindByHetu() {
+        given(this.permissionChecker.getOrganisaatioOidsByKayttaja(any(), any(), any())).willReturn(Set.of("1.2.3.4"));
+        given(this.permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
+
         Henkilo henkilo = Henkilo.builder()
                 .oidHenkilo("oid1")
                 .hetu("180897-945K")
@@ -399,6 +429,9 @@ public class OppijaServiceTest {
 
     @Test
     public void getOrCreateShouldFindByKaikkiHetut() {
+        given(this.permissionChecker.getOrganisaatioOidsByKayttaja(any(), any(), any())).willReturn(Set.of("1.2.3.4"));
+        given(this.permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
+
         Henkilo henkilo = Henkilo.builder()
                 .oidHenkilo("oid1")
                 .hetu("180897-945K")
@@ -414,14 +447,14 @@ public class OppijaServiceTest {
 
         OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
                 .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
-                        .tunniste("tunniste1")
-                        .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
-                                .hetu("180897-787F")
-                                .etunimet("etu")
-                                .kutsumanimi("etu")
-                                .sukunimi("suku")
+                                .tunniste("tunniste1")
+                                .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
+                                        .hetu("180897-787F")
+                                        .etunimet("etu")
+                                        .kutsumanimi("etu")
+                                        .sukunimi("suku")
+                                        .build())
                                 .build())
-                        .build())
                         .collect(toList()))
                 .build();
 
@@ -437,6 +470,9 @@ public class OppijaServiceTest {
 
     @Test
     public void getOrCreateShouldFindByPassinumero() {
+        given(this.permissionChecker.getOrganisaatioOidsByKayttaja(any(), any(), any())).willReturn(Set.of("1.2.3.4"));
+        given(this.permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
+
         Henkilo henkilo = Henkilo.builder()
                 .oidHenkilo("oid1")
                 .passinumerot(Stream.of("passi123").collect(toSet()))
@@ -474,12 +510,15 @@ public class OppijaServiceTest {
 
     @Test
     public void getOrCreateShouldFindBySahkoposti() {
+        given(this.permissionChecker.getOrganisaatioOidsByKayttaja(any(), any(), any())).willReturn(Set.of("1.2.3.4"));
+        given(this.permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
+
         Henkilo henkilo = Henkilo.builder()
                 .oidHenkilo("oid1")
                 .identifications(Stream.of(Identification.builder()
-                        .idpEntityId("email")
-                        .identifier("example@example.com")
-                        .build())
+                                .idpEntityId("email")
+                                .identifier("example@example.com")
+                                .build())
                         .collect(toSet()))
                 .etunimet("etu")
                 .kutsumanimi("suku")
@@ -516,14 +555,15 @@ public class OppijaServiceTest {
     @Test
     public void shouldFindByNameAsAdmin() {
         given(this.permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
+        given(this.permissionChecker.getOrganisaatioOidsByKayttaja(any(), any(), any())).willReturn(Set.of("1.2.3.4"));
 
         Henkilo henkilo = Henkilo.builder()
                 .oidHenkilo("oid1")
                 .passinumerot(Collections.singleton("passi123"))
                 .identifications(Stream.of(Identification.builder()
-                        .idpEntityId("email")
-                        .identifier("example@example.com")
-                        .build())
+                                .idpEntityId("email")
+                                .identifier("example@example.com")
+                                .build())
                         .collect(toSet()))
                 .etunimet("Arpa Noppa")
                 .kutsumanimi("Noppa")
@@ -535,14 +575,14 @@ public class OppijaServiceTest {
 
         OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
                 .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
-                        .tunniste("tunniste1")
-                        .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
-                                .passinumero("passi123")
-                                .etunimet("Arpa Noppa")
-                                .kutsumanimi("Noppa")
-                                .sukunimi("Kuutio")
+                                .tunniste("tunniste1")
+                                .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
+                                        .passinumero("passi123")
+                                        .etunimet("Arpa Noppa")
+                                        .kutsumanimi("Noppa")
+                                        .sukunimi("Kuutio")
+                                        .build())
                                 .build())
-                        .build())
                         .collect(toList()))
                 .build();
         create(createDto);
@@ -615,13 +655,49 @@ public class OppijaServiceTest {
     @Test
     public void passiivisetAliorganisaatiotTarkistetaan() {
         given(this.permissionChecker.isSuperUserOrCanReadAll()).willReturn(false);
+        given(this.permissionChecker.getAllOrganisaatioOids(any(), any(), any(), any())).willReturn(Set.of("1.2.3.4"));
         given(this.userDetailsHelper.getCurrentUserOid()).willReturn("1.2.3.4.5");
-        ArgumentCaptor<OrganisaatioTilat> organisaatioTilatArgumentCaptor = ArgumentCaptor.forClass(OrganisaatioTilat.class);
+
         this.oppijaService.list(OppijaTuontiCriteria.builder().build(), 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
-        verify(this.organisaatioClient, times(1))
-                .getChildOids(eq("1.2.3.4"), eq(true), organisaatioTilatArgumentCaptor.capture());
-        assertThat(organisaatioTilatArgumentCaptor.getValue())
-                .extracting(OrganisaatioTilat::isAktiiviset, OrganisaatioTilat::isSuunnitellut, OrganisaatioTilat::isLakkautetut)
-                .containsExactly(true, false, true);
+    }
+
+    @Test(expected = UnprocessableEntityException.class)
+    public void requiresHetuIfNationalityIsFinnish() {
+        given(koodistoService.list(MAAT_JA_VALTIOT_2)).willReturn(new KoodiTypeListBuilder(Koodisto.MAAT_JA_VALTIOT_2).koodi(Kansalaisuus.SUOMI).build());
+        OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
+                .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
+                                .tunniste("tunniste1")
+                                .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
+                                        .etunimet("Arpa Noppa")
+                                        .kutsumanimi("Noppa")
+                                        .sukunimi("Kuutio")
+                                        .kansalaisuus(List.of(new KoodiUpdateDto(Kansalaisuus.SUOMI)))
+                                        .build())
+                                .build())
+                        .collect(toList()))
+                .build();
+        create(createDto);
+    }
+
+    @Test
+    public void hetuPresentAndNationalityIsFinnish() {
+        given(this.permissionChecker.getOrganisaatioOidsByKayttaja(any(), any(), any())).willReturn(Set.of("1.2.3.4"));
+        given(this.permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
+
+        given(koodistoService.list(MAAT_JA_VALTIOT_2)).willReturn(new KoodiTypeListBuilder(Koodisto.MAAT_JA_VALTIOT_2).koodi(Kansalaisuus.SUOMI).build());
+        OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
+                .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
+                                .tunniste("tunniste1")
+                                .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
+                                        .etunimet("Arpa Noppa")
+                                        .kutsumanimi("Noppa")
+                                        .sukunimi("Kuutio")
+                                        .hetu("whatever")
+                                        .kansalaisuus(List.of(new KoodiUpdateDto(Kansalaisuus.SUOMI)))
+                                        .build())
+                                .build())
+                        .collect(toList()))
+                .build();
+        assertThat(create(createDto).getKasiteltavia()).isEqualTo(1);
     }
 }
