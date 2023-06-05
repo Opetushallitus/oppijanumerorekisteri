@@ -35,4 +35,5 @@ public interface IdentificationService {
 
     void setStrongIdentifiedHetu(String oidHenkilo, HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto);
 
+    void yksilointiTask();
 }

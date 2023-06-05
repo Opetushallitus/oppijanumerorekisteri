@@ -23,7 +23,6 @@ public interface TuontiRepositoryCustom {
      * yhteystiedotryhmät ja yhteystiedot muistiin.
      *
      * @param criteria hakukriteerit
-     * @param isSuperUser
      * @return tuonnin rivit
      */
     List<TuontiRivi> findRiviBy(OppijaTuontiCriteria criteria, boolean isSuperUser);

@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloVahvaTunnistusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
@@ -14,6 +15,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointivirheRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
+import fi.vm.sade.oppijanumerorekisteri.services.OppijaTuontiService;
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 import fi.vm.sade.oppijanumerorekisteri.utils.YhteystietoryhmaUtils;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +43,8 @@ public class IdentificationServiceImpl implements IdentificationService {
     private final YksilointiService yksilointiService;
     private final HenkiloModificationService henkiloModificationService;
     private final DuplicateService duplicateService;
+    private final OppijaTuontiService oppijaTuontiService;
+    private final OppijanumerorekisteriProperties properties;
 
     private Henkilo getHenkiloByOid(String oid) {
         return henkiloRepository.findByOidHenkilo(oid).orElseThrow(()
@@ -175,4 +179,22 @@ public class IdentificationServiceImpl implements IdentificationService {
         }
     }
 
+    public void yksilointiTask() {
+        OppijanumerorekisteriProperties.Scheduling.Yksilointi yksilointiProperties = properties
+                .getScheduling().getYksilointi();
+        Long offset = 0L;
+        Collection<Henkilo> unidentifiedHenkilos = henkiloRepository
+                .findUnidentified(yksilointiProperties.getBatchSize(), offset);
+        while (!unidentifiedHenkilos.isEmpty()) {
+            this.identifyHenkilos(unidentifiedHenkilos,
+                    yksilointiProperties.getVtjRequestDelayInMillis());
+            offset += yksilointiProperties.getBatchSize();
+            unidentifiedHenkilos = henkiloRepository.findUnidentified(yksilointiProperties.getBatchSize(),
+                    offset);
+        }
+
+        // Onko oppijoiden tuonteja valmistunut ja onko tarvetta lähettää
+        // sähköposti-ilmoitus
+        oppijaTuontiService.handleOppijaTuontiIlmoitus();
+    }
 }

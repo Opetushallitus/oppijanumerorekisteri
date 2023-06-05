@@ -6,7 +6,6 @@ import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
-import fi.vm.sade.oppijanumerorekisteri.configurations.scheduling.YksilointiTask;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysHakemus;
 import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysKayttooikeus;
@@ -57,11 +56,10 @@ public class YksilointiITest {
     private OppijaTuontiService oppijaTuontiService;
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private YksilointiTask yksilointiTask;
     @Autowired
     private YksilointiService yksilointiService;
+    @Autowired
+    private IdentificationService identificationService;
     @Autowired
     private HenkiloService henkiloService;
     @Autowired
@@ -254,7 +252,7 @@ public class YksilointiITest {
         when(vtjClientMock.fetchHenkilo(any())).thenReturn(Optional.of(yksiloityHenkilo));
 
         DateTime modifiedSince = DateTime.now();
-        yksilointiTask.execute(null, null);
+        identificationService.yksilointiTask();
 
         assertThat(henkiloService.getByHetu(hetu))
                 .returns("Teppo", from(HenkiloReadDto::getEtunimet))
@@ -290,7 +288,7 @@ public class YksilointiITest {
         when(vtjClientMock.fetchHenkilo(any())).thenReturn(Optional.of(yksiloityHenkilo));
 
         DateTime modifiedSince = DateTime.now();
-        yksilointiTask.execute(null, null);
+        identificationService.yksilointiTask();
 
         assertThat(henkiloService.getByHetu(hetu))
                 .returns("teppo", from(HenkiloReadDto::getEtunimet))

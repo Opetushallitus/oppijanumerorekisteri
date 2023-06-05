@@ -13,11 +13,6 @@ public class ValidationException extends OppijanumerorekisteriException {
         super(message);
     }
 
-    /**
-     * @param be bind exception
-     * @deprecated käytä {@link UnprocessableException}
-     */
-    @Deprecated
     public ValidationException(BindException be) {
         super(be.getMessage(), be.getCause());
     }
