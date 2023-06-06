@@ -20,9 +20,8 @@ spring:
 host:
   host-cas: localhost
   host-virkailija: localhost
-oppijanumerorekisteri:
-  scheduling:
-    enabled: false
+db-scheduler:
+  enabled: false
 cas:
   send-renew: false
   key: oppijanumerorekisteri-service

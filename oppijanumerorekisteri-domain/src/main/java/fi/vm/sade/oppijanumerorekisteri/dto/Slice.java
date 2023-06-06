@@ -54,7 +54,6 @@ public class Slice<T> implements Iterable<T> {
      * @param <T> listan alkioiden tyyppi
      * @param page sivunumero (alkaa 1:stä)
      * @param count sivun koko
-     * @return
      */
     public static <T> Slice<T> empty(int page, int count) {
         return of(page, count, emptyList());
