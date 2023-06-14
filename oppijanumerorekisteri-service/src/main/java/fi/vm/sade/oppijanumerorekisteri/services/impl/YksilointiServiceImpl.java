@@ -23,6 +23,7 @@ import org.apache.lucene.search.spell.JaroWinklerDistance;
 import org.apache.lucene.search.spell.StringDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,9 @@ import static java.util.stream.Collectors.*;
 @Service
 @RequiredArgsConstructor
 public class YksilointiServiceImpl implements YksilointiService {
+    @Value("${feature.kjhh-2346-salli-yksilointi-yhdella-etunimella:false}")
+    private boolean salliYksilointiYhdellaEtunimella;
+
     public static final String RYHMAALKUPERA_VTJ = "alkupera1";
     private static final Logger logger = LoggerFactory.getLogger(YksilointiService.class);
     private static final String KIELIKOODI_SV = "sv";
@@ -680,10 +684,18 @@ public class YksilointiServiceImpl implements YksilointiService {
         throw new ConflictException();
     }
 
-    private Optional<String> compareVtjDetails(final YksiloityHenkilo henkilo, final HenkiloExistenceCheckDto details) {
-        if (detailsMatch(henkilo.getEtunimi(), henkilo.getSukunimi(), details))
+    private Optional<String> compareVtjDetails(final YksiloityHenkilo vtjHenkilo, final HenkiloExistenceCheckDto details) {
+        if (detailsMatch(vtjHenkilo.getEtunimi(), vtjHenkilo.getSukunimi(), details))
             return Optional.empty();
-        reportConflict(henkilo, details);
+
+        if (salliYksilointiYhdellaEtunimella) {
+            for (String nimi : HenkiloExistenceCheckDto.splitEtunimet(vtjHenkilo.getEtunimi())) {
+                if (detailsMatch(nimi, vtjHenkilo.getSukunimi(), details))
+                    return Optional.empty();
+            }
+        }
+
+        reportConflict(vtjHenkilo, details);
         throw new ConflictException();
     }
 
@@ -694,8 +706,14 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     private boolean detailsMatch(final String firstName, final String lastName, final HenkiloExistenceCheckDto details) {
-        return isSimilar(firstName, details.getEtunimet()) &&
-                isSimilar(lastName, details.getSukunimi());
+        if (isSimilar(firstName, details.getEtunimet()) && isSimilar(lastName, details.getSukunimi())) {
+            return true;
+        }
+        if (salliYksilointiYhdellaEtunimella && isSimilar(lastName, details.getSukunimi())) {
+            return HenkiloExistenceCheckDto.splitEtunimet(firstName).stream()
+                    .anyMatch(nimi -> isSimilar(nimi, details.getEtunimet()));
+        }
+        return false;
     }
 
     private boolean isOppija(String oid) {

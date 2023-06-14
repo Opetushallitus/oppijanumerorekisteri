@@ -16,6 +16,8 @@ import fi.vm.sade.oppijanumerorekisteri.validators.OppijaTuontiCreatePostValidat
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -393,6 +395,26 @@ class YleistunnisteControllerTest {
         assertEquals(secondResponse.getOid(), response.getOid());
         // Oppijanumero on null tokalla haulla. Syynä ilmeisesti se, että oppijan luonti ei automaattisesti yksilöi oppijaa vaikka tiedot varmistetaan VTJ:ltä
         assertNull(secondResponse.getOppijanumero());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "Marja", "Terttu", "Karpalo" })
+    void oppijanumeroaEiVoiHakeaYleistunnisteRajapinnastaYhdelläVtjEtunimellä(String nimi) throws Exception {
+        YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
+        String hetu = "170654-498T";
+        yksiloityHenkilo.setHetu(hetu);
+        yksiloityHenkilo.setEtunimi("Marja Terttu Karpalo");
+        yksiloityHenkilo.setKutsumanimi("Terttu");
+        yksiloityHenkilo.setSukunimi("Virtanen");
+        when(vtjClient.fetchHenkilo(hetu)).thenReturn(Optional.of(yksiloityHenkilo));
+
+        HenkiloExistenceCheckDto request = HenkiloExistenceCheckDto.builder()
+                .hetu(hetu)
+                .etunimet(nimi)
+                .kutsumanimi(nimi)
+                .sukunimi(yksiloityHenkilo.getSukunimi())
+                .build();
+        mvc.perform(createRequest(post("/yleistunniste/hae"), request)).andExpect(status().isConflict());
     }
 
     private void waitUntilTuontiKäsitelty(Long tuontiId) throws Exception {

@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Generated
 @Getter
@@ -51,12 +52,17 @@ public class HenkiloExistenceCheckDto {
             return false;
         }
         String nickname = kutsumanimi.toLowerCase();
+        return splitEtunimet(etunimet).contains(nickname);
+    }
+
+    @JsonIgnore
+    public static List<String> splitEtunimet(String etunimet) {
         List<String> names = Arrays.asList(etunimet.toLowerCase().split("\\s"));
         List<String> splittedNames = names.stream()
                 .filter(s -> s.contains("-"))
                 .map(s -> Arrays.asList(s.split("-")))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
-        return names.contains(nickname) || splittedNames.contains(nickname);
+        return Stream.concat(names.stream(), splittedNames.stream()).collect(Collectors.toList());
     }
 }
