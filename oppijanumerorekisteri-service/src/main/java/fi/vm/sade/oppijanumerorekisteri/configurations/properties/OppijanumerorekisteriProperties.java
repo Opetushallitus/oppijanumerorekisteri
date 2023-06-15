@@ -18,6 +18,17 @@ public class OppijanumerorekisteriProperties {
 
     private String rootUserOid = "1.2.246.562.24.00000000001";
 
+    private final VtjMuutosrajapinta VtjMuutosrajapinta = new VtjMuutosrajapinta();
+
+    @Getter
+    @Setter
+    public static class VtjMuutosrajapinta {
+        private Boolean enabled = true;
+        private String baseUrl = "https://api.hiekkalaatikko.muutostietopalvelu.cloud.dvv.fi";
+        private String username = "Z02r0858";
+        private String password = "TLn6G36Bi53(x-rrL5UT";
+    }
+
     @Getter
     @Setter
     public static class Scheduling {

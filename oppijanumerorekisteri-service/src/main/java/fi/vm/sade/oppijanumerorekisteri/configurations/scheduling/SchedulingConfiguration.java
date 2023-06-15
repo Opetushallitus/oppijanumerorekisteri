@@ -10,6 +10,7 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.Oppijanumerore
 import fi.vm.sade.oppijanumerorekisteri.configurations.security.OphSessionMappingStorage;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.MuutostietoService;
+import fi.vm.sade.oppijanumerorekisteri.services.VtjMuutostietoService;
 import fi.vm.sade.oppijanumerorekisteri.services.death.CleanupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,7 @@ public class SchedulingConfiguration {
     private final OphSessionMappingStorage sessionMappingStorage;
     private final MuutostietoService muutostietoService;
     private final IdentificationService identificationService;
+    private final VtjMuutostietoService vtjMuutostietoService;
 
     @Bean
     @ConditionalOnProperty(name = "oppijanumerorekisteri.scheduling.yksilointi.enabled", matchIfMissing = true)
@@ -66,6 +68,14 @@ public class SchedulingConfiguration {
                 .recurring(new TaskWithoutDataDescriptor("henkilotietomuutos hetu sync task"),
                         FixedDelay.ofMillis(properties.getScheduling().getVtjsync().getFixedDelayInMillis()))
                 .execute((instance, ctx) -> muutostietoService.sendHetus());
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "oppijanumerorekisteri.vtj-muutosrajapinta.enabled", matchIfMissing = true)
+    Task<Void> vtjMuutostietoSyncTask() {
+        return Tasks
+                .recurring(new TaskWithoutDataDescriptor("vtj muutostieto sync task"), FixedDelay.ofSeconds(10))
+                .execute((instance, ctx) -> vtjMuutostietoService.fetchHenkiloMuutostieto());
     }
 
     @Bean
