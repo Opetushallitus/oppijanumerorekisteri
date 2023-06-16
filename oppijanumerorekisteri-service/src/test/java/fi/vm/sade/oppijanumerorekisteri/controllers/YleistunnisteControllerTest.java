@@ -8,6 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.impl.AwsSnsHenkiloModifiedTopic;
 import fi.vm.sade.oppijanumerorekisteri.configurations.H2Configuration;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloExistenceCheckDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YleistunnisteDto;
@@ -24,6 +25,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -366,6 +368,41 @@ class YleistunnisteControllerTest {
     }
 
     @Test
+    void oppijanumeronVoiHakeaYleistunnisteRajapinnastaRiittävänSamanlaisellaNimellä() throws Exception {
+        YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
+        yksiloityHenkilo.setHetu("100690-1412");
+        yksiloityHenkilo.setEtunimi("Seppo");
+        yksiloityHenkilo.setKutsumanimi("Seppo");
+        yksiloityHenkilo.setSukunimi("Peipponen");
+        when(vtjClient.fetchHenkilo("100690-1412")).thenReturn(Optional.of(yksiloityHenkilo));
+
+        HenkiloExistenceCheckDto request = HenkiloExistenceCheckDto.builder()
+                .hetu("100690-1412")
+                .etunimet("Sepo")
+                .kutsumanimi("Sepo")
+                .sukunimi("Peipponen")
+                .build();
+
+        MvcResult result1 = mvc.perform(createRequest(post("/yleistunniste/hae"), request)).andExpect(status().isOk()).andReturn();
+        verify(henkiloModifiedTopic, times(1)).publish(any());
+        YleistunnisteDto response = objectMapper.readValue(result1.getResponse().getContentAsString(), YleistunnisteDto.class);
+        verify(vtjClient, times(1)).fetchHenkilo(any());
+        assertNotNull(response.getOppijanumero());
+        assertEquals(response.getOppijanumero(), response.getOid());
+
+        HenkiloDto oppija = getOppijaInformation(response.getOid());
+        assertEquals(oppija.getEtunimet(), "Sepo", "Oppijasta tallennetaan luontipyynnössä annettu etunimi");
+    }
+
+    private HenkiloDto getOppijaInformation(String oid) throws Exception {
+        SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor rekisterinpitajaUser = user(username).password(password).roles("APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001");
+        MvcResult oppijaResult = mvc.perform(createRequest(get("/henkilo/" + oid)).with(rekisterinpitajaUser))
+                .andExpect(status().isOk())
+                .andReturn();
+        return objectMapper.readValue(oppijaResult.getResponse().getContentAsString(), HenkiloDto.class);
+    }
+
+    @Test
     void oppijanumeronVoiHakeaYleistunnisteRajapinnastaVtjTiedoilla() throws Exception {
         YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
         yksiloityHenkilo.setHetu("100690-1412");
@@ -430,10 +467,13 @@ class YleistunnisteControllerTest {
         } while (!response.isKasitelty());
     }
 
+    private MockHttpServletRequestBuilder createRequest(MockHttpServletRequestBuilder builder) {
+        return builder.with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT));
+    }
+
     private <RequestT> MockHttpServletRequestBuilder createRequest(MockHttpServletRequestBuilder builder, RequestT requestBody) throws JsonProcessingException {
-        return builder
+        return createRequest(builder)
                 .contentType(MediaType.APPLICATION_JSON)
-                .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
                 .content(objectMapper.writeValueAsString(requestBody));
     }
 }
