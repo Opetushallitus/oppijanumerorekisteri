@@ -29,19 +29,23 @@ public class VtjMuutostietoServiceImpl implements VtjMuutostietoService {
     private final VtjMuutostietoClient muutostietoClient;
     private final HenkiloRepository henkiloRepository;
 
-    protected VtjMuutostietoKirjausavain fetchNewKirjausavain(long id) {
+    private VtjMuutostietoKirjausavain fetchNewKirjausavain(long id) {
         try {
             long avain = muutostietoClient.fetchMuutostietoKirjausavain();
             VtjMuutostietoKirjausavain kirjausavain = new VtjMuutostietoKirjausavain(id, avain, LocalDateTime.now());
             kirjausavainRepository.save(kirjausavain);
             return kirjausavain;
+        } catch (InterruptedException ie) {
+            log.error("interrupted fetching a new kirjausavain", ie);
+            Thread.currentThread().interrupt();
+            throw new CompletionException(ie);
         } catch (Exception e) {
             throw new CompletionException(e);
         }
     }
 
     @Transactional
-    protected boolean fetchMuutostietoBatchForBucket(long bucketId, List<String> hetus)
+    public boolean fetchMuutostietoBatchForBucket(long bucketId, List<String> hetus)
             throws JsonProcessingException, InterruptedException, ExecutionException {
         VtjMuutostietoKirjausavain kirjausavain = kirjausavainRepository.findById(bucketId)
                 .orElseGet(() -> fetchNewKirjausavain(bucketId));
@@ -72,6 +76,9 @@ public class VtjMuutostietoServiceImpl implements VtjMuutostietoService {
 
                 long duration = System.currentTimeMillis() - start;
                 log.info("fetching muutostieto for bucket took " + duration + "ms");
+            } catch (InterruptedException ie) {
+                log.error("interrupted while fetching bucket " + bucketId, ie);
+                Thread.currentThread().interrupt();
             } catch (Exception e) {
                 log.error("failed to fetch muutostieto for bucket " + bucketId, e);
             }
