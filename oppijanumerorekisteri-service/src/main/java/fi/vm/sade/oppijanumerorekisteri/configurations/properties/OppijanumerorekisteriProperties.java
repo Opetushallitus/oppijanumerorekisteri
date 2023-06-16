@@ -18,7 +18,7 @@ public class OppijanumerorekisteriProperties {
 
     private String rootUserOid = "1.2.246.562.24.00000000001";
 
-    private final VtjMuutosrajapinta VtjMuutosrajapinta = new VtjMuutosrajapinta();
+    private final VtjMuutosrajapinta vtjMuutosrajapinta = new VtjMuutosrajapinta();
 
     @Getter
     @Setter

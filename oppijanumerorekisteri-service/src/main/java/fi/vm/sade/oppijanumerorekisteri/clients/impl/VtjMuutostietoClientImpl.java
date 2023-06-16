@@ -12,9 +12,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
 
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -73,13 +75,13 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
         return "Basic " + Base64.getEncoder().encodeToString(creds.getBytes());
     }
 
-    private HttpClient buildClient() throws Exception {
+    private HttpClient buildClient() {
         return HttpClient.newBuilder()
                 .build();
     }
 
     @Override
-    public Long fetchMuutostietoKirjausavain() throws Exception {
+    public Long fetchMuutostietoKirjausavain() throws InterruptedException, ExecutionException {
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String uri = properties.getVtjMuutosrajapinta().getBaseUrl() + "/api/v1/kirjausavain/" + date;
         HttpRequest request = HttpRequest.newBuilder()
@@ -97,7 +99,8 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     }
 
     @Override
-    public VtjMuutostietoResponse fetchHenkiloMuutostieto(Long avain, List<String> allHetus) throws Exception {
+    public VtjMuutostietoResponse fetchHenkiloMuutostieto(Long avain, List<String> allHetus)
+            throws InterruptedException, ExecutionException, JsonProcessingException {
         String uri = properties.getVtjMuutosrajapinta().getBaseUrl() + "/api/v1/muutokset";
         MuutostietoRequestBody body = new MuutostietoRequestBody(avain, allHetus);
         HttpRequest request = HttpRequest.newBuilder()

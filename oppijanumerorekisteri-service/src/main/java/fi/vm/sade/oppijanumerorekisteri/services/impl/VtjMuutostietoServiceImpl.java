@@ -3,9 +3,12 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjMuutostietoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.model.VtjMuutostietoResponse;
@@ -38,7 +41,8 @@ public class VtjMuutostietoServiceImpl implements VtjMuutostietoService {
     }
 
     @Transactional
-    protected boolean fetchMuutostietoBatchForBucket(long bucketId, List<String> hetus) throws Exception {
+    protected boolean fetchMuutostietoBatchForBucket(long bucketId, List<String> hetus)
+            throws JsonProcessingException, InterruptedException, ExecutionException {
         VtjMuutostietoKirjausavain kirjausavain = kirjausavainRepository.findById(bucketId)
                 .orElseGet(() -> fetchNewKirjausavain(bucketId));
         log.info("using kirjausavain " + kirjausavain.getAvain() + " for bucket " + bucketId);
