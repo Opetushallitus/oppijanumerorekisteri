@@ -13,14 +13,12 @@ import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.CompletionException;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjMuutostietoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.model.VtjMuutostietoResponse;
@@ -34,7 +32,7 @@ import lombok.Setter;
 @RequiredArgsConstructor
 public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     private final OppijanumerorekisteriProperties properties;
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
 
     @NoArgsConstructor
     @Setter
