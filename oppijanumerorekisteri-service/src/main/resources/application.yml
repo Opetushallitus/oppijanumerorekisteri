@@ -100,7 +100,10 @@ oppijanumerorekisteri:
   uses-ssl-proxy: false
   disable-same-site-cookie: false
   scheduling:
+    yksilointi:
+      enabled: false
     vtjsync:
+      enabled: false
       asiayhteysKaytossa: false
   allow-fake-ssn: true
 aws:

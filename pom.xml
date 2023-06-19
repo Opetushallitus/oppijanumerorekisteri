@@ -141,6 +141,11 @@
                 <version>${swagger.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.13.4.1</version>
+            </dependency>
+            <dependency>
                 <groupId>ma.glasnost.orika</groupId>
                 <artifactId>orika-core</artifactId>
                 <version>1.5.1</version>
@@ -181,6 +186,11 @@
                 <version>1.11.479</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.hypersistence</groupId>
+                <artifactId>hypersistence-utils-hibernate-55</artifactId>
+                <version>3.4.3</version>
             </dependency>
 
             <!-- dev tools -->

@@ -730,4 +730,14 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                 .select(qHenkilo)
                 .fetch();
     }
+
+    @Override
+    public List<String> findHetusInBucket(long bucketId) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        return jpa()
+                .from(qHenkilo)
+                .where(qHenkilo.id.mod(100l).eq(bucketId), qHenkilo.passivoitu.isFalse(), qHenkilo.hetu.isNotNull())
+                .select(qHenkilo.hetu)
+                .fetch();
+    }
 }

@@ -198,4 +198,6 @@ public interface HenkiloJpaRepository {
     List<HenkiloMunicipalDobDto> findByMunicipalAndBirthdate(String municipal, LocalDate dob, long limit, long offset);
 
     Collection<Henkilo> findDeadWithIncompleteCleanup(CleanupStep step);
+
+    List<String> findHetusInBucket(long bucketId);
 }
