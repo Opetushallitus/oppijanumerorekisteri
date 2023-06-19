@@ -24,8 +24,6 @@ public class OppijanumerorekisteriProperties {
     @Setter
     public static class VtjMuutosrajapinta {
         private Boolean enabled = true;
-        private int hour = 4;
-        private int minute = 0;
         private String baseUrl = "https://api.hiekkalaatikko.muutostietopalvelu.cloud.dvv.fi";
         private String username = "Z02r0858";
         private String password = "TLn6G36Bi53(x-rrL5UT";
