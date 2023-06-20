@@ -54,8 +54,6 @@ oppijanumerorekisteri:
   disable-same-site-cookie: {{oppijanumerorekisteri_disable_same_site_cookie | default('false')}}
   disable-strict-permission-check: {{ oppijanumerorekisteri_disable_strict_permission_check | default('false') }}
   scheduling:
-    yksilointi:
-      enabled: {{oppijanumerorekisteri_yksilointi_enabled | default('true')}}
     vtjsync:
       enabled: {{oppijanumerorekisteri_vtjsync_enabled | default('true')}}
       asiayhteysKaytossa: {{oppijanumerorekisteri_asiayhteys_kaytossa | default('false')}}

@@ -38,7 +38,7 @@ public class SchedulingConfiguration {
     private final VtjMuutostietoService vtjMuutostietoService;
 
     @Bean
-    @ConditionalOnProperty(name = "oppijanumerorekisteri.scheduling.yksilointi.enabled", matchIfMissing = true)
+    @ConditionalOnProperty(name = "oppijanumerorekisteri.scheduling.yksilointi.enabled", matchIfMissing = false)
     Task<Void> yksilointiTask() {
         return Tasks
                 .recurring(new TaskWithoutDataDescriptor("yksilointi task"),
