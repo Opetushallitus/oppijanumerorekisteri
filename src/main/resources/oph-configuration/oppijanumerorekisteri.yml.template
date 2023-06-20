@@ -62,7 +62,7 @@ oppijanumerorekisteri:
   allow-fake-ssn: {{oppijanumerorekisteri_allow_fake_ssn | default('true')}}
   vtj-muutosrajapinta:
     enabled: {{oppijanumerorekisteri_vtjmuutosrajapinta_enabled | default('false')}}
-    username: {{oppijanumerorekisteri_vtjmuutosrajapinta_baseurl}}
+    base-url: {{oppijanumerorekisteri_vtjmuutosrajapinta_baseurl}}
     username: {{oppijanumerorekisteri_vtjmuutosrajapinta_username}}
     password: {{oppijanumerorekisteri_vtjmuutosrajapinta_password}}
 aws:
