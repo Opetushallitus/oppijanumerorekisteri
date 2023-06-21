@@ -262,13 +262,12 @@ public class YksilointiServiceImpl implements YksilointiService {
         return isSimilar(henkilo1sukunimi, henkilo2sukunimi, oppijanumerorekisteriProperties.getSukunimiThreshold());
     }
 
-    protected boolean tarkistaEtunimi(String henkilo1kutsumanimi, String henkilo2etunimet) {
-        if (henkilo2etunimet.contains(henkilo1kutsumanimi)) {
+    protected boolean tarkistaEtunimi(String kutsumanimi, String vtjEtunimet) {
+        if (vtjEtunimet.contains(kutsumanimi)) {
             return true;
         }
-        return Arrays.stream(henkilo2etunimet.split(" "))
-                .anyMatch(henkilo2etunimi ->
-                        isSimilar(henkilo1kutsumanimi, henkilo2etunimi, oppijanumerorekisteriProperties.getEtunimiThreshold()));
+        return Arrays.stream(vtjEtunimet.split(" "))
+                .anyMatch(vtjEtunimi -> isSimilar(kutsumanimi, vtjEtunimi, oppijanumerorekisteriProperties.getEtunimiThreshold()));
     }
 
     private void addYksilointitietosWhenNamesDoNotMatch(final Henkilo henkilo, final YksiloityHenkilo yksiloityHenkilo) {
