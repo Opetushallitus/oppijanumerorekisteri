@@ -266,8 +266,13 @@ public class YksilointiServiceImpl implements YksilointiService {
         if (vtjEtunimet.contains(kutsumanimi)) {
             return true;
         }
-        return Arrays.stream(vtjEtunimet.split(" "))
-                .anyMatch(vtjEtunimi -> isSimilar(kutsumanimi, vtjEtunimi, oppijanumerorekisteriProperties.getEtunimiThreshold()));
+        if (salliYksilointiYhdellaEtunimella) {
+            return HenkiloExistenceCheckDto.splitEtunimet(vtjEtunimet).stream()
+                    .anyMatch(vtjEtunimi -> isSimilar(kutsumanimi, vtjEtunimi, oppijanumerorekisteriProperties.getEtunimiThreshold()));
+        } else {
+            return Arrays.stream(vtjEtunimet.split(" "))
+                    .anyMatch(vtjEtunimi -> isSimilar(kutsumanimi, vtjEtunimi, oppijanumerorekisteriProperties.getEtunimiThreshold()));
+        }
     }
 
     private void addYksilointitietosWhenNamesDoNotMatch(final Henkilo henkilo, final YksiloityHenkilo yksiloityHenkilo) {
