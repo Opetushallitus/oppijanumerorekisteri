@@ -112,4 +112,4 @@ aws:
     enabled: false
     topicArn: disabled
 
-feature.kjhh-2346-salli-yksilointi-yhdella-etunimella: false
+feature.kjhh-2346-salli-henkilon-luonti-yhdella-etunimella: false

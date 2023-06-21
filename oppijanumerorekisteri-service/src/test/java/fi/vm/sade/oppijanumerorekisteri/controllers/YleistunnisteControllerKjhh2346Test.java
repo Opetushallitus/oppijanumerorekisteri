@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, H2Configuration.class})
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {
-        "feature.kjhh-2346-salli-yksilointi-yhdella-etunimella=true",
+        "feature.kjhh-2346-salli-henkilon-luonti-yhdella-etunimella=true",
 })
 class YleistunnisteControllerKjhh2346Test {
     private static final String WRONG_ACCESS_RIGHT = "PIGGLYWIGGLY";

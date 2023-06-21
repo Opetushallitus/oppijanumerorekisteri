@@ -47,8 +47,8 @@ import static java.util.stream.Collectors.*;
 @Service
 @RequiredArgsConstructor
 public class YksilointiServiceImpl implements YksilointiService {
-    @Value("${feature.kjhh-2346-salli-yksilointi-yhdella-etunimella:false}")
-    private boolean salliYksilointiYhdellaEtunimella;
+    @Value("${feature.kjhh-2346-salli-henkilon-luonti-yhdella-etunimella:false}")
+    private boolean salliHenkilonLuontiYhdellaEtunimella;
 
     public static final String RYHMAALKUPERA_VTJ = "alkupera1";
     private static final Logger logger = LoggerFactory.getLogger(YksilointiService.class);
@@ -266,7 +266,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         if (vtjEtunimet.contains(kutsumanimi)) {
             return true;
         }
-        if (salliYksilointiYhdellaEtunimella) {
+        if (salliHenkilonLuontiYhdellaEtunimella) {
             return HenkiloExistenceCheckDto.splitEtunimet(vtjEtunimet).stream()
                     .anyMatch(vtjEtunimi -> isSimilar(kutsumanimi, vtjEtunimi, oppijanumerorekisteriProperties.getEtunimiThreshold()));
         } else {
@@ -692,7 +692,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         if (detailsMatch(vtjHenkilo.getEtunimi(), vtjHenkilo.getSukunimi(), details))
             return Optional.empty();
 
-        if (salliYksilointiYhdellaEtunimella) {
+        if (salliHenkilonLuontiYhdellaEtunimella) {
             for (String nimi : HenkiloExistenceCheckDto.splitEtunimet(vtjHenkilo.getEtunimi())) {
                 if (detailsMatch(nimi, vtjHenkilo.getSukunimi(), details))
                     return Optional.empty();
@@ -713,7 +713,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         if (isSimilar(firstName, details.getEtunimet()) && isSimilar(lastName, details.getSukunimi())) {
             return true;
         }
-        if (salliYksilointiYhdellaEtunimella && isSimilar(lastName, details.getSukunimi())) {
+        if (salliHenkilonLuontiYhdellaEtunimella && isSimilar(lastName, details.getSukunimi())) {
             return HenkiloExistenceCheckDto.splitEtunimet(firstName).stream()
                     .anyMatch(nimi -> isSimilar(nimi, details.getEtunimet()));
         }
