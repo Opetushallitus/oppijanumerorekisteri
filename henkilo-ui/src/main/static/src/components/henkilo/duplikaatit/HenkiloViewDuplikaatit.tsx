@@ -132,9 +132,11 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, router, oidHen
                     title={L['DUPLIKAATIT_VARMISTUS_OTSIKKO']}
                 >
                     <p className="duplicate_confirm_p">{L['DUPLIKAATIT_OLETKO_VARMA']}</p>
-                    <p className="duplicate_confirm_p">{`- ${L['DUPLIKAATIT_OPPIJANUMERO']} ${linkObj.master.oidHenkilo} (${
-                        linkObj.master.sukunimi
-                    }, ${linkObj.master.kutsumanimi ?? linkObj.master.etunimet}) ${L['DUPLIKAATIT_JAA_VOIMAAN']}`}</p>
+                    <p className="duplicate_confirm_p">{`- ${L['DUPLIKAATIT_OPPIJANUMERO']} ${
+                        linkObj.master.oidHenkilo
+                    } (${linkObj.master.sukunimi}, ${linkObj.master.kutsumanimi ?? linkObj.master.etunimet}) ${
+                        L['DUPLIKAATIT_JAA_VOIMAAN']
+                    }`}</p>
                     <p className="duplicate_confirm_p">
                         {`- ${L['DUPLIKAATIT_OPPIJA']} ${linkObj.duplicate.oidHenkilo} ${
                             L['DUPLIKAATIT_PASSIVOIDAAN']
