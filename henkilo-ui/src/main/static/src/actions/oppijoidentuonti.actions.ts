@@ -1,5 +1,6 @@
 import { urls } from 'oph-urls-js';
 import { http } from '../http';
+import { AppDispatch } from '../store';
 import {
     FETCH_OPPIJOIDEN_TUONTI_YHTEENVETO_REQUEST,
     FETCH_OPPIJOIDEN_TUONTI_YHTEENVETO_SUCCESS,
@@ -19,7 +20,7 @@ const fetchOppijoidenTuontiYhteenvetoSuccess = (data) => ({
 const fetchOppijoidenTuontiYhteenvetoFailure = () => ({
     type: FETCH_OPPIJOIDEN_TUONTI_YHTEENVETO_FAILURE,
 });
-export const fetchOppijoidenTuontiYhteenveto = () => async (dispatch) => {
+export const fetchOppijoidenTuontiYhteenveto = () => async (dispatch: AppDispatch) => {
     const url = urls.url('oppijanumerorekisteri-service.oppija.yhteenveto');
     dispatch(fetchOppijoidenTuontiYhteenvetoRequest());
     try {
@@ -41,7 +42,7 @@ const fetchOppijoidenTuontiListausSuccess = (data) => ({
 const fetchOppijoidenTuontiListausFailure = () => ({
     type: FETCH_OPPIJOIDEN_TUONTI_LISTAUS_FAILURE,
 });
-export const fetchOppijoidenTuontiListaus = (criteria) => async (dispatch) => {
+export const fetchOppijoidenTuontiListaus = (criteria) => async (dispatch: AppDispatch) => {
     const url = urls.url('oppijanumerorekisteri-service.oppija', criteria);
     dispatch(fetchOppijoidenTuontiListausRequest());
     try {

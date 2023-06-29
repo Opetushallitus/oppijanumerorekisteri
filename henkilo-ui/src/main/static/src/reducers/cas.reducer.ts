@@ -6,7 +6,7 @@ export type CasState = {
     loginFailed?: any;
 };
 
-const cas = (state: CasState = { authToken: '', temporaryTokenInvalid: false }, action) => {
+const cas = (state: CasState = { authToken: '', temporaryTokenInvalid: false }, action): CasState => {
     switch (action.type) {
         case FETCH_KUTSUBYTOKEN_FAILURE:
             return Object.assign({}, state, { temporaryTokenInvalid: true });

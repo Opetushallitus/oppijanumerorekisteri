@@ -7,9 +7,9 @@ import {
     FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_FAILURE,
     CLEAR_HAETUT_KAYTTOOIKEUSRYHMAT,
 } from './actiontypes';
-import { Dispatch } from '../types/dispatch.type';
 import { FetchHaetutKayttooikeusryhmatParameters } from '../components/anomus/AnomusPage';
 import { HaettuKayttooikeusryhma } from '../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
+import { AppDispatch } from '../store';
 
 const requestHaetutKayttooikeusryhmat = () => ({
     type: FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_REQUEST,
@@ -24,13 +24,13 @@ const receiveHaetutKayttooikeusryhmatFailure = (nimi?: string) => ({
 });
 
 export const fetchHaetutKayttooikeusryhmat = (parameters: FetchHaetutKayttooikeusryhmatParameters) => async (
-    dispatch: Dispatch
+    dispatch: AppDispatch
 ) => {
     dispatch(requestHaetutKayttooikeusryhmat());
     const url = urls.url('kayttooikeus-service.anomus.haetut-kayttooikeusryhmat', parameters);
     try {
         const haetutKayttooikeusryhmat = await http.get<HaettuKayttooikeusryhma[]>(url);
-        await dispatch(
+        await dispatch<any>(
             fetchOrganisations(
                 haetutKayttooikeusryhmat.map(
                     (haettuKayttooikeusryhma: HaettuKayttooikeusryhma) => haettuKayttooikeusryhma.anomus.organisaatioOid
@@ -44,5 +44,5 @@ export const fetchHaetutKayttooikeusryhmat = (parameters: FetchHaetutKayttooikeu
     }
 };
 
-export const clearHaetutKayttooikeusryhmat = () => (dispatch: Dispatch) =>
+export const clearHaetutKayttooikeusryhmat = () => (dispatch: AppDispatch) =>
     dispatch({ type: CLEAR_HAETUT_KAYTTOOIKEUSRYHMAT });

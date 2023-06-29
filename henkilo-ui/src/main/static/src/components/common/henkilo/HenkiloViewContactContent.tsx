@@ -1,7 +1,6 @@
 import './HenkiloViewContactContent.css';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../../reducers';
 import Columns from 'react-columns';
 import Field from '../field/Field';
 import Button from '../button/Button';
@@ -24,6 +23,7 @@ import type { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { validateEmail } from '../../../validation/EmailValidator';
 import type { Option } from 'react-select';
 import { WORK_ADDRESS, EMAIL } from '../../../types/constants';
+import { RootState } from '../../../store';
 
 type OwnProps = {
     henkilo: HenkiloState;

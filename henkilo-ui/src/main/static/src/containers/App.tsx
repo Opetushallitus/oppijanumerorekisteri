@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../reducers';
+import type { RootState } from '../store';
 import { fetchFrontProperties } from '../actions/frontProperties.actions';
 import TopNavigation from '../components/navigation/TopNavigation';
 import Loader from '../components/common/icons/Loader';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../reducers';
+import type { RootState } from '../../store';
 import { fetchOppijoidenTuontiYhteenveto, fetchOppijoidenTuontiListaus } from '../../actions/oppijoidentuonti.actions';
 import OppijoidenTuontiYhteenveto from './OppijoidenTuontiYhteenveto';
 import OppijoidenTuontiListaus from './OppijoidenTuontiListaus';

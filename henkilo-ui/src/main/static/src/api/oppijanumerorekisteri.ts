@@ -1,13 +1,27 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+
 import { getCommonOptions } from '../http';
+import { addGlobalNotification } from '../actions/notification.actions';
+import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
+import { Localisations } from '../types/localisation.type';
 
 type Passinumerot = string[];
+
+export type LinkHenkilosRequest = {
+    masterOid: string;
+    force: boolean;
+    duplicateOids: string[];
+    L: Localisations;
+};
 
 export const oppijanumerorekisteriApi = createApi({
     reducerPath: 'oppijanumerorekisteriApi',
     baseQuery: fetchBaseQuery({
         ...getCommonOptions(),
-        headers: { ...getCommonOptions().headers, 'Content-Type': 'application/json; charset=utf-8' },
+        headers: {
+            ...getCommonOptions().headers,
+            'Content-Type': 'application/json; charset=utf-8',
+        },
         baseUrl: '/oppijanumerorekisteri-service/',
     }),
     tagTypes: ['Passinumerot'],
@@ -24,7 +38,40 @@ export const oppijanumerorekisteriApi = createApi({
             }),
             invalidatesTags: ['Passinumerot'],
         }),
+        postLinkHenkilos: builder.mutation<void, LinkHenkilosRequest>({
+            query: ({ masterOid, duplicateOids, force }) => ({
+                url: force ? `henkilo/${masterOid}/forcelink` : `henkilo/${masterOid}/link`,
+                method: 'POST',
+                body: duplicateOids,
+            }),
+            async onQueryStarted({ L }, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch(
+                        addGlobalNotification({
+                            key: 'LINKED_DUPLICATES_SUCCESS',
+                            type: NOTIFICATIONTYPES.SUCCESS,
+                            title: L['DUPLIKAATIT_NOTIFICATION_ONNISTUI'],
+                            autoClose: 10000,
+                        })
+                    );
+                } catch (err) {
+                    dispatch(
+                        addGlobalNotification({
+                            key: 'LINKED_DUPLICATES_FAILURE',
+                            type: NOTIFICATIONTYPES.ERROR,
+                            title: L['DUPLIKAATIT_NOTIFICATION_EPAONNISTUI'],
+                            autoClose: 10000,
+                        })
+                    );
+                }
+            },
+        }),
     }),
 });
 
-export const { useGetPassinumerotQuery, useSetPassinumerotMutation } = oppijanumerorekisteriApi;
+export const {
+    useGetPassinumerotQuery,
+    useSetPassinumerotMutation,
+    usePostLinkHenkilosMutation,
+} = oppijanumerorekisteriApi;

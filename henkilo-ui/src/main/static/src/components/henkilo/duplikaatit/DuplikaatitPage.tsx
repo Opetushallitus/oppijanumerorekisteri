@@ -20,6 +20,16 @@ export default class DuplikaatitPage extends React.Component<Props> {
                     {this.props.L['DUPLIKAATIT_HEADER']}, {this.props.henkilo.henkilo.kutsumanimi}{' '}
                     {this.props.henkilo.henkilo.sukunimi}
                 </span>
+                <p>
+                    <a
+                        className="oph-link"
+                        href={this.props.L['DUPLIKAATIT_OHJELINKKI_OSOITE']}
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        {this.props.L['DUPLIKAATIT_OHJELINKKI_TEKSTI']}
+                    </a>
+                </p>
                 {!this.props.henkilo.henkiloLoading && !this.props.henkilo.hakemuksetLoading ? (
                     <HenkiloViewDuplikaatit {...this.props} vainLuku={false} />
                 ) : (

@@ -16,6 +16,7 @@ type ButtonProps = {
     className?: string;
     key?: string;
     loading?: boolean;
+    dataTestId?: string;
 };
 
 class Button extends React.Component<ButtonProps> {
@@ -30,7 +31,12 @@ class Button extends React.Component<ButtonProps> {
             [`${classNameProp}`]: classNameProp,
         });
         return this.props.href ? (
-            <a href={this.props.href} onClick={this.props.action} className={this.props.isButton ? className : ''}>
+            <a
+                href={this.props.href}
+                onClick={this.props.action}
+                className={this.props.isButton ? className : ''}
+                data-test-id={this.props.dataTestId}
+            >
                 {this.props.children}
             </a>
         ) : (
@@ -40,6 +46,7 @@ class Button extends React.Component<ButtonProps> {
                 disabled={this.props.disabled || this.props.loading}
                 onClick={this.props.action}
                 ref={this.props.inputRef}
+                data-test-id={this.props.dataTestId}
             >
                 {this.props.loading && <Loader inButton={true} />}
                 {this.props.children}

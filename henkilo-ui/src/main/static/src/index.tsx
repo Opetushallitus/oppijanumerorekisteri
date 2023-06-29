@@ -5,14 +5,10 @@ import { Provider } from 'react-redux';
 import { Router, useRouterHistory } from 'react-router';
 import { createHistory } from 'history';
 import { syncHistoryWithStore } from 'react-router-redux';
-import { configureStore } from '@reduxjs/toolkit';
-import { setupListeners } from '@reduxjs/toolkit/query';
 
 import routes from './routes';
 import PropertySingleton from './globals/PropertySingleton';
-import rootReducer from './reducers';
-import { kayttooikeusApi } from './api/kayttooikeus';
-import { oppijanumerorekisteriApi } from './api/oppijanumerorekisteri';
+import { store } from './store';
 
 import './reset.css';
 import './general-style.css';
@@ -21,27 +17,7 @@ import './index.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import './flex.css';
 
-const isDev = process.env.NODE_ENV !== 'production';
-const isClient = typeof window !== 'undefined';
-
 const App = () => {
-    const store = configureStore({
-        reducer: {
-            ...rootReducer,
-            [kayttooikeusApi.reducerPath]: kayttooikeusApi.reducer,
-            [oppijanumerorekisteriApi.reducerPath]: oppijanumerorekisteriApi.reducer,
-        },
-        middleware: (getDefaultMiddleware) =>
-            getDefaultMiddleware({
-                thunk: true,
-                immutableCheck: false,
-                serializableCheck: false,
-            })
-                .concat(kayttooikeusApi.middleware)
-                .concat(oppijanumerorekisteriApi.middleware),
-        devTools: isDev && isClient,
-    });
-    setupListeners(store.dispatch);
     const browserHistory = useRouterHistory(createHistory)({
         basename: '/henkilo-ui',
     });

@@ -1,75 +1,33 @@
 import { routerReducer as routing } from 'react-router-redux';
 
-import l10n, { LocalisationState } from './l10n.reducer';
-import { frontProperties, FrontPropertiesState } from './frontProperties.reducer';
-import kutsuList, { KutsuListState } from './kutsuList.reducer';
-import { henkilo, HenkiloState } from './henkilo.reducer';
-import koodisto, { KoodistoState } from './koodisto.reducer';
-import { prequels, PrequelsState } from './prequels.reducer';
-import omattiedot, { OmattiedotState } from './omattiedot.reducer';
-import { kutsuminenOrganisaatios, KutsuminenOrganisaatiosState } from './kutsuminen.reducer';
+import l10n from './l10n.reducer';
+import { frontProperties } from './frontProperties.reducer';
+import kutsuList from './kutsuList.reducer';
+import { henkilo } from './henkilo.reducer';
+import koodisto from './koodisto.reducer';
+import { prequels } from './prequels.reducer';
+import omattiedot from './omattiedot.reducer';
+import { kutsuminenOrganisaatios } from './kutsuminen.reducer';
 import { locale } from './locale.reducer';
-import { kayttooikeus, KayttooikeusRyhmaState } from './kayttooikeusryhma.reducer';
-import { ryhmatState, RyhmatState } from './ryhmat.reducer';
-import {
-    OrganisaatioKayttooikeusryhmat,
-    OrganisaatioKayttooikeusryhmatState,
-} from './organisaatiokayttooikeusryhmat.reducer';
-import { organisaatio, OrganisaatioState } from './organisaatio.reducer';
-import { notifications, NotificationsState } from './notifications.reducer';
-import { haetutKayttooikeusryhmat, HaetutKayttooikeusryhmatState } from './anomus.reducer';
-import { henkilohakuState, HenkilohakuState } from './henkilohaku.reducer';
-import cas, { CasState } from './cas.reducer';
-import {
-    oppijoidenTuontiYhteenveto,
-    TuontiYhteenvetoState,
-    oppijoidenTuontiListaus,
-    TuontiListausState,
-} from './oppijoidentuonti.reducer';
-import { tuontiKoosteReducer, TuontiKoosteState } from './tuontikooste.reducer';
-import { tuontidataReducer, TuontidataState } from './tuontidata.reducer';
-import { palvelukayttajat, PalvelukayttajatState } from './palvelukayttaja.reducer';
-import { palvelutState, PalvelutState } from './palvelut.reducer';
-import { kayttooikeusState, KayttooikeusState } from './kayttooikeus.reducer';
-import { notificationList, NotificationListState } from './notification.reducer';
-import { linkitykset, HenkiloLinkitysState } from './henkiloLinkitys.reducer';
-import { reportReducer, AccessRightsReportState } from './report.reducer';
-import existinceCheckReducer, { ExistenceCheckState } from './existence.reducer';
-import createPersonReducer, { CreatePersonState } from './create.reducer';
-import { Locale } from '../types/locale.type';
-
-export type RootState = {
-    routing: any;
-    kutsuList: KutsuListState;
-    frontProperties: FrontPropertiesState;
-    l10n: LocalisationState;
-    henkilo: HenkiloState;
-    koodisto: KoodistoState;
-    prequels: PrequelsState;
-    omattiedot: OmattiedotState;
-    kutsuminenOrganisaatios: KutsuminenOrganisaatiosState;
-    locale: Locale;
-    kayttooikeus: KayttooikeusRyhmaState;
-    ryhmatState: RyhmatState;
-    OrganisaatioKayttooikeusryhmat: OrganisaatioKayttooikeusryhmatState;
-    organisaatio: OrganisaatioState;
-    notificationList: NotificationListState;
-    notifications: NotificationsState;
-    haetutKayttooikeusryhmat: HaetutKayttooikeusryhmatState;
-    henkilohakuState: HenkilohakuState;
-    cas: CasState;
-    oppijoidenTuontiYhteenveto: TuontiYhteenvetoState;
-    oppijoidenTuontiListaus: TuontiListausState;
-    tuontikooste: TuontiKoosteState;
-    tuontidata: TuontidataState;
-    palvelukayttajat: PalvelukayttajatState;
-    palvelutState: PalvelutState;
-    kayttooikeusState: KayttooikeusState;
-    linkitykset: HenkiloLinkitysState;
-    report: AccessRightsReportState;
-    existenceCheck: ExistenceCheckState;
-    createPerson: CreatePersonState;
-};
+import { kayttooikeus } from './kayttooikeusryhma.reducer';
+import { ryhmatState } from './ryhmat.reducer';
+import { OrganisaatioKayttooikeusryhmat } from './organisaatiokayttooikeusryhmat.reducer';
+import { organisaatio } from './organisaatio.reducer';
+import { notifications } from './notifications.reducer';
+import { haetutKayttooikeusryhmat } from './anomus.reducer';
+import { henkilohakuState } from './henkilohaku.reducer';
+import cas from './cas.reducer';
+import { oppijoidenTuontiYhteenveto, oppijoidenTuontiListaus } from './oppijoidentuonti.reducer';
+import { tuontiKoosteReducer } from './tuontikooste.reducer';
+import { tuontidataReducer } from './tuontidata.reducer';
+import { palvelukayttajat } from './palvelukayttaja.reducer';
+import { palvelutState } from './palvelut.reducer';
+import { kayttooikeusState } from './kayttooikeus.reducer';
+import { notificationList } from './notification.reducer';
+import { linkitykset } from './henkiloLinkitys.reducer';
+import { reportReducer } from './report.reducer';
+import existinceCheckReducer from './existence.reducer';
+import createPersonReducer from './create.reducer';
 
 const rootReducer = {
     routing,

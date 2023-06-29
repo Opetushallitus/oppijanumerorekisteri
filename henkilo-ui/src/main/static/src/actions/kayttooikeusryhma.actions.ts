@@ -44,6 +44,7 @@ import {
 } from './actiontypes';
 import { fetchOrganisations } from './organisaatio.actions';
 import { fetchHenkiloOrgs } from './henkilo.actions';
+import { AppDispatch, RootState } from '../store';
 
 export type Kayttooikeus = {
     id: number;
@@ -65,14 +66,14 @@ const errorAllKayttooikeusryhmasForHenkilo = (henkiloOid) => ({
     type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_FAILURE,
     henkiloOid,
 });
-export const fetchAllKayttooikeusryhmasForHenkilo = (henkiloOid?: string) => (dispatch) => {
+export const fetchAllKayttooikeusryhmasForHenkilo = (henkiloOid?: string) => (dispatch: AppDispatch) => {
     dispatch(requestAllKayttooikeusryhmasForHenkilo(henkiloOid));
     const url = henkiloOid
         ? urls.url('kayttooikeus-service.kayttooikeusryhma.henkilo.oid', henkiloOid)
         : urls.url('kayttooikeus-service.kayttooikeusryhma.henkilo.current');
     http.get<[{ organisaatioOid: string }]>(url)
         .then((kayttooikeus) => {
-            dispatch(fetchOrganisations(kayttooikeus.map((ko) => ko.organisaatioOid))).then(() =>
+            dispatch<any>(fetchOrganisations(kayttooikeus.map((ko) => ko.organisaatioOid))).then(() =>
                 dispatch(receiveAllKayttooikeusryhmasForHenkilo(henkiloOid, kayttooikeus))
             );
         })
@@ -93,12 +94,12 @@ const errorAllKayttooikeusryhmaAnomusForHenkilo = (henkiloOid) => ({
     henkiloOid,
 });
 
-export const fetchAllKayttooikeusAnomusForHenkilo = (henkiloOid: string) => (dispatch) => {
+export const fetchAllKayttooikeusAnomusForHenkilo = (henkiloOid: string) => (dispatch: AppDispatch) => {
     dispatch(requestAllKayttooikeusryhmaAnomusForHenkilo(henkiloOid));
     const url = urls.url('kayttooikeus-service.henkilo.anomus-list', henkiloOid, { activeOnly: true });
     http.get<[{ anomus: { organisaatioOid: string } }]>(url)
         .then((kayttooikeusAnomus) => {
-            dispatch(
+            dispatch<any>(
                 fetchOrganisations(kayttooikeusAnomus.map((koAnomus) => koAnomus.anomus.organisaatioOid))
             ).then(() => dispatch(receiveAllKayttooikeusryhmaAnomusForHenkilo(henkiloOid, kayttooikeusAnomus)));
         })
@@ -124,7 +125,7 @@ export const updateHaettuKayttooikeusryhma = (
     loppupvm: string,
     oidHenkilo: { oid: string },
     hylkaysperuste: string
-) => async (dispatch) => {
+) => async (dispatch: AppDispatch) => {
     dispatch(requestHaettuKayttooikeusryhmaUpdate(id));
     const url = urls.url('kayttooikeus-service.henkilo.kaytto-oikeus-anomus');
     try {
@@ -136,8 +137,8 @@ export const updateHaettuKayttooikeusryhma = (
             hylkaysperuste,
         });
         dispatch(receiveHaettuKayttooikeusryhmaUpdate(id));
-        dispatch(fetchAllKayttooikeusAnomusForHenkilo(oidHenkilo.oid));
-        dispatch(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo.oid));
+        dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(oidHenkilo.oid));
+        dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo.oid));
     } catch (error) {
         dispatch(errorHaettuKayttooikeusryhmaUpdate(id));
         throw error;
@@ -150,7 +151,7 @@ export const updateHaettuKayttooikeusryhmaInAnomukset = (
     alkupvm: string,
     loppupvm: string,
     hylkaysperuste: string
-) => async (dispatch) => {
+) => async (dispatch: AppDispatch) => {
     dispatch(requestHaettuKayttooikeusryhmaUpdate(id));
     const url = urls.url('kayttooikeus-service.henkilo.kaytto-oikeus-anomus');
     try {
@@ -168,7 +169,7 @@ export const updateHaettuKayttooikeusryhmaInAnomukset = (
     }
 };
 
-export const clearHaettuKayttooikeusryhma = (id) => (dispatch) => {
+export const clearHaettuKayttooikeusryhma = (id) => (dispatch: AppDispatch) => {
     dispatch({ type: CLEAR_HAETTU_KAYTTOOIKEUSRYHMA, id });
 };
 
@@ -185,7 +186,7 @@ const requestOrganisaatioKayttooikeusryhmatFailure = (error) => ({
     type: FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_FAILURE,
     error,
 });
-export const fetchOrganisaatioKayttooikeusryhmat = (organisaatioOid) => async (dispatch) => {
+export const fetchOrganisaatioKayttooikeusryhmat = (organisaatioOid) => async (dispatch: AppDispatch) => {
     dispatch(requestOrganisaatioKayttooikeusryhmat(organisaatioOid));
     const url = urls.url('kayttooikeus-service.kayttooikeusryhma.organisaatio', organisaatioOid);
     try {
@@ -213,7 +214,9 @@ const errorAllowedKayttooikeusryhmasForOrganisation = (oidHenkilo, oidOrganisati
     oidHenkilo,
     oidOrganisation,
 });
-export const fetchAllowedKayttooikeusryhmasForOrganisation = (oidHenkilo, oidOrganisation) => (dispatch) => {
+export const fetchAllowedKayttooikeusryhmasForOrganisation = (oidHenkilo, oidOrganisation) => (
+    dispatch: AppDispatch
+) => {
     dispatch(requestAllowedKayttooikeusryhmasForOrganisation(oidHenkilo, oidOrganisation));
     const url = urls.url(
         'kayttooikeus-service.kayttooikeusryhma.forHenkilo.inOrganisaatio',
@@ -240,7 +243,7 @@ const errorAddKayttooikeusToHenkilo = (organisaatioOid, ryhmaIdList) => ({
     id: organisaatioOid + ryhmaIdList.join(''),
 });
 export const addKayttooikeusToHenkilo = (henkiloOid: string, organisaatioOid: string, payload: Kayttooikeus[]) => (
-    dispatch
+    dispatch: AppDispatch
 ) => {
     dispatch(requestAddKayttooikeusToHenkilo());
     const url = urls.url('kayttooikeus-service.henkilo.kayttooikeus-myonto', henkiloOid, organisaatioOid);
@@ -252,9 +255,9 @@ export const addKayttooikeusToHenkilo = (henkiloOid: string, organisaatioOid: st
                     payload.map((kayttooikeus) => kayttooikeus.id)
                 )
             );
-            dispatch(fetchAllKayttooikeusryhmasForHenkilo(henkiloOid));
-            dispatch(fetchHenkiloOrgs(henkiloOid));
-            dispatch(getGrantablePrivileges(henkiloOid));
+            dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(henkiloOid));
+            dispatch<any>(fetchHenkiloOrgs(henkiloOid));
+            dispatch<any>(getGrantablePrivileges(henkiloOid));
         })
         .catch(() =>
             dispatch(
@@ -278,7 +281,7 @@ const createKayttooikeusanomusFailure = (error) => ({
     error,
 });
 
-export const createKayttooikeusanomus = (anomusData) => async (dispatch) => {
+export const createKayttooikeusanomus = (anomusData) => async (dispatch: AppDispatch) => {
     dispatch(createKayttooikeusanomusRequest());
     const url = urls.url('kayttooikeus-service.henkilo.uusi.kayttooikeusanomus', anomusData.anojaOid);
     try {
@@ -306,7 +309,7 @@ const removePrivilegeFailure = (error, data) => ({
 });
 
 export const removePrivilege = (oidHenkilo: string, oidOrganisaatio: string, kayttooikeusryhmaId: number) => (
-    dispatch
+    dispatch: AppDispatch
 ) => {
     const data = { oidHenkilo, oidOrganisaatio, kayttooikeusryhmaId };
     const url = urls.url(
@@ -319,8 +322,8 @@ export const removePrivilege = (oidHenkilo: string, oidOrganisaatio: string, kay
     http.delete(url)
         .then(() => {
             dispatch(removePrivilegeSuccess(data));
-            dispatch(fetchHenkiloOrgs(oidHenkilo));
-            dispatch(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo));
+            dispatch<any>(fetchHenkiloOrgs(oidHenkilo));
+            dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo));
         })
         .catch((error) => dispatch(removePrivilegeFailure(error, data)));
 };
@@ -336,7 +339,7 @@ const getGrantablePrivilegesFailure = (error) => ({
     error,
 });
 
-export const getGrantablePrivileges = (henkiloOid) => async (dispatch) => {
+export const getGrantablePrivileges = (henkiloOid) => async (dispatch: AppDispatch) => {
     const url = urls.url('kayttooikeus-service.henkilo.kayttooikeus-list-grantable', henkiloOid);
     dispatch(getGrantablePrivilegesRequest());
     try {
@@ -361,7 +364,10 @@ const fetchAllKayttooikeusryhmaFailure = (error) => ({
     error,
 });
 
-export const fetchAllKayttooikeusryhma = (forceFetch = false) => async (dispatch, getState) => {
+export const fetchAllKayttooikeusryhma = (forceFetch = false) => async (
+    dispatch: AppDispatch,
+    getState: () => RootState
+) => {
     // Fetch data only once
 
     if (
@@ -395,7 +401,7 @@ const fetchKayttooikeusryhmaByIdFailure = (error) => ({
     error,
 });
 
-export const fetchKayttooikeusryhmaById = (id) => async (dispatch) => {
+export const fetchKayttooikeusryhmaById = (id) => async (dispatch: AppDispatch) => {
     const url = urls.url('kayttooikeus-service.kayttooikeusryhma.id', id, {
         passiiviset: true,
     });
@@ -422,7 +428,7 @@ const fetchPalveluRooliByKayttooikeusryhmaIdFailure = (error) => ({
     error,
 });
 
-export const fetchPalveluRooliByKayttooikeusryhmaId = (id) => async (dispatch) => {
+export const fetchPalveluRooliByKayttooikeusryhmaId = (id) => async (dispatch: AppDispatch) => {
     dispatch(fetchPalveluRooliByKayttooikeusryhmaIdRequest());
     const url = urls.url('kayttooikeus-service.kayttooikeusryhma.palvelurooli', id);
     try {
@@ -447,7 +453,7 @@ const fetchKayttooikeusryhmaSlavesFailure = (error) => ({
     error,
 });
 
-export const fetchKayttooikeusryhmaSlaves = (id) => async (dispatch) => {
+export const fetchKayttooikeusryhmaSlaves = (id) => async (dispatch: AppDispatch) => {
     dispatch(fetchKayttooikeusryhmaSlavesRequest());
     const url = urls.url('kayttooikeus-service.kayttooikeusryhma.slaves', id);
     try {

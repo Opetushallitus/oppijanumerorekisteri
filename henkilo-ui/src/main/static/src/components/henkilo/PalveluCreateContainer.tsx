@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../reducers';
+import type { RootState } from '../../store';
 import { http } from '../../http';
 import { urls } from 'oph-urls-js';
 import PalveluCreateForm from './PalveluCreateForm';

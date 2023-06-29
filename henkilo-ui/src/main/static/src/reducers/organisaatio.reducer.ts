@@ -8,10 +8,7 @@ import {
     FETCH_ALL_ORGANISAATIOS_HIERARCHY_FAILURE,
     FETCH_ORGANISATION_NAMES,
 } from '../actions/actiontypes';
-
-import StaticUtils from '../components/common/StaticUtils';
 import { Organisaatio, OrganisaatioWithChildren } from '../types/domain/organisaatio/organisaatio.types';
-
 import type { Asiointikieli } from '../types/domain/kayttooikeus/Kutsu.types';
 
 export type OrganisaatioCache = {
@@ -37,7 +34,7 @@ const initialState = {
     names: {},
 };
 
-export const organisaatio = (state: OrganisaatioState = initialState, action: any) => {
+export const organisaatio = (state: OrganisaatioState = initialState, action: any): OrganisaatioState => {
     switch (action.type) {
         case FETCH_ALL_ORGANISAATIOS_REQUEST:
             return { ...state, organisaatioLoading: true };
@@ -65,10 +62,9 @@ export const organisaatio = (state: OrganisaatioState = initialState, action: an
         case FETCH_ORGANISATIONS_SUCCESS: {
             const uncachedOrganisaatios = action.organisations
                 .filter((organisaatio) => Object.keys(state.cached).indexOf(organisaatio.oid) === -1)
-                .map((organisaatio) => ({ [organisaatio.oid]: organisaatio }))
-                .reduce(StaticUtils.reduceListToObject, {});
+                .map((organisaatio) => [organisaatio.oid, organisaatio]);
             return Object.assign({}, state, {
-                cached: { ...state.cached, ...uncachedOrganisaatios },
+                cached: { ...state.cached, ...Object.fromEntries(uncachedOrganisaatios) },
             });
         }
         case FETCH_ORGANISATION_NAMES:

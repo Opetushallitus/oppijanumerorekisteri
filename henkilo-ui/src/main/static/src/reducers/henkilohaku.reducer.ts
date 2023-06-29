@@ -32,7 +32,7 @@ const initialState: HenkilohakuState = {
     result: [],
 };
 
-export const henkilohakuState: any = (state = initialState, action: any): HenkilohakuState => {
+export const henkilohakuState = (state = initialState, action: any): HenkilohakuState => {
     switch (action.type) {
         case HENKILOHAKU_REQUEST:
             return { ...state, henkilohakuLoading: true, filters: action.filters };

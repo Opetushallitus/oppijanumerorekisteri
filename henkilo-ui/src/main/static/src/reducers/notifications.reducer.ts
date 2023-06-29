@@ -72,7 +72,7 @@ export const notifications = (
         duplicatesNotifications: [],
     },
     action
-) => {
+): NotificationsState => {
     switch (action.type) {
         case ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS:
             return {

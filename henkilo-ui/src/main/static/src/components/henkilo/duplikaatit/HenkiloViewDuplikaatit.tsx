@@ -1,186 +1,155 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import type { RootState } from '../../../reducers';
-import './HenkiloViewDuplikaatit.css';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+
+import { RootState } from '../../../store';
 import Button from '../../common/button/Button';
-import * as R from 'ramda';
 import DuplikaatitPerson from './DuplikaatitPerson';
 import Loader from '../../common/icons/Loader';
-import { Notification } from '../../common/notifications/Notifications';
-import { FloatingBar } from './FloatingBar';
 import { enabledDuplikaattiView } from '../../navigation/NavigationTabs';
 import type { Locale } from '../../../types/locale.type';
-import type { Localisations } from '../../../types/localisation.type';
-import type { KoodistoState } from '../../../reducers/koodisto.reducer';
+import type { L10n } from '../../../types/localisation.type';
 import { LocalNotification } from '../../common/Notification/LocalNotification';
 import { NOTIFICATIONTYPES } from '../../common/Notification/notificationtypes';
-import { linkHenkilos } from '../../../actions/henkilo.actions';
-import type { HenkiloDuplicateLenient } from '../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
+import type {
+    HenkiloDuplicate,
+    HenkiloDuplicateLenient,
+} from '../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
+import type { OmattiedotState } from '../../../reducers/omattiedot.reducer';
+import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
+import { Hakemus } from '../../../types/domain/oppijanumerorekisteri/Hakemus.type';
+import OphModal from '../../common/modal/OphModal';
+import { usePostLinkHenkilosMutation } from '../../../api/oppijanumerorekisteri';
 
-type OwnProps = {
+import './HenkiloViewDuplikaatit.css';
+
+export type LinkRelation = {
+    master: HenkiloDuplicate;
+    duplicate: HenkiloDuplicate;
+};
+
+type Props = {
     router?: any;
     oidHenkilo?: string;
-    henkilo: HenkiloDuplicateLenient;
+    henkilo: HenkiloDuplicateLenient & { hakemukset?: Hakemus[] };
     henkiloType: string;
-    notifications?: Notification[];
-    removeNotification?: (arg0: string, arg1: string, arg2: string | null | undefined) => void;
     vainLuku: boolean;
 };
 
-type StateProps = {
-    locale: Locale;
-    L: Localisations;
-    koodisto: KoodistoState;
-    ownOid: string;
-};
+const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, router, oidHenkilo }: Props) => {
+    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const l10n = useSelector<RootState, L10n>((state) => state.l10n.localisations);
+    const locale = useSelector<RootState, Locale>((state) => state.locale);
+    const L = l10n[locale];
+    const [linkObj, setLink] = useState<LinkRelation>();
+    const [postLinkHenkilos] = usePostLinkHenkilosMutation();
+    const canForceLink = hasAnyPalveluRooli(omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_YKSILOINNIN_PURKU']);
+    const emails = (henkilo.henkilo.yhteystiedotRyhma || [])
+        .flatMap((ryhma) => ryhma.yhteystieto)
+        .filter((yhteysTieto) => yhteysTieto.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI')
+        .map((yhteysTieto) => yhteysTieto.yhteystietoArvo);
+    const master: HenkiloDuplicate = { ...henkilo.henkilo, emails, hakemukset: henkilo.hakemukset };
+    const linkingEnabled =
+        enabledDuplikaattiView(oidHenkilo, henkilo.kayttaja, henkilo.masterLoading, henkilo.master?.oidHenkilo) ||
+        oidHenkilo !== omattiedot.data.oid;
 
-type DispatchProps = {
-    linkHenkilos: (masterOid: string, slaveOids: Array<string>, successMessage: string, failMessage: string) => void;
-};
+    const link = async () =>
+        await postLinkHenkilos({
+            masterOid: linkObj.master.oidHenkilo,
+            duplicateOids: [linkObj.duplicate.oidHenkilo],
+            L,
+            force: linkObj.duplicate.yksiloity,
+        })
+            .unwrap()
+            .then(() => {
+                setLink(undefined);
+                router?.push(`/${henkiloType}/${oidHenkilo}`);
+            })
+            .catch(() => {
+                setLink(undefined);
+            });
 
-type Props = OwnProps & StateProps & DispatchProps;
-
-type State = {
-    selectedDuplicates: string[];
-    notifications: Notification[];
-    yksiloitySelected: boolean;
-};
-
-class HenkiloViewDuplikaatit extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-
-        this.state = {
-            notifications: [],
-            selectedDuplicates: [],
-            yksiloitySelected: this.props.henkilo.henkilo['yksiloity'] || this.props.henkilo.henkilo['yksiloityVTJ'],
-        };
-    }
-
-    render() {
-        const master: any = this.props.henkilo.henkilo;
-        master.emails = (this.props.henkilo.henkilo.yhteystiedotRyhma || [])
-            .flatMap((ryhma) => ryhma.yhteystieto)
-            .filter((yhteysTieto) => yhteysTieto.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI')
-            .map((yhteysTieto) => yhteysTieto.yhteystietoArvo);
-        master.hakemukset = this.props.henkilo['hakemukset'];
-        const duplicates = this.props.henkilo.duplicates;
-        const koodisto = this.props.koodisto;
-        const locale = this.props.locale;
-        return (
-            <div className="duplicates-view">
-                <div id="duplicates">
-                    <div className="person header">
-                        <span />
-                        <span />
-                        <span>{this.props.L['DUPLIKAATIT_HENKILOTUNNUS']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_YKSILOITY']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_KUTSUMANIMI']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_ETUNIMET']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_SUKUNIMI']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_SUKUPUOLI']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_SYNTYMAAIKA']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_OIDHENKILO']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_SAHKOPOSTIOSOITE']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_PASSINUMERO']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_KANSALAISUUS']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_AIDINKIELI']}</span>
-                        <span />
-                        <span className="hakemus">{this.props.L['DUPLIKAATIT_KANSALAISUUS']}</span>
-                        <span className="hakemus">{this.props.L['DUPLIKAATIT_AIDINKIELI']}</span>
-                        <span className="hakemus">{this.props.L['DUPLIKAATIT_MATKAPUHELINNUMERO']}</span>
-                        <span className="hakemus">{this.props.L['DUPLIKAATIT_SAHKOPOSTIOSOITE']}</span>
-                        <span className="hakemus">{this.props.L['DUPLIKAATIT_OSOITE']}</span>
-                        <span className="hakemus">{this.props.L['DUPLIKAATIT_POSTINUMERO']}</span>
-                        <span className="hakemus">{this.props.L['DUPLIKAATIT_PASSINUMERO']}</span>
-                        <span className="hakemus">{this.props.L['DUPLIKAATIT_KANSALLINENID']}</span>
-                        <span className="hakemus">{this.props.L['DUPLIKAATIT_HAKEMUKSENTILA']}</span>
-                        <span className="hakemus">{this.props.L['DUPLIKAATIT_HAKEMUKSENOID']}</span>
-                        <span className="hakemus">{this.props.L['DUPLIKAATIT_MUUTHAKEMUKSET']}</span>
-                    </div>
-                    <DuplikaatitPerson
-                        henkilo={master}
-                        koodisto={koodisto}
-                        L={this.props.L}
-                        header={'DUPLIKAATIT_HENKILON_TIEDOT'}
-                        locale={locale}
-                        classNames={{ person: true, master: true }}
-                        isMaster={true}
-                        vainLuku={this.props.vainLuku}
-                        henkiloType={this.props.henkiloType}
-                        setSelection={this.setSelection.bind(this)}
-                    />
-                    {duplicates.map((duplicate) => (
-                        <DuplikaatitPerson
-                            henkilo={duplicate}
-                            koodisto={koodisto}
-                            L={this.props.L}
-                            header={'DUPLIKAATIT_DUPLIKAATTI'}
-                            locale={locale}
-                            key={duplicate.oidHenkilo}
-                            isMaster={false}
-                            classNames={{ person: true }}
-                            vainLuku={this.props.vainLuku}
-                            henkiloType={this.props.henkiloType}
-                            setSelection={this.setSelection.bind(this)}
-                            yksiloitySelected={this.state.yksiloitySelected}
-                        ></DuplikaatitPerson>
-                    ))}
-                    {this.props.henkilo.duplicatesLoading ? <Loader /> : null}
-                    <LocalNotification
-                        title={this.props.L['DUPLIKAATIT_NOTIFICATION_EI_LOYTYNYT']}
-                        type={NOTIFICATIONTYPES.INFO}
-                        toggle={!this.props.henkilo.duplicates}
-                    ></LocalNotification>
-                </div>
-                {!this.props.vainLuku && this.props.oidHenkilo && (
-                    <FloatingBar>
-                        <Button
-                            disabled={
-                                this.state.selectedDuplicates.length === 0 ||
-                                !enabledDuplikaattiView(
-                                    this.props.oidHenkilo,
-                                    this.props.henkilo.kayttaja,
-                                    this.props.henkilo.masterLoading,
-                                    this.props.henkilo.master.oidHenkilo
-                                ) ||
-                                this.props.oidHenkilo === this.props.ownOid
-                            }
-                            action={this._link.bind(this)}
-                        >
-                            {this.props.L['DUPLIKAATIT_YHDISTA']}
-                        </Button>
-                    </FloatingBar>
-                )}
+    return (
+        <div className="duplicates-view">
+            <div className="person header">
+                <div />
+                <div />
+                <div>{L['DUPLIKAATIT_HENKILOTUNNUS']}</div>
+                <div>{L['DUPLIKAATIT_YKSILOITY']}</div>
+                <div>{L['DUPLIKAATIT_KUTSUMANIMI']}</div>
+                <div>{L['DUPLIKAATIT_ETUNIMET']}</div>
+                <div>{L['DUPLIKAATIT_SUKUNIMI']}</div>
+                <div>{L['DUPLIKAATIT_SUKUPUOLI']}</div>
+                <div>{L['DUPLIKAATIT_SYNTYMAAIKA']}</div>
+                <div>{L['DUPLIKAATIT_OIDHENKILO']}</div>
+                <div>{L['DUPLIKAATIT_SAHKOPOSTIOSOITE']}</div>
+                <div>{L['DUPLIKAATIT_PASSINUMERO']}</div>
+                <div>{L['DUPLIKAATIT_KANSALAISUUS']}</div>
+                <div>{L['DUPLIKAATIT_AIDINKIELI']}</div>
+                <div />
+                <div className="hakemus">{L['DUPLIKAATIT_KANSALAISUUS']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_AIDINKIELI']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_MATKAPUHELINNUMERO']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_SAHKOPOSTIOSOITE']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_OSOITE']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_POSTINUMERO']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_PASSINUMERO']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_KANSALLINENID']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_HAKEMUKSENTILA']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_HAKEMUKSENOID']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_MUUTHAKEMUKSET']}</div>
             </div>
-        );
-    }
+            <DuplikaatitPerson
+                henkilo={master}
+                master={master}
+                isMaster={true}
+                vainLuku={vainLuku}
+                henkiloType={henkiloType}
+                canForceLink={canForceLink}
+                setLink={setLink}
+            />
+            {henkilo.duplicates.map((duplicate) => (
+                <DuplikaatitPerson
+                    henkilo={duplicate}
+                    master={master}
+                    key={duplicate.oidHenkilo}
+                    isMaster={false}
+                    vainLuku={vainLuku}
+                    henkiloType={henkiloType}
+                    canForceLink={canForceLink}
+                    setLink={setLink}
+                />
+            ))}
+            {henkilo.duplicatesLoading ? <Loader /> : null}
+            <LocalNotification
+                title={L['DUPLIKAATIT_NOTIFICATION_EI_LOYTYNYT']}
+                type={NOTIFICATIONTYPES.INFO}
+                toggle={!henkilo.duplicates}
+            ></LocalNotification>
+            {linkObj && linkingEnabled && (
+                <OphModal
+                    onClose={() => setLink(undefined)}
+                    onOverlayClick={() => setLink(undefined)}
+                    title={L['DUPLIKAATIT_VARMISTUS_OTSIKKO']}
+                >
+                    <p className="duplicate_confirm_p">{`Oletko varma, että haluat yhdistää henkilöt?`}</p>
+                    <p className="duplicate_confirm_p">{`- Oppijanumero ${linkObj.master.oidHenkilo} (${
+                        linkObj.master.sukunimi
+                    }, ${linkObj.master.kutsumanimi ?? linkObj.master.etunimet}) jää voimaan`}</p>
+                    <p className="duplicate_confirm_p">
+                        {`- Oppija ${linkObj.duplicate.oidHenkilo} passivoidaan ${
+                            linkObj.duplicate.yksiloity ? 'ja häneltä puretaan yksilöinti' : ''
+                        } `}
+                    </p>
+                    <div className="duplicate_confirm_buttons">
+                        <Button action={() => link()} dataTestId="confirm-force-link">
+                            {L['DUPLIKAATIT_VARMISTUS_YHDISTA']}
+                        </Button>
+                        <Button action={() => setLink(undefined)}>{L['DUPLIKAATIT_VARMISTUS_PERUUTA']}</Button>
+                    </div>
+                </OphModal>
+            )}
+        </div>
+    );
+};
 
-    async _link() {
-        const successMessage = this.props.L['DUPLIKAATIT_NOTIFICATION_ONNISTUI'];
-        const failMessage = this.props.L['DUPLIKAATIT_NOTIFICATION_EPAONNISTUI'];
-        const oid = this.props.oidHenkilo ? this.props.oidHenkilo : '';
-        await this.props.linkHenkilos(oid, this.state.selectedDuplicates, successMessage, failMessage);
-        if (this.props.router) {
-            this.props.router.push(`/${this.props.henkiloType}/${oid}`);
-        }
-    }
-
-    setSelection(oid: string) {
-        const selectedDuplicates = this.state.selectedDuplicates.includes(oid)
-            ? R.reject((duplicateOid) => duplicateOid === oid, this.state.selectedDuplicates)
-            : R.append(oid, this.state.selectedDuplicates);
-        this.setState({ selectedDuplicates });
-    }
-}
-
-const mapStateToProps = (state: RootState): StateProps => ({
-    ownOid: state.omattiedot.data.oid,
-    L: state.l10n.localisations[state.locale],
-    locale: state.locale,
-    koodisto: state.koodisto,
-});
-
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    linkHenkilos,
-})(HenkiloViewDuplikaatit);
+export default HenkiloViewDuplikaatit;

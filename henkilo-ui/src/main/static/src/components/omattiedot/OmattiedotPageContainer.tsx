@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../reducers';
+import type { RootState } from '../../store';
 import { fetchOmattiedot } from '../../actions/omattiedot.actions';
 import { fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, clearHenkilo } from '../../actions/henkilo.actions';
 import {

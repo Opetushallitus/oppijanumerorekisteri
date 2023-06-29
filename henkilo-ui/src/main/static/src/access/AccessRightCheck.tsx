@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { hasAnyPalveluRooli } from '../utilities/palvelurooli.util';
-import type { RootState } from '../reducers';
+import type { RootState } from '../store';
 import type { KayttooikeusOrganisaatiot } from '../types/domain/kayttooikeus/KayttooikeusPerustiedot.types';
 
 type OwnProps = {

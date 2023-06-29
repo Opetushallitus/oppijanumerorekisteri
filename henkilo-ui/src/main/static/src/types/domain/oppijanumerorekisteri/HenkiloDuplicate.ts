@@ -16,21 +16,21 @@ export type HenkiloDuplicateLenient = {
 };
 
 export type HenkiloDuplicate = {
-    oidHenkilo: string;
-    etunimet: string;
-    kutsumanimi: string;
-    sukunimi: string;
-    sukupuoli: string;
-    hetu: string;
-    syntymaaika: string;
-    passivoitu: boolean;
-    email: string;
-    emails: string[];
-    yksiloity: boolean;
-    yksiloityVTJ: boolean;
-    aidinkieli: Kielisyys;
-    asiointiKieli: Kielisyys;
+    oidHenkilo?: string;
+    etunimet?: string;
+    kutsumanimi?: string;
+    sukunimi?: string;
+    sukupuoli?: string;
+    hetu?: string;
+    syntymaaika?: string;
+    passivoitu?: boolean;
+    email?: string;
+    emails?: string[];
+    yksiloity?: boolean;
+    yksiloityVTJ?: boolean;
+    aidinkieli?: Kielisyys;
+    asiointiKieli?: Kielisyys;
     hakemukset?: Hakemus[];
-    passinumerot: string[];
-    kansalaisuus: Kansalaisuus[];
+    passinumerot?: string[];
+    kansalaisuus?: Kansalaisuus[];
 };

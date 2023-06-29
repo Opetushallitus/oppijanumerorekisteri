@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../../../reducers';
+import type { RootState } from '../../../../store';
 import ConfirmButton from '../../button/ConfirmButton';
 import Button from '../../button/Button';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';

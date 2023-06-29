@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../../reducers';
+import type { RootState } from '../../../store';
 import Table from '../table/Table';
 import moment from 'moment';
 import StaticUtils from '../StaticUtils';

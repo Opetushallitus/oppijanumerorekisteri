@@ -2,6 +2,7 @@ import { FETCH_LOCALISATIONS_REQUEST, FETCH_LOCALISATIONS_SUCCESS } from './acti
 import { http } from '../http';
 import { urls } from 'oph-urls-js';
 import { L10n } from '../types/localisation.type';
+import { AppDispatch } from '../store';
 
 const mapLocalisationsByLocale = (localisations: Array<any>): L10n => {
     const result = { fi: {}, sv: {}, en: {} };
@@ -36,7 +37,7 @@ type Localisation = {
     value: string;
 };
 
-export const fetchL10n = () => async (dispatch: any) => {
+export const fetchL10n = () => async (dispatch: AppDispatch) => {
     dispatch(requestLocalisations());
 
     const henkiloUiLocalisations = await http.get(urls.url('henkilo-ui.l10n'));

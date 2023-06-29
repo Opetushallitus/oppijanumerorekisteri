@@ -6,10 +6,11 @@ type Props = {
     title: string;
     type: NotificationType;
     children?: React.ReactNode;
+    dataTestId?: string;
 };
 
 export const TypedNotification = (props: Props) => (
-    <div className={`oph-alert oph-alert-${props.type}`}>
+    <div className={`oph-alert oph-alert-${props.type}`} data-test-id={props.dataTestId}>
         <div className="oph-alert-container">
             <div className="oph-alert-title">{props.title}</div>
             <div className="oph-alert-text">{props.children}</div>

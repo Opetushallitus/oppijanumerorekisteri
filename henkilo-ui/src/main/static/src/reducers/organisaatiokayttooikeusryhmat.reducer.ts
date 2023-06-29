@@ -17,7 +17,7 @@ export const OrganisaatioKayttooikeusryhmat = (
         kayttooikeusryhmat: [],
     },
     action: any
-) => {
+): OrganisaatioKayttooikeusryhmatState => {
     switch (action.type) {
         case FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_REQUEST:
             return Object.assign({}, state, {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../reducers';
+import type { RootState } from '../../store';
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup';
 import KutsuViews from './KutsuViews';
 import { Localisations } from '../../types/localisation.type';

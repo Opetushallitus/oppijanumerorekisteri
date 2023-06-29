@@ -1,6 +1,5 @@
 import { http } from '../http';
 import { urls } from 'oph-urls-js';
-import { Dispatch } from 'redux';
 import {
     DELETE_HENKILOORGS_FAILURE,
     DELETE_HENKILOORGS_REQUEST,
@@ -43,9 +42,6 @@ import {
     UPDATE_HENKILO_UNLINK_SUCCESS,
     UPDATE_HENKILO_UNLINK_REQUEST,
     UPDATE_HENKILO_UNLINK_FAILURE,
-    LINK_HENKILOS_REQUEST,
-    LINK_HENKILOS_SUCCESS,
-    LINK_HENKILOS_FAILURE,
     FETCH_HENKILO_MASTER_FAILURE,
     FETCH_HENKILO_MASTER_SUCCESS,
     FETCH_HENKILO_MASTER_REQUEST,
@@ -68,6 +64,7 @@ import { NOTIFICATIONTYPES } from '../components/common/Notification/notificatio
 import { localizeWithState } from '../utilities/localisation.util';
 import { GlobalNotificationConfig } from '../types/notification.types';
 import { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
+import { AppDispatch, RootState } from '../store';
 
 const requestHenkilo = (oid) => ({ type: FETCH_HENKILO_REQUEST, oid });
 const receiveHenkilo = (json) => ({
@@ -76,7 +73,7 @@ const receiveHenkilo = (json) => ({
     receivedAt: Date.now(),
 });
 const receiveHenkiloFailure = (data) => ({ type: FETCH_HENKILO_FAILURE, data });
-export const fetchHenkilo = (oid: string) => async (dispatch) => {
+export const fetchHenkilo = (oid: string) => async (dispatch: AppDispatch) => {
     dispatch(requestHenkilo(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.oid', oid);
     try {
@@ -95,26 +92,29 @@ const receiveHenkiloUpdate = (oid) => ({
     receivedAt: Date.now(),
 });
 const errorHenkiloUpdate = (error) => ({ type: UPDATE_HENKILO_FAILURE, error });
-export const updateHenkiloAndRefetch = (payload, errorNotificationConfig) => async (dispatch, getState) => {
+export const updateHenkiloAndRefetch = (payload, errorNotificationConfig) => async (
+    dispatch: AppDispatch,
+    getState: () => RootState
+) => {
     dispatch(requestHenkiloUpdate(payload.oidHenkilo));
     const url = urls.url('oppijanumerorekisteri-service.henkilo');
     try {
         const oid = await http.put<string>(url, payload);
         dispatch(receiveHenkiloUpdate(oid));
-        dispatch(fetchHenkilo(oid));
+        dispatch<any>(fetchHenkilo(oid));
     } catch (error) {
         const L = getState().l10n.localisations[getState().locale];
         if (errorNotificationConfig) {
             const errorMessages = getUpdateHenkiloErrorMessages(error, L);
             if (errorMessages.length > 0) {
                 errorMessages.forEach((errorMessage) =>
-                    dispatch(addGlobalNotification(createUpdateHenkiloErrorNotification(errorMessage)))
+                    dispatch<any>(addGlobalNotification(createUpdateHenkiloErrorNotification(errorMessage)))
                 );
             } else {
                 const errorUpdateHenkiloNotification = createUpdateHenkiloErrorNotification(
                     L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE']
                 );
-                dispatch(addGlobalNotification(errorUpdateHenkiloNotification));
+                dispatch<any>(addGlobalNotification(errorUpdateHenkiloNotification));
             }
         }
         dispatch(errorHenkiloUpdate(error));
@@ -138,7 +138,7 @@ const getUpdateHenkiloErrorMessages = (error, L): Array<string> => {
     return errorMessages;
 };
 
-export const fetchKayttaja = (oid) => async (dispatch) => {
+export const fetchKayttaja = (oid) => async (dispatch: AppDispatch) => {
     dispatch({ type: FETCH_KAYTTAJA_REQUEST, oid });
     const url = urls.url('kayttooikeus-service.henkilo.byOid', oid);
     try {
@@ -160,7 +160,7 @@ const errorKayttajatieto = () => ({
     type: FETCH_KAYTTAJATIETO_FAILURE,
     kayttajatieto: undefined,
 });
-export const fetchKayttajatieto = (oid: string) => (dispatch: Dispatch) => {
+export const fetchKayttajatieto = (oid: string) => (dispatch: AppDispatch) => {
     dispatch(requestKayttajatieto(oid));
     const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
     http.get<KayttajatiedotRead>(url)
@@ -181,16 +181,19 @@ const requestKayttajatietoUpdateSuccess = (kayttajatieto) => ({
 const requestKayttajatietoUpdateFailure = () => ({
     type: UPDATE_KAYTTAJATIETO_FAILURE,
 });
-export const updateAndRefetchKayttajatieto = (oid, username) => async (dispatch, getState) => {
+export const updateAndRefetchKayttajatieto = (oid, username) => async (
+    dispatch: AppDispatch,
+    getState: () => RootState
+) => {
     dispatch(requestKayttajatietoUpdate(username));
     const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
     try {
         const kayttajatieto = await http.put(url, { username: username });
         dispatch(requestKayttajatietoUpdateSuccess(kayttajatieto));
-        dispatch(fetchKayttajatieto(oid));
+        dispatch<any>(fetchKayttajatieto(oid));
     } catch (error) {
         if (error.errorType === 'IllegalArgumentException') {
-            dispatch(
+            dispatch<any>(
                 addGlobalNotification({
                     autoClose: 10000,
                     title: localizeWithState('NOTIFICATION_HENKILOTIEDOT_KAYTTAJANIMI_EXISTS', getState()),
@@ -217,13 +220,13 @@ const errorPassivoiHenkilo = () => ({
     },
     receivedAt: Date.now(),
 });
-export const passivoiHenkilo = (oid) => (dispatch) => {
+export const passivoiHenkilo = (oid) => (dispatch: AppDispatch) => {
     dispatch(requestPassivoiHenkilo(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.delete', oid);
     http.delete(url)
         .then(() => {
             dispatch(receivePassivoiHenkilo());
-            dispatch(fetchHenkilo(oid));
+            dispatch<any>(fetchHenkilo(oid));
         })
         .catch(() => dispatch(errorPassivoiHenkilo()));
 };
@@ -245,29 +248,29 @@ const errorPoistaKayttajatunnus = () => ({
     },
     receivedAt: Date.now(),
 });
-export const poistaKayttajatunnus = (oid) => (dispatch) => {
+export const poistaKayttajatunnus = (oid) => (dispatch: AppDispatch) => {
     dispatch(requestPoistaKayttajatunnus(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.poista-kayttajatunnus', oid);
     http.delete(url)
         .then(() => {
             dispatch(receivePoistaKayttajatunnus());
-            dispatch(fetchKayttajatieto(oid));
-            dispatch(fetchHenkiloOrgs(oid));
-            dispatch(fetchAllKayttooikeusryhmasForHenkilo(oid));
-            dispatch(fetchHenkilo(oid));
+            dispatch<any>(fetchKayttajatieto(oid));
+            dispatch<any>(fetchHenkiloOrgs(oid));
+            dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(oid));
+            dispatch<any>(fetchHenkilo(oid));
         })
         .catch(() => dispatch(errorPoistaKayttajatunnus()));
 };
 
-export const aktivoiHenkilo = (oid) => async (dispatch, getState) => {
+export const aktivoiHenkilo = (oid) => async (dispatch: AppDispatch, getState: () => RootState) => {
     try {
         const url = urls.url('oppijanumerorekisteri-service.henkilo', oid);
         // henkilö put toimii kuten patch joten ei tarvita kaikkia tietoja
         const data = { oidHenkilo: oid, passivoitu: false };
         await http.put(url, data);
-        dispatch(fetchHenkilo(oid));
+        dispatch<any>(fetchHenkilo(oid));
     } catch (error) {
-        dispatch(
+        dispatch<any>(
             addGlobalNotification({
                 key: 'AKTIVOI_EPAONNISTUI',
                 type: NOTIFICATIONTYPES.ERROR,
@@ -292,8 +295,8 @@ const failureHenkiloYksilointitieto = (error) => ({
     error,
 });
 
-export const fetchHenkiloYksilointitieto = (oid) => async (dispatch) => {
-    dispatch(requestHenkiloYksilointitieto);
+export const fetchHenkiloYksilointitieto = (oid) => async (dispatch: AppDispatch) => {
+    dispatch<any>(requestHenkiloYksilointitieto);
     const url = urls.url('oppijanumerorekisteri-service.henkilo.yksilointitiedot', oid);
     try {
         const data = await http.get(url);
@@ -318,13 +321,13 @@ const errorYksiloiHenkilo = () => ({
         notL10nText: 'YKSILOI_ERROR_TEXT',
     },
 });
-export const yksiloiHenkilo = (oid: string) => (dispatch) => {
+export const yksiloiHenkilo = (oid: string) => (dispatch: AppDispatch) => {
     dispatch(requestYksiloiHenkilo(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.yksiloihetuton', oid);
     http.post(url)
         .then(() => {
             dispatch(receiveYksiloiHenkilo(oid));
-            dispatch(fetchHenkilo(oid));
+            dispatch<any>(fetchHenkilo(oid));
         })
         .catch(() => dispatch(errorYksiloiHenkilo()));
 };
@@ -332,13 +335,13 @@ export const yksiloiHenkilo = (oid: string) => (dispatch) => {
 const requestPuraYksilointi = (oid) => ({ type: PURA_YKSILOINTI_REQUEST, oid });
 const receivePuraYksilointi = (oid) => ({ type: PURA_YKSILOINTI_SUCCESS, oid });
 const errorPuraYksilointi = () => ({ type: PURA_YKSILOINTI_FAILURE });
-export const puraYksilointi = (oid) => async (dispatch) => {
+export const puraYksilointi = (oid) => async (dispatch: AppDispatch) => {
     dispatch(requestPuraYksilointi(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.yksiloi.pura', oid);
     try {
         await http.post(url);
         receivePuraYksilointi(oid);
-        dispatch(fetchHenkilo(oid));
+        dispatch<any>(fetchHenkilo(oid));
     } catch (error) {
         errorPuraYksilointi();
         console.error(`Pura yksilointi failed for henkilo ${oid} - ${error}`);
@@ -364,7 +367,7 @@ const errorOverrideHenkiloVtjData = () => ({
         notL10nText: 'VTJ_OVERRIDE_ERROR_TEXT',
     },
 });
-export const overrideHenkiloVtjData = (oid) => async (dispatch) => {
+export const overrideHenkiloVtjData = (oid) => async (dispatch: AppDispatch) => {
     dispatch(requestOverrideHenkiloVtjData(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.yksilointitiedot', oid);
     try {
@@ -388,7 +391,7 @@ const successOverrideYksiloimatonHenkilo = (oid) => ({
 const errorOverrideYksiloimatonHenkilo = () => ({
     type: VTJ_OVERRIDE_YKSILOIMATON_HENKILO_FAILURE,
 });
-export const overrideYksiloimatonHenkiloVtjData = (oid) => async (dispatch) => {
+export const overrideYksiloimatonHenkiloVtjData = (oid) => async (dispatch: AppDispatch) => {
     dispatch(requestOverrideYksiloimatonHenkilo(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.yksilointitiedot.yliajayksiloimaton', oid);
     try {
@@ -409,12 +412,12 @@ const receiveHenkiloOrgsSuccess = (henkiloOrgs, organisations) => ({
 });
 
 // Fetch organisations for given henkilo (non hierarchical). If no oid given user current user oid.
-export const fetchHenkiloOrgs = (oidHenkilo) => (dispatch, getState) => {
+export const fetchHenkiloOrgs = (oidHenkilo) => (dispatch: AppDispatch, getState: () => RootState) => {
     oidHenkilo = oidHenkilo || getState().omattiedot.data.oid;
     dispatch(requestHenkiloOrgs(oidHenkilo));
     const url = urls.url('kayttooikeus-service.henkilo.organisaatiohenkilos', oidHenkilo);
     return http.get<[{ organisaatioOid: string }]>(url).then((json) => {
-        dispatch(fetchOrganisations(json.map((orgHenkilo) => orgHenkilo.organisaatioOid))).then(() =>
+        dispatch<any>(fetchOrganisations(json.map((orgHenkilo) => orgHenkilo.organisaatioOid))).then(() =>
             dispatch(receiveHenkiloOrgsSuccess(json, getState().organisaatio.cached))
         );
     });
@@ -442,15 +445,15 @@ const errorPassivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => ({
     },
     receivedAt: Date.now(),
 });
-export const passivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => (dispatch) => {
+export const passivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => (dispatch: AppDispatch) => {
     dispatch(requestPassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg));
     const url = urls.url('kayttooikeus-service.organisaatiohenkilo.passivoi', oidHenkilo, oidHenkiloOrg);
     return http
         .delete(url)
         .then(() => {
             dispatch(receivePassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg));
-            dispatch(fetchHenkiloOrgs(oidHenkilo));
-            dispatch(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo));
+            dispatch<any>(fetchHenkiloOrgs(oidHenkilo));
+            dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo));
         })
         .catch(() => dispatch(errorPassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg)));
 };
@@ -468,13 +471,13 @@ const requestHenkiloDuplicatesFailure = () => ({
     type: FETCH_HENKILO_DUPLICATES_FAILURE,
 });
 
-export const fetchHenkiloDuplicates = (oidHenkilo) => async (dispatch, getState) => {
+export const fetchHenkiloDuplicates = (oidHenkilo) => async (dispatch: AppDispatch, getState: () => RootState) => {
     dispatch(requestHenkiloDuplicates(oidHenkilo));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.duplicates', oidHenkilo);
     try {
         const duplicates = await http.get<[]>(url);
         if (duplicates.length === 0) {
-            dispatch(
+            dispatch<any>(
                 addGlobalNotification({
                     key: 'NOTIFICATION_DUPLIKAATIT_TYHJA_LISTA',
                     type: NOTIFICATIONTYPES.INFO,
@@ -497,7 +500,7 @@ export const fetchHenkiloDuplicates = (oidHenkilo) => async (dispatch, getState)
             errorMessage =
                 localizeWithState('NOTIFICATION_DUPLIKAATIT_HAKEMUKSET_HAKUAPP_VIRHE', getState()) + ' ' + oidHenkilo;
         }
-        dispatch(
+        dispatch<any>(
             addGlobalNotification({
                 key: 'FETCH_DUPLICATES_FAIL',
                 type: NOTIFICATIONTYPES.ERROR,
@@ -521,7 +524,7 @@ const requestHenkiloHakemuksetFailure = () => ({
     type: FETCH_HENKILO_HAKEMUKSET.FAILURE,
 });
 
-export const fetchHenkiloHakemukset = (oid: string) => async (dispatch, getState) => {
+export const fetchHenkiloHakemukset = (oid: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
     dispatch(requestHenkiloHakemukset(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.hakemukset', oid);
     try {
@@ -540,7 +543,7 @@ export const fetchHenkiloHakemukset = (oid: string) => async (dispatch, getState
             errorMessage = localizeWithState('NOTIFICATION_HENKILO_HAKEMUKSET_HAKUAPP_VIRHE', getState()) + ' ' + oid;
         }
 
-        dispatch(
+        dispatch<any>(
             addGlobalNotification({
                 key: 'HENKILOHAKEMUKSET_FAILURE',
                 type: NOTIFICATIONTYPES.ERROR,
@@ -565,7 +568,7 @@ const requestHenkiloSlavesFailure = (oidHenkilo) => ({
     oidHenkilo,
 });
 
-export const fetchHenkiloSlaves = (oidHenkilo) => async (dispatch) => {
+export const fetchHenkiloSlaves = (oidHenkilo) => async (dispatch: AppDispatch) => {
     dispatch(requestHenkiloSlaves(oidHenkilo));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.slaves', oidHenkilo);
     try {
@@ -590,7 +593,7 @@ const requestHenkiloMasterFailure = (oidHenkilo) => ({
     oidHenkilo,
 });
 
-export const fetchHenkiloMaster = (oidHenkilo: string) => async (dispatch) => {
+export const fetchHenkiloMaster = (oidHenkilo: string) => async (dispatch: AppDispatch) => {
     dispatch(requestHenkiloMaster(oidHenkilo));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.master', oidHenkilo);
     try {
@@ -598,45 +601,6 @@ export const fetchHenkiloMaster = (oidHenkilo: string) => async (dispatch) => {
         dispatch(requestHenkiloMasterSuccess(henkiloMaster));
     } catch (error) {
         dispatch(requestHenkiloMasterFailure(oidHenkilo));
-        throw error;
-    }
-};
-
-const linkHenkilosRequest = (masterOid, slaveOids) => ({
-    type: LINK_HENKILOS_REQUEST,
-    masterOid,
-    slaveOids,
-});
-const linkHenkilosSuccess = (slaveOids) => ({
-    type: LINK_HENKILOS_SUCCESS,
-    slaveOids,
-});
-const linkHenkilosFailure = () => ({ type: LINK_HENKILOS_FAILURE });
-
-export const linkHenkilos = (masterOid, slaveOids, successMessage, failMessage) => async (dispatch) => {
-    dispatch(linkHenkilosRequest(masterOid, slaveOids));
-    const url = urls.url('oppijanumerorekisteri-service.henkilo.link', masterOid);
-    try {
-        await http.post(url, slaveOids);
-        dispatch(linkHenkilosSuccess(slaveOids));
-        dispatch(
-            addGlobalNotification({
-                key: 'LINKED_DUPLICATES_SUCCESS',
-                type: NOTIFICATIONTYPES.SUCCESS,
-                title: successMessage,
-                autoClose: 10000,
-            })
-        );
-    } catch (error) {
-        dispatch(linkHenkilosFailure());
-        dispatch(
-            addGlobalNotification({
-                key: 'LINKED_DUPLICATES_FAILURE',
-                type: NOTIFICATIONTYPES.ERROR,
-                title: failMessage,
-                autoClose: 10000,
-            })
-        );
         throw error;
     }
 };
@@ -652,7 +616,7 @@ const updateHenkiloUnlinkSuccess = (unlinkedSlaveOid: string) => ({
 });
 const updateHenkiloUnlinkFailure = () => ({ type: UPDATE_HENKILO_UNLINK_FAILURE });
 
-export const unlinkHenkilo = (masterOid: string, slaveOid: string) => async (dispatch) => {
+export const unlinkHenkilo = (masterOid: string, slaveOid: string) => async (dispatch: AppDispatch) => {
     dispatch(updateHenkiloUnlink(masterOid, slaveOid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.unlink', masterOid, slaveOid);
     try {
@@ -664,4 +628,4 @@ export const unlinkHenkilo = (masterOid: string, slaveOid: string) => async (dis
     }
 };
 
-export const clearHenkilo = () => (dispatch) => dispatch({ type: CLEAR_HENKILO });
+export const clearHenkilo = () => (dispatch: AppDispatch) => dispatch({ type: CLEAR_HENKILO });

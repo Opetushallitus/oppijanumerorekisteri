@@ -5,7 +5,7 @@ export type PrequelsState = {
 };
 
 // notLoadedCount = number of prequels
-export const prequels = (state = { notLoadedCount: 2 }, action) => {
+export const prequels = (state = { notLoadedCount: 2 }, action): PrequelsState => {
     switch (action.type) {
         case FETCH_PREQUEL_REQUEST:
             return Object.assign({}, state);

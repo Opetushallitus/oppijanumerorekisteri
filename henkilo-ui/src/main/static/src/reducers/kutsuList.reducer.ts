@@ -24,7 +24,7 @@ const kutsuList = (
         kutsuByTokenLoading: true,
     },
     action: any
-) => {
+): KutsuListState => {
     switch (action.type) {
         case FETCH_KUTSU_REQUEST:
             return Object.assign({}, state, { loaded: false });

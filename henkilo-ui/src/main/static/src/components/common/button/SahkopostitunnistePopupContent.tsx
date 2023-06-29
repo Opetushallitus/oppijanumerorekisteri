@@ -5,7 +5,7 @@ import './SahkopostitunnistePopupContent.css';
 import { Localisations } from '../../../types/localisation.type';
 import Loader from '../icons/Loader';
 import { connect } from 'react-redux';
-import type { RootState } from '../../../reducers';
+import type { RootState } from '../../../store';
 import { addGlobalNotification } from '../../../actions/notification.actions';
 import { GlobalNotificationConfig } from '../../../types/notification.types';
 import { NOTIFICATIONTYPES } from '../Notification/notificationtypes';

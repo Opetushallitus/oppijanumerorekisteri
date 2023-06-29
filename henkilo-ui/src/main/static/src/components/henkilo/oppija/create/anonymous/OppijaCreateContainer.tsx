@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../../../../reducers';
 import { BrowserRouter } from 'react-router';
 import { http } from '../../../../../http';
 import { urls } from 'oph-urls-js';
@@ -20,6 +19,7 @@ import { addGlobalNotification } from '../../../../../actions/notification.actio
 import { NOTIFICATIONTYPES } from '../../../../common/Notification/notificationtypes';
 import { GlobalNotificationConfig } from '../../../../../types/notification.types';
 import CloseButton from '../../../../common/button/CloseButton';
+import { RootState } from '../../../../../store';
 
 type OwnProps = {
     router: BrowserRouter;

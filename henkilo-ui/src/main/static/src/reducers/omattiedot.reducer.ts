@@ -53,7 +53,7 @@ const initialState: OmattiedotState = {
     henkilohakuOrganisaatiot: [],
 };
 
-const omattiedot = (state: OmattiedotState = initialState, action) => {
+const omattiedot = (state: OmattiedotState = initialState, action): OmattiedotState => {
     switch (action.type) {
         case FETCH_OMATTIEDOT_REQUEST:
             return Object.assign({}, state, { omattiedotLoading: true });

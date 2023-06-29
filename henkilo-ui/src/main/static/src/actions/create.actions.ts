@@ -6,6 +6,7 @@ import { NOTIFICATIONTYPES } from '../components/common/Notification/notificatio
 import { CREATE_PERSON_REQUEST, CREATE_PERSON_SUCCESS, CREATE_PERSON_FAILURE } from './actiontypes';
 import type { ExistenceCheckRequest } from '../reducers/existence.reducer';
 import type { RequestAction, SuccessAction, FailureAction } from '../reducers/create.reducer';
+import { AppDispatch } from '../store';
 
 const createPersonRequest = (): RequestAction => ({
     type: CREATE_PERSON_REQUEST,
@@ -20,7 +21,7 @@ const createPersonRequestFailure = (status: number): FailureAction => ({
     status,
 });
 
-export const createPerson = (payload: ExistenceCheckRequest) => async (dispatch, state: () => any) => {
+export const createPerson = (payload: ExistenceCheckRequest) => async (dispatch: AppDispatch, state: () => any) => {
     dispatch(createPersonRequest());
     try {
         const url = urls.url('oppijanumerorekisteri-service.henkilo');
@@ -32,7 +33,7 @@ export const createPerson = (payload: ExistenceCheckRequest) => async (dispatch,
         }
     } catch (error) {
         dispatch(createPersonRequestFailure(500));
-        dispatch(
+        dispatch<any>(
             addGlobalNotification({
                 key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
                 title: localizeWithState('KAYTTOOIKEUSRAPORTTI_ERROR', state()),

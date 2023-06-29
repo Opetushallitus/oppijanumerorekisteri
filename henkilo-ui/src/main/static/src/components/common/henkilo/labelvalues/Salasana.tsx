@@ -1,5 +1,5 @@
 import React from 'react';
-import type { RootState } from '../../../../reducers';
+import type { RootState } from '../../../../store';
 import { connect } from 'react-redux';
 import LabelValue from './LabelValue';
 import type { Localisations } from '../../../../types/localisation.type';

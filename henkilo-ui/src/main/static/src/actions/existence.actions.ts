@@ -18,6 +18,7 @@ import type {
     FailureAction,
 } from '../reducers/existence.reducer';
 import { statusToMessage } from '../reducers/existence.reducer';
+import { AppDispatch } from '../store';
 
 export const clearExistenceCheck = (): ClearAction => ({
     type: CLEAR_EXISTENCE_CHECK,
@@ -38,7 +39,7 @@ const requestExistenceCheckFailure = (status: number): FailureAction => ({
 
 const isSupportedResponseStatus = (status: number) => Object.keys(statusToMessage).includes(status.toString());
 
-export const doExistenceCheck = (payload: ExistenceCheckRequest) => async (dispatch, state: () => any) => {
+export const doExistenceCheck = (payload: ExistenceCheckRequest) => async (dispatch: AppDispatch, state: () => any) => {
     dispatch(requestExistenceCheck());
     try {
         const url = urls.url('oppijanumerorekisteri-service.henkilo.exists');
@@ -50,7 +51,7 @@ export const doExistenceCheck = (payload: ExistenceCheckRequest) => async (dispa
         }
     } catch (error) {
         dispatch(requestExistenceCheckFailure(500));
-        dispatch(
+        dispatch<any>(
             addGlobalNotification({
                 key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
                 title: localizeWithState('KAYTTOOIKEUSRAPORTTI_ERROR', state()),

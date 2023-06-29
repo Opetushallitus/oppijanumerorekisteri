@@ -1,7 +1,7 @@
 import React from 'react';
 import './VirhePage.css';
 import { connect } from 'react-redux';
-import type { RootState } from '../../../reducers';
+import type { RootState } from '../../../store';
 import Button from '../button/Button';
 import { Localisations } from '../../../types/localisation.type';
 

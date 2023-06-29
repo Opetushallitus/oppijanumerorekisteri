@@ -1,7 +1,7 @@
 import React from 'react';
 import HenkilohakuPage from './HenkilohakuPage';
 import { connect } from 'react-redux';
-import type { RootState } from '../../reducers';
+import type { RootState } from '../../store';
 import Loader from '../common/icons/Loader';
 import { fetchAllKayttooikeusryhma } from '../../actions/kayttooikeusryhma.actions';
 import { clearHenkilohaku, henkilohaku, henkilohakuCount, updateFilters } from '../../actions/henkilohaku.actions';

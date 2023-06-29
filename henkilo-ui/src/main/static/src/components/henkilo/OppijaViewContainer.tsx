@@ -1,14 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../reducers';
+import type { RootState } from '../../store';
 import { fetchHenkilo, fetchHenkiloSlaves, fetchHenkiloYksilointitieto } from '../../actions/henkilo.actions';
 import {
     fetchKansalaisuusKoodisto,
     fetchKieliKoodisto,
     fetchYhteystietotyypitKoodisto,
 } from '../../actions/koodisto.actions';
-
-import PropertySingleton from '../../globals/PropertySingleton';
 import HenkiloViewPage from './HenkiloViewPage';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
 import { L10n } from '../../types/localisation.type';
@@ -18,7 +16,6 @@ import { getEmptyKayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma
 
 type OwnProps = {
     oidHenkilo: string;
-    externalPermissionService?: string | null;
     l10n: L10n;
     locale: Locale;
 };
@@ -41,11 +38,6 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 class OppijaViewContainer extends React.Component<Props> {
     async componentDidMount() {
-        if (this.props.externalPermissionService) {
-            PropertySingleton.setState({
-                externalPermissionService: this.props.externalPermissionService,
-            });
-        }
         await this.fetchOppijaViewData(this.props.oidHenkilo);
     }
 

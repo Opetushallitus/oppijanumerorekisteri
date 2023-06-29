@@ -4,7 +4,7 @@ export type FrontPropertiesState = {
     initialized: boolean;
 };
 
-export const frontProperties = (state = { initialized: false }, action) => {
+export const frontProperties = (state = { initialized: false }, action): FrontPropertiesState => {
     switch (action.type) {
         case FETCH_FRONTPROPERTIES_REQUEST:
             return Object.assign({}, state, { initialized: false });

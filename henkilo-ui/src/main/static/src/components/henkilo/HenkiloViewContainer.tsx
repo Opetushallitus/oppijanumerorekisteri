@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../reducers';
+import type { RootState } from '../../store';
 import { OmattiedotState } from '../../reducers/omattiedot.reducer';
 import AdminViewContainer from './AdminViewContainer';
 import VirkailijaViewContainer from './VirkailijaViewContainer';
@@ -30,7 +30,6 @@ type StateProps = {
     henkiloType: string;
     l10n: L10n;
     locale: Locale;
-    externalPermissionService?: string;
     isAdmin: boolean;
 };
 
@@ -82,7 +81,6 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     locale: state.locale,
     isAdmin: state.omattiedot.isAdmin,
     ownOid: path(['data', 'oid'], state.omattiedot),
-    externalPermissionService: path(['location', 'query', 'permissionCheckService'], ownProps),
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {

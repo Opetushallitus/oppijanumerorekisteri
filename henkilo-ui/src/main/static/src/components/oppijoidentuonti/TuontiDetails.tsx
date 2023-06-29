@@ -6,7 +6,7 @@ import OphModal from '../common/modal/OphModal';
 import Table from '../common/table/Table';
 import OphCheckboxButtonInput from '../common/forms/OphCheckboxButtonInput';
 import Button from '../common/button/Button';
-import type { RootState } from '../../reducers';
+import type { RootState } from '../../store';
 import type { Tuontidata } from '../../types/tuontidata.types';
 
 type OwnProps = {

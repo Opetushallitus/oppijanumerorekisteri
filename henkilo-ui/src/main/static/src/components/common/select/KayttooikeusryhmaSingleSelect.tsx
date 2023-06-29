@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../../reducers';
+import type { RootState } from '../../../store';
 import OphSelect from './OphSelect';
 import type { OnChangeHandler, Options, Option } from 'react-select';
 import StaticUtils from '../StaticUtils';

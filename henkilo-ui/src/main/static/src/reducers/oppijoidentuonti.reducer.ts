@@ -45,7 +45,10 @@ export const oppijoidenTuontiYhteenveto = (
     }
 };
 
-export const oppijoidenTuontiListaus = (state: TuontiListausState = { loading: true, data: {} }, action: any) => {
+export const oppijoidenTuontiListaus = (
+    state: TuontiListausState = { loading: true, data: {} },
+    action: any
+): TuontiListausState => {
     switch (action.type) {
         case FETCH_OPPIJOIDEN_TUONTI_LISTAUS_REQUEST:
             return { ...state, loading: true };

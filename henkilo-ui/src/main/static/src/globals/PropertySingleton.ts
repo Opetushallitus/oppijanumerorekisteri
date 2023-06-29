@@ -9,8 +9,6 @@ type State = {
     KOTIOSOITE?: string;
     YHTEYSTIETO_ALKUPERA_VTJ?: string;
     YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI?: string;
-
-    externalPermissionService: string;
     rootOrganisaatioOid: string;
 
     PVM_MOMENT_FORMAATTI: string;
@@ -23,7 +21,6 @@ class PropertySingleton {
     state: State;
     constructor() {
         this.state = {
-            externalPermissionService: '',
             rootOrganisaatioOid: '1.2.246.562.10.00000000001',
             opintopolkuCallerId: '1.2.246.562.10.00000000001.henkilo-ui',
             idRunner: 0,
