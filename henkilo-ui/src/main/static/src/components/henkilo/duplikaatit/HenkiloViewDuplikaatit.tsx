@@ -131,14 +131,14 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, router, oidHen
                     onOverlayClick={() => setLink(undefined)}
                     title={L['DUPLIKAATIT_VARMISTUS_OTSIKKO']}
                 >
-                    <p className="duplicate_confirm_p">{`Oletko varma, että haluat yhdistää henkilöt?`}</p>
-                    <p className="duplicate_confirm_p">{`- Oppijanumero ${linkObj.master.oidHenkilo} (${
+                    <p className="duplicate_confirm_p">{L['DUPLIKAATIT_OLETKO_VARMA']}</p>
+                    <p className="duplicate_confirm_p">{`- ${L['DUPLIKAATIT_OPPIJANUMERO']} ${linkObj.master.oidHenkilo} (${
                         linkObj.master.sukunimi
-                    }, ${linkObj.master.kutsumanimi ?? linkObj.master.etunimet}) jää voimaan`}</p>
+                    }, ${linkObj.master.kutsumanimi ?? linkObj.master.etunimet}) ${L['DUPLIKAATIT_JAA_VOIMAAN']}`}</p>
                     <p className="duplicate_confirm_p">
-                        {`- Oppija ${linkObj.duplicate.oidHenkilo} passivoidaan ${
-                            linkObj.duplicate.yksiloity ? 'ja häneltä puretaan yksilöinti' : ''
-                        } `}
+                        {`- ${L['DUPLIKAATIT_OPPIJA']} ${linkObj.duplicate.oidHenkilo} ${
+                            L['DUPLIKAATIT_PASSIVOIDAAN']
+                        } ${linkObj.duplicate.yksiloity ? L['DUPLIKAATIT_PURETAAN_YKSILOINTI'] : ''} `}
                     </p>
                     <div className="duplicate_confirm_buttons">
                         <Button action={() => link()} dataTestId="confirm-force-link">

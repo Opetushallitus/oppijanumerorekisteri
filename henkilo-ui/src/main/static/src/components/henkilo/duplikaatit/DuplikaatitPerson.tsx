@@ -122,7 +122,7 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
                         action={() => setLink({ master, duplicate: henkilo })}
                         dataTestId={`link-duplicate-from-${henkilo.oidHenkilo}`}
                     >
-                        {'< Yhdistä tämä duplikaatti'}
+                        {`< ${L['DUPLIKAATIT_YHDISTA_TAMA_DUPLIKAATTI']}`}
                     </Button>
                     <div className="duplicate-separator-container">
                         <span className="duplicate-separator">TAI</span>
@@ -132,7 +132,7 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
                         action={() => setLink({ master: henkilo, duplicate: master })}
                         dataTestId={`link-main-to-${henkilo.oidHenkilo}`}
                     >
-                        {'Yhdistä tähän henkilöön >'}
+                        {`${L['DUPLIKAATIT_YHDISTA_TAHAN_HENKILOON']} >`}
                     </Button>
                 </DataCell>
             )}
