@@ -42,6 +42,10 @@ public interface YksilointiService {
      * @return boolean indicating whether strings can be considered similar
      */
     boolean isSimilar(String a, String b);
+    boolean namesMatch(
+            String givenEtunimet, String givenSukunimi,
+            String expectedEtunimet, String expectedSukunimi
+    );
 
     /**
      * Purkaa virkailijan käsin yksilöimän henkilön yksilöinnin

@@ -692,13 +692,6 @@ public class YksilointiServiceImpl implements YksilointiService {
         if (detailsMatch(vtjHenkilo.getEtunimi(), vtjHenkilo.getSukunimi(), details))
             return Optional.empty();
 
-        if (salliHenkilonLuontiYhdellaEtunimella) {
-            for (String nimi : HenkiloExistenceCheckDto.splitEtunimet(vtjHenkilo.getEtunimi())) {
-                if (detailsMatch(nimi, vtjHenkilo.getSukunimi(), details))
-                    return Optional.empty();
-            }
-        }
-
         reportConflict(vtjHenkilo, details);
         throw new ConflictException();
     }
@@ -710,14 +703,18 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     private boolean detailsMatch(final String firstName, final String lastName, final HenkiloExistenceCheckDto details) {
-        if (isSimilar(firstName, details.getEtunimet()) && isSimilar(lastName, details.getSukunimi())) {
-            return true;
+        if (salliHenkilonLuontiYhdellaEtunimella) {
+            return namesMatch(details.getEtunimet(), details.getSukunimi(), firstName, lastName);
+        } else {
+            return isSimilar(firstName, details.getEtunimet()) && isSimilar(lastName, details.getSukunimi());
         }
-        if (salliHenkilonLuontiYhdellaEtunimella && isSimilar(lastName, details.getSukunimi())) {
-            return HenkiloExistenceCheckDto.splitEtunimet(firstName).stream()
-                    .anyMatch(nimi -> isSimilar(nimi, details.getEtunimet()));
-        }
-        return false;
+    }
+
+    public boolean namesMatch(
+            String givenEtunimet, String givenSukunimi,
+            String expectedEtunimet, String expectedSukunimi
+    ) {
+        return tarkistaSukunimi(givenSukunimi, expectedSukunimi) && tarkistaEtunimi(givenEtunimet, expectedEtunimet);
     }
 
     private boolean isOppija(String oid) {
