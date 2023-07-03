@@ -111,3 +111,5 @@ aws:
   henkiloModifiedTopic:
     enabled: false
     topicArn: disabled
+
+feature.kjhh-2346-salli-henkilon-luonti-yhdella-etunimella: false

@@ -4,5 +4,6 @@ delete from organisaatio;
 delete from tuonti_rivi;
 delete from tuonti;
 delete from tuonti_data;
+delete from henkilo_kansalaisuus;
 delete from henkilo;
 delete from henkiloviite;

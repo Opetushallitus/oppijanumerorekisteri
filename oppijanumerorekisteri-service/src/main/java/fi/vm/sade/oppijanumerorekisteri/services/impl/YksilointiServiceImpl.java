@@ -23,6 +23,7 @@ import org.apache.lucene.search.spell.JaroWinklerDistance;
 import org.apache.lucene.search.spell.StringDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,9 @@ import static java.util.stream.Collectors.*;
 @Service
 @RequiredArgsConstructor
 public class YksilointiServiceImpl implements YksilointiService {
+    @Value("${feature.kjhh-2346-salli-henkilon-luonti-yhdella-etunimella:false}")
+    private boolean salliHenkilonLuontiYhdellaEtunimella;
+
     public static final String RYHMAALKUPERA_VTJ = "alkupera1";
     private static final Logger logger = LoggerFactory.getLogger(YksilointiService.class);
     private static final String KIELIKOODI_SV = "sv";
@@ -258,13 +262,17 @@ public class YksilointiServiceImpl implements YksilointiService {
         return isSimilar(henkilo1sukunimi, henkilo2sukunimi, oppijanumerorekisteriProperties.getSukunimiThreshold());
     }
 
-    protected boolean tarkistaEtunimi(String henkilo1kutsumanimi, String henkilo2etunimet) {
-        if (henkilo2etunimet.contains(henkilo1kutsumanimi)) {
+    protected boolean tarkistaEtunimi(String kutsumanimi, String vtjEtunimet) {
+        if (vtjEtunimet.contains(kutsumanimi)) {
             return true;
         }
-        return Arrays.stream(henkilo2etunimet.split(" "))
-                .anyMatch(henkilo2etunimi ->
-                        isSimilar(henkilo1kutsumanimi, henkilo2etunimi, oppijanumerorekisteriProperties.getEtunimiThreshold()));
+        if (salliHenkilonLuontiYhdellaEtunimella) {
+            return HenkiloExistenceCheckDto.splitEtunimet(vtjEtunimet).stream()
+                    .anyMatch(vtjEtunimi -> isSimilar(kutsumanimi, vtjEtunimi, oppijanumerorekisteriProperties.getEtunimiThreshold()));
+        } else {
+            return Arrays.stream(vtjEtunimet.split(" "))
+                    .anyMatch(vtjEtunimi -> isSimilar(kutsumanimi, vtjEtunimi, oppijanumerorekisteriProperties.getEtunimiThreshold()));
+        }
     }
 
     private void addYksilointitietosWhenNamesDoNotMatch(final Henkilo henkilo, final YksiloityHenkilo yksiloityHenkilo) {
@@ -680,10 +688,11 @@ public class YksilointiServiceImpl implements YksilointiService {
         throw new ConflictException();
     }
 
-    private Optional<String> compareVtjDetails(final YksiloityHenkilo henkilo, final HenkiloExistenceCheckDto details) {
-        if (detailsMatch(henkilo.getEtunimi(), henkilo.getSukunimi(), details))
+    private Optional<String> compareVtjDetails(final YksiloityHenkilo vtjHenkilo, final HenkiloExistenceCheckDto details) {
+        if (detailsMatch(vtjHenkilo.getEtunimi(), vtjHenkilo.getSukunimi(), details))
             return Optional.empty();
-        reportConflict(henkilo, details);
+
+        reportConflict(vtjHenkilo, details);
         throw new ConflictException();
     }
 
@@ -694,8 +703,18 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     private boolean detailsMatch(final String firstName, final String lastName, final HenkiloExistenceCheckDto details) {
-        return isSimilar(firstName, details.getEtunimet()) &&
-                isSimilar(lastName, details.getSukunimi());
+        if (salliHenkilonLuontiYhdellaEtunimella) {
+            return namesMatch(details.getEtunimet(), details.getSukunimi(), firstName, lastName);
+        } else {
+            return isSimilar(firstName, details.getEtunimet()) && isSimilar(lastName, details.getSukunimi());
+        }
+    }
+
+    public boolean namesMatch(
+            String givenEtunimet, String givenSukunimi,
+            String expectedEtunimet, String expectedSukunimi
+    ) {
+        return tarkistaSukunimi(givenSukunimi, expectedSukunimi) && tarkistaEtunimi(givenEtunimet, expectedEtunimet);
     }
 
     private boolean isOppija(String oid) {
