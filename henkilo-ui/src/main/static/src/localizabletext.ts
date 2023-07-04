@@ -44,7 +44,7 @@ const isValid = (format, localizableText) => {
 };
 
 const getValue = (format, localizableText: TextGroup, uiLang: Locale, fallbackValue) => {
-    let value = format.getValue(localizableText, uiLang);
+    const value = format.getValue(localizableText, uiLang);
     if (hasValue(value)) {
         return value;
     }

@@ -70,8 +70,5 @@ export const oppijanumerorekisteriApi = createApi({
     }),
 });
 
-export const {
-    useGetPassinumerotQuery,
-    useSetPassinumerotMutation,
-    usePostLinkHenkilosMutation,
-} = oppijanumerorekisteriApi;
+export const { useGetPassinumerotQuery, useSetPassinumerotMutation, usePostLinkHenkilosMutation } =
+    oppijanumerorekisteriApi;

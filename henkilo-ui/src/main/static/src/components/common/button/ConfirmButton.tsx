@@ -83,4 +83,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     notifications: state.notifications.buttonNotifications,
 });
 
-export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(ReactTimeout(ConfirmButton));
+export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(ReactTimeout(ConfirmButton));

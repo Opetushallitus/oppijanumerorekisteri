@@ -418,8 +418,8 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     };
 
     _onOrganisaatioSelection = (selection: OrganisaatioSelectObject): void => {
-        const currentOrganisaatioSelections: Array<OrganisaatioSelectObject> = this.state.kayttooikeusryhmaForm
-            .organisaatioSelections;
+        const currentOrganisaatioSelections: Array<OrganisaatioSelectObject> =
+            this.state.kayttooikeusryhmaForm.organisaatioSelections;
         if (!currentOrganisaatioSelections.some((organisaatio) => organisaatio.oid === selection.oid)) {
             this.setState({
                 kayttooikeusryhmaForm: {
@@ -431,9 +431,10 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     };
 
     _onRemoveOrganisaatioSelect = (selection: OrganisaatioSelectObject): void => {
-        const newOrganisaatioSelections: Array<OrganisaatioSelectObject> = this.state.kayttooikeusryhmaForm.organisaatioSelections.filter(
-            (organisaatio) => selection.oid !== organisaatio.oid
-        );
+        const newOrganisaatioSelections: Array<OrganisaatioSelectObject> =
+            this.state.kayttooikeusryhmaForm.organisaatioSelections.filter(
+                (organisaatio) => selection.oid !== organisaatio.oid
+            );
         this.setState({
             kayttooikeusryhmaForm: {
                 ...this.state.kayttooikeusryhmaForm,
@@ -444,8 +445,8 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
 
     _onOppilaitostyypitSelection = (selection: React.ChangeEvent<HTMLInputElement>): void => {
         if (selection.target.checked) {
-            const currentOppilaitostyypitSelections: Array<string> = this.state.kayttooikeusryhmaForm
-                .oppilaitostyypitSelections;
+            const currentOppilaitostyypitSelections: Array<string> =
+                this.state.kayttooikeusryhmaForm.oppilaitostyypitSelections;
             if (
                 !currentOppilaitostyypitSelections.some(
                     (oppilaitostyyppi: string) => oppilaitostyyppi === selection.target.value
@@ -459,9 +460,10 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                 });
             }
         } else {
-            const newOppilaitostyypitSelections: Array<string> = this.state.kayttooikeusryhmaForm.oppilaitostyypitSelections.filter(
-                (oppilaitostyyppi: string) => selection.target.value !== oppilaitostyyppi
-            );
+            const newOppilaitostyypitSelections: Array<string> =
+                this.state.kayttooikeusryhmaForm.oppilaitostyypitSelections.filter(
+                    (oppilaitostyyppi: string) => selection.target.value !== oppilaitostyyppi
+                );
             this.setState({
                 kayttooikeusryhmaForm: {
                     ...this.state.kayttooikeusryhmaForm,
@@ -473,8 +475,8 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
 
     _onOrganisaatiotyypitSelection = (selection: React.ChangeEvent<HTMLInputElement>): void => {
         if (selection.target.checked) {
-            const currentOrganisaatiotyypitSelections: Array<string> = this.state.kayttooikeusryhmaForm
-                .organisaatiotyypitSelections;
+            const currentOrganisaatiotyypitSelections: Array<string> =
+                this.state.kayttooikeusryhmaForm.organisaatiotyypitSelections;
             if (
                 !currentOrganisaatiotyypitSelections.some(
                     (organisaatiotyyppi: string) => organisaatiotyyppi === selection.target.value
@@ -488,9 +490,10 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                 });
             }
         } else {
-            const newOrganisaatiotyypitSelections: Array<string> = this.state.kayttooikeusryhmaForm.organisaatiotyypitSelections.filter(
-                (organisaatiotyyppi: string) => selection.target.value !== organisaatiotyyppi
-            );
+            const newOrganisaatiotyypitSelections: Array<string> =
+                this.state.kayttooikeusryhmaForm.organisaatiotyypitSelections.filter(
+                    (organisaatiotyyppi: string) => selection.target.value !== organisaatiotyyppi
+                );
             this.setState({
                 kayttooikeusryhmaForm: {
                     ...this.state.kayttooikeusryhmaForm,
@@ -525,8 +528,8 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     };
 
     _onKayttooikeusryhmaSelection = (selection: Option<string>): void => {
-        const currentKayttooikeusryhmaSelections: Options<string> = this.state.kayttooikeusryhmaForm
-            .kayttooikeusryhmaSelections;
+        const currentKayttooikeusryhmaSelections: Options<string> =
+            this.state.kayttooikeusryhmaForm.kayttooikeusryhmaSelections;
         if (
             !currentKayttooikeusryhmaSelections.some(
                 (kayttooikeusryhma: Option<string>) => kayttooikeusryhma.value === selection.value
@@ -542,9 +545,10 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     };
 
     _onRemoveKayttooikeusryhmaSelect = (selection: Option<string>): void => {
-        const newKayttooikeusryhmaSelections: Options<string> = this.state.kayttooikeusryhmaForm.kayttooikeusryhmaSelections.filter(
-            (kayttooikeusryhma: Option<string>) => kayttooikeusryhma.value !== selection.value
-        );
+        const newKayttooikeusryhmaSelections: Options<string> =
+            this.state.kayttooikeusryhmaForm.kayttooikeusryhmaSelections.filter(
+                (kayttooikeusryhma: Option<string>) => kayttooikeusryhma.value !== selection.value
+            );
         this.setState({
             kayttooikeusryhmaForm: {
                 ...this.state.kayttooikeusryhmaForm,
@@ -590,13 +594,14 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     };
 
     _onRemovePalveluJaKayttooikeus = (removeItem: PalveluJaKayttooikeusSelection): void => {
-        const newPalveluJaKayttooikeusSelections = this.state.kayttooikeusryhmaForm.palveluJaKayttooikeusSelections.filter(
-            (currentItem: PalveluJaKayttooikeusSelection) =>
-                !(
-                    removeItem.kayttooikeus.value === currentItem.kayttooikeus.value &&
-                    removeItem.palvelu.value === currentItem.palvelu.value
-                )
-        );
+        const newPalveluJaKayttooikeusSelections =
+            this.state.kayttooikeusryhmaForm.palveluJaKayttooikeusSelections.filter(
+                (currentItem: PalveluJaKayttooikeusSelection) =>
+                    !(
+                        removeItem.kayttooikeus.value === currentItem.kayttooikeus.value &&
+                        removeItem.palvelu.value === currentItem.palvelu.value
+                    )
+            );
         this.setState({
             kayttooikeusryhmaForm: {
                 ...this.state.kayttooikeusryhmaForm,

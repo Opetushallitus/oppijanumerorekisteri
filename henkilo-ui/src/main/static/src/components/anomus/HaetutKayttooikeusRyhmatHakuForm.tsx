@@ -18,7 +18,7 @@ import { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/Organisaati
 import type { Option } from 'react-select';
 
 type OwnProps = {
-    onSubmit: (arg0: {}) => void;
+    onSubmit: (arg0: object) => void;
 };
 
 type StateProps = {

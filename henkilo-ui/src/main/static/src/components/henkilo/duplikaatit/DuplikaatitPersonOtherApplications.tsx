@@ -17,7 +17,7 @@ type Hakemus = {
 
 type Props = {
     hakemukset: Hakemus[];
-    koodisto: {};
+    koodisto: object;
     locale: string;
     styleClasses?: string;
     L: Record<string, string>;

@@ -12,7 +12,7 @@ import { KutsuRead } from '../types/domain/kayttooikeus/Kutsu.types';
 export type KutsuListState = {
     loaded: boolean;
     result: Array<KutsuRead>;
-    kutsuByToken: KutsuRead | {};
+    kutsuByToken: KutsuRead | object;
     kutsuByTokenLoading: boolean;
 };
 

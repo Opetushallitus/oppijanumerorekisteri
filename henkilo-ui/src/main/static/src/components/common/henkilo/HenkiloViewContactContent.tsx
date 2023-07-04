@@ -72,8 +72,10 @@ const containsEmail = (infoGroup: ContactInfo): boolean =>
 const isWorkEmail = (infoGroup: ContactInfo): boolean =>
     infoGroup.id && infoGroup.type === WORK_ADDRESS && containsEmail(infoGroup);
 
-const excludeRemovedItems = (removeList: Array<number | string>) => (infoGroup: ContactInfo): boolean =>
-    !removeList.includes(infoGroup.id) && !removeList.includes(infoGroup.henkiloUiId);
+const excludeRemovedItems =
+    (removeList: Array<number | string>) =>
+    (infoGroup: ContactInfo): boolean =>
+        !removeList.includes(infoGroup.id) && !removeList.includes(infoGroup.henkiloUiId);
 
 const resolveWorkAddresses = (contactInfo: Array<ContactInfo>, removeList: Array<number | string>) =>
     (contactInfo || []).filter((infoGroup) => isWorkEmail(infoGroup)).filter(excludeRemovedItems(removeList));

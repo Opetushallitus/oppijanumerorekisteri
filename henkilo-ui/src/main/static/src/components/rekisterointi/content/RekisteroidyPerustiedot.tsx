@@ -26,7 +26,7 @@ type OwnProps = {
     };
     updatePayloadModel: (arg0: string) => void;
     koodisto: {
-        kieli: Array<{}>;
+        kieli: Array<object>;
     };
     isUsernameError: boolean;
     isPasswordError: boolean;
@@ -98,4 +98,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(RekisteroidyPerustiedot);
+export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(RekisteroidyPerustiedot);

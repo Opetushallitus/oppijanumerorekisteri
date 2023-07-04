@@ -28,18 +28,21 @@ export const AnojaKayttooikeusryhmat = (props: Props) => {
             Header: props.l10n[props.locale]['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_MAIN_HEADER'],
             columns: [
                 {
-                    Header:
-                        props.l10n[props.locale]['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_ORGANISAATIO_HEADER'],
+                    Header: props.l10n[props.locale][
+                        'HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_ORGANISAATIO_HEADER'
+                    ],
                     accessor: 'organisaatioNimi',
                 },
                 {
-                    Header:
-                        props.l10n[props.locale]['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_KAYTTOOIKEUS_HEADER'],
+                    Header: props.l10n[props.locale][
+                        'HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_KAYTTOOIKEUS_HEADER'
+                    ],
                     accessor: 'kayttooikeusryhmaNimi',
                 },
                 {
-                    Header:
-                        props.l10n[props.locale]['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_VOIMASSAPVM_HEADER'],
+                    Header: props.l10n[props.locale][
+                        'HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_VOIMASSAPVM_HEADER'
+                    ],
                     accessor: 'voimassaPvm',
                 },
             ],

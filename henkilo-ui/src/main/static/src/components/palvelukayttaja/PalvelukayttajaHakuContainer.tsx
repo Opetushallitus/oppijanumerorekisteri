@@ -47,7 +47,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
     palvelukayttajat: state.palvelukayttajat,
 });
 
-export default connect<StateProps, DispatchProps, {}, RootState>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, never, RootState>(mapStateToProps, {
     setPalvelukayttajatCriteria,
     fetchPalvelukayttajat,
 })(PalvelukayttajaHakuContainer);

@@ -92,35 +92,33 @@ const receiveHenkiloUpdate = (oid) => ({
     receivedAt: Date.now(),
 });
 const errorHenkiloUpdate = (error) => ({ type: UPDATE_HENKILO_FAILURE, error });
-export const updateHenkiloAndRefetch = (payload, errorNotificationConfig) => async (
-    dispatch: AppDispatch,
-    getState: () => RootState
-) => {
-    dispatch(requestHenkiloUpdate(payload.oidHenkilo));
-    const url = urls.url('oppijanumerorekisteri-service.henkilo');
-    try {
-        const oid = await http.put<string>(url, payload);
-        dispatch(receiveHenkiloUpdate(oid));
-        dispatch<any>(fetchHenkilo(oid));
-    } catch (error) {
-        const L = getState().l10n.localisations[getState().locale];
-        if (errorNotificationConfig) {
-            const errorMessages = getUpdateHenkiloErrorMessages(error, L);
-            if (errorMessages.length > 0) {
-                errorMessages.forEach((errorMessage) =>
-                    dispatch<any>(addGlobalNotification(createUpdateHenkiloErrorNotification(errorMessage)))
-                );
-            } else {
-                const errorUpdateHenkiloNotification = createUpdateHenkiloErrorNotification(
-                    L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE']
-                );
-                dispatch<any>(addGlobalNotification(errorUpdateHenkiloNotification));
+export const updateHenkiloAndRefetch =
+    (payload, errorNotificationConfig) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        dispatch(requestHenkiloUpdate(payload.oidHenkilo));
+        const url = urls.url('oppijanumerorekisteri-service.henkilo');
+        try {
+            const oid = await http.put<string>(url, payload);
+            dispatch(receiveHenkiloUpdate(oid));
+            dispatch<any>(fetchHenkilo(oid));
+        } catch (error) {
+            const L = getState().l10n.localisations[getState().locale];
+            if (errorNotificationConfig) {
+                const errorMessages = getUpdateHenkiloErrorMessages(error, L);
+                if (errorMessages.length > 0) {
+                    errorMessages.forEach((errorMessage) =>
+                        dispatch<any>(addGlobalNotification(createUpdateHenkiloErrorNotification(errorMessage)))
+                    );
+                } else {
+                    const errorUpdateHenkiloNotification = createUpdateHenkiloErrorNotification(
+                        L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE']
+                    );
+                    dispatch<any>(addGlobalNotification(errorUpdateHenkiloNotification));
+                }
             }
+            dispatch(errorHenkiloUpdate(error));
+            throw error;
         }
-        dispatch(errorHenkiloUpdate(error));
-        throw error;
-    }
-};
+    };
 const createUpdateHenkiloErrorNotification = (title: string): GlobalNotificationConfig => ({
     autoClose: 10000,
     type: NOTIFICATIONTYPES.ERROR,
@@ -128,7 +126,7 @@ const createUpdateHenkiloErrorNotification = (title: string): GlobalNotification
     title: title,
 });
 const getUpdateHenkiloErrorMessages = (error, L): Array<string> => {
-    let errorMessages = [];
+    const errorMessages = [];
     if (error.status === 400 && error.message && error.message.indexOf('invalid.hetu') !== -1) {
         errorMessages.push(L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU']);
     }
@@ -181,30 +179,28 @@ const requestKayttajatietoUpdateSuccess = (kayttajatieto) => ({
 const requestKayttajatietoUpdateFailure = () => ({
     type: UPDATE_KAYTTAJATIETO_FAILURE,
 });
-export const updateAndRefetchKayttajatieto = (oid, username) => async (
-    dispatch: AppDispatch,
-    getState: () => RootState
-) => {
-    dispatch(requestKayttajatietoUpdate(username));
-    const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
-    try {
-        const kayttajatieto = await http.put(url, { username: username });
-        dispatch(requestKayttajatietoUpdateSuccess(kayttajatieto));
-        dispatch<any>(fetchKayttajatieto(oid));
-    } catch (error) {
-        if (error.errorType === 'IllegalArgumentException') {
-            dispatch<any>(
-                addGlobalNotification({
-                    autoClose: 10000,
-                    title: localizeWithState('NOTIFICATION_HENKILOTIEDOT_KAYTTAJANIMI_EXISTS', getState()),
-                    type: NOTIFICATIONTYPES.ERROR,
-                    key: 'NOTIFICATION_HENKILOTIEDOT_KAYTTAJANIMI_EXISTS',
-                })
-            );
+export const updateAndRefetchKayttajatieto =
+    (oid, username) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        dispatch(requestKayttajatietoUpdate(username));
+        const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
+        try {
+            const kayttajatieto = await http.put(url, { username: username });
+            dispatch(requestKayttajatietoUpdateSuccess(kayttajatieto));
+            dispatch<any>(fetchKayttajatieto(oid));
+        } catch (error) {
+            if (error.errorType === 'IllegalArgumentException') {
+                dispatch<any>(
+                    addGlobalNotification({
+                        autoClose: 10000,
+                        title: localizeWithState('NOTIFICATION_HENKILOTIEDOT_KAYTTAJANIMI_EXISTS', getState()),
+                        type: NOTIFICATIONTYPES.ERROR,
+                        key: 'NOTIFICATION_HENKILOTIEDOT_KAYTTAJANIMI_EXISTS',
+                    })
+                );
+            }
+            dispatch(requestKayttajatietoUpdateFailure());
         }
-        dispatch(requestKayttajatietoUpdateFailure());
-    }
-};
+    };
 
 const requestPassivoiHenkilo = (oid) => ({ type: PASSIVOI_HENKILO_REQUEST, oid });
 const receivePassivoiHenkilo = () => ({

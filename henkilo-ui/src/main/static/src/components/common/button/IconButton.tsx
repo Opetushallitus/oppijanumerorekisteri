@@ -1,8 +1,13 @@
 import './IconButton.css';
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { ReactNode } from 'react';
 
-const IconButton = ({ onClick, href, children }) =>
+type Props = {
+    href?: string;
+    onClick?: () => void;
+    children: ReactNode;
+};
+
+const IconButton = ({ onClick, href, children }: Props) =>
     onClick ? (
         <span className="icon-button" onClick={onClick}>
             {children}
@@ -10,10 +15,5 @@ const IconButton = ({ onClick, href, children }) =>
     ) : (
         <a href={href}>{children}</a>
     );
-
-IconButton.propTypes = {
-    onClick: PropTypes.func,
-    href: PropTypes.string,
-};
 
 export default IconButton;

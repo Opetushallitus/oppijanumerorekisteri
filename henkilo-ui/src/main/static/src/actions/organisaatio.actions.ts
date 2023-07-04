@@ -36,29 +36,31 @@ const requestAllOrganisaatiosFailure = (error) => ({
     error,
 });
 
-export const fetchAllOrganisaatios = (
-    criteria: OrganisaatioCriteria = {
-        tyyppi: 'ORGANISAATIO',
-        tila: ['AKTIIVINEN'],
-    }
-) => async (dispatch: AppDispatch, getState: GetState) => {
-    // Fetch only with the first call
-    if (!getState().organisaatio.organisaatioLoaded && !getState().organisaatio.organisaatioLoading) {
-        const url = urls.url('kayttooikeus-service.organisaatio', criteria);
-        dispatch(requestAllOrganisaatios());
-        try {
-            const organisaatiot = await http.get(url);
-            dispatch(requestAllOrganisaatiosSuccess(organisaatiot));
-            dispatch({
-                type: FETCH_ORGANISATIONS_SUCCESS,
-                organisations: organisaatiot,
-            });
-        } catch (error) {
-            dispatch(requestAllOrganisaatiosFailure(error));
-            throw error;
+export const fetchAllOrganisaatios =
+    (
+        criteria: OrganisaatioCriteria = {
+            tyyppi: 'ORGANISAATIO',
+            tila: ['AKTIIVINEN'],
         }
-    }
-};
+    ) =>
+    async (dispatch: AppDispatch, getState: GetState) => {
+        // Fetch only with the first call
+        if (!getState().organisaatio.organisaatioLoaded && !getState().organisaatio.organisaatioLoading) {
+            const url = urls.url('kayttooikeus-service.organisaatio', criteria);
+            dispatch(requestAllOrganisaatios());
+            try {
+                const organisaatiot = await http.get(url);
+                dispatch(requestAllOrganisaatiosSuccess(organisaatiot));
+                dispatch({
+                    type: FETCH_ORGANISATIONS_SUCCESS,
+                    organisations: organisaatiot,
+                });
+            } catch (error) {
+                dispatch(requestAllOrganisaatiosFailure(error));
+                throw error;
+            }
+        }
+    };
 
 const requestAllHierarchialOrganisaatios = () => ({
     type: FETCH_ALL_ORGANISAATIOS_HIERARCHY_REQUEST,

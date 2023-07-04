@@ -94,7 +94,7 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
     };
 
     getErrors = (values: Values, metadata: Metadata, L: Localisations): Errors => {
-        let errors: Errors = [];
+        const errors: Errors = [];
 
         // tarkistetaan pakollisuudet
         Object.entries(values).forEach(([name, value]) => {
@@ -168,4 +168,4 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     tyosahkopostiosoite: ownProps.params['tyosahkopostiosoite'] === 'true',
 });
 
-export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(VahvaTunnistusLisatiedotContainer);
+export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(VahvaTunnistusLisatiedotContainer);

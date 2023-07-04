@@ -37,4 +37,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
 });
 
-export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(Syntymaaika);
+export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(Syntymaaika);

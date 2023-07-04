@@ -62,4 +62,4 @@ const mapStateToProps = (state: RootState): StateProps => {
     };
 };
 
-export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(KoodistoSelect);
+export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(KoodistoSelect);

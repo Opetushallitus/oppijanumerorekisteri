@@ -1,0 +1,7 @@
+.nyc_output/
+build/
+config/
+coverage/
+node_modules/
+playwright-results/
+scripts/

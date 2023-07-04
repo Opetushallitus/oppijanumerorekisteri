@@ -1,5 +1,10 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
-export const ShowText = (props) => {
+type Props = {
+    show: boolean;
+    children: ReactNode;
+};
+
+export const ShowText = (props: Props) => {
     return <span>{props.show ? props.children : ''}</span>;
 };

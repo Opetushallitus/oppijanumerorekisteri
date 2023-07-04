@@ -404,7 +404,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
     }
 
     _parseEmailOptions(henkilo: HenkiloState): { value: string; label: string }[] {
-        let emails = [];
+        const emails = [];
         if (henkilo.henkilo.yhteystiedotRyhma) {
             henkilo.henkilo.yhteystiedotRyhma.forEach((yhteystietoRyhma) => {
                 yhteystietoRyhma.yhteystieto.forEach((yhteys) => {

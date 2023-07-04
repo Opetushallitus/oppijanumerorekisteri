@@ -94,4 +94,4 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     virhe: ownProps.route.path.indexOf('/vahvatunnistusinfo/virhe/') !== -1,
 });
 
-export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(VahvaTunnistusInfoContainer);
+export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(VahvaTunnistusInfoContainer);

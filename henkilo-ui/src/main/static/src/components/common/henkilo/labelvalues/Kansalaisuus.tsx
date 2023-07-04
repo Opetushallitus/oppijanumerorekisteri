@@ -69,4 +69,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     locale: state.locale,
 });
 
-export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(Kansalaisuus);
+export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(Kansalaisuus);

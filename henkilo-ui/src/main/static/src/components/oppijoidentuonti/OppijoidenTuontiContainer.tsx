@@ -172,7 +172,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
     translate: (key: string) => state.l10n.localisations[state.locale][key] || key,
 });
 
-export default connect<StateProps, DispatchProps, {}, RootState>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, never, RootState>(mapStateToProps, {
     fetchOppijoidenTuontiYhteenveto,
     fetchOppijoidenTuontiListaus,
     fetchTuontiKooste,

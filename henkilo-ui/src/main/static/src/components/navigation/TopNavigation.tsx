@@ -111,4 +111,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
 });
 
-export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(TopNavigation);
+export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(TopNavigation);

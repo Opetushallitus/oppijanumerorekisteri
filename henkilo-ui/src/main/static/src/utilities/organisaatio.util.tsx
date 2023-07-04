@@ -172,7 +172,7 @@ const getOrganisaatios = (organisaatios: OrganisaatioHenkilo[], locale: Locale):
 const mapOrganisaatio = (
     organisaatio: OrganisaatioWithChildren,
     locale: Locale,
-    sisallytaTyypit: boolean = true
+    sisallytaTyypit = true
 ): { value: string; label: string } => {
     const nimi = toLocalizedText(locale, organisaatio.nimi);
     const tyypit = sisallytaTyypit ? ` (${organisaatio.tyypit.join(',')})` : '';
@@ -197,10 +197,9 @@ export const getOrganisaatioOptionsAndFilter = (
     locale: Locale,
     isRyhma: boolean
 ): { options: any; filterOptions: any } => {
-    const newOptions = getOrganisationsOrRyhmas(
-        getOrganisaatios(newOrganisaatios, locale),
-        isRyhma
-    ).map((organisaatio) => mapOrganisaatio(organisaatio, locale, !isRyhma));
+    const newOptions = getOrganisationsOrRyhmas(getOrganisaatios(newOrganisaatios, locale), isRyhma).map(
+        (organisaatio) => mapOrganisaatio(organisaatio, locale, !isRyhma)
+    );
     // update index (raskas operaatio)
     const index = createFilterOptions({ options: newOptions });
     return {

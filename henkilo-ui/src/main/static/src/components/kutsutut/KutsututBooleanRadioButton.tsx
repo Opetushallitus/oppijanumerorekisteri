@@ -82,4 +82,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     isOphVirkailija: state.omattiedot.isOphVirkailija,
 });
 
-export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(KutsututBooleanRadioButton);
+export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(KutsututBooleanRadioButton);

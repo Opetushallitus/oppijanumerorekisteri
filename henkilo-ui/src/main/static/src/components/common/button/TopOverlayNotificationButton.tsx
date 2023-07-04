@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import NotificationButton from './NotificationButton';
-import CSS from 'csstype';
+import type CSS from 'csstype';
 
 type Props = {
     id: string;

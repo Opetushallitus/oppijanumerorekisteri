@@ -118,56 +118,54 @@ const errorHaettuKayttooikeusryhmaUpdate = (id) => ({
     type: UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_FAILURE,
     id,
 });
-export const updateHaettuKayttooikeusryhma = (
-    id: number,
-    kayttoOikeudenTila: string,
-    alkupvm: string,
-    loppupvm: string,
-    oidHenkilo: { oid: string },
-    hylkaysperuste: string
-) => async (dispatch: AppDispatch) => {
-    dispatch(requestHaettuKayttooikeusryhmaUpdate(id));
-    const url = urls.url('kayttooikeus-service.henkilo.kaytto-oikeus-anomus');
-    try {
-        await http.put(url, {
-            id,
-            kayttoOikeudenTila,
-            alkupvm,
-            loppupvm,
-            hylkaysperuste,
-        });
-        dispatch(receiveHaettuKayttooikeusryhmaUpdate(id));
-        dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(oidHenkilo.oid));
-        dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo.oid));
-    } catch (error) {
-        dispatch(errorHaettuKayttooikeusryhmaUpdate(id));
-        throw error;
-    }
-};
+export const updateHaettuKayttooikeusryhma =
+    (
+        id: number,
+        kayttoOikeudenTila: string,
+        alkupvm: string,
+        loppupvm: string,
+        oidHenkilo: { oid: string },
+        hylkaysperuste: string
+    ) =>
+    async (dispatch: AppDispatch) => {
+        dispatch(requestHaettuKayttooikeusryhmaUpdate(id));
+        const url = urls.url('kayttooikeus-service.henkilo.kaytto-oikeus-anomus');
+        try {
+            await http.put(url, {
+                id,
+                kayttoOikeudenTila,
+                alkupvm,
+                loppupvm,
+                hylkaysperuste,
+            });
+            dispatch(receiveHaettuKayttooikeusryhmaUpdate(id));
+            dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(oidHenkilo.oid));
+            dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo.oid));
+        } catch (error) {
+            dispatch(errorHaettuKayttooikeusryhmaUpdate(id));
+            throw error;
+        }
+    };
 
-export const updateHaettuKayttooikeusryhmaInAnomukset = (
-    id: number,
-    kayttoOikeudenTila: string,
-    alkupvm: string,
-    loppupvm: string,
-    hylkaysperuste: string
-) => async (dispatch: AppDispatch) => {
-    dispatch(requestHaettuKayttooikeusryhmaUpdate(id));
-    const url = urls.url('kayttooikeus-service.henkilo.kaytto-oikeus-anomus');
-    try {
-        await http.put(url, {
-            id,
-            kayttoOikeudenTila,
-            alkupvm,
-            loppupvm,
-            hylkaysperuste,
-        });
-        dispatch(receiveHaettuKayttooikeusryhmaUpdate(id));
-    } catch (error) {
-        dispatch(errorHaettuKayttooikeusryhmaUpdate(id));
-        throw error; // throw error to set notification in kayttooikeusanomukset
-    }
-};
+export const updateHaettuKayttooikeusryhmaInAnomukset =
+    (id: number, kayttoOikeudenTila: string, alkupvm: string, loppupvm: string, hylkaysperuste: string) =>
+    async (dispatch: AppDispatch) => {
+        dispatch(requestHaettuKayttooikeusryhmaUpdate(id));
+        const url = urls.url('kayttooikeus-service.henkilo.kaytto-oikeus-anomus');
+        try {
+            await http.put(url, {
+                id,
+                kayttoOikeudenTila,
+                alkupvm,
+                loppupvm,
+                hylkaysperuste,
+            });
+            dispatch(receiveHaettuKayttooikeusryhmaUpdate(id));
+        } catch (error) {
+            dispatch(errorHaettuKayttooikeusryhmaUpdate(id));
+            throw error; // throw error to set notification in kayttooikeusanomukset
+        }
+    };
 
 export const clearHaettuKayttooikeusryhma = (id) => (dispatch: AppDispatch) => {
     dispatch({ type: CLEAR_HAETTU_KAYTTOOIKEUSRYHMA, id });
@@ -214,21 +212,22 @@ const errorAllowedKayttooikeusryhmasForOrganisation = (oidHenkilo, oidOrganisati
     oidHenkilo,
     oidOrganisation,
 });
-export const fetchAllowedKayttooikeusryhmasForOrganisation = (oidHenkilo, oidOrganisation) => (
-    dispatch: AppDispatch
-) => {
-    dispatch(requestAllowedKayttooikeusryhmasForOrganisation(oidHenkilo, oidOrganisation));
-    const url = urls.url(
-        'kayttooikeus-service.kayttooikeusryhma.forHenkilo.inOrganisaatio',
-        oidHenkilo,
-        oidOrganisation
-    );
-    http.get(url)
-        .then((allowedKayttooikeus) =>
-            dispatch(receiveAllowedKayttooikeusryhmasForOrganisation(oidHenkilo, oidOrganisation, allowedKayttooikeus))
-        )
-        .catch(() => dispatch(errorAllowedKayttooikeusryhmasForOrganisation(oidHenkilo, oidOrganisation)));
-};
+export const fetchAllowedKayttooikeusryhmasForOrganisation =
+    (oidHenkilo, oidOrganisation) => (dispatch: AppDispatch) => {
+        dispatch(requestAllowedKayttooikeusryhmasForOrganisation(oidHenkilo, oidOrganisation));
+        const url = urls.url(
+            'kayttooikeus-service.kayttooikeusryhma.forHenkilo.inOrganisaatio',
+            oidHenkilo,
+            oidOrganisation
+        );
+        http.get(url)
+            .then((allowedKayttooikeus) =>
+                dispatch(
+                    receiveAllowedKayttooikeusryhmasForOrganisation(oidHenkilo, oidOrganisation, allowedKayttooikeus)
+                )
+            )
+            .catch(() => dispatch(errorAllowedKayttooikeusryhmasForOrganisation(oidHenkilo, oidOrganisation)));
+    };
 
 const requestAddKayttooikeusToHenkilo = () => ({
     type: ADD_KAYTTOOIKEUS_TO_HENKILO_REQUEST,
@@ -242,32 +241,31 @@ const errorAddKayttooikeusToHenkilo = (organisaatioOid, ryhmaIdList) => ({
     type: ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE,
     id: organisaatioOid + ryhmaIdList.join(''),
 });
-export const addKayttooikeusToHenkilo = (henkiloOid: string, organisaatioOid: string, payload: Kayttooikeus[]) => (
-    dispatch: AppDispatch
-) => {
-    dispatch(requestAddKayttooikeusToHenkilo());
-    const url = urls.url('kayttooikeus-service.henkilo.kayttooikeus-myonto', henkiloOid, organisaatioOid);
-    http.put(url, payload)
-        .then(() => {
-            dispatch(
-                receiveAddKayttooikeusToHenkilo(
-                    organisaatioOid,
-                    payload.map((kayttooikeus) => kayttooikeus.id)
+export const addKayttooikeusToHenkilo =
+    (henkiloOid: string, organisaatioOid: string, payload: Kayttooikeus[]) => (dispatch: AppDispatch) => {
+        dispatch(requestAddKayttooikeusToHenkilo());
+        const url = urls.url('kayttooikeus-service.henkilo.kayttooikeus-myonto', henkiloOid, organisaatioOid);
+        http.put(url, payload)
+            .then(() => {
+                dispatch(
+                    receiveAddKayttooikeusToHenkilo(
+                        organisaatioOid,
+                        payload.map((kayttooikeus) => kayttooikeus.id)
+                    )
+                );
+                dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(henkiloOid));
+                dispatch<any>(fetchHenkiloOrgs(henkiloOid));
+                dispatch<any>(getGrantablePrivileges(henkiloOid));
+            })
+            .catch(() =>
+                dispatch(
+                    errorAddKayttooikeusToHenkilo(
+                        organisaatioOid,
+                        payload.map((kayttooikeus) => kayttooikeus.id)
+                    )
                 )
             );
-            dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(henkiloOid));
-            dispatch<any>(fetchHenkiloOrgs(henkiloOid));
-            dispatch<any>(getGrantablePrivileges(henkiloOid));
-        })
-        .catch(() =>
-            dispatch(
-                errorAddKayttooikeusToHenkilo(
-                    organisaatioOid,
-                    payload.map((kayttooikeus) => kayttooikeus.id)
-                )
-            )
-        );
-};
+    };
 
 const createKayttooikeusanomusRequest = () => ({
     type: CREATE_KAYTTOOIKEUSANOMUS_REQUEST,
@@ -308,25 +306,24 @@ const removePrivilegeFailure = (error, data) => ({
     ...data,
 });
 
-export const removePrivilege = (oidHenkilo: string, oidOrganisaatio: string, kayttooikeusryhmaId: number) => (
-    dispatch: AppDispatch
-) => {
-    const data = { oidHenkilo, oidOrganisaatio, kayttooikeusryhmaId };
-    const url = urls.url(
-        'kayttooikeus-service.henkilo.kayttooikeus-remove',
-        oidHenkilo,
-        oidOrganisaatio,
-        kayttooikeusryhmaId
-    );
-    dispatch(removePrivilegeRequest(data));
-    http.delete(url)
-        .then(() => {
-            dispatch(removePrivilegeSuccess(data));
-            dispatch<any>(fetchHenkiloOrgs(oidHenkilo));
-            dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo));
-        })
-        .catch((error) => dispatch(removePrivilegeFailure(error, data)));
-};
+export const removePrivilege =
+    (oidHenkilo: string, oidOrganisaatio: string, kayttooikeusryhmaId: number) => (dispatch: AppDispatch) => {
+        const data = { oidHenkilo, oidOrganisaatio, kayttooikeusryhmaId };
+        const url = urls.url(
+            'kayttooikeus-service.henkilo.kayttooikeus-remove',
+            oidHenkilo,
+            oidOrganisaatio,
+            kayttooikeusryhmaId
+        );
+        dispatch(removePrivilegeRequest(data));
+        http.delete(url)
+            .then(() => {
+                dispatch(removePrivilegeSuccess(data));
+                dispatch<any>(fetchHenkiloOrgs(oidHenkilo));
+                dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo));
+            })
+            .catch((error) => dispatch(removePrivilegeFailure(error, data)));
+    };
 
 // Get all privileges user can grant
 const getGrantablePrivilegesRequest = () => ({ type: FETCH_GRANTABLE_REQUEST });
@@ -364,29 +361,29 @@ const fetchAllKayttooikeusryhmaFailure = (error) => ({
     error,
 });
 
-export const fetchAllKayttooikeusryhma = (forceFetch = false) => async (
-    dispatch: AppDispatch,
-    getState: () => RootState
-) => {
-    // Fetch data only once
+export const fetchAllKayttooikeusryhma =
+    (forceFetch = false) =>
+    async (dispatch: AppDispatch, getState: () => RootState) => {
+        // Fetch data only once
 
-    if (
-        forceFetch ||
-        (!getState().kayttooikeus.allKayttooikeusryhmas.length && !getState().kayttooikeus.allKayttooikeusryhmasLoading)
-    ) {
-        dispatch(fetchAllKayttooikeusryhmaRequest());
-        const url = urls.url('kayttooikeus-service.kayttooikeusryhma.all', {
-            passiiviset: true,
-        });
-        try {
-            const data = await http.get(url);
-            dispatch(fetchAllKayttooikeusryhmaSuccess(data));
-        } catch (error) {
-            dispatch(fetchAllKayttooikeusryhmaFailure(error));
-            throw error;
+        if (
+            forceFetch ||
+            (!getState().kayttooikeus.allKayttooikeusryhmas.length &&
+                !getState().kayttooikeus.allKayttooikeusryhmasLoading)
+        ) {
+            dispatch(fetchAllKayttooikeusryhmaRequest());
+            const url = urls.url('kayttooikeus-service.kayttooikeusryhma.all', {
+                passiiviset: true,
+            });
+            try {
+                const data = await http.get(url);
+                dispatch(fetchAllKayttooikeusryhmaSuccess(data));
+            } catch (error) {
+                dispatch(fetchAllKayttooikeusryhmaFailure(error));
+                throw error;
+            }
         }
-    }
-};
+    };
 
 // Fetch kayttooikeusryhma by id
 const fetchKayttooikeusryhmaByIdrequest = () => ({

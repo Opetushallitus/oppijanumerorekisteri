@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Table from '../table/Table';
-import moment, { Moment } from 'moment';
+import moment from 'moment';
+import type { Moment } from 'moment';
 import DatePicker from 'react-datepicker';
 import StaticUtils from '../StaticUtils';
 import MyonnaButton from './buttons/MyonnaButton';

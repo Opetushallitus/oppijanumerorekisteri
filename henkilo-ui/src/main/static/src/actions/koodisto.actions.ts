@@ -24,19 +24,18 @@ const receiveGenericKoodisto = (fetchSuccessType, typeField, json) => ({
     [typeField]: json,
     receivedAt: Date.now(),
 });
-const fetchGenericKoodisto = (fetchRequestType, fetchSuccessType, urlProperty, typeField) => (
-    dispatch: AppDispatch,
-    getState: () => RootState
-) => {
-    // Update only if not already fetched
-    if (!getState().koodisto[typeField].length) {
-        dispatch(requestGenericKoodisto(fetchRequestType));
-        const url = urls.url(urlProperty);
-        http.get(url).then((json) => {
-            dispatch(receiveGenericKoodisto(fetchSuccessType, typeField, json));
-        });
-    }
-};
+const fetchGenericKoodisto =
+    (fetchRequestType, fetchSuccessType, urlProperty, typeField) =>
+    (dispatch: AppDispatch, getState: () => RootState) => {
+        // Update only if not already fetched
+        if (!getState().koodisto[typeField].length) {
+            dispatch(requestGenericKoodisto(fetchRequestType));
+            const url = urls.url(urlProperty);
+            http.get(url).then((json) => {
+                dispatch(receiveGenericKoodisto(fetchSuccessType, typeField, json));
+            });
+        }
+    };
 
 export const fetchKieliKoodisto = () =>
     fetchGenericKoodisto(

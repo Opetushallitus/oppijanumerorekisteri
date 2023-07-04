@@ -250,7 +250,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
     }
 }
 
-export default connect<{}, DispatchProps, OwnProps, RootState>(undefined, {
+export default connect<object, DispatchProps, OwnProps, RootState>(undefined, {
     createKayttooikeusanomus,
     fetchAllKayttooikeusAnomusForHenkilo,
 })(HenkiloViewExpiredKayttooikeus);

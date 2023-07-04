@@ -23,4 +23,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     organisaatiot: state.omattiedot.organisaatiot,
 });
 
-export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(AccessRightCheck);
+export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(AccessRightCheck);

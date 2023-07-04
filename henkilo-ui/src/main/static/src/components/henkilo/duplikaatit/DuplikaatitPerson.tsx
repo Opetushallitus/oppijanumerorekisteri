@@ -29,6 +29,7 @@ type DuplikaatitPersonProps = {
 
 type CellProps = React.HTMLAttributes<HTMLSpanElement> & {
     hakemus?: boolean;
+    className?: string;
 };
 
 const DataCell: React.FC<CellProps> = ({ children, className, hakemus }: CellProps) => (
@@ -140,12 +141,14 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
     );
 };
 
-const _parseHakemus = (koodisto: KoodistoState, locale: Locale) => (hakemus: Hakemus): DuplikaatitHakemus => {
-    const hakemusData = hakemus.hakemusData;
-    return hakemusData.service === 'ataru'
-        ? _parseAtaruHakemus(hakemusData, koodisto, locale)
-        : _parseHakuappHakemus(hakemusData, koodisto, locale);
-};
+const _parseHakemus =
+    (koodisto: KoodistoState, locale: Locale) =>
+    (hakemus: Hakemus): DuplikaatitHakemus => {
+        const hakemusData = hakemus.hakemusData;
+        return hakemusData.service === 'ataru'
+            ? _parseAtaruHakemus(hakemusData, koodisto, locale)
+            : _parseHakuappHakemus(hakemusData, koodisto, locale);
+    };
 
 function _parseAtaruHakemus(hakemus: any, koodisto: KoodistoState, locale: Locale): DuplikaatitHakemus {
     const href = hakemus.haku

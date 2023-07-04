@@ -81,6 +81,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
     loading: state.tuontidata.loading,
 });
 
-export default connect<StateProps, DispatchProps, {}, RootState>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchData: fetchTuontidata,
 })(TuontiDetails);
