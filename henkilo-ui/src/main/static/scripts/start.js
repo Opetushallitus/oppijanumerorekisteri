@@ -13,7 +13,6 @@ process.on('unhandledRejection', err => {
 // Ensure environment variables are read.
 require('../config/env');
 
-const fs = require('fs');
 const chalk = require('react-dev-utils/chalk');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
@@ -29,11 +28,7 @@ const openBrowser = require('react-dev-utils/openBrowser');
 const paths = require('../config/paths');
 const configFactory = require('../config/webpack.config');
 const createDevServerConfig = require('../config/webpackDevServer.config');
-const getClientEnvironment = require('../config/env');
-const react = require(require.resolve('react', { paths: [paths.appPath] }));
 
-const env = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1));
-const useYarn = fs.existsSync(paths.yarnLockFile);
 const isInteractive = process.stdout.isTTY;
 
 // Warn and crash if required files are missing
@@ -81,7 +76,6 @@ checkBrowsers(paths.appPath, isInteractive)
     const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
     const appName = require(paths.appPackageJson).name;
 
-    const useTypeScript = fs.existsSync(paths.appTsConfig);
     const urls = prepareUrls(
       protocol,
       HOST,
@@ -93,8 +87,8 @@ checkBrowsers(paths.appPath, isInteractive)
       appName,
       config,
       urls,
-      useYarn,
-      useTypeScript,
+      useYarn: false,
+      useTypeScript: true,
       webpack,
     });
     // Load proxy config

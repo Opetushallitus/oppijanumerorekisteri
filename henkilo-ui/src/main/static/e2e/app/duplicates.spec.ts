@@ -1,6 +1,6 @@
 import { test, expect } from 'playwright-test-coverage';
 import { Page } from '@playwright/test';
-import R from 'ramda';
+import * as R from 'ramda';
 
 import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/current/omattiedot/GET.json';
 import duplicates from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/duplicates/GET.json';
