@@ -9,7 +9,6 @@ import './HaetutKayttooikeusRyhmatHakuForm.css';
 import DelayedSearchInput from '../henkilohaku/DelayedSearchInput';
 import CloseButton from '../common/button/CloseButton';
 import OphSelect from '../common/select/OphSelect';
-import * as R from 'ramda';
 import { Localisations } from '../../types/localisation.type';
 import { Locale } from '../../types/locale.type';
 import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
@@ -130,7 +129,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
     }
 
     _parseRyhmas(ryhmatState: { ryhmas: Array<Record<string, any>> }): Array<{ label: string; value: string }> {
-        const ryhmat = R.path(['ryhmas'], ryhmatState);
+        const ryhmat = ryhmatState?.ryhmas;
         return ryhmat
             ? ryhmat
                   .map((ryhma) => ({

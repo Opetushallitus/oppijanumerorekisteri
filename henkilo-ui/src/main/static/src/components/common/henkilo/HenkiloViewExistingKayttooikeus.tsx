@@ -25,7 +25,7 @@ import { TableCellProps, TableHeading } from '../../../types/react-table.types';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import { removeNotification } from '../../../actions/notifications.actions';
-import * as R from 'ramda';
+import { update } from 'ramda';
 import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { createEmailOptions } from '../../../utilities/henkilo.util';
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
@@ -328,7 +328,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                           checked={this.state.emailSelection[idx].value === email.value}
                           onChange={() =>
                               this.setState({
-                                  emailSelection: R.update(idx, email, this.state.emailSelection),
+                                  emailSelection: update(idx, email, this.state.emailSelection),
                               })
                           }
                       />
@@ -404,7 +404,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
             anojaOid: this.props.oidHenkilo,
         };
         await this.props.createKayttooikeusanomus(anomusData);
-        const oid: any = R.path(['omattiedot', 'data', 'oid'], this.props);
+        const oid = this.props.omattiedot?.data?.oid;
         this.props.fetchAllKayttooikeusAnomusForHenkilo(oid);
     }
 

@@ -10,7 +10,6 @@ import { addGlobalNotification } from '../../../actions/notification.actions';
 import { GlobalNotificationConfig } from '../../../types/notification.types';
 import OphModal from '../../common/modal/OphModal';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import { path } from 'ramda';
 
 type OwnProps = {
     router: any;
@@ -43,13 +42,13 @@ class ToggleKayttooikeusryhmaStateModal extends React.Component<Props, State> {
 
         this.state = {
             isWaitingRequest: false,
-            isPassivoitu: !!path(['passivoitu'], props.valittuKayttooikeusryhma),
+            isPassivoitu: !!props.valittuKayttooikeusryhma?.passivoitu,
             showPassivoiModal: false,
         };
     }
 
     componentWillReceiveProps(nextProps: Props): void {
-        const isPassivoitu = !!path(['passivoitu'], nextProps.valittuKayttooikeusryhma);
+        const isPassivoitu = !!nextProps.valittuKayttooikeusryhma?.passivoitu;
         if (isPassivoitu !== this.state.isPassivoitu) {
             this.setState({ isPassivoitu });
         }

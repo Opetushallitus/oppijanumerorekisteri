@@ -1,4 +1,3 @@
-import * as R from 'ramda';
 import { http } from '../http';
 import { urls } from 'oph-urls-js';
 import {
@@ -137,7 +136,7 @@ export const fetchOrganisations = (oidOrganisations: Array<string>) => (dispatch
         console.error('Can not fetch null organisations');
         return Promise.resolve();
     }
-    oidOrganisations = R.uniq(oidOrganisations);
+    oidOrganisations = [...new Set(oidOrganisations)];
     dispatch(requestOrganisations(oidOrganisations));
     const promises = oidOrganisations
         .filter((oidOrganisation) => Object.keys(getState().organisaatio.cached).indexOf(oidOrganisation) === -1)

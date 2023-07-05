@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './KayttooikeusryhmaLista.css';
 import KayttooikeusryhmaTiedot from './KayttooikeusryhmaTiedot';
-import * as R from 'ramda';
+import { update } from 'ramda';
 import { Locale } from '../../../types/locale.type';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import LocalizedTextGroup from '../../common/LocalizedTextGroup';
@@ -45,7 +45,7 @@ export default class KayttooikeusryhmaLista extends React.Component<Props, State
                     .filter(this.nimiFilter) // sort alphabetically
                     .sort(this.nimiSort) // map käyttöoikeus to html
                     .map((item: Kayttooikeusryhma, index: number) => {
-                        const texts: any = R.path(['nimi', 'texts'], item);
+                        const texts = item?.nimi?.texts;
                         return (
                             <div key={item.id} className="kayttooikeuryhma-lista-item">
                                 <div
@@ -73,7 +73,7 @@ export default class KayttooikeusryhmaLista extends React.Component<Props, State
 
     _onToggle = (index: number): void => {
         this.setState({
-            showItems: R.update(index, !this.state.showItems[index], this.state.showItems),
+            showItems: update(index, !this.state.showItems[index], this.state.showItems),
         });
     };
 
@@ -92,16 +92,16 @@ export default class KayttooikeusryhmaLista extends React.Component<Props, State
         if (this.props.filter.length === 0) {
             return true;
         }
-        const nimi: Text | null | undefined = R.find((text: Text) => text.lang === this.props.locale.toUpperCase())(
-            R.path(['nimi', 'texts'], item) || []
+        const nimi: Text | null | undefined = item?.nimi?.texts?.find(
+            (text: Text) => text.lang === this.props.locale.toUpperCase()
         );
         const text: string = nimi ? nimi.text : '';
         return text.toLowerCase().indexOf(this.props.filter.toLowerCase()) >= 0;
     };
 
     nimiSort = (a: Kayttooikeusryhma, b: Kayttooikeusryhma) => {
-        const nameA = (localizeTextGroup(R.path(['nimi', 'texts'], a) || [], this.props.locale) || '').toLowerCase();
-        const nameB = (localizeTextGroup(R.path(['nimi', 'texts'], b) || [], this.props.locale) || '').toLowerCase();
+        const nameA = (localizeTextGroup(a?.nimi?.texts ?? [], this.props.locale) || '').toLowerCase();
+        const nameB = (localizeTextGroup(b?.nimi?.texts ?? [], this.props.locale) || '').toLowerCase();
         if (nameA < nameB) {
             return -1;
         }

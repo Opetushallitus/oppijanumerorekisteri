@@ -1,12 +1,12 @@
-import React from 'react';
-import * as R from 'ramda';
+import React, { ReactNode } from 'react';
+import { findIndex, pathEq, sortBy, uniqBy } from 'ramda';
 import { toLocalizedText } from '../localizabletext';
 import type { OrganisaatioHenkilo } from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import type { OrganisaatioWithChildren } from '../types/domain/organisaatio/organisaatio.types';
 import type { Locale } from '../types/locale.type';
 import type { OrganisaatioNameLookup } from '../reducers/organisaatio.reducer';
 import createFilterOptions from 'react-select-fast-filter-options';
-import { OrganisaatioSelectObject } from '../types/organisaatioselectobject.types';
+import type { OrganisaatioSelectObject } from '../types/organisaatioselectobject.types';
 import { getLocalization } from './localisation.util';
 
 /*
@@ -17,7 +17,7 @@ export const omattiedotOrganisaatiotToOrganisaatioSelectObject = (
     orgNames: OrganisaatioNameLookup,
     locale: Locale
 ): OrganisaatioSelectObject[] => {
-    const omatOrganisaatiot = R.map(R.prop('organisaatio'))(organisaatiot);
+    const omatOrganisaatiot = organisaatiot.map((o) => o.organisaatio);
     const allOrganisaatioSelectObjects: OrganisaatioSelectObject[] =
         organisaatiot.length > 0
             ? organisaatioHierarkiaToOrganisaatioSelectObject(omatOrganisaatiot, orgNames, locale)
@@ -25,7 +25,7 @@ export const omattiedotOrganisaatiotToOrganisaatioSelectObject = (
     const organisaatioSelectObjects = allOrganisaatioSelectObjects.filter(
         (organisaatio: OrganisaatioSelectObject) => !isRyhma(organisaatio)
     );
-    return R.uniqBy(R.prop('oid'), organisaatioSelectObjects);
+    return uniqBy((o) => o.oid, organisaatioSelectObjects);
 };
 
 /*
@@ -98,7 +98,7 @@ export const findOmattiedotOrganisatioOrRyhmaByOid = (
     orgNames: OrganisaatioNameLookup,
     locale: Locale
 ): OrganisaatioSelectObject | null | undefined => {
-    const omatOrganisaatiot = R.map(R.prop('organisaatio'))(organisaatiot);
+    const omatOrganisaatiot = organisaatiot.map((o) => o.organisaatio);
     const allOrganisaatioSelectObjects: OrganisaatioSelectObject[] =
         organisaatiot.length > 0
             ? organisaatioHierarkiaToOrganisaatioSelectObject(omatOrganisaatiot, orgNames, locale)
@@ -108,10 +108,10 @@ export const findOmattiedotOrganisatioOrRyhmaByOid = (
 
 const organisaatioHierarchyRoots = (orgs: OrganisaatioHenkilo[], locale: Locale): Array<OrganisaatioWithChildren> => {
     // First sort by name:
-    orgs = R.sortBy((org: OrganisaatioHenkilo) => toLocalizedText(locale, org.organisaatio?.nimi), orgs);
+    orgs = sortBy((org: OrganisaatioHenkilo) => toLocalizedText(locale, org.organisaatio?.nimi), orgs);
     const byOid = {};
     // Determine direct parent oid and map by oid:
-    const mapOrg = (org) => {
+    const mapOrg = (org: OrganisaatioWithChildren) => {
         byOid[org.oid] = org;
         if (!org.parentOidPath) {
             org.parentOid = null;
@@ -122,20 +122,20 @@ const organisaatioHierarchyRoots = (orgs: OrganisaatioHenkilo[], locale: Locale)
         if (!org.children) {
             org.children = [];
         }
-        R.forEach(mapOrg, org.children);
+        org.children.forEach(mapOrg);
     };
-    const organisaatios = R.map(R.prop('organisaatio'), orgs);
-    R.forEach(mapOrg, organisaatios);
+    const organisaatios = orgs.map((o) => o.organisaatio);
+    organisaatios.forEach(mapOrg);
     // Map children by direct parent:
     const roots = [];
-    R.forEach((org) => {
+    organisaatios.forEach((org: OrganisaatioWithChildren) => {
         if (org.parentOid) {
-            const parent: OrganisaatioWithChildren = byOid[org.parentOid];
+            const parent = byOid[org.parentOid];
             if (parent) {
                 // do not add duplicates:
-                if (R.findIndex(R.pathEq(['oid'], org.oid))(parent.children) < 0) {
+                if (findIndex(pathEq(org.oid, ['oid']), parent.children) < 0) {
                     parent.children.push(org);
-                    parent.children = R.sortBy((o: OrganisaatioWithChildren) => toLocalizedText(locale, o.nimi))(
+                    parent.children = sortBy((o: OrganisaatioWithChildren) => toLocalizedText(locale, o.nimi))(
                         parent.children
                     );
                 }
@@ -147,20 +147,20 @@ const organisaatioHierarchyRoots = (orgs: OrganisaatioHenkilo[], locale: Locale)
             // root org:
             roots.push(org);
         }
-    }, organisaatios);
+    });
     return roots;
 };
 
 const organizationsFlatInHierarchyOrder = (organizationHierarchyRoots: OrganisaatioWithChildren[]) => {
-    const result = [];
-    const map = (org) => {
+    const result: OrganisaatioWithChildren[] = [];
+    const flatten = (org: OrganisaatioWithChildren) => {
         result.push(org);
         if (org.children) {
-            org.children.map((child) => (child.parent = org));
-            org.children.map(map);
+            org.children.forEach((child) => (child.parent = org));
+            org.children.forEach(flatten);
         }
     };
-    R.forEach(map, organizationHierarchyRoots);
+    organizationHierarchyRoots.forEach(flatten);
     return result;
 };
 
@@ -196,7 +196,7 @@ export const getOrganisaatioOptionsAndFilter = (
     newOrganisaatios: OrganisaatioHenkilo[],
     locale: Locale,
     isRyhma: boolean
-): { options: any; filterOptions: any } => {
+): { options: { value: string; label: ReactNode }[]; filterOptions: any } => {
     const newOptions = getOrganisationsOrRyhmas(getOrganisaatios(newOrganisaatios, locale), isRyhma).map(
         (organisaatio) => mapOrganisaatio(organisaatio, locale, !isRyhma)
     );
@@ -205,7 +205,7 @@ export const getOrganisaatioOptionsAndFilter = (
     return {
         options: newOptions
             .sort((a, b) => a.label.localeCompare(b.label))
-            .map((option: { value: string; label: string }): any => ({
+            .map((option: { value: string; label: string }) => ({
                 value: option.value,
                 label: <span>{option.label}</span>,
             })),

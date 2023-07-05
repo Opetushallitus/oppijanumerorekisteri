@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../../store';
 import './ItemList.css';
-import * as R from 'ramda';
+import { path } from 'ramda';
 import { Localisations } from '../../../types/localisation.type';
 
 type OwnProps = {
@@ -30,7 +30,7 @@ const ItemList = (props: Props) => (
             {props.items &&
                 props.items.map((item, index) => (
                     <li className="item-list-element flex-horizontal" key={index}>
-                        <span className="flex-item-1">{R.path(props.labelPath, item)}</span>
+                        <span className="flex-item-1">{path(props.labelPath, item)}</span>
                         <button className="oph-button oph-button-cancel" onClick={() => props.removeAction(item)}>
                             {props.L['POISTA']}
                         </button>

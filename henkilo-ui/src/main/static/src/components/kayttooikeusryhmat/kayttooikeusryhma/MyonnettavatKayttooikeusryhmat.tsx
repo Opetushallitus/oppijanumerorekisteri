@@ -1,14 +1,14 @@
 import React from 'react';
 import './MyonnettavatKayttooikeusryhmat.css';
 import { Locale } from '../../../types/locale.type';
-import * as R from 'ramda';
 import OphSelect from '../../common/select/OphSelect';
 import type { Option, Options } from 'react-select';
 import ItemList from './ItemList';
 import { Localisations } from '../../../types/localisation.type';
+import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 
 type Props = {
-    kayttooikeus: any;
+    kayttooikeus: KayttooikeusRyhmaState;
     L: Localisations;
     locale: Locale;
     kayttooikeusryhmaSelectAction: (selection: Option<string>) => void;
@@ -17,7 +17,7 @@ type Props = {
 };
 
 type State = {
-    kayttooikeusryhmaOptions: Array<any>;
+    kayttooikeusryhmaOptions: Options<string>;
 };
 
 export default class MyonnettavatKayttooikeusryhmat extends React.Component<Props, State> {
@@ -30,12 +30,10 @@ export default class MyonnettavatKayttooikeusryhmat extends React.Component<Prop
         const kayttooikeusryhmaOptions: Options<string> = this.props.kayttooikeus.allKayttooikeusryhmas
             .filter((kayttooikeusryhma) => !kayttooikeusryhma.passivoitu)
             .map((kayttooikeusryhma) => {
-                const textObject = R.find(R.propEq('lang', lang))(
-                    R.path(['description', 'texts'], kayttooikeusryhma) || []
-                );
+                const textObject = kayttooikeusryhma?.description?.texts?.find((t) => t.lang === lang);
                 return {
-                    label: R.path(['text'], textObject),
-                    value: kayttooikeusryhma.id,
+                    label: textObject?.text,
+                    value: kayttooikeusryhma.id?.toString(),
                 };
             });
         this.setState({ kayttooikeusryhmaOptions });

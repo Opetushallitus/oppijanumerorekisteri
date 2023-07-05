@@ -1,13 +1,13 @@
 import { test, expect } from 'playwright-test-coverage';
 import { Page } from '@playwright/test';
-import * as R from 'ramda';
+import { groupBy } from 'ramda';
 
 import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/current/omattiedot/GET.json';
 import duplicates from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/duplicates/GET.json';
 import link from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/link/POST.json';
 import main from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/GET.json';
 
-const groupedDuplicates = R.groupBy((h) => {
+const groupedDuplicates = groupBy((h) => {
     return h.yksiloityVTJ ? 'yksiloityVtj' : h.yksiloity ? 'yksiloity' : 'yksiloimaton';
 }, duplicates);
 
@@ -44,7 +44,7 @@ const routeMainWithYksilointi = async (page: Page, yksiloity: boolean, yksiloity
 test.describe('Hae duplikaatit', () => {
     test('linking non-yksiloity duplicate to main happy path', async ({ page }) => {
         await page.goto('/virkailija/1.2.3.4.5/duplikaatit');
-        await page.click(`[data-test-id="link-duplicate-from-${groupedDuplicates.yksiloimaton[1].oidHenkilo}"]`);
+        await page.click(`[data-test-id="link-duplicate-from-${groupedDuplicates.yksiloimaton?.[1].oidHenkilo}"]`);
         await page.click(`[data-test-id="confirm-force-link"]`);
         await expect(page.locator('[data-test-id="LINKED_DUPLICATES_SUCCESS"] .oph-alert-title')).toHaveText(
             'Henkilöiden linkittäminen onnistui'
@@ -54,7 +54,7 @@ test.describe('Hae duplikaatit', () => {
     test('linking non-yksiloity main to duplicate happy path', async ({ page }) => {
         await routeMainWithYksilointi(page, false, false);
         await page.goto('/virkailija/1.2.3.4.5/duplikaatit');
-        await page.click(`[data-test-id="link-main-to-${groupedDuplicates.yksiloityVtj[1].oidHenkilo}"]`);
+        await page.click(`[data-test-id="link-main-to-${groupedDuplicates.yksiloityVtj?.[1].oidHenkilo}"]`);
         await page.click(`[data-test-id="confirm-force-link"]`);
         await expect(page.locator('[data-test-id="LINKED_DUPLICATES_SUCCESS"] .oph-alert-title')).toHaveText(
             'Henkilöiden linkittäminen onnistui'
@@ -63,15 +63,15 @@ test.describe('Hae duplikaatit', () => {
 
     test('linking duplicate to main is enabled only for yksiloimaton', async ({ page }) => {
         await page.goto('/virkailija/1.2.3.4.5/duplikaatit');
-        groupedDuplicates.yksiloity.forEach(async (duplicate) => {
+        groupedDuplicates.yksiloity?.forEach(async (duplicate) => {
             const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
             await expect(locator).toBeDisabled();
         });
-        groupedDuplicates.yksiloityVtj.forEach(async (duplicate) => {
+        groupedDuplicates.yksiloityVtj?.forEach(async (duplicate) => {
             const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
             await expect(locator).toBeDisabled();
         });
-        groupedDuplicates.yksiloimaton.forEach(async (duplicate) => {
+        groupedDuplicates.yksiloimaton?.forEach(async (duplicate) => {
             const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
             await expect(locator).toBeEnabled();
         });
@@ -80,15 +80,15 @@ test.describe('Hae duplikaatit', () => {
     test('force linking duplicate to main is enabled for yksiloity', async ({ page }) => {
         await routeOmattiedotWithPurkuRole(page);
         await page.goto('/virkailija/1.2.3.4.5/duplikaatit');
-        groupedDuplicates.yksiloity.forEach(async (duplicate) => {
+        groupedDuplicates.yksiloity?.forEach(async (duplicate) => {
             const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
             await expect(locator).toBeEnabled();
         });
-        groupedDuplicates.yksiloityVtj.forEach(async (duplicate) => {
+        groupedDuplicates.yksiloityVtj?.forEach(async (duplicate) => {
             const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
             await expect(locator).toBeDisabled();
         });
-        groupedDuplicates.yksiloimaton.forEach(async (duplicate) => {
+        groupedDuplicates.yksiloimaton?.forEach(async (duplicate) => {
             const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
             await expect(locator).toBeEnabled();
         });
@@ -125,7 +125,7 @@ test.describe('Hae duplikaatit', () => {
 
     test('force linking yksiloity duplicate to main happy path', async ({ page }) => {
         await page.goto('/virkailija/1.2.3.4.5/duplikaatit');
-        await page.click(`[data-test-id="link-duplicate-from-${groupedDuplicates.yksiloimaton[1].oidHenkilo}"]`);
+        await page.click(`[data-test-id="link-duplicate-from-${groupedDuplicates.yksiloimaton?.[1].oidHenkilo}"]`);
         await page.click(`[data-test-id="confirm-force-link"]`);
         await expect(page.locator('[data-test-id="LINKED_DUPLICATES_SUCCESS"] .oph-alert-title')).toHaveText(
             'Henkilöiden linkittäminen onnistui'
@@ -135,7 +135,7 @@ test.describe('Hae duplikaatit', () => {
     test('force linking yksiloity main to duplicate happy path', async ({ page }) => {
         await routeOmattiedotWithPurkuRole(page);
         await page.goto('/virkailija/1.2.3.4.5/duplikaatit');
-        await page.click(`[data-test-id="link-main-to-${groupedDuplicates.yksiloityVtj[1].oidHenkilo}"]`);
+        await page.click(`[data-test-id="link-main-to-${groupedDuplicates.yksiloityVtj?.[1].oidHenkilo}"]`);
         await page.click(`[data-test-id="confirm-force-link"]`);
         await expect(page.locator('[data-test-id="LINKED_DUPLICATES_SUCCESS"] .oph-alert-title')).toHaveText(
             'Henkilöiden linkittäminen onnistui'
@@ -150,7 +150,7 @@ test.describe('Hae duplikaatit', () => {
             });
         });
         await page.goto('/virkailija/1.2.3.4.5/duplikaatit?permissionCheckService=ATARU');
-        await page.click(`[data-test-id="link-duplicate-from-${groupedDuplicates.yksiloimaton[1].oidHenkilo}"]`);
+        await page.click(`[data-test-id="link-duplicate-from-${groupedDuplicates.yksiloimaton?.[1].oidHenkilo}"]`);
         await page.click(`[data-test-id="confirm-force-link"]`);
         await expect(page.locator('[data-test-id="LINKED_DUPLICATES_SUCCESS"] .oph-alert-title')).toHaveText(
             'Henkilöiden linkittäminen onnistui'

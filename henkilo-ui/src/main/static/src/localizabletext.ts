@@ -1,4 +1,4 @@
-import * as R from 'ramda';
+import { filter, find, map, pipe } from 'ramda';
 import { Locale } from './types/locale.type';
 import { TextGroup } from './types/domain/kayttooikeus/textgroup.types';
 
@@ -7,7 +7,7 @@ const FORMATS = [
         // used (at least) in koodistopalvelu
         isValid: (localizableText) => Array.isArray(localizableText) && localizableText.length > 0,
         getValue: (localizableText: any, uiLang: Locale) => {
-            const value: any = R.find(R.propEq('kieli', uiLang.toUpperCase()))(localizableText);
+            const value: any = localizableText.find((l) => l.kieli === uiLang.toUpperCase());
             return value ? value.nimi : value;
         },
         getFallbackValue: (localizableText) =>
@@ -58,9 +58,9 @@ export function toLocalizedText(uiLang: Locale, localizableText: any, fallbackVa
     if (typeof localizableText === 'undefined' || localizableText === null) {
         return fallbackValue;
     }
-    return R.pipe(
-        R.filter((format) => isValid(format, localizableText)),
-        R.map((format) => getValue(format, localizableText, uiLang, fallbackValue)),
-        R.find(hasValue)
+    return pipe(
+        filter((format) => isValid(format, localizableText)),
+        map((format) => getValue(format, localizableText, uiLang, fallbackValue)),
+        find(hasValue)
     )(FORMATS);
 }

@@ -36,7 +36,6 @@ import {
     FETCH_HENKILO_HAKEMUKSET,
 } from '../actions/actiontypes';
 import StaticUtils from '../components/common/StaticUtils';
-import * as R from 'ramda';
 import type { Henkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
 import type { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
 import type { HenkiloDuplicate } from '../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
@@ -210,7 +209,7 @@ export const henkilo = (state: HenkiloState = initialState, action: any): Henkil
         case UPDATE_HENKILO_UNLINK_REQUEST:
             return Object.assign({}, state, { unlinkingLoading: true });
         case UPDATE_HENKILO_UNLINK_SUCCESS: {
-            const slaves = R.filter((slave) => slave.oidHenkilo !== action.unlinkedSlaveOid, state.slaves);
+            const slaves = state.slaves.filter((slave) => slave.oidHenkilo !== action.unlinkedSlaveOid);
             return Object.assign({}, state, { unlinkingLoading: false, slaves });
         }
         case UPDATE_HENKILO_UNLINK_FAILURE:
