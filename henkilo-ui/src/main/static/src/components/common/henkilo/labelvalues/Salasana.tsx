@@ -58,4 +58,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(Salasana);
+export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(Salasana);

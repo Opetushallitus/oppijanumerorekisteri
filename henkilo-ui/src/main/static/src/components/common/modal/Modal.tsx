@@ -1,10 +1,11 @@
-import React from 'react';
-import CSS from 'csstype';
+import React, { ReactNode } from 'react';
+import type CSS from 'csstype';
 
 type Props = {
     show: boolean;
     onClose: (e: React.SyntheticEvent<EventTarget>) => void;
     closeOnOuterClick: boolean;
+    children: ReactNode;
 };
 
 const wrapperStyles: Partial<CSS.Properties> = {

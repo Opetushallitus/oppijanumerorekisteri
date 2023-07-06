@@ -7,7 +7,7 @@ import {
 export type OrganisaatioKayttooikeusryhmatState = {
     kayttooikeusryhmatLoading: boolean;
     organisaatioOid: string | null | undefined;
-    kayttooikeusryhmat: Array<{}>;
+    kayttooikeusryhmat: Array<object>;
 };
 
 export const OrganisaatioKayttooikeusryhmat = (

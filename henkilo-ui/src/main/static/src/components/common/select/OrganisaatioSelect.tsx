@@ -1,8 +1,9 @@
 import * as React from 'react';
 
-import * as R from 'ramda';
+import { compose, last, partition, prop, sortBy, toLower } from 'ramda';
 import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../../utilities/organisaatio.util';
 import { List } from 'react-virtualized';
+import type { ListRowProps } from 'react-virtualized';
 
 import type { Locale } from '../../../types/locale.type';
 import type { Localisations } from '../../../types/localisation.type';
@@ -66,7 +67,7 @@ export default class OrganisaatioSelect extends React.Component<Props, State> {
         );
     }
 
-    _renderRow = (renderParams: any) => {
+    _renderRow = (renderParams: ListRowProps) => {
         const organisaatio: OrganisaatioSelectObject = this.state.organisaatiot[renderParams.index];
         return (
             <div
@@ -165,7 +166,7 @@ export default class OrganisaatioSelect extends React.Component<Props, State> {
     }
 
     _sortAlphabetically(organisaatiot: OrganisaatioSelectObject[]): OrganisaatioSelectObject[] {
-        return R.sortBy<OrganisaatioSelectObject>(R.compose(R.toLower, R.prop('name')))(organisaatiot);
+        return sortBy<OrganisaatioSelectObject>(compose(toLower, prop('name')))(organisaatiot);
     }
 
     _organisaatiotFilteredBy(
@@ -176,13 +177,13 @@ export default class OrganisaatioSelect extends React.Component<Props, State> {
     }
 
     _sortOrganisaatiotByParentName(organisaatiot: OrganisaatioSelectObject[]): OrganisaatioSelectObject[] {
-        const [organisaatiotHavingParents, organisaatiotNotHavingParents] = R.partition(
+        const [organisaatiotHavingParents, organisaatiotNotHavingParents] = partition(
             (o: OrganisaatioSelectObject) => o.parentNames && o.parentNames.length > 0
         )(organisaatiot);
 
         return [
             ...organisaatiotNotHavingParents,
-            ...R.sortBy<OrganisaatioSelectObject>(R.compose(R.toLower, R.last, R.prop('parentNames')))(
+            ...sortBy<OrganisaatioSelectObject>(compose(toLower, last, prop('parentNames')))(
                 organisaatiotHavingParents
             ),
         ];

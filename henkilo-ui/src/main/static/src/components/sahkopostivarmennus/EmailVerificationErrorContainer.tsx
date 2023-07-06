@@ -97,4 +97,4 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     loginToken: ownProps.params['loginToken'],
 });
 
-export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(EmailVerificationErrorContainer);
+export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(EmailVerificationErrorContainer);

@@ -44,7 +44,7 @@ export type KayttooikeusRyhmaState = {
     readonly kayttooikeusAnomusLoading: boolean;
     readonly kayttooikeus: Array<MyonnettyKayttooikeusryhma>;
     readonly kayttooikeusLoading: boolean;
-    readonly grantableKayttooikeus: {};
+    readonly grantableKayttooikeus: object;
     readonly grantableKayttooikeusLoading: boolean;
     readonly allowedKayttooikeus: Record<string, AllowedKayttooikeus>;
     readonly allowedKayttooikeusLoading: boolean;

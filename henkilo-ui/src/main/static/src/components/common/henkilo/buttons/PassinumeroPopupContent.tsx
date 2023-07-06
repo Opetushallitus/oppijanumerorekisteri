@@ -14,7 +14,11 @@ type Props = {
 
 const PassinumeroPopupContent = ({ oid, translate }: Props) => {
     const dispatch = useDispatch();
-    const { data: passinumerot = [], isLoading: isReading, isError: readError } = useGetPassinumerotQuery(oid, {
+    const {
+        data: passinumerot = [],
+        isLoading: isReading,
+        isError: readError,
+    } = useGetPassinumerotQuery(oid, {
         refetchOnMountOrArgChange: true,
     });
     const [setPassinumerot, { isLoading: isUpdating, isError: writeError }] = useSetPassinumerotMutation();

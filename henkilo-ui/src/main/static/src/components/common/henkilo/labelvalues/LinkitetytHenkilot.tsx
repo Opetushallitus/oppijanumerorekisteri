@@ -4,7 +4,6 @@ import type { RootState } from '../../../../store';
 import { Link } from 'react-router';
 import LabelValueGroup from './LabelValueGroup';
 import TextButton from '../../button/TextButton';
-import * as R from 'ramda';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { Localisations } from '../../../../types/localisation.type';
 import { unlinkHenkilo, fetchHenkiloSlaves } from '../../../../actions/henkilo.actions';
@@ -55,7 +54,7 @@ class LinkitetytHenkilot extends React.Component<LinkitetytHenkilotProps> {
             'HENKILONHALLINTA_OPHREKISTERI',
             'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
         ]);
-        return R.path(['henkilo', 'slaves'], this.props) ? (
+        return this.props.henkilo?.slaves ? (
             <div>
                 {this.props.henkilo.slaves.map((slave, index) => (
                     <div key={index} className="nowrap">

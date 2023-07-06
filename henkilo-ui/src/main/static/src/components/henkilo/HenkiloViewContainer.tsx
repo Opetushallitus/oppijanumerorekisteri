@@ -10,7 +10,6 @@ import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
 import { L10n } from '../../types/localisation.type';
 import { Locale } from '../../types/locale.type';
 import Loader from '../common/icons/Loader';
-import { path } from 'ramda';
 import { fetchHenkilo } from '../../actions/henkilo.actions';
 import { fetchOmattiedot } from '../../actions/omattiedot.actions';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
@@ -80,7 +79,7 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     l10n: state.l10n.localisations,
     locale: state.locale,
     isAdmin: state.omattiedot.isAdmin,
-    ownOid: path(['data', 'oid'], state.omattiedot),
+    ownOid: state.omattiedot.data?.oid,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {

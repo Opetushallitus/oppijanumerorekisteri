@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactTable from 'react-table';
-import * as R from 'ramda';
+import { pick } from 'ramda';
 import 'react-table/react-table.css';
 import './VtjVertailuListaus.css';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
@@ -11,9 +11,9 @@ type Props = {
 };
 export default class VtjVertailuListaus extends React.Component<Props> {
     render() {
-        const henkiloData = R.pick(
+        const henkiloData = pick(
             ['etunimet', 'sukunimi', 'kutsumanimi', 'sukupuoli', 'yhteystiedotRyhma'],
-            R.path(['henkilo'], this.props.henkilo)
+            this.props.henkilo?.henkilo
         );
         const yksilointitiedot = this.props.henkilo?.yksilointitiedot;
 

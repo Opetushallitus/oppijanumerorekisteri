@@ -22,7 +22,7 @@ import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.redu
 type OwnProps = {
     vuosia: number;
     kayttooikeus: KayttooikeusRyhmaState;
-    existingKayttooikeusRef: {};
+    existingKayttooikeusRef: object;
     oidHenkilo: string;
     isPalvelukayttaja: boolean;
 };
@@ -41,7 +41,7 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 type KayttooikeusModel = {
     kayttokohdeOrganisationOid: string;
-    myonnettavatOikeudet: Array<{}>;
+    myonnettavatOikeudet: Array<object>;
     alkupvm: moment.Moment;
     loppupvm: moment.Moment;
 };
@@ -51,7 +51,7 @@ type State = {
     validationMessages: {
         [key: string]: ValidationMessage;
     };
-    kayttooikeusData: Array<{}>;
+    kayttooikeusData: Array<object>;
     kayttooikeusModel: KayttooikeusModel;
     organisaatioSelection: string;
 };

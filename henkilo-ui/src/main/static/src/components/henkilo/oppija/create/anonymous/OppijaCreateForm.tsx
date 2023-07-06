@@ -268,7 +268,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
     };
 
     validate = (henkilo: HenkiloCreate) => {
-        let errors = [];
+        const errors = [];
 
         if (!henkilo.etunimet) {
             errors.push({

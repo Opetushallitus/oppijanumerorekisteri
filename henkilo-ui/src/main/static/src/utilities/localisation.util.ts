@@ -10,7 +10,7 @@ export const localizeWithState = (key: string, state: any): string => {
     return localize(key, state.l10n.localisations, state.locale);
 };
 
-export const localizeTextGroup = (textGroups: Text[] = [], lang: string = 'fi'): string =>
+export const localizeTextGroup = (textGroups: Text[] = [], lang = 'fi'): string =>
     [...textGroups, { text: '', lang: lang.toUpperCase() }].filter(
         (textGroup) => (textGroup.lang || 'fi').toUpperCase() === lang.toUpperCase()
     )[0].text;

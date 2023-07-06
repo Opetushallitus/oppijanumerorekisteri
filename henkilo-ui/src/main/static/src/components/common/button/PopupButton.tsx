@@ -1,7 +1,7 @@
 import React from 'react';
 import './PopupButton.css';
 import onClickOutside from 'react-onclickoutside';
-import CSS from 'csstype';
+import type CSS from 'csstype';
 
 type Props = {
     popupTitle?: any; // Title/header for the popup

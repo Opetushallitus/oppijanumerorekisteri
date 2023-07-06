@@ -4,7 +4,6 @@ import OphSelect from '../../common/select/OphSelect';
 import type { Option, Options } from 'react-select';
 import { Locale } from '../../../types/locale.type';
 import { PalvelutState } from '../../../reducers/palvelut.reducer';
-import * as R from 'ramda';
 import { KayttooikeusState } from '../../../reducers/kayttooikeus.reducer';
 import { PalveluKayttooikeus } from '../../../types/domain/kayttooikeus/palvelukayttooikeus.types';
 import { PalveluJaKayttooikeusSelection } from './KayttooikeusryhmaPage';
@@ -39,10 +38,10 @@ export default class KayttooikeusryhmatPalvelutJaKayttooikeudet extends React.Co
 
     componentWillMount() {
         const lang = this.props.locale.toUpperCase();
-        const palvelutOptions: Array<any> = this.props.palvelutState.palvelut.map((palvelu) => {
-            const textObject = R.find(R.propEq('lang', lang))(palvelu.description.texts);
+        const palvelutOptions: Options<string> = this.props.palvelutState.palvelut.map((palvelu) => {
+            const textObject = palvelu.description.texts?.find((t) => t.lang === lang);
             return {
-                label: R.path(['text'], textObject),
+                label: textObject?.text,
                 value: palvelu.name,
             };
         });
@@ -51,11 +50,11 @@ export default class KayttooikeusryhmatPalvelutJaKayttooikeudet extends React.Co
 
     componentWillReceiveProps(nextProps: Props) {
         const lang = this.props.locale.toUpperCase();
-        const palveluKayttooikeusOptions: Array<any> = nextProps.kayttooikeusState.palveluKayttooikeus.map(
+        const palveluKayttooikeusOptions: Options<string> = nextProps.kayttooikeusState.palveluKayttooikeus.map(
             (palveluKayttooikeus: PalveluKayttooikeus) => {
                 const textObject: Text | undefined = palveluKayttooikeus.oikeusLangs.find((o) => o.lang === lang);
                 return {
-                    label: R.path(['text'], textObject),
+                    label: textObject?.text,
                     value: palveluKayttooikeus.rooli,
                 };
             }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import './SortByHeader.css';
 
@@ -13,6 +13,7 @@ type Props = {
     by: string;
     state: SortInfo;
     onChange: (sortBy: string, direction: SortDirection) => void;
+    children: ReactNode;
 };
 
 export default class SortByHeader extends React.Component<Props> {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import TextButton from '../../common/button/TextButton';
-import CSS from 'csstype';
+import type CSS from 'csstype';
 import './DuplikaatitApplicationsPopup.css';
 
 type Props = {

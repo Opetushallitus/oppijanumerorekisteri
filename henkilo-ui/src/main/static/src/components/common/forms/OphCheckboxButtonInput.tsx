@@ -21,7 +21,7 @@ class OphCheckboxButtonInput extends React.Component<Props> {
                     className="oph-checkbox-button-input"
                     disabled={this.props.disabled}
                     onClick={this.props.action}
-                    onChange={() => {}}
+                    onChange={() => ({})}
                 />
                 <span className="oph-checkbox-button-text">{this.props.label}</span>
             </label>

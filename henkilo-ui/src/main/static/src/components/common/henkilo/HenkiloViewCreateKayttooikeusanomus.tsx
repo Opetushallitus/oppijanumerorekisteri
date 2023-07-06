@@ -4,7 +4,7 @@ import type { RootState } from '../../../store';
 import './HenkiloViewCreateKayttooikeusanomus.css';
 import OphSelect from '../select/OphSelect';
 import Button from '../button/Button';
-import * as R from 'ramda';
+import { findIndex, lensProp, map, propEq, view } from 'ramda';
 import IconButton from '../button/IconButton';
 import CrossCircleIcon from '../icons/CrossCircleIcon';
 import EmailSelect from './select/EmailSelect';
@@ -33,6 +33,7 @@ import type { Option } from 'react-select';
 import type { OrganisaatioNameLookup } from '../../../reducers/organisaatio.reducer';
 import { OrganisaatioWithChildren } from '../../../types/domain/organisaatio/organisaatio.types';
 import type { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
+import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 
 type OwnProps = {
     l10n: L10n;
@@ -101,7 +102,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
             return { id: selection.value };
         });
         const kayttooikeusryhmat = this.props.kayttooikeusryhmat.filter(
-            (kayttooikeusryhma) => R.findIndex(R.propEq('id', kayttooikeusryhma.id), kayttooikeusryhmaSelections) < 0
+            (kayttooikeusryhma) => findIndex(propEq('id', kayttooikeusryhma.id), kayttooikeusryhmaSelections) < 0
         );
 
         return this.props.henkilo.henkiloLoading ? (
@@ -404,7 +405,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
     }
 
     _parseEmailOptions(henkilo: HenkiloState): { value: string; label: string }[] {
-        let emails = [];
+        const emails = [];
         if (henkilo.henkilo.yhteystiedotRyhma) {
             henkilo.henkilo.yhteystiedotRyhma.forEach((yhteystietoRyhma) => {
                 yhteystietoRyhma.yhteystieto.forEach((yhteys) => {
@@ -417,15 +418,12 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         return emails.map((email) => ({ value: email || '', label: email || '' }));
     }
 
-    _addKayttooikeusryhmaSelection(kayttooikeusryhma: any) {
+    _addKayttooikeusryhmaSelection(kayttooikeusryhma: Kayttooikeusryhma) {
         const locale = this.props.locale.toUpperCase();
         const kayttooikeusryhmaSelection = {
             value: kayttooikeusryhma.id,
-            label: R.path(['text'], R.find(R.propEq('lang', locale))(kayttooikeusryhma.nimi.texts)),
-            description: R.path(
-                ['text'],
-                R.find(R.propEq('lang', locale))(kayttooikeusryhma.kuvaus ? kayttooikeusryhma.kuvaus.texts : [])
-            ),
+            label: kayttooikeusryhma.nimi.texts?.find((t) => t.lang === locale)?.text,
+            description: kayttooikeusryhma.kuvaus.texts?.find((t) => t.lang === locale)?.text,
         };
 
         const kayttooikeusryhmaSelections = this.state.kayttooikeusryhmaSelections;
@@ -443,8 +441,8 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
     }
 
     async _createKayttooikeusAnomus() {
-        const kayttooikeusRyhmaIds = R.map(
-            (selection) => R.view(R.lensProp('value'), selection),
+        const kayttooikeusRyhmaIds = map(
+            (selection) => view(lensProp('value'), selection),
             this.state.kayttooikeusryhmaSelections
         );
         const anomusData = {

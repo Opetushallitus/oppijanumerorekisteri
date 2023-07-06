@@ -1,6 +1,5 @@
 import { http } from '../http';
 import { urls } from 'oph-urls-js';
-import * as R from 'ramda';
 import {
     FETCH_OMATTIEDOT_REQUEST,
     FETCH_OMATTIEDOT_SUCCESS,
@@ -111,7 +110,7 @@ const fetchOmattiedotOrganisaatios = () => async (dispatch: AppDispatch, getStat
         !getState().omattiedot.organisaatios.length &&
         !getState().omattiedot.omattiedotOrganisaatiosLoading
     ) {
-        const oid = R.path(['omattiedot', 'data', 'oid'], getState());
+        const oid = getState().omattiedot.data?.oid;
         const omattiedotLoading = getState().omattiedot.omattiedotLoading;
         if (!oid && !omattiedotLoading) {
             dispatch<any>(fetchOmattiedot());
@@ -146,7 +145,7 @@ export const fetchOmatHenkiloHakuOrganisaatios = () => async (dispatch: AppDispa
         getState().omattiedot.henkilohakuOrganisaatiot.length === 0 &&
         !getState().omattiedot.henkilohakuOrganisaatiotLoading
     ) {
-        const oid = R.path(['omattiedot', 'data', 'oid'], getState());
+        const oid = getState().omattiedot.data?.oid;
         dispatch(requestOmatHenkilohakuOrganisaatiot());
         const url = urls.url('kayttooikeus-service.henkilo.organisaatios', oid, { requiredRoles: 'HENKILOHAKU' });
         try {

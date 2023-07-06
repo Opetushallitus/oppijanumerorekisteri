@@ -35,25 +35,23 @@ const requestTuontiKoosteFailure = (): FailureAction => ({
     type: FETCH_TUONTIKOOSTE_FAILURE,
 });
 
-export const fetchTuontiKooste = (criteria: TuontiKoosteCriteria) => async (
-    dispatch: AppDispatch,
-    state: () => any
-) => {
-    dispatch(requestTuontiKooste());
-    try {
-        const query = new URLSearchParams((criteria as unknown) as Record<string, string>).toString();
-        const url = urls.url('oppijanumerorekisteri-service.oppija.tuontikooste');
-        const payload = await http.get<TuontiKooste>(`${url}?${query}`);
-        dispatch(requestTuontiKoosteSuccess(payload));
-    } catch (error) {
-        dispatch(requestTuontiKoosteFailure());
-        dispatch<any>(
-            addGlobalNotification({
-                key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
-                title: localizeWithState('KAYTTOOIKEUSRAPORTTI_ERROR', state()),
-                type: NOTIFICATIONTYPES.ERROR,
-                autoClose: 10000,
-            })
-        );
-    }
-};
+export const fetchTuontiKooste =
+    (criteria: TuontiKoosteCriteria) => async (dispatch: AppDispatch, state: () => any) => {
+        dispatch(requestTuontiKooste());
+        try {
+            const query = new URLSearchParams(criteria as unknown as Record<string, string>).toString();
+            const url = urls.url('oppijanumerorekisteri-service.oppija.tuontikooste');
+            const payload = await http.get<TuontiKooste>(`${url}?${query}`);
+            dispatch(requestTuontiKoosteSuccess(payload));
+        } catch (error) {
+            dispatch(requestTuontiKoosteFailure());
+            dispatch<any>(
+                addGlobalNotification({
+                    key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
+                    title: localizeWithState('KAYTTOOIKEUSRAPORTTI_ERROR', state()),
+                    type: NOTIFICATIONTYPES.ERROR,
+                    autoClose: 10000,
+                })
+            );
+        }
+    };

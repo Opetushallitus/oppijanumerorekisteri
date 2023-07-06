@@ -88,7 +88,7 @@ const mapDispatchToProps: DispatchProps = {
     clearReport: clearAccessRightsReport,
 };
 
-export default connect<StateProps, DispatchProps, {}, RootState>(
+export default connect<StateProps, DispatchProps, never, RootState>(
     mapStateToProps,
     mapDispatchToProps
 )(AccessRightsReport);

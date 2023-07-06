@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { BrowserRouter } from 'react-router';
+import type { BrowserRouter } from 'react-router';
 import { http } from '../../../../../http';
 import { urls } from 'oph-urls-js';
 import {

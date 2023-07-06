@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../store';
-import * as R from 'ramda';
+import { difference } from 'ramda';
 import './AddedOrganization.css';
 import {
     kutsuRemoveOrganisaatio,
@@ -74,7 +74,7 @@ class AddedOrganization extends React.Component<Props, State> {
     render() {
         const addedOrg = this.props.addedOrg;
         const selectedOrganisaatioOid = this.props.addedOrg.organisation ? this.props.addedOrg.organisation.oid : '';
-        const selectablePermissions: Array<MyonnettyKayttooikeusryhma> = R.difference(
+        const selectablePermissions: Array<MyonnettyKayttooikeusryhma> = difference(
             addedOrg.selectablePermissions,
             addedOrg.selectedPermissions
         );

@@ -58,4 +58,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     ryhmaFilter: state.omattiedot.organisaatioRyhmaFilter,
 });
 
-export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(RyhmaSelection);
+export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(RyhmaSelection);

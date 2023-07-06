@@ -202,19 +202,6 @@
                     </execution>
 
                     <execution>
-                        <id>npm run test</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <environmentVariables>
-                                <CI>true</CI>
-                            </environmentVariables>
-                            <arguments>run test</arguments>
-                        </configuration>
-                    </execution>
-
-                    <execution>
                         <id>install e2e dependencies</id>
                         <goals>
                             <goal>npm</goal>

@@ -109,13 +109,13 @@ type kutsu = {
                     id: number;
                     nimi: {
                         id: number;
-                        texts: {};
+                        texts: object;
                     };
                 }
             ];
             nimi: {
                 id: number;
-                texts: {};
+                texts: object;
             };
             organisaatioOid: string;
             voimassaLoppuPvm: string;

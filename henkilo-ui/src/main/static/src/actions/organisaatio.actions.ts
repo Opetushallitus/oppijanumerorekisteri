@@ -1,4 +1,3 @@
-import * as R from 'ramda';
 import { http } from '../http';
 import { urls } from 'oph-urls-js';
 import {
@@ -36,29 +35,31 @@ const requestAllOrganisaatiosFailure = (error) => ({
     error,
 });
 
-export const fetchAllOrganisaatios = (
-    criteria: OrganisaatioCriteria = {
-        tyyppi: 'ORGANISAATIO',
-        tila: ['AKTIIVINEN'],
-    }
-) => async (dispatch: AppDispatch, getState: GetState) => {
-    // Fetch only with the first call
-    if (!getState().organisaatio.organisaatioLoaded && !getState().organisaatio.organisaatioLoading) {
-        const url = urls.url('kayttooikeus-service.organisaatio', criteria);
-        dispatch(requestAllOrganisaatios());
-        try {
-            const organisaatiot = await http.get(url);
-            dispatch(requestAllOrganisaatiosSuccess(organisaatiot));
-            dispatch({
-                type: FETCH_ORGANISATIONS_SUCCESS,
-                organisations: organisaatiot,
-            });
-        } catch (error) {
-            dispatch(requestAllOrganisaatiosFailure(error));
-            throw error;
+export const fetchAllOrganisaatios =
+    (
+        criteria: OrganisaatioCriteria = {
+            tyyppi: 'ORGANISAATIO',
+            tila: ['AKTIIVINEN'],
         }
-    }
-};
+    ) =>
+    async (dispatch: AppDispatch, getState: GetState) => {
+        // Fetch only with the first call
+        if (!getState().organisaatio.organisaatioLoaded && !getState().organisaatio.organisaatioLoading) {
+            const url = urls.url('kayttooikeus-service.organisaatio', criteria);
+            dispatch(requestAllOrganisaatios());
+            try {
+                const organisaatiot = await http.get(url);
+                dispatch(requestAllOrganisaatiosSuccess(organisaatiot));
+                dispatch({
+                    type: FETCH_ORGANISATIONS_SUCCESS,
+                    organisations: organisaatiot,
+                });
+            } catch (error) {
+                dispatch(requestAllOrganisaatiosFailure(error));
+                throw error;
+            }
+        }
+    };
 
 const requestAllHierarchialOrganisaatios = () => ({
     type: FETCH_ALL_ORGANISAATIOS_HIERARCHY_REQUEST,
@@ -135,7 +136,7 @@ export const fetchOrganisations = (oidOrganisations: Array<string>) => (dispatch
         console.error('Can not fetch null organisations');
         return Promise.resolve();
     }
-    oidOrganisations = R.uniq(oidOrganisations);
+    oidOrganisations = [...new Set(oidOrganisations)];
     dispatch(requestOrganisations(oidOrganisations));
     const promises = oidOrganisations
         .filter((oidOrganisation) => Object.keys(getState().organisaatio.cached).indexOf(oidOrganisation) === -1)

@@ -23,26 +23,26 @@ const receiveHaetutKayttooikeusryhmatFailure = (nimi?: string) => ({
     nimi,
 });
 
-export const fetchHaetutKayttooikeusryhmat = (parameters: FetchHaetutKayttooikeusryhmatParameters) => async (
-    dispatch: AppDispatch
-) => {
-    dispatch(requestHaetutKayttooikeusryhmat());
-    const url = urls.url('kayttooikeus-service.anomus.haetut-kayttooikeusryhmat', parameters);
-    try {
-        const haetutKayttooikeusryhmat = await http.get<HaettuKayttooikeusryhma[]>(url);
-        await dispatch<any>(
-            fetchOrganisations(
-                haetutKayttooikeusryhmat.map(
-                    (haettuKayttooikeusryhma: HaettuKayttooikeusryhma) => haettuKayttooikeusryhma.anomus.organisaatioOid
+export const fetchHaetutKayttooikeusryhmat =
+    (parameters: FetchHaetutKayttooikeusryhmatParameters) => async (dispatch: AppDispatch) => {
+        dispatch(requestHaetutKayttooikeusryhmat());
+        const url = urls.url('kayttooikeus-service.anomus.haetut-kayttooikeusryhmat', parameters);
+        try {
+            const haetutKayttooikeusryhmat = await http.get<HaettuKayttooikeusryhma[]>(url);
+            await dispatch<any>(
+                fetchOrganisations(
+                    haetutKayttooikeusryhmat.map(
+                        (haettuKayttooikeusryhma: HaettuKayttooikeusryhma) =>
+                            haettuKayttooikeusryhma.anomus.organisaatioOid
+                    )
                 )
-            )
-        );
-        dispatch(receiveHaetutKayttooikeusryhmatSuccess(haetutKayttooikeusryhmat));
-    } catch (error) {
-        dispatch(receiveHaetutKayttooikeusryhmatFailure());
-        throw error;
-    }
-};
+            );
+            dispatch(receiveHaetutKayttooikeusryhmatSuccess(haetutKayttooikeusryhmat));
+        } catch (error) {
+            dispatch(receiveHaetutKayttooikeusryhmatFailure());
+            throw error;
+        }
+    };
 
 export const clearHaetutKayttooikeusryhmat = () => (dispatch: AppDispatch) =>
     dispatch({ type: CLEAR_HAETUT_KAYTTOOIKEUSRYHMAT });

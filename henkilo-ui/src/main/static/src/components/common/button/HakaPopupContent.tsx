@@ -47,9 +47,7 @@ class HakatunnistePopupContent extends React.Component<Props, State> {
             <div className="hakapopupcontent">
                 <ul>
                     {this.state.hakatunnisteet.length > 0 ? (
-                        this.state.hakatunnisteet.map((
-                            hakatunniste // eslint-disable-next-line jsx-a11y/anchor-is-valid
-                        ) => (
+                        this.state.hakatunnisteet.map((hakatunniste) => (
                             <li className="tag" key={hakatunniste}>
                                 <span>{hakatunniste}</span>{' '}
                                 <a
@@ -138,6 +136,6 @@ class HakatunnistePopupContent extends React.Component<Props, State> {
     }
 }
 
-export default connect<{}, DispatchProps, OwnProps, RootState>(undefined, {
+export default connect<object, DispatchProps, OwnProps, RootState>(undefined, {
     addGlobalNotification,
 })(HakatunnistePopupContent);

@@ -1,7 +1,6 @@
 import React from 'react';
 import { AnojaKayttooikeusryhmaData, KayttooikeusryhmaData } from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
 import Loader from '../common/icons/Loader';
-import { path } from 'ramda';
 import './AnojaKayttoooikeusryhma.css';
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
@@ -20,26 +19,29 @@ type Props = {
  * Komponentti anomuslistaukseen näyttämään anojan olemassa olevat ja rauenneet käyttöoikeudet
  */
 export const AnojaKayttooikeusryhmat = (props: Props) => {
-    const data: AnojaKayttooikeusryhmaData | null | undefined = path(['data'], props);
-    const error: boolean | null | undefined = path(['data', 'error'], props);
-    const kayttooikeudet: Array<KayttooikeusryhmaData> | null | undefined = path(['data', 'kayttooikeudet'], props);
+    const data: AnojaKayttooikeusryhmaData | null | undefined = props.data;
+    const error: boolean | null | undefined = data?.error;
+    const kayttooikeudet: Array<KayttooikeusryhmaData> | null | undefined = data?.kayttooikeudet;
     const headings = [
         {
             Header: props.l10n[props.locale]['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_MAIN_HEADER'],
             columns: [
                 {
-                    Header:
-                        props.l10n[props.locale]['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_ORGANISAATIO_HEADER'],
+                    Header: props.l10n[props.locale][
+                        'HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_ORGANISAATIO_HEADER'
+                    ],
                     accessor: 'organisaatioNimi',
                 },
                 {
-                    Header:
-                        props.l10n[props.locale]['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_KAYTTOOIKEUS_HEADER'],
+                    Header: props.l10n[props.locale][
+                        'HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_KAYTTOOIKEUS_HEADER'
+                    ],
                     accessor: 'kayttooikeusryhmaNimi',
                 },
                 {
-                    Header:
-                        props.l10n[props.locale]['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_VOIMASSAPVM_HEADER'],
+                    Header: props.l10n[props.locale][
+                        'HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_VOIMASSAPVM_HEADER'
+                    ],
                     accessor: 'voimassaPvm',
                 },
             ],

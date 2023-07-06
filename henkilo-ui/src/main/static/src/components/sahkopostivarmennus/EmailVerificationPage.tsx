@@ -129,7 +129,7 @@ export class EmailVerificationPage extends React.Component<Props, State> {
     }
 
     emailChangeEvent(yhteystiedotRyhmaIndex: number, yhteystietoIndex: number, value: string): void {
-        let yhteystiedotRyhma: Array<YhteystietoRyhma> = this.state.henkilo.yhteystiedotRyhma;
+        const yhteystiedotRyhma: Array<YhteystietoRyhma> = this.state.henkilo.yhteystiedotRyhma;
         yhteystiedotRyhma[yhteystiedotRyhmaIndex].yhteystieto[yhteystietoIndex].yhteystietoArvo = value;
         const validForm = validateYhteystiedotRyhmaEmails(yhteystiedotRyhma);
         this.setState({
@@ -150,7 +150,7 @@ export class EmailVerificationPage extends React.Component<Props, State> {
             );
 
         if (emailNotOnlyYhteystietoInYhteystietoryhma) {
-            let yhteystietoRyhma = yhteystiedotRyhma[yhteystiedotRyhmaIndex];
+            const yhteystietoRyhma = yhteystiedotRyhma[yhteystiedotRyhmaIndex];
             yhteystietoRyhma.yhteystieto = remove(yhteystietoIndex, 1, yhteystietoRyhma.yhteystieto);
         } else {
             yhteystiedotRyhma = remove(yhteystiedotRyhmaIndex, 1, yhteystiedotRyhma);

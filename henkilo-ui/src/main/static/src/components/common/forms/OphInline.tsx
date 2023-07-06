@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import '../../../flex.css';
 
-const OphInline = ({ children }) => <div className="flex-inline">{children}</div>;
+type Props = {
+    children: ReactNode;
+};
 
-OphInline.propTypes = {};
+const OphInline = ({ children }: Props) => <div className="flex-inline">{children}</div>;
 
 export default OphInline;

@@ -1,0 +1,11 @@
+.nyc_output/
+build/
+config/
+coverage/
+node_modules/
+playwright-results/
+scripts/
+.prettierrc
+.eslintrc.js
+env.d.ts
+react-app-env.d.ts

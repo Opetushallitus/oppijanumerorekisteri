@@ -3,7 +3,7 @@ import { Locale } from '../../../types/locale.type';
 import { http } from '../../../http';
 import { urls } from 'oph-urls-js';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import * as R from 'ramda';
+import { isEmpty } from 'ramda';
 import { PalveluRooli } from '../../../types/domain/kayttooikeus/PalveluRooli.types';
 import LocalizedTextGroup from '../../common/LocalizedTextGroup';
 import './KayttooikeusryhmaTiedot.css';
@@ -29,7 +29,7 @@ export default class KayttooikeusryhmaTiedot extends React.Component<Props, Stat
     };
 
     async componentWillReceiveProps(nextProps: Props): Promise<void> {
-        if (nextProps.show && R.isEmpty(this.state.palvelutRoolit)) {
+        if (nextProps.show && isEmpty(this.state.palvelutRoolit)) {
             const url = urls.url('kayttooikeus-service.kayttooikeusryhma.palvelurooli', this.props.item.id);
             const data = await http.get<PalveluRooli[]>(url);
             this.setState({ palvelutRoolit: data });
@@ -37,7 +37,7 @@ export default class KayttooikeusryhmaTiedot extends React.Component<Props, Stat
     }
 
     render() {
-        const kuvaus: any = R.path(['kuvaus', 'texts'], this.props.item);
+        const kuvaus = this.props.item?.kuvaus?.texts;
 
         return this.props.show ? (
             <div className="kayttooikeusryhma-tiedot">

@@ -42,7 +42,7 @@ type State = {
 };
 
 class HenkilohakuPage extends React.Component<Props, State> {
-    initialised: boolean = false;
+    initialised = false;
     L: Localisations = this.props.l10n[this.props.locale];
 
     state: State = {

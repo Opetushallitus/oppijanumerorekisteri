@@ -30,28 +30,27 @@ const henkilohakuSuccess = (data: HenkilohakuResult) => ({
 });
 const henkilohakuFailure = (error: any) => ({ type: HENKILOHAKU_FAILURE, error });
 
-export const henkilohaku = (payload: HenkilohakuCriteria, queryParams: HenkilohakuQueryparameters) => async (
-    dispatch: AppDispatch,
-    getState: () => RootState
-) => {
-    dispatch(henkilohakuRequest(payload));
-    const url = urls.url('kayttooikeus-service.henkilo.henkilohaku', queryParams ? queryParams : {});
-    try {
-        const data = await http.post<HenkilohakuResult>(url, payload);
-        dispatch(henkilohakuSuccess(data));
-    } catch (error) {
-        dispatch(henkilohakuFailure(error));
-        dispatch<any>(
-            addGlobalNotification({
-                key: 'HENKILOHAKU_ERROR',
-                title: localizeWithState('HENKILOHAKU_ERROR', getState()),
-                type: NOTIFICATIONTYPES.ERROR,
-                autoClose: 10000,
-            })
-        );
-        throw error;
-    }
-};
+export const henkilohaku =
+    (payload: HenkilohakuCriteria, queryParams: HenkilohakuQueryparameters) =>
+    async (dispatch: AppDispatch, getState: () => RootState) => {
+        dispatch(henkilohakuRequest(payload));
+        const url = urls.url('kayttooikeus-service.henkilo.henkilohaku', queryParams ? queryParams : {});
+        try {
+            const data = await http.post<HenkilohakuResult>(url, payload);
+            dispatch(henkilohakuSuccess(data));
+        } catch (error) {
+            dispatch(henkilohakuFailure(error));
+            dispatch<any>(
+                addGlobalNotification({
+                    key: 'HENKILOHAKU_ERROR',
+                    title: localizeWithState('HENKILOHAKU_ERROR', getState()),
+                    type: NOTIFICATIONTYPES.ERROR,
+                    autoClose: 10000,
+                })
+            );
+            throw error;
+        }
+    };
 
 export const updateFilters = (filters: HenkilohakuCriteria) => (dispatch: AppDispatch) =>
     dispatch({ type: UPDATE_HENKILOHAKU_FILTERS, filters });

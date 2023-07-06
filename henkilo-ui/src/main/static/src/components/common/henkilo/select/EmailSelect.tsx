@@ -41,4 +41,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
 });
 
-export default connect<StateProps, {}, {}, RootState>(mapStateToProps)(EmailSelect);
+export default connect<StateProps, never, OwnProps, RootState>(mapStateToProps)(EmailSelect);

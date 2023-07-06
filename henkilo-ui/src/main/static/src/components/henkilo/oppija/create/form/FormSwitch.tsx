@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router';
+import type { BrowserRouter } from 'react-router';
 import type { FormType } from './types';
 import AnonymousForm from '../anonymous';
 import SSNForm from '../ssn';

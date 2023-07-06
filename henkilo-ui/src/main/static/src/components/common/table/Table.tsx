@@ -29,6 +29,7 @@ type Props = {
     isLoading?: boolean;
     pageSize?: number;
     translate?: (key: string) => string;
+    column?: object;
 };
 
 const getHeaderProps = (state: any, _rowInfo: any, column: any) => {

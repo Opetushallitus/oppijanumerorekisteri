@@ -1,4 +1,4 @@
-import { AnyAction } from '@reduxjs/toolkit';
+import type { AnyAction } from '@reduxjs/toolkit';
 import {
     FETCH_HENKILO_LINKITYKSET_FAILURE,
     FETCH_HENKILO_LINKITYKSET_REQUEST,

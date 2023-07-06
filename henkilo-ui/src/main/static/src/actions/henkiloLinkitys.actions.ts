@@ -26,19 +26,17 @@ const henkiloLinkitysFailure = (oidHenkilo) => ({
  * @param oidHenkilo
  * @returns {Function}
  */
-export const fetchHenkiloLinkitykset = (oidHenkilo: string) => async (
-    dispatch: AppDispatch,
-    getState: () => RootState
-) => {
-    if (!getState().linkitykset[oidHenkilo]) {
-        dispatch(henkiloLinkitysRequest(oidHenkilo));
-        const url = urls.url('kayttooikeus-service.henkilo.linkitykset', oidHenkilo);
-        try {
-            const linkitykset = await http.get(url);
-            dispatch(henkiloLinkitysSuccess(oidHenkilo, { [oidHenkilo]: linkitykset }));
-        } catch (error) {
-            dispatch(henkiloLinkitysFailure(oidHenkilo));
-            throw error;
+export const fetchHenkiloLinkitykset =
+    (oidHenkilo: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        if (!getState().linkitykset[oidHenkilo]) {
+            dispatch(henkiloLinkitysRequest(oidHenkilo));
+            const url = urls.url('kayttooikeus-service.henkilo.linkitykset', oidHenkilo);
+            try {
+                const linkitykset = await http.get(url);
+                dispatch(henkiloLinkitysSuccess(oidHenkilo, { [oidHenkilo]: linkitykset }));
+            } catch (error) {
+                dispatch(henkiloLinkitysFailure(oidHenkilo));
+                throw error;
+            }
         }
-    }
-};
+    };

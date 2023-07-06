@@ -31,7 +31,7 @@ class StaticUtils {
         const pList = fieldpath.split('.');
         const len = pList.length;
         for (let i = 0; i < len - 1; i++) {
-            let elem = pList[i];
+            const elem = pList[i];
             if (!schema[elem]) {
                 schema[elem] = {};
             }
