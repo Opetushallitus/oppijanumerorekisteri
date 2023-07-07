@@ -106,9 +106,11 @@ public class DuplicateServiceImpl implements DuplicateService {
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
     public LinkResult removeDuplicateHetuAndLink(Henkilo henkilo, String hetu) {
+        log.info("Checking for hetu duplicates for henkilo {}", henkilo.getOidHenkilo());
         return this.henkiloDataRepository.findByHetu(hetu)
                 .filter((henkiloWithSameHetu) -> !henkiloWithSameHetu.getOidHenkilo().equals(henkilo.getOidHenkilo()))
                 .map(oppijaWithSameHetu -> {
+                    log.info("Found hetu duplicate; clearing duplicate's hetu and yksilöinti");
                     String[] oppijaWithSameHetuHetuhistoria = oppijaWithSameHetu.getKaikkiHetut().toArray(new String[0]);
                     oppijaWithSameHetu.clearHetut();
                     oppijaWithSameHetu.setHetu(null);
@@ -148,6 +150,7 @@ public class DuplicateServiceImpl implements DuplicateService {
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
     public LinkResult linkHenkilos(String henkiloOid, List<String> similarHenkiloOids) {
+        log.info("Linkin henkilos {}, {}", henkiloOid, String.join(", ", similarHenkiloOids));
         similarHenkiloOids = similarHenkiloOids.stream().filter(oid -> !henkiloOid.equals(oid)).distinct().collect(toList());
 
         Henkilo master = determineMasterHenkilo(henkiloOid, similarHenkiloOids);

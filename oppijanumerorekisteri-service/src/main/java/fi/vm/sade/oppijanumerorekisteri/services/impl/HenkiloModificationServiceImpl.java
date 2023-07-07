@@ -23,6 +23,7 @@ import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HuoltajaCreatePostValidator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,7 @@ import static java.util.stream.Collectors.toSet;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class HenkiloModificationServiceImpl implements HenkiloModificationService {
 
     private final HenkiloUpdatePostValidator henkiloUpdatePostValidator;
@@ -135,6 +137,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     @Override
     @Transactional
     public HenkiloForceReadDto forceUpdateHenkilo(HenkiloForceUpdateDto henkiloUpdateDto) {
+        log.info("Updating henkilo with oid {}", henkiloUpdateDto.getOidHenkilo());
         final Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo())
                 .orElseThrow(() -> new NotFoundException("Could not find henkilo " + henkiloUpdateDto.getOidHenkilo()));
 
@@ -210,6 +213,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     private DuplicateService.LinkResult updateHetuAndLinkDuplicate(HenkiloForceUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
         // Only if hetu has changed
         if (StringUtils.hasLength(henkiloUpdateDto.getHetu()) && !henkiloUpdateDto.getHetu().equals(henkiloSaved.getHetu())) {
+            log.info("Hetu has changed for henkilo {}", henkiloUpdateDto.getOidHenkilo());
             if (henkiloSaved.isYksiloityVTJ()) {
                 henkiloDataRepository.findByHetu(henkiloUpdateDto.getHetu()).ifPresent(henkiloByUusiHetu -> {
                     henkiloByUusiHetu.clearHetut();
