@@ -122,6 +122,9 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(nullable = false)
     private boolean yksiloityVTJ;
 
+    @Column(name = "vtj_bucket")
+    private Long vtjBucket;
+
     /**
      * true jos hetulliselle henkilölle on yritetty automaattista yksilöintiä.
      */

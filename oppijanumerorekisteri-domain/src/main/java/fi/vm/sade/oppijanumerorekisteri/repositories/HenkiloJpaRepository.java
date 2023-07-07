@@ -199,5 +199,7 @@ public interface HenkiloJpaRepository {
 
     Collection<Henkilo> findDeadWithIncompleteCleanup(CleanupStep step);
 
-    List<String> findHetusInBucket(long bucketId);
+    List<String> findHetusInVtjBucket(long bucketId);
+
+    List<String> findHetusWithoutVtjBucket();
 }

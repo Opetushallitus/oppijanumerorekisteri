@@ -75,7 +75,7 @@ public class SchedulingConfiguration {
     Task<Void> vtjMuutostietoSyncTask() {
         return Tasks
                 .recurring(new TaskWithoutDataDescriptor("vtj muutostieto fetch task"), FixedDelay.ofHours(1))
-                .execute((instance, ctx) -> vtjMuutostietoService.fetchHenkiloMuutostieto());
+                .execute((instance, ctx) -> vtjMuutostietoService.handleMuutostietoFetchTask());
     }
 
     @Bean

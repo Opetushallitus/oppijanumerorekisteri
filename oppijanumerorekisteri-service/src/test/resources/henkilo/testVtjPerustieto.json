@@ -1,0 +1,150 @@
+[
+  { "tietoryhma": "SUKUPUOLI", "sukupuoli": "NAINEN" },
+  {
+    "tietoryhma": "HENKILON_NIMI",
+    "etunimi": "Mathilda Helena Sophie",
+    "sukunimi": "Aslan Tes",
+    "alkupv": { "tarkkuus": "PAIVA", "arvo": "2019-05-08" }
+  },
+  {
+    "tietoryhma": "NIMENMUUTOS",
+    "nimilaji": "NYKYINEN_KUTSUMANIMI",
+    "nimi": "Helena",
+    "alkupv": { "arvo": "2019-05-10", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "NIMENMUUTOS",
+    "nimilaji": "EDELLINEN_ETUNIMI",
+    "nimi": "Martha Helena Beate-Sophie",
+    "loppupv": { "arvo": "2019-05-08", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "NIMENMUUTOS",
+    "nimilaji": "VIIMEKSI_NAIMATTOMANA_OLLESSA_OLLUT_SUKUNIMI",
+    "nimi": "Kajander",
+    "loppupv": { "arvo": "1992-11-24", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "NIMENMUUTOS",
+    "nimilaji": "EDELLINEN_KUTSUMANIMI",
+    "nimi": "Beate",
+    "alkupv": { "arvo": "2009-04-29", "tarkkuus": "PAIVA" },
+    "loppupv": { "arvo": "2013-03-06", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "NIMENMUUTOS",
+    "nimilaji": "EDELLINEN_KUTSUMANIMI",
+    "nimi": "Sophie",
+    "alkupv": { "arvo": "2013-03-06", "tarkkuus": "PAIVA" },
+    "loppupv": { "arvo": "2019-05-10", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "NIMENMUUTOS_LAAJA",
+    "nimilaji": "NYKYINEN_KUTSUMANIMI",
+    "nimi": "Helena",
+    "nimenmuutostapa": "KUTSUMANIMEN_MUUTOS",
+    "alkupv": { "arvo": "2019-05-10", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "NIMENMUUTOS_LAAJA",
+    "nimilaji": "EDELLINEN_ETUNIMI",
+    "nimi": "Martha Helena Beate-Sophie",
+    "loppupv": { "arvo": "2019-05-08", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "NIMENMUUTOS_LAAJA",
+    "nimilaji": "VIIMEKSI_NAIMATTOMANA_OLLESSA_OLLUT_SUKUNIMI",
+    "nimi": "Kajander",
+    "loppupv": { "arvo": "1992-11-24", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "NIMENMUUTOS_LAAJA",
+    "nimilaji": "EDELLINEN_KUTSUMANIMI",
+    "nimi": "Beate",
+    "alkupv": { "arvo": "2009-04-29", "tarkkuus": "PAIVA" },
+    "loppupv": { "arvo": "2013-03-06", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "NIMENMUUTOS_LAAJA",
+    "nimilaji": "EDELLINEN_KUTSUMANIMI",
+    "nimi": "Sophie",
+    "alkupv": { "arvo": "2013-03-06", "tarkkuus": "PAIVA" },
+    "loppupv": { "arvo": "2019-05-10", "tarkkuus": "PAIVA" }
+  },
+  { "tietoryhma": "SYNTYMAKOTIKUNTA", "kuntakoodi": "091" },
+  { "tietoryhma": "SIVIILISAATY", "siviilisaaty": "AVIOLIITOSSA" },
+  {
+    "tietoryhma": "SYNTYMAPAIVA",
+    "syntymapv": { "arvo": "1958-01-30", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "VAKINAINEN_KOTIMAINEN_OSOITE",
+    "katunimi": { "fi": "Öljymäki", "sv": "Oljebacka" },
+    "katunumero": "11",
+    "huoneistokirjain": "C",
+    "huoneistonumero": "003",
+    "postinumero": "00780",
+    "postitoimipaikka": { "fi": "HELSINKI", "sv": "HELSINGFORS" },
+    "rakennustunnus": "900000759J",
+    "osoitenumero": 1,
+    "kuntakoodi": "091",
+    "alkupv": { "arvo": "1986-06-02", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "KOTIKUNTA",
+    "kuntakoodi": "091",
+    "kuntaanMuuttopv": { "arvo": "2019-05-04", "tarkkuus": "PAIVA" },
+    "kuntaanMuuttoPv": { "arvo": "2019-05-04", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "VAESTOKIRJANPITOKUNTA",
+    "kuntakoodi": "091",
+    "kuntaanMuuttopv": { "arvo": "2019-05-04", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "SAHKOPOSTIOSOITE",
+    "sahkopostiosoite": "helena@miukumauku.fi",
+    "lajikoodi": "MAISTRAATTI",
+    "alkupv": { "arvo": "1986-06-02", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "VAKINAINEN_KOTIMAINEN_ASUINPAIKKATUNNUS",
+    "rakennustunnus": "900000759J",
+    "osoitenumero": 1,
+    "huoneistonumero": "003",
+    "huoneistokirjain": "C",
+    "kuntakoodi": "091",
+    "alkupv": { "arvo": "1986-06-02", "tarkkuus": "PAIVA" },
+    "asuinpaikantunnus": "900000759J1C003 "
+  },
+  {
+    "tietoryhma": "KOTIMAINEN_POSTIOSOITE",
+    "postiosoite": { "fi": "Kaljamäki 12 B 4", "sv": "Ölbacka 12 B 4" },
+    "postinumero": "00100",
+    "postitoimipaikka": { "fi": "HELSINKI", "sv": "HELSINGFORS" },
+    "alkupv": { "arvo": "1986-06-02", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "AIDINKIELI",
+    "kielikoodi": "fi",
+    "kielikoodiISO6392": "fin",
+    "alkupv": { "arvo": "1986-06-02", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "KANSALAISUUS",
+    "henkilonKansalaisuudet": [
+      { "kansalaisuuskoodi": "fi" },
+      { "kansalaisuuskoodi": "sv" }
+    ]
+  },
+  {
+    "tietoryhma": "USKONTOKUNTALAJI",
+    "uskontokuntalaji": "EI_USKONTOKUNTAA"
+  },
+  {
+    "tietoryhma": "KUTSUMANIMI",
+    "nimilaji": "NYKYINEN_KUTSUMANIMI",
+    "nimi": "Helena",
+    "alkupv": { "arvo": "2019-05-10", "tarkkuus": "PAIVA" }
+  }
+]

@@ -33,7 +33,7 @@ public class KoodiNimiReadDto {
     @Getter
     @Setter
     @AllArgsConstructor
-    static class Nimi {
+    public static class Nimi {
         @JsonProperty(LANG_FI)
         @ApiModelProperty
         String fi;

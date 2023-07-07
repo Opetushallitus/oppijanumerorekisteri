@@ -732,11 +732,21 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     }
 
     @Override
-    public List<String> findHetusInBucket(long bucketId) {
+    public List<String> findHetusInVtjBucket(long bucketId) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
         return jpa()
                 .from(qHenkilo)
-                .where(qHenkilo.id.mod(100l).eq(bucketId), qHenkilo.passivoitu.isFalse(), qHenkilo.hetu.isNotNull())
+                .where(qHenkilo.vtjBucket.eq(bucketId), qHenkilo.passivoitu.isFalse(), qHenkilo.hetu.isNotNull(), qHenkilo.yksiloityVTJ.isTrue())
+                .select(qHenkilo.hetu)
+                .fetch();
+    }
+
+    @Override
+    public List<String> findHetusWithoutVtjBucket() {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        return jpa()
+                .from(qHenkilo)
+                .where(qHenkilo.vtjBucket.isNull(), qHenkilo.passivoitu.isFalse(), qHenkilo.hetu.isNotNull(), qHenkilo.yksiloityVTJ.isTrue())
                 .select(qHenkilo.hetu)
                 .fetch();
     }

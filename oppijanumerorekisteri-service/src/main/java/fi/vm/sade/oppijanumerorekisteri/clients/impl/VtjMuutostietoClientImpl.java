@@ -25,6 +25,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjMuutostietoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.model.VtjMuutostietoResponse;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
+import fi.vm.sade.oppijanumerorekisteri.models.VtjPerustieto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +52,21 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
         public final List<String> hetulista;
     }
 
+    @RequiredArgsConstructor
+    @Getter
+    private static class PerustietoRequestBody {
+        public final String tuotekoodi = "mutpT1";
+        public final List<String> hetulista;
+    }
+
+    @NoArgsConstructor
+    @Setter
+    @Getter
+    private static class PerustietoResponse {
+        public List<VtjPerustieto> perustiedot;
+    }
+
+
     AvainResponse parseAvainResponse(String content) {
         try {
             return objectMapper.readValue(content, new TypeReference<AvainResponse>() {
@@ -63,6 +79,15 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     VtjMuutostietoResponse parseMuutostietoResponse(String content) {
         try {
             return objectMapper.readValue(content, new TypeReference<VtjMuutostietoResponse>() {
+            });
+        } catch (IOException ioe) {
+            throw new CompletionException(ioe);
+        }
+    }
+
+    PerustietoResponse parsePerustietoResponse(String content) {
+        try {
+            return objectMapper.readValue(content, new TypeReference<PerustietoResponse>() {
             });
         } catch (IOException ioe) {
             throw new CompletionException(ioe);
@@ -115,5 +140,25 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
                 .thenApply(HttpResponse::body)
                 .thenApply(this::parseMuutostietoResponse)
                 .get();
+    }
+
+    @Override
+    public List<VtjPerustieto> fetchHenkiloPerustieto(List<String> hetus)
+            throws InterruptedException, ExecutionException, JsonProcessingException {
+        String uri = properties.getVtjMuutosrajapinta().getBaseUrl() + "/api/v1/perustiedot";
+        PerustietoRequestBody body = new PerustietoRequestBody(hetus);
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(BodyPublishers.ofString(objectMapper.writeValueAsString(body)))
+                .uri(URI.create(uri))
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .header("Authorization", getBasicAuthentication())
+                .build();
+        PerustietoResponse response = buildClient()
+                .sendAsync(request, BodyHandlers.ofString())
+                .thenApply(HttpResponse::body)
+                .thenApply(this::parsePerustietoResponse)
+                .get();
+        return response.perustiedot;
     }
 }
