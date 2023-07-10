@@ -141,15 +141,19 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         final Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo())
                 .orElseThrow(() -> new NotFoundException("Could not find henkilo " + henkiloUpdateDto.getOidHenkilo()));
 
-        List<Henkilo> henkilot = henkiloUpdateDto.getKaikkiHetut().stream()
-                .flatMap(hetu -> henkiloDataRepository.findByHetu(hetu).stream())
+        Set<String> kaikkiHetut = combineKaikkiHetut(henkiloUpdateDto, henkiloSaved);
+        List<Henkilo> henkilot = kaikkiHetut.stream()
+                .flatMap(hetu -> henkiloDataRepository.findByKaikkiHetut(hetu).stream())
                 .collect(toList());
-        Henkilo originalHenkilo = henkilot.stream().sorted(Comparator.comparing(Henkilo::getCreated)).findFirst()
-                .orElseThrow(() -> new IllegalStateException("Expected to find at least one henkilo to update with hetus"));
-        if (!originalHenkilo.getOidHenkilo().equals(henkiloUpdateDto.getOidHenkilo())) {
-            log.info("Trying to update duplicate henkilo; updating the original instead");
-            henkiloUpdateDto.setOidHenkilo(originalHenkilo.getOidHenkilo());
-            return forceUpdateHenkilo(henkiloUpdateDto);
+        if (!henkilot.isEmpty()) {
+            Comparator<Henkilo> originalHenkiloSortOrder = Comparator.comparing(Henkilo::getCreated).thenComparing(Henkilo::getId);
+            Henkilo originalHenkilo = henkilot.stream().min(originalHenkiloSortOrder)
+                    .orElseThrow(() -> new IllegalStateException("Expected to find at least one henkilo to update with hetus"));
+            if (!originalHenkilo.getOidHenkilo().equals(henkiloUpdateDto.getOidHenkilo())) {
+                log.info("Trying to update duplicate henkilo; updating the original instead");
+                henkiloUpdateDto.setOidHenkilo(originalHenkilo.getOidHenkilo());
+                return forceUpdateHenkilo(henkiloUpdateDto);
+            }
         }
 
         if (henkiloUpdateDto.getEtunimet() != null || henkiloUpdateDto.getKutsumanimi() != null) {
@@ -192,6 +196,15 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
         linked.forEachModified(this::update);
         return mapper.map(henkiloSaved, HenkiloForceReadDto.class);
+    }
+
+    private static Set<String> combineKaikkiHetut(HenkiloForceUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
+        Set<String> kaikkiHetut = new HashSet<>();
+        if (henkiloSaved.getHetu() != null) kaikkiHetut.add(henkiloSaved.getHetu());
+        if (henkiloUpdateDto.getHetu() != null) kaikkiHetut.add(henkiloUpdateDto.getHetu());
+        if (henkiloUpdateDto.getKaikkiHetut() != null) kaikkiHetut.addAll(henkiloUpdateDto.getKaikkiHetut());
+        if (henkiloSaved.getKaikkiHetut() != null) kaikkiHetut.addAll(henkiloSaved.getKaikkiHetut());
+        return kaikkiHetut;
     }
 
 

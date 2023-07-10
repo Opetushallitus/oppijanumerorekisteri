@@ -81,6 +81,10 @@ public class HenkiloModificationServiceIntegrationTest {
         henkiloForceUpdateDto.setHetu("111111-1234");
         henkiloForceUpdateDto.setKaikkiHetut(Stream.of("111111-1234", "111111-1233").collect(toSet()));
 
+        // TODO: Tapahtuuko tätä tilannetta koskaan? Päivittääkö henkilotietomuutospalvelu koskaan olemassaolevaa hetua
+        // (tässä hetu '111111-985K', oid 'VTJYKSILOITY1')
+        // täysin uudella setillä hetuja (hetut "111111-1234" ja "111111-1233", jotka assignattu henkilölle 'VTJYKSILOITY2'), jotka viittaa toiseen henkilöön?
+
         HenkiloForceReadDto henkiloReadDto = this.henkiloModificationService.forceUpdateHenkilo(henkiloForceUpdateDto);
 
         assertThat(henkiloReadDto)
