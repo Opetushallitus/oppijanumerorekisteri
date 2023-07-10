@@ -141,6 +141,17 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         final Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo())
                 .orElseThrow(() -> new NotFoundException("Could not find henkilo " + henkiloUpdateDto.getOidHenkilo()));
 
+        List<Henkilo> henkilot = henkiloUpdateDto.getKaikkiHetut().stream()
+                .flatMap(hetu -> henkiloDataRepository.findByHetu(hetu).stream())
+                .collect(toList());
+        Henkilo originalHenkilo = henkilot.stream().sorted(Comparator.comparing(Henkilo::getCreated)).findFirst()
+                .orElseThrow(() -> new IllegalStateException("Expected to find at least one henkilo to update with hetus"));
+        if (!originalHenkilo.getOidHenkilo().equals(henkiloUpdateDto.getOidHenkilo())) {
+            log.info("Trying to update duplicate henkilo; updating the original instead");
+            henkiloUpdateDto.setOidHenkilo(originalHenkilo.getOidHenkilo());
+            return forceUpdateHenkilo(henkiloUpdateDto);
+        }
+
         if (henkiloUpdateDto.getEtunimet() != null || henkiloUpdateDto.getKutsumanimi() != null) {
             // etunimet ja/tai kutsumanimi muuttuu -> asetetaan molemmat jotta voidaan tehdä validointi
             henkiloUpdateDto.setEtunimet(Optional.ofNullable(henkiloUpdateDto.getEtunimet()).orElse(henkiloSaved.getEtunimet()));
@@ -157,6 +168,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             }
         }
         if (errors.hasErrors()) {
+            log.info("Henkilo update from henkilotietomuutos contianed errors");
             throw new UnprocessableEntityException(errors);
         }
 
@@ -274,6 +286,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
         // päivitettäessä henkilöä, päivitetään samalla kaikkien slave-henkilöiden
         // modified-aikaleima, jotta myös slavet näkyvät muutosrajapinnassa
+        log.info("Marking all duplicates as updated");
         List<Henkilo> duplikaatit = henkiloDataRepository.findSlavesByMasterOid(tallennettu.getOidHenkilo()).stream().map(slave -> {
             slave.setModified(nyt);
             kayttajaOid.ifPresent(slave::setKasittelijaOid);
