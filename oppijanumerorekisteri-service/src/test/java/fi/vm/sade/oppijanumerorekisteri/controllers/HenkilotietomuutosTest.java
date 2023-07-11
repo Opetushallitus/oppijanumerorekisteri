@@ -84,6 +84,8 @@ public class HenkilotietomuutosTest {
         henkiloForceUpdateDto.setOidHenkilo(duplicate.getOidHenkilo());
         henkiloForceUpdateDto.setHetu(duplicate.getHetu());
         henkiloForceUpdateDto.setKaikkiHetut(Set.of(original.getHetu(), duplicate.getHetu()));
+        henkiloForceUpdateDto.setEtunimet("Matti");
+        henkiloForceUpdateDto.setSukunimi("Mehiläinen");
 
         MvcResult result2 = mvc.perform(createRequest(put("/s2s/henkilo/muutostiedot"), henkiloForceUpdateDto))
                 .andExpect(status().isOk()).andReturn();

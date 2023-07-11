@@ -137,6 +137,10 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     @Override
     @Transactional
     public HenkiloForceReadDto forceUpdateHenkilo(HenkiloForceUpdateDto henkiloUpdateDto) {
+        return forceUpdateHenkiloInternal(henkiloUpdateDto, false);
+    }
+
+    private HenkiloForceReadDto forceUpdateHenkiloInternal(HenkiloForceUpdateDto henkiloUpdateDto, boolean skipNameValidation) {
         log.info("Updating henkilo with oid {}", henkiloUpdateDto.getOidHenkilo());
         final Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo())
                 .orElseThrow(() -> new NotFoundException("Could not find henkilo " + henkiloUpdateDto.getOidHenkilo()));
@@ -152,11 +156,11 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             if (!originalHenkilo.getOidHenkilo().equals(henkiloUpdateDto.getOidHenkilo())) {
                 log.info("Trying to update duplicate henkilo; updating the original instead");
                 henkiloUpdateDto.setOidHenkilo(originalHenkilo.getOidHenkilo());
-                return forceUpdateHenkilo(henkiloUpdateDto);
+                return forceUpdateHenkiloInternal(henkiloUpdateDto, true);
             }
         }
 
-        if (henkiloUpdateDto.getEtunimet() != null || henkiloUpdateDto.getKutsumanimi() != null) {
+        if (!skipNameValidation && (henkiloUpdateDto.getEtunimet() != null || henkiloUpdateDto.getKutsumanimi() != null)) {
             // etunimet ja/tai kutsumanimi muuttuu -> asetetaan molemmat jotta voidaan tehdä validointi
             henkiloUpdateDto.setEtunimet(Optional.ofNullable(henkiloUpdateDto.getEtunimet()).orElse(henkiloSaved.getEtunimet()));
             henkiloUpdateDto.setKutsumanimi(Optional.ofNullable(henkiloUpdateDto.getKutsumanimi()).orElse(henkiloSaved.getKutsumanimi()));
