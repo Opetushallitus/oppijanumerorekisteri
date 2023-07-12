@@ -137,11 +137,35 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     @Override
     @Transactional
     public HenkiloForceReadDto forceUpdateHenkilo(HenkiloForceUpdateDto henkiloUpdateDto) {
+        return forceUpdateHenkiloInternal(henkiloUpdateDto, false);
+    }
+
+    private HenkiloForceReadDto forceUpdateHenkiloInternal(HenkiloForceUpdateDto henkiloUpdateDto, boolean skipNameValidation) {
         log.info("Updating henkilo with oid {}", henkiloUpdateDto.getOidHenkilo());
         final Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo())
                 .orElseThrow(() -> new NotFoundException("Could not find henkilo " + henkiloUpdateDto.getOidHenkilo()));
 
-        if (henkiloUpdateDto.getEtunimet() != null || henkiloUpdateDto.getKutsumanimi() != null) {
+        Set<String> kaikkiHetut = combineKaikkiHetut(henkiloUpdateDto, henkiloSaved);
+        List<Henkilo> henkilot = kaikkiHetut.stream()
+                .flatMap(hetu -> henkiloDataRepository.findByKaikkiHetut(hetu).stream())
+                .collect(toList());
+        if (!henkilot.isEmpty()) {
+            Comparator<Henkilo> originalHenkiloSortOrder = Comparator.comparing(Henkilo::getCreated).thenComparing(Henkilo::getId);
+            Henkilo originalHenkilo = henkilot.stream().min(originalHenkiloSortOrder)
+                    .orElseThrow(() -> new IllegalStateException("Expected to find at least one henkilo to update with hetus"));
+
+            log.info("Found {} henkilos ({}) with given hetus and of those {} is the oldest",
+                    henkilot.size(),
+                    henkilot.stream().map(Henkilo::getOidHenkilo).collect(Collectors.joining(", ")),
+                    originalHenkilo.getOidHenkilo());
+            if (!originalHenkilo.getOidHenkilo().equals(henkiloUpdateDto.getOidHenkilo())) {
+                log.info("Trying to update duplicate henkilo; updating the original instead");
+                henkiloUpdateDto.setOidHenkilo(originalHenkilo.getOidHenkilo());
+                return forceUpdateHenkiloInternal(henkiloUpdateDto, true);
+            }
+        }
+
+        if (!skipNameValidation && (henkiloUpdateDto.getEtunimet() != null || henkiloUpdateDto.getKutsumanimi() != null)) {
             // etunimet ja/tai kutsumanimi muuttuu -> asetetaan molemmat jotta voidaan tehdä validointi
             henkiloUpdateDto.setEtunimet(Optional.ofNullable(henkiloUpdateDto.getEtunimet()).orElse(henkiloSaved.getEtunimet()));
             henkiloUpdateDto.setKutsumanimi(Optional.ofNullable(henkiloUpdateDto.getKutsumanimi()).orElse(henkiloSaved.getKutsumanimi()));
@@ -157,6 +181,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             }
         }
         if (errors.hasErrors()) {
+            log.info("Henkilo update from henkilotietomuutos contianed errors");
             throw new UnprocessableEntityException(errors);
         }
 
@@ -180,6 +205,15 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
         linked.forEachModified(this::update);
         return mapper.map(henkiloSaved, HenkiloForceReadDto.class);
+    }
+
+    private static Set<String> combineKaikkiHetut(HenkiloForceUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
+        Set<String> kaikkiHetut = new HashSet<>();
+        if (henkiloSaved.getHetu() != null) kaikkiHetut.add(henkiloSaved.getHetu());
+        if (henkiloUpdateDto.getHetu() != null) kaikkiHetut.add(henkiloUpdateDto.getHetu());
+        if (henkiloUpdateDto.getKaikkiHetut() != null) kaikkiHetut.addAll(henkiloUpdateDto.getKaikkiHetut());
+        if (henkiloSaved.getKaikkiHetut() != null) kaikkiHetut.addAll(henkiloSaved.getKaikkiHetut());
+        return kaikkiHetut;
     }
 
 
@@ -274,6 +308,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
         // päivitettäessä henkilöä, päivitetään samalla kaikkien slave-henkilöiden
         // modified-aikaleima, jotta myös slavet näkyvät muutosrajapinnassa
+        log.info("Marking all duplicates as updated");
         List<Henkilo> duplikaatit = henkiloDataRepository.findSlavesByMasterOid(tallennettu.getOidHenkilo()).stream().map(slave -> {
             slave.setModified(nyt);
             kayttajaOid.ifPresent(slave::setKasittelijaOid);
