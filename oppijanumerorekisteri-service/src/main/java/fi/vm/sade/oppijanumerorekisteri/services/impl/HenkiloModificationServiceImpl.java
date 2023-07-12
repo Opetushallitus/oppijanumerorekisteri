@@ -153,6 +153,11 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             Comparator<Henkilo> originalHenkiloSortOrder = Comparator.comparing(Henkilo::getCreated).thenComparing(Henkilo::getId);
             Henkilo originalHenkilo = henkilot.stream().min(originalHenkiloSortOrder)
                     .orElseThrow(() -> new IllegalStateException("Expected to find at least one henkilo to update with hetus"));
+
+            log.info("Found {} henkilos ({}) with given hetus and of those {} is the oldest",
+                    henkilot.size(),
+                    henkilot.stream().map(Henkilo::getOidHenkilo).collect(Collectors.joining(", ")),
+                    originalHenkilo.getOidHenkilo());
             if (!originalHenkilo.getOidHenkilo().equals(henkiloUpdateDto.getOidHenkilo())) {
                 log.info("Trying to update duplicate henkilo; updating the original instead");
                 henkiloUpdateDto.setOidHenkilo(originalHenkilo.getOidHenkilo());
