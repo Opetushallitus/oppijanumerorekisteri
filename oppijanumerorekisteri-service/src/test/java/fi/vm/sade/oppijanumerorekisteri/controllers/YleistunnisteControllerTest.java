@@ -27,6 +27,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -56,6 +57,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("dev")
 @SpringBootTest(classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, H2Configuration.class})
 @AutoConfigureMockMvc
+@TestPropertySource(properties = {
+        "feature.kjhh-2346-salli-henkilon-luonti-yhdella-etunimella=false",
+})
 class YleistunnisteControllerTest {
 
     private static final String WRONG_ACCESS_RIGHT = "PIGGLYWIGGLY";

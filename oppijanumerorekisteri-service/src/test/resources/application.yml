@@ -36,4 +36,4 @@ aws:
 logback:
   access: true
 
-feature.kjhh-2346-salli-henkilon-luonti-yhdella-etunimella: false
+feature.kjhh-2346-salli-henkilon-luonti-yhdella-etunimella: true
