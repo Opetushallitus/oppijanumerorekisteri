@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.google.common.collect.Lists;
 import fi.vm.sade.oppijanumerorekisteri.KoodistoServiceMock;
+import fi.vm.sade.oppijanumerorekisteri.aspects.AuditlogAspectHelper;
 import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
@@ -66,6 +67,9 @@ public class DuplicateServiceImplTest {
 
     @MockBean
     private KansalaisuusRepository kansalaisuusRepository;
+
+    @MockBean
+    private AuditlogAspectHelper auditlogAspectHelper;
 
     @Test
     public void getHenkiloDuplicateDtoListShouldReturnApplicationsFromAtaruAndHakuApp() {
