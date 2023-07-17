@@ -11,6 +11,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -53,6 +54,44 @@ public class AuditlogAspectHelper {
                 .updated(AuditMessageFields.HENKILO, "", getJson(henkilo))
                 .build();
         virkailijaLogger.log(OnrOperation.FORCE_UPDATE_HENKILO, target, changes);
+    }
+
+    public void logLinkHenkilos(DuplicateService.LinkResult result) {
+        String masterOid = result.master.getOidHenkilo();
+        virkailijaLogger.log(
+                OnrOperation.LINKITYS,
+                new Target.Builder()
+                        .setField(AuditMessageFields.HENKILO_OID, masterOid)
+                        .setField(AuditMessageFields.LISATIETO, "Henkilöön linkitetty duplikaatit: " + String.join(", ", result.getSlaveOids()))
+                        .build(),
+                new Changes.Builder().build());
+
+        for (String slaveOid : result.getSlaveOids()) {
+            virkailijaLogger.log(
+                    OnrOperation.LINKITYS,
+                    new Target.Builder()
+                            .setField(AuditMessageFields.HENKILO_OID, slaveOid)
+                            .setField(AuditMessageFields.LISATIETO, "Henkilö merkitty duplikaatiksi ja linkitetty henkilöön " + masterOid)
+                            .build(),
+                    new Changes.Builder().build());
+        }
+    }
+
+    public void logUnlinkHenkilos(String masterOid, String slaveOid) {
+        virkailijaLogger.log(
+                OnrOperation.PURA_LINKITYS,
+                new Target.Builder()
+                        .setField(AuditMessageFields.HENKILO_OID, masterOid)
+                        .setField(AuditMessageFields.LISATIETO, String.format("Linkitys henkilöön %s purettu", slaveOid))
+                        .build(),
+                new Changes.Builder().build());
+        virkailijaLogger.log(
+                OnrOperation.PURA_LINKITYS,
+                new Target.Builder()
+                        .setField(AuditMessageFields.HENKILO_OID, slaveOid)
+                        .setField(AuditMessageFields.LISATIETO, String.format("Linkitys henkilöön %s purettu", masterOid))
+                        .build(),
+                new Changes.Builder().build());
     }
 
     void logDisableHenkilo(String henkiloOid, Object returnHenkilo) {

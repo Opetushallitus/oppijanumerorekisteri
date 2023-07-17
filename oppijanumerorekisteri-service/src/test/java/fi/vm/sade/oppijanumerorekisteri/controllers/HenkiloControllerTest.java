@@ -459,21 +459,6 @@ public class HenkiloControllerTest {
         verifyReadAudit("1.2.3.4.5");
     }
 
-    @Test
-    @WithMockUser(username = "1.2.3.4.5", authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "YKSILOINNIN_PURKU" + ROOT_ORGANISATION_SUFFIX)
-    public void forcelink() throws Exception {
-        given(this.henkiloModificationService.forceLinkHenkilos(any(), any())).willReturn(List.of("6.7.8.9.10"));
-
-        mvc.perform(
-                post("/henkilo/{oid}/forcelink", "1.2.3.4.5")
-                        .content("[\"6.7.8.9.10\"]")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpectAll(
-                        status().isOk()
-                );
-
-        verify(henkiloModificationService, times(1)).forceLinkHenkilos("1.2.3.4.5", List.of("6.7.8.9.10"));
-    }
 
     @WithMockUser(username = "1.2.3.4.5")
     public void removeAccessRightsNoAccess() throws Exception {

@@ -1,8 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -11,6 +10,9 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "henkiloviite", schema = "public")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @SqlResultSetMapping(

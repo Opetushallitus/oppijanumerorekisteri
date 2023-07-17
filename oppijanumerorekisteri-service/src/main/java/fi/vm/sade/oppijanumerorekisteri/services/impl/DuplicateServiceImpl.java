@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.google.common.collect.Lists;
+import fi.vm.sade.oppijanumerorekisteri.aspects.AuditlogAspectHelper;
 import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
@@ -44,6 +45,7 @@ public class DuplicateServiceImpl implements DuplicateService {
     private final UserDetailsHelper userDetailsHelper;
     private final OrikaConfiguration mapper;
     private final KayttooikeusClient kayttooikeusClient;
+    private final AuditlogAspectHelper auditlogAspectHelper;
 
     @Override
     @Transactional(readOnly = true)
@@ -172,7 +174,7 @@ public class DuplicateServiceImpl implements DuplicateService {
                         .stream()
                         .map(HenkiloViite::getMasterOid).collect(toSet()));
 
-        return new LinkResult(
+        LinkResult result = new LinkResult(
                 master,
                 Stream.concat(
                         slaveOids.stream().flatMap(oid -> this.linkHenkilos(master, oid).stream()),
@@ -180,6 +182,8 @@ public class DuplicateServiceImpl implements DuplicateService {
                 ).collect(toList()),
                 slaveOids
         );
+        auditlogAspectHelper.logLinkHenkilos(result);
+        return result;
     }
 
     private List<Henkilo> linkHenkilos(Henkilo master, String slaveOid) {
@@ -296,6 +300,7 @@ public class DuplicateServiceImpl implements DuplicateService {
         slave.setDuplicate(false);
         slave.setPassivoitu(false);
         this.henkiloViiteRepository.removeByMasterOidAndSlaveOid(oid, slaveOid);
+        auditlogAspectHelper.logUnlinkHenkilos(oid, slaveOid);
         return new LinkResult(master, Lists.newArrayList(master, slave), new ArrayList<>());
     }
 
