@@ -1,0 +1,59 @@
+[
+    { "tietoryhma": "SUKUPUOLI", "sukupuoli": "NAINEN" },
+    {
+      "tietoryhma": "HENKILON_NIMI",
+      "etunimi": "Mathilda Helena Sophie",
+      "sukunimi": "Aslan Tes",
+      "alkupv": { "tarkkuus": "PAIVA", "arvo": "2019-05-08" }
+    },
+    {
+      "tietoryhma": "SYNTYMAPAIVA",
+      "syntymapv": { "arvo": "1958-01-30", "tarkkuus": "PAIVA" }
+    },
+    {
+      "tietoryhma": "VAESTOKIRJANPITOKUNTA",
+      "kuntakoodi": "091",
+      "kuntaanMuuttopv": { "arvo": "2019-05-04", "tarkkuus": "PAIVA" }
+    },
+    {
+      "tietoryhma": "AIDINKIELI",
+      "kielikoodi": "fr",
+      "kielikoodiISO6392": "fra",
+      "alkupv": { "arvo": "1986-06-02", "tarkkuus": "PAIVA" }
+    },
+    {
+      "tietoryhma": "KANSALAISUUS",
+      "henkilonKansalaisuudet": [
+        { "kansalaisuuskoodi": "250" }
+      ]
+    },
+    {
+      "tietoryhma": "VAKINAINEN_ULKOMAINEN_OSOITE",
+      "lahiosoite": "123 le street",
+      "paikkakunta": "Paris",
+      "valtiokoodi": "250"
+    },
+    {
+      "tietoryhma": "TILAPAINEN_KOTIMAINEN_OSOITE",
+      "katunimi": { "fi": "Öljymäki", "sv": "Oljebacka" },
+      "katunumero": "11",
+      "huoneistokirjain": "C",
+      "huoneistonumero": "003",
+      "postinumero": "00780",
+      "postitoimipaikka": { "fi": "HELSINKI", "sv": "HELSINGFORS" },
+      "rakennustunnus": "900000759J",
+      "osoitenumero": 1,
+      "kuntakoodi": "091",
+      "alkupv": { "arvo": "1986-06-02", "tarkkuus": "PAIVA" }
+    },
+    {
+      "tietoryhma": "USKONTOKUNTALAJI",
+      "uskontokuntalaji": "EI_USKONTOKUNTAA"
+    },
+    {
+      "tietoryhma": "KUTSUMANIMI",
+      "nimilaji": "NYKYINEN_KUTSUMANIMI",
+      "nimi": "Helena",
+      "alkupv": { "arvo": "2019-05-10", "tarkkuus": "PAIVA" }
+    }
+  ]

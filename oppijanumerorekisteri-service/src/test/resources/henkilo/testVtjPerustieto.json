@@ -133,8 +133,8 @@
   {
     "tietoryhma": "KANSALAISUUS",
     "henkilonKansalaisuudet": [
-      { "kansalaisuuskoodi": "fi" },
-      { "kansalaisuuskoodi": "sv" }
+      { "kansalaisuuskoodi": "123" },
+      { "kansalaisuuskoodi": "456" }
     ]
   },
   {

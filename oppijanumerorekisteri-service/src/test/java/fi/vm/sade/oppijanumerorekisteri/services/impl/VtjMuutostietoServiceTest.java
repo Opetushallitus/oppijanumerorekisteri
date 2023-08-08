@@ -69,6 +69,8 @@ public class VtjMuutostietoServiceTest {
     List<String> hetus = List.of("123456-111A", "101010-010B");
     List<VtjMuutostieto> muutostietos;
     VtjPerustieto perustieto;
+    VtjPerustieto turvakielto;
+    VtjPerustieto foreign;
 
     @Before
     public void before() throws Exception {
@@ -77,13 +79,10 @@ public class VtjMuutostietoServiceTest {
                         "[{\"tietoryhma\": \"TURVAKIELTO\", \"muutosattribuutti\": \"LISATTY\", \"turvakieltoAktiivinen\": true}]")),
                 new VtjMuutostieto("101010-010B", LocalDateTime.now(), objectMapper.readTree(
                         "[{\"tietoryhma\": \"TURVAKIELTO\", \"turvaLoppuPv\": {\"arvo\": \"2024-10-01\", \"tarkkuus\": \"PAIVA\"}, \"muutosattribuutti\": \"LISATTY\", \"turvakieltoAktiivinen\": true}]")));
-        perustieto = new VtjPerustieto();
-        perustieto.henkilotunnus = hetus.get(0);
-        perustieto.tietoryhmat = objectMapper.readTree(new File("src/test/resources/henkilo/testVtjPerustieto.json"));
-    }
+        perustieto = new VtjPerustieto(hetus.get(0), objectMapper.readTree(new File("src/test/resources/henkilo/testVtjPerustieto.json")));
+        turvakielto = new VtjPerustieto(hetus.get(0), objectMapper.readTree(new File("src/test/resources/henkilo/testVtjTurvakielto.json")));
+        foreign = new VtjPerustieto(hetus.get(0), objectMapper.readTree(new File("src/test/resources/henkilo/testVtjForeign.json")));
 
-    @Test
-    public void savePerustietoParsesCorrectForceUpdateDto() throws Exception {
         Optional<Henkilo> henkilo = Optional.of(Henkilo.builder()
                 .etunimet("etu")
                 .sukunimi("suku")
@@ -93,13 +92,16 @@ public class VtjMuutostietoServiceTest {
         henkilo.get().setId(1l);
         when(henkiloRepository.findByHetu(hetus.get(0)))
                 .thenReturn(henkilo);
+        when(koodistoService.list(Koodisto.KIELI))
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI).koodi("fr").koodi("fi").koodi("sv").build());
         when(koodistoService.list(Koodisto.KUNTA))
                 .thenReturn(new KoodiTypeListBuilder(Koodisto.KUNTA).koodi("091").build());
-        when(koodistoService.list(Koodisto.KIELI))
-                .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI).koodi("sv").koodi("fi").build());
         when(koodistoService.list(Koodisto.MAAT_JA_VALTIOT_2))
-                .thenReturn(new KoodiTypeListBuilder(Koodisto.MAAT_JA_VALTIOT_2).koodi("sv").koodi("fi").build());
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.MAAT_JA_VALTIOT_2).koodi("250").koodi("123").koodi("456").build());
+    }
 
+    @Test
+    public void savePerustietoParsesCorrectForceUpdateDto() throws Exception {
         muutostietoService.savePerustieto(perustieto);
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -110,7 +112,7 @@ public class VtjMuutostietoServiceTest {
         assertThat(actual.getSyntymaaika()).isEqualTo(LocalDate.of(1958, 1, 30));
         assertThat(actual.getSukupuoli()).isEqualTo("2");
         assertThat(actual.getKansalaisuus().stream().map(k -> k.getKansalaisuusKoodi()).collect(Collectors.toSet()))
-                .isEqualTo(Set.of("fi", "sv"));
+                .isEqualTo(Set.of("123", "456"));
         assertThat(actual.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
         assertThat(actual.getKutsumanimi()).isEqualTo("Helena");
         assertThat(actual.getTurvakielto()).isFalse();
@@ -144,6 +146,60 @@ public class VtjMuutostietoServiceTest {
                                     tuple(YhteystietoTyyppi.YHTEYSTIETO_KAUPUNKI, "HELSINKI"),
                                     tuple(YhteystietoTyyppi.YHTEYSTIETO_POSTINUMERO, "00100"),
                                     tuple(YhteystietoTyyppi.YHTEYSTIETO_KATUOSOITE, "Kaljamäki 12 B 4")
+                            );
+                    break;
+                default:
+                    throw new Exception("invalid ryhmakuvaus " + ryhma.getRyhmaKuvaus());
+            }
+        }
+        verify(henkiloRepository, times(1)).save(any());
+    }
+
+    @Test
+    public void savePerustietoParsesTurvakielto() throws Exception {
+        muutostietoService.savePerustieto(turvakielto);
+
+        ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
+        verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
+        HenkiloForceUpdateDto actual = argument.getValue();
+        assertThat(actual.getTurvakielto()).isTrue();
+        assertThat(actual.getKotikunta()).isNull();
+        assertThat(actual.getYhteystiedotRyhma()).isEmpty();
+        verify(henkiloRepository, times(1)).save(any());
+    }
+
+    @Test
+    public void savePerustietoParsesForeign() throws Exception {
+        muutostietoService.savePerustieto(foreign);
+
+        ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
+        verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
+        HenkiloForceUpdateDto actual = argument.getValue();
+        assertThat(actual.getKansalaisuus().stream().map(k -> k.getKansalaisuusKoodi()).collect(Collectors.toSet()))
+                .isEqualTo(Set.of("250"));
+        assertThat(actual.getAidinkieli().getKieliKoodi()).isEqualTo("fr");
+        assertThat(actual.getYhteystiedotRyhma()).extracting(YhteystiedotRyhmaDto::getRyhmaKuvaus)
+                .containsExactlyInAnyOrder("yhteystietotyyppi5", "yhteystietotyyppi9");
+        assertThat(actual.getYhteystiedotRyhma()).extracting(YhteystiedotRyhmaDto::getRyhmaAlkuperaTieto)
+                .allMatch(alkupera -> alkupera.equals("alkupera1"));
+        for (YhteystiedotRyhmaDto ryhma : actual.getYhteystiedotRyhma()) {
+            switch (ryhma.getRyhmaKuvaus()) {
+                case "yhteystietotyyppi9":
+                    assertThat(ryhma.getYhteystieto())
+                            .extracting(YhteystietoDto::getYhteystietoTyyppi, YhteystietoDto::getYhteystietoArvo)
+                            .containsExactlyInAnyOrder(
+                                    tuple(YhteystietoTyyppi.YHTEYSTIETO_KAUPUNKI, "HELSINKI"),
+                                    tuple(YhteystietoTyyppi.YHTEYSTIETO_POSTINUMERO, "00780"),
+                                    tuple(YhteystietoTyyppi.YHTEYSTIETO_KATUOSOITE, "Öljymäki 11 C 3")
+                            );
+                    break;
+                case "yhteystietotyyppi5":
+                    assertThat(ryhma.getYhteystieto())
+                            .extracting(YhteystietoDto::getYhteystietoTyyppi, YhteystietoDto::getYhteystietoArvo)
+                            .containsExactlyInAnyOrder(
+                                    tuple(YhteystietoTyyppi.YHTEYSTIETO_KATUOSOITE, "123 le street"),
+                                    tuple(YhteystietoTyyppi.YHTEYSTIETO_KUNTA, "Paris"),
+                                    tuple(YhteystietoTyyppi.YHTEYSTIETO_MAA, "") // KoodiType metadata...
                             );
                     break;
                 default:
