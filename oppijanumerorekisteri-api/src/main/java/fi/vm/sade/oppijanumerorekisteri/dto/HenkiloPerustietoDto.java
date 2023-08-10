@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import static fi.vm.sade.oppijanumerorekisteri.utils.StringUtils.isEmpty;
+import static org.springframework.util.StringUtils.hasLength;
 
 @Getter
 @Setter
@@ -65,25 +65,25 @@ public class HenkiloPerustietoDto implements Serializable {
     private String palveluasiayhteys;
 
     private boolean isFind() {
-        return !isEmpty(getOidHenkilo());
+        return hasLength(getOidHenkilo());
     }
 
     @JsonIgnore
     @AssertTrue(message = "invalid.etunimet.empty")
     public boolean isEtunimetValidIfCreate() {
-        return isFind() || !isEmpty(getEtunimet());
+        return isFind() || hasLength(getEtunimet());
     }
 
     @JsonIgnore
     @AssertTrue(message = "invalid.kutsumanimi.empty")
     public boolean isKutsumanimiValidIfCreate() {
-        return isFind() || !isEmpty(getKutsumanimi());
+        return isFind() || hasLength(getKutsumanimi());
     }
 
     @JsonIgnore
     @AssertTrue(message = "invalid.sukunimi.empty")
     public boolean isSukunimiValidIfCreate() {
-        return isFind() || !isEmpty(getSukunimi());
+        return isFind() || hasLength(getSukunimi());
     }
 
     @Deprecated

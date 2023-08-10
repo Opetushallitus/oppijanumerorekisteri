@@ -17,6 +17,7 @@ import org.springframework.util.StringUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.oppijanumerorekisteri.clients.SlackClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjMuutostietoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.model.VtjMuutostietoResponse;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceReadDto;
@@ -56,6 +57,7 @@ public class VtjMuutostietoServiceImpl implements VtjMuutostietoService {
     private final HenkiloModificationService henkiloModificationService;
     private final OrikaConfiguration mapper;
     private final KoodistoService koodistoService;
+    private final SlackClient slackClient;
 
     @Autowired
     private TransactionTemplate transaction;
@@ -258,8 +260,7 @@ public class VtjMuutostietoServiceImpl implements VtjMuutostietoService {
         setYhteystietoArvo(yhteystiedotRyhma, YhteystietoTyyppi.YHTEYSTIETO_MAA, maa);
     }
 
-    private HenkiloForceUpdateDto mutateHenkiloForceUpdateDto(HenkiloForceUpdateDto update, JsonNode tietoryhma,
-            String locale) {
+    private HenkiloForceUpdateDto mutateUpdateDto(HenkiloForceUpdateDto update, JsonNode tietoryhma, String locale) {
         switch (getStringValue(tietoryhma, "tietoryhma")) {
             case "HENKILON_NIMI":
                 update.setEtunimet(getStringValue(tietoryhma, "etunimi"));
@@ -369,16 +370,32 @@ public class VtjMuutostietoServiceImpl implements VtjMuutostietoService {
         update.setHuoltajat(read.getHuoltajat());
         String locale = findYhteystietoLocale(tietoryhmat);
         for (JsonNode tietoryhma : tietoryhmat) {
-            mutateHenkiloForceUpdateDto(update, tietoryhma, locale);
+            mutateUpdateDto(update, tietoryhma, locale);
         }
         VtjMuutostietoValidator validator = new VtjMuutostietoValidator(koodistoService);
         validator.validateAndCorrectErrors(update);
         return update;
     }
 
+    private boolean isHenkilotunnusKorjaus(JsonNode tietoryhmat) {
+        for (JsonNode tietoryhma : tietoryhmat) {
+            if ("HENKILOTUNNUS_KORJAUS".equals(getStringValue(tietoryhma, "tietoryhma"))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Void savePerustieto(VtjPerustieto perustieto) {
-        // TODO käsittele HENKILOTUNNUS_KORJAUS
         henkiloRepository.findByHetu(perustieto.henkilotunnus).ifPresent(henkilo -> {
+            if (isHenkilotunnusKorjaus(perustieto.tietoryhmat)) {
+                String message = String.format(
+                        "VTJ-perustietojen tallennus käyttäjälle %s estetty HENKILOTUNNUS_KORJAUS-tietoryhmän vuoksi",
+                        henkilo.getOidHenkilo());
+                slackClient.sendToSlack(message, null);
+                return;
+            }
+
             HenkiloForceReadDto read = mapper.map(henkilo, HenkiloForceReadDto.class);
             HenkiloForceUpdateDto update = mapToUpdateDto(read, perustieto.tietoryhmat);
             henkiloModificationService.forceUpdateHenkilo(update);
@@ -401,6 +418,7 @@ public class VtjMuutostietoServiceImpl implements VtjMuutostietoService {
             Thread.currentThread().interrupt();
         } catch (Exception e) {
             log.error("exception while fetching perustieto", e);
+            slackClient.sendToSlack("Virhe VTJ-perustietojen tallennuksessa", e.toString());
         }
     }
 
