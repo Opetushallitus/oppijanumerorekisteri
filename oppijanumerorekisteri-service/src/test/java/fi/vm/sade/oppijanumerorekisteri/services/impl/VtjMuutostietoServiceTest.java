@@ -2,8 +2,10 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -27,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
+import fi.vm.sade.oppijanumerorekisteri.clients.SlackClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjMuutostietoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.model.VtjMuutostietoResponse;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
@@ -60,6 +63,8 @@ public class VtjMuutostietoServiceTest {
     private VtjMuutostietoRepository muutostietoRepository;
     @MockBean
     private KoodistoService koodistoService;
+    @MockBean
+    private SlackClient slackClient;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -71,6 +76,7 @@ public class VtjMuutostietoServiceTest {
     VtjPerustieto perustieto;
     VtjPerustieto turvakielto;
     VtjPerustieto foreign;
+    VtjPerustieto henkilotunnusKorjaus;
 
     @Before
     public void before() throws Exception {
@@ -82,12 +88,14 @@ public class VtjMuutostietoServiceTest {
         perustieto = new VtjPerustieto(hetus.get(0), objectMapper.readTree(new File("src/test/resources/henkilo/testVtjPerustieto.json")));
         turvakielto = new VtjPerustieto(hetus.get(0), objectMapper.readTree(new File("src/test/resources/henkilo/testVtjTurvakielto.json")));
         foreign = new VtjPerustieto(hetus.get(0), objectMapper.readTree(new File("src/test/resources/henkilo/testVtjForeign.json")));
+        henkilotunnusKorjaus = new VtjPerustieto(hetus.get(0), objectMapper.readTree(new File("src/test/resources/henkilo/testVtjHenkilotunnusKorjaus.json")));
 
         Optional<Henkilo> henkilo = Optional.of(Henkilo.builder()
                 .etunimet("etu")
                 .sukunimi("suku")
                 .hetu(hetus.get(0))
                 .yhteystiedotRyhma(Set.of())
+                .oidHenkilo("1.2.3.4.5")
                 .build());
         henkilo.get().setId(1l);
         when(henkiloRepository.findByHetu(hetus.get(0)))
@@ -207,6 +215,17 @@ public class VtjMuutostietoServiceTest {
             }
         }
         verify(henkiloRepository, times(1)).save(any());
+    }
+
+    @Test
+    public void savePerustietoHandlesHenkilotunnusKorjaus() throws Exception {
+        muutostietoService.savePerustieto(henkilotunnusKorjaus);
+
+        ArgumentCaptor<String> slackMessage = ArgumentCaptor.forClass(String.class);
+        verify(slackClient, times(1)).sendToSlack(slackMessage.capture(), isNull());
+        assertThat(slackMessage.getValue()).contains("1.2.3.4.5");
+        verify(henkiloModificationService, never()).forceUpdateHenkilo(any());
+        verify(henkiloRepository, never()).save(any());
     }
 
     @Test

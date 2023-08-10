@@ -13,6 +13,7 @@ public class OppijanumerorekisteriProperties {
     private int henkiloViiteSplitSize = 5000;
     private float etunimiThreshold = 0.85f;
     private float sukunimiThreshold = 0.85f;
+    private String slackUrl = "";
 
     private final Scheduling scheduling = new Scheduling();
 
