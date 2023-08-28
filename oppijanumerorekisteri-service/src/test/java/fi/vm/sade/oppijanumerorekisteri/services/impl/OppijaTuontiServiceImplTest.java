@@ -10,7 +10,6 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.EmailService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -77,7 +76,7 @@ public class OppijaTuontiServiceImplTest {
     @Test
     public void detectONRConflictsNone() throws Exception {
         initMocks();
-        when(yksilointiService.isSimilar(any(), any())).thenReturn(true);
+        when(yksilointiService.namesMatch(any(), any(), any(), any())).thenReturn(true);
 
         oppijaTuontiServiceImpl.create(1L);
 
@@ -87,7 +86,7 @@ public class OppijaTuontiServiceImplTest {
     @Test
     public void detectONRConflictsSome() throws Exception {
         initMocks();
-        when(yksilointiService.isSimilar(any(), any())).thenReturn(false);
+        when(yksilointiService.namesMatch(any(), any(), any(), any())).thenReturn(false);
 
         oppijaTuontiServiceImpl.create(1L);
 
@@ -97,7 +96,7 @@ public class OppijaTuontiServiceImplTest {
     @Test
     public void detectONRConflictsNotFound() throws Exception {
         initMocks();
-        when(yksilointiService.isSimilar(any(), any())).thenReturn(true);
+        when(yksilointiService.namesMatch(any(), any(), any(), any())).thenReturn(true);
 
         oppijaTuontiServiceImpl.create(1L);
 
