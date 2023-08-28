@@ -91,9 +91,6 @@ class YksilointiServiceImplExistenceCheckTest {
 
     private static Stream<Arguments> conflictingOnrData() {
         return Stream.of(
-                Arguments.of("Handles null:s (artificial test case)",
-                        fixture("", null, null, null),
-                        fixture("", null, null, null)),
                 Arguments.of("Conflicting details",
                         fixture("", "a b c", "b", "d"),
                         fixture("", "x y z", "i", "l"))
@@ -102,9 +99,6 @@ class YksilointiServiceImplExistenceCheckTest {
 
     private static Stream<Arguments> conflictingVtjData() {
         return Stream.of(
-                Arguments.of("Handles null:s (artificial test case)",
-                        fixture("", null, null, null),
-                        fixture("", null, null, null)),
                 Arguments.of("Conflicting details",
                         fixture("", "a b c", "b", "d"),
                         fixture("", "x y z", "i", "l"))

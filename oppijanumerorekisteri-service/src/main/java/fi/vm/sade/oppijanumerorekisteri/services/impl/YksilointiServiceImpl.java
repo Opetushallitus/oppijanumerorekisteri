@@ -255,15 +255,18 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     protected boolean tarkistaSukunimi(String henkilo1sukunimi, String henkilo2sukunimi) {
-        return isSimilar(henkilo1sukunimi, henkilo2sukunimi, oppijanumerorekisteriProperties.getSukunimiThreshold());
+        return isSimilar(name(henkilo1sukunimi), name(henkilo2sukunimi), oppijanumerorekisteriProperties.getSukunimiThreshold());
     }
 
     protected boolean tarkistaEtunimi(String kutsumanimi, String vtjEtunimet) {
         if (vtjEtunimet.contains(kutsumanimi)) {
             return true;
         }
-        return HenkiloExistenceCheckDto.splitEtunimet(vtjEtunimet).stream()
-                .anyMatch(vtjEtunimi -> isSimilar(kutsumanimi, vtjEtunimi));
+        List<String> vtjEtunimetSplit = HenkiloExistenceCheckDto.splitEtunimet(vtjEtunimet);
+        List<String> kutsumanimiSplit = HenkiloExistenceCheckDto.splitEtunimet(kutsumanimi);
+        return vtjEtunimetSplit.stream().anyMatch(vtjEtunimi ->
+                kutsumanimiSplit.stream().anyMatch(k -> isSimilar(k, vtjEtunimi))
+        );
     }
 
     private void addYksilointitietosWhenNamesDoNotMatch(final Henkilo henkilo, final YksiloityHenkilo yksiloityHenkilo) {
@@ -701,7 +704,7 @@ public class YksilointiServiceImpl implements YksilointiService {
             String givenEtunimet, String givenSukunimi,
             String expectedEtunimet, String expectedSukunimi
     ) {
-        return tarkistaSukunimi(givenSukunimi, expectedSukunimi) && tarkistaEtunimi(givenEtunimet, expectedEtunimet);
+        return tarkistaSukunimi(name(givenSukunimi), name(expectedSukunimi)) && tarkistaEtunimi(name(givenEtunimet), name(expectedEtunimet));
     }
 
     private boolean isOppija(String oid) {
