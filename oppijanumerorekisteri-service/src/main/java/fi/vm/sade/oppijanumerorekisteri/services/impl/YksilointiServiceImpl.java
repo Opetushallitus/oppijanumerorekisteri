@@ -223,7 +223,7 @@ public class YksilointiServiceImpl implements YksilointiService {
 
     protected boolean tarkistaNimet(Henkilo onrHenkilo, YksiloityHenkilo vtjHenkilo, Set<String> kaikkiSukunimet) {
         String onrSukunimi = normalize(onrHenkilo.getSukunimi());
-        String onrKutsumanimi = normalize(onrHenkilo.getKutsumanimi());
+        String onrEtunimet = normalize(onrHenkilo.getEtunimet());
 
         Set<String> vtjSukunimet = kaikkiSukunimet.stream()
                 .map(this::normalize)
@@ -231,9 +231,9 @@ public class YksilointiServiceImpl implements YksilointiService {
         String vtjEtunimi = normalize(vtjHenkilo.getEtunimi());
 
         return vtjSukunimet.stream().anyMatch(vtjSukunimi -> tarkistaSukunimi(onrSukunimi, vtjSukunimi))
-                && tarkistaEtunimi(onrKutsumanimi, vtjEtunimi)
+                && tarkistaEtunimi(onrEtunimet, vtjEtunimi)
                 // joistakin järjestelmistä tulee etunimi ja sukunimi väärissä kentissä
-                || vtjSukunimet.stream().anyMatch(vtjSukunimi -> tarkistaSukunimi(onrKutsumanimi, vtjSukunimi))
+                || vtjSukunimet.stream().anyMatch(vtjSukunimi -> tarkistaSukunimi(onrEtunimet, vtjSukunimi))
                 && tarkistaEtunimi(onrSukunimi, vtjEtunimi);
     }
 

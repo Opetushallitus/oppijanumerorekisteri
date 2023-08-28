@@ -99,10 +99,10 @@ public class YksilointiServiceImplUnitTest {
         });
     }
 
-    private boolean tarkistaNimet(String onrSukunimi, String onrKutsumanimi, String vtjEtunimi, String ...vtjSukunimet) {
+    private boolean tarkistaNimet(String onrSukunimi, String onrKutsumanimi, String vtjEtunimi, String... vtjSukunimet) {
         Henkilo onrHenkilo = new Henkilo();
         onrHenkilo.setSukunimi(onrSukunimi);
-        onrHenkilo.setKutsumanimi(onrKutsumanimi);
+        onrHenkilo.setEtunimet(onrKutsumanimi);
 
         YksiloityHenkilo vtjHenkilo = new YksiloityHenkilo();
         vtjHenkilo.setEtunimi(vtjEtunimi);
