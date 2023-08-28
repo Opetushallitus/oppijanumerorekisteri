@@ -27,7 +27,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -46,7 +45,6 @@ import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -57,9 +55,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("dev")
 @SpringBootTest(classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, H2Configuration.class})
 @AutoConfigureMockMvc
-@TestPropertySource(properties = {
-        "feature.kjhh-2346-salli-henkilon-luonti-yhdella-etunimella=false",
-})
 class YleistunnisteControllerTest {
 
     private static final String WRONG_ACCESS_RIGHT = "PIGGLYWIGGLY";
@@ -439,8 +434,8 @@ class YleistunnisteControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "Marja", "Terttu", "Karpalo" })
-    void oppijanumeroaEiVoiHakeaYleistunnisteRajapinnastaYhdelläVtjEtunimellä(String nimi) throws Exception {
+    @ValueSource(strings = {"Marja", "Terttu", "Karpalo"})
+    void oppijanumeronVoiHakeaYleistunnisteRajapinnastaYhdelläVtjEtunimellä(String nimi) throws Exception {
         YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
         String hetu = "170654-498T";
         yksiloityHenkilo.setHetu(hetu);
@@ -455,7 +450,63 @@ class YleistunnisteControllerTest {
                 .kutsumanimi(nimi)
                 .sukunimi(yksiloityHenkilo.getSukunimi())
                 .build();
-        mvc.perform(createRequest(post("/yleistunniste/hae"), request)).andExpect(status().isConflict());
+        MvcResult result1 = mvc.perform(createRequest(post("/yleistunniste/hae"), request)).andExpect(status().isOk()).andReturn();
+        YleistunnisteDto response = objectMapper.readValue(result1.getResponse().getContentAsString(), YleistunnisteDto.class);
+
+        verify(henkiloModifiedTopic, times(1)).publish(any());
+        verify(vtjClient, times(1)).fetchHenkilo(any());
+        assertNotNull(response.getOppijanumero());
+        assertEquals(response.getOppijanumero(), response.getOid());
+
+        // Uudelleen haku ei enää tarkista tietoja VTJ:stä
+        reset(vtjClient);
+        MvcResult result2 = mvc.perform(createRequest(post("/yleistunniste/hae"), request)).andExpect(status().isOk()).andReturn();
+        YleistunnisteDto secondResponse = objectMapper.readValue(result2.getResponse().getContentAsString(), YleistunnisteDto.class);
+        verify(vtjClient, times(0)).fetchHenkilo(any());
+        assertEquals(secondResponse.getOid(), response.getOid());
+        // Oppijanumero on null tokalla haulla. Syynä ilmeisesti se, että oppijan luonti ei automaattisesti yksilöi oppijaa vaikka tiedot varmistetaan VTJ:ltä
+        assertNull(secondResponse.getOppijanumero());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Marja", "Terttu", "Karpalo"})
+    void oppijanumeronVoiHakeaYleistunnisteRajapinnastaYhdelläOppijanumerorekisteriinTallennetullaEtunimellä(String nimi) throws Exception {
+        YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
+        String hetu = "170654-498T";
+        yksiloityHenkilo.setHetu(hetu);
+        yksiloityHenkilo.setEtunimi("Marja Terttu Karpalo");
+        yksiloityHenkilo.setKutsumanimi("Terttu");
+        yksiloityHenkilo.setSukunimi("Virtanen");
+        when(vtjClient.fetchHenkilo(hetu)).thenReturn(Optional.of(yksiloityHenkilo));
+
+        // Luodessa uutta oppijaa, kutsussa annettu etunimi/etunimet tallennetaan oppijanumerorekisteriin eikä VTJ:stä
+        // saadut nimet. Luodaan siis ensin uusi oppija kaikilla nimillä, jotta voidaan testata, että olemassaolevan
+        // oppijan oppijanumeron voi myös hakea käyttäen vain yhtä henkilön etunimistä.
+        HenkiloExistenceCheckDto initialRequest = HenkiloExistenceCheckDto.builder()
+                .hetu(hetu)
+                .etunimet(yksiloityHenkilo.getEtunimi())
+                .kutsumanimi(yksiloityHenkilo.getKutsumanimi())
+                .sukunimi(yksiloityHenkilo.getSukunimi())
+                .build();
+        MvcResult initialResult = mvc.perform(createRequest(post("/yleistunniste/hae"), initialRequest)).andExpect(status().isOk()).andReturn();
+        YleistunnisteDto initialResponse = objectMapper.readValue(initialResult.getResponse().getContentAsString(), YleistunnisteDto.class);
+        verify(henkiloModifiedTopic, times(1)).publish(any());
+        verify(vtjClient, times(1)).fetchHenkilo(any());
+        assertNotNull(initialResponse.getOppijanumero());
+        assertEquals(initialResponse.getOppijanumero(), initialResponse.getOid());
+
+
+        reset(vtjClient);
+        HenkiloExistenceCheckDto requestWithOneEtunimi = HenkiloExistenceCheckDto.builder()
+                .hetu(hetu)
+                .etunimet(nimi)
+                .kutsumanimi(nimi)
+                .sukunimi(yksiloityHenkilo.getSukunimi())
+                .build();
+        MvcResult result1 = mvc.perform(createRequest(post("/yleistunniste/hae"), requestWithOneEtunimi)).andExpect(status().isOk()).andReturn();
+        YleistunnisteDto response = objectMapper.readValue(result1.getResponse().getContentAsString(), YleistunnisteDto.class);
+        verify(vtjClient, times(0)).fetchHenkilo(any());
+        assertEquals(response.getOid(), initialResponse.getOid());
     }
 
     private void waitUntilTuontiKäsitelty(Long tuontiId) throws Exception {

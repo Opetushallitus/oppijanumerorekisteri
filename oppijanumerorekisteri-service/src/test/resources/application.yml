@@ -35,5 +35,3 @@ aws:
     topicArn: test-topic-arn
 logback:
   access: true
-
-feature.kjhh-2346-salli-henkilon-luonti-yhdella-etunimella: true

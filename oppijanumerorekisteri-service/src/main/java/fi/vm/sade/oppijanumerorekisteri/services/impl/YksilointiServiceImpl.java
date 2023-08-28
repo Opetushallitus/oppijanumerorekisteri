@@ -23,7 +23,6 @@ import org.apache.lucene.search.spell.JaroWinklerDistance;
 import org.apache.lucene.search.spell.StringDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,9 +46,6 @@ import static java.util.stream.Collectors.*;
 @Service
 @RequiredArgsConstructor
 public class YksilointiServiceImpl implements YksilointiService {
-    @Value("${feature.kjhh-2346-salli-henkilon-luonti-yhdella-etunimella:false}")
-    private boolean salliHenkilonLuontiYhdellaEtunimella;
-
     public static final String RYHMAALKUPERA_VTJ = "alkupera1";
     private static final Logger logger = LoggerFactory.getLogger(YksilointiService.class);
     private static final String KIELIKOODI_SV = "sv";
@@ -266,13 +262,8 @@ public class YksilointiServiceImpl implements YksilointiService {
         if (vtjEtunimet.contains(kutsumanimi)) {
             return true;
         }
-        if (salliHenkilonLuontiYhdellaEtunimella) {
-            return HenkiloExistenceCheckDto.splitEtunimet(vtjEtunimet).stream()
-                    .anyMatch(vtjEtunimi -> isSimilar(kutsumanimi, vtjEtunimi, oppijanumerorekisteriProperties.getEtunimiThreshold()));
-        } else {
-            return Arrays.stream(vtjEtunimet.split(" "))
-                    .anyMatch(vtjEtunimi -> isSimilar(kutsumanimi, vtjEtunimi, oppijanumerorekisteriProperties.getEtunimiThreshold()));
-        }
+        return HenkiloExistenceCheckDto.splitEtunimet(vtjEtunimet).stream()
+                .anyMatch(vtjEtunimi -> isSimilar(kutsumanimi, vtjEtunimi));
     }
 
     private void addYksilointitietosWhenNamesDoNotMatch(final Henkilo henkilo, final YksiloityHenkilo yksiloityHenkilo) {
@@ -703,11 +694,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     private boolean detailsMatch(final String firstName, final String lastName, final HenkiloExistenceCheckDto details) {
-        if (salliHenkilonLuontiYhdellaEtunimella) {
-            return namesMatch(details.getEtunimet(), details.getSukunimi(), firstName, lastName);
-        } else {
-            return isSimilar(firstName, details.getEtunimet()) && isSimilar(lastName, details.getSukunimi());
-        }
+        return namesMatch(details.getEtunimet(), details.getSukunimi(), firstName, lastName);
     }
 
     public boolean namesMatch(

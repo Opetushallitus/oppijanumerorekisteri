@@ -17,7 +17,6 @@ import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.validators.OppijaTuontiCreatePostValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,9 +39,6 @@ import static java.util.stream.Collectors.toSet;
 @Transactional
 @RequiredArgsConstructor
 public class OppijaTuontiServiceImpl implements OppijaTuontiService {
-    @Value("${feature.kjhh-2346-salli-henkilon-luonti-yhdella-etunimella:false}")
-    private boolean salliHenkilonLuontiYhdellaEtunimella;
-
     // määrittää kuinka monta riviä käsitellään yhdessä transaktiossa
     private static final int ERAKOKO = 100;
 
@@ -250,16 +246,10 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         }
 
         private boolean hasNameConflict(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto imported, Henkilo onr) {
-            if (salliHenkilonLuontiYhdellaEtunimella) {
-                return !yksilointiService.namesMatch(
-                        imported.getEtunimet(), imported.getSukunimi(),
-                        onr.getEtunimet(), onr.getSukunimi()
-                );
-            } else {
-                return !yksilointiService.isSimilar(
-                        String.format("%s %s %s", imported.getEtunimet(), imported.getKutsumanimi(), imported.getSukunimi()),
-                        String.format("%s %s %s", onr.getEtunimet(), onr.getKutsumanimi(), onr.getSukunimi()));
-            }
+            return !yksilointiService.namesMatch(
+                    imported.getEtunimet(), imported.getSukunimi(),
+                    onr.getEtunimet(), onr.getSukunimi()
+            );
         }
 
         private Henkilo createHenkilo(OppijaTuontiRiviCreateDto oppija) {
