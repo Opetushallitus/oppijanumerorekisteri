@@ -31,6 +31,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
@@ -97,6 +98,21 @@ public class YksilointiServiceImplTest {
 
     private Optional<YksiloityHenkilo> setUsedFixture(String path) {
         return Optional.ofNullable(gson.fromJson(new InputStreamReader(getClass().getResourceAsStream(path)), YksiloityHenkilo.class));
+    }
+
+    @Test
+    public void yksiloinninNimivertailuSalliiYksiloinninKunhanYksikinEtunimiOnOikein() {
+        Henkilo onr = new Henkilo();
+        onr.setEtunimet("Krista Johanna");
+        onr.setKutsumanimi("Krista");
+        onr.setSukunimi("Virtanen");
+
+        YksiloityHenkilo vtj = new YksiloityHenkilo();
+        vtj.setEtunimi("Liisa Johanna");
+        vtj.setKutsumanimi(null);
+        vtj.setSukunimi("Virtanen");
+
+        assertThat(yksilointiService.tarkistaNimet(onr, vtj, Set.of(vtj.getSukunimi()))).isTrue();
     }
 
     @Test
