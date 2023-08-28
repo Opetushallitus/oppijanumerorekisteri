@@ -95,7 +95,7 @@ public class IdentificationServiceImpl implements IdentificationService {
                 .filter(this::hasNoDataInconsistency)
                 .forEach(henkilo -> {
                     this.waitBetweenRequests(vtjRequestDelayInMillis);
-                    log.debug("Henkilo {} passed initial validation, {} to identify...", henkilo.getOidHenkilo(), henkilo.isYksilointiYritetty() ? "retrying" : "trying");
+                    log.info("Henkilo {} passed initial validation, {} to identify...", henkilo.getOidHenkilo(), henkilo.isYksilointiYritetty() ? "retrying" : "trying");
                     this.identifyHenkilo(henkilo.getOidHenkilo());
                 });
     }
@@ -151,10 +151,10 @@ public class IdentificationServiceImpl implements IdentificationService {
             return;
         }
         if (!hasRetriableYksilointivirhe(henkilo)) {
-            log.debug("Henkilo {} has been black listed from processing.", henkilo.getOidHenkilo());
+            log.info("Henkilo {} has been black listed from processing.", henkilo.getOidHenkilo());
         }
         if (!hasNoDataInconsistency(henkilo)) {
-            log.debug("Henkilo {} has inconsistent data that must be solved by officials.", henkilo.getOidHenkilo());
+            log.info("Henkilo {} has inconsistent data that must be solved by officials.", henkilo.getOidHenkilo());
         }
     }
 
@@ -172,7 +172,7 @@ public class IdentificationServiceImpl implements IdentificationService {
     private void identifyHenkilo(String oid) {
         try {
             this.yksilointiService.yksiloiAutomaattisesti(oid);
-            log.debug("Henkilo {} successfully identified.", oid);
+            log.info("Henkilo {} successfully identified.", oid);
         } catch (Exception e) {
             log.error("Henkilo {} unsuccessfully identified.", oid, e);
             yksilointiService.tallennaYksilointivirhe(oid, e);

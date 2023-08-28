@@ -36,17 +36,10 @@ class LogExecutionTimeAspectTest {
     }
 
     @Test
-    void writesToLogWhenLogLevelIsDebug() throws Throwable {
-        logCaptor.setLogLevelToDebug();
-        assertThat(aspect.methodTimeLogger(proceedingJoinPoint)).isEqualTo(result);
-        assertThat(logCaptor.getDebugLogs()).hasSize(1);
-        assertThat(logCaptor.getDebugLogs().get(0)).contains("took");
-    }
-
-    @Test
-    void skipLoggingWhenLevelBeyondDebug() throws Throwable {
+    void writesToLogWhenLogLevelIsInfo() throws Throwable {
         logCaptor.setLogLevelToInfo();
         assertThat(aspect.methodTimeLogger(proceedingJoinPoint)).isEqualTo(result);
-        assertThat(logCaptor.getDebugLogs()).isEmpty();
+        assertThat(logCaptor.getInfoLogs()).hasSize(1);
+        assertThat(logCaptor.getInfoLogs().get(0)).contains("took");
     }
 }
