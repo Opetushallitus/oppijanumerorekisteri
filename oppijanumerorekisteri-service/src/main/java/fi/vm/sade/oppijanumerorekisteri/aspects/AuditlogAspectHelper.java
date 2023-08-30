@@ -22,7 +22,7 @@ public class AuditlogAspectHelper {
 
     private final VirkailijaAuditLogger virkailijaLogger;
 
-    void logCreateHenkilo(Henkilo henkilo, Object returnHenkilo) {
+    public void logCreateHenkilo(Henkilo henkilo, Object returnHenkilo) {
         Target target = new Target.Builder()
                 .setField(AuditMessageFields.HENKILO_OID, henkilo.getOidHenkilo())
                 .setField(AuditMessageFields.LISATIETO, "Luotu uusi henkilö.")

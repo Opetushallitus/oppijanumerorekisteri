@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.google.common.collect.Lists;
+import fi.vm.sade.oppijanumerorekisteri.aspects.AuditlogAspectHelper;
 import fi.vm.sade.oppijanumerorekisteri.clients.HenkiloModifiedTopic;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
@@ -68,6 +69,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     private final OidGenerator oidGenerator;
 
     private final OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
+    private final AuditlogAspectHelper auditlogAspectHelper;
 
     // Mapper is configured to ignore null values so setting henkiloUpdateDto field to null is same as skipping the field.
     // If one wishes to enable validation groups with hibernate one needs to disable automatic validation and manually
@@ -488,6 +490,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
         Henkilo tallennettu = this.henkiloDataRepository.save(henkiloCreate);
         henkiloModifiedTopic.publish(tallennettu);
+        auditlogAspectHelper.logCreateHenkilo(tallennettu, null);
         return tallennettu;
     }
 

@@ -2,8 +2,12 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
+import fi.vm.sade.auditlog.Target;
 import fi.vm.sade.oppijanumerorekisteri.FilesystemHelper;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
+import fi.vm.sade.oppijanumerorekisteri.audit.OnrOperation;
+import fi.vm.sade.oppijanumerorekisteri.audit.VirkailijaAuditLogger;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.impl.AwsSnsHenkiloModifiedTopic;
 import fi.vm.sade.oppijanumerorekisteri.configurations.H2Configuration;
@@ -19,6 +23,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -42,6 +48,7 @@ import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerIm
 import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -83,6 +90,12 @@ class YleistunnisteControllerTest {
 
     @MockBean
     private OppijaTuontiCreatePostValidator tuontiValidator;
+
+    @MockBean
+    private VirkailijaAuditLogger auditLogger;
+
+    @Captor
+    private ArgumentCaptor<Target> auditCaptor;
 
 
     private YleistunnisteController.YleistunnisteInput getValidYleistunnisteInput() {
@@ -388,6 +401,7 @@ class YleistunnisteControllerTest {
         verify(vtjClient, times(1)).fetchHenkilo(any());
         assertNotNull(response.getOppijanumero());
         assertEquals(response.getOppijanumero(), response.getOid());
+        assertThat(findAuditEventForHenkiloOid(OnrOperation.CREATE_HENKILO, response.getOid())).isPresent();
 
         HenkiloDto oppija = getOppijaInformation(response.getOid());
         assertEquals(oppija.getEtunimet(), "Sepo", "Oppijasta tallennetaan luontipyynnössä annettu etunimi");
@@ -530,5 +544,11 @@ class YleistunnisteControllerTest {
         return createRequest(builder)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBody));
+    }
+
+    private Optional<JsonObject> findAuditEventForHenkiloOid(OnrOperation operation, String henkiloOid) {
+        verify(auditLogger, atLeast(0)).log(eq(operation), auditCaptor.capture(), any());
+        Stream<JsonObject> auditLogEvents = auditCaptor.getAllValues().stream().map(Target::asJson);
+        return auditLogEvents.filter(e -> henkiloOid.equals(e.get("henkiloOid").getAsString())).findFirst();
     }
 }

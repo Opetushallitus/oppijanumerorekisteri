@@ -3,7 +3,6 @@ package fi.vm.sade.oppijanumerorekisteri.aspects;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -22,14 +21,6 @@ public class AuditlogAspect {
     }
 
     /* Henkilo */
-    @Around(value = "execution(public * fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService.createHenkilo(*))" +
-            "&& args(henkilo)", argNames = "proceedingJoinPoint, henkilo")
-    private Object logCreateHenkilo(ProceedingJoinPoint proceedingJoinPoint, Henkilo henkilo) throws Throwable {
-        Object result = proceedingJoinPoint.proceed();
-        auditlogAspectHelper.logCreateHenkilo(henkilo, result);
-        return result;
-    }
-
     @Around(value = "execution(public * fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService.updateHenkilo(*))" +
             "&& args(henkilo)", argNames = "proceedingJoinPoint, henkilo")
     private Object logUpdateHenkilo(ProceedingJoinPoint proceedingJoinPoint, HenkiloUpdateDto henkilo) throws Throwable {

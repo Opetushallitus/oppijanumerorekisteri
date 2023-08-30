@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.google.common.collect.Lists;
 import fi.vm.sade.oppijanumerorekisteri.KoodistoServiceMock;
+import fi.vm.sade.oppijanumerorekisteri.aspects.AuditlogAspectHelper;
 import fi.vm.sade.oppijanumerorekisteri.clients.HenkiloModifiedTopic;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
@@ -103,6 +104,9 @@ public class HenkiloModificationServiceImplTest {
 
     @Mock
     private HenkiloModifiedTopic henkiloModifiedTopic;
+
+    @Mock
+    private AuditlogAspectHelper auditlogAspectHelper;
 
     @Before
     public void setup() {
