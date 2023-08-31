@@ -112,42 +112,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Generate schema.ddl from which .html/.png presentation of domain model can be generated later -->
-            <plugin>
-                <groupId>de.juplo</groupId>
-                <artifactId>hibernate-maven-plugin</artifactId>
-                <version>${hibernate-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>create</goal>
-                        </goals>
-                        <configuration>
-                            <outputFile>${project.build.directory}/generated-schema/schema.ddl</outputFile>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <!-- https://juplo.de/hibernate-maven-plugin/create-mojo.html -->
-                    <execute>false</execute>
-                    <format>true</format>
-                    <dialect>org.hibernate.dialect.PostgreSQL95Dialect</dialect>
-                    <implicitNamingStrategy>org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl</implicitNamingStrategy>
-                    <physicalNamingStrategy>org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy</physicalNamingStrategy>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>javax.xml.bind</groupId>
-                        <artifactId>jaxb-api</artifactId>
-                        <version>2.3.1</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.javassist</groupId>
-                        <artifactId>javassist</artifactId>
-                        <version>3.27.0-GA</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
         </plugins>
     </build>
 </project>
