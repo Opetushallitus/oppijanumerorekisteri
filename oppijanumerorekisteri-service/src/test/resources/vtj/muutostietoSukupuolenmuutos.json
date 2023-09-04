@@ -1,0 +1,37 @@
+[
+  {
+    "tietoryhma": "HENKILOTUNNUS_KORJAUS",
+    "voimassaolo": "AKTIIVI",
+    "muutosattribuutti": "LISATTY",
+    "muutettuHenkilotunnus": "021086-998R",
+    "aktiivinenHenkilotunnus": "021086-998R",
+    "edellisetHenkilotunnukset": ["021086-903N"]
+  },
+  {
+    "tietoryhma": "HENKILOTUNNUS_KORJAUS",
+    "voimassaolo": "PASSIIVI",
+    "muutosattribuutti": "MUUTETTU",
+    "muutettuHenkilotunnus": "021086-903N",
+    "aktiivinenHenkilotunnus": "021086-998R",
+    "edellisetHenkilotunnukset": ["021086-903N"]
+  },
+  {
+    "tietoryhma": "SUKUPUOLI",
+    "muutosattribuutti": "MUUTETTU",
+    "sukupuoli": "NAINEN"
+  },
+  {
+    "tietoryhma": "HENKILON_NIMI",
+    "etunimi": "Roope Johannes",
+    "sukunimi": "Kidron Tes",
+    "muutosattribuutti": "LISATIETO"
+  },
+  {
+    "tietoryhma": "SYNTYMAPAIVA",
+    "muutosattribuutti": "MUUTETTU",
+    "syntymapv": {
+      "arvo": "1986-10-02",
+      "tarkkuus": "PAIVA"
+    }
+  }
+]

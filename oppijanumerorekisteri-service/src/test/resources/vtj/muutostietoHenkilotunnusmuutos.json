@@ -1,0 +1,32 @@
+[
+  {
+    "tietoryhma": "HENKILOTUNNUS_KORJAUS",
+    "voimassaolo": "AKTIIVI",
+    "muutosattribuutti": "LISATTY",
+    "muutettuHenkilotunnus": "010869-9983",
+    "aktiivinenHenkilotunnus": "010869-9983",
+    "edellisetHenkilotunnukset": ["010568-998D"]
+  },
+  {
+    "tietoryhma": "HENKILOTUNNUS_KORJAUS",
+    "voimassaolo": "PASSIIVI",
+    "muutosattribuutti": "MUUTETTU",
+    "muutettuHenkilotunnus": "010568-998D",
+    "aktiivinenHenkilotunnus": "010869-9983",
+    "edellisetHenkilotunnukset": ["010568-998D"]
+  },
+  {
+    "tietoryhma": "HENKILON_NIMI",
+    "etunimi": "Pekka Matias",
+    "sukunimi": "Länsman Tes",
+    "muutosattribuutti": "LISATIETO"
+  },
+  {
+    "tietoryhma": "SYNTYMAPAIVA",
+    "muutosattribuutti": "MUUTETTU",
+    "syntymapv": {
+      "arvo": "1969-08-01",
+      "tarkkuus": "PAIVA"
+    }
+  }
+]

@@ -1,0 +1,53 @@
+[
+  {
+    "tietoryhma": "HENKILON_NIMI",
+    "muutosattribuutti": "MUUTETTU",
+    "alkupv": {
+      "arvo": "2019-05-05",
+      "tarkkuus": "PAIVA"
+    },
+    "etunimi": "Kurt Helge",
+    "sukunimi": "von Olme-Tes"
+  },
+  {
+    "tietoryhma": "NIMENMUUTOS",
+    "muutosattribuutti": "LISATTY",
+    "nimilaji": "NYKYINEN_SUKUNIMI",
+    "nimi": "von Olme-Tes",
+    "alkupv": {
+      "arvo": "2019-05-05",
+      "tarkkuus": "PAIVA"
+    }
+  },
+  {
+    "tietoryhma": "NIMENMUUTOS",
+    "muutosattribuutti": "MUUTETTU",
+    "nimilaji": "EDELLINEN_SUKUNIMI",
+    "nimi": "Olme Tes",
+    "loppupv": {
+      "arvo": "2019-05-05",
+      "tarkkuus": "PAIVA"
+    }
+  },
+  {
+    "tietoryhma": "NIMENMUUTOS_LAAJA",
+    "muutosattribuutti": "LISATTY",
+    "nimilaji": "NYKYINEN_SUKUNIMI",
+    "nimi": "von Olme-Tes",
+    "alkupv": {
+      "arvo": "2019-05-05",
+      "tarkkuus": "PAIVA"
+    },
+    "nimenmuutostapa": "NIMENMUUTOS_ULKOMAILLA"
+  },
+  {
+    "tietoryhma": "NIMENMUUTOS_LAAJA",
+    "muutosattribuutti": "MUUTETTU",
+    "nimilaji": "EDELLINEN_SUKUNIMI",
+    "nimi": "Olme Tes",
+    "loppupv": {
+      "arvo": "2019-05-05",
+      "tarkkuus": "PAIVA"
+    }
+  }
+]

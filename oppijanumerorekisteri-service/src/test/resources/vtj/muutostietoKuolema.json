@@ -1,0 +1,11 @@
+[
+  {
+    "tietoryhma": "KUOLINPAIVA",
+    "muutosattribuutti": "LISATTY",
+    "kuollut": true,
+    "kuolinpv": {
+      "arvo": "2019-06-06",
+      "tarkkuus": "PAIVA"
+    }
+  }
+]

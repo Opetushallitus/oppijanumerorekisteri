@@ -1,0 +1,75 @@
+[
+  {
+    "tietoryhma": "NIMENMUUTOS",
+    "muutosattribuutti": "LISATTY",
+    "nimilaji": "NYKYINEN_KUTSUMANIMI",
+    "nimi": "Helena",
+    "alkupv": {
+      "arvo": "2019-05-10",
+      "tarkkuus": "PAIVA"
+    }
+  },
+  {
+    "tietoryhma": "NIMENMUUTOS",
+    "muutosattribuutti": "MUUTETTU",
+    "nimilaji": "EDELLINEN_KUTSUMANIMI",
+    "nimi": "Sophie",
+    "alkupv": {
+      "arvo": "2013-03-06",
+      "tarkkuus": "PAIVA"
+    },
+    "loppupv": {
+      "arvo": "2019-05-10",
+      "tarkkuus": "PAIVA"
+    }
+  },
+  {
+    "tietoryhma": "NIMENMUUTOS_LAAJA",
+    "muutosattribuutti": "LISATTY",
+    "nimilaji": "NYKYINEN_KUTSUMANIMI",
+    "nimi": "Helena",
+    "alkupv": {
+      "arvo": "2019-05-10",
+      "tarkkuus": "PAIVA"
+    },
+    "nimenmuutostapa": "KUTSUMANIMEN_MUUTOS"
+  },
+  {
+    "tietoryhma": "NIMENMUUTOS_LAAJA",
+    "muutosattribuutti": "MUUTETTU",
+    "nimilaji": "EDELLINEN_KUTSUMANIMI",
+    "nimi": "Sophie",
+    "alkupv": {
+      "arvo": "2013-03-06",
+      "tarkkuus": "PAIVA"
+    },
+    "loppupv": {
+      "arvo": "2019-05-10",
+      "tarkkuus": "PAIVA"
+    }
+  },
+  {
+    "tietoryhma": "KUTSUMANIMI",
+    "muutosattribuutti": "LISATTY",
+    "nimilaji": "NYKYINEN_KUTSUMANIMI",
+    "nimi": "Helena",
+    "alkupv": {
+      "arvo": "2019-05-10",
+      "tarkkuus": "PAIVA"
+    }
+  },
+  {
+    "tietoryhma": "KUTSUMANIMI",
+    "muutosattribuutti": "MUUTETTU",
+    "nimilaji": "EDELLINEN_KUTSUMANIMI",
+    "nimi": "Sophie",
+    "alkupv": {
+      "arvo": "2013-03-06",
+      "tarkkuus": "PAIVA"
+    },
+    "loppupv": {
+      "arvo": "2019-05-10",
+      "tarkkuus": "PAIVA"
+    }
+  }
+]

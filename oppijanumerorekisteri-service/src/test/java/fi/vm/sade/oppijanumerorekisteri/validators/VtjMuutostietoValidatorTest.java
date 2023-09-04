@@ -13,6 +13,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HuoltajaCreateDto;
@@ -33,7 +34,7 @@ public class VtjMuutostietoValidatorTest {
     @Test
     public void testNullValues() {
         HenkiloForceUpdateDto henkiloForceUpdateDto = new HenkiloForceUpdateDto();
-        validator.validateAndCorrectErrors(henkiloForceUpdateDto);
+        validator.validateAndCorrectErrors(new HenkiloForceReadDto(), henkiloForceUpdateDto);
         assertThat(henkiloForceUpdateDto)
                 .extracting(HenkiloForceUpdateDto::getHuoltajat, HenkiloForceUpdateDto::getKotikunta, HenkiloUpdateDto::getAidinkieli, HenkiloUpdateDto::getKansalaisuus)
                 .containsExactly(null, null, null, null);
@@ -43,7 +44,7 @@ public class VtjMuutostietoValidatorTest {
     public void testHuoltajaNullValues() {
         HenkiloForceUpdateDto henkiloForceUpdateDto = new HenkiloForceUpdateDto();
         henkiloForceUpdateDto.setHuoltajat(Collections.singleton(new HuoltajaCreateDto()));
-        validator.validateAndCorrectErrors(henkiloForceUpdateDto);
+        validator.validateAndCorrectErrors(new HenkiloForceReadDto(), henkiloForceUpdateDto);
         assertThat(henkiloForceUpdateDto.getHuoltajat())
                 .extracting(HuoltajaCreateDto::getKansalaisuusKoodi)
                 .containsNull();
@@ -64,7 +65,7 @@ public class VtjMuutostietoValidatorTest {
             huoltajaCreateDto.setKansalaisuusKoodi(Collections.singleton("invalid"));
             henkiloForceUpdateDto.setHuoltajat(Collections.singleton(huoltajaCreateDto));
 
-            validator.validateAndCorrectErrors(henkiloForceUpdateDto);
+            validator.validateAndCorrectErrors(new HenkiloForceReadDto(), henkiloForceUpdateDto);
 
             assertThat(henkiloForceUpdateDto)
                     .extracting(HenkiloForceUpdateDto::getKotikunta, updateDto -> updateDto.getAidinkieli().getKieliKoodi())
@@ -99,7 +100,7 @@ public class VtjMuutostietoValidatorTest {
             huoltajaCreateDto.setKansalaisuusKoodi(Collections.singleton("validMaa"));
             henkiloForceUpdateDto.setHuoltajat(Collections.singleton(huoltajaCreateDto));
 
-            validator.validateAndCorrectErrors(henkiloForceUpdateDto);
+            validator.validateAndCorrectErrors(new HenkiloForceReadDto(), henkiloForceUpdateDto);
 
             assertThat(henkiloForceUpdateDto)
                     .extracting(HenkiloForceUpdateDto::getKotikunta, updateDto -> updateDto.getAidinkieli().getKieliKoodi())

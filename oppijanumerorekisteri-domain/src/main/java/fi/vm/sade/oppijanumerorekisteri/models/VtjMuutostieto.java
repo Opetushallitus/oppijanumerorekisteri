@@ -33,4 +33,10 @@ public class VtjMuutostieto extends IdentifiableAndVersionedEntity {
     @Type(type = "jsonb")
     @Column(nullable = false, columnDefinition = "jsonb")
     public JsonNode tietoryhmat;
+
+    @Column(nullable = true)
+    public LocalDateTime processed;
+
+    @Column(nullable = false)
+    public Boolean error;
 }

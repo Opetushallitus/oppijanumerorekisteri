@@ -1,0 +1,16 @@
+[
+  {
+    "tietoryhma": "KUOLINPAIVA",
+    "muutosattribuutti": "KORJATTAVA",
+    "kuollut": true,
+    "kuolinpv": {
+      "arvo": "2018-05-01",
+      "tarkkuus": "PAIVA"
+    }
+  },
+  {
+    "tietoryhma": "KUOLINPAIVA",
+    "muutosattribuutti": "KORJATTU",
+    "kuollut": false
+  }
+]

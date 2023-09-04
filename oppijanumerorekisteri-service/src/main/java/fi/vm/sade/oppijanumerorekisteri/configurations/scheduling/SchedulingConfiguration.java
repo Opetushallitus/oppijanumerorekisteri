@@ -74,8 +74,8 @@ public class SchedulingConfiguration {
     @ConditionalOnProperty(name = "oppijanumerorekisteri.vtj-muutosrajapinta.enabled", matchIfMissing = true)
     Task<Void> vtjMuutostietoSyncTask() {
         return Tasks
-                .recurring(new TaskWithoutDataDescriptor("vtj muutostieto fetch task"), FixedDelay.ofHours(1))
-                .execute((instance, ctx) -> vtjMuutostietoService.handleMuutostietoFetchTask());
+                .recurring(new TaskWithoutDataDescriptor("vtj muutostieto task"), FixedDelay.ofHours(1))
+                .execute((instance, ctx) -> vtjMuutostietoService.handleMuutostietoTask());
     }
 
     @Bean
