@@ -55,7 +55,7 @@ public class VtjMuutostietoValidator {
                                                 KANSALAISUUSKOODI_TUNTEMATON)))),
                 updateDto -> Optional.ofNullable(henkiloForceUpdateDto.getHuoltajat())
                         .ifPresent(huoltajat -> huoltajat.forEach(this::validateAndCorrectErrors)),
-                updateDto -> replaceKutsumanimiIfMissingFromNimenmuutos(henkiloForceReadDto, updateDto),
+                updateDto -> replaceInvalidKutsumanimi(henkiloForceReadDto, updateDto),
                 this::replaceInvalidEmailWithEmptyString)
                 .forEach(consumer -> consumer.accept(henkiloForceUpdateDto));
     }
@@ -74,12 +74,21 @@ public class VtjMuutostietoValidator {
                         }))));
     }
 
-    private void replaceKutsumanimiIfMissingFromNimenmuutos(HenkiloForceReadDto readDto,
+    private void replaceInvalidKutsumanimi(HenkiloForceReadDto readDto,
             HenkiloForceUpdateDto updateDto) {
+        // if etunimet change but kutsumanimi is not updated
         if (updateDto.getEtunimet() != null && updateDto.getKutsumanimi() == null && readDto.getKutsumanimi() != null) {
             KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(updateDto.getEtunimet());
             if (!kutsumanimiValidator.isValid(readDto.getKutsumanimi())) {
                 updateDto.setKutsumanimi(updateDto.getEtunimet());
+            }
+        }
+
+        // if kutsumanimi changes
+        if (updateDto.getKutsumanimi() != null && updateDto.getEtunimet() == null) {
+            KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(readDto.getEtunimet());
+            if (!kutsumanimiValidator.isValid(updateDto.getKutsumanimi())) {
+                updateDto.setKutsumanimi(null);
             }
         }
     }

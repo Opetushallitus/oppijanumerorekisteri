@@ -193,23 +193,28 @@ public class VtjMuutostietoServiceImpl implements VtjMuutostietoService {
 
     protected Void saveMuutostieto(VtjMuutostieto muutostieto) {
         henkiloRepository.findByHetu(muutostieto.henkilotunnus).ifPresent(henkilo -> {
+            if (henkilo.isPassivoitu()) {
+                log.debug("did not update passivoitu henkilö {} with VTJ muutostieto", henkilo.getOidHenkilo());
+                return;
+            }
+
             try {
                 HenkiloForceReadDto read = mapper.map(henkilo, HenkiloForceReadDto.class);
                 HenkiloForceUpdateDto update = mapToUpdateDto(read, muutostieto.tietoryhmat, muutostietoMapper);
                 henkiloModificationService.forceUpdateHenkilo(update);
             } catch (UnprocessableEntityException uee) {
-                BindException bindException = (BindException) uee.getErrors();
-                log.error("exception while processing muutostieto", bindException);
-                slackClient.sendToSlack("Virhe VTJ-muutostietojen päivityksessä", bindException.getMessage());
+                BindException be = (BindException) uee.getErrors();
+                log.error("exception while processing muutostieto for henkilo " + henkilo.getOidHenkilo(), be);
+                slackClient.sendToSlack("Virhe VTJ-muutostietojen päivityksessä", be.getMessage());
                 muutostieto.setError(true);
             } catch (Exception e) {
-                log.error("failed to handle muutostieto", e);
+                log.error("failed to handle muutostieto for henkilo " + henkilo.getOidHenkilo(), e);
                 slackClient.sendToSlack("Virhe muutostiedon käsittelyssä", e.getMessage());
                 muutostieto.setError(true);
             }
-            muutostieto.setProcessed(LocalDateTime.now());
-            muutostietoRepository.save(muutostieto);
         });
+        muutostieto.setProcessed(LocalDateTime.now());
+        muutostietoRepository.save(muutostieto);
         return null;
     }
 

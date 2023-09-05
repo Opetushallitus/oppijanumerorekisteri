@@ -24,6 +24,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.validation.BindException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -36,6 +37,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotRyhmaDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjMuutostieto;
@@ -81,6 +83,14 @@ public class VtjMuutostietoServiceTest {
     VtjPerustieto foreign;
     VtjPerustieto henkilotunnusKorjaus;
 
+    Optional<Henkilo> henkilo = Optional.of(Henkilo.builder()
+            .etunimet("etu")
+            .sukunimi("suku")
+            .kansalaisuus(Set.of(new Kansalaisuus("152")))
+            .hetu(hetus.get(0))
+            .yhteystiedotRyhma(Set.of())
+            .oidHenkilo("1.2.3.4.5")
+            .build());
     Optional<Henkilo> henkiloWithYhteystiedot = Optional.of(Henkilo.builder()
             .etunimet("etu")
             .sukunimi("suku")
@@ -119,17 +129,7 @@ public class VtjMuutostietoServiceTest {
         henkilotunnusKorjaus = new VtjPerustieto(hetus.get(0),
                 objectMapper.readTree(new File("src/test/resources/vtj/perustietoHetuKorjaus.json")));
 
-        Optional<Henkilo> henkilo = Optional.of(Henkilo.builder()
-                .etunimet("etu")
-                .sukunimi("suku")
-                .kansalaisuus(Set.of(new Kansalaisuus("152")))
-                .hetu(hetus.get(0))
-                .yhteystiedotRyhma(Set.of())
-                .oidHenkilo("1.2.3.4.5")
-                .build());
         henkilo.get().setId(1l);
-        when(henkiloRepository.findByHetu(hetus.get(0)))
-                .thenReturn(henkilo);
         when(koodistoService.list(Koodisto.KIELI))
                 .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI).koodi("fr").koodi("fi").koodi("sv")
                         .koodi("98")
@@ -145,6 +145,7 @@ public class VtjMuutostietoServiceTest {
 
     @Test
     public void savePerustietoParsesCorrectForceUpdateDto() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         muutostietoService.savePerustieto(perustieto);
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -199,6 +200,7 @@ public class VtjMuutostietoServiceTest {
 
     @Test
     public void savePerustietoParsesTurvakielto() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         muutostietoService.savePerustieto(turvakielto);
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -212,6 +214,7 @@ public class VtjMuutostietoServiceTest {
 
     @Test
     public void savePerustietoParsesForeign() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         muutostietoService.savePerustieto(foreign);
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -252,6 +255,7 @@ public class VtjMuutostietoServiceTest {
 
     @Test
     public void savePerustietoHandlesHenkilotunnusKorjaus() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         muutostietoService.savePerustieto(henkilotunnusKorjaus);
 
         ArgumentCaptor<String> slackMessage = ArgumentCaptor.forClass(String.class);
@@ -299,7 +303,38 @@ public class VtjMuutostietoServiceTest {
     }
 
     @Test
+    public void saveMuutostietoDoesNotSaveIfHenkiloIsPassivoitu() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0)))
+                .thenReturn(Optional.of(Henkilo.builder()
+                        .hetu(hetus.get(0))
+                        .passivoitu(true)
+                        .build()));
+        VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoEtunimenmuutos.json");
+        muutostietoService.saveMuutostieto(muutostieto);
+
+        verify(muutostietoRepository, times(1)).save(any());
+        verify(henkiloModificationService, times(0)).forceUpdateHenkilo(any());
+    }
+
+    @Test
+    public void saveMuutostietoSetsMuutostietoErrorIfValidationFails() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
+        when(henkiloModificationService.forceUpdateHenkilo(any()))
+                .thenThrow(new UnprocessableEntityException(
+                        new BindException(new HenkiloForceUpdateDto(), "henkiloForceUpdateDto")));
+        VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoEtunimenmuutos.json");
+        muutostietoService.saveMuutostieto(muutostieto);
+        verify(henkiloModificationService, times(1)).forceUpdateHenkilo(any());
+
+        ArgumentCaptor<VtjMuutostieto> argument = ArgumentCaptor.forClass(VtjMuutostieto.class);
+        verify(muutostietoRepository, times(1)).save(argument.capture());
+        VtjMuutostieto actual = argument.getValue();
+        assertThat(actual.getError()).isTrue();
+    }
+
+    @Test
     public void saveMuutostietoSavesEtunimenmuutos() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoEtunimenmuutos.json");
         muutostietoService.saveMuutostieto(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
@@ -313,6 +348,7 @@ public class VtjMuutostietoServiceTest {
 
     @Test
     public void saveMuutostietoSavesHenkilotunnusmuutos() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoHenkilotunnusmuutos.json");
         muutostietoService.saveMuutostieto(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
@@ -325,6 +361,7 @@ public class VtjMuutostietoServiceTest {
 
     @Test
     public void saveMuutostietoSavesSukupuolenmuutos() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoSukupuolenmuutos.json");
         muutostietoService.saveMuutostieto(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
@@ -338,6 +375,7 @@ public class VtjMuutostietoServiceTest {
 
     @Test
     public void saveMuutostietoSavesSukunimenmuutos() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoSukunimenmuutos.json");
         muutostietoService.saveMuutostieto(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
@@ -351,6 +389,14 @@ public class VtjMuutostietoServiceTest {
 
     @Test
     public void saveMuutostietoSavesKutsumanimenmuutos() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(Optional.of(Henkilo.builder()
+            .etunimet("Mathilda Helena Sophie")
+            .sukunimi("Aslan Tes")
+            .kansalaisuus(Set.of(new Kansalaisuus("152")))
+            .hetu(hetus.get(0))
+            .yhteystiedotRyhma(Set.of())
+            .oidHenkilo("1.2.3.4.5")
+            .build()));
         VtjMuutostieto muutostieto = getMuutostieto(
                 "src/test/resources/vtj/muutostietoKutsumanimenmuutos.json");
         muutostietoService.saveMuutostieto(muutostieto);
@@ -364,6 +410,7 @@ public class VtjMuutostietoServiceTest {
 
     @Test
     public void saveMuutostietoSavesKuolema() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoKuolema.json");
         muutostietoService.saveMuutostieto(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
@@ -376,6 +423,7 @@ public class VtjMuutostietoServiceTest {
 
     @Test
     public void saveMuutostietoSavesKuolinpaivanPoisto() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto(
                 "src/test/resources/vtj/muutostietoKuolinpaivanPoisto.json");
         muutostietoService.saveMuutostieto(muutostieto);
@@ -389,6 +437,7 @@ public class VtjMuutostietoServiceTest {
 
     @Test
     public void saveMuutostietoSavesKunnastaToiseenMuutto() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto(
                 "src/test/resources/vtj/muutostietoKunnastaToiseenMuutto.json");
         muutostietoService.saveMuutostieto(muutostieto);
@@ -419,12 +468,10 @@ public class VtjMuutostietoServiceTest {
 
     @Test
     public void saveMuutostietoSavesTurvakielto() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkiloWithYhteystiedot);
         VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoTurvakielto.json");
         muutostietoService.saveMuutostieto(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
-
-        when(henkiloRepository.findByHetu(hetus.get(0)))
-                .thenReturn(henkiloWithYhteystiedot);
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
         verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
@@ -435,6 +482,7 @@ public class VtjMuutostietoServiceTest {
 
     @Test
     public void saveMuutostietoSavesKansalaisuus() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto(
                 "src/test/resources/vtj/muutostietoKansalaisuudenLisaysJaPassivointi.json");
         muutostietoService.saveMuutostieto(muutostieto);
@@ -450,6 +498,7 @@ public class VtjMuutostietoServiceTest {
 
     @Test
     public void saveMuutostietoSavesPostiosoitteenmuutos() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto(
                 "src/test/resources/vtj/muutostietoPostiosoitteenmuutos.json");
         muutostietoService.saveMuutostieto(muutostieto);
@@ -479,6 +528,7 @@ public class VtjMuutostietoServiceTest {
 
     @Test
     public void saveMuutostietoSavesAidinkielenmuutos() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoAidinkieli.json");
         muutostietoService.saveMuutostieto(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());

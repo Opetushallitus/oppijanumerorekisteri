@@ -36,7 +36,8 @@ public class VtjMuutostietoValidatorTest {
         HenkiloForceUpdateDto henkiloForceUpdateDto = new HenkiloForceUpdateDto();
         validator.validateAndCorrectErrors(new HenkiloForceReadDto(), henkiloForceUpdateDto);
         assertThat(henkiloForceUpdateDto)
-                .extracting(HenkiloForceUpdateDto::getHuoltajat, HenkiloForceUpdateDto::getKotikunta, HenkiloUpdateDto::getAidinkieli, HenkiloUpdateDto::getKansalaisuus)
+                .extracting(HenkiloForceUpdateDto::getHuoltajat, HenkiloForceUpdateDto::getKotikunta,
+                        HenkiloUpdateDto::getAidinkieli, HenkiloUpdateDto::getKansalaisuus)
                 .containsExactly(null, null, null, null);
     }
 
@@ -68,7 +69,8 @@ public class VtjMuutostietoValidatorTest {
             validator.validateAndCorrectErrors(new HenkiloForceReadDto(), henkiloForceUpdateDto);
 
             assertThat(henkiloForceUpdateDto)
-                    .extracting(HenkiloForceUpdateDto::getKotikunta, updateDto -> updateDto.getAidinkieli().getKieliKoodi())
+                    .extracting(HenkiloForceUpdateDto::getKotikunta,
+                            updateDto -> updateDto.getAidinkieli().getKieliKoodi())
                     .containsExactly(KUNTAKOODI_TUNTEMATON, KIELIKOODI_TUNTEMATON);
             assertThat(henkiloForceUpdateDto.getKansalaisuus())
                     .extracting(KansalaisuusDto::getKansalaisuusKoodi)
@@ -80,14 +82,36 @@ public class VtjMuutostietoValidatorTest {
     }
 
     @Test
+    public void testInvalidKutsumanimiOnEtunimetChange() {
+        HenkiloForceUpdateDto henkiloForceUpdateDto = new HenkiloForceUpdateDto();
+        henkiloForceUpdateDto.setEtunimet("Jeeppi Jooseppi");
+        HenkiloForceReadDto henkiloForceReadDto = new HenkiloForceReadDto();
+        henkiloForceReadDto.setEtunimet("James Jooseppi");
+        henkiloForceReadDto.setKutsumanimi("James");
+        validator.validateAndCorrectErrors(henkiloForceReadDto, henkiloForceUpdateDto);
+        assertThat(henkiloForceUpdateDto.getKutsumanimi()).isEqualTo("Jeeppi Jooseppi");
+    }
+
+    @Test
+    public void testInvalidKutsumanimiOnKutsumanimiChange() {
+        HenkiloForceUpdateDto henkiloForceUpdateDto = new HenkiloForceUpdateDto();
+        henkiloForceUpdateDto.setKutsumanimi("Jeeppi");
+        HenkiloForceReadDto henkiloForceReadDto = new HenkiloForceReadDto();
+        henkiloForceReadDto.setEtunimet("James Jooseppi");
+        henkiloForceReadDto.setKutsumanimi("James");
+        validator.validateAndCorrectErrors(henkiloForceReadDto, henkiloForceUpdateDto);
+        assertThat(henkiloForceUpdateDto.getKutsumanimi()).isNull();
+    }
+
+    @Test
     public void testAllValuesValid() {
         try (MockedStatic<KoodiValidator> utilities = Mockito.mockStatic(KoodiValidator.class)) {
             utilities.when(() -> KoodiValidator.isValid(any(), eq(Koodisto.KUNTA), eq("validKunta")))
-                .thenReturn(true);
+                    .thenReturn(true);
             utilities.when(() -> KoodiValidator.isValid(any(), eq(Koodisto.MAAT_JA_VALTIOT_2), eq("validMaa")))
-                .thenReturn(true);
+                    .thenReturn(true);
             utilities.when(() -> KoodiValidator.isValid(any(), eq(Koodisto.KIELI), eq("validKieli")))
-                .thenReturn(true);
+                    .thenReturn(true);
             HenkiloForceUpdateDto henkiloForceUpdateDto = new HenkiloForceUpdateDto();
             henkiloForceUpdateDto.setKotikunta("validKunta");
             KansalaisuusDto invalidKansalaisuus = new KansalaisuusDto();
@@ -103,7 +127,8 @@ public class VtjMuutostietoValidatorTest {
             validator.validateAndCorrectErrors(new HenkiloForceReadDto(), henkiloForceUpdateDto);
 
             assertThat(henkiloForceUpdateDto)
-                    .extracting(HenkiloForceUpdateDto::getKotikunta, updateDto -> updateDto.getAidinkieli().getKieliKoodi())
+                    .extracting(HenkiloForceUpdateDto::getKotikunta,
+                            updateDto -> updateDto.getAidinkieli().getKieliKoodi())
                     .containsExactly("validKunta", "validKieli");
             assertThat(henkiloForceUpdateDto.getKansalaisuus())
                     .extracting(KansalaisuusDto::getKansalaisuusKoodi)
