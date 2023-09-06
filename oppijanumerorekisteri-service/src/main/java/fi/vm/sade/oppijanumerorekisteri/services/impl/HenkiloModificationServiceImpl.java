@@ -17,7 +17,6 @@ import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
-import fi.vm.sade.oppijanumerorekisteri.utils.OptionalUtils;
 import fi.vm.sade.oppijanumerorekisteri.utils.YhteystietoryhmaUtils;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
@@ -71,8 +70,10 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     private final OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
     private final AuditlogAspectHelper auditlogAspectHelper;
 
-    // Mapper is configured to ignore null values so setting henkiloUpdateDto field to null is same as skipping the field.
-    // If one wishes to enable validation groups with hibernate one needs to disable automatic validation and manually
+    // Mapper is configured to ignore null values so setting henkiloUpdateDto field
+    // to null is same as skipping the field.
+    // If one wishes to enable validation groups with hibernate one needs to disable
+    // automatic validation and manually
     // call the validator.
     @Override
     @Transactional
@@ -82,9 +83,12 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
                 .stream().findFirst().orElseThrow(NotFoundException::new);
 
         if (henkiloUpdateDto.getEtunimet() != null || henkiloUpdateDto.getKutsumanimi() != null) {
-            // etunimet ja/tai kutsumanimi muuttuu -> asetetaan molemmat jotta voidaan tehdä validointi
-            henkiloUpdateDto.setEtunimet(Optional.ofNullable(henkiloUpdateDto.getEtunimet()).orElse(henkiloSaved.getEtunimet()));
-            henkiloUpdateDto.setKutsumanimi(Optional.ofNullable(henkiloUpdateDto.getKutsumanimi()).orElse(henkiloSaved.getKutsumanimi()));
+            // etunimet ja/tai kutsumanimi muuttuu -> asetetaan molemmat jotta voidaan tehdä
+            // validointi
+            henkiloUpdateDto.setEtunimet(
+                    Optional.ofNullable(henkiloUpdateDto.getEtunimet()).orElse(henkiloSaved.getEtunimet()));
+            henkiloUpdateDto.setKutsumanimi(
+                    Optional.ofNullable(henkiloUpdateDto.getKutsumanimi()).orElse(henkiloSaved.getKutsumanimi()));
         }
 
         BindException errors = new BindException(henkiloUpdateDto, "henkiloUpdateDto");
@@ -111,7 +115,8 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             henkiloUpdateDto.setKotikunta(null);
         }
 
-        // In case hetu changes henkilo should be considered pristine from identification point of view
+        // In case hetu changes henkilo should be considered pristine from
+        // identification point of view
         if (henkiloUpdateDto.getHetu() != null && !Objects.equals(henkiloSaved.getHetu(), henkiloUpdateDto.getHetu())) {
             yksilointitietoRepository.findByHenkilo(henkiloSaved).ifPresent(yksilointitietoRepository::delete);
             henkiloSaved.getYksilointivirheet().clear();
@@ -130,19 +135,23 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         return henkiloUpdateDto;
     }
 
-    // Mapper is configured to ignore null values so setting henkiloUpdateDto field to null is same as skipping the field.
-    // If one wishes to enable validation groups with hibernate one needs to disable automatic validation and manually
+    // Mapper is configured to ignore null values so setting henkiloUpdateDto field
+    // to null is same as skipping the field.
+    // If one wishes to enable validation groups with hibernate one needs to disable
+    // automatic validation and manually
     // call the validator.
     //
     // Same as updateHenkilo, only with fewer validations.
-    // Values can be saved overwritten and Hetu can be changed even if isYksiloityVTJ() is true.
+    // Values can be saved overwritten and Hetu can be changed even if
+    // isYksiloityVTJ() is true.
     @Override
     @Transactional
     public HenkiloForceReadDto forceUpdateHenkilo(HenkiloForceUpdateDto henkiloUpdateDto) {
         return forceUpdateHenkiloInternal(henkiloUpdateDto, false);
     }
 
-    private HenkiloForceReadDto forceUpdateHenkiloInternal(HenkiloForceUpdateDto henkiloUpdateDto, boolean skipNameValidation) {
+    private HenkiloForceReadDto forceUpdateHenkiloInternal(HenkiloForceUpdateDto henkiloUpdateDto,
+            boolean skipNameValidation) {
         log.info("Updating henkilo with oid {}", henkiloUpdateDto.getOidHenkilo());
         final Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo())
                 .orElseThrow(() -> new NotFoundException("Could not find henkilo " + henkiloUpdateDto.getOidHenkilo()));
@@ -152,9 +161,11 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
                 .flatMap(hetu -> henkiloDataRepository.findByKaikkiHetut(hetu).stream())
                 .collect(toList());
         if (!henkilot.isEmpty()) {
-            Comparator<Henkilo> originalHenkiloSortOrder = Comparator.comparing(Henkilo::getCreated).thenComparing(Henkilo::getId);
+            Comparator<Henkilo> originalHenkiloSortOrder = Comparator.comparing(Henkilo::getCreated)
+                    .thenComparing(Henkilo::getId);
             Henkilo originalHenkilo = henkilot.stream().min(originalHenkiloSortOrder)
-                    .orElseThrow(() -> new IllegalStateException("Expected to find at least one henkilo to update with hetus"));
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Expected to find at least one henkilo to update with hetus"));
 
             log.info("Found {} henkilos ({}) with given hetus and of those {} is the oldest",
                     henkilot.size(),
@@ -167,16 +178,21 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             }
         }
 
-        if (!skipNameValidation && (henkiloUpdateDto.getEtunimet() != null || henkiloUpdateDto.getKutsumanimi() != null)) {
-            // etunimet ja/tai kutsumanimi muuttuu -> asetetaan molemmat jotta voidaan tehdä validointi
-            henkiloUpdateDto.setEtunimet(Optional.ofNullable(henkiloUpdateDto.getEtunimet()).orElse(henkiloSaved.getEtunimet()));
-            henkiloUpdateDto.setKutsumanimi(Optional.ofNullable(henkiloUpdateDto.getKutsumanimi()).orElse(henkiloSaved.getKutsumanimi()));
+        if (!skipNameValidation
+                && (henkiloUpdateDto.getEtunimet() != null || henkiloUpdateDto.getKutsumanimi() != null)) {
+            // etunimet ja/tai kutsumanimi muuttuu -> asetetaan molemmat jotta voidaan tehdä
+            // validointi
+            henkiloUpdateDto.setEtunimet(
+                    Optional.ofNullable(henkiloUpdateDto.getEtunimet()).orElse(henkiloSaved.getEtunimet()));
+            henkiloUpdateDto.setKutsumanimi(
+                    Optional.ofNullable(henkiloUpdateDto.getKutsumanimi()).orElse(henkiloSaved.getKutsumanimi()));
         }
 
         BindException errors = new BindException(henkiloUpdateDto, "henkiloForceUpdateDto");
         this.henkiloUpdatePostValidator.validateWithoutHetu(henkiloUpdateDto, errors);
         if (!errors.hasErrors() && henkiloUpdateDto.getHuoltajat() != null) {
-            // These can't be validated in henkiloUpdatePostValidator because different errors type
+            // These can't be validated in henkiloUpdatePostValidator because different
+            // errors type
             for (HuoltajaCreateDto huoltajaCreateDto : henkiloUpdateDto.getHuoltajat()) {
                 errors = new BindException(huoltajaCreateDto, "huoltajaCreateDto");
                 this.huoltajaCreatePostValidator.validate(huoltajaCreateDto, errors);
@@ -211,26 +227,29 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
     private static Set<String> combineKaikkiHetut(HenkiloForceUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
         Set<String> kaikkiHetut = new HashSet<>();
-        if (henkiloSaved.getHetu() != null) kaikkiHetut.add(henkiloSaved.getHetu());
-        if (henkiloUpdateDto.getHetu() != null) kaikkiHetut.add(henkiloUpdateDto.getHetu());
-        if (henkiloUpdateDto.getKaikkiHetut() != null) kaikkiHetut.addAll(henkiloUpdateDto.getKaikkiHetut());
-        if (henkiloSaved.getKaikkiHetut() != null) kaikkiHetut.addAll(henkiloSaved.getKaikkiHetut());
+        if (henkiloSaved.getHetu() != null)
+            kaikkiHetut.add(henkiloSaved.getHetu());
+        if (henkiloUpdateDto.getHetu() != null)
+            kaikkiHetut.add(henkiloUpdateDto.getHetu());
+        if (henkiloUpdateDto.getKaikkiHetut() != null)
+            kaikkiHetut.addAll(henkiloUpdateDto.getKaikkiHetut());
+        if (henkiloSaved.getKaikkiHetut() != null)
+            kaikkiHetut.addAll(henkiloSaved.getKaikkiHetut());
         return kaikkiHetut;
     }
-
 
     @Transactional
     @Override
     public Henkilo findOrCreateHuoltaja(HuoltajaCreateDto huoltajaCreateDto, Henkilo lapsi) {
         Optional<Henkilo> huoltaja = Optional.empty();
         if (StringUtils.hasLength(huoltajaCreateDto.getHetu())) {
-            huoltaja = OptionalUtils.or(this.henkiloDataRepository.findByHetu(huoltajaCreateDto.getHetu()),
-                    () -> this.henkiloDataRepository.findByKaikkiHetut(huoltajaCreateDto.getHetu()));
+            huoltaja = henkiloDataRepository.findByHetu(huoltajaCreateDto.getHetu())
+                    .or(() -> this.henkiloDataRepository.findByKaikkiHetut(huoltajaCreateDto.getHetu()));
             // Ainoastaan etukäteen kutsujan "yksilöimä" huoltaja
             huoltaja.filter(henkilo -> Boolean.TRUE.equals(huoltajaCreateDto.getYksiloityVTJ()))
                     .ifPresent(henkilo -> this.mapper.map(huoltajaCreateDto, henkilo));
-        }
-        else if (StringUtils.hasLength(huoltajaCreateDto.getEtunimet()) && StringUtils.hasLength(huoltajaCreateDto.getSukunimi())) {
+        } else if (StringUtils.hasLength(huoltajaCreateDto.getEtunimet())
+                && StringUtils.hasLength(huoltajaCreateDto.getSukunimi())) {
             huoltaja = lapsi.getHuoltajat().stream()
                     .map(HenkiloHuoltajaSuhde::getHuoltaja)
                     .filter(existingHuoltaja -> huoltajaCreateDto.getEtunimet().equals(existingHuoltaja.getEtunimet()))
@@ -243,12 +262,15 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
                     .findFirst();
         }
         huoltaja.ifPresent(this::update);
-        return huoltaja.orElseGet(() -> this.createHenkilo(huoltajaCreateDto, oppijanumerorekisteriProperties.getRootUserOid()));
+        return huoltaja.orElseGet(
+                () -> this.createHenkilo(huoltajaCreateDto, oppijanumerorekisteriProperties.getRootUserOid()));
     }
 
-    private DuplicateService.LinkResult updateHetuAndLinkDuplicate(HenkiloForceUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
+    private DuplicateService.LinkResult updateHetuAndLinkDuplicate(HenkiloForceUpdateDto henkiloUpdateDto,
+            Henkilo henkiloSaved) {
         // Only if hetu has changed
-        if (StringUtils.hasLength(henkiloUpdateDto.getHetu()) && !henkiloUpdateDto.getHetu().equals(henkiloSaved.getHetu())) {
+        if (StringUtils.hasLength(henkiloUpdateDto.getHetu())
+                && !henkiloUpdateDto.getHetu().equals(henkiloSaved.getHetu())) {
             log.info("Hetu has changed for henkilo {}", henkiloUpdateDto.getOidHenkilo());
             if (henkiloSaved.isYksiloityVTJ()) {
                 henkiloDataRepository.findByHetu(henkiloUpdateDto.getHetu()).ifPresent(henkiloByUusiHetu -> {
@@ -258,25 +280,32 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
                 henkiloSaved.addHetu(henkiloUpdateDto.getHetu());
             }
             String newHetu = henkiloUpdateDto.getHetu();
-            DuplicateService.LinkResult linked = this.duplicateService.removeDuplicateHetuAndLink(henkiloSaved, newHetu);
+            DuplicateService.LinkResult linked = this.duplicateService.removeDuplicateHetuAndLink(henkiloSaved,
+                    newHetu);
             henkiloSaved.setHetu(newHetu);
             henkiloUpdateDto.setHetu(null);
             return linked;
         } else {
-            return new DuplicateService.LinkResult(henkiloSaved, Collections.singletonList(henkiloSaved), Collections.emptyList());
+            return new DuplicateService.LinkResult(henkiloSaved, Collections.singletonList(henkiloSaved),
+                    Collections.emptyList());
         }
     }
 
-    private void henkiloUpdateSetReusableFields(HenkiloUpdateDto henkiloUpdateDto, Henkilo henkiloSaved, boolean overwriteReadOnly) {
-        YhteystietoryhmaUtils.updateYhteystiedot(henkiloUpdateDto.getYhteystiedotRyhma(), henkiloSaved.getYhteystiedotRyhma(), overwriteReadOnly, this.mapper);
+    private void henkiloUpdateSetReusableFields(HenkiloUpdateDto henkiloUpdateDto, Henkilo henkiloSaved,
+            boolean overwriteReadOnly) {
+        YhteystietoryhmaUtils.updateYhteystiedot(henkiloUpdateDto.getYhteystiedotRyhma(),
+                henkiloSaved.getYhteystiedotRyhma(), overwriteReadOnly, this.mapper);
         henkiloUpdateDto.setYhteystiedotRyhma(null);
 
         if (henkiloUpdateDto.getAidinkieli() != null && henkiloUpdateDto.getAidinkieli().getKieliKoodi() != null) {
-            henkiloSaved.setAidinkieli(this.kielisyysRepository.findOrCreateByKoodi(henkiloUpdateDto.getAidinkieli().getKieliKoodi()));
+            henkiloSaved.setAidinkieli(
+                    this.kielisyysRepository.findOrCreateByKoodi(henkiloUpdateDto.getAidinkieli().getKieliKoodi()));
             henkiloUpdateDto.setAidinkieli(null);
         }
-        if (henkiloUpdateDto.getAsiointiKieli() != null && henkiloUpdateDto.getAsiointiKieli().getKieliKoodi() != null) {
-            henkiloSaved.setAsiointiKieli(this.kielisyysRepository.findOrCreateByKoodi(henkiloUpdateDto.getAsiointiKieli().getKieliKoodi()));
+        if (henkiloUpdateDto.getAsiointiKieli() != null
+                && henkiloUpdateDto.getAsiointiKieli().getKieliKoodi() != null) {
+            henkiloSaved.setAsiointiKieli(
+                    this.kielisyysRepository.findOrCreateByKoodi(henkiloUpdateDto.getAsiointiKieli().getKieliKoodi()));
             henkiloUpdateDto.setAsiointiKieli(null);
         }
 
@@ -311,13 +340,14 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         // päivitettäessä henkilöä, päivitetään samalla kaikkien slave-henkilöiden
         // modified-aikaleima, jotta myös slavet näkyvät muutosrajapinnassa
         log.info("Marking all duplicates as updated");
-        List<Henkilo> duplikaatit = henkiloDataRepository.findSlavesByMasterOid(tallennettu.getOidHenkilo()).stream().map(slave -> {
-            slave.setModified(nyt);
-            kayttajaOid.ifPresent(slave::setKasittelijaOid);
-            return henkiloDataRepository.save(slave);
-            // rakenne ei ole rekursiivinen (vaikka kantarakenne mahdollistaakin)
-            // joten päivitystä ei tarvitse tehdä rekursiivisesti
-        }).collect(toList());
+        List<Henkilo> duplikaatit = henkiloDataRepository.findSlavesByMasterOid(tallennettu.getOidHenkilo()).stream()
+                .map(slave -> {
+                    slave.setModified(nyt);
+                    kayttajaOid.ifPresent(slave::setKasittelijaOid);
+                    return henkiloDataRepository.save(slave);
+                    // rakenne ei ole rekursiivinen (vaikka kantarakenne mahdollistaakin)
+                    // joten päivitystä ei tarvitse tehdä rekursiivisesti
+                }).collect(toList());
 
         henkiloModifiedTopic.publish(tallennettu);
         duplikaatit.forEach(henkiloModifiedTopic::publish);
@@ -346,7 +376,8 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
     @Override
     @Transactional
-    public FindOrCreateWrapper<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto) {
+    public FindOrCreateWrapper<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(
+            HenkiloPerustietoDto henkiloPerustietoDto) {
         return findHenkilo(henkiloPerustietoDto)
                 .map(entity -> found(this.mapper.map(entity, HenkiloPerustietoDto.class)))
                 .orElseGet(() -> created(this.createHenkilo(henkiloPerustietoDto)));
@@ -354,16 +385,19 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
     private Optional<Henkilo> findHenkilo(HenkiloPerustietoDto henkiloPerustietoDto) {
         return Stream.<Function<HenkiloPerustietoDto, Optional<Henkilo>>>of(
-                dto -> Optional.ofNullable(dto.getOidHenkilo()).flatMap(oid -> Optional.of(this.henkiloService.getEntityByOid(oid))),
+                dto -> Optional.ofNullable(dto.getOidHenkilo())
+                        .flatMap(oid -> Optional.of(this.henkiloService.getEntityByOid(oid))),
                 dto -> Optional.ofNullable(dto.getExternalIds())
                         .filter(externalIds -> !externalIds.isEmpty())
                         .flatMap(externalIds -> findUnique(henkiloDataRepository.findByExternalIds(externalIds))),
                 dto -> Optional.ofNullable(dto.getIdentifications())
                         .filter(identifications -> !identifications.isEmpty())
-                        .flatMap(identifications -> findUnique(henkiloDataRepository.findByIdentifications(identifications))),
-                dto -> Optional.ofNullable(dto.getHetu()).flatMap(hetu -> OptionalUtils.or(
-                        henkiloDataRepository.findByHetu(hetu), () -> henkiloDataRepository.findByKaikkiHetut(hetu)))
-        ).map(transformer -> transformer.apply(henkiloPerustietoDto))
+                        .flatMap(identifications -> findUnique(
+                                henkiloDataRepository.findByIdentifications(identifications))),
+                dto -> Optional.ofNullable(dto.getHetu())
+                        .flatMap(hetu -> henkiloDataRepository.findByHetu(hetu)
+                                .or(() -> henkiloDataRepository.findByKaikkiHetut(hetu))))
+                .map(transformer -> transformer.apply(henkiloPerustietoDto))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst();
@@ -508,10 +542,12 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         }
 
         if (henkiloCreate.getAidinkieli() != null && henkiloCreate.getAidinkieli().getKieliKoodi() != null) {
-            henkiloCreate.setAidinkieli(this.kielisyysRepository.findOrCreateByKoodi(henkiloCreate.getAidinkieli().getKieliKoodi()));
+            henkiloCreate.setAidinkieli(
+                    this.kielisyysRepository.findOrCreateByKoodi(henkiloCreate.getAidinkieli().getKieliKoodi()));
         }
         if (henkiloCreate.getAsiointiKieli() != null && henkiloCreate.getAsiointiKieli().getKieliKoodi() != null) {
-            henkiloCreate.setAsiointiKieli(this.kielisyysRepository.findOrCreateByKoodi(henkiloCreate.getAsiointiKieli().getKieliKoodi()));
+            henkiloCreate.setAsiointiKieli(
+                    this.kielisyysRepository.findOrCreateByKoodi(henkiloCreate.getAsiointiKieli().getKieliKoodi()));
         }
         if (henkiloCreate.getKansalaisuus() != null) {
             Set<Kansalaisuus> kansalaisuusSet = henkiloCreate.getKansalaisuus().stream()
@@ -550,11 +586,10 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     }
 
     private void validateForceLinkCandidates(List<Henkilo> candidates) {
-        candidates.stream().filter(henkilo ->
-                henkilo.isYksiloityVTJ() || henkilo.getHetu() != null
-        ).findAny().ifPresent(henkilo -> {
-            throw new ValidationException();
-        });
+        candidates.stream().filter(henkilo -> henkilo.isYksiloityVTJ() || henkilo.getHetu() != null).findAny()
+                .ifPresent(henkilo -> {
+                    throw new ValidationException();
+                });
     }
 
     private void puraYksiloinnit(List<Henkilo> candidates) {

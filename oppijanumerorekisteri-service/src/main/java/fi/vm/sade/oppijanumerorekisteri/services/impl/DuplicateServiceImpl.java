@@ -19,7 +19,6 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
-import fi.vm.sade.oppijanumerorekisteri.utils.OptionalUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -146,7 +145,8 @@ public class DuplicateServiceImpl implements DuplicateService {
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
     public LinkResult linkWithHetu(Henkilo henkilo, String hetu) {
-        return OptionalUtils.or(henkiloDataRepository.findByKaikkiHetut(hetu), () -> henkiloDataRepository.findByHetu(hetu))
+        return henkiloDataRepository.findByKaikkiHetut(hetu)
+                .or(() -> henkiloDataRepository.findByHetu(hetu))
                 .filter(henkiloByHetu -> !henkiloByHetu.equals(henkilo))
                 .map(henkiloByHetu -> {
                     if (henkiloByHetu.isYksiloityVTJ() && (henkilo.isYksiloity() || henkilo.isYksiloityVTJ())) {
