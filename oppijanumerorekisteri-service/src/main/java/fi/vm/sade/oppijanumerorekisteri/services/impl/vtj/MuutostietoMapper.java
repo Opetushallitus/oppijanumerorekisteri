@@ -81,14 +81,14 @@ public class MuutostietoMapper extends TietoryhmaMapper {
                 }
                 break;
             case "KOTIKUNTA":
-                if (isTurvakiellonAlainen(tietoryhma, "KOTIKUNTA")) {
+                if (isTurvakiellonAlainen(tietoryhma)) {
                     update.setKotikunta(null);
                 } else if (isDataUpdate(tietoryhma)) {
                     update.setKotikunta(getStringValue(tietoryhma, "kuntakoodi"));
                 }
                 break;
             case "SAHKOPOSTIOSOITE":
-                if (isTurvakiellonAlainen(tietoryhma, "SAHKOPOSTIOSOITE")) {
+                if (isTurvakiellonAlainen(tietoryhma)) {
                     removeYhteystietoryhma(update.getYhteystiedotRyhma(), VtjYhteystiedotRyhma.SAHKOPOSTIOSOITE);
                 } else if (isDataUpdate(tietoryhma)) {
                     YhteystiedotRyhmaDto yhteystiedotRyhma = removeAndCreateNewYhteystiedotRyhmaDto(update,
@@ -98,14 +98,14 @@ public class MuutostietoMapper extends TietoryhmaMapper {
                 }
                 break;
             case "KOTIMAINEN_POSTIOSOITE":
-                if (isTurvakiellonAlainen(tietoryhma, "KOTIMAINEN_POSTIOSOITE")) {
+                if (isTurvakiellonAlainen(tietoryhma)) {
                     removeYhteystietoryhma(update.getYhteystiedotRyhma(), VtjYhteystiedotRyhma.KOTIMAINEN_POSTIOSOITE);
                 } else if (isDataUpdate(tietoryhma)) {
                     setKotimainenPostiosoite(update, tietoryhma, locale);
                 }
                 break;
             case "VAKINAINEN_KOTIMAINEN_OSOITE":
-                if (isTurvakiellonAlainen(tietoryhma, "VAKINAINEN_KOTIMAINEN_OSOITE")) {
+                if (isTurvakiellonAlainen(tietoryhma)) {
                     removeYhteystietoryhma(update.getYhteystiedotRyhma(),
                             VtjYhteystiedotRyhma.VAKINAINEN_KOTIMAINEN_OSOITE);
                 } else if (isDataUpdate(tietoryhma)) {
@@ -115,7 +115,7 @@ public class MuutostietoMapper extends TietoryhmaMapper {
                 }
                 break;
             case "VAKINAINEN_ULKOMAINEN_OSOITE":
-                if (isTurvakiellonAlainen(tietoryhma, "VAKINAINEN_ULKOMAINEN_OSOITE")) {
+                if (isTurvakiellonAlainen(tietoryhma)) {
                     removeYhteystietoryhma(update.getYhteystiedotRyhma(),
                             VtjYhteystiedotRyhma.VAKINAINEN_ULKOMAINEN_OSOITE);
                 } else if (isDataUpdate(tietoryhma)) {
@@ -125,7 +125,7 @@ public class MuutostietoMapper extends TietoryhmaMapper {
                 }
                 break;
             case "TILAPAINEN_KOTIMAINEN_OSOITE":
-                if (isTurvakiellonAlainen(tietoryhma, "TILAPAINEN_KOTIMAINEN_OSOITE")) {
+                if (isTurvakiellonAlainen(tietoryhma)) {
                     removeYhteystietoryhma(update.getYhteystiedotRyhma(),
                             VtjYhteystiedotRyhma.TILAPAINEN_KOTIMAINEN_OSOITE);
                 } else if (isDataUpdate(tietoryhma)) {
@@ -135,7 +135,7 @@ public class MuutostietoMapper extends TietoryhmaMapper {
                 }
                 break;
             case "TILAPAINEN_ULKOMAINEN_OSOITE":
-                if (isTurvakiellonAlainen(tietoryhma, "TILAPAINEN_ULKOMAINEN_OSOITE")) {
+                if (isTurvakiellonAlainen(tietoryhma)) {
                     removeYhteystietoryhma(update.getYhteystiedotRyhma(),
                             VtjYhteystiedotRyhma.TILAPAINEN_ULKOMAINEN_OSOITE);
                 } else if (isDataUpdate(tietoryhma)) {

@@ -90,16 +90,8 @@ public abstract class TietoryhmaMapper {
         return kansalaisuudet;
     }
 
-    protected boolean isTurvakiellonAlainen(JsonNode tietoryhma, String tietoryhmaTyyppi) {
-        if (tietoryhma.get("turvakiellonAlaisetKentat") != null
-                && tietoryhma.get("turvakiellonAlaisetKentat").isArray()) {
-            for (JsonNode kentta : tietoryhma.get("turvakiellonAlaisetKentat")) {
-                if (tietoryhmaTyyppi.equals(kentta.asText())) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    protected boolean isTurvakiellonAlainen(JsonNode tietoryhma) {
+        return tietoryhma.get("turvakiellonAlaisetKentat") != null && tietoryhma.get("turvakiellonAlaisetKentat").isArray();
     }
 
     private YhteystiedotRyhmaDto createYhteystiedotRyhmaDto(VtjYhteystiedotRyhma ryhmaKuvaus) {

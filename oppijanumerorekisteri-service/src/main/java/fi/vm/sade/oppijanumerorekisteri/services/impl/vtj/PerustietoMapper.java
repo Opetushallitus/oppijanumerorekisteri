@@ -49,12 +49,12 @@ public class PerustietoMapper extends TietoryhmaMapper {
                 update.setTurvakielto(tietoryhma.get("turvakieltoAktiivinen").asBoolean());
                 break;
             case "KOTIKUNTA":
-                if (!isTurvakiellonAlainen(tietoryhma, "KOTIKUNTA")) {
+                if (!isTurvakiellonAlainen(tietoryhma)) {
                     update.setKotikunta(getStringValue(tietoryhma, "kuntakoodi"));
                 }
                 break;
             case "SAHKOPOSTIOSOITE":
-                if (!isTurvakiellonAlainen(tietoryhma, "SAHKOPOSTIOSOITE")
+                if (!isTurvakiellonAlainen(tietoryhma)
                         && tietoryhma.get("sahkopostiosoite") != null) {
                     YhteystiedotRyhmaDto yhteystiedotRyhma = removeAndCreateNewYhteystiedotRyhmaDto(update,
                             VtjYhteystiedotRyhma.SAHKOPOSTIOSOITE);
@@ -63,33 +63,33 @@ public class PerustietoMapper extends TietoryhmaMapper {
                 }
                 break;
             case "KOTIMAINEN_POSTIOSOITE":
-                if (!isTurvakiellonAlainen(tietoryhma, "KOTIMAINEN_POSTIOSOITE")) {
+                if (!isTurvakiellonAlainen(tietoryhma)) {
                     setKotimainenPostiosoite(update, tietoryhma, locale);
                 }
                 break;
             case "VAKINAINEN_KOTIMAINEN_OSOITE":
-                if (!isTurvakiellonAlainen(tietoryhma, "VAKINAINEN_KOTIMAINEN_OSOITE")) {
+                if (!isTurvakiellonAlainen(tietoryhma)) {
                     YhteystiedotRyhmaDto yhteystiedotRyhma = removeAndCreateNewYhteystiedotRyhmaDto(update,
                             VtjYhteystiedotRyhma.VAKINAINEN_KOTIMAINEN_OSOITE);
                     setKotimainenOsoite(yhteystiedotRyhma, tietoryhma, locale);
                 }
                 break;
             case "VAKINAINEN_ULKOMAINEN_OSOITE":
-                if (!isTurvakiellonAlainen(tietoryhma, "VAKINAINEN_ULKOMAINEN_OSOITE")) {
+                if (!isTurvakiellonAlainen(tietoryhma)) {
                     YhteystiedotRyhmaDto yhteystiedotRyhma = removeAndCreateNewYhteystiedotRyhmaDto(update,
                             VtjYhteystiedotRyhma.VAKINAINEN_ULKOMAINEN_OSOITE);
                     setUlkomainenOsoite(yhteystiedotRyhma, tietoryhma, locale);
                 }
                 break;
             case "TILAPAINEN_KOTIMAINEN_OSOITE":
-                if (!isTurvakiellonAlainen(tietoryhma, "TILAPAINEN_KOTIMAINEN_OSOITE")) {
+                if (!isTurvakiellonAlainen(tietoryhma)) {
                     YhteystiedotRyhmaDto yhteystiedotRyhma = removeAndCreateNewYhteystiedotRyhmaDto(update,
                             VtjYhteystiedotRyhma.TILAPAINEN_KOTIMAINEN_OSOITE);
                     setKotimainenOsoite(yhteystiedotRyhma, tietoryhma, locale);
                 }
                 break;
             case "TILAPAINEN_ULKOMAINEN_OSOITE":
-                if (!isTurvakiellonAlainen(tietoryhma, "TILAPAINEN_ULKOMAINEN_OSOITE")) {
+                if (!isTurvakiellonAlainen(tietoryhma)) {
                     YhteystiedotRyhmaDto yhteystiedotRyhma = removeAndCreateNewYhteystiedotRyhmaDto(update,
                             VtjYhteystiedotRyhma.TILAPAINEN_ULKOMAINEN_OSOITE);
                     setUlkomainenOsoite(yhteystiedotRyhma, tietoryhma, locale);
