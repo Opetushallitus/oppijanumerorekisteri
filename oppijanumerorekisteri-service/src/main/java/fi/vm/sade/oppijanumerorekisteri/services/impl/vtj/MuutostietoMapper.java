@@ -147,35 +147,18 @@ public class MuutostietoMapper extends TietoryhmaMapper {
                 }
                 break;
             case "HUOLTAJA":
-                JsonNode huoltajaJson = tietoryhma.get("voimassaolevatTiedot") != null
-                        && tietoryhma.get("voimassaolevatTiedot").get("huoltaja") != null
-                                ? tietoryhma.get("voimassaolevatTiedot").get("huoltaja")
-                                : tietoryhma.get("huoltaja");
                 Set<HuoltajaCreateDto> huoltajat = update.getHuoltajat();
                 if ("POISTETTU".equals(getStringValue(tietoryhma, "muutosattribuutti"))) {
+                    JsonNode huoltajaJson = tietoryhma.get("huoltaja");
                     huoltajat.removeIf(huoltaja -> huoltajaMatches(huoltaja, huoltajaJson));
                 } else if (isDataUpdate(tietoryhma)) {
-                    HuoltajaCreateDto huoltajaCreateDto = huoltajat.stream()
-                            .filter(huoltaja -> huoltajaMatches(huoltaja, huoltajaJson))
-                            .findFirst()
-                            .orElseGet(HuoltajaCreateDto::new);
-                    huoltajat.removeIf(huoltaja -> huoltajaMatches(huoltaja, huoltajaJson));
-                    LocalDate alkupv = parseDate(tietoryhma.get("huoltosuhteenAlkupv"));
-                    LocalDate loppupv = parseDate(tietoryhma.get("huoltosuhteenLoppupv"));
-                    if ((alkupv == null || LocalDate.now().isAfter(alkupv))
-                            && (loppupv == null || LocalDate.now().isBefore(loppupv))) {
-                        huoltajaCreateDto.setHetu(getStringValue(huoltajaJson, "henkilotunnus"));
-                        huoltajaCreateDto.setHuoltajuusAlku(alkupv);
-                        huoltajaCreateDto.setHuoltajuusLoppu(loppupv);
-                        huoltajaCreateDto.setEtunimet(getStringValue(huoltajaJson, "etunimet"));
-                        huoltajaCreateDto.setKutsumanimi(getStringValue(huoltajaJson, "etunimet"));
-                        huoltajaCreateDto.setSukunimi(getStringValue(huoltajaJson, "sukunimi"));
-                        huoltajaCreateDto.setSyntymaaika(parseDate(huoltajaJson.get("syntymapv")));
-                        if (getStringValue(huoltajaJson, "kansalaisuuskoodi") != null) {
-                            huoltajaCreateDto.setKansalaisuusKoodi(
-                                    Set.of(getStringValue(huoltajaJson, "kansalaisuuskoodi")));
+                    if (tietoryhma.get("voimassaolevatTiedot") != null
+                            && tietoryhma.get("voimassaolevatTiedot").isArray()) {
+                        for (JsonNode huoltajaTietoryhma : tietoryhma.get("voimassaolevatTiedot")) {
+                            addOrUpdateHuoltaja(huoltajat, huoltajaTietoryhma);
                         }
-                        huoltajat.add(huoltajaCreateDto);
+                    } else {
+                        addOrUpdateHuoltaja(huoltajat, tietoryhma);
                     }
                 }
                 break;

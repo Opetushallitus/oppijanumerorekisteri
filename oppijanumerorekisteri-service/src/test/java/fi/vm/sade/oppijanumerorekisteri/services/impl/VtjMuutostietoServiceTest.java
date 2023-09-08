@@ -259,6 +259,37 @@ public class VtjMuutostietoServiceTest {
     }
 
     @Test
+    public void savePerustietoParsesHuoltaja() throws Exception {
+        VtjPerustieto huoltajaPerustieto = new VtjPerustieto(hetus.get(0),
+                objectMapper.readTree(new File("src/test/resources/vtj/perustietoHuoltaja.json")));
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
+        muutostietoService.savePerustieto(huoltajaPerustieto);
+
+        ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
+        verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
+        verify(henkiloRepository, times(1)).save(any());
+        HenkiloForceUpdateDto actual = argument.getValue();
+        assertThat(actual.getHuoltajat()).hasSize(2);
+        Iterator<HuoltajaCreateDto> iter = actual.getHuoltajat().iterator();
+        HuoltajaCreateDto huoltaja1 = iter.next();
+        assertThat(huoltaja1.getHetu()).isEqualTo("220271-949R");
+        assertThat(huoltaja1.getEtunimet()).isEqualTo("Leo Albert");
+        assertThat(huoltaja1.getKutsumanimi()).isEqualTo("Leo Albert");
+        assertThat(huoltaja1.getSukunimi()).isEqualTo("Lukkari Tes");
+        assertThat(huoltaja1.getSyntymaaika()).isEqualTo(LocalDate.of(2001, 1, 1));
+        assertThat(huoltaja1.getHuoltajuusAlku()).isEqualTo(LocalDate.of(2020, 3, 25));
+        assertThat(huoltaja1.getHuoltajuusLoppu()).isEqualTo(LocalDate.of(2036, 1, 1));
+        HuoltajaCreateDto huoltaja2 = iter.next();
+        assertThat(huoltaja2.getHetu()).isEqualTo("111075-9782");
+        assertThat(huoltaja2.getEtunimet()).isEqualTo("Chira Sabine");
+        assertThat(huoltaja2.getKutsumanimi()).isEqualTo("Chira Sabine");
+        assertThat(huoltaja2.getSukunimi()).isEqualTo("Karlsson Tes");
+        assertThat(huoltaja2.getSyntymaaika()).isEqualTo(LocalDate.of(2001, 2, 15));
+        assertThat(huoltaja2.getHuoltajuusAlku()).isEqualTo(LocalDate.of(2020, 3, 25));
+        assertThat(huoltaja2.getHuoltajuusLoppu()).isEqualTo(LocalDate.of(2036, 1, 1));
+    }
+
+    @Test
     public void savePerustietoHandlesHenkilotunnusKorjaus() throws Exception {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         muutostietoService.savePerustieto(henkilotunnusKorjaus);
@@ -561,8 +592,8 @@ public class VtjMuutostietoServiceTest {
         assertThat(huoltaja.getKutsumanimi()).isEqualTo("Henriikka Sandra");
         assertThat(huoltaja.getSukunimi()).isEqualTo("Valkeavirta Tes");
         assertThat(huoltaja.getSyntymaaika()).isEqualTo(LocalDate.of(1984, 6, 1));
-        assertThat(huoltaja.getHuoltajuusAlku()).isEqualTo(LocalDate.of(2012, 8, 1));
-        assertThat(huoltaja.getHuoltajuusLoppu()).isEqualTo(LocalDate.of(2030, 8, 2));
+        assertThat(huoltaja.getHuoltajuusAlku()).isEqualTo(LocalDate.of(2012, 8, 2));
+        assertThat(huoltaja.getHuoltajuusLoppu()).isEqualTo(LocalDate.of(2030, 8, 1));
     }
 
     @Test
@@ -602,8 +633,8 @@ public class VtjMuutostietoServiceTest {
         assertThat(huoltaja.getKutsumanimi()).isEqualTo("Henriikka Sandra");
         assertThat(huoltaja.getSukunimi()).isEqualTo("Valkeavirta Tes");
         assertThat(huoltaja.getSyntymaaika()).isEqualTo(LocalDate.of(1984, 6, 1));
-        assertThat(huoltaja.getHuoltajuusAlku()).isEqualTo(LocalDate.of(2012, 8, 1));
-        assertThat(huoltaja.getHuoltajuusLoppu()).isEqualTo(LocalDate.of(2030, 8, 2));
+        assertThat(huoltaja.getHuoltajuusAlku()).isEqualTo(LocalDate.of(2012, 8, 2));
+        assertThat(huoltaja.getHuoltajuusLoppu()).isEqualTo(LocalDate.of(2030, 8, 1));
     }
 
     @Test
@@ -639,19 +670,19 @@ public class VtjMuutostietoServiceTest {
         assertThat(actual.getHuoltajat()).hasSize(2);
         Iterator<HuoltajaCreateDto> iter = actual.getHuoltajat().iterator();
         HuoltajaCreateDto huoltaja1 = iter.next();
-        assertThat(huoltaja1.getHetu()).isEqualTo("100391-9566");
-        assertThat(huoltaja1.getEtunimet()).isEqualTo("Lina Margretha");
-        assertThat(huoltaja1.getKutsumanimi()).isEqualTo("Lina Margretha");
-        assertThat(huoltaja1.getSukunimi()).isEqualTo("Stenman Tes");
-        assertThat(huoltaja1.getSyntymaaika()).isEqualTo(LocalDate.of(1994, 10, 11));
+        assertThat(huoltaja1.getHetu()).isNull();
+        assertThat(huoltaja1.getEtunimet()).isEqualTo("Paola Peppina");
+        assertThat(huoltaja1.getKutsumanimi()).isEqualTo("Paola Peppina");
+        assertThat(huoltaja1.getSukunimi()).isEqualTo("Weitsell Tes");
+        assertThat(huoltaja1.getSyntymaaika()).isEqualTo(LocalDate.of(2000, 11, 22));
         assertThat(huoltaja1.getHuoltajuusAlku()).isEqualTo(LocalDate.of(2020, 5, 14));
         assertThat(huoltaja1.getHuoltajuusLoppu()).isEqualTo(LocalDate.of(2036, 12, 30));
         HuoltajaCreateDto huoltaja2 = iter.next();
-        assertThat(huoltaja2.getHetu()).isNull();
-        assertThat(huoltaja2.getEtunimet()).isEqualTo("Paola Peppina");
-        assertThat(huoltaja2.getKutsumanimi()).isEqualTo("Paola Peppina");
-        assertThat(huoltaja2.getSukunimi()).isEqualTo("Weitsell Tes");
-        assertThat(huoltaja2.getSyntymaaika()).isEqualTo(LocalDate.of(2000, 11, 22));
+        assertThat(huoltaja2.getHetu()).isEqualTo("100391-9566");
+        assertThat(huoltaja2.getEtunimet()).isEqualTo("Lina Margretha");
+        assertThat(huoltaja2.getKutsumanimi()).isEqualTo("Lina Margretha");
+        assertThat(huoltaja2.getSukunimi()).isEqualTo("Stenman Tes");
+        assertThat(huoltaja2.getSyntymaaika()).isEqualTo(LocalDate.of(1994, 10, 11));
         assertThat(huoltaja2.getHuoltajuusAlku()).isEqualTo(LocalDate.of(2020, 5, 14));
         assertThat(huoltaja2.getHuoltajuusLoppu()).isEqualTo(LocalDate.of(2036, 12, 30));
     }

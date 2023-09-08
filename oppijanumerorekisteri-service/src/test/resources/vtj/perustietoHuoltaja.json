@@ -1,0 +1,113 @@
+[
+  {
+    "tietoryhma": "AIDINKIELI",
+    "kielikoodi": "fi",
+    "kielikoodiISO6392": "fin",
+    "alkupv": { "arvo": "2019-11-06", "tarkkuus": "PAIVA" }
+  },
+  { "tietoryhma": "SUKUPUOLI", "sukupuoli": "NAINEN" },
+  {
+    "tietoryhma": "HENKILON_NIMI",
+    "etunimi": "Hulianna Katruska",
+    "sukunimi": "Timonen One Tes"
+  },
+  {
+    "tietoryhma": "KANSALAISUUS",
+    "henkilonKansalaisuudet": [
+      { "kansalaisuuskoodi": "246", "voimassaolo": "AKTIIVI" }
+    ]
+  },
+  {
+    "tietoryhma": "VAKINAINEN_KOTIMAINEN_OSOITE",
+    "katunimi": { "fi": "Mikkolantie", "sv": "Mickelsvägen" },
+    "katunumero": "30",
+    "huoneistokirjain": "A",
+    "huoneistonumero": "333",
+    "postinumero": "00650",
+    "postitoimipaikka": { "fi": "HELSINKI", "sv": "HELSINGFORS" },
+    "rakennustunnus": "9000000367",
+    "osoitenumero": 1,
+    "kuntakoodi": "091",
+    "alkupv": { "arvo": "2018-01-01", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "KOTIKUNTA",
+    "kuntakoodi": "091",
+    "kuntaanMuuttopv": { "arvo": "2018-01-01", "tarkkuus": "PAIVA" },
+    "kuntaanMuuttoPv": { "arvo": "2018-01-01", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "VAKINAINEN_KOTIMAINEN_ASUINPAIKKATUNNUS",
+    "rakennustunnus": "9000000367",
+    "osoitenumero": 1,
+    "huoneistonumero": "333",
+    "huoneistokirjain": "A",
+    "kuntakoodi": "091",
+    "alkupv": { "arvo": "2018-01-01", "tarkkuus": "PAIVA" },
+    "asuinpaikantunnus": "90000003671A333 "
+  },
+  {
+    "tietoryhma": "VANHEMPI",
+    "vanhempi": {
+      "henkilotunnus": "220271-949R",
+      "etunimet": "Leo Albert",
+      "sukunimi": "Lukkari Tes",
+      "syntymapv": { "arvo": "2001-01-01", "tarkkuus": "PAIVA" },
+      "sukupuoli": "MIES"
+    },
+    "isaAiti": "ADOPTIOISA",
+    "lapsilaatu": "SAATU_ADOPTIOLAPSEKSI",
+    "alkupv": { "arvo": "2020-03-25", "tarkkuus": "PAIVA" },
+    "adoptiosuhde": {
+      "alkupv": { "arvo": "2020-03-25", "tarkkuus": "PAIVA" }
+    },
+    "jarjestyskirjain": "A"
+  },
+  {
+    "tietoryhma": "VANHEMPI",
+    "vanhempi": {
+      "henkilotunnus": "111075-9782",
+      "etunimet": "Chira Sabine",
+      "sukunimi": "Karlsson Tes",
+      "syntymapv": { "arvo": "2001-02-15", "tarkkuus": "PAIVA" },
+      "sukupuoli": "NAINEN"
+    },
+    "isaAiti": "ADOPTIOAITI",
+    "lapsilaatu": "SAATU_ADOPTIOLAPSEKSI",
+    "alkupv": { "arvo": "2020-03-25", "tarkkuus": "PAIVA" },
+    "adoptiosuhde": {
+      "alkupv": { "arvo": "2020-03-25", "tarkkuus": "PAIVA" }
+    },
+    "jarjestyskirjain": "A"
+  },
+  {
+    "tietoryhma": "HUOLTAJA",
+    "huoltaja": {
+      "henkilotunnus": "220271-949R",
+      "etunimet": "Leo Albert",
+      "sukunimi": "Lukkari Tes",
+      "syntymapv": { "arvo": "2001-01-01", "tarkkuus": "PAIVA" },
+      "sukupuoli": "MIES"
+    },
+    "huoltajanLaji": "LAKISAATEINEN_HUOLTAJA",
+    "huoltajanRooli": "ADOPTIOISA",
+    "huoltosuhteenAlkupv": { "arvo": "2020-03-25", "tarkkuus": "PAIVA" },
+    "huoltosuhteenLoppupv": { "arvo": "2036-01-01", "tarkkuus": "PAIVA" },
+    "oikeudet": []
+  },
+  {
+    "tietoryhma": "HUOLTAJA",
+    "huoltaja": {
+      "henkilotunnus": "111075-9782",
+      "etunimet": "Chira Sabine",
+      "sukunimi": "Karlsson Tes",
+      "syntymapv": { "arvo": "2001-02-15", "tarkkuus": "PAIVA" },
+      "sukupuoli": "NAINEN"
+    },
+    "huoltajanLaji": "LAKISAATEINEN_HUOLTAJA",
+    "huoltajanRooli": "ADOPTIOAITI",
+    "huoltosuhteenAlkupv": { "arvo": "2020-03-25", "tarkkuus": "PAIVA" },
+    "huoltosuhteenLoppupv": { "arvo": "2036-01-01", "tarkkuus": "PAIVA" },
+    "oikeudet": []
+  }
+]

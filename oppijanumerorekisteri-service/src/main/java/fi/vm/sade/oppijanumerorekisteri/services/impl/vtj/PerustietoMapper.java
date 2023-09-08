@@ -95,6 +95,9 @@ public class PerustietoMapper extends TietoryhmaMapper {
                     setUlkomainenOsoite(yhteystiedotRyhma, tietoryhma, locale);
                 }
                 break;
+            case "HUOLTAJA":
+                addOrUpdateHuoltaja(update.getHuoltajat(), tietoryhma);
+                break;
             default:
                 log.debug("did not know how to handle tietoryhma " + getStringValue(tietoryhma, "tietoryhma"));
                 break;
