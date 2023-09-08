@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HuoltajaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KielisyysDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KoodiNimiReadDto;
@@ -206,6 +207,17 @@ public abstract class TietoryhmaMapper {
 
     protected KielisyysDto getKielisyys(JsonNode tietoryhma) {
         return new KielisyysDto(getStringValue(tietoryhma, "kielikoodi"), getStringValue(tietoryhma, "nimi"));
+    }
+
+    protected boolean huoltajaMatches(HuoltajaCreateDto huoltajaCreateDto, JsonNode huoltaja) {
+        String henkilotunnus = getStringValue(huoltaja, "henkilotunnus");
+        if (StringUtils.hasLength(henkilotunnus) && henkilotunnus.equals(huoltajaCreateDto.getHetu())) {
+            return true;
+        }
+        return StringUtils.hasLength(huoltajaCreateDto.getEtunimet())
+                && huoltajaCreateDto.getEtunimet().equals(getStringValue(huoltaja, "etunimet"))
+                && StringUtils.hasLength(huoltajaCreateDto.getSukunimi())
+                && huoltajaCreateDto.getSukunimi().equals(getStringValue(huoltaja, "sukunimi"));
     }
 
     public abstract HenkiloForceUpdateDto mutateUpdateDto(HenkiloForceUpdateDto update, JsonNode tietoryhma,

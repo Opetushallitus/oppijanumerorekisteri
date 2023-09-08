@@ -2,12 +2,14 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl.vtj;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HuoltajaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotRyhmaDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
@@ -142,6 +144,39 @@ public class MuutostietoMapper extends TietoryhmaMapper {
                     YhteystiedotRyhmaDto yhteystiedotRyhma = removeAndCreateNewYhteystiedotRyhmaDto(update,
                             VtjYhteystiedotRyhma.TILAPAINEN_ULKOMAINEN_OSOITE);
                     setUlkomainenOsoite(yhteystiedotRyhma, tietoryhma, locale);
+                }
+                break;
+            case "HUOLTAJA":
+                JsonNode huoltajaJson = tietoryhma.get("voimassaolevatTiedot") != null
+                        && tietoryhma.get("voimassaolevatTiedot").get("huoltaja") != null
+                                ? tietoryhma.get("voimassaolevatTiedot").get("huoltaja")
+                                : tietoryhma.get("huoltaja");
+                Set<HuoltajaCreateDto> huoltajat = update.getHuoltajat();
+                if ("POISTETTU".equals(getStringValue(tietoryhma, "muutosattribuutti"))) {
+                    huoltajat.removeIf(huoltaja -> huoltajaMatches(huoltaja, huoltajaJson));
+                } else if (isDataUpdate(tietoryhma)) {
+                    HuoltajaCreateDto huoltajaCreateDto = huoltajat.stream()
+                            .filter(huoltaja -> huoltajaMatches(huoltaja, huoltajaJson))
+                            .findFirst()
+                            .orElseGet(HuoltajaCreateDto::new);
+                    huoltajat.removeIf(huoltaja -> huoltajaMatches(huoltaja, huoltajaJson));
+                    LocalDate alkupv = parseDate(tietoryhma.get("huoltosuhteenAlkupv"));
+                    LocalDate loppupv = parseDate(tietoryhma.get("huoltosuhteenLoppupv"));
+                    if ((alkupv == null || LocalDate.now().isAfter(alkupv))
+                            && (loppupv == null || LocalDate.now().isBefore(loppupv))) {
+                        huoltajaCreateDto.setHetu(getStringValue(huoltajaJson, "henkilotunnus"));
+                        huoltajaCreateDto.setHuoltajuusAlku(alkupv);
+                        huoltajaCreateDto.setHuoltajuusLoppu(loppupv);
+                        huoltajaCreateDto.setEtunimet(getStringValue(huoltajaJson, "etunimet"));
+                        huoltajaCreateDto.setKutsumanimi(getStringValue(huoltajaJson, "etunimet"));
+                        huoltajaCreateDto.setSukunimi(getStringValue(huoltajaJson, "sukunimi"));
+                        huoltajaCreateDto.setSyntymaaika(parseDate(huoltajaJson.get("syntymapv")));
+                        if (getStringValue(huoltajaJson, "kansalaisuuskoodi") != null) {
+                            huoltajaCreateDto.setKansalaisuusKoodi(
+                                    Set.of(getStringValue(huoltajaJson, "kansalaisuuskoodi")));
+                        }
+                        huoltajat.add(huoltajaCreateDto);
+                    }
                 }
                 break;
             default:

@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -34,11 +35,13 @@ import fi.vm.sade.oppijanumerorekisteri.clients.SlackClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjMuutostietoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.model.VtjMuutostietoResponse;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HuoltajaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotRyhmaDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjMuutostieto;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjMuutostietoKirjausavain;
@@ -89,6 +92,7 @@ public class VtjMuutostietoServiceTest {
             .kansalaisuus(Set.of(new Kansalaisuus("152")))
             .hetu(hetus.get(0))
             .yhteystiedotRyhma(Set.of())
+            .huoltajat(Set.of())
             .oidHenkilo("1.2.3.4.5")
             .build());
     Optional<Henkilo> henkiloWithYhteystiedot = Optional.of(Henkilo.builder()
@@ -106,6 +110,7 @@ public class VtjMuutostietoServiceTest {
                     new YhteystiedotRyhma("yhteystietotyyppi8", "alkupera1", false,
                             Set.of(new Yhteystieto(YhteystietoTyyppi.YHTEYSTIETO_SAHKOPOSTI,
                                     "sahko@posti.fi")))))
+            .huoltajat(Set.of())
             .oidHenkilo("1.2.3.4.5")
             .build());
 
@@ -537,5 +542,117 @@ public class VtjMuutostietoServiceTest {
         verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
         HenkiloForceUpdateDto actual = argument.getValue();
         assertThat(actual.getAidinkieli().getKieliKoodi()).isEqualTo("98");
+    }
+
+    @Test
+    public void saveMuutostietoSavesNewHuoltaja() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
+        VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoHuoltosuhteenmuutos.json");
+        muutostietoService.saveMuutostieto(muutostieto);
+        verify(muutostietoRepository, times(1)).save(any());
+
+        ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
+        verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
+        HenkiloForceUpdateDto actual = argument.getValue();
+        assertThat(actual.getHuoltajat()).hasSize(1);
+        HuoltajaCreateDto huoltaja = actual.getHuoltajat().iterator().next();
+        assertThat(huoltaja.getHetu()).isEqualTo("280790-9696");
+        assertThat(huoltaja.getEtunimet()).isEqualTo("Henriikka Sandra");
+        assertThat(huoltaja.getKutsumanimi()).isEqualTo("Henriikka Sandra");
+        assertThat(huoltaja.getSukunimi()).isEqualTo("Valkeavirta Tes");
+        assertThat(huoltaja.getSyntymaaika()).isEqualTo(LocalDate.of(1984, 6, 1));
+        assertThat(huoltaja.getHuoltajuusAlku()).isEqualTo(LocalDate.of(2012, 8, 1));
+        assertThat(huoltaja.getHuoltajuusLoppu()).isEqualTo(LocalDate.of(2030, 8, 2));
+    }
+
+    @Test
+    public void saveMuutostietoUpdatesCurrentHuoltaja() throws Exception {
+        Henkilo oldHuoltaja = Henkilo.builder()
+                .etunimet("huol")
+                .sukunimi("taja")
+                .kansalaisuus(Set.of(new Kansalaisuus("152")))
+                .hetu("280790-9696")
+                .yhteystiedotRyhma(Set.of())
+                .huoltajat(Set.of())
+                .oidHenkilo("1.2.3.4.5")
+                .build();
+        Optional<Henkilo> henkiloWithHuoltaja = Optional.of(Henkilo.builder()
+                .etunimet("etu")
+                .sukunimi("suku")
+                .kansalaisuus(Set.of(new Kansalaisuus("152")))
+                .hetu(hetus.get(0))
+                .yhteystiedotRyhma(Set.of())
+                .huoltajat(Set.of(new HenkiloHuoltajaSuhde(henkilo.get(), oldHuoltaja, LocalDate.of(1900, 1, 1), null,
+                        null, null)))
+                .oidHenkilo("1.2.3.4.5")
+                .build());
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkiloWithHuoltaja);
+        VtjMuutostieto muutostieto = getMuutostieto(
+                "src/test/resources/vtj/muutostietoHuoltosuhteenmuutos.json");
+        muutostietoService.saveMuutostieto(muutostieto);
+        verify(muutostietoRepository, times(1)).save(any());
+
+        ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
+        verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
+        HenkiloForceUpdateDto actual = argument.getValue();
+        assertThat(actual.getHuoltajat()).hasSize(1);
+        HuoltajaCreateDto huoltaja = actual.getHuoltajat().iterator().next();
+        assertThat(huoltaja.getHetu()).isEqualTo("280790-9696");
+        assertThat(huoltaja.getEtunimet()).isEqualTo("Henriikka Sandra");
+        assertThat(huoltaja.getKutsumanimi()).isEqualTo("Henriikka Sandra");
+        assertThat(huoltaja.getSukunimi()).isEqualTo("Valkeavirta Tes");
+        assertThat(huoltaja.getSyntymaaika()).isEqualTo(LocalDate.of(1984, 6, 1));
+        assertThat(huoltaja.getHuoltajuusAlku()).isEqualTo(LocalDate.of(2012, 8, 1));
+        assertThat(huoltaja.getHuoltajuusLoppu()).isEqualTo(LocalDate.of(2030, 8, 2));
+    }
+
+    @Test
+    public void saveMuutostietoRemovesAndAddsHuoltaja() throws Exception {
+        Henkilo oldHuoltaja = Henkilo.builder()
+                .etunimet("Henriikka")
+                .sukunimi("Hui Lai Lee Tes")
+                .kansalaisuus(Set.of(new Kansalaisuus("152")))
+                .hetu("140891-9642")
+                .yhteystiedotRyhma(Set.of())
+                .huoltajat(Set.of())
+                .oidHenkilo("1.2.3.4.5")
+                .build();
+        Optional<Henkilo> henkiloWithHuoltaja = Optional.of(Henkilo.builder()
+                .etunimet("etu")
+                .sukunimi("suku")
+                .kansalaisuus(Set.of(new Kansalaisuus("152")))
+                .hetu(hetus.get(0))
+                .yhteystiedotRyhma(Set.of())
+                .huoltajat(Set.of(new HenkiloHuoltajaSuhde(henkilo.get(), oldHuoltaja, LocalDate.of(1900, 1, 1), null,
+                        null, null)))
+                .oidHenkilo("1.2.3.4.5")
+                .build());
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkiloWithHuoltaja);
+        VtjMuutostieto muutostieto = getMuutostieto(
+                "src/test/resources/vtj/muutostietoHuoltajanPoisto.json");
+        muutostietoService.saveMuutostieto(muutostieto);
+        verify(muutostietoRepository, times(1)).save(any());
+
+        ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
+        verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
+        HenkiloForceUpdateDto actual = argument.getValue();
+        assertThat(actual.getHuoltajat()).hasSize(2);
+        Iterator<HuoltajaCreateDto> iter = actual.getHuoltajat().iterator();
+        HuoltajaCreateDto huoltaja1 = iter.next();
+        assertThat(huoltaja1.getHetu()).isEqualTo("100391-9566");
+        assertThat(huoltaja1.getEtunimet()).isEqualTo("Lina Margretha");
+        assertThat(huoltaja1.getKutsumanimi()).isEqualTo("Lina Margretha");
+        assertThat(huoltaja1.getSukunimi()).isEqualTo("Stenman Tes");
+        assertThat(huoltaja1.getSyntymaaika()).isEqualTo(LocalDate.of(1994, 10, 11));
+        assertThat(huoltaja1.getHuoltajuusAlku()).isEqualTo(LocalDate.of(2020, 5, 14));
+        assertThat(huoltaja1.getHuoltajuusLoppu()).isEqualTo(LocalDate.of(2036, 12, 30));
+        HuoltajaCreateDto huoltaja2 = iter.next();
+        assertThat(huoltaja2.getHetu()).isNull();
+        assertThat(huoltaja2.getEtunimet()).isEqualTo("Paola Peppina");
+        assertThat(huoltaja2.getKutsumanimi()).isEqualTo("Paola Peppina");
+        assertThat(huoltaja2.getSukunimi()).isEqualTo("Weitsell Tes");
+        assertThat(huoltaja2.getSyntymaaika()).isEqualTo(LocalDate.of(2000, 11, 22));
+        assertThat(huoltaja2.getHuoltajuusAlku()).isEqualTo(LocalDate.of(2020, 5, 14));
+        assertThat(huoltaja2.getHuoltajuusLoppu()).isEqualTo(LocalDate.of(2036, 12, 30));
     }
 }
