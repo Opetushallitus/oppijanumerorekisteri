@@ -68,7 +68,7 @@ public class VtjMuutostietoServiceImpl implements VtjMuutostietoService {
         }
     }
 
-    public boolean fetchMuutostietoBatchForBucket(long bucketId, List<String> hetus) {
+    protected boolean fetchMuutostietoBatchForBucket(long bucketId, List<String> hetus) {
         try {
             VtjMuutostietoKirjausavain kirjausavain = kirjausavainRepository.findById(bucketId)
                     .orElseGet(() -> fetchNewKirjausavain(bucketId));
@@ -171,23 +171,23 @@ public class VtjMuutostietoServiceImpl implements VtjMuutostietoService {
         List<String> hetusWithoutBucket = henkiloRepository.findHetusWithoutVtjBucket();
         log.info("found " + hetusWithoutBucket.size() + " hetus without vtj bucket");
 
-        try {
-            List<List<String>> partitioned = Lists.partition(hetusWithoutBucket, 100);
-            for (List<String> partition : partitioned) {
+        List<List<String>> partitioned = Lists.partition(hetusWithoutBucket, 100);
+        for (List<String> partition : partitioned) {
+            try {
                 List<VtjPerustieto> perustiedot = muutostietoClient.fetchHenkiloPerustieto(partition);
                 perustiedot.stream().forEach(
                         perustieto -> transaction.execute(status -> savePerustieto(perustieto)));
+            } catch (InterruptedException ie) {
+                log.error("interrupted while fetching perustieto", ie);
+                Thread.currentThread().interrupt();
+            } catch (UnprocessableEntityException uee) {
+                BindException bindException = (BindException) uee.getErrors();
+                log.error("exception while processing perustieto", bindException);
+                slackClient.sendToSlack("Virhe VTJ-perustietojen päivityksessä", bindException.getMessage());
+            } catch (Exception e) {
+                log.error("exception while fetching perustieto", e);
+                slackClient.sendToSlack("Virhe VTJ-perustietojen tallennuksessa", e.getMessage());
             }
-        } catch (InterruptedException ie) {
-            log.error("interrupted while fetching perustieto", ie);
-            Thread.currentThread().interrupt();
-        } catch (UnprocessableEntityException uee) {
-            BindException bindException = (BindException) uee.getErrors();
-            log.error("exception while processing perustieto", bindException);
-            slackClient.sendToSlack("Virhe VTJ-perustietojen päivityksessä", bindException.getMessage());
-        } catch (Exception e) {
-            log.error("exception while fetching perustieto", e);
-            slackClient.sendToSlack("Virhe VTJ-perustietojen tallennuksessa", e.getMessage());
         }
     }
 
@@ -236,8 +236,8 @@ public class VtjMuutostietoServiceImpl implements VtjMuutostietoService {
     public void handleMuutostietoTask() {
         log.info("starting muutostieto task");
 
-        // savePerustietoForNewHetus();
-        // fetchMuutostietos();
+        savePerustietoForNewHetus();
+        fetchMuutostietos();
         saveMuutostietos();
 
         log.info("finishing muutostieto task");
