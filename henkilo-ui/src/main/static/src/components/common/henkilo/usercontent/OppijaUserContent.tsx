@@ -25,6 +25,7 @@ import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
 import LinkitetytHenkilot from '../labelvalues/LinkitetytHenkilot';
 import MasterHenkilo from '../labelvalues/MasterHenkilo';
 import Sukupuoli from '../labelvalues/Sukupuoli';
+import { KoodistoState } from '../../../../reducers/koodisto.reducer';
 
 type OwnProps = {
     readOnly: boolean;
@@ -40,7 +41,7 @@ type OwnProps = {
 
 type StateProps = {
     henkilo: HenkiloState;
-    koodisto: any;
+    koodisto: KoodistoState;
     L: Localisations;
     locale: Locale;
     omattiedot: OmattiedotState;
@@ -79,25 +80,29 @@ class OppijaUserContent extends React.Component<Props> {
             updateDateFieldAction: this.props.updateDateAction,
             henkiloUpdate: this.props.henkiloUpdate,
         };
+        const oid = this.props.henkilo?.henkilo?.oidHenkilo;
 
         // Basic info box content
         return [
             [
-                <Sukunimi autofocus {...basicInfoProps} />,
-                <Etunimet {...basicInfoProps} />,
-                <Syntymaaika {...basicInfoProps} />,
-                <Hetu {...basicInfoProps} />,
-                <Kutsumanimi {...basicInfoProps} />,
+                <Sukunimi key={`sukunimi_${oid}`} autofocus {...basicInfoProps} />,
+                <Etunimet key={`etunimet_${oid}`} {...basicInfoProps} />,
+                <Syntymaaika key={`syntymaaika_${oid}`} {...basicInfoProps} />,
+                <Hetu key={`hetu_${oid}`} {...basicInfoProps} />,
+                <Kutsumanimi key={`kutsumanimi_${oid}`} {...basicInfoProps} />,
             ],
             [
-                <Kansalaisuus {...basicInfoProps} />,
-                <Aidinkieli {...basicInfoProps} />,
-                <Sukupuoli {...basicInfoProps} />,
-                <Oppijanumero {...basicInfoProps} />,
-                <Oid {...basicInfoProps} />,
-                <Asiointikieli {...basicInfoProps} />,
+                <Kansalaisuus key={`kansalaisuus_${oid}`} {...basicInfoProps} />,
+                <Aidinkieli key={`aidinkieli_${oid}`} {...basicInfoProps} />,
+                <Sukupuoli key={`sukupuoli_${oid}`} {...basicInfoProps} />,
+                <Oppijanumero key={`oppijanumero_${oid}`} {...basicInfoProps} />,
+                <Oid key={`oid_${oid}`} {...basicInfoProps} />,
+                <Asiointikieli key={`asiointikieli_${oid}`} {...basicInfoProps} />,
             ],
-            [<LinkitetytHenkilot oppija={true} />, <MasterHenkilo oidHenkilo={this.props.oidHenkilo} oppija={true} />],
+            [
+                <LinkitetytHenkilot key={`linkitetyt_${oid}`} oppija={true} />,
+                <MasterHenkilo key={`master_${oid}`} oidHenkilo={this.props.oidHenkilo} oppija={true} />,
+            ],
         ];
     };
 

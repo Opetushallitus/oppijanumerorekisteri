@@ -1,11 +1,11 @@
 import './AbstractUserContent.css';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import EditButtons from '../buttons/EditButtons';
 import Columns from 'react-columns';
 
 type Props = {
-    basicInfo: Array<any>;
-    readOnlyButtons: Array<any>;
+    basicInfo: Array<Array<ReactNode>>;
+    readOnlyButtons: Array<ReactNode>;
     readOnly: boolean;
     discardAction: () => void;
     updateAction: () => void;

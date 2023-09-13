@@ -18,7 +18,6 @@ module.exports = {
     },
     rules: {
         // TODO fix stuff
-        '@typescript-eslint/ban-ts-comment': 1,
         '@typescript-eslint/no-explicit-any': 1,
         'react/no-deprecated': 1,
         'react/jsx-key': 1,

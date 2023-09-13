@@ -1,24 +1,24 @@
-import Button from './Button';
 import React from 'react';
 import { connect } from 'react-redux';
+
 import type { RootState } from '../../../store';
-import type { L10n, Localisations } from '../../../types/localisation.type';
+import type { Localisations } from '../../../types/localisation.type';
 import type { Notification } from '../../../reducers/notifications.reducer';
-import type { Locale } from '../../../types/locale.type';
 import { removeNotification } from '../../../actions/notifications.actions';
-import type CSS from 'csstype';
+import Button from './Button';
+
+import './NotificationButton.css';
 
 type OwnProps = {
     id: string;
-    inputRef: () => void;
-    styles: Pick<CSS.Properties, 'top' | 'left' | 'position'>;
-    arrowDirection: string;
+    action?: () => void;
+    disabled?: boolean;
+    errorMessage?: string;
+    confirm?: boolean;
 };
 
 type StateProps = {
     notifications: Notification[];
-    l10n: L10n;
-    locale: Locale;
     L: Localisations;
 };
 
@@ -28,50 +28,39 @@ type DispatchProps = {
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-// Do not use directly but by one of the wrappers of this class.
-class NotificationButton extends React.Component<Props> {
-    render() {
-        const notification = this.props.notifications.filter((item) => item.id === this.props.id)[0];
-        let arrowDirectionStyle;
-        let style: CSS.Properties = { ...this.props.styles };
-        if (this.props.arrowDirection === 'down') {
-            arrowDirectionStyle = 'oph-popup oph-popup-error oph-popup-top';
-        } else if (this.props.arrowDirection === 'up') {
-            arrowDirectionStyle = 'oph-popup oph-popup-error oph-popup-bottom';
-            style = { ...style, marginBottom: '10px' };
-        }
-        return (
-            <div className="popup-button">
-                <Button {...this.props} inputRef={this.props.inputRef} />
-                {notification ? (
-                    <div className={arrowDirectionStyle} style={style}>
-                        <button
-                            className="oph-button oph-button-close"
-                            type="button"
-                            title="Close"
-                            aria-label="Close"
-                            onClick={this.hide.bind(this)}
-                        >
-                            <span aria-hidden="true">×</span>
-                        </button>
-                        <div className="oph-popup-arrow" />
-                        <div className="oph-popup-title">{this.props.L[notification.notL10nMessage]}</div>
-                        <div className="oph-popup-content">{this.props.L[notification.notL10nText]}</div>
-                    </div>
-                ) : null}
-            </div>
-        );
+const NotificationButton = (props: Props) => {
+    const { id, L, notifications, removeNotification } = props
+    const notification = notifications.filter((item) => item.id === id)[0];
+
+    const hide = () => {
+        removeNotification('error', 'buttonNotifications', id);
     }
 
-    hide() {
-        this.props.removeNotification('error', 'buttonNotifications', this.props.id);
-    }
+    return (
+        <div className="popup-button" style={{ position: 'relative' }}>
+            <Button {...props} />
+            {notification ? (
+                <div className="oph-popup oph-popup-error oph-popup-top">
+                    <button
+                        className="oph-button oph-button-close"
+                        type="button"
+                        title="Close"
+                        aria-label="Close"
+                        onClick={hide}
+                    >
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <div className="oph-popup-arrow" />
+                    <div className="oph-popup-title">{L[notification.notL10nMessage]}</div>
+                    <div className="oph-popup-content">{L[notification.notL10nText]}</div>
+                </div>
+            ) : null}
+        </div>
+    );
 }
 
 const mapStateToProps = (state: RootState): StateProps => ({
     notifications: state.notifications.buttonNotifications,
-    l10n: state.l10n.localisations,
-    locale: state.locale,
     L: state.l10n.localisations[state.locale],
 });
 

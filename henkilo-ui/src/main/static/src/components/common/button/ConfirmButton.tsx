@@ -1,10 +1,11 @@
 import './Button.css';
 import React from 'react';
 import { connect } from 'react-redux';
+import ReactTimeout from 'react-timeout';
+
 import type { RootState } from '../../../store';
 import type { Notification } from '../../../reducers/notifications.reducer';
-import ReactTimeout from 'react-timeout';
-import TopOverlayNotificationButton from './TopOverlayNotificationButton';
+import NotificationButton from './NotificationButton';
 
 type OwnProps = {
     action: () => void;
@@ -28,7 +29,7 @@ type State = {
 };
 
 class ConfirmButton extends React.Component<Props, State> {
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
         this.state = {
             confirmState: false,
@@ -36,7 +37,7 @@ class ConfirmButton extends React.Component<Props, State> {
         };
     }
 
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps: Props) {
         if (nextProps.notifications.filter((notification) => notification.id === this.props.id)[0]) {
             this.setState({ confirmState: false, disabled: true });
             this.props.setTimeout(() => {
@@ -48,7 +49,7 @@ class ConfirmButton extends React.Component<Props, State> {
     render() {
         const confirmProps = { ...this.props, cancel: false, action: this.action };
         return !this.state.confirmState ? (
-            <TopOverlayNotificationButton
+            <NotificationButton
                 className={this.props.className}
                 {...this.props}
                 action={() => {
@@ -57,9 +58,9 @@ class ConfirmButton extends React.Component<Props, State> {
                 disabled={this.state.disabled || this.props.disabled}
             >
                 {this.props.normalLabel}
-            </TopOverlayNotificationButton> // Never show error message after confirm state
+            </NotificationButton>
         ) : (
-            <TopOverlayNotificationButton
+            <NotificationButton
                 className={this.props.className}
                 confirm
                 {...confirmProps}
@@ -67,7 +68,7 @@ class ConfirmButton extends React.Component<Props, State> {
                 id={this.props.id}
             >
                 {this.props.confirmLabel}
-            </TopOverlayNotificationButton>
+            </NotificationButton>
         );
     }
 

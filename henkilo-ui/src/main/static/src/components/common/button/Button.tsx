@@ -1,18 +1,17 @@
 import './Button.css';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import classNames from 'classnames/bind';
 import Loader from '../icons/Loader';
 
 type ButtonProps = {
-    action?: (arg0: React.MouseEvent<HTMLElement>) => any;
+    action?: (arg0: React.MouseEvent<HTMLElement>) => void;
     disabled?: boolean;
     href?: string;
     confirm?: boolean;
     big?: boolean;
     cancel?: boolean;
-    inputRef?: () => void;
     isButton?: boolean;
-    children?: any;
+    children?: ReactNode;
     className?: string;
     key?: string;
     loading?: boolean;
@@ -45,7 +44,6 @@ class Button extends React.Component<ButtonProps> {
                 className={className}
                 disabled={this.props.disabled || this.props.loading}
                 onClick={this.props.action}
-                ref={this.props.inputRef}
                 data-test-id={this.props.dataTestId}
             >
                 {this.props.loading && <Loader inButton={true} />}

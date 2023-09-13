@@ -5,13 +5,14 @@ import RekisteroidyPerustiedot from './content/RekisteroidyPerustiedot';
 import RekisteroidyOrganisaatiot from './content/RekisteroidyOrganisaatiot';
 import StaticUtils from '../common/StaticUtils';
 import RekisteroidyHaka from './content/RekisteroidyHaka';
-import BottomNotificationButton from '../common/button/BottomNotificationButton';
 import { isValidPassword } from '../../validation/PasswordValidator';
 import type { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/Kutsu.types';
+import NotificationButton from '../common/button/NotificationButton';
+import { KoodistoStateKoodi } from '../../reducers/koodisto.reducer';
 
 type Props = {
     koodisto: {
-        kieli: Array<any>;
+        kieli: Array<KoodistoStateKoodi>;
     };
     kutsu: {
         temporaryToken: string;
@@ -21,8 +22,8 @@ type Props = {
         hakaIdentifier?: string;
         organisaatiot: KutsuOrganisaatio[];
     };
-    createHenkiloByToken: (temporaryToken: string, payload: any) => any;
-    removeNotification: (status: string, group: string, id: string) => any;
+    createHenkiloByToken: (temporaryToken: string, payload: Henkilo) => void;
+    removeNotification: (status: string, group: string, id: string) => void;
     L: Record<string, string>;
     locale: string;
 };
@@ -104,13 +105,13 @@ class RekisteroidyPage extends React.Component<Props, State> {
                             isUsernameError={!this.kayttajanimiIsNotEmpty(this.state.henkilo)}
                             isKutsumanimiError={!this.etunimetContainsKutsumanimi(this.state.henkilo)}
                         />
-                        <BottomNotificationButton
+                        <NotificationButton
                             action={this.createHenkilo.bind(this)}
                             disabled={!this.state.isValid}
                             id="rekisteroidyPage"
                         >
                             {this.props.L['REKISTEROIDY_TALLENNA_NAPPI']}
-                        </BottomNotificationButton>
+                        </NotificationButton>
                         <div>{this.printErrors()}</div>
                     </div>
                     <div className="borderless-colored-wrapper flex-horizontal flex-align-center">
@@ -136,12 +137,12 @@ class RekisteroidyPage extends React.Component<Props, State> {
                         {this.props.L['REKISTEROIDY_PRIVACY_POLICY']}
                     </ReactMarkdown>
                 </div>
-                <BottomNotificationButton
+                <NotificationButton
                     action={() => this.setState({ privacyPolicySeen: true })}
                     id="rekisteroidyPage"
                 >
                     {this.props.L['REKISTEROIDY_ACCEPT_PRIVACY_POLICY']}
-                </BottomNotificationButton>
+                </NotificationButton>
             </div>
         );
     }
