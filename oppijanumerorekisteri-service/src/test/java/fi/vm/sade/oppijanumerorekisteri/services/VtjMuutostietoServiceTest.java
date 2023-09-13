@@ -343,7 +343,7 @@ public class VtjMuutostietoServiceTest {
                         .passivoitu(true)
                         .build()));
         VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoEtunimenmuutos.json");
-        muutostietoService.saveMuutostieto(muutostieto);
+        muutostietoService.updateHenkilo(muutostieto);
 
         verify(muutostietoRepository, times(1)).save(any());
         verify(henkiloModificationService, times(0)).forceUpdateHenkilo(any());
@@ -356,7 +356,7 @@ public class VtjMuutostietoServiceTest {
                 .thenThrow(new UnprocessableEntityException(
                         new BindException(new HenkiloForceUpdateDto(), "henkiloForceUpdateDto")));
         VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoEtunimenmuutos.json");
-        muutostietoService.saveMuutostieto(muutostieto);
+        muutostietoService.updateHenkilo(muutostieto);
         verify(henkiloModificationService, times(1)).forceUpdateHenkilo(any());
 
         ArgumentCaptor<VtjMuutostieto> argument = ArgumentCaptor.forClass(VtjMuutostieto.class);
@@ -369,7 +369,7 @@ public class VtjMuutostietoServiceTest {
     public void saveMuutostietoSavesEtunimenmuutos() throws Exception {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoEtunimenmuutos.json");
-        muutostietoService.saveMuutostieto(muutostieto);
+        muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -383,7 +383,7 @@ public class VtjMuutostietoServiceTest {
     public void saveMuutostietoSavesHenkilotunnusmuutos() throws Exception {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoHenkilotunnusmuutos.json");
-        muutostietoService.saveMuutostieto(muutostieto);
+        muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -396,7 +396,7 @@ public class VtjMuutostietoServiceTest {
     public void saveMuutostietoSavesSukupuolenmuutos() throws Exception {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoSukupuolenmuutos.json");
-        muutostietoService.saveMuutostieto(muutostieto);
+        muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -410,7 +410,7 @@ public class VtjMuutostietoServiceTest {
     public void saveMuutostietoSavesSukunimenmuutos() throws Exception {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoSukunimenmuutos.json");
-        muutostietoService.saveMuutostieto(muutostieto);
+        muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -432,7 +432,7 @@ public class VtjMuutostietoServiceTest {
             .build()));
         VtjMuutostieto muutostieto = getMuutostieto(
                 "src/test/resources/vtj/muutostietoKutsumanimenmuutos.json");
-        muutostietoService.saveMuutostieto(muutostieto);
+        muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -445,7 +445,7 @@ public class VtjMuutostietoServiceTest {
     public void saveMuutostietoSavesKuolema() throws Exception {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoKuolema.json");
-        muutostietoService.saveMuutostieto(muutostieto);
+        muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -459,7 +459,7 @@ public class VtjMuutostietoServiceTest {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto(
                 "src/test/resources/vtj/muutostietoKuolinpaivanPoisto.json");
-        muutostietoService.saveMuutostieto(muutostieto);
+        muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -473,7 +473,7 @@ public class VtjMuutostietoServiceTest {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto(
                 "src/test/resources/vtj/muutostietoKunnastaToiseenMuutto.json");
-        muutostietoService.saveMuutostieto(muutostieto);
+        muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -503,7 +503,7 @@ public class VtjMuutostietoServiceTest {
     public void saveMuutostietoSavesTurvakielto() throws Exception {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkiloWithYhteystiedot);
         VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoTurvakielto.json");
-        muutostietoService.saveMuutostieto(muutostieto);
+        muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -518,7 +518,7 @@ public class VtjMuutostietoServiceTest {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto(
                 "src/test/resources/vtj/muutostietoKansalaisuudenLisaysJaPassivointi.json");
-        muutostietoService.saveMuutostieto(muutostieto);
+        muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -534,7 +534,7 @@ public class VtjMuutostietoServiceTest {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto(
                 "src/test/resources/vtj/muutostietoPostiosoitteenmuutos.json");
-        muutostietoService.saveMuutostieto(muutostieto);
+        muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -563,7 +563,7 @@ public class VtjMuutostietoServiceTest {
     public void saveMuutostietoSavesAidinkielenmuutos() throws Exception {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoAidinkieli.json");
-        muutostietoService.saveMuutostieto(muutostieto);
+        muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -576,7 +576,7 @@ public class VtjMuutostietoServiceTest {
     public void saveMuutostietoSavesNewHuoltaja() throws Exception {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoHuoltosuhteenmuutos.json");
-        muutostietoService.saveMuutostieto(muutostieto);
+        muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -617,7 +617,7 @@ public class VtjMuutostietoServiceTest {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkiloWithHuoltaja);
         VtjMuutostieto muutostieto = getMuutostieto(
                 "src/test/resources/vtj/muutostietoHuoltosuhteenmuutos.json");
-        muutostietoService.saveMuutostieto(muutostieto);
+        muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -658,7 +658,7 @@ public class VtjMuutostietoServiceTest {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkiloWithHuoltaja);
         VtjMuutostieto muutostieto = getMuutostieto(
                 "src/test/resources/vtj/muutostietoHuoltajanPoisto.json");
-        muutostietoService.saveMuutostieto(muutostieto);
+        muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);

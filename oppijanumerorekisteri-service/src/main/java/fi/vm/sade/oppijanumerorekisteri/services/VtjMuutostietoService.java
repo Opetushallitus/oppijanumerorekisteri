@@ -83,6 +83,7 @@ public class VtjMuutostietoService {
             return true;
         } catch (Exception e) {
             log.error("exception while fetching muutostieto for bucket " + bucketId, e);
+            slackClient.sendToSlack("Virhe VTJ-muutostietojen haussa", e.getMessage());
             return true;
         }
     }
@@ -164,16 +165,16 @@ public class VtjMuutostietoService {
         return null;
     }
 
-    private void savePerustietoForNewHetus() {
+    private void updateNewHenkilosWithPerustieto() {
         List<String> hetusWithoutBucket = henkiloRepository.findHetusWithoutVtjBucket();
         log.info("found " + hetusWithoutBucket.size() + " hetus without vtj bucket");
 
         List<List<String>> partitioned = Lists.partition(hetusWithoutBucket, 100);
         for (List<String> partition : partitioned) {
             try {
-                List<VtjPerustieto> perustiedot = muutostietoClient.fetchHenkiloPerustieto(partition);
-                perustiedot.stream().forEach(
-                        perustieto -> transaction.execute(status -> savePerustieto(perustieto)));
+                muutostietoClient.fetchHenkiloPerustieto(partition)
+                        .stream()
+                        .forEach(perustieto -> transaction.execute(status -> savePerustieto(perustieto)));
             } catch (InterruptedException ie) {
                 log.error("interrupted while fetching perustieto", ie);
                 Thread.currentThread().interrupt();
@@ -188,7 +189,7 @@ public class VtjMuutostietoService {
         }
     }
 
-    protected Void saveMuutostieto(VtjMuutostieto muutostieto) {
+    protected Void updateHenkilo(VtjMuutostieto muutostieto) {
         henkiloRepository.findByHetu(muutostieto.henkilotunnus).ifPresent(henkilo -> {
             if (henkilo.isPassivoitu()) {
                 log.debug("did not update passivoitu henkilö {} with VTJ muutostieto", henkilo.getOidHenkilo());
@@ -215,12 +216,12 @@ public class VtjMuutostietoService {
         return null;
     }
 
-    private void saveMuutostietos() {
+    private void updateHenkilosWithMuutostietos() {
         List<VtjMuutostieto> muutostietos = muutostietoRepository.findByProcessedIsNullOrderByMuutospvAsc();
         log.info("found " + muutostietos.size() + " unprocessed muutostietos");
         muutostietos.stream().forEach(muutostieto -> {
             try {
-                transaction.execute(status -> saveMuutostieto(muutostieto));
+                transaction.execute(status -> updateHenkilo(muutostieto));
             } catch (Exception e) {
                 muutostieto.setError(true);
                 muutostieto.setProcessed(LocalDateTime.now());
@@ -229,13 +230,16 @@ public class VtjMuutostietoService {
         });
     }
 
+    public void handlePerustietoTask() {
+        log.info("starting perustieto task");
+        updateNewHenkilosWithPerustieto();
+        log.info("finishing perustieto task");
+    }
+
     public void handleMuutostietoTask() {
         log.info("starting muutostieto task");
-
-        savePerustietoForNewHetus();
         fetchMuutostietos();
-        saveMuutostietos();
-
+        updateHenkilosWithMuutostietos();
         log.info("finishing muutostieto task");
     }
 }
