@@ -99,7 +99,7 @@ const Table: React.FC<Props> = ({
                     sortMethod: heading.sortMethod,
                     show: !heading.hide,
                 }))}
-                getTrProps={(_state, rowInfo, _column) => ({
+                getTrProps={(_state, rowInfo) => ({
                     className: rowInfo?.row.HIGHLIGHT ? 'fadeOutBackgroundColor' : null,
                 })}
                 getTdProps={props.getTdProps}
