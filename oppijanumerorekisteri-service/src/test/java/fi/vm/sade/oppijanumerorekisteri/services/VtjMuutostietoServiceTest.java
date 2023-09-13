@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.services.impl;
+package fi.vm.sade.oppijanumerorekisteri.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -51,9 +51,6 @@ import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.VtjMuutostietoKirjausavainRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.VtjMuutostietoRepository;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
-import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
-import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 
 @RunWith(SpringRunner.class)
 @IntegrationTest
@@ -77,7 +74,7 @@ public class VtjMuutostietoServiceTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private VtjMuutostietoServiceImpl muutostietoService;
+    private VtjMuutostietoService muutostietoService;
 
     List<String> hetus = List.of("123456-111A", "101010-010B");
     List<VtjMuutostieto> muutostietos;

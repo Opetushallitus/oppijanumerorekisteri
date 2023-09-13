@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.services.impl.vtj;
+package fi.vm.sade.oppijanumerorekisteri.services.vtj;
 
 import org.springframework.stereotype.Component;
 
