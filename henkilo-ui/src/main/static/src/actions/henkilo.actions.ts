@@ -56,6 +56,7 @@ import {
     POISTA_KAYTTAJATUNNUS_REQUEST,
     POISTA_KAYTTAJATUNNUS_SUCCESS,
     POISTA_KAYTTAJATUNNUS_FAILURE,
+    YKSILOI_PUUTTUVAT_TIEDOT_FAILURE,
 } from './actiontypes';
 import { fetchOrganisations } from './organisaatio.actions';
 import { fetchAllKayttooikeusryhmasForHenkilo } from './kayttooikeusryhma.actions';
@@ -312,11 +313,22 @@ const errorYksiloiHenkilo = () => ({
     type: YKSILOI_HENKILO_FAILURE,
     receivedAt: Date.now(),
     buttonNotification: {
-        position: 'yksiloi',
+        position: 'yksilointi',
         notL10nMessage: 'YKSILOI_ERROR_TOPIC',
         notL10nText: 'YKSILOI_ERROR_TEXT',
     },
 });
+
+export const yksiloiHenkiloPuuttuvatTiedot = () => ({
+    type: YKSILOI_PUUTTUVAT_TIEDOT_FAILURE,
+    buttonNotification: {
+        position: 'yksilointi',
+        notL10nMessage: 'YKSILOI_PUUTTUVAT_TIEDOT_TOPIC',
+        notL10nText: 'YKSILOI_PUUTTUVAT_TIEDOT_TEXT',
+    },
+    receivedAt: Date.now(),
+});
+
 export const yksiloiHenkilo = (oid: string) => (dispatch: AppDispatch) => {
     dispatch(requestYksiloiHenkilo(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.yksiloihetuton', oid);

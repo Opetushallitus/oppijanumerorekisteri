@@ -7,6 +7,7 @@ import {
     VTJ_OVERRIDE_HENKILO_FAILURE,
     YKSILOI_HENKILO_FAILURE,
     CREATE_HENKILOBYTOKEN_FAILURE,
+    YKSILOI_PUUTTUVAT_TIEDOT_FAILURE,
 } from '../actions/actiontypes';
 
 export type Notification = {
@@ -125,6 +126,7 @@ export const notifications = (
         case YKSILOI_HENKILO_FAILURE:
         case DELETE_HENKILOORGS_FAILURE:
         case VTJ_OVERRIDE_HENKILO_FAILURE:
+        case YKSILOI_PUUTTUVAT_TIEDOT_FAILURE:
             return {
                 ...state,
                 buttonNotifications: [
