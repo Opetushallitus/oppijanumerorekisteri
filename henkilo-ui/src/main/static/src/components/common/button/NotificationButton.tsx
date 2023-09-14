@@ -13,7 +13,6 @@ type OwnProps = {
     id: string;
     action?: () => void;
     disabled?: boolean;
-    errorMessage?: string;
     confirm?: boolean;
 };
 
@@ -29,12 +28,12 @@ type DispatchProps = {
 type Props = OwnProps & StateProps & DispatchProps;
 
 const NotificationButton = (props: Props) => {
-    const { id, L, notifications, removeNotification } = props
+    const { id, L, notifications, removeNotification } = props;
     const notification = notifications.filter((item) => item.id === id)[0];
 
     const hide = () => {
         removeNotification('error', 'buttonNotifications', id);
-    }
+    };
 
     return (
         <div className="popup-button" style={{ position: 'relative' }}>
@@ -57,7 +56,7 @@ const NotificationButton = (props: Props) => {
             ) : null}
         </div>
     );
-}
+};
 
 const mapStateToProps = (state: RootState): StateProps => ({
     notifications: state.notifications.buttonNotifications,

@@ -34,7 +34,7 @@ export type KoodistoState = {
     kansalaisuusKoodistoLoading: boolean;
     sukupuoliKoodistoLoading: boolean;
     yhteystietotyypitKoodistoLoading: boolean;
-    yhteystietotyypit: Array<any>;
+    yhteystietotyypit: Array<KoodistoStateKoodi>;
     kieli: Array<KoodistoStateKoodi>;
     kieliKoodisto: Koodisto;
     kansalaisuus: Array<KoodistoStateKoodi>;

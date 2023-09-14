@@ -137,10 +137,7 @@ class RekisteroidyPage extends React.Component<Props, State> {
                         {this.props.L['REKISTEROIDY_PRIVACY_POLICY']}
                     </ReactMarkdown>
                 </div>
-                <NotificationButton
-                    action={() => this.setState({ privacyPolicySeen: true })}
-                    id="rekisteroidyPage"
-                >
+                <NotificationButton action={() => this.setState({ privacyPolicySeen: true })} id="rekisteroidyPage">
                     {this.props.L['REKISTEROIDY_ACCEPT_PRIVACY_POLICY']}
                 </NotificationButton>
             </div>

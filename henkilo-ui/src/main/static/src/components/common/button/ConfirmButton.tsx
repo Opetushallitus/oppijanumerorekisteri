@@ -60,13 +60,7 @@ class ConfirmButton extends React.Component<Props, State> {
                 {this.props.normalLabel}
             </NotificationButton>
         ) : (
-            <NotificationButton
-                className={this.props.className}
-                confirm
-                {...confirmProps}
-                errorMessage={null}
-                id={this.props.id}
-            >
+            <NotificationButton className={this.props.className} confirm {...confirmProps} id={this.props.id}>
                 {this.props.confirmLabel}
             </NotificationButton>
         );
