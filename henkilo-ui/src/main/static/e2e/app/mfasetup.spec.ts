@@ -57,7 +57,7 @@ test.describe('mfa setup', () => {
         await page.click('[data-test-id="start-mfa-setup"]');
 
         await expect(page.locator('[data-test-id="setup-error"]')).toHaveText(
-            'Kaksivaiheisen tunnistautumisen tietojen haku epäonnistui. Yritä myöhemmin uudelleen.'
+            'Kaksivaiheisen tunnistautumisen tietojen haku epäonnistui. Yritä hetken kuluttua uudelleen.'
         );
     });
 
@@ -70,7 +70,7 @@ test.describe('mfa setup', () => {
         await page.click('[data-test-id="start-mfa-setup"]');
         await inputToken(page, '123456');
         await expect(page.locator('[data-test-id="token-error"]')).toHaveText(
-            'Jotain meni vikaan. Yritä myöhemmin uudelleen.'
+            'Jotain meni vikaan. Yritä hetken kuluttua uudelleen.'
         );
     });
 

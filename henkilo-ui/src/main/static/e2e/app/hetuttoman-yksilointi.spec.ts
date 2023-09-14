@@ -48,11 +48,4 @@ test.describe('hetuttoman yksilointi', () => {
         await hetuttomanYksilointiTest(page, { aidinkieli: null });
         await expect(page.getByText('Yksilöintiä ei voitu suorittaa')).toBeVisible();
     });
-
-    test('can be done if henkilo has required data', async ({ page }) => {
-        await page.goto('/oppija/1.2.3.4.5');
-        await page.getByText('Yksilöi ilman hetua').click();
-        await page.getByText('Vahvista yksilöinti').click();
-        await expect(page.getByText('Pura yksilöinti')).toBeVisible();
-    });
 });

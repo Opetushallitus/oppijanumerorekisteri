@@ -1,4 +1,3 @@
-import { Page } from '@playwright/test';
 import { test, expect } from 'playwright-test-coverage';
 
 import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/current/omattiedot/GET.json';
@@ -37,14 +36,14 @@ test.describe('Person page', () => {
         const passinumeroButton = await test.step('Page contains passinumero button', async () => {
             await page.goto('/virkailija/1.2.246.562.24.00000007357');
             const button = await page.locator('#passinumero-button');
-            expect(button).toHaveText('HALLITSE_PASSINUMEROITA');
+            expect(button).toHaveText('Hallitse passinumeroita');
             return button;
         });
 
         const [content, close] = await test.step('Button opens passinumero popup', async () => {
             await passinumeroButton.click();
             const popup = await page.locator('.oph-popup');
-            await expect(popup.locator('.oph-popup-title').first()).toHaveText('PASSINUMEROT:');
+            await expect(popup.locator('.oph-popup-title').first()).toHaveText('Passinumerot:');
             return [popup.locator('.oph-popup-content'), popup.locator('.fa-times')];
         });
 
