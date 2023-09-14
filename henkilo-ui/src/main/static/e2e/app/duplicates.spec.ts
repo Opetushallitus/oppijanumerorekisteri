@@ -1,5 +1,4 @@
-import { test, expect } from 'playwright-test-coverage';
-import { Page } from '@playwright/test';
+import { test, expect , Page } from '@playwright/test';
 import { groupBy } from 'ramda';
 
 import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/current/omattiedot/GET.json';

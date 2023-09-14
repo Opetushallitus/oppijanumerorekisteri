@@ -1,5 +1,4 @@
-import { Page } from '@playwright/test';
-import { test, expect } from 'playwright-test-coverage';
+import { test, expect, Page } from '@playwright/test';
 
 import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/current/omattiedot/GET.json';
 import mfasetup from '../../mock-api/src/api/kayttooikeus-service/mfasetup/gauth/setup/GET.json';

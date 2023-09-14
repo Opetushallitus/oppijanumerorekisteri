@@ -1,5 +1,4 @@
-import { Page } from '@playwright/test';
-import { test, expect } from 'playwright-test-coverage';
+import { expect, test, Page } from '@playwright/test';
 
 import henkilo from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/GET.json';
 

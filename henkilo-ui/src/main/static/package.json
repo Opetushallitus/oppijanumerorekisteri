@@ -35,7 +35,6 @@
         "universal-cookie": "4.0.2"
     },
     "devDependencies": {
-        "@istanbuljs/nyc-config-typescript": "1.0.2",
         "@playwright/test": "1.29.2",
         "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
         "@svgr/webpack": "^7.0.0",
@@ -60,8 +59,6 @@
         "fs-extra": "^10.0.0",
         "html-webpack-plugin": "^5.5.0",
         "mini-css-extract-plugin": "^2.4.5",
-        "nyc": "^15.1.0",
-        "playwright-test-coverage": "^1.2.8",
         "prettier": "2.8.8",
         "react-dev-utils": "^12.0.1",
         "react-refresh-typescript": "^2.0.9",
@@ -85,7 +82,7 @@
         "prettier:fix": "prettier --write 'src/**/*{ts,tsx}'",
         "e2e:install-deps": "playwright install chromium && npm --prefix mock-api ci",
         "e2e:mock-api": "npm --prefix mock-api run mock-api",
-        "e2e:serve": "concurrently -k 'nyc --no-clean npm start' 'npm:e2e:mock-api'",
+        "e2e:serve": "concurrently -k 'npm:start' 'npm:e2e:mock-api'",
         "e2e:test": "wait-port -t 120000 http://:3000/henkilo-ui && playwright test",
         "e2e:ci": "concurrently -s first -k 'npm:e2e:serve' 'npm:e2e:test'"
     },
