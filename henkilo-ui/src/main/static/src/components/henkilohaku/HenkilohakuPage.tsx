@@ -100,6 +100,7 @@ class HenkilohakuPage extends React.Component<Props, State> {
                     setSearchQueryAction={this.updateNameQuery.bind(this)}
                     defaultNameQuery={this.state.henkilohakuModel.nameQuery}
                     loading={this.props.henkilohakuLoading}
+                    minSearchValueLength={2}
                 />
                 <HenkilohakuFilters
                     noOrganisationAction={this.updateToSearchModel('noOrganisation', true).bind(this)}
@@ -204,24 +205,21 @@ class HenkilohakuPage extends React.Component<Props, State> {
 
     clearOrganisaatio = () => {
         const henkilohakuModel = { ...this.state.henkilohakuModel };
-        henkilohakuModel.organisaatioOids = '';
+        henkilohakuModel.organisaatioOids = undefined;
         this.setState({ henkilohakuModel }, this.searchQuery);
     };
 
     selectOrganisaaOid(organisaatio: OrganisaatioSelectObject) {
-        const henkilohakuModel = { ...this.state.henkilohakuModel };
-        henkilohakuModel.organisaatioOids = organisaatio.oid;
+        const henkilohakuModel = { ...this.state.henkilohakuModel, organisaatioOids: [organisaatio.oid] };
         this.setState({ ryhmaOid: undefined, henkilohakuModel }, this.searchQuery);
     }
 
     selectRyhmaOid(ryhmaOption: any) {
-        const henkilohakuModel = { ...this.state.henkilohakuModel };
-        henkilohakuModel.organisaatioOids = ryhmaOption.value;
+        const henkilohakuModel = { ...this.state.henkilohakuModel, organisaatioOids: [ryhmaOption.value] };
         this.setState({ ryhmaOid: ryhmaOption.value, henkilohakuModel }, this.searchQuery);
     }
 
     updateNameQuery(nameQuery: string) {
-        const callback = nameQuery.length === 1 ? undefined : this.searchQuery;
         this.setState(
             {
                 henkilohakuModel: {
@@ -229,7 +227,7 @@ class HenkilohakuPage extends React.Component<Props, State> {
                     nameQuery,
                 },
             },
-            callback
+            this.searchQuery
         );
     }
 
@@ -263,19 +261,13 @@ class HenkilohakuPage extends React.Component<Props, State> {
                         : undefined,
                 };
 
-                const organisaatioOids: any = henkilohakuModel.organisaatioOids
-                    ? [henkilohakuModel.organisaatioOids]
-                    : undefined;
-
                 const henkilohakuCriteria: HenkilohakuCriteria = {
                     ...this.state.henkilohakuModel,
-                    organisaatioOids,
                     isCountSearch: false,
                 };
 
                 const henkilohakuCountCriteria: HenkilohakuCriteria = {
                     ...this.state.henkilohakuModel,
-                    organisaatioOids,
                     isCountSearch: true,
                 };
 
