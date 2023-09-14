@@ -15,6 +15,7 @@ import PasswordButton from '../buttons/PasswordButton';
 import PassivoiButton from '../buttons/PassivoiButton';
 import AktivoiButton from '../buttons/AktivoiButton';
 import PoistaKayttajatunnusButton from '../buttons/PoistaKayttajatunnusButton';
+import { KoodistoState } from '../../../../reducers/koodisto.reducer';
 
 type OwnProps = {
     readOnly: boolean;
@@ -31,7 +32,7 @@ type OwnProps = {
 
 type StateProps = {
     henkilo: HenkiloState;
-    koodisto: any;
+    koodisto: KoodistoState;
     L: Localisations;
     isAdmin: boolean;
 };
@@ -76,10 +77,11 @@ class PalveluUserContent extends React.Component<Props> {
 
         // Basic info box content
         return [
-            [<Sukunimi autofocus={true} label="HENKILO_PALVELUN_NIMI" {...props} />],
+            [<Sukunimi key="palveluuser-sukunimi" autofocus={true} label="HENKILO_PALVELUN_NIMI" {...props} />],
             [
-                <Oid {...props} />,
+                <Oid key="palveluuser-oid" {...props} />,
                 <Kayttajanimi
+                    key="palveluuser-kayttajanimi"
                     disabled={!this.props.isAdmin && !!this.props.henkilo.kayttajatieto?.username}
                     {...props}
                 />,
@@ -93,7 +95,7 @@ class PalveluUserContent extends React.Component<Props> {
         const passivoitu = this.props.henkilo.henkilo.passivoitu;
         const kayttajatunnukseton = !this.props.henkilo.kayttajatieto?.username;
         return [
-            <EditButton editAction={this.props.edit} disabled={duplicate || passivoitu} />,
+            <EditButton key="editbutton" editAction={this.props.edit} disabled={duplicate || passivoitu} />,
             this.props.isAdmin ? <PassivoiButton disabled={duplicate || passivoitu} /> : null,
             this.props.isAdmin && this.props.henkilo.henkilo.passivoitu ? (
                 <AktivoiButton
@@ -104,6 +106,7 @@ class PalveluUserContent extends React.Component<Props> {
             ) : null,
             !kayttajatunnukseton && this.props.isAdmin ? <PoistaKayttajatunnusButton /> : null,
             <PasswordButton
+                key="passwordbutton"
                 oidHenkilo={this.props.oidHenkilo}
                 styles={{ top: '3rem', left: '0', width: '18rem' }}
                 disabled={duplicate || passivoitu || kayttajatunnukseton}

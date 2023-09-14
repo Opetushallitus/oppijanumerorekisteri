@@ -20,6 +20,5 @@ module.exports = {
         // TODO fix stuff
         '@typescript-eslint/no-explicit-any': 1,
         'react/no-deprecated': 1,
-        'react/jsx-key': 1,
     },
 };

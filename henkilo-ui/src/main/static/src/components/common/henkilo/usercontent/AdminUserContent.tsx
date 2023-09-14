@@ -34,6 +34,7 @@ import Sukupuoli from '../labelvalues/Sukupuoli';
 import SahkopostitunnisteButton from '../buttons/SahkopostitunnisteButton';
 import PassinumeroButton from '../buttons/PassinumeroButton';
 import PoistaKayttajatunnusButton from '../buttons/PoistaKayttajatunnusButton';
+import { KoodistoState } from '../../../../reducers/koodisto.reducer';
 
 type OwnProps = {
     readOnly: boolean;
@@ -50,7 +51,7 @@ type OwnProps = {
 
 type StateProps = {
     henkilo: HenkiloState;
-    koodisto: any;
+    koodisto: KoodistoState;
     L: Localisations;
     isAdmin: boolean;
     omattiedot: OmattiedotState;
@@ -96,27 +97,28 @@ class AdminUserContent extends React.Component<Props> {
         // Basic info box content
         return [
             [
-                <Sukunimi {...props} autofocus={true} />,
-                <Etunimet {...props} />,
-                <Syntymaaika {...props} />,
-                <Hetu {...props} />,
-                <Kutsumanimi {...props} />,
+                <Sukunimi key="admin-sukunimi" {...props} autofocus={true} />,
+                <Etunimet key="admin-etunimi" {...props} />,
+                <Syntymaaika key="admin-syntymaaika" {...props} />,
+                <Hetu key="admin-hetu" {...props} />,
+                <Kutsumanimi key="admin-kutsumanimi" {...props} />,
             ],
             [
-                <Kansalaisuus {...props} />,
-                <Aidinkieli {...props} />,
-                <Sukupuoli {...props} />,
-                <Oppijanumero {...props} />,
-                <Oid {...props} />,
-                <Asiointikieli {...props} />,
+                <Kansalaisuus key="admin-kansalaisuus" {...props} />,
+                <Aidinkieli key="admin-aidinkieli" {...props} />,
+                <Sukupuoli key="admin-sukupuoli" {...props} />,
+                <Oppijanumero key="admin-oppijanumero" {...props} />,
+                <Oid key="admin-oid" {...props} />,
+                <Asiointikieli key="admin-asiointikieli" {...props} />,
             ],
             [
                 <Kayttajanimi
+                    key="admin-kayttajanimi"
                     {...props}
                     disabled={!this.props.isAdmin || !this.props.henkilo.kayttajatieto?.username}
                 />,
-                <LinkitetytHenkilot />,
-                <MasterHenkilo oidHenkilo={this.props.oidHenkilo} />,
+                <LinkitetytHenkilot key="admin-linkitetythenkilot" />,
+                <MasterHenkilo key="admin-masterhenkilo" oidHenkilo={this.props.oidHenkilo} />,
             ],
         ];
     };

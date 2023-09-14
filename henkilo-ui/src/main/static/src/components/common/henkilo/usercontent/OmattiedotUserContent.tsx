@@ -24,6 +24,8 @@ import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
 import AnomusIlmoitus from '../labelvalues/AnomusIlmoitus';
 import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
 import HenkiloVarmentajaSuhde from '../labelvalues/HenkiloVarmentajaSuhde';
+import { KoodistoState } from '../../../../reducers/koodisto.reducer';
+import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 
 type OwnProps = {
     readOnly: boolean;
@@ -32,14 +34,14 @@ type OwnProps = {
     updateModelAction: () => void;
     updateDateAction: () => void;
     edit: () => void;
-    henkiloUpdate: any;
+    henkiloUpdate: Henkilo;
     oidHenkilo: string;
     isValidForm: boolean;
 };
 
 type StateProps = {
     henkilo: HenkiloState;
-    koodisto: any;
+    koodisto: KoodistoState;
     L: Localisations;
     isAdmin: boolean;
     omattiedot: OmattiedotState;
@@ -90,25 +92,33 @@ class OmattiedotUserContent extends React.Component<Props> {
         // Basic info box content
         return [
             [
-                <Etunimet {...props} />,
-                <Sukunimi {...props} />,
-                <Syntymaaika {...props} />,
-                <Hetu {...props} />,
-                <Kutsumanimi {...props} />,
+                <Etunimet key="omattiedot-etunimet" {...props} />,
+                <Sukunimi key="omattiedot-sukunimi" {...props} />,
+                <Syntymaaika key="omattiedot-syntymaaika" {...props} />,
+                <Hetu key="omattiedot-hetu" {...props} />,
+                <Kutsumanimi key="omattiedot-kutsumanimi" {...props} />,
             ],
             [
-                <Kansalaisuus {...props} />,
-                <Aidinkieli {...props} />,
-                <Sukupuoli {...props} />,
-                <Oppijanumero {...props} />,
-                <Oid {...props} />,
-                <Asiointikieli {...props} />,
+                <Kansalaisuus key="omattiedot-kansalaisuus" {...props} />,
+                <Aidinkieli key="omattiedot-aidinkieli" {...props} />,
+                <Sukupuoli key="omattiedot-sukupuoli" {...props} />,
+                <Oppijanumero key="omattiedot-oppijanumero" {...props} />,
+                <Oid key="omattiedot-oid" {...props} />,
+                <Asiointikieli key="omattiedot-asiointikieli" {...props} />,
             ],
             [
-                <Kayttajanimi {...props} disabled={true} />,
-                showAnomusIlmoitus ? <AnomusIlmoitus {...props} /> : null,
-                <HenkiloVarmentajaSuhde oidHenkilo={this.props.omattiedot.data.oid} type="henkiloVarmentajas" />,
-                <HenkiloVarmentajaSuhde oidHenkilo={this.props.omattiedot.data.oid} type="henkiloVarmennettavas" />,
+                <Kayttajanimi key="omattiedot-kayttajanimi" {...props} disabled={true} />,
+                showAnomusIlmoitus ? <AnomusIlmoitus key="omattiedot-anomusilmoitus" {...props} /> : null,
+                <HenkiloVarmentajaSuhde
+                    key="omattiedot-henkiloVarmentajas"
+                    oidHenkilo={this.props.omattiedot.data.oid}
+                    type="henkiloVarmentajas"
+                />,
+                <HenkiloVarmentajaSuhde
+                    key="omattiedot-henkiloVarmennettavas"
+                    oidHenkilo={this.props.omattiedot.data.oid}
+                    type="henkiloVarmennettavas"
+                />,
             ],
         ];
     };
@@ -119,8 +129,9 @@ class OmattiedotUserContent extends React.Component<Props> {
         const passivoitu = this.props.henkilo.henkilo.passivoitu;
         const kayttajatunnukseton = !this.props.henkilo.kayttajatieto?.username;
         return [
-            <EditButton editAction={this.props.edit} disabled={duplicate || passivoitu} />,
+            <EditButton key="editbutton" editAction={this.props.edit} disabled={duplicate || passivoitu} />,
             <PasswordButton
+                key="passwordbutton"
                 oidHenkilo={this.props.omattiedot.data.oid}
                 styles={{ top: '3rem', left: '0', width: '18rem' }}
                 disabled={duplicate || passivoitu || kayttajatunnukseton}

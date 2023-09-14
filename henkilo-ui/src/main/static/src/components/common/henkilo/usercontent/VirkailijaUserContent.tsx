@@ -21,6 +21,7 @@ import HakaButton from '../buttons/HakaButton';
 import PasswordButton from '../buttons/PasswordButton';
 import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
 import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
+import { KoodistoState } from '../../../../reducers/koodisto.reducer';
 
 type OwnProps = {
     readOnly: boolean;
@@ -36,7 +37,7 @@ type OwnProps = {
 
 type StateProps = {
     henkilo: HenkiloState;
-    koodisto: any;
+    koodisto: KoodistoState;
     L: Localisations;
     isAdmin: boolean;
     omattiedot: OmattiedotState;
@@ -80,16 +81,16 @@ class VirkailijaUserContent extends React.Component<Props> {
         // Basic info box content
         return [
             [
-                <Sukunimi autofocus={true} {...props} />,
-                <Etunimet {...props} />,
-                <Kutsumanimi {...props} />,
-                <Asiointikieli {...props} />,
+                <Sukunimi key="virkailija-sukunimi" autofocus={true} {...props} />,
+                <Etunimet key="virkailija-etunimet" {...props} />,
+                <Kutsumanimi key="virkailija-kutsumanimi" {...props} />,
+                <Asiointikieli key="virkailija-asiointikieli" {...props} />,
             ],
-            [<Oppijanumero {...props} />, <Oid {...props} />],
+            [<Oppijanumero key="virkailija-oppijanumero" {...props} />, <Oid key="virkailija-oid" {...props} />],
             [
-                <Kayttajanimi {...props} disabled={true} />,
-                <LinkitetytHenkilot />,
-                <MasterHenkilo oidHenkilo={this.props.oidHenkilo} />,
+                <Kayttajanimi key="virkailija-kayttajanimi" {...props} disabled={true} />,
+                <LinkitetytHenkilot key="virkailija-linkitetyt" />,
+                <MasterHenkilo key="virkailija-master" oidHenkilo={this.props.oidHenkilo} />,
             ],
         ];
     };
