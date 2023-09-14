@@ -97,7 +97,7 @@ class HenkilohakuPage extends React.Component<Props, State> {
             <div className="wrapper">
                 <div className="oph-h2 oph-bold henkilohaku-main-header">{this.L['HENKILOHAKU_OTSIKKO']}</div>
                 <DelayedSearchInput
-                    setSearchQueryAction={this.updateToSearchModel('nameQuery').bind(this)}
+                    setSearchQueryAction={this.updateNameQuery.bind(this)}
                     defaultNameQuery={this.state.henkilohakuModel.nameQuery}
                     loading={this.props.henkilohakuLoading}
                 />
@@ -220,11 +220,21 @@ class HenkilohakuPage extends React.Component<Props, State> {
         this.setState({ ryhmaOid: ryhmaOption.value, henkilohakuModel }, this.searchQuery);
     }
 
+    updateNameQuery(nameQuery: string) {
+        const callback = nameQuery.length === 1 ? undefined : this.searchQuery;
+        this.setState(
+            {
+                henkilohakuModel: {
+                    ...this.state.henkilohakuModel,
+                    nameQuery,
+                },
+            },
+            callback
+        );
+    }
+
     updateToSearchModel(key: string, isEvent?: boolean) {
         return (entity: any) => {
-            // Don't launch henkilohaku if nameQuery field was changed to length 1
-            const callback = key === 'nameQuery' && entity.value.length === 1 ? undefined : this.searchQuery;
-
             this.setState(
                 {
                     henkilohakuModel: {
@@ -232,7 +242,7 @@ class HenkilohakuPage extends React.Component<Props, State> {
                         [key]: !isEvent ? entity.value : entity.target.checked,
                     },
                 },
-                callback
+                this.searchQuery
             ); // Do query when model updates.
         };
     }

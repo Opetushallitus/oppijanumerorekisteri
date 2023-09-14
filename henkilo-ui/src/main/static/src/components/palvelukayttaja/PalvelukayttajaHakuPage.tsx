@@ -33,7 +33,7 @@ class PalvelukayttajaHakuPage extends React.Component<PalvelukayttajaHakuPagePro
         return (
             <div className="PalvelukayttajaHakuPage-criteria">
                 <DelayedSearchInput
-                    setSearchQueryAction={this.onNameQueryChange}
+                    setSearchQueryAction={this.onNameQueryChange.bind(this)}
                     defaultNameQuery={this.props.palvelukayttajat.criteria.nameQuery}
                     loading={this.props.palvelukayttajat.loading}
                 />
@@ -65,11 +65,11 @@ class PalvelukayttajaHakuPage extends React.Component<PalvelukayttajaHakuPagePro
         return <PalvelukayttajaHakuTaulukko L={this.props.L} palvelukayttajat={this.props.palvelukayttajat} />;
     }
 
-    onNameQueryChange = (element: HTMLInputElement) => {
-        if (this.props.palvelukayttajat.criteria.nameQuery !== element.value) {
+    onNameQueryChange = (nameQuery: string) => {
+        if (this.props.palvelukayttajat.criteria.nameQuery !== nameQuery) {
             this.props.onCriteriaChange({
                 ...this.props.palvelukayttajat.criteria,
-                nameQuery: element.value,
+                nameQuery,
             });
         }
     };

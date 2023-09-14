@@ -106,7 +106,7 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
                 ) : (
                     <>
                         <DelayedSearchInput
-                            setSearchQueryAction={this.onChangeNimiHaku}
+                            setSearchQueryAction={this.onChangeNimiHaku.bind(this)}
                             loading={this.props.isOppijaHakuLoading}
                             defaultNameQuery={this.state.criteria.nimiHaku}
                             minSearchValueLength={2}
@@ -143,10 +143,10 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
         this.setState({ criteria: criteria }, () => this.onFetchData(page, pageSize));
     };
 
-    onChangeNimiHaku = (element: HTMLInputElement) => {
+    onChangeNimiHaku = (nimiHaku: string) => {
         const criteria: SearchCriteria = {
             ...this.state.criteria,
-            nimiHaku: element.value,
+            nimiHaku,
         };
         this.setState({ criteria: criteria }, () => this.onFetchData(criteria.page, criteria.count));
     };

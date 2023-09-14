@@ -145,11 +145,10 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
             : [];
     }
 
-    onHakutermiChange = (event: HTMLInputElement) => {
-        const hakutermi = event.value;
-        this.setState({ searchTerm: hakutermi });
-        if (hakutermi.length === 0 || hakutermi.length >= 3) {
-            this.props.onSubmit({ q: hakutermi });
+    onHakutermiChange = (searchTerm: string) => {
+        this.setState({ searchTerm });
+        if (searchTerm.length === 0 || searchTerm.length >= 3) {
+            this.props.onSubmit({ q: searchTerm });
         }
     };
 

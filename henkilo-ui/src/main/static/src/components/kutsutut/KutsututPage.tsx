@@ -251,11 +251,10 @@ export default class KutsututPage extends React.Component<Props, State> {
         });
     }
 
-    onHakutermiChange(target: { value: string }) {
-        const hakutermi = target.value;
-        if (hakutermi.length === 0 || hakutermi.length >= 3) {
+    onHakutermiChange(searchTerm: string) {
+        if (searchTerm.length === 0 || searchTerm.length >= 3) {
             this.setState({
-                payload: { ...this.state.payload, searchTerm: hakutermi },
+                payload: { ...this.state.payload, searchTerm },
             });
         }
     }
