@@ -18,7 +18,6 @@ import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { Localisations } from '../../../../types/localisation.type';
 import { Locale } from '../../../../types/locale.type';
-import { yksiloiHenkilo } from '../../../../actions/henkilo.actions';
 import Loader from '../../icons/Loader';
 import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
 import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
@@ -47,11 +46,7 @@ type StateProps = {
     omattiedot: OmattiedotState;
 };
 
-type DispatchProps = {
-    yksiloiHenkilo: (oid: string) => void;
-};
-
-type Props = OwnProps & StateProps & DispatchProps;
+type Props = OwnProps & StateProps;
 
 class OppijaUserContent extends React.Component<Props> {
     render() {
@@ -140,6 +135,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     omattiedot: state.omattiedot,
 });
 
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    yksiloiHenkilo,
-})(OppijaUserContent);
+export default connect<StateProps, null, OwnProps, RootState>(mapStateToProps)(OppijaUserContent);

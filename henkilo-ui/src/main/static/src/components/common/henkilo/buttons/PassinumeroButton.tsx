@@ -1,10 +1,12 @@
 import React from 'react';
+import type CSS from 'csstype';
+
 import PopupButton from '../../button/PopupButton';
 import PassinumeroPopupContent from './PassinumeroPopupContent';
 
 type Props = {
     oid: string;
-    styles: any;
+    styles: CSS.Properties;
     disabled?: boolean;
     translate: (key: string) => string;
 };

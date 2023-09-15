@@ -18,7 +18,7 @@ import PassivoiButton from '../buttons/PassivoiButton';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { Localisations } from '../../../../types/localisation.type';
-import { fetchHenkiloSlaves, yksiloiHenkilo } from '../../../../actions/henkilo.actions';
+import { fetchHenkiloSlaves } from '../../../../actions/henkilo.actions';
 import Loader from '../../icons/Loader';
 import Kayttajanimi from '../labelvalues/Kayttajanimi';
 import LinkitetytHenkilot from '../labelvalues/LinkitetytHenkilot';
@@ -59,7 +59,6 @@ type StateProps = {
 };
 
 type DispatchProps = {
-    yksiloiHenkilo: (oid: string) => void;
     fetchHenkiloSlaves: (oid: string) => void;
 };
 
@@ -214,6 +213,5 @@ const mapStateToProps = (state: RootState): StateProps => ({
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    yksiloiHenkilo,
     fetchHenkiloSlaves,
 })(AdminUserContent);

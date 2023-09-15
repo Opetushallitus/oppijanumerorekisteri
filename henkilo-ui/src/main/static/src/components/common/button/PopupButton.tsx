@@ -4,17 +4,17 @@ import onClickOutside from 'react-onclickoutside';
 import type CSS from 'csstype';
 
 type Props = {
-    popupTitle?: any; // Title/header for the popup
+    popupTitle?: string; // Title/header for the popup
     popupContent: React.ReactNode; // React element as popup content
     children: any; // Button text
 
     toggle?: boolean;
     popupClass?: string; // css-classes for popup (see oph style guide)
-    popupStyle?: any; // css-styles for positioning popup
+    popupStyle?: CSS.Properties; // css-styles for positioning popup
     disabled?: boolean;
     simple?: boolean;
     popupButtonWrapperPositioning?: CSS.Property.Position; // value for css-position attribute (defaults to relative)
-    popupArrowStyles?: any; // css-styles to position arrow
+    popupArrowStyles?: CSS.Properties; // css-styles to position arrow
     popupButtonClasses?: string; // css-classes for button (see oph style guide)
     id?: string;
 };

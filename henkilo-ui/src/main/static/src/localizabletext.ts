@@ -6,8 +6,8 @@ const FORMATS = [
     {
         // used (at least) in koodistopalvelu
         isValid: (localizableText) => Array.isArray(localizableText) && localizableText.length > 0,
-        getValue: (localizableText: any, uiLang: Locale) => {
-            const value: any = localizableText.find((l) => l.kieli === uiLang.toUpperCase());
+        getValue: (localizableText, uiLang: Locale) => {
+            const value = localizableText.find((l) => l.kieli === uiLang.toUpperCase());
             return value ? value.nimi : value;
         },
         getFallbackValue: (localizableText) =>
@@ -54,7 +54,7 @@ const getValue = (format, localizableText: TextGroup, uiLang: Locale, fallbackVa
     return format.getFallbackValue(localizableText);
 };
 
-export function toLocalizedText(uiLang: Locale, localizableText: any, fallbackValue?: string | null | undefined): any {
+export function toLocalizedText(uiLang: Locale, localizableText, fallbackValue?: string | null | undefined) {
     if (typeof localizableText === 'undefined' || localizableText === null) {
         return fallbackValue;
     }

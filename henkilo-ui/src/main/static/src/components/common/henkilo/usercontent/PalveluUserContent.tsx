@@ -7,7 +7,7 @@ import EditButton from '../buttons/EditButton';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { Localisations } from '../../../../types/localisation.type';
-import { fetchHenkiloSlaves, fetchKayttajatieto, yksiloiHenkilo } from '../../../../actions/henkilo.actions';
+import { fetchHenkiloSlaves, fetchKayttajatieto } from '../../../../actions/henkilo.actions';
 import Loader from '../../icons/Loader';
 import Oid from '../labelvalues/Oid';
 import Kayttajanimi from '../labelvalues/Kayttajanimi';
@@ -38,7 +38,6 @@ type StateProps = {
 };
 
 type DispatchProps = {
-    yksiloiHenkilo: (oid: string) => void;
     fetchHenkiloSlaves: (oid: string) => void;
     fetchKayttajatieto: (oid: string) => void;
 };
@@ -123,7 +122,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    yksiloiHenkilo,
     fetchHenkiloSlaves,
     fetchKayttajatieto,
 })(PalveluUserContent);

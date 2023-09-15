@@ -64,7 +64,7 @@ export const http = {
                 .then((response: T) => resolveResponse(response, resolve, reject))
                 .catch((error) => reject({ networkError: error.message }))
         ),
-    put: <T>(url: string, payload?: any) =>
+    put: <T>(url: string, payload?: unknown) =>
         new Promise<T>((resolve, reject) =>
             fetch(url, {
                 ...getCommonOptions(),
@@ -79,7 +79,7 @@ export const http = {
                 .then((response: T) => resolveResponse(response, resolve, reject))
                 .catch((error) => reject({ networkError: error.message }))
         ),
-    post: <T>(url: string, payload?: any) =>
+    post: <T>(url: string, payload?: unknown) =>
         new Promise<T>((resolve, reject) =>
             fetch(url, {
                 ...getCommonOptions(),
@@ -97,7 +97,7 @@ export const http = {
 };
 
 export const httpWithStatus = {
-    post: <T>(url: string, payload?: any): Promise<[T, number, boolean]> =>
+    post: <T>(url: string, payload?: unknown): Promise<[T, number, boolean]> =>
         new Promise<[T, number, boolean]>((resolve, reject) =>
             fetch(url, {
                 ...getCommonOptions(),

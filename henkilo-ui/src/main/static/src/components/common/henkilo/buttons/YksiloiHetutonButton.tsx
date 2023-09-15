@@ -1,10 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../../../store';
+import { useAppDispatch, type RootState } from '../../../../store';
 import ConfirmButton from '../../button/ConfirmButton';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
-import { yksiloiHenkilo, yksiloiHenkiloPuuttuvatTiedot } from '../../../../actions/henkilo.actions';
 import { Localisations } from '../../../../types/localisation.type';
+import { useYksiloiHetutonMutation } from '../../../../api/oppijanumerorekisteri';
+import { YKSILOI_HENKILO_FAILURE, YKSILOI_PUUTTUVAT_TIEDOT_FAILURE } from '../../../../actions/actiontypes';
 
 type OwnProps = {
     disabled?: boolean;
@@ -15,15 +16,12 @@ type StateProps = {
     L: Localisations;
 };
 
-type DispatchProps = {
-    yksiloiHenkiloPuuttuvatTiedot: () => void;
-    yksiloiHenkilo: (oid: string) => void;
-};
-
-type Props = OwnProps & StateProps & DispatchProps;
+type Props = OwnProps & StateProps;
 
 const YksiloiHetutonButton = (props: Props) => {
     const henkilo = props.henkilo.henkilo;
+    const [yksiloiHetuton] = useYksiloiHetutonMutation();
+    const dispatch = useAppDispatch();
     if (henkilo.yksiloityVTJ || henkilo.hetu || henkilo.yksiloity) {
         return null;
     }
@@ -41,7 +39,29 @@ const YksiloiHetutonButton = (props: Props) => {
         <ConfirmButton
             key="yksilointi"
             action={() =>
-                isValidHenkilo ? props.yksiloiHenkilo(henkilo.oidHenkilo) : props.yksiloiHenkiloPuuttuvatTiedot()
+                isValidHenkilo
+                    ? yksiloiHetuton(henkilo.oidHenkilo)
+                          .unwrap()
+                          .catch(() =>
+                              dispatch({
+                                  type: YKSILOI_HENKILO_FAILURE,
+                                  receivedAt: Date.now(),
+                                  buttonNotification: {
+                                      position: 'yksilointi',
+                                      notL10nMessage: 'YKSILOI_ERROR_TOPIC',
+                                      notL10nText: 'YKSILOI_ERROR_TEXT',
+                                  },
+                              })
+                          )
+                    : dispatch({
+                          type: YKSILOI_PUUTTUVAT_TIEDOT_FAILURE,
+                          buttonNotification: {
+                              position: 'yksilointi',
+                              notL10nMessage: 'YKSILOI_PUUTTUVAT_TIEDOT_TOPIC',
+                              notL10nText: 'YKSILOI_PUUTTUVAT_TIEDOT_TEXT',
+                          },
+                          receivedAt: Date.now(),
+                      })
             }
             normalLabel={props.L['YKSILOI_LINKKI']}
             confirmLabel={props.L['YKSILOI_LINKKI_CONFIRM']}
@@ -56,7 +76,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    yksiloiHenkilo,
-    yksiloiHenkiloPuuttuvatTiedot,
-})(YksiloiHetutonButton);
+export default connect<StateProps, null, OwnProps, RootState>(mapStateToProps)(YksiloiHetutonButton);

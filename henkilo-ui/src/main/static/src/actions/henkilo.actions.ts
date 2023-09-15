@@ -24,9 +24,6 @@ import {
     UPDATE_KAYTTAJATIETO_REQUEST,
     UPDATE_KAYTTAJATIETO_SUCCESS,
     UPDATE_KAYTTAJATIETO_FAILURE,
-    YKSILOI_HENKILO_FAILURE,
-    YKSILOI_HENKILO_REQUEST,
-    YKSILOI_HENKILO_SUCCESS,
     PURA_YKSILOINTI_REQUEST,
     PURA_YKSILOINTI_SUCCESS,
     PURA_YKSILOINTI_FAILURE,
@@ -56,7 +53,6 @@ import {
     POISTA_KAYTTAJATUNNUS_REQUEST,
     POISTA_KAYTTAJATUNNUS_SUCCESS,
     POISTA_KAYTTAJATUNNUS_FAILURE,
-    YKSILOI_PUUTTUVAT_TIEDOT_FAILURE,
 } from './actiontypes';
 import { fetchOrganisations } from './organisaatio.actions';
 import { fetchAllKayttooikeusryhmasForHenkilo } from './kayttooikeusryhma.actions';
@@ -301,43 +297,6 @@ export const fetchHenkiloYksilointitieto = (oid) => async (dispatch: AppDispatch
     } catch (error) {
         dispatch(failureHenkiloYksilointitieto(error));
     }
-};
-
-const requestYksiloiHenkilo = (oid) => ({ type: YKSILOI_HENKILO_REQUEST, oid });
-const receiveYksiloiHenkilo = (oid) => ({
-    type: YKSILOI_HENKILO_SUCCESS,
-    oid,
-    receivedAt: Date.now(),
-});
-const errorYksiloiHenkilo = () => ({
-    type: YKSILOI_HENKILO_FAILURE,
-    receivedAt: Date.now(),
-    buttonNotification: {
-        position: 'yksilointi',
-        notL10nMessage: 'YKSILOI_ERROR_TOPIC',
-        notL10nText: 'YKSILOI_ERROR_TEXT',
-    },
-});
-
-export const yksiloiHenkiloPuuttuvatTiedot = () => ({
-    type: YKSILOI_PUUTTUVAT_TIEDOT_FAILURE,
-    buttonNotification: {
-        position: 'yksilointi',
-        notL10nMessage: 'YKSILOI_PUUTTUVAT_TIEDOT_TOPIC',
-        notL10nText: 'YKSILOI_PUUTTUVAT_TIEDOT_TEXT',
-    },
-    receivedAt: Date.now(),
-});
-
-export const yksiloiHenkilo = (oid: string) => (dispatch: AppDispatch) => {
-    dispatch(requestYksiloiHenkilo(oid));
-    const url = urls.url('oppijanumerorekisteri-service.henkilo.yksiloihetuton', oid);
-    http.post(url)
-        .then(() => {
-            dispatch(receiveYksiloiHenkilo(oid));
-            dispatch<any>(fetchHenkilo(oid));
-        })
-        .catch(() => dispatch(errorYksiloiHenkilo()));
 };
 
 const requestPuraYksilointi = (oid) => ({ type: PURA_YKSILOINTI_REQUEST, oid });

@@ -4,6 +4,8 @@ import { getCommonOptions } from '../http';
 import { addGlobalNotification } from '../actions/notification.actions';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { Localisations } from '../types/localisation.type';
+import { fetchHenkilo } from '../actions/henkilo.actions';
+import { YKSILOI_HENKILO_FAILURE } from '../actions/actiontypes';
 
 type Passinumerot = string[];
 
@@ -67,8 +69,34 @@ export const oppijanumerorekisteriApi = createApi({
                 }
             },
         }),
+        yksiloiHetuton: builder.mutation<void, string>({
+            query: (oid: string) => ({
+                url: `henkilo/${oid}/yksiloihetuton`,
+                method: 'POST',
+            }),
+            async onQueryStarted(oid, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch(fetchHenkilo(oid));
+                } catch (err) {
+                    dispatch({
+                        type: YKSILOI_HENKILO_FAILURE,
+                        receivedAt: Date.now(),
+                        buttonNotification: {
+                            position: 'yksilointi',
+                            notL10nMessage: 'YKSILOI_ERROR_TOPIC',
+                            notL10nText: 'YKSILOI_ERROR_TEXT',
+                        },
+                    });
+                }
+            },
+        }),
     }),
 });
 
-export const { useGetPassinumerotQuery, useSetPassinumerotMutation, usePostLinkHenkilosMutation } =
-    oppijanumerorekisteriApi;
+export const {
+    useGetPassinumerotQuery,
+    useSetPassinumerotMutation,
+    usePostLinkHenkilosMutation,
+    useYksiloiHetutonMutation,
+} = oppijanumerorekisteriApi;

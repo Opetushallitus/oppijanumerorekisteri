@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import Button from '../../../common/button/Button';
 import Loader from '../../../common/icons/Loader';
 import { useGetPassinumerotQuery, useSetPassinumerotMutation } from '../../../../api/oppijanumerorekisteri';
 import { addGlobalNotification } from '../../../../actions/notification.actions';
 import './PassinumeroPopupContent.css';
+import { useAppDispatch } from '../../../../store';
 
 type Props = {
     oid: string;
@@ -13,7 +13,7 @@ type Props = {
 };
 
 const PassinumeroPopupContent = ({ oid, translate }: Props) => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const {
         data: passinumerot = [],
         isLoading: isReading,

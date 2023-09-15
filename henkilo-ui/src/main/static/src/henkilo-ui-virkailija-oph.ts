@@ -89,7 +89,6 @@ const urlConfig = {
     'oppijanumerorekisteri-service.henkilo.exists': 'oppijanumerorekisteri-service/henkilo/exists',
     'oppijanumerorekisteri-service.henkilo.delete': 'oppijanumerorekisteri-service/henkilo/$1',
     'oppijanumerorekisteri-service.henkilo.yksiloi': 'oppijanumerorekisteri-service/henkilo/$1/yksiloi',
-    'oppijanumerorekisteri-service.henkilo.yksiloihetuton': 'oppijanumerorekisteri-service/henkilo/$1/yksiloihetuton',
     'oppijanumerorekisteri-service.henkilo.yksiloi.pura': 'oppijanumerorekisteri-service/henkilo/$1/purayksilointi',
     'oppijanumerorekisteri-service.henkilo.yksilointitiedot':
         'oppijanumerorekisteri-service/henkilo/$1/yksilointitiedot',
