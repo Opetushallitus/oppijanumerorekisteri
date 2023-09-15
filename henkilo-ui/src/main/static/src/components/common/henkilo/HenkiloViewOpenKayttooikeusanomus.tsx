@@ -25,9 +25,10 @@ import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
+import { HenkilonNimi } from '../../../types/domain/kayttooikeus/HenkilonNimi';
 
 export type KayttooikeusryhmaData = {
-    voimassaPvm: any;
+    voimassaPvm: string;
     organisaatioNimi: string;
     kayttooikeusryhmaNimi: string;
 };
@@ -59,9 +60,9 @@ type Props = {
         arg1: string,
         arg2: string,
         arg3: string,
-        arg4: any,
+        arg4: HenkilonNimi,
         arg5: string
-    ) => Promise<any>;
+    ) => Promise<void>;
     isOmattiedot?: boolean;
     omattiedot?: OmattiedotState;
     kayttooikeus: KayttooikeusRyhmaState;
@@ -72,7 +73,10 @@ type Props = {
         defaultSorted: Array<any>;
         onFetchData: (arg0: any) => void;
     };
-    fetchMoreSettings?: any;
+    fetchMoreSettings?: {
+        fetchMoreAction?: () => void;
+        isActive?: boolean;
+    };
     tableLoading?: boolean;
     striped?: boolean;
     fetchAllKayttooikeusAnomusForHenkilo?: (arg0: string) => void;
@@ -324,7 +328,13 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         );
     }
 
-    updateHaettuKayttooikeusryhma = (id: number, tila: string, idx: number, henkilo: any, hylkaysperuste?: string) => {
+    updateHaettuKayttooikeusryhma = (
+        id: number,
+        tila: string,
+        idx: number,
+        henkilo: HenkilonNimi,
+        hylkaysperuste?: string
+    ) => {
         const dates = this.state.dates[idx];
         const alkupvm: string = dates.alkupvm.format(PropertySingleton.state.PVM_DBFORMAATTI);
         const loppupvm: string = dates.loppupvm.format(PropertySingleton.state.PVM_DBFORMAATTI);

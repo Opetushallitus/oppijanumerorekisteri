@@ -1,12 +1,14 @@
 import React from 'react';
 import { KAYTTOOIKEUDENTILA } from '../../globals/KayttooikeudenTila';
+import { HenkilonNimi } from '../../types/domain/kayttooikeus/HenkilonNimi';
+import { Localisations } from '../../types/localisation.type';
 
 type Props = {
-    L: any;
-    action: (arg0: number, arg1: string, arg2: number, arg3: any, arg4: string) => void;
+    L: Localisations;
+    action: (arg0: number, arg1: string, arg2: number, arg3: HenkilonNimi, arg4: string) => void;
     kayttooikeusryhmaId: number;
     index: number;
-    henkilo: any;
+    henkilo: HenkilonNimi;
 };
 
 type State = {

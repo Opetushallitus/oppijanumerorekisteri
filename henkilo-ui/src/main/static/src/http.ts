@@ -2,9 +2,11 @@ import fetch from 'isomorphic-fetch';
 import Cookies from 'universal-cookie';
 import { permissionServiceHeaders } from './permission-service';
 
+type ResponseBody = { status: number, ok: boolean, data: unknown }
+
 const cookies = new Cookies();
 
-const parseResponseBody = (response) => {
+const parseResponseBody = (response: Response): Promise<ResponseBody> => {
     return new Promise((resolve) =>
         (response.headers.get('content-type') &&
         response.headers.get('content-type').toLowerCase().startsWith('application/json')
@@ -20,7 +22,7 @@ const parseResponseBody = (response) => {
     );
 };
 
-const resolveResponse = (response, resolve, reject) => {
+const resolveResponse = (response: ResponseBody, resolve, reject) => {
     if (response.ok) {
         return resolve(response.data);
     }
@@ -28,7 +30,7 @@ const resolveResponse = (response, resolve, reject) => {
     return reject(response.data);
 };
 
-const resolveResponseWithStatus = (response, resolve) => {
+const resolveResponseWithStatus = (response: ResponseBody, resolve) => {
     return resolve([response.data, response.status, response.ok]);
 };
 
@@ -51,7 +53,7 @@ export const http = {
                 ...getCommonOptions(),
             })
                 .then(parseResponseBody)
-                .then((response: T) => resolveResponse(response, resolve, reject))
+                .then((response) => resolveResponse(response, resolve, reject))
                 .catch((error) => reject({ networkError: error.message }))
         ),
     delete: <T>(url: string) =>
@@ -61,7 +63,7 @@ export const http = {
                 method: 'DELETE',
             })
                 .then(parseResponseBody)
-                .then((response: T) => resolveResponse(response, resolve, reject))
+                .then((response) => resolveResponse(response, resolve, reject))
                 .catch((error) => reject({ networkError: error.message }))
         ),
     put: <T>(url: string, payload?: unknown) =>
@@ -76,7 +78,7 @@ export const http = {
                 },
             })
                 .then(parseResponseBody)
-                .then((response: T) => resolveResponse(response, resolve, reject))
+                .then((response) => resolveResponse(response, resolve, reject))
                 .catch((error) => reject({ networkError: error.message }))
         ),
     post: <T>(url: string, payload?: unknown) =>
@@ -91,7 +93,7 @@ export const http = {
                 },
             })
                 .then(parseResponseBody)
-                .then((response: T) => resolveResponse(response, resolve, reject))
+                .then((response) => resolveResponse(response, resolve, reject))
                 .catch((error) => reject({ networkError: error.message }))
         ),
 };
@@ -109,7 +111,7 @@ export const httpWithStatus = {
                 },
             })
                 .then(parseResponseBody)
-                .then((response: T) => resolveResponseWithStatus(response, resolve))
+                .then((response) => resolveResponseWithStatus(response, resolve))
                 .catch((error) => reject({ networkError: error.message }))
         ),
 };

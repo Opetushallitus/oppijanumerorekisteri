@@ -10,6 +10,8 @@ import { KAYTTOOIKEUDENTILA } from '../../globals/KayttooikeudenTila';
 import { getEmptyKayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma.reducer';
 import { OrganisaatioCache } from '../../reducers/organisaatio.reducer';
 import { OrganisaatioCriteria } from '../../types/domain/organisaatio/organisaatio.types';
+import { HenkilonNimi } from '../../types/domain/kayttooikeus/HenkilonNimi';
+import { L10n } from '../../types/localisation.type';
 
 /**
  * Haettujen käyttöoikeusryhmien haku ja myöntäminen/hylkääminen.
@@ -24,7 +26,7 @@ export type FetchHaetutKayttooikeusryhmatParameters = {
 };
 
 type Props = {
-    l10n: any;
+    l10n: L10n;
     locale: Locale;
     kayttooikeusAnomus: any;
     organisaatioCache: OrganisaatioCache;
@@ -180,7 +182,7 @@ class AnomusPage extends React.Component<Props, State> {
         kayttoOikeudenTila: string,
         alkupvm: string,
         loppupvm: string,
-        henkilo: any,
+        henkilo: HenkilonNimi,
         hylkaysperuste?: string
     ): void {
         try {
@@ -218,7 +220,7 @@ class AnomusPage extends React.Component<Props, State> {
         }
     }
 
-    createNotificationMessage(henkilo: any, messageKey: string): string {
+    createNotificationMessage(henkilo: HenkilonNimi, messageKey: string): string {
         const message = this.props.l10n[this.props.locale][messageKey];
         const henkiloLocalized =
             this.props.l10n[this.props.locale]['HENKILO_KAYTTOOIKEUSANOMUS_NOTIFICATIONS_HENKILON'];

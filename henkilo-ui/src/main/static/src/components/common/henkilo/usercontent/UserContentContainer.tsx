@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../../../store';
 import StaticUtils from '../../StaticUtils';
@@ -30,7 +30,7 @@ import { clone } from 'ramda';
 type OwnProps = {
     readOnly?: boolean;
     basicInfo?: (arg0: boolean, arg1: (arg0: any) => void, arg2: (arg0: any) => void, arg3: any) => any;
-    readOnlyButtons?: (arg0: (arg0: any) => void) => any;
+    readOnlyButtons?: ReactNode;
     oidHenkilo: string;
     view: string;
 };

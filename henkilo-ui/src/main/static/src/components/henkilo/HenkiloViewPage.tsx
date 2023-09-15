@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Locale } from '../../types/locale.type';
 import UserContentContainer from '../common/henkilo/usercontent/UserContentContainer';
 import HenkiloViewOrganisationContent from '../common/henkilo/HenkiloViewOrganisationContent';
@@ -31,7 +31,7 @@ type Props = {
     kayttooikeus: KayttooikeusRyhmaState;
     koodisto: KoodistoState;
     createBasicInfo?: (arg0: boolean, arg1: (arg0: any) => void, arg2: (arg0: any) => void, arg3: any) => any;
-    readOnlyButtons?: (arg0: (arg0: any) => void) => any;
+    readOnlyButtons?: ReactNode;
     passivoiHenkiloOrg?: (henkiloOid: string, organisaatioOid: string) => void;
     organisaatioKayttooikeusryhmat?: OrganisaatioKayttooikeusryhmatState;
     omattiedot?: OmattiedotState;
