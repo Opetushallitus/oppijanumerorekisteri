@@ -5,7 +5,6 @@ import { addGlobalNotification } from '../actions/notification.actions';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { Localisations } from '../types/localisation.type';
 import { fetchHenkilo } from '../actions/henkilo.actions';
-import { YKSILOI_HENKILO_FAILURE } from '../actions/actiontypes';
 
 type Passinumerot = string[];
 
@@ -69,26 +68,57 @@ export const oppijanumerorekisteriApi = createApi({
                 }
             },
         }),
+        aktivoiHenkilo: builder.mutation<void, { oidHenkilo: string; L: Localisations }>({
+            query: ({ oidHenkilo }) => ({
+                url: 'henkilo',
+                method: 'PUT',
+                body: { oidHenkilo, passivoitu: false },
+                responseHandler: 'text',
+            }),
+            async onQueryStarted({ oidHenkilo, L }, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch(fetchHenkilo(oidHenkilo));
+                } catch (err) {
+                    dispatch(
+                        addGlobalNotification({
+                            key: 'AKTIVOI_EPAONNISTUI',
+                            type: NOTIFICATIONTYPES.ERROR,
+                            title: L['AKTIVOI_EPAONNISTUI'],
+                            autoClose: 10000,
+                        })
+                    );
+                }
+            },
+        }),
         yksiloiHetuton: builder.mutation<void, string>({
             query: (oid: string) => ({
                 url: `henkilo/${oid}/yksiloihetuton`,
                 method: 'POST',
             }),
             async onQueryStarted(oid, { dispatch, queryFulfilled }) {
-                try {
-                    await queryFulfilled;
-                    dispatch(fetchHenkilo(oid));
-                } catch (err) {
-                    dispatch({
-                        type: YKSILOI_HENKILO_FAILURE,
-                        receivedAt: Date.now(),
-                        buttonNotification: {
-                            position: 'yksilointi',
-                            notL10nMessage: 'YKSILOI_ERROR_TOPIC',
-                            notL10nText: 'YKSILOI_ERROR_TEXT',
-                        },
-                    });
-                }
+                await queryFulfilled;
+                dispatch(fetchHenkilo(oid));
+            },
+        }),
+        puraYksilointi: builder.mutation<void, string>({
+            query: (oid: string) => ({
+                url: `henkilo/${oid}/purayksilointi`,
+                method: 'POST',
+            }),
+            async onQueryStarted(oid, { dispatch, queryFulfilled }) {
+                await queryFulfilled;
+                dispatch(fetchHenkilo(oid));
+            },
+        }),
+        passivoiHenkilo: builder.mutation<void, string>({
+            query: (oid: string) => ({
+                url: `henkilo/${oid}`,
+                method: 'DELETE',
+            }),
+            async onQueryStarted(oid, { dispatch, queryFulfilled }) {
+                await queryFulfilled;
+                dispatch(fetchHenkilo(oid));
             },
         }),
     }),
@@ -98,5 +128,8 @@ export const {
     useGetPassinumerotQuery,
     useSetPassinumerotMutation,
     usePostLinkHenkilosMutation,
+    useAktivoiHenkiloMutation,
     useYksiloiHetutonMutation,
+    usePuraYksilointiMutation,
+    usePassivoiHenkiloMutation,
 } = oppijanumerorekisteriApi;

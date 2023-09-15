@@ -4,7 +4,7 @@ import type { RootState } from '../../../../store';
 import ConfirmButton from '../../button/ConfirmButton';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { Localisations } from '../../../../types/localisation.type';
-import { puraYksilointi } from '../../../../actions/henkilo.actions';
+import { usePuraYksilointiMutation } from '../../../../api/oppijanumerorekisteri';
 
 type OwnProps = {
     disabled?: boolean;
@@ -15,29 +15,29 @@ type StateProps = {
     L: Localisations;
 };
 
-type DispatchProps = {
-    puraYksilointi: (oid: string) => void;
-};
+type Props = OwnProps & StateProps;
 
-type Props = OwnProps & StateProps & DispatchProps;
+const PuraHetuttomanYksilointiButton = (props: Props) => {
+    const [puraYksilointi] = usePuraYksilointiMutation();
+    if (props.henkilo.henkilo.yksiloityVTJ || (props.henkilo.henkilo.hetu && props.henkilo.henkilo.yksiloity)) {
+        return null;
+    }
 
-const PuraHetuttomanYksilointiButton = (props: Props) =>
-    !props.henkilo.henkilo.yksiloityVTJ && !props.henkilo.henkilo.hetu && props.henkilo.henkilo.yksiloity ? (
+    return (
         <ConfirmButton
             key="purayksilointi"
-            action={() => props.puraYksilointi(props.henkilo.henkilo.oidHenkilo)}
+            action={() => puraYksilointi(props.henkilo.henkilo.oidHenkilo)}
             normalLabel={props.L['PURA_YKSILOINTI_LINKKI']}
             confirmLabel={props.L['PURA_YKSILOINTI_LINKKI_CONFIRM']}
             id="purayksilointi"
             disabled={props.disabled}
         />
-    ) : null;
+    );
+};
 
 const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    puraYksilointi,
-})(PuraHetuttomanYksilointiButton);
+export default connect<StateProps, null, OwnProps, RootState>(mapStateToProps)(PuraHetuttomanYksilointiButton);

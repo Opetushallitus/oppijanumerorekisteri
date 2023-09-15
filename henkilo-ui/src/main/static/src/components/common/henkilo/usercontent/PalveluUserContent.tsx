@@ -25,7 +25,6 @@ type OwnProps = {
     updateDateAction: () => void;
     edit: () => void;
     henkiloUpdate: Henkilo;
-    aktivoiHenkilo: (oid: string) => void;
     oidHenkilo: string;
     isValidForm: boolean;
 };
@@ -97,11 +96,7 @@ class PalveluUserContent extends React.Component<Props> {
             <EditButton key="editbutton" editAction={this.props.edit} disabled={duplicate || passivoitu} />,
             this.props.isAdmin ? <PassivoiButton disabled={duplicate || passivoitu} /> : null,
             this.props.isAdmin && this.props.henkilo.henkilo.passivoitu ? (
-                <AktivoiButton
-                    L={this.props.L}
-                    oid={this.props.henkilo.henkilo.oidHenkilo}
-                    onClick={this.props.aktivoiHenkilo}
-                />
+                <AktivoiButton L={this.props.L} oidHenkilo={this.props.henkilo.henkilo.oidHenkilo} />
             ) : null,
             !kayttajatunnukseton && this.props.isAdmin ? <PoistaKayttajatunnusButton /> : null,
             <PasswordButton

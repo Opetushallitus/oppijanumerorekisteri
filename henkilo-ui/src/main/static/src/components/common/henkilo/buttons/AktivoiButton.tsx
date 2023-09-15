@@ -1,21 +1,24 @@
 import React from 'react';
 import { Localisations } from '../../../../types/localisation.type';
 import ConfirmButton from '../../button/ConfirmButton';
+import { useAktivoiHenkiloMutation } from '../../../../api/oppijanumerorekisteri';
 
 type Props = {
     L: Localisations;
-    oid: string;
-    onClick: (arg0: string) => void;
+    oidHenkilo: string;
 };
 
-const AktivoiButton = (props: Props) => (
-    <ConfirmButton
-        key="aktivoi"
-        action={() => props.onClick(props.oid)}
-        normalLabel={props.L['AKTIVOI_LINKKI']}
-        confirmLabel={props.L['AKTIVOI_LINKKI_CONFIRM']}
-        id="aktivoi"
-    />
-);
+const AktivoiButton = (props: Props) => {
+    const [aktivoiHenkilo] = useAktivoiHenkiloMutation();
+    return (
+        <ConfirmButton
+            key="aktivoi"
+            action={() => aktivoiHenkilo(props)}
+            normalLabel={props.L['AKTIVOI_LINKKI']}
+            confirmLabel={props.L['AKTIVOI_LINKKI_CONFIRM']}
+            id="aktivoi"
+        />
+    );
+};
 
 export default AktivoiButton;

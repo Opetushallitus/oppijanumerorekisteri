@@ -15,18 +15,12 @@ import {
     FETCH_KAYTTAJATIETO_FAILURE,
     FETCH_KAYTTAJATIETO_REQUEST,
     FETCH_KAYTTAJATIETO_SUCCESS,
-    PASSIVOI_HENKILO_FAILURE,
-    PASSIVOI_HENKILO_REQUEST,
-    PASSIVOI_HENKILO_SUCCESS,
     UPDATE_HENKILO_FAILURE,
     UPDATE_HENKILO_REQUEST,
     UPDATE_HENKILO_SUCCESS,
     UPDATE_KAYTTAJATIETO_REQUEST,
     UPDATE_KAYTTAJATIETO_SUCCESS,
     UPDATE_KAYTTAJATIETO_FAILURE,
-    PURA_YKSILOINTI_REQUEST,
-    PURA_YKSILOINTI_SUCCESS,
-    PURA_YKSILOINTI_FAILURE,
     VTJ_OVERRIDE_HENKILO_REQUEST,
     VTJ_OVERRIDE_HENKILO_SUCCESS,
     VTJ_OVERRIDE_HENKILO_FAILURE,
@@ -199,31 +193,6 @@ export const updateAndRefetchKayttajatieto =
         }
     };
 
-const requestPassivoiHenkilo = (oid) => ({ type: PASSIVOI_HENKILO_REQUEST, oid });
-const receivePassivoiHenkilo = () => ({
-    type: PASSIVOI_HENKILO_SUCCESS,
-    receivedAt: Date.now(),
-});
-const errorPassivoiHenkilo = () => ({
-    type: PASSIVOI_HENKILO_FAILURE,
-    buttonNotification: {
-        position: 'passivoi',
-        notL10nMessage: 'PASSIVOI_ERROR_TOPIC',
-        notL10nText: 'PASSIVOI_ERROR_TEXT',
-    },
-    receivedAt: Date.now(),
-});
-export const passivoiHenkilo = (oid) => (dispatch: AppDispatch) => {
-    dispatch(requestPassivoiHenkilo(oid));
-    const url = urls.url('oppijanumerorekisteri-service.henkilo.delete', oid);
-    http.delete(url)
-        .then(() => {
-            dispatch(receivePassivoiHenkilo());
-            dispatch<any>(fetchHenkilo(oid));
-        })
-        .catch(() => dispatch(errorPassivoiHenkilo()));
-};
-
 const requestPoistaKayttajatunnus = (oid) => ({
     type: POISTA_KAYTTAJATUNNUS_REQUEST,
     oid,
@@ -255,26 +224,6 @@ export const poistaKayttajatunnus = (oid) => (dispatch: AppDispatch) => {
         .catch(() => dispatch(errorPoistaKayttajatunnus()));
 };
 
-export const aktivoiHenkilo = (oid) => async (dispatch: AppDispatch, getState: () => RootState) => {
-    try {
-        const url = urls.url('oppijanumerorekisteri-service.henkilo', oid);
-        // henkilö put toimii kuten patch joten ei tarvita kaikkia tietoja
-        const data = { oidHenkilo: oid, passivoitu: false };
-        await http.put(url, data);
-        dispatch<any>(fetchHenkilo(oid));
-    } catch (error) {
-        dispatch<any>(
-            addGlobalNotification({
-                key: 'AKTIVOI_EPAONNISTUI',
-                type: NOTIFICATIONTYPES.ERROR,
-                title: localizeWithState('AKTIVOI_EPAONNISTUI', getState()),
-                autoClose: 10000,
-            })
-        );
-        throw error;
-    }
-};
-
 const requestHenkiloYksilointitieto = (oid) => ({
     type: FETCH_HENKILO_YKSILOINTITIETO_REQUEST,
     oid,
@@ -296,22 +245,6 @@ export const fetchHenkiloYksilointitieto = (oid) => async (dispatch: AppDispatch
         dispatch(receiveHenkiloYksilointitieto(data));
     } catch (error) {
         dispatch(failureHenkiloYksilointitieto(error));
-    }
-};
-
-const requestPuraYksilointi = (oid) => ({ type: PURA_YKSILOINTI_REQUEST, oid });
-const receivePuraYksilointi = (oid) => ({ type: PURA_YKSILOINTI_SUCCESS, oid });
-const errorPuraYksilointi = () => ({ type: PURA_YKSILOINTI_FAILURE });
-export const puraYksilointi = (oid) => async (dispatch: AppDispatch) => {
-    dispatch(requestPuraYksilointi(oid));
-    const url = urls.url('oppijanumerorekisteri-service.henkilo.yksiloi.pura', oid);
-    try {
-        await http.post(url);
-        receivePuraYksilointi(oid);
-        dispatch<any>(fetchHenkilo(oid));
-    } catch (error) {
-        errorPuraYksilointi();
-        console.error(`Pura yksilointi failed for henkilo ${oid} - ${error}`);
     }
 };
 

@@ -3,11 +3,7 @@ import { connect } from 'react-redux';
 import type { RootState } from '../../../../store';
 import StaticUtils from '../../StaticUtils';
 import { Localisations } from '../../../../types/localisation.type';
-import {
-    updateHenkiloAndRefetch,
-    updateAndRefetchKayttajatieto,
-    aktivoiHenkilo,
-} from '../../../../actions/henkilo.actions';
+import { updateHenkiloAndRefetch, updateAndRefetchKayttajatieto } from '../../../../actions/henkilo.actions';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import OppijaUserContent from './OppijaUserContent';
 import AdminUserContent from './AdminUserContent';
@@ -38,7 +34,6 @@ type OwnProps = {
 type DispatchProps = {
     updateHenkiloAndRefetch: (arg0: any, arg1: boolean) => void;
     updateAndRefetchKayttajatieto: (henkiloOid: string, kayttajatunnus: string) => void;
-    aktivoiHenkilo: (oid: string) => void;
     fetchOmattiedot: (arg0: boolean | null | undefined) => any;
     updateAnomusilmoitus: (arg0: boolean) => any;
 };
@@ -103,7 +98,6 @@ class UserContentContainer extends React.Component<Props, State> {
             updateDateAction: this._updateModelField.bind(this),
             henkiloUpdate: this.state.henkiloUpdate,
             edit: this._edit.bind(this),
-            aktivoiHenkilo: this.props.aktivoiHenkilo,
             oidHenkilo: this.props.oidHenkilo,
             isValidForm: this._validForm(),
         };
@@ -281,7 +275,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     updateHenkiloAndRefetch,
     updateAndRefetchKayttajatieto,
-    aktivoiHenkilo,
     fetchOmattiedot,
     updateAnomusilmoitus,
 })(UserContentContainer);

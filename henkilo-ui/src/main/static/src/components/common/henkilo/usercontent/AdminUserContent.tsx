@@ -44,7 +44,6 @@ type OwnProps = {
     updateDateAction: () => void;
     edit: () => void;
     henkiloUpdate: Henkilo;
-    aktivoiHenkilo: (oid: string) => void;
     oidHenkilo: string;
     isValidForm: boolean;
 };
@@ -152,11 +151,7 @@ class AdminUserContent extends React.Component<Props> {
             isOnrRekisterinpitaja && !kayttajatunnukseton ? <PoistaKayttajatunnusButton /> : null;
         const aktivoiButton =
             passivoitu && hasHenkiloReadUpdateRights ? (
-                <AktivoiButton
-                    L={this.props.L}
-                    oid={this.props.henkilo.henkilo.oidHenkilo}
-                    onClick={this.props.aktivoiHenkilo}
-                />
+                <AktivoiButton L={this.props.L} oidHenkilo={this.props.henkilo.henkilo.oidHenkilo} />
             ) : null;
         const hakaButton = (
             <HakaButton
