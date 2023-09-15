@@ -147,9 +147,7 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, router, oidHen
                     {!isHenkiloValidForYksilointi(linkObj.master) && (
                         <div className="oph-alert oph-alert-info">
                             <div className="oph-alert-container">
-                                <div className="oph-alert-title">
-                                    {L['DUPLIKAATIT_PUUTTUVAT_TIEDOT_OTSIKKO']}
-                                </div>
+                                <div className="oph-alert-title">{L['DUPLIKAATIT_PUUTTUVAT_TIEDOT_OTSIKKO']}</div>
                                 <div className="oph-alert-text">{L['DUPLIKAATIT_PUUTTUVAT_TIEDOT_TEKSTI']}</div>
                             </div>
                         </div>

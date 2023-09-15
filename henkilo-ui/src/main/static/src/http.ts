@@ -2,7 +2,7 @@ import fetch from 'isomorphic-fetch';
 import Cookies from 'universal-cookie';
 import { permissionServiceHeaders } from './permission-service';
 
-type ResponseBody = { status: number, ok: boolean, data: unknown }
+type ResponseBody = { status: number; ok: boolean; data: unknown };
 
 const cookies = new Cookies();
 
