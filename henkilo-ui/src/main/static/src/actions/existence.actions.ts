@@ -51,7 +51,7 @@ export const doExistenceCheck = (payload: ExistenceCheckRequest) => async (dispa
         }
     } catch (error) {
         dispatch(requestExistenceCheckFailure(500));
-        dispatch<any>(
+        dispatch(
             addGlobalNotification({
                 key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
                 title: localizeWithState('KAYTTOOIKEUSRAPORTTI_ERROR', state()),

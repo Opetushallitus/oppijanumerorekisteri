@@ -69,7 +69,7 @@ export const fetchKutsus = (payload, offset, amount) => async (dispatch: AppDisp
         const kutsus = await http.get(url);
         dispatch(receiveKutsus(kutsus));
     } catch (error) {
-        dispatch<any>(
+        dispatch(
             addGlobalNotification({
                 key: 'KUTSUTUT_VIRKAILIJA_FETCHING_FAILED',
                 autoClose: 10000,

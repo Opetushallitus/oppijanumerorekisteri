@@ -45,7 +45,7 @@ export const fetchTuontiKooste =
             dispatch(requestTuontiKoosteSuccess(payload));
         } catch (error) {
             dispatch(requestTuontiKoosteFailure());
-            dispatch<any>(
+            dispatch(
                 addGlobalNotification({
                     key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
                     title: localizeWithState('KAYTTOOIKEUSRAPORTTI_ERROR', state()),

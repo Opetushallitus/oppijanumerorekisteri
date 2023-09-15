@@ -25,11 +25,13 @@ const PassinumeroPopupContent = ({ oid, translate }: Props) => {
 
     useEffect(() => {
         if (readError || writeError) {
-            addGlobalNotification({
-                key: 'PASSINUMEROT_NETWORK_ERROR',
-                type: 'error',
-                title: translate('PASSINUMEROT_NETWORK_ERROR'),
-            })(dispatch);
+            dispatch(
+                addGlobalNotification({
+                    key: 'PASSINUMEROT_NETWORK_ERROR',
+                    type: 'error',
+                    title: translate('PASSINUMEROT_NETWORK_ERROR'),
+                })
+            );
         }
     }, [readError, writeError, dispatch, translate]);
 

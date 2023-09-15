@@ -40,7 +40,7 @@ export const henkilohaku =
             dispatch(henkilohakuSuccess(data));
         } catch (error) {
             dispatch(henkilohakuFailure(error));
-            dispatch<any>(
+            dispatch(
                 addGlobalNotification({
                     key: 'HENKILOHAKU_ERROR',
                     title: localizeWithState('HENKILOHAKU_ERROR', getState()),

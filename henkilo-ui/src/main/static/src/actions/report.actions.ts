@@ -41,7 +41,7 @@ export const fetchAccessRightsReport = (oid: string) => async (dispatch: AppDisp
         dispatch(requestAccessRightsReportSuccess(report));
     } catch (error) {
         dispatch(requestAccessRightsReportFailure());
-        dispatch<any>(
+        dispatch(
             addGlobalNotification({
                 key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
                 title: localizeWithState('KAYTTOOIKEUSRAPORTTI_ERROR', state()),

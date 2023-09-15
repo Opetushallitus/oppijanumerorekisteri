@@ -43,7 +43,7 @@ export const fetchTuontidata = (tuontiId: number) => async (dispatch: AppDispatc
         dispatch(requestTuontidataSuccess(payload));
     } catch (error) {
         dispatch(requestTuontidataFailure());
-        dispatch<any>(
+        dispatch(
             addGlobalNotification({
                 key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
                 title: localizeWithState('KAYTTOOIKEUSRAPORTTI_ERROR', state()),

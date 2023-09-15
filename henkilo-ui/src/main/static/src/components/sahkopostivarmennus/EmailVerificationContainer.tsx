@@ -83,7 +83,7 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
 
 const mapDispatchToProps = (dispatch: AppDispatch): DispatchProps => ({
     errorNotification: (title: string) =>
-        dispatch<any>(
+        dispatch(
             addGlobalNotification({
                 key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
                 title,

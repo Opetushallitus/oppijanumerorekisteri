@@ -33,7 +33,7 @@ export const createPerson = (payload: ExistenceCheckRequest) => async (dispatch:
         }
     } catch (error) {
         dispatch(createPersonRequestFailure(500));
-        dispatch<any>(
+        dispatch(
             addGlobalNotification({
                 key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
                 title: localizeWithState('KAYTTOOIKEUSRAPORTTI_ERROR', state()),

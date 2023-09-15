@@ -97,13 +97,13 @@ export const updateHenkiloAndRefetch =
                 const errorMessages = getUpdateHenkiloErrorMessages(error, L);
                 if (errorMessages.length > 0) {
                     errorMessages.forEach((errorMessage) =>
-                        dispatch<any>(addGlobalNotification(createUpdateHenkiloErrorNotification(errorMessage)))
+                        dispatch(addGlobalNotification(createUpdateHenkiloErrorNotification(errorMessage)))
                     );
                 } else {
                     const errorUpdateHenkiloNotification = createUpdateHenkiloErrorNotification(
                         L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE']
                     );
-                    dispatch<any>(addGlobalNotification(errorUpdateHenkiloNotification));
+                    dispatch(addGlobalNotification(errorUpdateHenkiloNotification));
                 }
             }
             dispatch(errorHenkiloUpdate(error));
@@ -180,7 +180,7 @@ export const updateAndRefetchKayttajatieto =
             dispatch<any>(fetchKayttajatieto(oid));
         } catch (error) {
             if (error.errorType === 'IllegalArgumentException') {
-                dispatch<any>(
+                dispatch(
                     addGlobalNotification({
                         autoClose: 10000,
                         title: localizeWithState('NOTIFICATION_HENKILOTIEDOT_KAYTTAJANIMI_EXISTS', getState()),
@@ -377,7 +377,7 @@ export const fetchHenkiloDuplicates = (oidHenkilo) => async (dispatch: AppDispat
     try {
         const duplicates = await http.get<[]>(url);
         if (duplicates.length === 0) {
-            dispatch<any>(
+            dispatch(
                 addGlobalNotification({
                     key: 'NOTIFICATION_DUPLIKAATIT_TYHJA_LISTA',
                     type: NOTIFICATIONTYPES.INFO,
@@ -400,7 +400,7 @@ export const fetchHenkiloDuplicates = (oidHenkilo) => async (dispatch: AppDispat
             errorMessage =
                 localizeWithState('NOTIFICATION_DUPLIKAATIT_HAKEMUKSET_HAKUAPP_VIRHE', getState()) + ' ' + oidHenkilo;
         }
-        dispatch<any>(
+        dispatch(
             addGlobalNotification({
                 key: 'FETCH_DUPLICATES_FAIL',
                 type: NOTIFICATIONTYPES.ERROR,
@@ -443,7 +443,7 @@ export const fetchHenkiloHakemukset = (oid: string) => async (dispatch: AppDispa
             errorMessage = localizeWithState('NOTIFICATION_HENKILO_HAKEMUKSET_HAKUAPP_VIRHE', getState()) + ' ' + oid;
         }
 
-        dispatch<any>(
+        dispatch(
             addGlobalNotification({
                 key: 'HENKILOHAKEMUKSET_FAILURE',
                 type: NOTIFICATIONTYPES.ERROR,
