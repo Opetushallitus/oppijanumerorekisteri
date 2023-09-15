@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import type { BrowserRouter } from 'react-router';
 
 import { RootState } from '../../../store';
 import Button from '../../common/button/Button';
@@ -21,6 +22,7 @@ import OphModal from '../../common/modal/OphModal';
 import { usePostLinkHenkilosMutation } from '../../../api/oppijanumerorekisteri';
 
 import './HenkiloViewDuplikaatit.css';
+import { isHenkiloValidForYksilointi } from '../../../validation/YksilointiValidator';
 
 export type LinkRelation = {
     master: HenkiloDuplicate;
@@ -28,7 +30,7 @@ export type LinkRelation = {
 };
 
 type Props = {
-    router?: any;
+    router?: BrowserRouter;
     oidHenkilo?: string;
     henkilo: HenkiloDuplicateLenient & { hakemukset?: Hakemus[] };
     henkiloType: string;
@@ -142,6 +144,16 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, router, oidHen
                             L['DUPLIKAATIT_PASSIVOIDAAN']
                         } ${linkObj.duplicate.yksiloity ? L['DUPLIKAATIT_PURETAAN_YKSILOINTI'] : ''} `}
                     </p>
+                    {!isHenkiloValidForYksilointi(linkObj.master) && (
+                        <div className="oph-alert oph-alert-info">
+                            <div className="oph-alert-container">
+                                <div className="oph-alert-title">
+                                    {L['DUPLIKAATIT_PUUTTUVAT_TIEDOT_OTSIKKO']}
+                                </div>
+                                <div className="oph-alert-text">{L['DUPLIKAATIT_PUUTTUVAT_TIEDOT_TEKSTI']}</div>
+                            </div>
+                        </div>
+                    )}
                     <div className="duplicate_confirm_buttons">
                         <Button action={() => link()} dataTestId="confirm-force-link">
                             {L['DUPLIKAATIT_VARMISTUS_YHDISTA']}

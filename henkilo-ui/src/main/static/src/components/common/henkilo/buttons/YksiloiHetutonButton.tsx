@@ -6,6 +6,7 @@ import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { Localisations } from '../../../../types/localisation.type';
 import { useYksiloiHetutonMutation } from '../../../../api/oppijanumerorekisteri';
 import { YKSILOI_HENKILO_FAILURE, YKSILOI_PUUTTUVAT_TIEDOT_FAILURE } from '../../../../actions/actiontypes';
+import { isHenkiloValidForYksilointi } from '../../../../validation/YksilointiValidator';
 
 type OwnProps = {
     disabled?: boolean;
@@ -26,20 +27,11 @@ const YksiloiHetutonButton = (props: Props) => {
         return null;
     }
 
-    const isValidHenkilo =
-        henkilo.etunimet &&
-        henkilo.sukunimi &&
-        henkilo.kutsumanimi &&
-        henkilo.sukupuoli &&
-        henkilo.syntymaaika &&
-        henkilo.aidinkieli &&
-        henkilo.kansalaisuus?.length;
-
     return (
         <ConfirmButton
             key="yksilointi"
             action={() =>
-                isValidHenkilo
+                isHenkiloValidForYksilointi(henkilo)
                     ? yksiloiHetuton(henkilo.oidHenkilo)
                           .unwrap()
                           .catch(() =>
