@@ -57,6 +57,7 @@ const HenkiloViewPage = (props: Props) => {
         oidHenkilo,
         createBasicInfo,
         readOnlyButtons,
+        ryhmas,
     } = props;
     const L = l10n[locale];
     if (henkilo.henkiloKayttoEstetty) {
@@ -64,12 +65,12 @@ const HenkiloViewPage = (props: Props) => {
     }
 
     const _parseRyhmaOptions = (): Array<{ label: string; value: string }> => {
-        return props.ryhmas?.ryhmas
-            ? props.ryhmas?.ryhmas.map((ryhma) => ({
-                  label: ryhma.nimi[props.locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
-                  value: ryhma.oid,
-              }))
-            : [];
+        return (
+            ryhmas?.ryhmas?.map((ryhma) => ({
+                label: ryhma.nimi[locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
+                value: ryhma.oid,
+            })) ?? []
+        );
     };
 
     const kayttooikeusryhmat = organisaatioKayttooikeusryhmat?.kayttooikeusryhmat ?? [];

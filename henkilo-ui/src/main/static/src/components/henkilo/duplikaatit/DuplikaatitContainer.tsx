@@ -60,7 +60,7 @@ class VirkailijaDuplikaatitContainer extends React.Component<Props> {
     }
 
     render() {
-        return <DuplikaatitPage {...this.props} />;
+        return <DuplikaatitPage L={this.props.L} henkiloType={this.props.henkiloType} henkilo={this.props.henkilo} />;
     }
 }
 
