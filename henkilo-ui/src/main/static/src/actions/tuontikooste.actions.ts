@@ -5,7 +5,7 @@ import { localizeWithState } from '../utilities/localisation.util';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { FETCH_TUONTIKOOSTE_REQUEST, FETCH_TUONTIKOOSTE_SUCCESS, FETCH_TUONTIKOOSTE_FAILURE } from './actiontypes';
 import { TuontiKooste, TuontiKoosteCriteria } from '../types/tuontikooste.types';
-import { AppDispatch } from '../store';
+import { AppDispatch, RootState } from '../store';
 
 type RequestAction = {
     type: typeof FETCH_TUONTIKOOSTE_REQUEST;
@@ -36,7 +36,7 @@ const requestTuontiKoosteFailure = (): FailureAction => ({
 });
 
 export const fetchTuontiKooste =
-    (criteria: TuontiKoosteCriteria) => async (dispatch: AppDispatch, state: () => any) => {
+    (criteria: TuontiKoosteCriteria) => async (dispatch: AppDispatch, state: () => RootState) => {
         dispatch(requestTuontiKooste());
         try {
             const query = new URLSearchParams(criteria as unknown as Record<string, string>).toString();

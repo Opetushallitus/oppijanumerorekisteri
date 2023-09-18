@@ -1,1 +1,5 @@
-declare module '*.module.css';
+declare global {
+    interface Window {
+        opintopolku_caller_id?: string;
+    }
+}

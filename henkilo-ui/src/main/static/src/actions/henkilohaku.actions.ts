@@ -28,7 +28,7 @@ const henkilohakuSuccess = (data: HenkilohakuResult) => ({
     type: HENKILOHAKU_SUCCESS,
     data,
 });
-const henkilohakuFailure = (error: any) => ({ type: HENKILOHAKU_FAILURE, error });
+const henkilohakuFailure = (error: unknown) => ({ type: HENKILOHAKU_FAILURE, error });
 
 export const henkilohaku =
     (payload: HenkilohakuCriteria, queryParams: HenkilohakuQueryparameters) =>

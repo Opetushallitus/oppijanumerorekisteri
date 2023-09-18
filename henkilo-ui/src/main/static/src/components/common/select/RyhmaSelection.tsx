@@ -1,4 +1,5 @@
 import React from 'react';
+import createFilterOptions from 'react-select-fast-filter-options';
 import OphSelect from './OphSelect';
 import type { OnChangeHandler, Options, Option } from 'react-select';
 import { connect } from 'react-redux';
@@ -17,7 +18,7 @@ type StateProps = {
     L: Localisations;
     locale: Locale;
     ryhmaOptions: Options<string>;
-    ryhmaFilter: any;
+    ryhmaFilter: ReturnType<createFilterOptions>;
 };
 
 type Props = OwnProps & StateProps;

@@ -3,6 +3,7 @@ import 'react-virtualized/styles.css';
 import 'react-virtualized-select/styles.css';
 import './OphSelect.css';
 import React from 'react';
+import createFilterOptions from 'react-select-fast-filter-options';
 import { connect } from 'react-redux';
 import type { RootState } from '../../../store';
 import Select from 'react-virtualized-select';
@@ -25,7 +26,7 @@ type OwnProps = {
     multiselect?: boolean;
     maxHeight?: number;
     optionHeight?: number | ((options: { option: string }) => number);
-    filterOptions?: any;
+    filterOptions?: ReturnType<createFilterOptions>;
     noResultsText?: string;
     onBlurResetsInput?: boolean;
 };

@@ -6,7 +6,7 @@ import { NOTIFICATIONTYPES } from '../components/common/Notification/notificatio
 import { CREATE_PERSON_REQUEST, CREATE_PERSON_SUCCESS, CREATE_PERSON_FAILURE } from './actiontypes';
 import type { ExistenceCheckRequest } from '../reducers/existence.reducer';
 import type { RequestAction, SuccessAction, FailureAction } from '../reducers/create.reducer';
-import { AppDispatch } from '../store';
+import { AppDispatch, RootState } from '../store';
 
 const createPersonRequest = (): RequestAction => ({
     type: CREATE_PERSON_REQUEST,
@@ -21,25 +21,26 @@ const createPersonRequestFailure = (status: number): FailureAction => ({
     status,
 });
 
-export const createPerson = (payload: ExistenceCheckRequest) => async (dispatch: AppDispatch, state: () => any) => {
-    dispatch(createPersonRequest());
-    try {
-        const url = urls.url('oppijanumerorekisteri-service.henkilo');
-        const [data, status] = await httpWithStatus.post<string>(url, payload);
-        if (status === 201) {
-            dispatch(createPersonRequestSuccess(data, status));
-        } else {
-            dispatch(createPersonRequestFailure(status));
+export const createPerson =
+    (payload: ExistenceCheckRequest) => async (dispatch: AppDispatch, state: () => RootState) => {
+        dispatch(createPersonRequest());
+        try {
+            const url = urls.url('oppijanumerorekisteri-service.henkilo');
+            const [data, status] = await httpWithStatus.post<string>(url, payload);
+            if (status === 201) {
+                dispatch(createPersonRequestSuccess(data, status));
+            } else {
+                dispatch(createPersonRequestFailure(status));
+            }
+        } catch (error) {
+            dispatch(createPersonRequestFailure(500));
+            dispatch(
+                addGlobalNotification({
+                    key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
+                    title: localizeWithState('KAYTTOOIKEUSRAPORTTI_ERROR', state()),
+                    type: NOTIFICATIONTYPES.ERROR,
+                    autoClose: 10000,
+                })
+            );
         }
-    } catch (error) {
-        dispatch(createPersonRequestFailure(500));
-        dispatch(
-            addGlobalNotification({
-                key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
-                title: localizeWithState('KAYTTOOIKEUSRAPORTTI_ERROR', state()),
-                type: NOTIFICATIONTYPES.ERROR,
-                autoClose: 10000,
-            })
-        );
-    }
-};
+    };

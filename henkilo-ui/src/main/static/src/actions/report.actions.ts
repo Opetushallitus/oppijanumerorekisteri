@@ -16,7 +16,7 @@ import type {
     SuccessAction,
     FailureAction,
 } from '../reducers/report.reducer';
-import { AppDispatch } from '../store';
+import { AppDispatch, RootState } from '../store';
 
 export const clearAccessRightsReport = (): ClearAction => ({
     type: CLEAR_ACCESS_RIGHT_REPORT,
@@ -33,7 +33,7 @@ const requestAccessRightsReportFailure = (): FailureAction => ({
     type: FETCH_ACCESS_RIGHT_REPORT_FAILURE,
 });
 
-export const fetchAccessRightsReport = (oid: string) => async (dispatch: AppDispatch, state: () => any) => {
+export const fetchAccessRightsReport = (oid: string) => async (dispatch: AppDispatch, state: () => RootState) => {
     dispatch(requestAccessRightsReport());
     try {
         const url = urls.url('kayttooikeus-service.report.access-rights-for-organisaatio', oid);

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { Options } from 'react-select';
 import { findIndex, pathEq, sortBy, uniqBy } from 'ramda';
 import { toLocalizedText } from '../localizabletext';
 import type { OrganisaatioHenkilo } from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
@@ -196,19 +196,14 @@ export const getOrganisaatioOptionsAndFilter = (
     newOrganisaatios: OrganisaatioHenkilo[],
     locale: Locale,
     isRyhma: boolean
-): { options: { value: string; label: ReactNode }[]; filterOptions: any } => {
+): { options: Options<string>; filterOptions: ReturnType<createFilterOptions> } => {
     const newOptions = getOrganisationsOrRyhmas(getOrganisaatios(newOrganisaatios, locale), isRyhma).map(
         (organisaatio) => mapOrganisaatio(organisaatio, locale, !isRyhma)
     );
     // update index (raskas operaatio)
     const index = createFilterOptions({ options: newOptions });
     return {
-        options: newOptions
-            .sort((a, b) => a.label.localeCompare(b.label))
-            .map((option: { value: string; label: string }) => ({
-                value: option.value,
-                label: <span>{option.label}</span>,
-            })),
+        options: newOptions.sort((a, b) => a.label.localeCompare(b.label)),
         filterOptions: index,
     };
 };

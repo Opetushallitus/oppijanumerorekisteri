@@ -5,7 +5,7 @@ import { localizeWithState } from '../utilities/localisation.util';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { FETCH_TUONTIDATA_REQUEST, FETCH_TUONTIDATA_SUCCESS, FETCH_TUONTIDATA_FAILURE } from './actiontypes';
 import { Tuontidata } from '../types/tuontidata.types';
-import { AppDispatch } from '../store';
+import { AppDispatch, RootState } from '../store';
 
 type RequestAction = {
     type: typeof FETCH_TUONTIDATA_REQUEST;
@@ -35,7 +35,7 @@ const requestTuontidataFailure = (): FailureAction => ({
     type: FETCH_TUONTIDATA_FAILURE,
 });
 
-export const fetchTuontidata = (tuontiId: number) => async (dispatch: AppDispatch, state: () => any) => {
+export const fetchTuontidata = (tuontiId: number) => async (dispatch: AppDispatch, state: () => RootState) => {
     dispatch(requestTuontidata());
     try {
         const url = urls.url('oppijanumerorekisteri-service.oppija.tuontidata');

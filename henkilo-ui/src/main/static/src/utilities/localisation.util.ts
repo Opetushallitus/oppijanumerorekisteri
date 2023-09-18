@@ -1,12 +1,13 @@
 import { L10n } from '../types/localisation.type';
 import { Locale } from '../types/locale.type';
 import { Text } from '../types/domain/kayttooikeus/text.types';
+import { RootState } from '../store';
 
 export const localize = (key: string, l10n: L10n, locale: Locale): string => {
     return l10n[locale][key];
 };
 
-export const localizeWithState = (key: string, state: any): string => {
+export const localizeWithState = (key: string, state: RootState): string => {
     return localize(key, state.l10n.localisations, state.locale);
 };
 

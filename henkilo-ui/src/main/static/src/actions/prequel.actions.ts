@@ -8,9 +8,8 @@ const receivedKayttooikeusPrequel = () => ({ type: FETCH_PREQUEL_SUCCESS });
 const requestOppijanumerorekisteriPrequel = () => ({
     type: FETCH_PREQUEL_REQUEST,
 });
-const receiveOppijanumerorekisteriPrequel = (json?: any) => ({
+const receiveOppijanumerorekisteriPrequel = () => ({
     type: FETCH_PREQUEL_SUCCESS,
-    data: json,
 });
 
 export const fetchPrequels = () => async (dispatch: AppDispatch) => {

@@ -17,7 +17,7 @@ export type TuontiYhteenvetoState = {
 
 export type TuontiListausState = {
     loading: boolean;
-    data: Page<OppijaList> | any;
+    data: Page<OppijaList> | Record<string, never>;
 };
 
 const yhteenvetoInitialState: TuontiYhteenvetoState = {

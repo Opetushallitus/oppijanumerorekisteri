@@ -4,9 +4,9 @@ import { urls } from 'oph-urls-js';
 import { L10n } from '../types/localisation.type';
 import { AppDispatch } from '../store';
 
-const mapLocalisationsByLocale = (localisations: Array<any>): L10n => {
+const mapLocalisationsByLocale = (localisations: Localisation[]): L10n => {
     const result = { fi: {}, sv: {}, en: {} };
-    localisations.forEach((localisation: any) => {
+    localisations.forEach((localisation) => {
         try {
             result[localisation.locale][localisation.key] = localisation.value;
         } catch {
@@ -17,7 +17,7 @@ const mapLocalisationsByLocale = (localisations: Array<any>): L10n => {
 };
 
 const requestLocalisations = () => ({ type: FETCH_LOCALISATIONS_REQUEST });
-const receiveLocalisations = (payload: any) => ({
+const receiveLocalisations = (payload: L10n) => ({
     type: FETCH_LOCALISATIONS_SUCCESS,
     localisations: payload,
 });
@@ -40,7 +40,7 @@ type Localisation = {
 export const fetchL10n = () => async (dispatch: AppDispatch) => {
     dispatch(requestLocalisations());
 
-    const henkiloUiLocalisations = await http.get(urls.url('henkilo-ui.l10n'));
+    const henkiloUiLocalisations = await http.get<L10n>(urls.url('henkilo-ui.l10n'));
     dispatch(receiveLocalisations(henkiloUiLocalisations));
 
     const localisationPalveluLocalisations = await http.get<Localisation[]>(

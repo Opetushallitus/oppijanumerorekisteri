@@ -15,10 +15,12 @@ import {
 import { getOrganisaatioOptionsAndFilter } from '../utilities/organisaatio.util';
 import { KayttooikeusOrganisaatiot } from '../types/domain/kayttooikeus/KayttooikeusPerustiedot.types';
 import { OrganisaatioHenkilo } from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
+import { Options } from 'react-select';
+import createFilterOptions from 'react-select-fast-filter-options';
 
 export type OmattiedotState = {
     readonly omattiedotLoading: boolean;
-    readonly data: any;
+    readonly data?: { oid: string };
     readonly initialized: boolean;
     readonly omattiedotOrganisaatiosLoading: boolean;
     readonly organisaatios: Array<OrganisaatioHenkilo>;
@@ -28,8 +30,8 @@ export type OmattiedotState = {
     readonly isOphVirkailija: boolean;
     readonly mfaProvider?: string;
     readonly idpEntityId?: string;
-    readonly organisaatioRyhmaOptions: Array<any>;
-    readonly organisaatioRyhmaFilter: Array<any>;
+    readonly organisaatioRyhmaOptions: Options<string>;
+    readonly organisaatioRyhmaFilter: ReturnType<createFilterOptions>;
     readonly organisaatiot: Array<KayttooikeusOrganisaatiot>;
     readonly henkilohakuOrganisaatiotLoading: boolean;
     readonly henkilohakuOrganisaatiot: Array<OrganisaatioHenkilo>;

@@ -18,7 +18,7 @@ import type {
     FailureAction,
 } from '../reducers/existence.reducer';
 import { statusToMessage } from '../reducers/existence.reducer';
-import { AppDispatch } from '../store';
+import { AppDispatch, RootState } from '../store';
 
 export const clearExistenceCheck = (): ClearAction => ({
     type: CLEAR_EXISTENCE_CHECK,
@@ -39,25 +39,26 @@ const requestExistenceCheckFailure = (status: number): FailureAction => ({
 
 const isSupportedResponseStatus = (status: number) => Object.keys(statusToMessage).includes(status.toString());
 
-export const doExistenceCheck = (payload: ExistenceCheckRequest) => async (dispatch: AppDispatch, state: () => any) => {
-    dispatch(requestExistenceCheck());
-    try {
-        const url = urls.url('oppijanumerorekisteri-service.henkilo.exists');
-        const [data, status] = await httpWithStatus.post<ExistenceCheckReponse>(url, payload);
-        if (isSupportedResponseStatus(status)) {
-            dispatch(requestExistenceCheckSuccess(data, status));
-        } else {
-            throw new Error();
+export const doExistenceCheck =
+    (payload: ExistenceCheckRequest) => async (dispatch: AppDispatch, state: () => RootState) => {
+        dispatch(requestExistenceCheck());
+        try {
+            const url = urls.url('oppijanumerorekisteri-service.henkilo.exists');
+            const [data, status] = await httpWithStatus.post<ExistenceCheckReponse>(url, payload);
+            if (isSupportedResponseStatus(status)) {
+                dispatch(requestExistenceCheckSuccess(data, status));
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            dispatch(requestExistenceCheckFailure(500));
+            dispatch(
+                addGlobalNotification({
+                    key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
+                    title: localizeWithState('KAYTTOOIKEUSRAPORTTI_ERROR', state()),
+                    type: NOTIFICATIONTYPES.ERROR,
+                    autoClose: 10000,
+                })
+            );
         }
-    } catch (error) {
-        dispatch(requestExistenceCheckFailure(500));
-        dispatch(
-            addGlobalNotification({
-                key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
-                title: localizeWithState('KAYTTOOIKEUSRAPORTTI_ERROR', state()),
-                type: NOTIFICATIONTYPES.ERROR,
-                autoClose: 10000,
-            })
-        );
-    }
-};
+    };

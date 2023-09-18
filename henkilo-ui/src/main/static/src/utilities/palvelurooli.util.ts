@@ -33,7 +33,7 @@ export const hasPalveluRooliByOrganisaatioOid = (
 };
 
 /*
- * Check if any given organisaatio contains any of the given palvelurooli
+ * Check if given organisaatio contains at least one of the given palvelurooli
  */
 export const hasAnyPalveluRooli = (
     organisaatiot: Array<KayttooikeusOrganisaatiot>,
@@ -45,7 +45,7 @@ export const hasAnyPalveluRooli = (
 };
 
 /*
- * Check if given organisaatio contains any of the given palveluRooli
+ * Check if given organisaatio contains at least one of the given palveluRooli
  */
 export const organisaatioContainsAnyPalveluRooli = (
     organisaatio: KayttooikeusOrganisaatiot,
@@ -57,7 +57,7 @@ export const organisaatioContainsAnyPalveluRooli = (
 };
 
 /*
- * Check if KayttooikeusOikeudet contains any of the given palvelurooli
+ * Check if KayttooikeusOikeudet contains at least one of the given palvelurooli
  */
 export const kayttooikeusMatchesAnyPalveluRooli = (
     kayttooikeus: KayttooikeusOikeudet,

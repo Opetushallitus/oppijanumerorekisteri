@@ -6,12 +6,12 @@ import { AppDispatch } from '../store';
 
 type PalvelutRequestAction = { type: string };
 type PalvelutSuccessAction = { type: string; payload: Array<Palvelu> };
-type PalvelutFailureAction = { type: string; error: any };
+type PalvelutFailureAction = { type: string; error: unknown };
 
 export type PalvelutAction = {
     type: string;
     payload?: Array<Palvelu>;
-    error?: any;
+    error?: unknown;
 };
 
 const requestPalvelut = (): PalvelutRequestAction => ({

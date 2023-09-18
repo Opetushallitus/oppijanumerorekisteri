@@ -11,7 +11,7 @@ import { AppDispatch } from '../store';
 export type PalveluKayttooikeusAction = {
     type: string;
     payload?: Array<PalveluKayttooikeus>;
-    error?: any;
+    error?: unknown;
 };
 
 const requestPalveluKayttooikeus = (): PalveluKayttooikeusAction => ({
