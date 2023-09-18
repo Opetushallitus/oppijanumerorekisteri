@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import Button from './Button';
 import { ValidationMessage } from '../../../types/validation.type';
 
 type Props = {
-    children: any;
+    children: ReactNode;
     validationMessages: {
         [key: string]: ValidationMessage;
     };
-    buttonAction: (arg0: any) => void;
+    buttonAction: (event: React.MouseEvent<HTMLElement>) => void;
     disabled?: boolean;
 };
 

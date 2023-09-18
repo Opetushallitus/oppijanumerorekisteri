@@ -36,7 +36,7 @@ type State = {
 };
 
 class PasswordPopupContent extends React.Component<Props, State> {
-    passwordInput: any;
+    passwordInput: HTMLInputElement;
 
     constructor(props: Props) {
         super(props);

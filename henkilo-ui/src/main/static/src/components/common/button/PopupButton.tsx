@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import './PopupButton.css';
 import onClickOutside from 'react-onclickoutside';
 import type CSS from 'csstype';
@@ -6,7 +6,7 @@ import type CSS from 'csstype';
 type Props = {
     popupTitle?: string; // Title/header for the popup
     popupContent: React.ReactNode; // React element as popup content
-    children: any; // Button text
+    children: ReactNode; // Button text
 
     toggle?: boolean;
     popupClass?: string; // css-classes for popup (see oph style guide)

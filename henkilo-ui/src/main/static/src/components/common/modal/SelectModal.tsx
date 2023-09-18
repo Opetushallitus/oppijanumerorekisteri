@@ -53,7 +53,7 @@ class SelectModal extends React.Component<SelectModalProps, State> {
         );
     }
 
-    _onOpen = (event: React.SyntheticEvent<HTMLButtonElement>): void => {
+    _onOpen = (event: React.MouseEvent<HTMLElement>): void => {
         event.preventDefault();
         this.setState({ visible: true });
     };

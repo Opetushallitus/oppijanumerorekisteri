@@ -17,7 +17,7 @@ type OwnProps = {
 };
 
 type DispatchProps = {
-    addGlobalNotification: (arg0: GlobalNotificationConfig) => any;
+    addGlobalNotification: (arg0: GlobalNotificationConfig) => void;
 };
 
 type Props = OwnProps & DispatchProps;

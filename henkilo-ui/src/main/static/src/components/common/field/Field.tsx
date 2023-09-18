@@ -118,7 +118,7 @@ class Field extends React.Component<Props, State> {
         );
     }
 
-    isValidEmailInputEvent(type: string, event: React.SyntheticEvent<HTMLButtonElement>) {
+    isValidEmailInputEvent(type: string, event: React.SyntheticEvent<HTMLInputElement>) {
         return type === 'email' && event.currentTarget.value !== '' && !validateEmail(event.currentTarget.value);
     }
 
