@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import './InfoPage.css';
 
 type InfoPageProps = {
-    children: any;
+    children: ReactNode;
     topicLocalised: string;
 };
 

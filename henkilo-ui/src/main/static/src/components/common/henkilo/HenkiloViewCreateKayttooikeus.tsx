@@ -3,7 +3,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../../store';
 import moment from 'moment';
-import scrollToComponent from 'react-scroll-to-component';
 import CKKohde from './createkayttooikeus/CKKohde';
 import CKKesto from './createkayttooikeus/CKKesto';
 import CKKayttooikeudet, { ValittuKayttooikeusryhma } from './createkayttooikeus/CKKayttooikeudet';
@@ -22,7 +21,7 @@ import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.redu
 type OwnProps = {
     vuosia: number;
     kayttooikeus: KayttooikeusRyhmaState;
-    existingKayttooikeusRef: object;
+    existingKayttooikeusRef: React.MutableRefObject<HTMLDivElement>;
     oidHenkilo: string;
     isPalvelukayttaja: boolean;
 };
@@ -59,7 +58,7 @@ type State = {
 class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
     initialKayttooikeusModel: () => KayttooikeusModel;
     initialState: State;
-    organisationAction: (arg0: any) => void;
+    organisationAction: (arg0: { value?: string; oid?: string; name?: string }) => void;
     close: (arg0: number) => void;
     kayttooikeudetAction: (arg0: ValittuKayttooikeusryhma) => void;
     createKayttooikeusAction: () => void;
@@ -189,9 +188,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
             // clear
             this.setState(this.initialState);
             // Scroll
-            scrollToComponent(this.props.existingKayttooikeusRef, {
-                align: 'top',
-            });
+            this.props.existingKayttooikeusRef.current?.scrollIntoView(true);
         };
 
         this.state = this.initialState;

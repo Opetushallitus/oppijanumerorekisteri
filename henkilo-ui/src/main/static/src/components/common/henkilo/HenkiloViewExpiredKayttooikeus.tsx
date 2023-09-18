@@ -217,7 +217,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
             anojaOid: this.props.oidHenkilo,
         };
         await this.props.createKayttooikeusanomus(anomusData);
-        const oid: any = path(['omattiedot', 'data', 'oid'], this.props);
+        const oid = path(['omattiedot', 'data', 'oid'], this.props);
         this.props.fetchAllKayttooikeusAnomusForHenkilo(oid);
     }
 

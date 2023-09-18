@@ -8,7 +8,7 @@ import { Localisations } from '../../../types/localisation.type';
 import { Locale } from '../../../types/locale.type';
 
 type OwnProps = {
-    selectOrganisaatio: OnChangeHandler<string, Options<string> | Option<string>>;
+    selectOrganisaatio: OnChangeHandler<string, Option<string>>;
     selectedOrganisaatioOid: string;
     placeholder?: string;
     clearable?: boolean;

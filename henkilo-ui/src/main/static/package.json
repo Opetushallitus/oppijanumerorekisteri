@@ -26,7 +26,6 @@
         "react-redux": "^8.0.5",
         "react-router": "3.2.6",
         "react-router-redux": "4.0.8",
-        "react-scroll-to-component": "1.0.2",
         "react-select-fast-filter-options": "0.2.3",
         "react-table": "6.7.4",
         "react-virtualized": "9.22.3",

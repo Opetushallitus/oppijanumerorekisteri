@@ -5,8 +5,8 @@ import Button from '../../button/Button';
 import { Localisations } from '../../../../types/localisation.type';
 
 type OwnProps = {
-    discardAction: () => any;
-    updateAction: () => any;
+    discardAction: () => void;
+    updateAction: () => void;
     isValidForm: boolean;
 };
 

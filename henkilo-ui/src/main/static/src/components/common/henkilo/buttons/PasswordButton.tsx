@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import CSS from 'csstype';
+
 import type { RootState } from '../../../../store';
 import type { NotificationsState } from '../../../../reducers/notifications.reducer';
 import PopupButton from '../../button/PopupButton';
@@ -8,7 +10,7 @@ import { removeNotification } from '../../../../actions/notifications.actions';
 import { Localisations } from '../../../../types/localisation.type';
 
 type OwnProps = {
-    styles: any;
+    styles: CSS.Properties;
     disabled?: boolean;
     oidHenkilo: string;
 };
@@ -19,7 +21,7 @@ type StateProps = {
 };
 
 type DispatchProps = {
-    removeNotification: (status: string, group: string, id: string) => any;
+    removeNotification: (status: string, group: string, id: string) => void;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;

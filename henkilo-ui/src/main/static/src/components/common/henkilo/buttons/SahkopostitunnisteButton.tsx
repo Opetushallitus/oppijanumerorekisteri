@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import CSS from 'csstype';
+
 import type { RootState } from '../../../../store';
 import { Localisations } from '../../../../types/localisation.type';
 import PopupButton from '../../button/PopupButton';
@@ -7,7 +9,7 @@ import SahkopostitunnistePopupContent from '../../button/SahkopostitunnistePopup
 
 type OwnProps = {
     oidHenkilo: string;
-    styles: any;
+    styles: CSS.Properties;
     disabled?: boolean;
 };
 

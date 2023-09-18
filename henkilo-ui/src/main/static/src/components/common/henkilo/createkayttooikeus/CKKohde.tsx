@@ -6,7 +6,7 @@ import { Localisations } from '../../../../types/localisation.type';
 import { Locale } from '../../../../types/locale.type';
 
 type Props = {
-    organisationAction: (arg0: any) => void;
+    organisationAction: (arg0: { value?: string; oid?: string; name?: string }) => void;
     organisationValue: string;
     L: Localisations;
     locale: Locale;

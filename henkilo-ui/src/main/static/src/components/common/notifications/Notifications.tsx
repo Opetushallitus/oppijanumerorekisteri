@@ -1,4 +1,6 @@
 import React from 'react';
+import CSS from 'csstype';
+
 import WideGreenNotification from './WideGreenNotification';
 import WideRedNotification from './WideRedNotification';
 import WideBlueNotification from './WideBlueNotification';
@@ -19,7 +21,7 @@ type Props = {
     notifications: Array<Notification>;
     L: Localisations;
     closeAction: (type: NotificationType, id: string | null | undefined) => void;
-    styles?: any;
+    styles?: CSS.Properties;
 };
 
 const Notifications = ({ notifications, L, closeAction, styles }: Props) => (
