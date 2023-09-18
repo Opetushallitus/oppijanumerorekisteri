@@ -10,8 +10,6 @@ import {
     FETCH_KAYTTAJATIETO_FAILURE,
     FETCH_KAYTTAJATIETO_REQUEST,
     FETCH_KAYTTAJATIETO_SUCCESS,
-    FETCH_HENKILO_ORGANISAATIOS_REQUEST,
-    FETCH_HENKILO_ORGANISAATIOS_SUCCESS,
     UPDATE_KAYTTAJATIETO_REQUEST,
     UPDATE_KAYTTAJATIETO_SUCCESS,
     UPDATE_KAYTTAJATIETO_FAILURE,
@@ -53,8 +51,6 @@ export type HenkiloState = {
     readonly kayttaja: Kayttaja;
     readonly henkiloOrgs: Array<any>;
     readonly kayttajatieto?: KayttajatiedotRead;
-    readonly henkiloOrganisaatiosLoading: boolean;
-    readonly henkiloOrganisaatios: Array<any>;
     readonly slaves: Array<any>;
     readonly slavesLoading: boolean;
     readonly unlinkingLoading: boolean;
@@ -80,8 +76,6 @@ const initialState: HenkiloState = {
     kayttaja: {} as Kayttaja,
     henkiloOrgs: [],
     kayttajatieto: undefined,
-    henkiloOrganisaatiosLoading: true,
-    henkiloOrganisaatios: [],
     slaves: [],
     slavesLoading: false,
     unlinkingLoading: false,
@@ -176,13 +170,6 @@ export const henkilo = (state: HenkiloState = initialState, action: any): Henkil
             return Object.assign({}, state, {
                 henkiloOrgsLoading: false,
                 henkiloOrgs: mapOrgHenkilosWithOrganisations(action.henkiloOrgs, action.organisations),
-            });
-        case FETCH_HENKILO_ORGANISAATIOS_REQUEST:
-            return Object.assign({}, state, { henkiloOrganisaatiosLoading: true });
-        case FETCH_HENKILO_ORGANISAATIOS_SUCCESS:
-            return Object.assign({}, state, {
-                henkiloOrganisaatiosLoading: false,
-                henkiloOrganisaatios: action.henkiloOrganisaatios,
             });
         case FETCH_HENKILO_MASTER_REQUEST:
             return Object.assign({}, state, { masterLoading: true });
