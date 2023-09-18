@@ -3,7 +3,6 @@ import { CREATE_HENKILOBYTOKEN_SUCCESS, FETCH_KUTSUBYTOKEN_FAILURE } from '../ac
 export type CasState = {
     authToken: string;
     temporaryTokenInvalid: boolean;
-    loginFailed?: any;
 };
 
 const cas = (state: CasState = { authToken: '', temporaryTokenInvalid: false }, action): CasState => {

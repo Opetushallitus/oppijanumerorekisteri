@@ -14,12 +14,9 @@ import {
     UPDATE_KAYTTAJATIETO_SUCCESS,
     UPDATE_KAYTTAJATIETO_FAILURE,
     UPDATE_HENKILO_REQUEST,
-    FETCH_HENKILO_SLAVES_REQUEST,
     FETCH_HENKILO_SLAVES_SUCCESS,
     FETCH_HENKILO_SLAVES_FAILURE,
-    UPDATE_HENKILO_UNLINK_REQUEST,
     UPDATE_HENKILO_UNLINK_SUCCESS,
-    UPDATE_HENKILO_UNLINK_FAILURE,
     FETCH_HENKILO_DUPLICATES_REQUEST,
     FETCH_HENKILO_DUPLICATES_SUCCESS,
     FETCH_HENKILO_DUPLICATES_FAILURE,
@@ -52,12 +49,8 @@ export type HenkiloState = {
     readonly henkiloOrgs: Array<any>;
     readonly kayttajatieto?: KayttajatiedotRead;
     readonly slaves: Array<any>;
-    readonly slavesLoading: boolean;
-    readonly unlinkingLoading: boolean;
     readonly duplicates: Array<HenkiloDuplicate>;
-    readonly ataruApplications: any;
     readonly duplicatesLoading: boolean;
-    readonly linkingLoading: boolean;
     readonly masterLoading: boolean;
     readonly master: any;
     readonly yksilointitiedotLoading: boolean;
@@ -77,18 +70,14 @@ const initialState: HenkiloState = {
     henkiloOrgs: [],
     kayttajatieto: undefined,
     slaves: [],
-    slavesLoading: false,
-    unlinkingLoading: false,
     duplicates: [],
     duplicatesLoading: false,
-    linkingLoading: false,
     masterLoading: true,
     master: {},
     yksilointitiedotLoading: false,
     yksilointitiedot: {},
     hakemuksetLoading: false,
     hakemukset: [],
-    ataruApplications: [],
 };
 
 const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
@@ -180,23 +169,14 @@ export const henkilo = (state: HenkiloState = initialState, action: any): Henkil
             });
         case FETCH_HENKILO_MASTER_FAILURE:
             return Object.assign({}, state, { masterLoading: false });
-        case FETCH_HENKILO_SLAVES_REQUEST:
-            return Object.assign({}, state, { slavesLoading: true });
         case FETCH_HENKILO_SLAVES_SUCCESS:
-            return Object.assign({}, state, {
-                slavesLoading: false,
-                slaves: action.slaves,
-            });
+            return Object.assign({}, state, { slaves: action.slaves });
         case FETCH_HENKILO_SLAVES_FAILURE:
-            return Object.assign({}, state, { slavesLoading: false, slaves: [] });
-        case UPDATE_HENKILO_UNLINK_REQUEST:
-            return Object.assign({}, state, { unlinkingLoading: true });
+            return Object.assign({}, state, { slaves: [] });
         case UPDATE_HENKILO_UNLINK_SUCCESS: {
             const slaves = state.slaves.filter((slave) => slave.oidHenkilo !== action.unlinkedSlaveOid);
-            return Object.assign({}, state, { unlinkingLoading: false, slaves });
+            return Object.assign({}, state, { slaves });
         }
-        case UPDATE_HENKILO_UNLINK_FAILURE:
-            return Object.assign({}, state, { unlinkingLoading: false });
         case FETCH_HENKILO_DUPLICATES_REQUEST:
             return Object.assign({}, state, { duplicatesLoading: true });
         case FETCH_HENKILO_DUPLICATES_SUCCESS:

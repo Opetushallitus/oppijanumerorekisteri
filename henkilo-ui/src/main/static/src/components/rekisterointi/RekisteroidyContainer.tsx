@@ -21,7 +21,6 @@ type StateProps = {
     temporaryToken: string | string[];
     tokenLoading: boolean;
     kutsu: any;
-    loginFailed: any;
     loggedIn: string;
     omattiedotLoading: boolean;
     authToken: string;
@@ -77,7 +76,6 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => {
         temporaryToken: ownProps.location.query['temporaryKutsuToken'],
         tokenLoading: state.kutsuList.kutsuByTokenLoading,
         kutsu: state.kutsuList.kutsuByToken,
-        loginFailed: state.cas.loginFailed,
         loggedIn: state.omattiedot.data.oid,
         omattiedotLoading: state.omattiedot.omattiedotLoading,
         authToken: state.cas.authToken,

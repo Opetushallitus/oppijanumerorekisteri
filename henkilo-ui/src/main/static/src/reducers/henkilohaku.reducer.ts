@@ -3,8 +3,6 @@ import {
     HENKILOHAKU_FAILURE,
     HENKILOHAKU_REQUEST,
     HENKILOHAKU_SUCCESS,
-    HENKILOHAKUCOUNT_FAILURE,
-    HENKILOHAKUCOUNT_REQUEST,
     HENKILOHAKUCOUNT_SUCCESS,
     UPDATE_HENKILOHAKU_FILTERS,
 } from '../actions/actiontypes';
@@ -14,7 +12,6 @@ import { HenkilohakuResult } from '../types/domain/kayttooikeus/HenkilohakuResul
 export type HenkilohakuState = {
     readonly filters: HenkilohakuCriteria;
     readonly henkilohakuLoading: boolean;
-    readonly henkilohakuCountLoading: boolean;
     readonly resultCount: number;
     readonly result: Array<HenkilohakuResult>;
 };
@@ -27,7 +24,6 @@ const initialState: HenkilohakuState = {
         dublicates: false,
     },
     henkilohakuLoading: false,
-    henkilohakuCountLoading: false,
     resultCount: 0,
     result: [],
 };
@@ -44,16 +40,11 @@ export const henkilohakuState = (state = initialState, action: any): Henkilohaku
             };
         case HENKILOHAKU_FAILURE:
             return { ...state, henkilohakuLoading: false };
-        case HENKILOHAKUCOUNT_REQUEST:
-            return { ...state, henkilohakuCountLoading: true };
         case HENKILOHAKUCOUNT_SUCCESS:
             return {
                 ...state,
                 resultCount: action.count,
-                henkilohakuCountLoading: false,
             };
-        case HENKILOHAKUCOUNT_FAILURE:
-            return { ...state, henkilohakuCountLoading: false };
         case UPDATE_HENKILOHAKU_FILTERS:
             return { ...state, filters: action.filters };
         case CLEAR_HENKILOHAKU:
