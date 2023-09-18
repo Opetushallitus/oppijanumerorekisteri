@@ -30,7 +30,7 @@ type Props = {
     henkilo: HenkiloState;
     kayttooikeus: KayttooikeusRyhmaState;
     koodisto: KoodistoState;
-    createBasicInfo?: (arg0: boolean, arg1: (arg0: any) => void, arg2: (arg0: any) => void, arg3: any) => any;
+    createBasicInfo?: () => ReactNode;
     readOnlyButtons?: ReactNode;
     passivoiHenkiloOrg?: (henkiloOid: string, organisaatioOid: string) => void;
     organisaatioKayttooikeusryhmat?: OrganisaatioKayttooikeusryhmatState;

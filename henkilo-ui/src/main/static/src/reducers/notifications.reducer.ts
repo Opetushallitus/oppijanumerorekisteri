@@ -8,6 +8,7 @@ import {
     YKSILOI_HENKILO_FAILURE,
     CREATE_HENKILOBYTOKEN_FAILURE,
     YKSILOI_PUUTTUVAT_TIEDOT_FAILURE,
+    RESET_BUTTON_NOTIFICATIONS,
 } from '../actions/actiontypes';
 
 export type Notification = {
@@ -149,6 +150,11 @@ export const notifications = (
                 ],
             };
         }
+        case RESET_BUTTON_NOTIFICATIONS:
+            return {
+                ...state,
+                buttonNotifications: [],
+            };
         default:
             return state;
     }

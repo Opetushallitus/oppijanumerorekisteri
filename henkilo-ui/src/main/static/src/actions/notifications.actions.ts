@@ -1,4 +1,4 @@
-import { NOTIFICATION_REMOVED } from './actiontypes';
+import { NOTIFICATION_REMOVED, RESET_BUTTON_NOTIFICATIONS } from './actiontypes';
 
 export const removeNotification = (status, group, id) => ({
     type: NOTIFICATION_REMOVED,
@@ -6,3 +6,5 @@ export const removeNotification = (status, group, id) => ({
     group,
     id,
 });
+
+export const resetButtonNotifications = () => ({ type: RESET_BUTTON_NOTIFICATIONS });

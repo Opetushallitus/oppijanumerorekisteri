@@ -22,20 +22,22 @@ import { fetchOmattiedot, updateAnomusilmoitus } from '../../../../actions/omatt
 import moment from 'moment';
 import PropertySingleton from '../../../../globals/PropertySingleton';
 import { clone } from 'ramda';
+import { resetButtonNotifications } from '../../../../actions/notifications.actions';
 
 type OwnProps = {
     readOnly?: boolean;
-    basicInfo?: (arg0: boolean, arg1: (arg0: any) => void, arg2: (arg0: any) => void, arg3: any) => any;
+    basicInfo?: () => ReactNode;
     readOnlyButtons?: ReactNode;
     oidHenkilo: string;
     view: string;
 };
 
 type DispatchProps = {
-    updateHenkiloAndRefetch: (arg0: any, arg1: boolean) => void;
+    updateHenkiloAndRefetch: (arg0: Henkilo, arg1: boolean) => void;
     updateAndRefetchKayttajatieto: (henkiloOid: string, kayttajatunnus: string) => void;
-    fetchOmattiedot: (arg0: boolean | null | undefined) => any;
-    updateAnomusilmoitus: (arg0: boolean) => any;
+    fetchOmattiedot: (arg0: boolean | null | undefined) => void;
+    updateAnomusilmoitus: (arg0: boolean) => void;
+    resetButtonNotifications: () => void;
 };
 
 type StateProps = {
@@ -59,7 +61,7 @@ type StateProps = {
 type Props = OwnProps & StateProps & DispatchProps;
 
 type State = {
-    henkiloUpdate: any;
+    henkiloUpdate: Henkilo;
     readOnly: boolean;
     showPassive: boolean;
 };
@@ -79,7 +81,7 @@ class UserContentContainer extends React.Component<Props, State> {
     }
 
     componentWillReceiveProps(nextProps: Props) {
-        const henkiloUpdate: any = clone(nextProps.henkilo.henkilo);
+        const henkiloUpdate = clone(nextProps.henkilo.henkilo);
         henkiloUpdate.anomusilmoitus = nextProps.omattiedot && nextProps.omattiedot.anomusilmoitus;
 
         this.setState({
@@ -151,6 +153,7 @@ class UserContentContainer extends React.Component<Props, State> {
     }
 
     _edit() {
+        this.props.resetButtonNotifications();
         this.setState({ readOnly: false });
     }
 
@@ -198,7 +201,7 @@ class UserContentContainer extends React.Component<Props, State> {
         this.setState({ readOnly: true });
     }
 
-    async anomus(henkiloUpdate: any) {
+    async anomus(henkiloUpdate: Henkilo) {
         if (this.props.view === 'OMATTIEDOT' && this.props.omattiedot.isAdmin) {
             const initialAnomusilmoitusValue = this.props.omattiedot.anomusilmoitus;
             const url = urls.url('kayttooikeus-service.henkilo.anomusilmoitus', henkiloUpdate.oidHenkilo);
@@ -220,7 +223,7 @@ class UserContentContainer extends React.Component<Props, State> {
         }
     }
 
-    _updateModelField(event: any) {
+    _updateModelField(event: React.SyntheticEvent<HTMLInputElement>) {
         this.setState({
             henkiloUpdate: StaticUtils.updateFieldByDotAnnotation(this.state.henkiloUpdate, event),
         });
@@ -277,4 +280,5 @@ export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateT
     updateAndRefetchKayttajatieto,
     fetchOmattiedot,
     updateAnomusilmoitus,
+    resetButtonNotifications,
 })(UserContentContainer);

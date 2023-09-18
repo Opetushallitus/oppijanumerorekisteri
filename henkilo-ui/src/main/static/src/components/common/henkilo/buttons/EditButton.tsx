@@ -5,7 +5,7 @@ import Button from '../../button/Button';
 import { Localisations } from '../../../../types/localisation.type';
 
 type OwnProps = {
-    editAction: () => any;
+    editAction: () => void;
     disabled?: boolean;
 };
 
@@ -24,4 +24,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(EditButton);
+export default connect<StateProps, undefined, OwnProps, RootState>(mapStateToProps)(EditButton);

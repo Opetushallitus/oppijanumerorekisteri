@@ -56,6 +56,7 @@ import { localizeWithState } from '../utilities/localisation.util';
 import { GlobalNotificationConfig } from '../types/notification.types';
 import { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
 import { AppDispatch, RootState } from '../store';
+import { Henkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
 
 const requestHenkilo = (oid) => ({ type: FETCH_HENKILO_REQUEST, oid });
 const receiveHenkilo = (json) => ({
@@ -84,7 +85,7 @@ const receiveHenkiloUpdate = (oid) => ({
 });
 const errorHenkiloUpdate = (error) => ({ type: UPDATE_HENKILO_FAILURE, error });
 export const updateHenkiloAndRefetch =
-    (payload, errorNotificationConfig) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    (payload: Henkilo, errorNotificationConfig) => async (dispatch: AppDispatch, getState: () => RootState) => {
         dispatch(requestHenkiloUpdate(payload.oidHenkilo));
         const url = urls.url('oppijanumerorekisteri-service.henkilo');
         try {

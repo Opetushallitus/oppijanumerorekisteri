@@ -35,6 +35,8 @@ export type Henkilo = {
     huoltaja: Henkilo;
     yhteystiedotRyhma: Array<YhteystietoRyhma>;
     yksilointivirheet: Array<Yksilointivirhe>;
+    anomusilmoitus?: boolean;
+    kayttajanimi?: string;
 };
 
 export type HenkiloCreate = {
