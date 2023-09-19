@@ -33,14 +33,13 @@ import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
 import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 import { localizeTextGroup } from '../../../utilities/localisation.util';
+import { RyhmatState } from '../../../reducers/ryhmat.reducer';
 
 type OwnProps = {
     oidHenkilo: string;
     omattiedot?: OmattiedotState;
-    organisaatioCache: OrganisaatioCache;
     isOmattiedot: boolean;
     vuosia: number;
-    ryhmas?: any;
 };
 
 type StateProps = {
@@ -48,9 +47,11 @@ type StateProps = {
     locale: Locale;
     henkilo: HenkiloState;
     kayttooikeus: KayttooikeusRyhmaState;
+    organisaatioCache: OrganisaatioCache;
     notifications: {
         existingKayttooikeus: any[];
     };
+    ryhmas?: RyhmatState;
 };
 
 type DispatchProps = {
@@ -421,6 +422,8 @@ const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
     kayttooikeus: state.kayttooikeus,
     notifications: state.notifications,
+    organisaatioCache: state.organisaatio.cached,
+    ryhmas: state.ryhmatState,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {

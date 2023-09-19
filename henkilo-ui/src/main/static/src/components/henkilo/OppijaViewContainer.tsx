@@ -1,85 +1,39 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import type { RootState } from '../../store';
-import { fetchHenkilo, fetchHenkiloSlaves, fetchHenkiloYksilointitieto } from '../../actions/henkilo.actions';
+import React, { useEffect } from 'react';
+
+import { useAppDispatch } from '../../store';
+import {
+    clearHenkilo,
+    fetchHenkilo,
+    fetchHenkiloSlaves,
+    fetchHenkiloYksilointitieto,
+} from '../../actions/henkilo.actions';
 import {
     fetchKansalaisuusKoodisto,
     fetchKieliKoodisto,
     fetchYhteystietotyypitKoodisto,
 } from '../../actions/koodisto.actions';
 import HenkiloViewPage from './HenkiloViewPage';
-import { HenkiloState } from '../../reducers/henkilo.reducer';
-import { L10n } from '../../types/localisation.type';
-import { Locale } from '../../types/locale.type';
-import { KoodistoState } from '../../reducers/koodisto.reducer';
-import { getEmptyKayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma.reducer';
 
-type OwnProps = {
+type Props = {
     oidHenkilo: string;
 };
 
-type StateProps = {
-    henkilo: HenkiloState;
-    koodisto: KoodistoState;
-    l10n: L10n;
-    locale: Locale;
+const OppijaViewContainer = ({ oidHenkilo }: Props) => {
+    const dispatch = useAppDispatch();
+    useEffect(() => {
+        const fetchAllData = async () => {
+            dispatch<any>(clearHenkilo());
+            await dispatch<any>(fetchHenkilo(oidHenkilo));
+            dispatch<any>(fetchHenkiloYksilointitieto(oidHenkilo));
+            dispatch<any>(fetchHenkiloSlaves(oidHenkilo));
+            dispatch<any>(fetchYhteystietotyypitKoodisto());
+            dispatch<any>(fetchKieliKoodisto());
+            dispatch<any>(fetchKansalaisuusKoodisto());
+        };
+        fetchAllData();
+    }, [oidHenkilo]);
+
+    return <HenkiloViewPage oidHenkilo={oidHenkilo} view="OPPIJA" />;
 };
 
-type DispatchProps = {
-    fetchHenkiloSlaves: (oid: string) => void;
-    fetchHenkilo: (oid: string) => void;
-    fetchYhteystietotyypitKoodisto: () => void;
-    fetchKieliKoodisto: () => void;
-    fetchKansalaisuusKoodisto: () => void;
-    fetchHenkiloYksilointitieto: (arg0: string) => void;
-};
-
-type Props = OwnProps & StateProps & DispatchProps;
-
-class OppijaViewContainer extends React.Component<Props> {
-    async componentDidMount() {
-        await this.fetchOppijaViewData(this.props.oidHenkilo);
-    }
-
-    async componentWillReceiveProps(nextProps: Props) {
-        if (nextProps.oidHenkilo !== this.props.oidHenkilo) {
-            await this.fetchOppijaViewData(nextProps.oidHenkilo);
-        }
-    }
-
-    async fetchOppijaViewData(oid: string) {
-        await this.props.fetchHenkilo(oid);
-        this.props.fetchHenkiloYksilointitieto(oid);
-        this.props.fetchHenkiloSlaves(oid);
-        this.props.fetchYhteystietotyypitKoodisto();
-        this.props.fetchKieliKoodisto();
-        this.props.fetchKansalaisuusKoodisto();
-    }
-
-    render() {
-        return (
-            <HenkiloViewPage
-                {...this.props}
-                kayttooikeus={getEmptyKayttooikeusRyhmaState()}
-                organisaatioCache={{}}
-                view={'OPPIJA'}
-            />
-        );
-    }
-}
-
-const mapStateToProps = (state: RootState): StateProps => ({
-    henkilo: state.henkilo,
-    koodisto: state.koodisto,
-    l10n: state.l10n.localisations,
-    locale: state.locale,
-});
-
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    fetchHenkilo,
-    fetchHenkiloSlaves,
-    fetchYhteystietotyypitKoodisto,
-    fetchHenkiloYksilointitieto,
-    fetchKieliKoodisto,
-    fetchKansalaisuusKoodisto,
-})(OppijaViewContainer);
+export default OppijaViewContainer;

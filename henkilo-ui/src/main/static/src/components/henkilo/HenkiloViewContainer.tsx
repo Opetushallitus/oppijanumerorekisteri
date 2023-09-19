@@ -9,10 +9,9 @@ import VirkailijaViewContainer from './VirkailijaViewContainer';
 import OppijaViewContainer from './OppijaViewContainer';
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
-import { L10n } from '../../types/localisation.type';
-import { Locale } from '../../types/locale.type';
 import Loader from '../common/icons/Loader';
 import { fetchOmattiedot } from '../../actions/omattiedot.actions';
+import { useLocalisations } from '../../selectors';
 
 type OwnProps = {
     router: RouteActions;
@@ -24,15 +23,14 @@ type OwnProps = {
  * Henkilo-näkymä. Päätellään näytetäänkö admin/virkailija/oppija -versio henkilöstä, vai siirrytäänkö omattiedot-sivulle
  */
 const HenkiloViewContainer = ({ router, location, params }: OwnProps) => {
-    const l10n = useSelector<RootState, L10n>((state) => state.l10n.localisations);
-    const locale = useSelector<RootState, Locale>((state) => state.locale);
+    const { L } = useLocalisations();
     const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
-    const { oid, henkiloType } = params;
+    const { oid } = params;
     const dispatch = useAppDispatch();
 
     useEffect(() => {
         dispatch<any>(fetchOmattiedot());
-        if (oid && omattiedot.data?.oid && omattiedot.data?.oid === oid) {
+        if (oid && omattiedot.data?.oid === oid) {
             router.replace('/omattiedot');
         }
     }, [omattiedot]);
@@ -41,16 +39,14 @@ const HenkiloViewContainer = ({ router, location, params }: OwnProps) => {
     if (!omattiedot.data || omattiedot.omattiedotLoading) {
         return <Loader />;
     } else if (omattiedot.isAdmin) {
-        return <AdminViewContainer router={router} oidHenkilo={oid} henkiloType={henkiloType} />;
+        return <AdminViewContainer oidHenkilo={oid} />;
     } else if (view === 'virkailija') {
         return <VirkailijaViewContainer oidHenkilo={oid} />;
     } else if (view === 'oppija') {
         return <OppijaViewContainer oidHenkilo={oid} />;
     }
 
-    return (
-        <LocalNotification type={NOTIFICATIONTYPES.WARNING} title={l10n[locale]['HENKILO_SIVU_VIRHE']} toggle={true} />
-    );
+    return <LocalNotification type={NOTIFICATIONTYPES.WARNING} title={L['HENKILO_SIVU_VIRHE']} toggle={true} />;
 };
 
 export default HenkiloViewContainer;

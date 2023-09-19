@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 
 import DuplikaatitApplicationsPopup from './DuplikaatitApplicationsPopup';
 import DuplikaatitPersonOtherApplications from './DuplikaatitPersonOtherApplications';
-import type { L10n } from '../../../types/localisation.type';
 import type { Locale } from '../../../types/locale.type';
 import type { KoodistoState, KoodistoStateKoodi } from '../../../reducers/koodisto.reducer';
 import type { DuplikaatitHakemus } from '../../../types/duplikaatithakemus.types';
@@ -14,6 +13,7 @@ import type { HenkiloDuplicate } from '../../../types/domain/oppijanumerorekiste
 import Button from '../../common/button/Button';
 import { LinkRelation } from './HenkiloViewDuplikaatit';
 import { RootState } from '../../../store';
+import { useLocalisations } from '../../../selectors';
 
 import './DuplikaatitPerson.css';
 
@@ -44,9 +44,7 @@ const sukupuolet = {
 const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
     const { henkilo, master, henkiloType, vainLuku, isMaster, canForceLink, setLink } = props;
     const koodisto = useSelector<RootState, KoodistoState>((state) => state.koodisto);
-    const l10n = useSelector<RootState, L10n>((state) => state.l10n.localisations);
-    const locale = useSelector<RootState, Locale>((state) => state.locale);
-    const L = l10n[locale];
+    const { L, locale } = useLocalisations();
     const hakemukset = henkilo.hakemukset ? henkilo.hakemukset.map(_parseHakemus(koodisto, locale)) : [];
     const hakemus = hakemukset.shift();
     const canLinkDuplicateToMaster =

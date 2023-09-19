@@ -7,8 +7,6 @@ import Button from '../../common/button/Button';
 import DuplikaatitPerson from './DuplikaatitPerson';
 import Loader from '../../common/icons/Loader';
 import { enabledDuplikaattiView } from '../../navigation/NavigationTabs';
-import type { Locale } from '../../../types/locale.type';
-import type { L10n } from '../../../types/localisation.type';
 import { LocalNotification } from '../../common/Notification/LocalNotification';
 import { NOTIFICATIONTYPES } from '../../common/Notification/notificationtypes';
 import type {
@@ -23,6 +21,7 @@ import { usePostLinkHenkilosMutation } from '../../../api/oppijanumerorekisteri'
 
 import './HenkiloViewDuplikaatit.css';
 import { isHenkiloValidForYksilointi } from '../../../validation/YksilointiValidator';
+import { useLocalisations } from '../../../selectors';
 
 export type LinkRelation = {
     master: HenkiloDuplicate;
@@ -39,9 +38,7 @@ type Props = {
 
 const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, router, oidHenkilo }: Props) => {
     const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
-    const l10n = useSelector<RootState, L10n>((state) => state.l10n.localisations);
-    const locale = useSelector<RootState, Locale>((state) => state.locale);
-    const L = l10n[locale];
+    const { L } = useLocalisations();
     const [linkObj, setLink] = useState<LinkRelation>();
     const [postLinkHenkilos] = usePostLinkHenkilosMutation();
     const canForceLink = hasAnyPalveluRooli(omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_YKSILOINNIN_PURKU']);

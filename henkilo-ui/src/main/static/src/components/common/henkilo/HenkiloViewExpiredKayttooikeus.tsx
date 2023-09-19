@@ -23,16 +23,20 @@ import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 import { localizeTextGroup } from '../../../utilities/localisation.util';
+import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
 
 type OwnProps = {
+    isOmattiedot: boolean;
+    oidHenkilo: string;
+};
+
+type StateProps = {
     l10n: L10n;
     locale: Locale;
-    organisaatioCache: any;
+    organisaatioCache: OrganisaatioCache;
     kayttooikeus: KayttooikeusRyhmaState;
-    isOmattiedot: boolean;
     henkilo: HenkiloState;
-    oidHenkilo: string;
-    omattiedot?: OmattiedotState;
+    omattiedot: OmattiedotState;
 };
 
 type DispatchProps = {
@@ -40,7 +44,7 @@ type DispatchProps = {
     fetchAllKayttooikeusAnomusForHenkilo: (arg0: string) => void;
 };
 
-type Props = OwnProps & DispatchProps;
+type Props = OwnProps & DispatchProps & StateProps;
 
 type State = {
     emailOptions: Array<EmailOption>;
@@ -250,7 +254,16 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
     }
 }
 
-export default connect<object, DispatchProps, OwnProps, RootState>(undefined, {
+const mapStateToProps = (state: RootState): StateProps => ({
+    l10n: state.l10n.localisations,
+    locale: state.locale,
+    organisaatioCache: state.organisaatio.cached,
+    kayttooikeus: state.kayttooikeus,
+    henkilo: state.henkilo,
+    omattiedot: state.omattiedot,
+});
+
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     createKayttooikeusanomus,
     fetchAllKayttooikeusAnomusForHenkilo,
 })(HenkiloViewExpiredKayttooikeus);

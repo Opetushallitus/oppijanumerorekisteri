@@ -1,5 +1,6 @@
 import React, { ReactNode, useRef } from 'react';
-import { Locale } from '../../types/locale.type';
+import { useSelector } from 'react-redux';
+
 import UserContentContainer from '../common/henkilo/usercontent/UserContentContainer';
 import HenkiloViewOrganisationContent from '../common/henkilo/HenkiloViewOrganisationContent';
 import HenkiloViewExistingKayttooikeus from '../common/henkilo/HenkiloViewExistingKayttooikeus';
@@ -9,71 +10,50 @@ import HenkiloViewCreateKayttooikeus from '../common/henkilo/HenkiloViewCreateKa
 import Loader from '../common/icons/Loader';
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent';
 import StaticUtils from '../common/StaticUtils';
-import { L10n } from '../../types/localisation.type';
 import HenkiloViewCreateKayttooikeusanomus from '../common/henkilo/HenkiloViewCreateKayttooikeusanomus';
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
-import { OrganisaatioCache, OrganisaatioState } from '../../reducers/organisaatio.reducer';
-import { OmattiedotState } from '../../reducers/omattiedot.reducer';
-import { RyhmatState } from '../../reducers/ryhmat.reducer';
-import { HenkiloState } from '../../reducers/henkilo.reducer';
-import { OrganisaatioKayttooikeusryhmatState } from '../../reducers/organisaatiokayttooikeusryhmat.reducer';
-import { KayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma.reducer';
-import { KoodistoState } from '../../reducers/koodisto.reducer';
 import Mfa from './Mfa';
-import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
+import { RootState } from '../../store';
+import { useLocalisations } from '../../selectors';
+import { HenkiloState } from '../../reducers/henkilo.reducer';
+import { KoodistoState } from '../../reducers/koodisto.reducer';
+import { OrganisaatioKayttooikeusryhmatState } from '../../reducers/organisaatiokayttooikeusryhmat.reducer';
+import { RyhmatState } from '../../reducers/ryhmat.reducer';
+import { KayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma.reducer';
 
 export type View = 'OMATTIEDOT' | 'VIRKAILIJA' | 'ADMIN' | 'OPPIJA';
 type Props = {
-    l10n: L10n;
-    locale: Locale;
-    updateHenkiloAndRefetch?: (arg0: Henkilo) => void;
-    updateAndRefetchKayttajatieto?: (henkiloOid: string, kayttajatunnus: string) => void;
-    henkilo: HenkiloState;
-    kayttooikeus: KayttooikeusRyhmaState;
-    koodisto: KoodistoState;
     createBasicInfo?: () => ReactNode;
     readOnlyButtons?: ReactNode;
-    passivoiHenkiloOrg?: (henkiloOid: string, organisaatioOid: string) => void;
-    organisaatioKayttooikeusryhmat?: OrganisaatioKayttooikeusryhmatState;
-    omattiedot?: OmattiedotState;
-    fetchAllKayttooikeusAnomusForHenkilo?: (arg0: string) => void;
     oidHenkilo: string;
     view: View;
-    organisaatios?: OrganisaatioState;
-    organisaatioCache: OrganisaatioCache;
-    ryhmas?: RyhmatState;
 };
 
 const HenkiloViewPage = (props: Props) => {
+    const { L, locale } = useLocalisations();
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
+    const koodisto = useSelector<RootState, KoodistoState>((state) => state.koodisto);
+    const OrganisaatioKayttooikeusryhmat = useSelector<RootState, OrganisaatioKayttooikeusryhmatState>(
+        (state) => state.OrganisaatioKayttooikeusryhmat
+    );
+    const ryhmatState = useSelector<RootState, RyhmatState>((state) => state.ryhmatState);
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
-    const {
-        henkilo,
-        view,
-        kayttooikeus,
-        koodisto,
-        locale,
-        l10n,
-        organisaatioKayttooikeusryhmat,
-        oidHenkilo,
-        createBasicInfo,
-        readOnlyButtons,
-        ryhmas,
-    } = props;
-    const L = l10n[locale];
+    const { view, oidHenkilo, createBasicInfo, readOnlyButtons } = props;
     if (henkilo.henkiloKayttoEstetty) {
-        return <VirheKayttoEstetty L={l10n[locale]} />;
+        return <VirheKayttoEstetty L={L} />;
     }
 
     const _parseRyhmaOptions = (): Array<{ label: string; value: string }> => {
         return (
-            ryhmas?.ryhmas?.map((ryhma) => ({
+            ryhmatState?.ryhmas?.map((ryhma) => ({
                 label: ryhma.nimi[locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
                 value: ryhma.oid,
             })) ?? []
         );
     };
 
-    const kayttooikeusryhmat = organisaatioKayttooikeusryhmat?.kayttooikeusryhmat ?? [];
+    const kayttooikeusryhmat = OrganisaatioKayttooikeusryhmat?.kayttooikeusryhmat ?? [];
 
     return (
         <div>
@@ -98,17 +78,13 @@ const HenkiloViewPage = (props: Props) => {
                     {henkilo.henkiloLoading || henkilo.kayttajaLoading || koodisto.yhteystietotyypitKoodistoLoading ? (
                         <Loader />
                     ) : (
-                        <HenkiloViewContactContent {...props} readOnly={true} />
+                        <HenkiloViewContactContent view={view} readOnly={true} />
                     )}
                 </div>
             )}
             {view !== 'OMATTIEDOT' && view !== 'OPPIJA' && (
                 <div className="wrapper">
-                    {henkilo.henkiloOrgsLoading ? (
-                        <Loader />
-                    ) : (
-                        <HenkiloViewOrganisationContent {...props} readOnly={true} />
-                    )}
+                    {henkilo.henkiloOrgsLoading ? <Loader /> : <HenkiloViewOrganisationContent readOnly={true} />}
                 </div>
             )}
             {view !== 'OPPIJA' && (
@@ -117,9 +93,8 @@ const HenkiloViewPage = (props: Props) => {
                         <Loader />
                     ) : (
                         <HenkiloViewExistingKayttooikeus
-                            {...props}
                             vuosia={StaticUtils.getKayttooikeusKestoVuosissa(henkilo.kayttaja)}
-                            oidHenkilo={henkilo.henkilo.oidHenkilo}
+                            oidHenkilo={oidHenkilo}
                             isOmattiedot={view === 'OMATTIEDOT'}
                         />
                     )}
@@ -130,7 +105,10 @@ const HenkiloViewPage = (props: Props) => {
                     {kayttooikeus.kayttooikeusAnomusLoading ? (
                         <Loader />
                     ) : (
-                        <HenkiloViewOpenKayttooikeusanomus {...props} isOmattiedot={view === 'OMATTIEDOT'} />
+                        <HenkiloViewOpenKayttooikeusanomus
+                            kayttooikeus={kayttooikeus}
+                            isOmattiedot={view === 'OMATTIEDOT'}
+                        />
                     )}
                 </div>
             )}
@@ -140,7 +118,6 @@ const HenkiloViewPage = (props: Props) => {
                         <Loader />
                     ) : (
                         <HenkiloViewExpiredKayttooikeus
-                            {...props}
                             oidHenkilo={henkilo.henkilo.oidHenkilo}
                             isOmattiedot={view === 'OMATTIEDOT'}
                         />
@@ -150,7 +127,7 @@ const HenkiloViewPage = (props: Props) => {
             {view !== 'OMATTIEDOT' && view !== 'OPPIJA' && (
                 <div className="wrapper">
                     <HenkiloViewCreateKayttooikeus
-                        {...props}
+                        oidHenkilo={oidHenkilo}
                         vuosia={StaticUtils.getKayttooikeusKestoVuosissa(henkilo.kayttaja)}
                         existingKayttooikeusRef={existingKayttooikeusRef}
                         isPalvelukayttaja={henkilo.kayttaja.kayttajaTyyppi === 'PALVELU'}
@@ -160,7 +137,6 @@ const HenkiloViewPage = (props: Props) => {
             {view === 'OMATTIEDOT' && (
                 <div className="wrapper">
                     <HenkiloViewCreateKayttooikeusanomus
-                        {...props}
                         ryhmaOptions={_parseRyhmaOptions.call(this)}
                         kayttooikeusryhmat={kayttooikeusryhmat}
                     />

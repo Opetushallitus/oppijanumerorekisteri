@@ -1,12 +1,14 @@
 import * as React from 'react';
-import Table from '../table/Table';
 import moment from 'moment';
+import { connect } from 'react-redux';
 import type { Moment } from 'moment';
 import DatePicker from 'react-datepicker';
+import { urls } from 'oph-urls-js';
+
+import Table from '../table/Table';
 import StaticUtils from '../StaticUtils';
 import MyonnaButton from './buttons/MyonnaButton';
 import Button from '../button/Button';
-import { urls } from 'oph-urls-js';
 import { http } from '../../../http';
 import { toLocalizedText } from '../../../localizabletext';
 import PopupButton from '../button/PopupButton';
@@ -26,6 +28,11 @@ import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.redu
 import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 import { HenkilonNimi } from '../../../types/domain/kayttooikeus/HenkilonNimi';
+import { RootState } from '../../../store';
+import {
+    fetchAllKayttooikeusAnomusForHenkilo,
+    updateHaettuKayttooikeusryhma,
+} from '../../../actions/kayttooikeusryhma.actions';
 
 export type KayttooikeusryhmaData = {
     voimassaPvm: string;
@@ -52,21 +59,8 @@ type State = {
     accessRight: AccessRight | null;
 };
 
-type Props = {
-    l10n: L10n;
-    locale: Locale;
-    updateHaettuKayttooikeusryhma?: (
-        arg0: number,
-        arg1: string,
-        arg2: string,
-        arg3: string,
-        arg4: HenkilonNimi,
-        arg5: string
-    ) => Promise<void>;
-    isOmattiedot?: boolean;
-    omattiedot?: OmattiedotState;
-    kayttooikeus: KayttooikeusRyhmaState;
-    organisaatioCache: OrganisaatioCache;
+type OwnProps = {
+    isOmattiedot: boolean;
     isAnomusView?: boolean;
     manualSortSettings?: {
         manual: boolean;
@@ -79,9 +73,38 @@ type Props = {
     };
     tableLoading?: boolean;
     striped?: boolean;
-    fetchAllKayttooikeusAnomusForHenkilo?: (arg0: string) => void;
     piilotaOtsikko?: boolean;
+    kayttooikeus: KayttooikeusRyhmaState;
+    updateHaettuKayttooikeusryhmaAlt?: (
+        arg0: number,
+        arg1: string,
+        arg2: string,
+        arg3: string,
+        arg4: HenkilonNimi,
+        arg5: string
+    ) => void;
 };
+
+type StateProps = {
+    l10n: L10n;
+    locale: Locale;
+    omattiedot: OmattiedotState;
+    organisaatioCache: OrganisaatioCache;
+};
+
+type DispatchProps = {
+    updateHaettuKayttooikeusryhma: (
+        arg0: number,
+        arg1: string,
+        arg2: string,
+        arg3: string,
+        arg4: HenkilonNimi,
+        arg5: string
+    ) => void;
+    fetchAllKayttooikeusAnomusForHenkilo: (arg0: string) => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
     L: Localisations;
@@ -338,7 +361,9 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         const dates = this.state.dates[idx];
         const alkupvm: string = dates.alkupvm.format(PropertySingleton.state.PVM_DBFORMAATTI);
         const loppupvm: string = dates.loppupvm.format(PropertySingleton.state.PVM_DBFORMAATTI);
-        if (this.props.updateHaettuKayttooikeusryhma) {
+        if (this.props.updateHaettuKayttooikeusryhmaAlt) {
+            this.props.updateHaettuKayttooikeusryhmaAlt(id, tila, alkupvm, loppupvm, henkilo, hylkaysperuste || '');
+        } else if (this.props.updateHaettuKayttooikeusryhma) {
             this.props.updateHaettuKayttooikeusryhma(id, tila, alkupvm, loppupvm, henkilo, hylkaysperuste || '');
         }
         const disabledMyonnettyButtons = {
@@ -523,4 +548,14 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
     }
 }
 
-export default HenkiloViewOpenKayttooikeusanomus;
+const mapStateToProps = (state: RootState) => ({
+    l10n: state.l10n.localisations,
+    locale: state.locale,
+    omattiedot: state.omattiedot,
+    organisaatioCache: state.organisaatio.cached,
+});
+
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
+    updateHaettuKayttooikeusryhma,
+    fetchAllKayttooikeusAnomusForHenkilo,
+})(HenkiloViewOpenKayttooikeusanomus);

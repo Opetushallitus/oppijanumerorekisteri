@@ -26,9 +26,7 @@ import { WORK_ADDRESS, EMAIL } from '../../../types/constants';
 import { RootState } from '../../../store';
 
 type OwnProps = {
-    henkilo: HenkiloState;
     readOnly: boolean;
-    koodisto: KoodistoState;
     view: string;
 };
 
@@ -36,6 +34,8 @@ type StateProps = {
     L: Localisations;
     locale: Locale;
     omattiedot: OmattiedotState;
+    henkilo: HenkiloState;
+    koodisto: KoodistoState;
 };
 
 type DispatchProps = {
@@ -413,6 +413,8 @@ const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     omattiedot: state.omattiedot,
+    henkilo: state.henkilo,
+    koodisto: state.koodisto,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {

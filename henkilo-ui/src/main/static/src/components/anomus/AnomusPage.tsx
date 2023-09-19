@@ -104,16 +104,14 @@ class AnomusPage extends React.Component<Props, State> {
                 ) : (
                     <div>
                         <HenkiloViewOpenKayttooikeusanomus
+                            isOmattiedot={false}
                             kayttooikeus={{
                                 ...getEmptyKayttooikeusRyhmaState(),
                                 kayttooikeusAnomus: this.props.kayttooikeusAnomus,
                                 grantableKayttooikeus: {},
                                 grantableKayttooikeusLoading: true,
                             }}
-                            l10n={this.props.l10n}
-                            locale={this.props.locale}
-                            organisaatioCache={this.props.organisaatioCache}
-                            updateHaettuKayttooikeusryhma={this.updateHaettuKayttooikeusryhma.bind(this)}
+                            updateHaettuKayttooikeusryhmaAlt={this.updateHaettuKayttooikeusryhma.bind(this)}
                             isAnomusView={true}
                             manualSortSettings={{
                                 manual: true,

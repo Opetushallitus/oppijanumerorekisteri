@@ -9,11 +9,11 @@ import googlePlay from '../../img/google_play.svg';
 import Loader from '../common/icons/Loader';
 import { RootState, useAppDispatch } from '../../store';
 import { OmattiedotState } from '../../reducers/omattiedot.reducer';
-import { Locale } from '../../types/locale.type';
-import { L10n, Localisations } from '../../types/localisation.type';
+import { Localisations } from '../../types/localisation.type';
 import { View } from './HenkiloViewPage';
 import WideGreenNotification from '../common/notifications/WideGreenNotification';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
+import { useLocalisations } from '../../selectors';
 
 import styles from './Mfa.module.css';
 
@@ -315,11 +315,9 @@ const Mfa = ({ view }: MfaProps) => {
     const { mfaProvider, idpEntityId } = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const userMfaProvider = view === 'OMATTIEDOT' ? mfaProvider : henkilo.kayttajatieto?.mfaProvider;
-    const locale = useSelector<RootState, Locale>((state) => state.locale);
-    const l10n = useSelector<RootState, L10n>((state) => state.l10n.localisations);
+    const { L } = useLocalisations();
     const [isMfaSetup, setMfaSetup] = useState(false);
     const [setupSuccess, setSetupSuccess] = useState<string>();
-    const L = l10n[locale];
 
     const mfaSetupComponent = isMfaSetup ? (
         <MfaSetup setMfaSetup={setMfaSetup} setSetupSuccess={setSetupSuccess} L={L} />

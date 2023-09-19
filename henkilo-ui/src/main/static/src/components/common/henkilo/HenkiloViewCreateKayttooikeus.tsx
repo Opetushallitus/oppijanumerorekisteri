@@ -20,13 +20,13 @@ import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.redu
 
 type OwnProps = {
     vuosia: number;
-    kayttooikeus: KayttooikeusRyhmaState;
     existingKayttooikeusRef: React.MutableRefObject<HTMLDivElement>;
     oidHenkilo: string;
     isPalvelukayttaja: boolean;
 };
 
 type StateProps = {
+    kayttooikeus: KayttooikeusRyhmaState;
     L: Localisations;
     locale: Locale;
 };
@@ -265,6 +265,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
 const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
+    kayttooikeus: state.kayttooikeus,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {

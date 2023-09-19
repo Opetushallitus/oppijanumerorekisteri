@@ -36,19 +36,19 @@ import type { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/Org
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 
 type OwnProps = {
-    l10n: L10n;
-    locale: Locale;
-    omattiedot?: OmattiedotState;
-    ryhmas?: RyhmatState;
-    henkilo: HenkiloState;
     ryhmaOptions: Array<{ label: string; value: string }>;
     kayttooikeusryhmat: Array<any>;
-    organisaatioKayttooikeusryhmat?: OrganisaatioKayttooikeusryhmatState;
-    organisaatios?: OrganisaatioState;
 };
 
 type StateProps = {
+    l10n: L10n;
+    locale: Locale;
     organisationNames: OrganisaatioNameLookup;
+    omattiedot: OmattiedotState;
+    ryhmas: RyhmatState;
+    henkilo: HenkiloState;
+    organisaatioKayttooikeusryhmat: OrganisaatioKayttooikeusryhmatState;
+    organisaatios: OrganisaatioState;
 };
 
 type DispatchProps = {
@@ -475,7 +475,14 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
 }
 
 const mapStateToProps = (state: RootState): StateProps => ({
+    l10n: state.l10n.localisations,
+    locale: state.locale,
+    henkilo: state.henkilo,
     organisationNames: state.organisaatio.names,
+    omattiedot: state.omattiedot,
+    organisaatioKayttooikeusryhmat: state.OrganisaatioKayttooikeusryhmat,
+    organisaatios: state.organisaatio,
+    ryhmas: state.ryhmatState,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
