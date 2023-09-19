@@ -21,13 +21,7 @@ import {
     SET_MFA_PROVIDER,
 } from './actiontypes';
 import { Omattiedot } from '../types/domain/kayttooikeus/Omattiedot.types';
-import { OmattiedotState } from '../reducers/omattiedot.reducer';
-import { AppDispatch } from '../store';
-
-type GetState = () => {
-    omattiedot: OmattiedotState;
-    locale: string;
-};
+import { AppDispatch, RootState } from '../store';
 
 export const fetchLocale = () => async (dispatch: AppDispatch) => {
     const url = urls.url('oppijanumerorekisteri-service.henkilo.current.asiointikieli');
@@ -63,7 +57,7 @@ const receiveOmattiedotFailure = (error) => ({
     type: FETCH_OMATTIEDOT_FAILURE,
     error,
 });
-export const fetchOmattiedot = () => async (dispatch: AppDispatch, getState: GetState) => {
+export const fetchOmattiedot = () => async (dispatch: AppDispatch, getState: () => RootState) => {
     if (!getState().omattiedot.data) {
         dispatch(requestOmattiedot());
         const url = urls.url('kayttooikeus-service.henkilo.current.omattiedot');
@@ -103,7 +97,7 @@ const receiveOmattiedotOrganisaatiosFailure = (error) => ({
     type: FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE,
     error,
 });
-const fetchOmattiedotOrganisaatios = () => async (dispatch: AppDispatch, getState: GetState) => {
+const fetchOmattiedotOrganisaatios = () => async (dispatch: AppDispatch, getState: () => RootState) => {
     // Fetch only with the first call
     if (
         getState().omattiedot.organisaatios &&
@@ -139,7 +133,7 @@ const receiveOmatHenkilohakuOrganisaatiotSuccess = (organisaatiot, locale) => ({
 const receiveOmatHenkilohakuOrganisaatiotFailure = () => ({
     type: FETCH_HENKILOHAKUORGANISAATIOT_FAILURE,
 });
-export const fetchOmatHenkiloHakuOrganisaatios = () => async (dispatch: AppDispatch, getState: GetState) => {
+export const fetchOmatHenkiloHakuOrganisaatios = () => async (dispatch: AppDispatch, getState: () => RootState) => {
     // Fetch only once
     if (
         getState().omattiedot.henkilohakuOrganisaatiot.length === 0 &&

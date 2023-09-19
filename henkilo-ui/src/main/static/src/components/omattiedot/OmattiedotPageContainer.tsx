@@ -34,9 +34,7 @@ const OmattiedotPageContainer = () => {
         dispatch<any>(fetchAllOrganisaatios());
         dispatch<any>(fetchAllRyhmas());
         dispatch<any>(fetchAllHierarchialOrganisaatios());
-    }, []);
 
-    useEffect(() => {
         if (omattiedot.data?.oid) {
             const userOid = omattiedot.data?.oid;
             dispatch<any>(clearHenkilo());
@@ -46,7 +44,7 @@ const OmattiedotPageContainer = () => {
             dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo()); // For current user
             dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(userOid));
         }
-    }, [omattiedot]);
+    }, []);
 
     if (omattiedot.data?.oid === henkilo.henkilo.oidHenkilo) {
         return <HenkiloViewPage oidHenkilo={omattiedot.data.oid} view="omattiedot" />;
