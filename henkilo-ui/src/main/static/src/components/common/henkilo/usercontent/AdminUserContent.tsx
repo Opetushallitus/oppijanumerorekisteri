@@ -18,7 +18,6 @@ import PassivoiButton from '../buttons/PassivoiButton';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { Localisations } from '../../../../types/localisation.type';
-import { fetchHenkiloSlaves } from '../../../../actions/henkilo.actions';
 import Loader from '../../icons/Loader';
 import Kayttajanimi from '../labelvalues/Kayttajanimi';
 import LinkitetytHenkilot from '../labelvalues/LinkitetytHenkilot';
@@ -57,11 +56,7 @@ type StateProps = {
     translate: (key: string) => string;
 };
 
-type DispatchProps = {
-    fetchHenkiloSlaves: (oid: string) => void;
-};
-
-type Props = OwnProps & StateProps & DispatchProps;
+type Props = OwnProps & StateProps;
 
 class AdminUserContent extends React.Component<Props> {
     render() {
@@ -207,6 +202,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     omattiedot: state.omattiedot,
 });
 
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    fetchHenkiloSlaves,
-})(AdminUserContent);
+export default connect<StateProps, undefined, OwnProps, RootState>(mapStateToProps)(AdminUserContent);

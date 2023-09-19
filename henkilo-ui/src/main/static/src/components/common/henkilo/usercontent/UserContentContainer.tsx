@@ -18,7 +18,7 @@ import { Kayttaja } from '../../../../types/domain/kayttooikeus/kayttaja.types';
 import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
 import { http } from '../../../../http';
 import { urls } from 'oph-urls-js';
-import { fetchOmattiedot, updateAnomusilmoitus } from '../../../../actions/omattiedot.actions';
+import { updateAnomusilmoitus } from '../../../../actions/omattiedot.actions';
 import moment from 'moment';
 import PropertySingleton from '../../../../globals/PropertySingleton';
 import { clone } from 'ramda';
@@ -36,7 +36,6 @@ type OwnProps = {
 type DispatchProps = {
     updateHenkiloAndRefetch: (arg0: Henkilo, arg1: boolean) => void;
     updateAndRefetchKayttajatieto: (henkiloOid: string, kayttajatunnus: string) => void;
-    fetchOmattiedot: (arg0: boolean | null | undefined) => void;
     updateAnomusilmoitus: (arg0: boolean) => void;
     resetButtonNotifications: () => void;
 };
@@ -277,7 +276,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     updateHenkiloAndRefetch,
     updateAndRefetchKayttajatieto,
-    fetchOmattiedot,
     updateAnomusilmoitus,
     resetButtonNotifications,
 })(UserContentContainer);

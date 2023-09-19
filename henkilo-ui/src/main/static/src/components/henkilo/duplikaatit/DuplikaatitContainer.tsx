@@ -9,7 +9,6 @@ import {
     fetchHenkiloMaster,
     fetchHenkiloHakemukset,
 } from '../../../actions/henkilo.actions';
-import { fetchOmattiedot } from '../../../actions/omattiedot.actions';
 import {
     fetchKansalaisuusKoodisto,
     fetchMaatJaValtiotKoodisto,
@@ -35,7 +34,6 @@ type StateProps = {
 type DispatchProps = {
     fetchHenkilo: (arg0: string) => void;
     fetchKayttaja: (arg0: string) => void;
-    fetchOmattiedot: () => void;
     fetchHenkiloMaster: (arg0: string) => void;
     fetchHenkiloHakemukset: (arg0: string) => void;
     fetchHenkiloDuplicates: (arg0: string) => void;
@@ -50,7 +48,6 @@ class VirkailijaDuplikaatitContainer extends React.Component<Props> {
     async componentDidMount() {
         this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchKayttaja(this.props.oidHenkilo);
-        this.props.fetchOmattiedot();
         this.props.fetchKansalaisuusKoodisto();
         this.props.fetchMaatJaValtiotKoodisto();
         this.props.fetchKieliKoodisto();
@@ -75,7 +72,6 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchHenkilo,
     fetchKayttaja,
-    fetchOmattiedot,
     fetchHenkiloDuplicates,
     fetchHenkiloMaster,
     fetchHenkiloHakemukset,

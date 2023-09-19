@@ -8,7 +8,6 @@ import {
     fetchHenkiloMaster,
     overrideYksiloimatonHenkiloVtjData,
 } from '../../../actions/henkilo.actions';
-import { fetchOmattiedot } from '../../../actions/omattiedot.actions';
 import VtjVertailuListaus from './VtjVertailuListaus';
 import Loader from '../../common/icons/Loader';
 import Button from '../../common/button/Button';
@@ -38,7 +37,6 @@ type DispatchProps = {
     fetchHenkilo: (arg0: string) => void;
     fetchHenkiloYksilointitieto: (arg0: string) => void;
     fetchHenkiloMaster: (arg0: string) => void;
-    fetchOmattiedot: () => void;
     overrideYksiloimatonHenkiloVtjData: (arg0: string) => void;
     fetchHenkiloSlaves: (arg0: string) => void;
     addGlobalNotification: (payload: GlobalNotificationConfig) => void;
@@ -48,7 +46,6 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 class VtjVertailuPage extends React.Component<Props> {
     async componentDidMount() {
-        this.props.fetchOmattiedot();
         this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchHenkiloYksilointitieto(this.props.oidHenkilo);
         this.props.fetchHenkiloMaster(this.props.oidHenkilo);
@@ -118,7 +115,6 @@ export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateT
     fetchHenkilo,
     fetchHenkiloYksilointitieto,
     fetchHenkiloMaster,
-    fetchOmattiedot,
     overrideYksiloimatonHenkiloVtjData,
     fetchHenkiloSlaves,
     addGlobalNotification,

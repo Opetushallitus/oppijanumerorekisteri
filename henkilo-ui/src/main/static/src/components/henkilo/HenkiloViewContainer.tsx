@@ -5,7 +5,6 @@ import { RouteActions } from 'react-router-redux';
 import { useAppDispatch, type RootState } from '../../store';
 import { OmattiedotState } from '../../reducers/omattiedot.reducer';
 import Loader from '../common/icons/Loader';
-import { fetchOmattiedot } from '../../actions/omattiedot.actions';
 import {
     fetchKansalaisuusKoodisto,
     fetchKieliKoodisto,
@@ -60,7 +59,6 @@ const HenkiloViewContainer = ({ router, location, params }: OwnProps) => {
     const view = getView(henkiloType, omattiedot);
 
     useEffect(() => {
-        dispatch<any>(fetchOmattiedot());
         if (oid && omattiedot.data?.oid === oid) {
             router.replace('/omattiedot');
         }
