@@ -11,7 +11,6 @@ import Loader from '../common/icons/Loader';
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent';
 import StaticUtils from '../common/StaticUtils';
 import HenkiloViewCreateKayttooikeusanomus from '../common/henkilo/HenkiloViewCreateKayttooikeusanomus';
-import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
 import Mfa from './Mfa';
 import { RootState } from '../../store';
 import { useLocalisations } from '../../selectors';
@@ -40,9 +39,6 @@ const HenkiloViewPage = (props: Props) => {
     const ryhmatState = useSelector<RootState, RyhmatState>((state) => state.ryhmatState);
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
     const { view, oidHenkilo, createBasicInfo, readOnlyButtons } = props;
-    if (henkilo.henkiloKayttoEstetty) {
-        return <VirheKayttoEstetty L={L} />;
-    }
 
     const _parseRyhmaOptions = (): Array<{ label: string; value: string }> => {
         return (

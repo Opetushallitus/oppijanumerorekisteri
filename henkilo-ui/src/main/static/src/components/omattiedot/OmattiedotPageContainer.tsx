@@ -30,6 +30,7 @@ import { RyhmatState } from '../../reducers/ryhmat.reducer';
 import { OrganisaatioKayttooikeusryhmatState } from '../../reducers/organisaatiokayttooikeusryhmat.reducer';
 import { OrganisaatioCriteria } from '../../types/domain/organisaatio/organisaatio.types';
 import { NotificationsState } from '../../reducers/notifications.reducer';
+import Loader from '../common/icons/Loader';
 
 type StateProps = {
     omattiedot: OmattiedotState;
@@ -91,7 +92,11 @@ class OmattiedotPageContainer extends React.Component<Props> {
     }
 
     render() {
-        return <HenkiloViewPage {...this.props} oidHenkilo={this.props.omattiedot.data.oid} view="omattiedot" />;
+        if (this.props.omattiedot.data?.oid === this.props.henkilo.henkilo.oidHenkilo) {
+            return <HenkiloViewPage {...this.props} oidHenkilo={this.props.omattiedot.data.oid} view="omattiedot" />;
+        } else {
+            return <Loader />;
+        }
     }
 }
 

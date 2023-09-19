@@ -115,7 +115,7 @@ class UserContentContainer extends React.Component<Props, State> {
         } else if (this.props.view === 'omattiedot') {
             content = <OmattiedotUserContent {...userContentProps} />;
         } else {
-            throw new Error('Unidentified view');
+            throw new Error(`Unidentified view ${this.props.view}`);
         }
         return (
             <div className="henkiloViewUserContentWrapper">

@@ -91,19 +91,14 @@ const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
 };
 
 const isKayttoEstetty = (data?: { status: number; path: string; message: string }) =>
-    (data && data.status === 403) || // oppijanumerorekisteri palauttaa väärän status-koodin
+    data?.status === 403 || // oppijanumerorekisteri palauttaa väärän status-koodin
     isKayttoEstettyOppijanumerorekisteri(data);
 
 const isKayttoEstettyOppijanumerorekisteri = (data?: { status: number; path: string; message: string }) => {
+    console.log(data);
     if (typeof data === 'object' && data !== null) {
-        const { status, path, message } = data;
-        return (
-            status === 401 &&
-            path &&
-            path.startsWith('/oppijanumerorekisteri-service/') &&
-            message &&
-            message.endsWith('AccessDeniedException')
-        );
+        const { status, path } = data;
+        return status === 401 && path?.startsWith('/oppijanumerorekisteri-service/');
     }
     return false;
 };

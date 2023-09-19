@@ -3,9 +3,10 @@ import { Link } from 'react-router';
 import VirheKirjautunut from './VirheKirjautunut';
 import TextButton from '../common/button/TextButton';
 import './VirheKayttoEstetty.css';
+import { Localisations } from '../../types/localisation.type';
 
 type Props = {
-    L: any;
+    L: Localisations;
 };
 
 /**

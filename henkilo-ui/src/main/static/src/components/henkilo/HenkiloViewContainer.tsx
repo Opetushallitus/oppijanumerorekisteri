@@ -25,31 +25,38 @@ import {
     fetchAllKayttooikeusryhmasForHenkilo,
 } from '../../actions/kayttooikeusryhma.actions';
 import HenkiloViewPage, { View } from './HenkiloViewPage';
-
-type HenkiloType = 'virkailija' | 'oppija';
+import { HenkiloState } from '../../reducers/henkilo.reducer';
+import { LocalNotification } from '../common/Notification/LocalNotification';
+import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
+import { useLocalisations } from '../../selectors';
+import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
 
 type OwnProps = {
     router: RouteActions;
+    location: { pathname: string };
     params: { oid?: string; henkiloType?: string };
-    henkiloType: HenkiloType;
 };
 
-const getView = (henkiloType: HenkiloType, omattiedot: OmattiedotState): View => {
+const getView = (henkiloType: string, omattiedot: OmattiedotState): View => {
     if (omattiedot.isAdmin) {
         return 'admin';
-    } else {
+    } else if (henkiloType === 'virkailija' || henkiloType === 'oppija') {
         return henkiloType;
     }
+    return null;
 };
 
 /*
  * Henkilo-näkymä. Päätellään näytetäänkö admin/virkailija/oppija -versio henkilöstä, vai siirrytäänkö omattiedot-sivulle
  */
-const HenkiloViewContainer = ({ router, henkiloType, params }: OwnProps) => {
+const HenkiloViewContainer = ({ router, location, params }: OwnProps) => {
     const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { L } = useLocalisations();
     const { oid } = params;
     const dispatch = useAppDispatch();
 
+    const henkiloType = location.pathname.split('/')[1];
     const view = getView(henkiloType, omattiedot);
 
     useEffect(() => {
@@ -75,10 +82,14 @@ const HenkiloViewContainer = ({ router, henkiloType, params }: OwnProps) => {
         }
     }, [omattiedot, oid, view]);
 
-    if (!omattiedot.data || omattiedot.omattiedotLoading) {
+    if (!omattiedot.data || omattiedot.omattiedotLoading || !view) {
         return <Loader />;
-    } else {
+    } else if (henkilo.henkiloKayttoEstetty) {
+        return <VirheKayttoEstetty L={L} />;
+    } else if (view) {
         return <HenkiloViewPage oidHenkilo={oid} view={view} />;
+    } else {
+        return <LocalNotification type={NOTIFICATIONTYPES.WARNING} title={L['HENKILO_SIVU_VIRHE']} toggle={true} />;
     }
 };
 
