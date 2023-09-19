@@ -16,13 +16,13 @@ import { getEmptyKayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma
 
 type OwnProps = {
     oidHenkilo: string;
-    l10n: L10n;
-    locale: Locale;
 };
 
 type StateProps = {
     henkilo: HenkiloState;
     koodisto: KoodistoState;
+    l10n: L10n;
+    locale: Locale;
 };
 
 type DispatchProps = {
@@ -71,6 +71,8 @@ class OppijaViewContainer extends React.Component<Props> {
 const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
     koodisto: state.koodisto,
+    l10n: state.l10n.localisations,
+    locale: state.locale,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {

@@ -31,11 +31,8 @@ import { KayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma.reducer
 
 type OwnProps = {
     oidHenkilo: string; // tarkasteltava
-    ownOid: string; // tarkastelija
     henkiloType: string;
     router: any;
-    l10n: L10n;
-    locale: Locale;
 };
 
 type StateProps = {
@@ -44,6 +41,8 @@ type StateProps = {
     koodisto: KoodistoState;
     organisaatioCache: OrganisaatioCache;
     notifications: NotificationsState;
+    l10n: L10n;
+    locale: Locale;
 };
 
 type DispatchProps = {
@@ -107,6 +106,8 @@ const mapStateToProps = (state: RootState): StateProps => ({
     kayttooikeus: state.kayttooikeus,
     organisaatioCache: state.organisaatio.cached,
     notifications: state.notifications,
+    l10n: state.l10n.localisations,
+    locale: state.locale,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {

@@ -55,7 +55,6 @@ type StateProps = {
         yhteystietotyypitKoodistoLoading: boolean;
     };
     omattiedot: OmattiedotState;
-    ownOid: string;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -272,7 +271,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
     omattiedot: state.omattiedot,
     L: state.l10n.localisations[state.locale],
-    ownOid: state.omattiedot.data.oid,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import type { BrowserRouter } from 'react-router';
+import type { RouteActions } from 'react-router-redux';
 
 import { RootState } from '../../../store';
 import Button from '../../common/button/Button';
@@ -30,7 +30,7 @@ export type LinkRelation = {
 };
 
 type Props = {
-    router?: BrowserRouter;
+    router?: RouteActions;
     oidHenkilo?: string;
     henkilo: HenkiloDuplicateLenient & { hakemukset?: Hakemus[] };
     henkiloType: string;
@@ -64,7 +64,7 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, router, oidHen
             .unwrap()
             .then(() => {
                 setLink(undefined);
-                router?.push(`/${henkiloType}/${oidHenkilo}`);
+                router.push(`/${henkiloType}/${oidHenkilo}`);
             })
             .catch(() => {
                 setLink(undefined);
