@@ -314,7 +314,7 @@ type MfaProps = {
 const Mfa = ({ view }: MfaProps) => {
     const { mfaProvider, idpEntityId } = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
-    const userMfaProvider = view === 'OMATTIEDOT' ? mfaProvider : henkilo.kayttajatieto?.mfaProvider;
+    const userMfaProvider = view === 'omattiedot' ? mfaProvider : henkilo.kayttajatieto?.mfaProvider;
     const { L } = useLocalisations();
     const [isMfaSetup, setMfaSetup] = useState(false);
     const [setupSuccess, setSetupSuccess] = useState<string>();
@@ -347,7 +347,7 @@ const Mfa = ({ view }: MfaProps) => {
                     </span>
                 )}
             </div>
-            {view === 'OMATTIEDOT' && mfaStateComponent}
+            {view === 'omattiedot' && mfaStateComponent}
         </div>
     );
 };

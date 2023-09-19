@@ -21,7 +21,7 @@ import { OrganisaatioKayttooikeusryhmatState } from '../../reducers/organisaatio
 import { RyhmatState } from '../../reducers/ryhmat.reducer';
 import { KayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma.reducer';
 
-export type View = 'OMATTIEDOT' | 'VIRKAILIJA' | 'ADMIN' | 'OPPIJA';
+export type View = 'omattiedot' | 'virkailija' | 'admin' | 'oppija';
 type Props = {
     createBasicInfo?: () => ReactNode;
     readOnlyButtons?: ReactNode;
@@ -82,12 +82,12 @@ const HenkiloViewPage = (props: Props) => {
                     )}
                 </div>
             )}
-            {view !== 'OMATTIEDOT' && view !== 'OPPIJA' && (
+            {view !== 'omattiedot' && view !== 'oppija' && (
                 <div className="wrapper">
                     {henkilo.henkiloOrgsLoading ? <Loader /> : <HenkiloViewOrganisationContent readOnly={true} />}
                 </div>
             )}
-            {view !== 'OPPIJA' && (
+            {view !== 'oppija' && (
                 <div className="wrapper" ref={existingKayttooikeusRef}>
                     {kayttooikeus.kayttooikeusLoading ? (
                         <Loader />
@@ -95,36 +95,36 @@ const HenkiloViewPage = (props: Props) => {
                         <HenkiloViewExistingKayttooikeus
                             vuosia={StaticUtils.getKayttooikeusKestoVuosissa(henkilo.kayttaja)}
                             oidHenkilo={oidHenkilo}
-                            isOmattiedot={view === 'OMATTIEDOT'}
+                            isOmattiedot={view === 'omattiedot'}
                         />
                     )}
                 </div>
             )}
-            {henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && view !== 'OPPIJA' && (
+            {henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && view !== 'oppija' && (
                 <div className="wrapper">
                     {kayttooikeus.kayttooikeusAnomusLoading ? (
                         <Loader />
                     ) : (
                         <HenkiloViewOpenKayttooikeusanomus
                             kayttooikeus={kayttooikeus}
-                            isOmattiedot={view === 'OMATTIEDOT'}
+                            isOmattiedot={view === 'omattiedot'}
                         />
                     )}
                 </div>
             )}
-            {view !== 'OPPIJA' && (
+            {view !== 'oppija' && (
                 <div className="wrapper">
                     {kayttooikeus.kayttooikeusLoading ? (
                         <Loader />
                     ) : (
                         <HenkiloViewExpiredKayttooikeus
                             oidHenkilo={henkilo.henkilo.oidHenkilo}
-                            isOmattiedot={view === 'OMATTIEDOT'}
+                            isOmattiedot={view === 'omattiedot'}
                         />
                     )}
                 </div>
             )}
-            {view !== 'OMATTIEDOT' && view !== 'OPPIJA' && (
+            {view !== 'omattiedot' && view !== 'oppija' && (
                 <div className="wrapper">
                     <HenkiloViewCreateKayttooikeus
                         oidHenkilo={oidHenkilo}
@@ -134,7 +134,7 @@ const HenkiloViewPage = (props: Props) => {
                     />
                 </div>
             )}
-            {view === 'OMATTIEDOT' && (
+            {view === 'omattiedot' && (
                 <div className="wrapper">
                     <HenkiloViewCreateKayttooikeusanomus
                         ryhmaOptions={_parseRyhmaOptions.call(this)}

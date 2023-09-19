@@ -24,10 +24,11 @@ import { validateEmail } from '../../../validation/EmailValidator';
 import type { Option } from 'react-select';
 import { WORK_ADDRESS, EMAIL } from '../../../types/constants';
 import { RootState } from '../../../store';
+import { View } from '../../henkilo/HenkiloViewPage';
 
 type OwnProps = {
     readOnly: boolean;
-    view: string;
+    view: View;
 };
 
 type StateProps = {
@@ -213,7 +214,7 @@ export class HenkiloViewContactContentComponent extends React.Component<Props, S
         const passivoitu = this.props.henkilo.henkilo.passivoitu;
         const duplicate = this.props.henkilo.henkilo.duplicate;
         const hasHenkiloReadUpdateRights: boolean =
-            this.props.view === 'OMATTIEDOT'
+            this.props.view === 'omattiedot'
                 ? true
                 : hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, [
                       'OPPIJANUMEROREKISTERI_HENKILON_RU',

@@ -23,13 +23,14 @@ import moment from 'moment';
 import PropertySingleton from '../../../../globals/PropertySingleton';
 import { clone } from 'ramda';
 import { resetButtonNotifications } from '../../../../actions/notifications.actions';
+import { View } from '../../../henkilo/HenkiloViewPage';
 
 type OwnProps = {
     readOnly?: boolean;
     basicInfo?: () => ReactNode;
     readOnlyButtons?: ReactNode;
     oidHenkilo: string;
-    view: string;
+    view: View;
 };
 
 type DispatchProps = {
@@ -105,13 +106,13 @@ class UserContentContainer extends React.Component<Props, State> {
         let content;
         if (kayttajaTyyppi === 'PALVELU') {
             content = <PalveluUserContent {...userContentProps} />;
-        } else if (this.props.view === 'OPPIJA') {
+        } else if (this.props.view === 'oppija') {
             content = <OppijaUserContent {...userContentProps} />;
-        } else if (this.props.view === 'ADMIN') {
+        } else if (this.props.view === 'admin') {
             content = <AdminUserContent {...userContentProps} />;
-        } else if (this.props.view === 'VIRKAILIJA') {
+        } else if (this.props.view === 'virkailija') {
             content = <VirkailijaUserContent {...userContentProps} />;
-        } else if (this.props.view === 'OMATTIEDOT') {
+        } else if (this.props.view === 'omattiedot') {
             content = <OmattiedotUserContent {...userContentProps} />;
         } else {
             throw new Error('Unidentified view');
@@ -201,7 +202,7 @@ class UserContentContainer extends React.Component<Props, State> {
     }
 
     async anomus(henkiloUpdate: Henkilo) {
-        if (this.props.view === 'OMATTIEDOT' && this.props.omattiedot.isAdmin) {
+        if (this.props.view === 'omattiedot' && this.props.omattiedot.isAdmin) {
             const initialAnomusilmoitusValue = this.props.omattiedot.anomusilmoitus;
             const url = urls.url('kayttooikeus-service.henkilo.anomusilmoitus', henkiloUpdate.oidHenkilo);
             try {

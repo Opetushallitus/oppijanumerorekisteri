@@ -29,13 +29,9 @@ import { OrganisaatioCache, OrganisaatioState } from '../../reducers/organisaati
 import { RyhmatState } from '../../reducers/ryhmat.reducer';
 import { OrganisaatioKayttooikeusryhmatState } from '../../reducers/organisaatiokayttooikeusryhmat.reducer';
 import { OrganisaatioCriteria } from '../../types/domain/organisaatio/organisaatio.types';
-
-type OwnProps = {
-    location: any;
-};
+import { NotificationsState } from '../../reducers/notifications.reducer';
 
 type StateProps = {
-    path: string;
     omattiedot: OmattiedotState;
     henkilo: HenkiloState;
     l10n: L10n;
@@ -46,7 +42,7 @@ type StateProps = {
     ryhmas: RyhmatState;
     organisaatioCache: OrganisaatioCache;
     organisaatioKayttooikeusryhmat: OrganisaatioKayttooikeusryhmatState;
-    notifications: any;
+    notifications: NotificationsState;
 };
 
 type DispatchProps = {
@@ -73,7 +69,7 @@ type DispatchProps = {
     clearHenkilo: () => void;
 };
 
-type Props = OwnProps & StateProps & DispatchProps;
+type Props = StateProps & DispatchProps;
 
 class OmattiedotPageContainer extends React.Component<Props> {
     async componentDidMount() {
@@ -95,12 +91,11 @@ class OmattiedotPageContainer extends React.Component<Props> {
     }
 
     render() {
-        return <HenkiloViewPage {...this.props} oidHenkilo={this.props.omattiedot.data.oid} view="OMATTIEDOT" />;
+        return <HenkiloViewPage {...this.props} oidHenkilo={this.props.omattiedot.data.oid} view="omattiedot" />;
     }
 }
 
-const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
-    path: ownProps.location.pathname,
+const mapStateToProps = (state: RootState): StateProps => ({
     omattiedot: state.omattiedot,
     henkilo: state.henkilo,
     l10n: state.l10n.localisations,
@@ -114,7 +109,7 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     notifications: state.notifications,
 });
 
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, undefined, RootState>(mapStateToProps, {
     fetchOmattiedot,
     fetchHenkilo,
     fetchHenkiloOrgs,
