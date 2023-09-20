@@ -27,9 +27,7 @@ const App = () => {
 
     return (
         <Provider store={store}>
-            <div>
-                <Router history={history} routes={routes} onUpdate={() => window.scrollTo(0, 0)} />
-            </div>
+            <Router history={history} routes={routes} onUpdate={() => window.scrollTo(0, 0)} />
         </Provider>
     );
 };
