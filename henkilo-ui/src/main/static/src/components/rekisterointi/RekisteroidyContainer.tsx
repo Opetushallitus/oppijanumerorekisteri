@@ -1,91 +1,50 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+
 import RekisteroidyPage from './RekisteroidyPage';
 import { fetchKieliKoodisto } from '../../actions/koodisto.actions';
 import Loader from '../common/icons/Loader';
-import { createHenkiloByToken, fetchKutsuByToken } from '../../actions/kutsu.actions';
-import { removeNotification } from '../../actions/notifications.actions';
+import { fetchKutsuByToken } from '../../actions/kutsu.actions';
 import VirhePage from '../common/page/VirhePage';
-import type { Location } from 'history';
-import type { RootState } from '../../store';
+import { useAppDispatch, type RootState } from '../../store';
 import type { KoodistoState } from '../../reducers/koodisto.reducer';
+import { useLocalisations } from '../../selectors';
+import { OmattiedotState } from '../../reducers/omattiedot.reducer';
+import { KutsuListState } from '../../reducers/kutsuList.reducer';
+import { CasState } from '../../reducers/cas.reducer';
 
 type OwnProps = {
-    location: Location;
+    location: { query: Record<string, string> };
 };
 
-type StateProps = {
-    l10n: Record<string, Record<string, string>>;
-    koodistoLoading: boolean;
-    koodisto: KoodistoState;
-    temporaryToken: string | string[];
-    tokenLoading: boolean;
-    kutsu: any;
-    loggedIn: string;
-    omattiedotLoading: boolean;
-    authToken: string;
-    temporaryTokenInvalid: boolean;
-};
+const RekisteroidyContainer = (props: OwnProps) => {
+    const dispatch = useAppDispatch();
+    const { l10n } = useLocalisations();
+    const kutsuList = useSelector<RootState, KutsuListState>((state) => state.kutsuList);
+    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const koodisto = useSelector<RootState, KoodistoState>((state) => state.koodisto);
+    const cas = useSelector<RootState, CasState>((state) => state.cas);
 
-type DispatchProps = {
-    fetchKieliKoodisto: () => void;
-    fetchKutsuByToken: (token: string | string[]) => void;
-    removeNotification: (status: string, group: string, id: string) => any;
-    createHenkiloByToken: (temporaryToken: string, payload: any) => any;
-};
+    useEffect(() => {
+        dispatch<any>(fetchKieliKoodisto());
+        dispatch<any>(fetchKutsuByToken(props.location.query['temporaryKutsuToken']));
+    }, []);
 
-type Props = OwnProps & StateProps & DispatchProps;
-
-class RekisteroidyContainer extends React.Component<Props> {
-    loggedIn;
-
-    componentWillMount() {
-        this.props.fetchKieliKoodisto();
-        this.props.fetchKutsuByToken(this.props.temporaryToken);
+    if (koodisto.kieliKoodistoLoading || kutsuList.kutsuByTokenLoading) {
+        return <Loader />;
+    } else if (omattiedot.data.oid !== undefined) {
+        return <VirhePage text={'REKISTEROIDY_KIRJAUTUNUT'} />;
+    } else if (cas.temporaryTokenInvalid) {
+        return <VirhePage text={'REKISTEROIDY_TEMP_TOKEN_INVALID'} />;
     }
-
-    constructor(props) {
-        super(props);
-
-        this.loggedIn = this.props.loggedIn;
-    }
-
-    render() {
-        if (this.props.koodistoLoading || this.props.tokenLoading) {
-            return <Loader />;
-        } else if (this.loggedIn !== undefined) {
-            return <VirhePage text={'REKISTEROIDY_KIRJAUTUNUT'} />;
-        } else if (this.props.temporaryTokenInvalid) {
-            return <VirhePage text={'REKISTEROIDY_TEMP_TOKEN_INVALID'} />;
-        }
-        return (
-            <RekisteroidyPage
-                {...this.props}
-                L={this.props.l10n[this.props.kutsu.asiointikieli]}
-                locale={this.props.kutsu.asiointikieli}
-            />
-        );
-    }
-}
-
-const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => {
-    return {
-        l10n: state.l10n.localisations,
-        koodistoLoading: state.koodisto.kieliKoodistoLoading,
-        koodisto: state.koodisto,
-        temporaryToken: ownProps.location.query['temporaryKutsuToken'],
-        tokenLoading: state.kutsuList.kutsuByTokenLoading,
-        kutsu: state.kutsuList.kutsuByToken,
-        loggedIn: state.omattiedot.data.oid,
-        omattiedotLoading: state.omattiedot.omattiedotLoading,
-        authToken: state.cas.authToken,
-        temporaryTokenInvalid: state.cas.temporaryTokenInvalid,
-    };
+    return (
+        <RekisteroidyPage
+            koodisto={koodisto}
+            kutsu={kutsuList.kutsuByToken}
+            L={l10n[kutsuList.kutsuByToken.asiointikieli]}
+            locale={kutsuList.kutsuByToken.asiointikieli}
+        />
+    );
 };
 
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    fetchKieliKoodisto,
-    fetchKutsuByToken,
-    createHenkiloByToken,
-    removeNotification,
-})(RekisteroidyContainer);
+export default RekisteroidyContainer;

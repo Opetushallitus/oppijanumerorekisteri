@@ -1,32 +1,35 @@
 import './RekisteroidyPage.css';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import { connect } from 'react-redux';
+
 import RekisteroidyPerustiedot from './content/RekisteroidyPerustiedot';
 import RekisteroidyOrganisaatiot from './content/RekisteroidyOrganisaatiot';
 import StaticUtils from '../common/StaticUtils';
 import RekisteroidyHaka from './content/RekisteroidyHaka';
 import { isValidPassword } from '../../validation/PasswordValidator';
-import type { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/Kutsu.types';
+import type { KutsuByToken } from '../../types/domain/kayttooikeus/Kutsu.types';
 import NotificationButton from '../common/button/NotificationButton';
-import { KoodistoStateKoodi } from '../../reducers/koodisto.reducer';
+import { KoodistoState } from '../../reducers/koodisto.reducer';
+import { RootState } from '../../store';
+import { createHenkiloByToken } from '../../actions/kutsu.actions';
+import { removeNotification } from '../../actions/notifications.actions';
+import { Locale } from '../../types/locale.type';
+import { Localisations } from '../../types/localisation.type';
 
-type Props = {
-    koodisto: {
-        kieli: Array<KoodistoStateKoodi>;
-    };
-    kutsu: {
-        temporaryToken: string;
-        etunimi: string;
-        sukunimi: string;
-        asiointikieli: string;
-        hakaIdentifier?: string;
-        organisaatiot: KutsuOrganisaatio[];
-    };
+type OwnProps = {
+    koodisto: KoodistoState;
+    kutsu: KutsuByToken;
+    L: Localisations;
+    locale: Locale;
+};
+
+type DispatchProps = {
     createHenkiloByToken: (temporaryToken: string, payload: Henkilo) => void;
     removeNotification: (status: string, group: string, id: string) => void;
-    L: Record<string, string>;
-    locale: string;
 };
+
+type Props = DispatchProps & OwnProps;
 
 type Henkilo = {
     etunimet: string;
@@ -219,4 +222,7 @@ class RekisteroidyPage extends React.Component<Props, State> {
     }
 }
 
-export default RekisteroidyPage;
+export default connect<object, DispatchProps, OwnProps, RootState>(undefined, {
+    createHenkiloByToken,
+    removeNotification,
+})(RekisteroidyPage);

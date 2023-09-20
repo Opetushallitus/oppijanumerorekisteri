@@ -7,12 +7,12 @@ import {
     CLEAR_KUTSU_LIST,
     FETCH_KUTSU_FAILURE,
 } from '../actions/actiontypes';
-import { KutsuRead } from '../types/domain/kayttooikeus/Kutsu.types';
+import { KutsuByToken, KutsuRead } from '../types/domain/kayttooikeus/Kutsu.types';
 
 export type KutsuListState = {
     loaded: boolean;
     result: Array<KutsuRead>;
-    kutsuByToken: KutsuRead | object;
+    kutsuByToken: KutsuByToken;
     kutsuByTokenLoading: boolean;
 };
 
@@ -20,7 +20,7 @@ const kutsuList = (
     state: KutsuListState = {
         loaded: false,
         result: [],
-        kutsuByToken: {},
+        kutsuByToken: undefined,
         kutsuByTokenLoading: true,
     },
     action: any

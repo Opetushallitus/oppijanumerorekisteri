@@ -24,5 +24,7 @@ export type KutsuRead = {
     aikaleima: string;
     asiointikieli: Asiointikieli;
     organisaatiot: Array<KutsuOrganisaatio>;
-    hakaIdentifier: boolean;
+    hakaIdentifier: string;
 };
+
+export type KutsuByToken = KutsuRead & { temporaryToken: string };

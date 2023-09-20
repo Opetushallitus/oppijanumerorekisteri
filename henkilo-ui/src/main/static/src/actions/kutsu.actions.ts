@@ -24,6 +24,7 @@ import { addGlobalNotification } from './notification.actions';
 import { localizeWithState } from '../utilities/localisation.util';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { AppDispatch, RootState } from '../store';
+import { KutsuByToken, KutsuRead } from '../types/domain/kayttooikeus/Kutsu.types';
 
 const requestDeleteKutsu = (id) => ({ type: DELETE_KUTSU_REQUEST, id });
 const receiveDeleteKutsu = (id) => ({
@@ -85,7 +86,7 @@ export const fetchKutsus = (payload, offset, amount) => async (dispatch: AppDisp
 export const clearKutsuList = () => (dispatch: AppDispatch) => dispatch({ type: CLEAR_KUTSU_LIST });
 
 const kutsuByTokenRequest = () => ({ type: FETCH_KUTSUBYTOKEN_REQUEST });
-const kutsuByTokenSuccess = (kutsu) => ({
+const kutsuByTokenSuccess = (kutsu: KutsuByToken) => ({
     type: FETCH_KUTSUBYTOKEN_SUCCESS,
     kutsu,
     receivedAt: Date.now(),
@@ -95,42 +96,10 @@ const kutsuByTokenFailure = () => ({
     receivedAt: Date.now(),
 });
 
-type kutsu = {
-    aikaleima: string;
-    asiointikieli: string;
-    etunimi: string;
-    hakaIdentifier: boolean;
-    id: number;
-    kutsujaOid: string;
-    organisaatiot: [
-        {
-            kayttoOikeusRyhmat: [
-                {
-                    id: number;
-                    nimi: {
-                        id: number;
-                        texts: object;
-                    };
-                }
-            ];
-            nimi: {
-                id: number;
-                texts: object;
-            };
-            organisaatioOid: string;
-            voimassaLoppuPvm: string;
-        }
-    ];
-    saate: string;
-    sahkoposti: string;
-    sukunimi: string;
-    tila: string; // should be enum
-};
-
-export const fetchKutsuByToken = (temporaryToken) => (dispatch: AppDispatch) => {
+export const fetchKutsuByToken = (temporaryToken: string) => (dispatch: AppDispatch) => {
     dispatch(kutsuByTokenRequest());
     const url = urls.url('kayttooikeus-service.kutsu.by-token', temporaryToken);
-    http.get<kutsu>(url)
+    http.get<KutsuRead>(url)
         .then((json) => {
             dispatch(kutsuByTokenSuccess({ ...json, temporaryToken }));
             dispatch({
