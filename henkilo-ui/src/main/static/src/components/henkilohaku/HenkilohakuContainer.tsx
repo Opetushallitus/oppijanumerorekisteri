@@ -43,13 +43,6 @@ type DispatchProps = {
 type Props = OwnProps & StateProps & DispatchProps;
 
 class HenkilohakuContainer extends React.Component<Props> {
-    initialCriteria: HenkilohakuCriteria = {
-        noOrganisation: false,
-        subOrganisation: true,
-        passivoitu: false,
-        dublicates: false,
-    };
-
     async componentWillMount() {
         const kayttooikeudet = parsePalveluRoolit(this.props.omattiedot.organisaatiot);
         const vainOppijoidenTuonti =
@@ -73,7 +66,6 @@ class HenkilohakuContainer extends React.Component<Props> {
             <HenkilohakuPage
                 l10n={this.props.l10n}
                 locale={this.props.locale}
-                initialCriteria={this.initialCriteria}
                 henkilohakuAction={this.props.henkilohaku}
                 henkilohakuCount={this.props.henkilohakuCount}
                 henkilohakuResult={this.props.henkilohakuState.result}

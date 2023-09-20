@@ -19,7 +19,6 @@ import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.t
 type Props = {
     l10n: L10n;
     locale: Locale;
-    initialCriteria: HenkilohakuCriteria;
     isAdmin: boolean;
     henkilohakuAction: (arg0: HenkilohakuCriteria, arg1: HenkilohakuQueryparameters) => void;
     henkilohakuCount: (arg0: HenkilohakuCriteria) => void;
@@ -41,25 +40,45 @@ type State = {
     initialised: boolean;
 };
 
+const initialState: State = {
+    henkilohakuModel: {
+        noOrganisation: false,
+        subOrganisation: true,
+        passivoitu: false,
+        dublicates: false,
+        organisaatioOids: undefined,
+        kayttooikeusryhmaId: undefined,
+        ryhmaOids: undefined,
+        nameQuery: undefined,
+    },
+    showNoDataMessage: false,
+    allFetched: true,
+    page: 0,
+    sorted: [],
+    ryhmaOid: undefined,
+    initialised: false,
+};
+
+const columnHeaders = [
+    {
+        key: 'HENKILO_NIMI',
+        maxWidth: 400,
+    },
+    {
+        key: 'USERNAME',
+        maxWidth: 200,
+    },
+    {
+        key: 'HENKILOHAKU_ORGANISAATIO',
+        notSortable: true,
+    },
+];
+
 class HenkilohakuPage extends React.Component<Props, State> {
     initialised = false;
     L: Localisations = this.props.l10n[this.props.locale];
 
-    state: State = {
-        henkilohakuModel: {
-            ...this.props.initialCriteria,
-            organisaatioOids: undefined,
-            kayttooikeusryhmaId: undefined,
-            ryhmaOids: undefined,
-            nameQuery: undefined,
-        },
-        showNoDataMessage: false,
-        allFetched: true,
-        page: 0,
-        sorted: [],
-        ryhmaOid: undefined,
-        initialised: false,
-    };
+    state: State = initialState;
 
     componentWillReceiveProps(nextProps: Props): void {
         const newState = {
@@ -126,12 +145,12 @@ class HenkilohakuPage extends React.Component<Props, State> {
                 {(this.initialised && !this.state.showNoDataMessage) || this.props.henkilohakuResult.length ? (
                     <div className="henkilohakuTableWrapper">
                         <Table
-                            headings={this.createColumnHeaders().map((template) =>
+                            headings={columnHeaders.map((template) =>
                                 Object.assign({}, template, {
                                     label: this.L[template.key] || template.key,
                                 })
                             )}
-                            data={this.createRows(this.createColumnHeaders().map((template) => template.key))}
+                            data={this.createRows(columnHeaders.map((template) => template.key))}
                             noDataText=""
                             striped
                             highlight
@@ -184,23 +203,6 @@ class HenkilohakuPage extends React.Component<Props, State> {
                 </ul>
             ),
         }));
-    }
-
-    createColumnHeaders(): Array<any> {
-        return [
-            {
-                key: 'HENKILO_NIMI',
-                maxWidth: 400,
-            },
-            {
-                key: 'USERNAME',
-                maxWidth: 200,
-            },
-            {
-                key: 'HENKILOHAKU_ORGANISAATIO',
-                notSortable: true,
-            },
-        ];
     }
 
     clearOrganisaatio = () => {
