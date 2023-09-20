@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Locale } from '../../../types/locale.type';
 import { http } from '../../../http';
 import { urls } from 'oph-urls-js';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import { isEmpty } from 'ramda';
 import { PalveluRooli } from '../../../types/domain/kayttooikeus/PalveluRooli.types';
 import LocalizedTextGroup from '../../common/LocalizedTextGroup';
 import './KayttooikeusryhmaTiedot.css';
@@ -16,64 +15,55 @@ type Props = {
     locale: Locale;
     L: Localisations;
     show: boolean;
-    router: any;
 };
 
-type State = {
-    palvelutRoolit: PalveluRooli[];
-};
+const KayttooikeusryhmaTiedot = (props: Props) => {
+    const [palveluRoolit, setPalveluRoolit] = useState<PalveluRooli[]>([]);
 
-export default class KayttooikeusryhmaTiedot extends React.Component<Props, State> {
-    state = {
-        palvelutRoolit: [],
-    };
-
-    async componentWillReceiveProps(nextProps: Props): Promise<void> {
-        if (nextProps.show && isEmpty(this.state.palvelutRoolit)) {
-            const url = urls.url('kayttooikeus-service.kayttooikeusryhma.palvelurooli', this.props.item.id);
+    useEffect(() => {
+        const fetchPalveluRoolit = async () => {
+            const url = urls.url('kayttooikeus-service.kayttooikeusryhma.palvelurooli', props.item.id);
             const data = await http.get<PalveluRooli[]>(url);
-            this.setState({ palvelutRoolit: data });
+            setPalveluRoolit(data);
+        };
+
+        if (props.show && palveluRoolit.length === 0) {
+            fetchPalveluRoolit();
         }
-    }
+    }, [props]);
 
-    render() {
-        const kuvaus = this.props.item?.kuvaus?.texts;
+    const kuvaus = props.item?.kuvaus?.texts;
 
-        return this.props.show ? (
-            <div className="kayttooikeusryhma-tiedot">
-                <LocalizedTextGroup texts={kuvaus} locale={this.props.locale}></LocalizedTextGroup>
-                <div className="flex-horizontal kayttooikeusryhma-tiedot-palvelutroolit-header">
-                    <div className="flex-item-1 ">{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PALVELU']}</div>
-                    <div className="flex-item-1">{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_KAYTTOOIKEUS']}</div>
-                    <div className="flex-item-2"></div>
-                </div>
-                <div className="kayttooikeusryhma-tiedot-palvelutroolit">
-                    {this.state.palvelutRoolit.map((item: PalveluRooli, index: number) => (
-                        <div key={index} className="flex-horizontal">
-                            <div className="flex-item-1">
-                                <LocalizedTextGroup
-                                    locale={this.props.locale}
-                                    texts={item.palveluTexts}
-                                ></LocalizedTextGroup>
-                            </div>
-                            <div className="flex-item-1">
-                                <LocalizedTextGroup
-                                    locale={this.props.locale}
-                                    texts={item.rooliTexts}
-                                ></LocalizedTextGroup>
-                            </div>
-                            <div className="flex-item-2"></div>
-                        </div>
-                    ))}
-                </div>
-                <Link
-                    to={`/kayttooikeusryhmat/${this.props.item.id}`}
-                    className="oph-button oph-button-primary"
-                    disabled={!this.props.muokkausoikeus}
-                >
-                    {this.props.L['MUOKKAA']}
-                </Link>
+    return props.show ? (
+        <div className="kayttooikeusryhma-tiedot">
+            <LocalizedTextGroup texts={kuvaus} locale={props.locale}></LocalizedTextGroup>
+            <div className="flex-horizontal kayttooikeusryhma-tiedot-palvelutroolit-header">
+                <div className="flex-item-1 ">{props.L['KAYTTOOIKEUSRYHMAT_LISAA_PALVELU']}</div>
+                <div className="flex-item-1">{props.L['KAYTTOOIKEUSRYHMAT_LISAA_KAYTTOOIKEUS']}</div>
+                <div className="flex-item-2"></div>
             </div>
-        ) : null;
-    }
-}
+            <div className="kayttooikeusryhma-tiedot-palvelutroolit">
+                {palveluRoolit.map((item: PalveluRooli, index: number) => (
+                    <div key={index} className="flex-horizontal">
+                        <div className="flex-item-1">
+                            <LocalizedTextGroup locale={props.locale} texts={item.palveluTexts}></LocalizedTextGroup>
+                        </div>
+                        <div className="flex-item-1">
+                            <LocalizedTextGroup locale={props.locale} texts={item.rooliTexts}></LocalizedTextGroup>
+                        </div>
+                        <div className="flex-item-2"></div>
+                    </div>
+                ))}
+            </div>
+            <Link
+                to={`/kayttooikeusryhmat/${props.item.id}`}
+                className="oph-button oph-button-primary"
+                disabled={!props.muokkausoikeus}
+            >
+                {props.L['MUOKKAA']}
+            </Link>
+        </div>
+    ) : null;
+};
+
+export default KayttooikeusryhmaTiedot;
