@@ -173,7 +173,6 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                 />
 
                 <MyonnettavatKayttooikeusryhmat
-                    {...this.props}
                     kayttooikeusryhmaSelectAction={this._onKayttooikeusryhmaSelection}
                     kayttooikeusryhmaSelections={this.state.kayttooikeusryhmaForm.kayttooikeusryhmaSelections}
                     removeKayttooikeusryhmaSelectAction={this._onRemoveKayttooikeusryhmaSelect}
