@@ -161,7 +161,6 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                 />
 
                 <KayttooikeusryhmanOrganisaatiorajoite
-                    {...this.props}
                     ryhmaRestriction={this.state.kayttooikeusryhmaForm.ryhmaRestriction}
                     toggleRyhmaRestriction={this._toggleRyhmaRestriction}
                     organisaatioSelectAction={this._onOrganisaatioSelection}
@@ -181,7 +180,6 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                 />
 
                 <KayttooikeusryhmatPalvelutJaKayttooikeudet
-                    {...this.props}
                     palvelutSelection={this.state.palvelutSelection}
                     palvelutSelectAction={this._onPalvelutSelection}
                     palveluKayttooikeusSelectAction={this._onPalveluKayttooikeusSelection}
