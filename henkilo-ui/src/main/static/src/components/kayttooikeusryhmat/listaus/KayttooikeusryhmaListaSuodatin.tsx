@@ -1,7 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router';
+
 import './KayttooikeusryhmaListaSuodatin.css';
 import { Localisations } from '../../../types/localisation.type';
-import { Link } from 'react-router';
 import BooleanRadioButtonGroup from '../../common/radiobuttongroup/BooleanRadioButtonGroup';
 import OphInline from '../../common/forms/OphInline';
 
@@ -9,7 +10,6 @@ type Props = {
     L: Localisations;
     muokkausoikeus: boolean;
     onFilterEvent: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    router: any;
     naytaVainPalvelulleSallitut: boolean;
     setNaytaVainSallitut: () => void;
     naytaPassivoidut: boolean;

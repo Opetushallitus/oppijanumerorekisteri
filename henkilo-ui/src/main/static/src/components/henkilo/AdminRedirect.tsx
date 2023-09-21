@@ -3,10 +3,11 @@ import { connect } from 'react-redux';
 import type { RootState } from '../../store';
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
+import { RouteActions } from 'react-router-redux';
 
 type OwnProps = {
-    router: any;
-    params: any;
+    router: RouteActions;
+    params: { oid?: string };
 };
 
 type StateProps = {

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { RouteActions } from 'react-router-redux';
+
 import { useAppDispatch, type RootState } from '../../../store';
 import { http } from '../../../http';
 import { urls } from 'oph-urls-js';
@@ -11,7 +13,7 @@ import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooike
 import { useLocalisations } from '../../../selectors';
 
 type OwnProps = {
-    router: any;
+    router: RouteActions;
     kayttooikeusryhmaId: string | null | undefined;
 };
 

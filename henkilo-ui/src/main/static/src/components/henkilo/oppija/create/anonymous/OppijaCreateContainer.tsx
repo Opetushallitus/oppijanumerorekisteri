@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { BrowserRouter } from 'react-router';
+import { RouteActions } from 'react-router-redux';
+
 import { http } from '../../../../../http';
 import { urls } from 'oph-urls-js';
 import {
@@ -22,7 +23,7 @@ import CloseButton from '../../../../common/button/CloseButton';
 import { RootState } from '../../../../../store';
 
 type OwnProps = {
-    router: BrowserRouter;
+    router: RouteActions;
     goBack: () => void;
 };
 

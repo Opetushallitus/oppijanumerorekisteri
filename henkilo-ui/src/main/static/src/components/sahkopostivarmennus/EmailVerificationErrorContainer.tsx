@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { RouteActions } from 'react-router-redux';
+
 import type { RootState } from '../../store';
 import { Localisations } from '../../types/localisation.type';
 import { Locale } from '../../types/locale.type';
@@ -9,8 +11,8 @@ import Button from '../common/button/Button';
 import { http } from '../../http';
 
 type OwnProps = {
-    params: any;
-    router: any;
+    params: { locale?: Locale; loginToken?: string; virhekoodi?: string };
+    router: RouteActions;
 };
 
 type StateProps = {

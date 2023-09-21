@@ -1,4 +1,6 @@
 import React from 'react';
+import { RouteActions } from 'react-router-redux';
+
 import KayttooikeusryhmaLista from './KayttooikeusryhmaLista';
 import { Locale } from '../../../types/locale.type';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
@@ -11,7 +13,7 @@ type Props = {
     kayttooikeusryhmat: Array<Kayttooikeusryhma>;
     locale: Locale;
     L: Localisations;
-    router: any;
+    router: RouteActions;
     omattiedot: OmattiedotState;
 };
 

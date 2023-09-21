@@ -1,13 +1,15 @@
 import React from 'react';
+import { RouteActions } from 'react-router-redux';
+import { clone, remove } from 'ramda';
+import { urls } from 'oph-urls-js';
+
 import { Locale } from '../../types/locale.type';
 import { Localisations } from '../../types/localisation.type';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { http } from '../../http';
-import { urls } from 'oph-urls-js';
 import Button from '../common/button/Button';
 import { YhteystietoRyhma } from '../../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
 import { EmailVerificationList } from './EmailVerificationList';
-import { clone, remove } from 'ramda';
 import {
     notEmptyYhteystiedotRyhmaEmailCount,
     validateYhteystiedotRyhmaEmails,
@@ -21,7 +23,7 @@ type Props = {
     L: Localisations;
     henkilo: Henkilo;
     loginToken: string;
-    router: any;
+    router: RouteActions;
     errorNotification: (title: string) => void;
 };
 

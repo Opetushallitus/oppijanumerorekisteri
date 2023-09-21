@@ -19,7 +19,7 @@ import type { KoodistoState } from '../../../reducers/koodisto.reducer';
 import type { Localisations } from '../../../types/localisation.type';
 
 type OwnProps = {
-    params: any;
+    params: { oid?: string };
     route: any;
 };
 

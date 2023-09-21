@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { RouteActions } from 'react-router-redux';
+
 import type { RootState } from '../../store';
 import VahvaTunnistusLisatiedotPage from './VahvaTunnistusLisatiedotPage';
 import { Form, Values, Metadata, Errors } from './VahvaTunnistusLisatiedotInputs';
@@ -10,8 +12,8 @@ import { http } from '../../http';
 import { isValidPassword } from '../../validation/PasswordValidator';
 
 type OwnProps = {
-    params: any;
-    router: any;
+    params: { locale?: Locale; loginToken?: string; salasana?: string; tyosahkopostiosoite?: string };
+    router: RouteActions;
 };
 
 type StateProps = {

@@ -21,7 +21,7 @@ import { addGlobalNotification } from '../../../actions/notification.actions';
 import { GlobalNotificationConfig } from '../../../types/notification.types';
 
 type OwnProps = {
-    params: any;
+    params: { oid?: string; henkiloType?: string };
 };
 
 type StateProps = {

@@ -1,7 +1,8 @@
 import * as React from 'react';
+import { update } from 'ramda';
+
 import './KayttooikeusryhmaLista.css';
 import KayttooikeusryhmaTiedot from './KayttooikeusryhmaTiedot';
-import { update } from 'ramda';
 import { Locale } from '../../../types/locale.type';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import LocalizedTextGroup from '../../common/LocalizedTextGroup';
@@ -15,7 +16,6 @@ type Props = {
     labelPath: Array<string>;
     locale: Locale;
     L: Localisations;
-    router: any;
     filter: string;
     naytaVainPalvelulleSallitut: boolean;
     naytaPassivoidut: boolean;

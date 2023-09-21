@@ -20,11 +20,6 @@ import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
 import { validateEmail } from '../../validation/EmailValidator';
 import { Locale } from '../../types/locale.type';
 
-type OwnProps = {
-    ryhmaState: any;
-    location: any;
-};
-
 type StateProps = {
     L: Localisations;
     l10n: L10n;
@@ -44,7 +39,7 @@ type DispatchProps = {
     fetchHenkilo: (oid: string) => void;
 };
 
-type Props = OwnProps & StateProps & DispatchProps;
+type Props = StateProps & DispatchProps;
 
 type State = {
     confirmationModalOpen: boolean;
@@ -250,7 +245,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
     ryhmasLoading: state.ryhmatState.ryhmasLoading,
 });
 
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, undefined, RootState>(mapStateToProps, {
     kutsuClearOrganisaatios,
     kutsuAddOrganisaatio,
     fetchHenkilo,
