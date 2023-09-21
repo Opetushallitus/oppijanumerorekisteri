@@ -53,9 +53,7 @@ class VtjVertailuPage extends React.Component<Props> {
     }
 
     render() {
-        return this.props.henkilo.yksilointitiedotLoading ||
-            this.props.henkilo.henkiloLoading ||
-            this.props.omattiedot.omattiedotLoading ? (
+        return this.props.henkilo.yksilointitiedotLoading || this.props.henkilo.henkiloLoading ? (
             <Loader />
         ) : (
             <div className="wrapper">

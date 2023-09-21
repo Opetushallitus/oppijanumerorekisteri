@@ -62,7 +62,7 @@ class HenkilohakuContainer extends React.Component<Props> {
     }
 
     render() {
-        return !this.props.allKayttooikeusryhmasLoading && !this.props.omattiedot.omattiedotLoading ? (
+        return !this.props.allKayttooikeusryhmasLoading ? (
             <HenkilohakuPage
                 l10n={this.props.l10n}
                 locale={this.props.locale}

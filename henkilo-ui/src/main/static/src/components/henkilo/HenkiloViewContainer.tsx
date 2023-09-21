@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { RouteActions } from 'react-router-redux';
 
 import { useAppDispatch, type RootState } from '../../store';
-import { OmattiedotState } from '../../reducers/omattiedot.reducer';
 import Loader from '../common/icons/Loader';
 import {
     fetchKansalaisuusKoodisto,
@@ -29,6 +28,8 @@ import { LocalNotification } from '../common/Notification/LocalNotification';
 import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
 import { useLocalisations } from '../../selectors';
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
+import { Omattiedot } from '../../types/domain/kayttooikeus/Omattiedot.types';
+import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
 
 type OwnProps = {
     router: RouteActions;
@@ -36,7 +37,7 @@ type OwnProps = {
     params: { oid?: string; henkiloType?: string };
 };
 
-const getView = (henkiloType: string, omattiedot: OmattiedotState): View => {
+const getView = (henkiloType: string, omattiedot: Omattiedot): View => {
     if (omattiedot.isAdmin) {
         return 'admin';
     } else if (henkiloType === 'virkailija' || henkiloType === 'oppija') {
@@ -49,7 +50,7 @@ const getView = (henkiloType: string, omattiedot: OmattiedotState): View => {
  * Henkilo-näkymä. Päätellään näytetäänkö admin/virkailija/oppija -versio henkilöstä, vai siirrytäänkö omattiedot-sivulle
  */
 const HenkiloViewContainer = ({ router, location, params }: OwnProps) => {
-    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const { data: omattiedot } = useGetOmattiedotQuery();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const { L } = useLocalisations();
     const { oid } = params;
@@ -59,7 +60,7 @@ const HenkiloViewContainer = ({ router, location, params }: OwnProps) => {
     const view = getView(henkiloType, omattiedot);
 
     useEffect(() => {
-        if (oid && omattiedot.data?.oid === oid) {
+        if (oid && omattiedot.oidHenkilo === oid) {
             router.replace('/omattiedot');
         }
 
@@ -80,7 +81,7 @@ const HenkiloViewContainer = ({ router, location, params }: OwnProps) => {
         }
     }, [omattiedot, oid, view]);
 
-    if (!omattiedot.data || omattiedot.omattiedotLoading || !view) {
+    if (!view) {
         return <Loader />;
     } else if (henkilo.henkiloKayttoEstetty) {
         return <VirheKayttoEstetty L={L} />;

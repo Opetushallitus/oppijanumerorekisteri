@@ -35,7 +35,6 @@ const urlConfig = {
     'kayttooikeus-service.henkilo.kayttooikeus-list-grantable':
         'kayttooikeus-service/kayttooikeusanomus/henkilo/current/$1/canGrant',
     'kayttooikeus-service.henkilo.password': 'kayttooikeus-service/henkilo/$1/password',
-    'kayttooikeus-service.henkilo.current.omattiedot': 'kayttooikeus-service/henkilo/current/omattiedot',
 
     'kayttooikeus-service.virkailija': 'kayttooikeus-service/virkailija',
     'kayttooikeus-service.palvelukayttaja': 'kayttooikeus-service/palvelukayttaja',
@@ -91,8 +90,6 @@ const urlConfig = {
         'oppijanumerorekisteri-service/henkilo/$1/yksilointitiedot',
     'oppijanumerorekisteri-service.henkilo.yksilointitiedot.yliajayksiloimaton':
         'oppijanumerorekisteri-service/henkilo/$1/yksilointitiedot/yliajayksiloimaton',
-    'oppijanumerorekisteri-service.henkilo.current.asiointikieli':
-        'oppijanumerorekisteri-service/henkilo/current/asiointiKieli',
     'oppijanumerorekisteri-service.henkilo.identification': 'oppijanumerorekisteri-service/henkilo/$1/identification',
     'oppijanumerorekisteri-service.henkilo.identification.remove':
         'oppijanumerorekisteri-service/henkilo/$1/identification/$2/$3',

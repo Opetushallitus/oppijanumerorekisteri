@@ -33,7 +33,6 @@ type StateProps = {
     kayttajaOid: string;
     henkilo: Henkilo;
     organisaatioState: OrganisaatioState;
-    omattiedotLoading: boolean;
     henkiloLoading: boolean;
     ryhmasLoading: boolean;
 };
@@ -125,7 +124,7 @@ class KutsuminenPage extends React.Component<Props, State> {
         };
         const { basicInfo } = this.state;
 
-        if (this.props.omattiedotLoading || this.props.henkiloLoading || this.props.ryhmasLoading) {
+        if (this.props.henkiloLoading || this.props.ryhmasLoading) {
             return (
                 <div className="wrapper">
                     <Loader />
@@ -242,7 +241,6 @@ class KutsuminenPage extends React.Component<Props, State> {
 const mapStateToProps = (state: RootState): StateProps => ({
     l10n: state.l10n.localisations,
     L: state.l10n.localisations[state.locale],
-    omattiedotLoading: state.omattiedot.omattiedotLoading,
     kayttajaOid: state.omattiedot.data.oid,
     henkiloLoading: state.henkilo.henkiloLoading,
     henkilo: state.henkilo.henkilo,

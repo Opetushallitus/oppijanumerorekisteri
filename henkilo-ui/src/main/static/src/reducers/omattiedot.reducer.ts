@@ -1,16 +1,11 @@
 import {
-    FETCH_OMATTIEDOT_REQUEST,
-    FETCH_OMATTIEDOT_SUCCESS,
-    FETCH_OMATTIEDOT_FAILURE,
-    FETCH_OMATTIEDOT_ORGANISAATIOS_REQUEST,
-    FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS,
-    FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE,
     FETCH_CASME_SUCCESS,
     UPDATE_ANOMUSILMOITUS,
+    FETCH_OMATTIEDOT_SUCCESS,
+    FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS,
     FETCH_HENKILOHAKUORGANISAATIOT_REQUEST,
     FETCH_HENKILOHAKUORGANISAATIOT_SUCCESS,
     FETCH_HENKILOHAKUORGANISAATIOT_FAILURE,
-    SET_MFA_PROVIDER,
 } from '../actions/actiontypes';
 import { getOrganisaatioOptionsAndFilter } from '../utilities/organisaatio.util';
 import { KayttooikeusOrganisaatiot } from '../types/domain/kayttooikeus/KayttooikeusPerustiedot.types';
@@ -19,10 +14,7 @@ import { Options } from 'react-select';
 import createFilterOptions from 'react-select-fast-filter-options';
 
 export type OmattiedotState = {
-    readonly omattiedotLoading: boolean;
     readonly data?: { oid: string };
-    readonly initialized: boolean;
-    readonly omattiedotOrganisaatiosLoading: boolean;
     readonly organisaatios: Array<OrganisaatioHenkilo>;
     readonly casMeSuccess: boolean;
     readonly isAdmin: boolean;
@@ -38,14 +30,11 @@ export type OmattiedotState = {
 };
 
 const initialState: OmattiedotState = {
-    omattiedotLoading: false,
     data: undefined,
     isAdmin: false,
     isOphVirkailija: false,
     mfaProvider: undefined,
     anomusilmoitus: false,
-    initialized: false,
-    omattiedotOrganisaatiosLoading: false,
     organisaatios: [],
     casMeSuccess: false,
     organisaatioRyhmaOptions: [],
@@ -57,36 +46,22 @@ const initialState: OmattiedotState = {
 
 const omattiedot = (state: OmattiedotState = initialState, action): OmattiedotState => {
     switch (action.type) {
-        case FETCH_OMATTIEDOT_REQUEST:
-            return Object.assign({}, state, { omattiedotLoading: true });
         case FETCH_OMATTIEDOT_SUCCESS:
             return {
                 ...state,
-                omattiedotLoading: false,
                 data: { oid: action.omattiedot.oidHenkilo },
                 isAdmin: action.omattiedot.isAdmin,
                 isOphVirkailija: action.omattiedot.isMiniAdmin,
                 mfaProvider: action.omattiedot.mfaProvider,
                 idpEntityId: action.omattiedot.idpEntityId,
                 organisaatiot: action.omattiedot.organisaatiot,
-                initialized: true,
                 anomusilmoitus: action.omattiedot.anomusilmoitus,
             };
-        case FETCH_OMATTIEDOT_FAILURE:
-            return Object.assign({}, state, {
-                omattiedotLoading: false,
-                initialized: true,
-            });
-        case FETCH_OMATTIEDOT_ORGANISAATIOS_REQUEST:
-            return Object.assign({}, state, {
-                omattiedotOrganisaatiosLoading: true,
-            });
         case FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS: {
             const newRyhmaOptions = getOrganisaatioOptionsAndFilter(action.organisaatios, action.locale, true);
             return {
                 ...state,
                 organisaatios: action.organisaatios,
-                omattiedotOrganisaatiosLoading: false,
                 organisaatioRyhmaOptions: newRyhmaOptions.options,
                 organisaatioRyhmaFilter: newRyhmaOptions.filterOptions,
             };
@@ -101,16 +76,10 @@ const omattiedot = (state: OmattiedotState = initialState, action): OmattiedotSt
             };
         case FETCH_HENKILOHAKUORGANISAATIOT_FAILURE:
             return { ...state, henkilohakuOrganisaatiotLoading: false };
-        case FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE:
-            return Object.assign({}, state, {
-                omattiedotOrganisaatiosLoading: false,
-            });
         case FETCH_CASME_SUCCESS:
             return Object.assign({}, state, { casMeSuccess: true });
         case UPDATE_ANOMUSILMOITUS:
             return { ...state, anomusilmoitus: action.value };
-        case SET_MFA_PROVIDER:
-            return { ...state, mfaProvider: action.mfaProvider };
         default:
             return state;
     }

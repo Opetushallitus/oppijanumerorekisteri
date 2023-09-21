@@ -1,10 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { LOCATION_CHANGE } from 'react-router-redux';
 
 import { getCommonOptions } from '../http';
 import { addGlobalNotification } from '../actions/notification.actions';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { Localisations } from '../types/localisation.type';
 import { fetchHenkilo } from '../actions/henkilo.actions';
+import { FETCH_HENKILO_ASIOINTIKIELI_SUCCESS } from '../actions/actiontypes';
 
 type Passinumerot = string[];
 
@@ -25,8 +27,20 @@ export const oppijanumerorekisteriApi = createApi({
         },
         baseUrl: '/oppijanumerorekisteri-service/',
     }),
-    tagTypes: ['Passinumerot'],
+    tagTypes: ['Passinumerot', 'locale'],
     endpoints: (builder) => ({
+        getLocale: builder.query<Locale, void>({
+            query: () => ({
+                url: 'henkilo/current/asiointiKieli',
+                responseHandler: 'text',
+            }),
+            async onQueryStarted(_, { dispatch, queryFulfilled }) {
+                const { data: lang } = await queryFulfilled;
+                dispatch({ type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, lang });
+                dispatch({ type: LOCATION_CHANGE });
+            },
+            providesTags: ['locale'],
+        }),
         getPassinumerot: builder.query<Passinumerot, string>({
             query: (oid) => `henkilo/${oid}/passinumerot`,
             providesTags: ['Passinumerot'],
@@ -125,6 +139,7 @@ export const oppijanumerorekisteriApi = createApi({
 });
 
 export const {
+    useGetLocaleQuery,
     useGetPassinumerotQuery,
     useSetPassinumerotMutation,
     usePostLinkHenkilosMutation,
