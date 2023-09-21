@@ -35,7 +35,6 @@ const mapLocalisations = (data: L10n, localisationData: L10n): L10n => {
 };
 
 export type LocalisationState = {
-    localisationsInitialized: boolean;
     localisations: L10n;
 };
 
@@ -43,18 +42,16 @@ const localisations: L10n = { fi: {}, sv: {}, en: {} };
 
 const l10n = (
     state: LocalisationState = {
-        localisationsInitialized: false,
         localisations: localisations,
     },
     action: any
 ): LocalisationState => {
     switch (action.type) {
         case FETCH_LOCALISATIONS_REQUEST:
-            return { ...state, localisationsInitialized: false };
+            return { ...state };
         case FETCH_LOCALISATIONS_SUCCESS:
             return Object.assign({}, state, {
                 localisations: mapLocalisations(state.localisations, action.localisations),
-                localisationsInitialized: true,
             });
         default:
             return state;

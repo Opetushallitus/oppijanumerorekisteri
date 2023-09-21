@@ -35,7 +35,7 @@ export const kayttooikeusApi = createApi({
             query: ({ oid }) => `henkilo/${oid}/organisaatio?piilotaOikeudettomat=true`,
             async onQueryStarted({ locale }, { dispatch, queryFulfilled }) {
                 const { data } = await queryFulfilled;
-                dispatch({ type: FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS, organisaatios: data, locale });
+                dispatch({ type: FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS, organisaatios: { ...data }, locale });
             },
             providesTags: ['organisaatiot'],
         }),

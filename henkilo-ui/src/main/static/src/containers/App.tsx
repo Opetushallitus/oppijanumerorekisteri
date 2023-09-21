@@ -17,11 +17,11 @@ import { NOTIFICATIONTYPES } from '../components/common/Notification/notificatio
 import { fetchOrganisationNames } from '../actions/organisaatio.actions';
 import { useLocalisations } from '../selectors';
 import { fetchL10n } from '../actions/l10n.actions';
+import { useGetOmatOrganisaatiotQuery, useGetOmattiedotQuery } from '../api/kayttooikeus';
+import { useGetLocaleQuery } from '../api/oppijanumerorekisteri';
 
 import 'moment/locale/fi';
 import 'moment/locale/sv';
-import { useGetOmatOrganisaatiotQuery, useGetOmattiedotQuery } from '../api/kayttooikeus';
-import { useGetLocaleQuery } from '../api/oppijanumerorekisteri';
 
 type OwnProps = {
     children: React.ReactNode;
@@ -38,11 +38,11 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     const [isInitialized, setIsInitialized] = useState(false);
     const frontPropertiesInitialized = useSelector<RootState, boolean>((state) => state.frontProperties.initialized);
     const prequelsNotLoadedCount = useSelector<RootState, number>((state) => state.prequels.notLoadedCount);
-    const { data: lang, isLoading: isLocaleLoading } = useGetLocaleQuery();
-    const { data: omattiedot, isLoading: isOmattiedotLoading } = useGetOmattiedotQuery();
-    const { isLoading: isOmatOrganisaatiotLoading } = useGetOmatOrganisaatiotQuery(
+    const { data: lang, isSuccess: isLocaleSuccess } = useGetLocaleQuery();
+    const { data: omattiedot, isSuccess: isOmattiedotSuccess } = useGetOmattiedotQuery();
+    const { isSuccess: isOmatOrganisaatiotSuccess } = useGetOmatOrganisaatiotQuery(
         { oid: omattiedot?.oidHenkilo, locale: lang },
-        { skip: !!omattiedot?.oidHenkilo || !!lang }
+        { skip: !omattiedot?.oidHenkilo || !lang }
     );
     const { L, l10n, locale } = useLocalisations();
     const dispatch = useAppDispatch();
@@ -73,10 +73,9 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     useEffect(() => {
         if (
             frontPropertiesInitialized &&
-            l10n.localisationsInitialized &&
-            !isOmattiedotLoading &&
-            !isOmatOrganisaatiotLoading &&
-            !isLocaleLoading &&
+            isOmattiedotSuccess &&
+            isOmatOrganisaatiotSuccess &&
+            isLocaleSuccess &&
             prequelsNotLoadedCount === 0
         ) {
             setIsInitialized(true);
@@ -85,10 +84,9 @@ const App = ({ children, location, params, routes }: OwnProps) => {
         }
     }, [
         frontPropertiesInitialized,
-        l10n,
-        isOmattiedotLoading,
-        isOmatOrganisaatiotLoading,
-        isLocaleLoading,
+        isOmattiedotSuccess,
+        isOmatOrganisaatiotSuccess,
+        isLocaleSuccess,
         prequelsNotLoadedCount,
     ]);
 
