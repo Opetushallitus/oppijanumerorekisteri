@@ -49,7 +49,7 @@ type StateProps = {
 
 type DispatchProps = {
     fetchAllKayttooikeusryhma: () => void;
-    fetchOmatHenkiloHakuOrganisaatios: () => any;
+    fetchOmatHenkiloHakuOrganisaatios: () => void;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;

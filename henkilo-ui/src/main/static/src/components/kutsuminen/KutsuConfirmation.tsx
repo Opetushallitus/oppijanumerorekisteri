@@ -86,7 +86,7 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
         this.setState({ sent: false });
     }
 
-    renderAddedOrg(org: any) {
+    renderAddedOrg(org: KutsuOrganisaatio) {
         return (
             <div key={org.organisation.oid}>
                 <span className="oph-h3 oph-strong">{org.organisation.name}</span>

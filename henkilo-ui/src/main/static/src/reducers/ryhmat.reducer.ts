@@ -1,3 +1,4 @@
+import { AnyAction } from '@reduxjs/toolkit';
 import { FETCH_ALL_RYHMAT_REQUEST, FETCH_ALL_RYHMAT_SUCCESS, FETCH_ALL_RYHMAT_FAILURE } from '../actions/actiontypes';
 import { OrganisaatioWithChildren } from '../types/domain/organisaatio/organisaatio.types';
 
@@ -11,7 +12,7 @@ const initialState: RyhmatState = {
     ryhmas: [],
 };
 
-export const ryhmatState = (state: RyhmatState = initialState, action: any): RyhmatState => {
+export const ryhmatState = (state: RyhmatState = initialState, action: AnyAction): RyhmatState => {
     switch (action.type) {
         case FETCH_ALL_RYHMAT_REQUEST:
             return { ...state, ryhmasLoading: true, ryhmas: [] };

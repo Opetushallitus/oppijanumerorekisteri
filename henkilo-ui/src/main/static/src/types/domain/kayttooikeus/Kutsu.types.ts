@@ -25,6 +25,7 @@ export type KutsuRead = {
     asiointikieli: Asiointikieli;
     organisaatiot: Array<KutsuOrganisaatio>;
     hakaIdentifier: string;
+    saate?: string;
 };
 
 export type KutsuByToken = KutsuRead & { temporaryToken: string };

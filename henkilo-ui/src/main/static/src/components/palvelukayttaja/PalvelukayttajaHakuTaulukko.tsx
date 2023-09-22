@@ -51,7 +51,7 @@ class PalvelukayttajaHakuTaulukko extends React.Component<PalvelukayttajaHakuTau
         return this.renderKokoRivi(<Loader />);
     }
 
-    renderKokoRivi(sisalto: any) {
+    renderKokoRivi(sisalto: ReactNode) {
         return (
             <tr>
                 <td colSpan={2}>{sisalto}</td>

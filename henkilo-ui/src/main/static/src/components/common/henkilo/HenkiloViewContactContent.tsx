@@ -17,7 +17,7 @@ import type { HenkiloState } from '../../../reducers/henkilo.reducer';
 import type { Henkilo } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import type { Kayttaja } from '../../../types/domain/kayttooikeus/kayttaja.types';
 import type { GlobalNotificationConfig } from '../../../types/notification.types';
-import type { KoodistoState } from '../../../reducers/koodisto.reducer';
+import type { KoodistoState, KoodistoStateKoodi } from '../../../reducers/koodisto.reducer';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import type { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { validateEmail } from '../../../validation/EmailValidator';
@@ -25,6 +25,8 @@ import type { Option } from 'react-select';
 import { WORK_ADDRESS, EMAIL } from '../../../types/constants';
 import { RootState } from '../../../store';
 import { View } from '../../henkilo/HenkiloViewPage';
+import { Yhteystieto } from '../../../types/domain/oppijanumerorekisteri/yhteystieto.types';
+import { YhteystietoRyhma } from '../../../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
 
 type OwnProps = {
     readOnly: boolean;
@@ -350,9 +352,9 @@ export class HenkiloViewContactContentComponent extends React.Component<Props, S
             value?: string;
             inputValue?: string;
         }>,
-        yhteystietotyypit: Array<any>,
+        yhteystietotyypit: KoodistoStateKoodi[],
         locale: string
-    ): Array<any> =>
+    ) =>
         henkiloUpdate.yhteystiedotRyhma.map((yhteystiedotRyhma, idx) => {
             const yhteystietoFlatList = this.createFlatYhteystieto(
                 contactInfoTemplate,
@@ -375,10 +377,10 @@ export class HenkiloViewContactContentComponent extends React.Component<Props, S
             value?: string;
             inputValue?: string;
         }>,
-        yhteystietoList: Array<any>,
+        yhteystietoList: Array<Yhteystieto>,
         idx: number,
-        yhteystiedotRyhma: any,
-        yhteystietotyypit: Array<any>,
+        yhteystiedotRyhma: YhteystietoRyhma,
+        yhteystietotyypit: KoodistoStateKoodi[],
         locale: string,
         henkiloUiId?: string
     ): ContactInfo {

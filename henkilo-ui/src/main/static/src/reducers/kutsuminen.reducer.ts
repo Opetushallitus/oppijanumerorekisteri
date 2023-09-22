@@ -1,3 +1,4 @@
+import { AnyAction } from '@reduxjs/toolkit';
 import {
     KUTSU_ADD_ORGANISAATIO,
     KUTSU_CLEAR_ORGANISAATIOS,
@@ -16,7 +17,7 @@ export type KutsuminenOrganisaatiosState = readonly KutsuOrganisaatio[];
 
 export const kutsuminenOrganisaatios = (
     state: KutsuminenOrganisaatiosState = [], // NOSONAR
-    action: any
+    action: AnyAction
 ): KutsuminenOrganisaatiosState => {
     const newOrganisaatios = [...state];
     let kutsu: KutsuOrganisaatio | undefined;

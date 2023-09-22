@@ -39,6 +39,8 @@ export type Henkilo = {
     kayttajanimi?: string;
 };
 
+export type LinkedHenkilo = Henkilo & { id: string };
+
 export type HenkiloCreate = {
     etunimet?: string;
     kutsumanimi?: string;
@@ -50,4 +52,14 @@ export type HenkiloCreate = {
     passinumerot?: Array<string>;
     yhteystiedotRyhma?: Array<YhteystietoRyhma>;
     yksiloity?: boolean;
+};
+
+export type HenkiloOrg = {
+    id: number;
+    organisaatioOid: string;
+    organisaatioHenkiloTyyppi: string | null;
+    tehtavanimike: string;
+    passivoitu: boolean;
+    voimassaAlkuPvm: string | null;
+    voimassaLoppuPvm: string | null;
 };

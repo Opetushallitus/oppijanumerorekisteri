@@ -31,13 +31,13 @@ export const vtjDataAvailable = (yksilointitieto: Yksilointitieto | null | undef
  * @Params (String oidHenkilo, Object Henkilo, String viewType [admin/virkailija])
  */
 export const henkiloViewTabs = (oidHenkilo: string, henkilo: HenkiloState, henkiloType: string): Array<NaviTab> => {
-    const currentHenkilo: any = path(['henkilo'], henkilo);
+    const currentHenkilo = path(['henkilo'], henkilo);
     if (!henkiloType) {
         henkiloType = 'virkailija';
     }
     const tabs = henkiloType === 'virkailija' ? virkailijaNavi(oidHenkilo) : oppijaNavi(oidHenkilo);
 
-    const masterHenkiloOid: any = path(['master', 'oidHenkilo'], henkilo);
+    const masterHenkiloOid = path(['master', 'oidHenkilo'], henkilo);
 
     // Wait until all needed and correct data has been fetched before enabling tabs to prevent them switching on/off
     if (

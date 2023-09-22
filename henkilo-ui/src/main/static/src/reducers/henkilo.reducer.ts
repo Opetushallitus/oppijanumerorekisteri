@@ -31,12 +31,15 @@ import {
     FETCH_HENKILO_HAKEMUKSET,
 } from '../actions/actiontypes';
 import StaticUtils from '../components/common/StaticUtils';
-import type { Henkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
+import type { Henkilo, HenkiloOrg, LinkedHenkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
 import type { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
 import type { HenkiloDuplicate } from '../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 import type { Hakemus } from '../types/domain/oppijanumerorekisteri/Hakemus.type';
 import type { Kayttaja } from '../types/domain/kayttooikeus/kayttaja.types';
 import type { Yksilointitieto } from '../types/domain/oppijanumerorekisteri/yksilointitieto.types';
+import { StoreOrganisaatio } from '../types/domain/organisaatio/organisaatio.types';
+import { OrganisaatioCache } from './organisaatio.reducer';
+import { AnyAction } from '@reduxjs/toolkit';
 
 export type HenkiloState = {
     readonly henkiloLoading: boolean;
@@ -46,13 +49,13 @@ export type HenkiloState = {
     readonly henkiloKayttoEstetty: boolean;
     readonly henkilo: Henkilo;
     readonly kayttaja: Kayttaja;
-    readonly henkiloOrgs: Array<any>;
+    readonly henkiloOrgs: Array<StoreOrganisaatio>;
     readonly kayttajatieto?: KayttajatiedotRead;
-    readonly slaves: Array<any>;
+    readonly slaves: Array<LinkedHenkilo>;
     readonly duplicates: Array<HenkiloDuplicate>;
     readonly duplicatesLoading: boolean;
     readonly masterLoading: boolean;
-    readonly master: any;
+    readonly master: LinkedHenkilo;
     readonly yksilointitiedotLoading: boolean;
     readonly yksilointitiedot: Yksilointitieto;
     readonly hakemuksetLoading: boolean;
@@ -73,14 +76,14 @@ const initialState: HenkiloState = {
     duplicates: [],
     duplicatesLoading: false,
     masterLoading: true,
-    master: {},
+    master: {} as LinkedHenkilo,
     yksilointitiedotLoading: false,
     yksilointitiedot: {},
     hakemuksetLoading: false,
     hakemukset: [],
 };
 
-const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
+const mapOrgHenkilosWithOrganisations = (henkiloOrgs: HenkiloOrg[], organisations: OrganisaatioCache) => {
     return henkiloOrgs.map((henkiloOrg) =>
         Object.assign(
             {},
@@ -103,7 +106,7 @@ const isKayttoEstettyOppijanumerorekisteri = (data?: { status: number; path: str
     return false;
 };
 
-export const henkilo = (state: HenkiloState = initialState, action: any): HenkiloState => {
+export const henkilo = (state: HenkiloState = initialState, action: AnyAction): HenkiloState => {
     switch (action.type) {
         case UPDATE_HENKILO_REQUEST:
         case FETCH_HENKILO_REQUEST:

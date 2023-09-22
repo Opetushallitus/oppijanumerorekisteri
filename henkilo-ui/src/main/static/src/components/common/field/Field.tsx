@@ -7,7 +7,7 @@ import { validateEmail } from '../../../validation/EmailValidator';
 
 type Props = {
     readOnly: boolean;
-    changeAction: (arg0: any) => any;
+    changeAction: (arg0: any) => void;
     inputValue?: string;
     selectValue?: string | string[];
     password?: boolean;
@@ -18,8 +18,8 @@ type Props = {
     placeholder?: string;
     isError?: boolean;
     data?: any;
-    date?: any;
-    children: any;
+    date?: string | boolean;
+    children: string;
     clearable?: boolean;
     multiselect?: boolean;
 };

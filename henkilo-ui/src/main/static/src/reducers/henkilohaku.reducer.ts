@@ -1,3 +1,4 @@
+import { AnyAction } from '@reduxjs/toolkit';
 import {
     CLEAR_HENKILOHAKU,
     HENKILOHAKU_FAILURE,
@@ -28,7 +29,7 @@ const initialState: HenkilohakuState = {
     result: [],
 };
 
-export const henkilohakuState = (state = initialState, action: any): HenkilohakuState => {
+export const henkilohakuState = (state = initialState, action: AnyAction): HenkilohakuState => {
     switch (action.type) {
         case HENKILOHAKU_REQUEST:
             return { ...state, henkilohakuLoading: true, filters: action.filters };

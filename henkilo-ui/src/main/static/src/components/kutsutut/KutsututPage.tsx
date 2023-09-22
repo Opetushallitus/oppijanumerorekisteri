@@ -39,7 +39,7 @@ type Props = {
     isOphVirkailija: boolean;
 };
 
-type Kutsu = {
+export type Kutsu = {
     id?: number;
     etunimi?: string;
     sukunimi?: string;

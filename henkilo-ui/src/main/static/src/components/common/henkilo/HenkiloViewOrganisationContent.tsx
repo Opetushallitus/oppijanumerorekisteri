@@ -11,6 +11,7 @@ import { toLocalizedText } from '../../../localizabletext';
 import { passivoiHenkiloOrg } from '../../../actions/henkilo.actions';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
+import { StoreOrganisaatio } from '../../../types/domain/organisaatio/organisaatio.types';
 
 type OwnProps = {
     readOnly: boolean;
@@ -117,13 +118,9 @@ class HenkiloViewOrganisationContent extends React.Component<Props, State> {
         this.props.passivoiHenkiloOrg(this.props.henkilo.henkilo.oidHenkilo, organisationOid);
     }
 
-    flatOrganisations(organisations: Array<any>): Array<OrganisaatioFlat> {
+    flatOrganisations(organisations: Array<StoreOrganisaatio>): Array<OrganisaatioFlat> {
         return organisations.map((organisation) => {
-            const typesFlat = organisation.tyypit
-                ? this.organisationTypesFlat(organisation.tyypit)
-                : organisation.organisaatiotyypit
-                ? this.organisationTypesFlat(organisation.organisaatiotyypit)
-                : '';
+            const typesFlat = organisation.tyypit ? this.organisationTypesFlat(organisation.tyypit) : '';
             return {
                 name: toLocalizedText(this.props.locale, organisation.nimi),
                 typesFlat: typesFlat,
@@ -133,7 +130,7 @@ class HenkiloViewOrganisationContent extends React.Component<Props, State> {
         });
     }
 
-    organisationTypesFlat(tyypit: any) {
+    organisationTypesFlat(tyypit: string[]) {
         return tyypit.length ? '(' + StaticUtils.flatArray(tyypit) + ')' : '';
     }
 }

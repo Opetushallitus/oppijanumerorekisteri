@@ -1,3 +1,5 @@
+import { HenkiloOrg } from '../oppijanumerorekisteri/henkilo.types';
+
 export type OrganisaatioStatus = 'AKTIIVINEN' | 'SUUNNITELTU' | 'PASSIIVINEN' | 'POISTETTU';
 
 export type Organisaatio = {
@@ -35,3 +37,5 @@ export type OrganisaatioCriteria = {
     tyyppi?: OrganisaatioTyyppi;
     tila?: Array<OrganisaatioStatus>;
 };
+
+export type StoreOrganisaatio = HenkiloOrg & Organisaatio;

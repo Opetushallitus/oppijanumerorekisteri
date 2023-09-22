@@ -1,3 +1,4 @@
+import { AnyAction } from '@reduxjs/toolkit';
 import {
     FETCH_OPPIJOIDEN_TUONTI_YHTEENVETO_REQUEST,
     FETCH_OPPIJOIDEN_TUONTI_YHTEENVETO_SUCCESS,
@@ -31,7 +32,7 @@ const yhteenvetoInitialState: TuontiYhteenvetoState = {
 
 export const oppijoidenTuontiYhteenveto = (
     state = { ...yhteenvetoInitialState }, // NOSONAR
-    action: any
+    action: AnyAction
 ) => {
     switch (action.type) {
         case FETCH_OPPIJOIDEN_TUONTI_YHTEENVETO_REQUEST:
@@ -47,7 +48,7 @@ export const oppijoidenTuontiYhteenveto = (
 
 export const oppijoidenTuontiListaus = (
     state: TuontiListausState = { loading: true, data: {} },
-    action: any
+    action: AnyAction
 ): TuontiListausState => {
     switch (action.type) {
         case FETCH_OPPIJOIDEN_TUONTI_LISTAUS_REQUEST:

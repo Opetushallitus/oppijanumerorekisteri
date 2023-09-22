@@ -12,6 +12,7 @@ import { KayttooikeusOrganisaatiot } from '../types/domain/kayttooikeus/Kayttooi
 import { OrganisaatioHenkilo } from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { Options } from 'react-select';
 import createFilterOptions from 'react-select-fast-filter-options';
+import { AnyAction } from '@reduxjs/toolkit';
 
 export type OmattiedotState = {
     readonly data?: { oid: string };
@@ -44,7 +45,7 @@ const initialState: OmattiedotState = {
     henkilohakuOrganisaatiot: [],
 };
 
-const omattiedot = (state: OmattiedotState = initialState, action): OmattiedotState => {
+const omattiedot = (state: OmattiedotState = initialState, action: AnyAction): OmattiedotState => {
     switch (action.type) {
         case FETCH_OMATTIEDOT_SUCCESS:
             return {

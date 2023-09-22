@@ -1,3 +1,4 @@
+import { AnyAction } from '@reduxjs/toolkit';
 import {
     FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_FAILURE,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_REQUEST,
@@ -81,7 +82,7 @@ export const getEmptyKayttooikeusRyhmaState = (): KayttooikeusRyhmaState => {
 
 export const kayttooikeus = (
     state: KayttooikeusRyhmaState = getEmptyKayttooikeusRyhmaState(),
-    action: any
+    action: AnyAction
 ): KayttooikeusRyhmaState => {
     switch (action.type) {
         case FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST:

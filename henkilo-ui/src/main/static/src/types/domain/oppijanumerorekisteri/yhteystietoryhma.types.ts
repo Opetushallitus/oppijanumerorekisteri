@@ -6,4 +6,5 @@ export type YhteystietoRyhma = {
     ryhmaKuvaus: string; // Koodisto "yhteystietotyypit"
     ryhmaAlkuperaTieto?: string; // Koodisto "yhteystietojenalkupera"
     yhteystieto: Array<Yhteystieto>;
+    readOnly?: boolean;
 };

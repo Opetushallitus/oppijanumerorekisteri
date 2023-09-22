@@ -1,3 +1,4 @@
+import { AnyAction } from '@reduxjs/toolkit';
 import {
     FETCH_KANSALAISUUSKOODISTO_REQUEST,
     FETCH_KANSALAISUUSKOODISTO_SUCCESS,
@@ -69,7 +70,7 @@ const koodisto = (
         organisaatiotyyppiKoodistoLoading: false,
         organisaatiotyyppiKoodisto: [],
     },
-    action: any
+    action: AnyAction
 ): KoodistoState => {
     switch (action.type) {
         case FETCH_KANSALAISUUSKOODISTO_REQUEST:

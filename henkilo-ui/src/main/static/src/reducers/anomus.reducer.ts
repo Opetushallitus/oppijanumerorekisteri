@@ -1,3 +1,4 @@
+import { AnyAction } from '@reduxjs/toolkit';
 import {
     FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_REQUEST,
     FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_SUCCESS,
@@ -14,7 +15,7 @@ export type HaetutKayttooikeusryhmatState = {
 
 export const haetutKayttooikeusryhmat = (
     state: HaetutKayttooikeusryhmatState = { isLoading: true, data: [] },
-    action: any
+    action: AnyAction
 ): HaetutKayttooikeusryhmatState => {
     switch (action.type) {
         case FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_REQUEST:

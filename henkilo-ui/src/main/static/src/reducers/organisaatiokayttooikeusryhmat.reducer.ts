@@ -1,3 +1,4 @@
+import { AnyAction } from '@reduxjs/toolkit';
 import {
     FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_REQUEST,
     FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_SUCCESS,
@@ -16,7 +17,7 @@ export const OrganisaatioKayttooikeusryhmat = (
         organisaatioOid: null,
         kayttooikeusryhmat: [],
     },
-    action: any
+    action: AnyAction
 ): OrganisaatioKayttooikeusryhmatState => {
     switch (action.type) {
         case FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_REQUEST:

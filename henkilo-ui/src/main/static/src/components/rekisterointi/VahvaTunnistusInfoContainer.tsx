@@ -4,8 +4,9 @@ import VahvaTunnistusInfoPage from './VahvaTunnistusInfoPage';
 import VirhePage from '../common/page/VirhePage';
 import { RootState } from '../../store';
 import type { Localisations } from '../../types/localisation.type';
+import { RouteType } from '../../routes';
 
-type OwnProps = { params: { loginType?: string; locale?: string }; route: any };
+type OwnProps = { params: { loginType?: string; locale?: string }; route: RouteType };
 
 type StateProps = {
     L: Localisations;

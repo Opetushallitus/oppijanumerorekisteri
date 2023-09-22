@@ -56,7 +56,8 @@ import { localizeWithState } from '../utilities/localisation.util';
 import { GlobalNotificationConfig } from '../types/notification.types';
 import { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
 import { AppDispatch, RootState } from '../store';
-import { Henkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
+import { Henkilo, HenkiloOrg, LinkedHenkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
+import { OrganisaatioCache } from '../reducers/organisaatio.reducer';
 
 const requestHenkilo = (oid) => ({ type: FETCH_HENKILO_REQUEST, oid });
 const receiveHenkilo = (json) => ({
@@ -305,7 +306,7 @@ export const overrideYksiloimatonHenkiloVtjData = (oid) => async (dispatch: AppD
 };
 
 const requestHenkiloOrgs = (oid) => ({ type: FETCH_HENKILOORGS_REQUEST, oid });
-const receiveHenkiloOrgsSuccess = (henkiloOrgs, organisations) => ({
+const receiveHenkiloOrgsSuccess = (henkiloOrgs: HenkiloOrg[], organisations: OrganisaatioCache) => ({
     type: FETCH_HENKILOORGS_SUCCESS,
     henkiloOrgs: henkiloOrgs,
     organisations: organisations,
@@ -317,7 +318,7 @@ export const fetchHenkiloOrgs = (oidHenkilo) => (dispatch: AppDispatch, getState
     oidHenkilo = oidHenkilo || getState().omattiedot.data.oid;
     dispatch(requestHenkiloOrgs(oidHenkilo));
     const url = urls.url('kayttooikeus-service.henkilo.organisaatiohenkilos', oidHenkilo);
-    return http.get<[{ organisaatioOid: string }]>(url).then((json) => {
+    return http.get<HenkiloOrg[]>(url).then((json) => {
         dispatch<any>(fetchOrganisations(json.map((orgHenkilo) => orgHenkilo.organisaatioOid))).then(() =>
             dispatch(receiveHenkiloOrgsSuccess(json, getState().organisaatio.cached))
         );
@@ -460,7 +461,7 @@ const requestHenkiloSlaves = (oidHenkilo) => ({
     type: FETCH_HENKILO_SLAVES_REQUEST,
     oidHenkilo,
 });
-const requestHenkiloSlavesSuccess = (slaves) => ({
+const requestHenkiloSlavesSuccess = (slaves: LinkedHenkilo[]) => ({
     type: FETCH_HENKILO_SLAVES_SUCCESS,
     slaves,
 });
@@ -473,7 +474,7 @@ export const fetchHenkiloSlaves = (oidHenkilo) => async (dispatch: AppDispatch) 
     dispatch(requestHenkiloSlaves(oidHenkilo));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.slaves', oidHenkilo);
     try {
-        const henkiloSlaves = await http.get(url);
+        const henkiloSlaves = await http.get<LinkedHenkilo[]>(url);
         dispatch(requestHenkiloSlavesSuccess(henkiloSlaves));
     } catch (error) {
         dispatch(requestHenkiloSlavesFailure(oidHenkilo));

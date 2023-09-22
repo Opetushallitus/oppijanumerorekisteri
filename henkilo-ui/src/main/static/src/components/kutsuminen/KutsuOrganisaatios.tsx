@@ -35,7 +35,7 @@ export default class KutsuOrganisaatios extends React.Component<Props> {
         this.props.addOrganisaatio({
             key: moment.now(),
             oid: '',
-            organisation: { oid: '' },
+            organisation: { oid: '', name: '' },
             voimassaLoppuPvm: moment().add(1, 'years').format(PropertySingleton.state.PVM_DBFORMAATTI),
             selectablePermissions: [],
             selectedPermissions: [],

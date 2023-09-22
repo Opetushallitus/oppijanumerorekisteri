@@ -1,3 +1,4 @@
+import { AnyAction } from '@reduxjs/toolkit';
 import {
     ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE,
     ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS,
@@ -73,7 +74,7 @@ export const notifications = (
         henkilohakuNotifications: [],
         duplicatesNotifications: [],
     },
-    action
+    action: AnyAction
 ): NotificationsState => {
     switch (action.type) {
         case ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS:

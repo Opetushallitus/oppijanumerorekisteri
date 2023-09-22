@@ -10,6 +10,7 @@ import {
 } from '../actions/actiontypes';
 import { Organisaatio, OrganisaatioWithChildren } from '../types/domain/organisaatio/organisaatio.types';
 import type { Asiointikieli } from '../types/domain/kayttooikeus/Kutsu.types';
+import { AnyAction } from '@reduxjs/toolkit';
 
 export type OrganisaatioCache = {
     [key: string]: Organisaatio;
@@ -34,7 +35,7 @@ const initialState = {
     names: {},
 };
 
-export const organisaatio = (state: OrganisaatioState = initialState, action: any): OrganisaatioState => {
+export const organisaatio = (state: OrganisaatioState = initialState, action: AnyAction): OrganisaatioState => {
     switch (action.type) {
         case FETCH_ALL_ORGANISAATIOS_REQUEST:
             return { ...state, organisaatioLoading: true };

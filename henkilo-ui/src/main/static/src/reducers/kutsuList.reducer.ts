@@ -1,3 +1,4 @@
+import { AnyAction } from '@reduxjs/toolkit';
 import {
     FETCH_KUTSU_SUCCESS,
     FETCH_KUTSU_REQUEST,
@@ -23,7 +24,7 @@ const kutsuList = (
         kutsuByToken: undefined,
         kutsuByTokenLoading: true,
     },
-    action: any
+    action: AnyAction
 ): KutsuListState => {
     switch (action.type) {
         case FETCH_KUTSU_REQUEST:

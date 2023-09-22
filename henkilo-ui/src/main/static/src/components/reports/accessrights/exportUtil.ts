@@ -10,12 +10,12 @@ const isDate = (value) => String(value).match(/^\d{4}-\d{2}-\d{2}/);
 
 const formatDate = (date: Date) => moment(date).format(PropertySingleton.state.PVM_MOMENT_FORMAATTI);
 
-const format: (any) => any = (value) => (isDate(value) ? formatDate(value) : value);
+const format: (a: any) => any = (value) => (isDate(value) ? formatDate(value) : value);
 
 export const convertToCSV = (
     data: Record<string, any>[],
     columns: TableHeading[],
-    translate: (string) => string
+    translate: (s: string) => string
 ): Record<string, string>[] => {
     const fields: Record<string, string> = columns.reduce(
         (acc, curr) => ({

@@ -1,3 +1,4 @@
+import { AnyAction } from '@reduxjs/toolkit';
 import { FETCH_LOCALISATIONS_SUCCESS, FETCH_LOCALISATIONS_REQUEST } from '../actions/actiontypes';
 import { L10n } from '../types/localisation.type';
 
@@ -44,7 +45,7 @@ const l10n = (
     state: LocalisationState = {
         localisations: localisations,
     },
-    action: any
+    action: AnyAction
 ): LocalisationState => {
     switch (action.type) {
         case FETCH_LOCALISATIONS_REQUEST:

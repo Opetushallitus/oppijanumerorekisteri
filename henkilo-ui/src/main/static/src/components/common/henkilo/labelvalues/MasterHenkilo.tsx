@@ -92,7 +92,7 @@ class MasterHenkilo extends React.Component<Props> {
 
 const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
-    isLoading: state.henkilo.master.masterLoading,
+    isLoading: state.henkilo.masterLoading,
     henkilo: state.henkilo,
     kayttooikeudet: state.omattiedot.organisaatiot,
 });

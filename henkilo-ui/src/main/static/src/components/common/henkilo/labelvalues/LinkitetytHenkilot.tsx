@@ -54,7 +54,7 @@ class LinkitetytHenkilot extends React.Component<LinkitetytHenkilotProps> {
             'HENKILONHALLINTA_OPHREKISTERI',
             'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
         ]);
-        return this.props.henkilo?.slaves ? (
+        return (
             <div>
                 {this.props.henkilo.slaves.map((slave, index) => (
                     <div key={index} className="nowrap">
@@ -78,7 +78,7 @@ class LinkitetytHenkilot extends React.Component<LinkitetytHenkilotProps> {
                     </div>
                 ))}
             </div>
-        ) : null;
+        );
     }
 
     getLinkHref(oid: string) {

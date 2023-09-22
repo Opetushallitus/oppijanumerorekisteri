@@ -26,6 +26,7 @@ import type { OrganisaatioSelectObject } from '../../types/organisaatioselectobj
 import CrossCircleIcon from '../common/icons/CrossCircleIcon';
 import type { OrganisaatioNameLookup } from '../../reducers/organisaatio.reducer';
 import { Locale } from '../../types/locale.type';
+import { RyhmatState } from '../../reducers/ryhmat.reducer';
 
 type OwnProps = {
     addedOrgs: readonly KutsuOrganisaatio[];
@@ -38,7 +39,7 @@ type StateProps = {
     L: Localisations;
     omatOrganisaatios: Array<OrganisaatioHenkilo>;
     currentHenkiloOid: string;
-    ryhmatState: any;
+    ryhmatState: RyhmatState;
     organisationNames: OrganisaatioNameLookup;
 };
 
@@ -51,7 +52,7 @@ type DispatchProps = {
     kutsuOrganisaatioSetProperties: (
         index: number,
         arg1: {
-            [key: string]: any;
+            [key: string]: string;
         }
     ) => void;
 };

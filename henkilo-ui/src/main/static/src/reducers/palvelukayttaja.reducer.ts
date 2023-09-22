@@ -1,3 +1,4 @@
+import { AnyAction } from '@reduxjs/toolkit';
 import {
     SET_PALVELUKAYTTAJAT_CRITERIA,
     FETCH_PALVELUKAYTTAJAT_REQUEST,
@@ -25,7 +26,10 @@ const initialState: PalvelukayttajatState = {
     data: [],
 };
 
-export const palvelukayttajat = (state: PalvelukayttajatState = initialState, action: any): PalvelukayttajatState => {
+export const palvelukayttajat = (
+    state: PalvelukayttajatState = initialState,
+    action: AnyAction
+): PalvelukayttajatState => {
     switch (action.type) {
         case SET_PALVELUKAYTTAJAT_CRITERIA: {
             const dirty = action.criteria.nameQuery !== '' || !!action.criteria.organisaatioOids;

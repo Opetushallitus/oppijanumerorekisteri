@@ -8,8 +8,8 @@ import HenkiloViewDuplikaatit from '../../../../../components/henkilo/duplikaati
 type Props = {
     locale: Locale;
     L: Localisations;
-    tallenna: (oppija: HenkiloCreate) => any;
-    peruuta: () => any;
+    tallenna: (oppija: HenkiloCreate) => void;
+    peruuta: () => void;
     oppija: HenkiloCreate;
     duplikaatit: HenkiloDuplicate[];
 };
