@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { useSelector } from 'react-redux';
 
 import DuplikaatitApplicationsPopup from './DuplikaatitApplicationsPopup';
-import DuplikaatitPersonOtherApplications from './DuplikaatitPersonOtherApplications';
 import type { Locale } from '../../../types/locale.type';
 import type { KoodistoState, KoodistoStateKoodi } from '../../../reducers/koodisto.reducer';
 import type { DuplikaatitHakemus } from '../../../types/duplikaatithakemus.types';
@@ -40,6 +39,34 @@ const sukupuolet = {
     1: 'HENKILO_YHTEISET_MIES',
     2: 'HENKILO_YHTEISET_NAINEN',
 };
+
+const renderHakemusData = (hakemus: DuplikaatitHakemus, henkiloType: string) => (
+    <>
+        <DataCell hakemus>{hakemus?.kansalaisuus}</DataCell>
+        <DataCell hakemus>{hakemus?.aidinkieli}</DataCell>
+        <DataCell hakemus>{hakemus?.matkapuhelinnumero}</DataCell>
+        <DataCell hakemus>{hakemus?.sahkoposti}</DataCell>
+        <DataCell hakemus>{hakemus?.lahiosoite}</DataCell>
+        <DataCell hakemus>{hakemus?.postinumero}</DataCell>
+        <DataCell hakemus>{hakemus?.passinumero}</DataCell>
+        <DataCell hakemus>{hakemus?.kansallinenIdTunnus}</DataCell>
+        <DataCell hakemus>{hakemus?.state}</DataCell>
+        <DataCell hakemus>
+            {hakemus?.hakijaOid && (
+                <Link className="oph-link" to={`/${henkiloType}/${hakemus.hakijaOid}`}>
+                    {hakemus.hakijaOid}
+                </Link>
+            )}
+        </DataCell>
+        <DataCell hakemus>
+            {hakemus?.href && (
+                <a className="oph-link" href={hakemus?.href}>
+                    {hakemus?.oid}
+                </a>
+            )}
+        </DataCell>
+    </>
+);
 
 const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
     const { henkilo, master, henkiloType, vainLuku, isMaster, canForceLink, setLink } = props;
@@ -82,42 +109,15 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
             </DataCell>
             <DataCell>{_koodistoLabel(henkilo.aidinkieli?.kieliKoodi, koodisto.kieli, locale)}</DataCell>
             <DataCell className="type">{L['DUPLIKAATIT_HAKEMUS']}</DataCell>
-            <DataCell hakemus>{hakemus?.kansalaisuus}</DataCell>
-            <DataCell hakemus>{hakemus?.aidinkieli}</DataCell>
-            <DataCell hakemus>{hakemus?.matkapuhelinnumero}</DataCell>
-            <DataCell hakemus>{hakemus?.sahkoposti}</DataCell>
-            <DataCell hakemus>{hakemus?.lahiosoite}</DataCell>
-            <DataCell hakemus>{hakemus?.postinumero}</DataCell>
-            <DataCell hakemus>{hakemus?.passinumero}</DataCell>
-            <DataCell hakemus>{hakemus?.kansallinenIdTunnus}</DataCell>
-            <DataCell hakemus>{hakemus?.state}</DataCell>
-            <DataCell hakemus>
-                {hakemus?.hakijaOid && (
-                    <Link className="oph-link" to={`/${henkiloType}/${hakemus.hakijaOid}`}>
-                        {hakemus.hakijaOid}
-                    </Link>
-                )}
-            </DataCell>
-            <DataCell hakemus>
-                {hakemus?.href && (
-                    <a className="oph-link" href={hakemus?.href}>
-                        {hakemus?.oid}
-                    </a>
-                )}
-            </DataCell>
+            {renderHakemusData(hakemus, henkiloType)}
             <DataCell hakemus>
                 {!!hakemukset.length && (
-                    <DuplikaatitApplicationsPopup
-                        popupContent={
-                            <DuplikaatitPersonOtherApplications
-                                hakemukset={hakemukset}
-                                koodisto={koodisto}
-                                locale={locale}
-                                L={L}
-                            />
-                        }
-                    >
-                        {L['DUPLIKAATIT_MUUTHAKEMUKSET']}
+                    <DuplikaatitApplicationsPopup title={L['DUPLIKAATIT_MUUTHAKEMUKSET']}>
+                        {hakemukset.map((h) => (
+                            <div className="application" key={h.oid}>
+                                {renderHakemusData(h, henkiloType)}
+                            </div>
+                        ))}
                     </DuplikaatitApplicationsPopup>
                 )}
             </DataCell>

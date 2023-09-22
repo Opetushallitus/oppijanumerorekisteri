@@ -1,3 +1,7 @@
+.applications-wrapper {
+    position: relative;
+    display: inline-block;
+}
 
 .other-applications {
     width: auto !important;
@@ -17,14 +21,26 @@
     padding-bottom: 26px;
 }
 
-.application > span {
-    display: block;
+.application > div {
     height: 25px;
     line-height: 25px;
     padding-left: 1em;
     padding-right: 1em;
 }
 
-.application > span:nth-child(2n + 1) {
+.application > div:nth-child(2n + 1) {
     background: #fbfbfb;
+}
+
+.close-applications-div {
+    float: right;
+    clear: right;
+    margin-top: -5px;
+}
+
+.close-applications-button {
+    border: none;
+    margin: 0 !important;
+    padding: 0;
+    cursor: pointer;
 }

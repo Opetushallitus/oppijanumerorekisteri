@@ -17,10 +17,11 @@ import {
 import type { HenkiloState } from '../../../reducers/henkilo.reducer';
 import type { KoodistoState } from '../../../reducers/koodisto.reducer';
 import type { Localisations } from '../../../types/localisation.type';
+import { RouteType } from '../../../routes';
 
 type OwnProps = {
     params: { oid?: string };
-    route: any;
+    route: RouteType;
 };
 
 type StateProps = {
