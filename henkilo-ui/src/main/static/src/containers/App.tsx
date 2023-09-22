@@ -44,7 +44,7 @@ const App = ({ children, location, params, routes }: OwnProps) => {
         { oid: omattiedot?.oidHenkilo, locale: lang },
         { skip: !omattiedot?.oidHenkilo || !lang }
     );
-    const { L, l10n, locale } = useLocalisations();
+    const { L, locale } = useLocalisations();
     const dispatch = useAppDispatch();
 
     const setBackGround = (route: RouteType) => {
