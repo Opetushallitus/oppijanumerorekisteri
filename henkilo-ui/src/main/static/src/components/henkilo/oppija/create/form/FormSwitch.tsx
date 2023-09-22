@@ -1,12 +1,13 @@
 import React from 'react';
-import type { BrowserRouter } from 'react-router';
+import { RouteActions } from 'react-router-redux';
+
 import type { FormType } from './types';
 import AnonymousForm from '../anonymous';
 import SSNForm from '../ssn';
 import FormPicker from './FormPicker';
 
 type Props = {
-    router: BrowserRouter;
+    router: RouteActions;
 };
 
 const FormSwitch: React.FC<Props> = ({ router }) => {

@@ -18,12 +18,12 @@ import {
     fetchAllRyhmas,
 } from '../../actions/organisaatio.actions';
 import HenkiloViewPage from '../henkilo/HenkiloViewPage';
-import { OmattiedotState } from '../../reducers/omattiedot.reducer';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
 import Loader from '../common/icons/Loader';
+import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
 
 const OmattiedotPageContainer = () => {
-    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const { data: omattiedot } = useGetOmattiedotQuery();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const dispatch = useAppDispatch();
 
@@ -35,8 +35,8 @@ const OmattiedotPageContainer = () => {
         dispatch<any>(fetchAllRyhmas());
         dispatch<any>(fetchAllHierarchialOrganisaatios());
 
-        if (omattiedot.data?.oid) {
-            const userOid = omattiedot.data?.oid;
+        if (omattiedot.oidHenkilo) {
+            const userOid = omattiedot.oidHenkilo;
             dispatch<any>(clearHenkilo());
             dispatch<any>(fetchHenkilo(userOid));
             dispatch<any>(fetchKayttajatieto(userOid));
@@ -46,8 +46,8 @@ const OmattiedotPageContainer = () => {
         }
     }, []);
 
-    if (omattiedot.data?.oid === henkilo.henkilo.oidHenkilo) {
-        return <HenkiloViewPage oidHenkilo={omattiedot.data.oid} view="omattiedot" />;
+    if (omattiedot.oidHenkilo === henkilo.henkilo.oidHenkilo) {
+        return <HenkiloViewPage oidHenkilo={omattiedot.oidHenkilo} view="omattiedot" />;
     } else {
         return <Loader />;
     }

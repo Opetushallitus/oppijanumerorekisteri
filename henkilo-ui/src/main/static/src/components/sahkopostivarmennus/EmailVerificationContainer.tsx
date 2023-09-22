@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { RouteActions } from 'react-router-redux';
+
 import type { RootState } from '../../store';
 import { Locale } from '../../types/locale.type';
 import { EmailVerificationPage } from './EmailVerificationPage';
@@ -13,8 +15,8 @@ import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types'
 import { AppDispatch } from '../../store';
 
 type OwnProps = {
-    params: any;
-    router: any;
+    params: { loginToken?: string; locale?: Locale };
+    router: RouteActions;
 };
 
 type StateProps = {

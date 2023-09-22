@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { RouteActions } from 'react-router-redux';
+
 import type { RootState } from '../../store';
 import { http } from '../../http';
 import { urls } from 'oph-urls-js';
@@ -12,7 +14,7 @@ import { LocalNotification } from '../common/Notification/LocalNotification';
 import { isValidKayttajatunnus } from '../../validation/KayttajatunnusValidator';
 
 type OwnProps = {
-    router: any;
+    router: RouteActions;
 };
 
 type StateProps = {

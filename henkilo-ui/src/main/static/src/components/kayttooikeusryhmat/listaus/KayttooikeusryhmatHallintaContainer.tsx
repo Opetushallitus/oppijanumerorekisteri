@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { RouteActions } from 'react-router-redux';
+
 import type { RootState } from '../../../store';
 import { fetchAllKayttooikeusryhma } from '../../../actions/kayttooikeusryhma.actions';
 import Loader from '../../common/icons/Loader';
@@ -11,7 +13,7 @@ import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 
 type OwnProps = {
-    router: any;
+    router: RouteActions;
 };
 
 type StateProps = {

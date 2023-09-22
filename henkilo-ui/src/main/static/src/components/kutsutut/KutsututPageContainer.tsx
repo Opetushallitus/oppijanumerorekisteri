@@ -7,12 +7,7 @@ import { KutsuRead } from '../../types/domain/kayttooikeus/Kutsu.types';
 import { L10n } from '../../types/localisation.type';
 import { Locale } from '../../types/locale.type';
 
-type OwnProps = {
-    location: any;
-};
-
 type StateProps = {
-    path: string;
     kutsus: { result: Array<KutsuRead> };
     l10n: L10n;
     locale: Locale;
@@ -27,7 +22,7 @@ type DispatchProps = {
     clearKutsuList: () => void;
 };
 
-type Props = OwnProps & StateProps & DispatchProps;
+type Props = StateProps & DispatchProps;
 
 class KutsututPageContainer extends React.Component<Props> {
     render() {
@@ -35,8 +30,7 @@ class KutsututPageContainer extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
-    path: ownProps.location.pathname,
+const mapStateToProps = (state: RootState): StateProps => ({
     kutsus: state.kutsuList,
     l10n: state.l10n.localisations,
     locale: state.locale,
@@ -45,7 +39,7 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     isOphVirkailija: state.omattiedot.isOphVirkailija,
 });
 
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, undefined, RootState>(mapStateToProps, {
     fetchKutsus,
     deleteKutsu,
     clearKutsuList,

@@ -1,6 +1,8 @@
 import React from 'react';
 import HenkilohakuPage from './HenkilohakuPage';
 import { connect } from 'react-redux';
+import { RouteActions } from 'react-router-redux';
+
 import type { RootState } from '../../store';
 import Loader from '../common/icons/Loader';
 import { fetchAllKayttooikeusryhma } from '../../actions/kayttooikeusryhma.actions';
@@ -18,7 +20,7 @@ import { OmattiedotState } from '../../reducers/omattiedot.reducer';
 import { parsePalveluRoolit, hasAnyPalveluRooli } from '../../utilities/palvelurooli.util';
 
 type OwnProps = {
-    router: any;
+    router: RouteActions;
 };
 
 type StateProps = {
@@ -62,7 +64,7 @@ class HenkilohakuContainer extends React.Component<Props> {
     }
 
     render() {
-        return !this.props.allKayttooikeusryhmasLoading && !this.props.omattiedot.omattiedotLoading ? (
+        return !this.props.allKayttooikeusryhmasLoading ? (
             <HenkilohakuPage
                 l10n={this.props.l10n}
                 locale={this.props.locale}

@@ -10,13 +10,15 @@ import { fetchPrequels } from '../actions/prequel.actions';
 import PropertySingleton from '../globals/PropertySingleton';
 import { addGlobalNotification } from '../actions/notification.actions';
 import { GlobalNotifications } from '../components/common/Notification/GlobalNotifications';
-import { LocalisationState } from '../reducers/l10n.reducer';
 import { ophLightGray } from '../components/navigation/navigation.utils';
-import { Locale } from '../types/locale.type';
 import background from '../img/unauthenticated_background.jpg';
 import { RouteType } from '../routes';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { fetchOrganisationNames } from '../actions/organisaatio.actions';
+import { useLocalisations } from '../selectors';
+import { fetchL10n } from '../actions/l10n.actions';
+import { useGetOmatOrganisaatiotQuery, useGetOmattiedotQuery } from '../api/kayttooikeus';
+import { useGetLocaleQuery } from '../api/oppijanumerorekisteri';
 
 import 'moment/locale/fi';
 import 'moment/locale/sv';
@@ -35,10 +37,14 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     const [route, setRoute] = useState<RouteType>(routes[routes.length - 1]);
     const [isInitialized, setIsInitialized] = useState(false);
     const frontPropertiesInitialized = useSelector<RootState, boolean>((state) => state.frontProperties.initialized);
-    const omattiedotInitialized = useSelector<RootState, boolean>((state) => state.omattiedot.initialized);
     const prequelsNotLoadedCount = useSelector<RootState, number>((state) => state.prequels.notLoadedCount);
-    const l10n = useSelector<RootState, LocalisationState>((state) => state.l10n);
-    const locale = useSelector<RootState, Locale>((state) => state.locale);
+    const { data: lang, isSuccess: isLocaleSuccess } = useGetLocaleQuery();
+    const { data: omattiedot, isSuccess: isOmattiedotSuccess } = useGetOmattiedotQuery();
+    const { isSuccess: isOmatOrganisaatiotSuccess } = useGetOmatOrganisaatiotQuery(
+        { oid: omattiedot?.oidHenkilo, locale: lang },
+        { skip: !omattiedot?.oidHenkilo || !lang }
+    );
+    const { L, locale } = useLocalisations();
     const dispatch = useAppDispatch();
 
     const setBackGround = (route: RouteType) => {
@@ -57,6 +63,8 @@ const App = ({ children, location, params, routes }: OwnProps) => {
 
     useEffect(() => {
         dispatch<any>(fetchFrontProperties());
+        dispatch<any>(fetchL10n());
+        dispatch<any>(fetchPrequels());
         dispatch<any>(fetchOrganisationNames());
         const prequel = setInterval(() => dispatch<any>(fetchPrequels()), fetchPrequelsIntervalInMillis);
         return () => clearTimeout(prequel);
@@ -65,15 +73,22 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     useEffect(() => {
         if (
             frontPropertiesInitialized &&
-            l10n.localisationsInitialized &&
-            omattiedotInitialized &&
+            isOmattiedotSuccess &&
+            isOmatOrganisaatiotSuccess &&
+            isLocaleSuccess &&
             prequelsNotLoadedCount === 0
         ) {
             setIsInitialized(true);
             moment.locale(locale);
             moment.defaultFormat = PropertySingleton.getState().PVM_MOMENT_FORMAATTI;
         }
-    }, [frontPropertiesInitialized, l10n, omattiedotInitialized, prequelsNotLoadedCount]);
+    }, [
+        frontPropertiesInitialized,
+        isOmattiedotSuccess,
+        isOmatOrganisaatiotSuccess,
+        isLocaleSuccess,
+        prequelsNotLoadedCount,
+    ]);
 
     useEffect(() => {
         const route = routes[routes.length - 1];
@@ -83,7 +98,6 @@ const App = ({ children, location, params, routes }: OwnProps) => {
             setRoute(route);
         }
         if (isInitialized) {
-            const L = l10n.localisations[locale];
             window.document.title = L[route.title] || L['TITLE_DEFAULT'];
             if (locale.toLowerCase() !== 'fi' && locale.toLowerCase() !== 'sv') {
                 dispatch(

@@ -24,6 +24,10 @@ test.describe('mfa setup', () => {
 
         await expect(page.locator('[data-test-id="secret-key"]')).toHaveText(mfasetup.secretKey);
 
+        await page.route('/kayttooikeus-service/henkilo/current/omattiedot', async (route) => {
+            await route.fulfill({ json: { ...omattiedot, mfaProvider: 'GAUTH' } });
+        });
+
         await inputToken(page, '123456');
 
         await expect(page.locator('[data-test-id="success-notification"] .oph-alert-title')).toContainText(
@@ -120,6 +124,11 @@ test.describe('mfa setup', () => {
 
         await page.goto('/omattiedot');
         await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Käytössä');
+
+        await page.route('/kayttooikeus-service/henkilo/current/omattiedot', async (route) => {
+            await route.fulfill({ json: omattiedot });
+        });
+
         await page.click('[data-test-id="disable-mfa"]');
 
         await expect(page.locator('[data-test-id="success-notification"] .oph-alert-title')).toContainText(

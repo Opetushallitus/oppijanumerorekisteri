@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import type { RouteActions } from 'react-router-redux';
 
-import { RootState } from '../../../store';
 import Button from '../../common/button/Button';
 import DuplikaatitPerson from './DuplikaatitPerson';
 import Loader from '../../common/icons/Loader';
@@ -13,7 +11,6 @@ import type {
     HenkiloDuplicate,
     HenkiloDuplicateLenient,
 } from '../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
-import type { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { Hakemus } from '../../../types/domain/oppijanumerorekisteri/Hakemus.type';
 import OphModal from '../../common/modal/OphModal';
@@ -22,6 +19,7 @@ import { usePostLinkHenkilosMutation } from '../../../api/oppijanumerorekisteri'
 import './HenkiloViewDuplikaatit.css';
 import { isHenkiloValidForYksilointi } from '../../../validation/YksilointiValidator';
 import { useLocalisations } from '../../../selectors';
+import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
 
 export type LinkRelation = {
     master: HenkiloDuplicate;
@@ -37,7 +35,7 @@ type Props = {
 };
 
 const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, router, oidHenkilo }: Props) => {
-    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const { data: omattiedot } = useGetOmattiedotQuery();
     const { L } = useLocalisations();
     const [linkObj, setLink] = useState<LinkRelation>();
     const [postLinkHenkilos] = usePostLinkHenkilosMutation();
@@ -49,7 +47,7 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, router, oidHen
     const master: HenkiloDuplicate = { ...henkilo.henkilo, emails, hakemukset: henkilo.hakemukset };
     const linkingEnabled =
         enabledDuplikaattiView(oidHenkilo, henkilo.kayttaja, henkilo.masterLoading, henkilo.master?.oidHenkilo) ||
-        oidHenkilo !== omattiedot.data.oid;
+        oidHenkilo !== omattiedot.oidHenkilo;
 
     const link = async () =>
         await postLinkHenkilos({

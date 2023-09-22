@@ -20,11 +20,6 @@ import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
 import { validateEmail } from '../../validation/EmailValidator';
 import { Locale } from '../../types/locale.type';
 
-type OwnProps = {
-    ryhmaState: any;
-    location: any;
-};
-
 type StateProps = {
     L: Localisations;
     l10n: L10n;
@@ -33,7 +28,6 @@ type StateProps = {
     kayttajaOid: string;
     henkilo: Henkilo;
     organisaatioState: OrganisaatioState;
-    omattiedotLoading: boolean;
     henkiloLoading: boolean;
     ryhmasLoading: boolean;
 };
@@ -45,7 +39,7 @@ type DispatchProps = {
     fetchHenkilo: (oid: string) => void;
 };
 
-type Props = OwnProps & StateProps & DispatchProps;
+type Props = StateProps & DispatchProps;
 
 type State = {
     confirmationModalOpen: boolean;
@@ -125,7 +119,7 @@ class KutsuminenPage extends React.Component<Props, State> {
         };
         const { basicInfo } = this.state;
 
-        if (this.props.omattiedotLoading || this.props.henkiloLoading || this.props.ryhmasLoading) {
+        if (this.props.henkiloLoading || this.props.ryhmasLoading) {
             return (
                 <div className="wrapper">
                     <Loader />
@@ -242,7 +236,6 @@ class KutsuminenPage extends React.Component<Props, State> {
 const mapStateToProps = (state: RootState): StateProps => ({
     l10n: state.l10n.localisations,
     L: state.l10n.localisations[state.locale],
-    omattiedotLoading: state.omattiedot.omattiedotLoading,
     kayttajaOid: state.omattiedot.data.oid,
     henkiloLoading: state.henkilo.henkiloLoading,
     henkilo: state.henkilo.henkilo,
@@ -252,7 +245,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
     ryhmasLoading: state.ryhmatState.ryhmasLoading,
 });
 
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, undefined, RootState>(mapStateToProps, {
     kutsuClearOrganisaatios,
     kutsuAddOrganisaatio,
     fetchHenkilo,

@@ -54,8 +54,7 @@ class OmattiedotUserContent extends React.Component<Props> {
             this.props.henkilo.kayttajatietoLoading ||
             this.props.koodisto.sukupuoliKoodistoLoading ||
             this.props.koodisto.kieliKoodistoLoading ||
-            this.props.koodisto.kansalaisuusKoodistoLoading ||
-            this.props.omattiedot.omattiedotLoading ? (
+            this.props.koodisto.kansalaisuusKoodistoLoading ? (
             <Loader />
         ) : (
             <AbstractUserContent

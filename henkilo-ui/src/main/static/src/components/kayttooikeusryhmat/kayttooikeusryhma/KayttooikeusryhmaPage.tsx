@@ -1,5 +1,7 @@
 import React from 'react';
 import moment from 'moment';
+import { RouteActions } from 'react-router-redux';
+
 import './KayttooikeusryhmaPage.css';
 import KayttooikeusryhmanOrganisaatiorajoite from './KayttooikeusryhmanOrganisaatiorajoite';
 import KayttooikeusryhmatNimi from './KayttooikeusryhmatNimi';
@@ -56,7 +58,7 @@ export type KayttooikeusryhmaForm = {
 
 type Props = {
     L: Localisations;
-    router: any;
+    router: RouteActions;
     koodisto: KoodistoState;
     kayttooikeus: KayttooikeusRyhmaState;
     kayttooikeusState: KayttooikeusState;

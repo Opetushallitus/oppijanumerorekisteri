@@ -3,10 +3,9 @@ import { connect } from 'react-redux';
 import VahvaTunnistusInfoPage from './VahvaTunnistusInfoPage';
 import VirhePage from '../common/page/VirhePage';
 import { RootState } from '../../store';
-import { Location } from 'history';
 import type { Localisations } from '../../types/localisation.type';
 
-type OwnProps = Location & { params: any; route: any };
+type OwnProps = { params: { loginType?: string; locale?: string }; route: any };
 
 type StateProps = {
     L: Localisations;

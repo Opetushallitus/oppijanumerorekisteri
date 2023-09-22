@@ -9,9 +9,9 @@ import VirhePage from '../common/page/VirhePage';
 import { useAppDispatch, type RootState } from '../../store';
 import type { KoodistoState } from '../../reducers/koodisto.reducer';
 import { useLocalisations } from '../../selectors';
-import { OmattiedotState } from '../../reducers/omattiedot.reducer';
 import { KutsuListState } from '../../reducers/kutsuList.reducer';
 import { CasState } from '../../reducers/cas.reducer';
+import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
 
 type OwnProps = {
     location: { query: Record<string, string> };
@@ -21,7 +21,7 @@ const RekisteroidyContainer = (props: OwnProps) => {
     const dispatch = useAppDispatch();
     const { l10n } = useLocalisations();
     const kutsuList = useSelector<RootState, KutsuListState>((state) => state.kutsuList);
-    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const { data: omattiedot } = useGetOmattiedotQuery();
     const koodisto = useSelector<RootState, KoodistoState>((state) => state.koodisto);
     const cas = useSelector<RootState, CasState>((state) => state.cas);
 
@@ -32,7 +32,7 @@ const RekisteroidyContainer = (props: OwnProps) => {
 
     if (koodisto.kieliKoodistoLoading || kutsuList.kutsuByTokenLoading) {
         return <Loader />;
-    } else if (omattiedot.data.oid !== undefined) {
+    } else if (omattiedot.oidHenkilo !== undefined) {
         return <VirhePage text={'REKISTEROIDY_KIRJAUTUNUT'} />;
     } else if (cas.temporaryTokenInvalid) {
         return <VirhePage text={'REKISTEROIDY_TEMP_TOKEN_INVALID'} />;

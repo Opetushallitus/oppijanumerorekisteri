@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { RouteActions } from 'react-router-redux';
+
 import type { RootState } from '../../../store';
 import KayttooikeusryhmaPage from './KayttooikeusryhmaPage';
 import { fetchOppilaitostyypit, fetchOrganisaatiotyypit } from '../../../actions/koodisto.actions';
@@ -21,18 +23,20 @@ import { GlobalNotificationConfig } from '../../../types/notification.types';
 import { addGlobalNotification } from '../../../actions/notification.actions';
 import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
 import { OrganisaatioCriteria } from '../../../types/domain/organisaatio/organisaatio.types';
+import { KoodistoState } from '../../../reducers/koodisto.reducer';
+import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 
 type OwnProps = {
-    router: any;
+    router: RouteActions;
     routeParams: any;
 };
 
 type StateProps = {
     L: Localisations;
     organisaatioCache: OrganisaatioCache;
-    koodisto: any;
+    koodisto: KoodistoState;
     locale: Locale;
-    kayttooikeus: any;
+    kayttooikeus: KayttooikeusRyhmaState;
     kayttooikeusState: KayttooikeusState;
     palvelutState: PalvelutState;
     kayttooikeusryhmaId?: string;

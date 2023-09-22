@@ -21,7 +21,7 @@ import { addGlobalNotification } from '../../../actions/notification.actions';
 import { GlobalNotificationConfig } from '../../../types/notification.types';
 
 type OwnProps = {
-    params: any;
+    params: { oid?: string; henkiloType?: string };
 };
 
 type StateProps = {
@@ -53,9 +53,7 @@ class VtjVertailuPage extends React.Component<Props> {
     }
 
     render() {
-        return this.props.henkilo.yksilointitiedotLoading ||
-            this.props.henkilo.henkiloLoading ||
-            this.props.omattiedot.omattiedotLoading ? (
+        return this.props.henkilo.yksilointitiedotLoading || this.props.henkilo.henkiloLoading ? (
             <Loader />
         ) : (
             <div className="wrapper">
