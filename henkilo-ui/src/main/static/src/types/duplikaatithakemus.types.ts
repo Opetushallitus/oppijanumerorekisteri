@@ -1,5 +1,6 @@
 export type DuplikaatitHakemus = {
     oid: string;
+    hakijaOid: string;
     kansalaisuus: string;
     aidinkieli: string;
     matkapuhelinnumero: string;

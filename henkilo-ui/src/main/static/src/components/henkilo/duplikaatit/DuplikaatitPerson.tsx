@@ -8,7 +8,7 @@ import DuplikaatitPersonOtherApplications from './DuplikaatitPersonOtherApplicat
 import type { Locale } from '../../../types/locale.type';
 import type { KoodistoState, KoodistoStateKoodi } from '../../../reducers/koodisto.reducer';
 import type { DuplikaatitHakemus } from '../../../types/duplikaatithakemus.types';
-import type { Hakemus } from '../../../types/domain/oppijanumerorekisteri/Hakemus.type';
+import type { AtaruHakemus, Hakemus, HakuAppHakemus } from '../../../types/domain/oppijanumerorekisteri/Hakemus.type';
 import type { HenkiloDuplicate } from '../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 import Button from '../../common/button/Button';
 import { LinkRelation } from './HenkiloViewDuplikaatit';
@@ -92,6 +92,13 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
             <DataCell hakemus>{hakemus?.kansallinenIdTunnus}</DataCell>
             <DataCell hakemus>{hakemus?.state}</DataCell>
             <DataCell hakemus>
+                {hakemus?.hakijaOid && (
+                    <Link className="oph-link" to={`/${henkiloType}/${hakemus.hakijaOid}`}>
+                        {hakemus.hakijaOid}
+                    </Link>
+                )}
+            </DataCell>
+            <DataCell hakemus>
                 {hakemus?.href && (
                     <a className="oph-link" href={hakemus?.href}>
                         {hakemus?.oid}
@@ -139,16 +146,18 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
     );
 };
 
+const isAtaruHakemus = (h: AtaruHakemus | HakuAppHakemus): h is AtaruHakemus => h.service === 'ataru';
+
 const _parseHakemus =
     (koodisto: KoodistoState, locale: Locale) =>
     (hakemus: Hakemus): DuplikaatitHakemus => {
         const hakemusData = hakemus.hakemusData;
-        return hakemusData.service === 'ataru'
+        return isAtaruHakemus(hakemusData)
             ? _parseAtaruHakemus(hakemusData, koodisto, locale)
             : _parseHakuappHakemus(hakemusData, koodisto, locale);
     };
 
-function _parseAtaruHakemus(hakemus: any, koodisto: KoodistoState, locale: Locale): DuplikaatitHakemus {
+function _parseAtaruHakemus(hakemus: AtaruHakemus, koodisto: KoodistoState, locale: Locale): DuplikaatitHakemus {
     const href = hakemus.haku
         ? `/lomake-editori/applications/search?term=${hakemus.oid}`
         : `/lomake-editori/applications/${hakemus.form}?application-key=${hakemus.oid}`;
@@ -160,6 +169,7 @@ function _parseAtaruHakemus(hakemus: any, koodisto: KoodistoState, locale: Local
 
     return {
         oid: hakemus.oid,
+        hakijaOid: hakemus.henkiloOid,
         kansalaisuus,
         aidinkieli,
         matkapuhelinnumero: hakemus.matkapuhelin,
@@ -173,14 +183,15 @@ function _parseAtaruHakemus(hakemus: any, koodisto: KoodistoState, locale: Local
     };
 }
 
-function _parseHakuappHakemus(hakemus: any, koodisto: KoodistoState, locale: Locale): DuplikaatitHakemus {
-    const henkilotiedot = hakemus.answers?.henkilotiedot || {};
-    const aidinkieliKoodi = (henkilotiedot.aidinkieli || '').toLocaleLowerCase();
+function _parseHakuappHakemus(hakemus: HakuAppHakemus, koodisto: KoodistoState, locale: Locale): DuplikaatitHakemus {
+    const henkilotiedot = hakemus.answers?.henkilotiedot;
+    const aidinkieliKoodi = (henkilotiedot?.aidinkieli ?? '').toLocaleLowerCase();
     const aidinkieli = _koodistoLabel(aidinkieliKoodi, koodisto.kieli, locale);
-    const kansalaisuusKoodi = (henkilotiedot.kansalaisuus || '').toLocaleLowerCase();
+    const kansalaisuusKoodi = (henkilotiedot?.kansalaisuus ?? '').toLocaleLowerCase();
     const kansalaisuus = _koodistoLabel(kansalaisuusKoodi, koodisto.maatjavaltiot1, locale);
     return {
         oid: hakemus.oid,
+        hakijaOid: hakemus.personOid,
         kansalaisuus,
         aidinkieli,
         matkapuhelinnumero: henkilotiedot.matkapuhelinnumero1,

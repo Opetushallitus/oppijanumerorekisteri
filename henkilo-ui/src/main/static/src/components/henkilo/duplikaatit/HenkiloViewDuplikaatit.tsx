@@ -15,11 +15,11 @@ import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { Hakemus } from '../../../types/domain/oppijanumerorekisteri/Hakemus.type';
 import OphModal from '../../common/modal/OphModal';
 import { usePostLinkHenkilosMutation } from '../../../api/oppijanumerorekisteri';
-
-import './HenkiloViewDuplikaatit.css';
 import { isHenkiloValidForYksilointi } from '../../../validation/YksilointiValidator';
 import { useLocalisations } from '../../../selectors';
 import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
+
+import './HenkiloViewDuplikaatit.css';
 
 export type LinkRelation = {
     master: HenkiloDuplicate;
@@ -92,6 +92,7 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, router, oidHen
                 <div className="hakemus">{L['DUPLIKAATIT_PASSINUMERO']}</div>
                 <div className="hakemus">{L['DUPLIKAATIT_KANSALLINENID']}</div>
                 <div className="hakemus">{L['DUPLIKAATIT_HAKEMUKSENTILA']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_HAKIJANOID']}</div>
                 <div className="hakemus">{L['DUPLIKAATIT_HAKEMUKSENOID']}</div>
                 <div className="hakemus">{L['DUPLIKAATIT_MUUTHAKEMUKSET']}</div>
             </div>
