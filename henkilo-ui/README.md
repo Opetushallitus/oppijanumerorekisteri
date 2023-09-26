@@ -2,21 +2,27 @@
 
 ## Teknologiat
 
-- (Docker)
+- Docker
 - Java 11
-- Maven 3
-- Node
+- Maven
 - Spring Boot
 - Spring Security
+- Node
 - Typescript
-- React (CRA)
 - Redux
-- ES6
-- NPM 5
+- React
 
 ## Kehittäminen
 
 Lokaalikehitys onnistuu helpoiten käyttämällä tarkoitukseen kehitettyä [välityspalvelinta](nginx).
+
+```
+cd src/main/static
+npm install
+npm run dev
+```
+
+Kirjaudu sisään http://localhost:8080
 
 ## Ennakkovaatimukset
 
@@ -56,16 +62,6 @@ Idea: SpringBoot VMOptions `-Dspring.profiles.active=dev -Dspring.config.locatio
 JAR: `java -jar target/henkiloui-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev --spring.config.additional-location=<path-to-local-henkiloui.yml>/henkiloui.yml`
 
 Ui löytyy osoitteesta http://localhost:8280/henkilo-ui/
-
-## Frontend
-
-Voidaan käyttää suoraan backendin kautta mutta kehityksessä on parempi käyttää webpack-dev-server:iä seuraavasti:
-
-`npm install`
-
-`npm start`
-
-Mikäli kehityksesssä tarvitsee tehdä kutsuja taustajärjestelmiin, sen pitäisi onnistua helposti [näillä ohjeilla](nginx):
 
 ### CORS
 
