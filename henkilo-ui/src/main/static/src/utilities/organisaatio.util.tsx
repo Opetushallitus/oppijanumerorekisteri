@@ -1,5 +1,5 @@
 import { Options } from 'react-select';
-import { findIndex, pathEq, sortBy, uniqBy, clone } from 'ramda';
+import { findIndex, pathEq, sortBy, uniqBy } from 'ramda';
 import { toLocalizedText } from '../localizabletext';
 import type { OrganisaatioHenkilo } from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import type { OrganisaatioWithChildren } from '../types/domain/organisaatio/organisaatio.types';
@@ -111,7 +111,8 @@ const organisaatioHierarchyRoots = (orgs: OrganisaatioHenkilo[], locale: Locale)
     orgs = sortBy((org: OrganisaatioHenkilo) => toLocalizedText(locale, org.organisaatio?.nimi), orgs);
     const byOid = {};
     // Determine direct parent oid and map by oid:
-    const mapOrg = (org: OrganisaatioWithChildren) => {
+    const mapOrg = (oldOrg: OrganisaatioWithChildren) => {
+        const org = { ...oldOrg };
         byOid[org.oid] = org;
         if (!org.parentOidPath) {
             org.parentOid = null;
@@ -119,14 +120,11 @@ const organisaatioHierarchyRoots = (orgs: OrganisaatioHenkilo[], locale: Locale)
             const parents = org.parentOidPath.split('/');
             org.parentOid = parents[1];
         }
-        if (!org.children) {
-            org.children = [];
-        }
-        org.children.forEach(mapOrg);
+        org.children = (org.children ?? []).map(mapOrg);
+        return org;
     };
     // clone organisaatios for now since rtk createApi responses have Object.preventExtensions and we're mutating here...
-    const organisaatios = orgs.map((o) => clone(o.organisaatio));
-    organisaatios.forEach(mapOrg);
+    const organisaatios = orgs.map((o) => o.organisaatio).map(mapOrg);
     // Map children by direct parent:
     const roots = [];
     organisaatios.forEach((org: OrganisaatioWithChildren) => {
