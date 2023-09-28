@@ -57,6 +57,7 @@ export const oppijanumerorekisteriApi = createApi({
                 method: 'POST',
                 body: passinumerot,
             }),
+            extraOptions: { maxRetries: 0 },
             invalidatesTags: ['Passinumerot'],
         }),
         postLinkHenkilos: builder.mutation<void, LinkHenkilosRequest>({

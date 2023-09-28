@@ -47,6 +47,7 @@ export const kayttooikeusApi = createApi({
         }),
         getMfaSetup: builder.query<MfaSetupResponse, void>({
             query: () => 'mfasetup/gauth/setup',
+            extraOptions: { maxRetries: 0 },
         }),
         postMfaEnable: builder.mutation<MfaPostResponse, MfaEnableRequest>({
             query: (token) => ({
@@ -54,6 +55,7 @@ export const kayttooikeusApi = createApi({
                 method: 'POST',
                 body: `"${token}"`,
             }),
+            extraOptions: { maxRetries: 0 },
             invalidatesTags: ['omattiedot'],
         }),
         postMfaDisable: builder.mutation<MfaPostResponse, MfaDisableRequest>({
@@ -61,6 +63,7 @@ export const kayttooikeusApi = createApi({
                 url: 'mfasetup/gauth/disable',
                 method: 'POST',
             }),
+            extraOptions: { maxRetries: 0 },
             invalidatesTags: ['omattiedot'],
         }),
     }),
