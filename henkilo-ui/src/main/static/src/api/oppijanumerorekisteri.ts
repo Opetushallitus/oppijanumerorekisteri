@@ -65,6 +65,7 @@ export const oppijanumerorekisteriApi = createApi({
                 method: 'POST',
                 body: duplicateOids,
             }),
+            extraOptions: { maxRetries: 0 },
             async onQueryStarted({ L }, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
@@ -95,6 +96,7 @@ export const oppijanumerorekisteriApi = createApi({
                 body: { oidHenkilo, passivoitu: false },
                 responseHandler: 'text',
             }),
+            extraOptions: { maxRetries: 0 },
             async onQueryStarted({ oidHenkilo, L }, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
@@ -116,6 +118,7 @@ export const oppijanumerorekisteriApi = createApi({
                 url: `henkilo/${oid}/yksiloihetuton`,
                 method: 'POST',
             }),
+            extraOptions: { maxRetries: 0 },
             async onQueryStarted(oid, { dispatch, queryFulfilled }) {
                 await queryFulfilled;
                 dispatch(fetchHenkilo(oid));
@@ -126,6 +129,7 @@ export const oppijanumerorekisteriApi = createApi({
                 url: `henkilo/${oid}/purayksilointi`,
                 method: 'POST',
             }),
+            extraOptions: { maxRetries: 0 },
             async onQueryStarted(oid, { dispatch, queryFulfilled }) {
                 await queryFulfilled;
                 dispatch(fetchHenkilo(oid));
@@ -136,6 +140,7 @@ export const oppijanumerorekisteriApi = createApi({
                 url: `henkilo/${oid}`,
                 method: 'DELETE',
             }),
+            extraOptions: { maxRetries: 0 },
             async onQueryStarted(oid, { dispatch, queryFulfilled }) {
                 await queryFulfilled;
                 dispatch(fetchHenkilo(oid));
