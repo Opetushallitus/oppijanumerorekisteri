@@ -117,7 +117,6 @@ class HakatunnistePopupContent extends React.Component<Props, State> {
     }
 
     async saveHakatunnisteet(newHakatunnisteet: Array<string>, newTunnisteValue: string) {
-        console.log(newHakatunnisteet);
         const url = urls.url('kayttooikeus-service.henkilo.hakatunnus', this.props.henkiloOid);
         try {
             const hakatunnisteet = await http.put<string[]>(url, newHakatunnisteet);

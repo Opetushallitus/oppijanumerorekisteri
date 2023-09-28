@@ -4,6 +4,7 @@ import { getCommonOptions } from '../http';
 import { OrganisaatioHenkilo } from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { Omattiedot } from '../types/domain/kayttooikeus/Omattiedot.types';
 import { FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS, FETCH_OMATTIEDOT_SUCCESS } from '../actions/actiontypes';
+import { Locale } from '../types/locale.type';
 
 type MfaSetupResponse = {
     secretKey: string;

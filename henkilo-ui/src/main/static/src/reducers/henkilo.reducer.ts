@@ -98,7 +98,6 @@ const isKayttoEstetty = (data?: { status: number; path: string; message: string 
     isKayttoEstettyOppijanumerorekisteri(data);
 
 const isKayttoEstettyOppijanumerorekisteri = (data?: { status: number; path: string; message: string }) => {
-    console.log(data);
     if (typeof data === 'object' && data !== null) {
         const { status, path } = data;
         return status === 401 && path?.startsWith('/oppijanumerorekisteri-service/');

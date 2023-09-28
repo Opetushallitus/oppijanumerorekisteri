@@ -7,11 +7,8 @@ import {
     FETCH_HENKILOHAKUORGANISAATIOT_SUCCESS,
     FETCH_HENKILOHAKUORGANISAATIOT_FAILURE,
 } from '../actions/actiontypes';
-import { getOrganisaatioOptionsAndFilter } from '../utilities/organisaatio.util';
 import { KayttooikeusOrganisaatiot } from '../types/domain/kayttooikeus/KayttooikeusPerustiedot.types';
 import { OrganisaatioHenkilo } from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
-import { Options } from 'react-select';
-import createFilterOptions from 'react-select-fast-filter-options';
 import { AnyAction } from '@reduxjs/toolkit';
 
 export type OmattiedotState = {
@@ -23,8 +20,6 @@ export type OmattiedotState = {
     readonly isOphVirkailija: boolean;
     readonly mfaProvider?: string;
     readonly idpEntityId?: string;
-    readonly organisaatioRyhmaOptions: Options<string>;
-    readonly organisaatioRyhmaFilter: ReturnType<createFilterOptions>;
     readonly organisaatiot: Array<KayttooikeusOrganisaatiot>;
     readonly henkilohakuOrganisaatiotLoading: boolean;
     readonly henkilohakuOrganisaatiot: Array<OrganisaatioHenkilo>;
@@ -38,8 +33,6 @@ const initialState: OmattiedotState = {
     anomusilmoitus: false,
     organisaatios: [],
     casMeSuccess: false,
-    organisaatioRyhmaOptions: [],
-    organisaatioRyhmaFilter: [],
     organisaatiot: [],
     henkilohakuOrganisaatiotLoading: false,
     henkilohakuOrganisaatiot: [],
@@ -59,12 +52,9 @@ const omattiedot = (state: OmattiedotState = initialState, action: AnyAction): O
                 anomusilmoitus: action.omattiedot.anomusilmoitus,
             };
         case FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS: {
-            const newRyhmaOptions = getOrganisaatioOptionsAndFilter(action.organisaatios, action.locale, true);
             return {
                 ...state,
                 organisaatios: action.organisaatios,
-                organisaatioRyhmaOptions: newRyhmaOptions.options,
-                organisaatioRyhmaFilter: newRyhmaOptions.filterOptions,
             };
         }
         case FETCH_HENKILOHAKUORGANISAATIOT_REQUEST:

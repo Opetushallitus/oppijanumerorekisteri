@@ -7,6 +7,7 @@ import { NOTIFICATIONTYPES } from '../components/common/Notification/notificatio
 import { Localisations } from '../types/localisation.type';
 import { fetchHenkilo } from '../actions/henkilo.actions';
 import { FETCH_HENKILO_ASIOINTIKIELI_SUCCESS } from '../actions/actiontypes';
+import { Locale } from '../types/locale.type';
 
 type Passinumerot = string[];
 

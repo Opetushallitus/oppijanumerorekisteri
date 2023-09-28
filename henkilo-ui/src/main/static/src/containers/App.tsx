@@ -38,13 +38,10 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     const [isInitialized, setIsInitialized] = useState(false);
     const frontPropertiesInitialized = useSelector<RootState, boolean>((state) => state.frontProperties.initialized);
     const prequelsNotLoadedCount = useSelector<RootState, number>((state) => state.prequels.notLoadedCount);
-    const { data: lang, isSuccess: isLocaleSuccess } = useGetLocaleQuery();
+    const { data: locale, isSuccess: isLocaleSuccess } = useGetLocaleQuery();
     const { data: omattiedot, isSuccess: isOmattiedotSuccess } = useGetOmattiedotQuery();
-    const { isSuccess: isOmatOrganisaatiotSuccess } = useGetOmatOrganisaatiotQuery(
-        { oid: omattiedot?.oidHenkilo, locale: lang },
-        { skip: !omattiedot?.oidHenkilo || !lang }
-    );
-    const { L, locale } = useLocalisations();
+    useGetOmatOrganisaatiotQuery({ oid: omattiedot?.oidHenkilo, locale }, { skip: !omattiedot?.oidHenkilo || !locale });
+    const { L } = useLocalisations();
     const dispatch = useAppDispatch();
 
     const setBackGround = (route: RouteType) => {
@@ -71,24 +68,12 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     }, []);
 
     useEffect(() => {
-        if (
-            frontPropertiesInitialized &&
-            isOmattiedotSuccess &&
-            isOmatOrganisaatiotSuccess &&
-            isLocaleSuccess &&
-            prequelsNotLoadedCount === 0
-        ) {
+        if (frontPropertiesInitialized && isOmattiedotSuccess && isLocaleSuccess && prequelsNotLoadedCount === 0) {
             setIsInitialized(true);
             moment.locale(locale);
             moment.defaultFormat = PropertySingleton.getState().PVM_MOMENT_FORMAATTI;
         }
-    }, [
-        frontPropertiesInitialized,
-        isOmattiedotSuccess,
-        isOmatOrganisaatiotSuccess,
-        isLocaleSuccess,
-        prequelsNotLoadedCount,
-    ]);
+    }, [frontPropertiesInitialized, isOmattiedotSuccess, isLocaleSuccess, prequelsNotLoadedCount]);
 
     useEffect(() => {
         const route = routes[routes.length - 1];
