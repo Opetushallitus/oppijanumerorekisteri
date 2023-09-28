@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 import { LOCATION_CHANGE } from 'react-router-redux';
 
 import { getCommonOptions } from '../http';
@@ -18,9 +18,8 @@ export type LinkHenkilosRequest = {
     L: Localisations;
 };
 
-export const oppijanumerorekisteriApi = createApi({
-    reducerPath: 'oppijanumerorekisteriApi',
-    baseQuery: fetchBaseQuery({
+const staggeredBaseQuery = retry(
+    fetchBaseQuery({
         ...getCommonOptions(),
         headers: {
             ...getCommonOptions().headers,
@@ -28,6 +27,12 @@ export const oppijanumerorekisteriApi = createApi({
         },
         baseUrl: '/oppijanumerorekisteri-service/',
     }),
+    { maxRetries: 5 }
+);
+
+export const oppijanumerorekisteriApi = createApi({
+    reducerPath: 'oppijanumerorekisteriApi',
+    baseQuery: staggeredBaseQuery,
     tagTypes: ['Passinumerot', 'locale'],
     endpoints: (builder) => ({
         getLocale: builder.query<Locale, void>({

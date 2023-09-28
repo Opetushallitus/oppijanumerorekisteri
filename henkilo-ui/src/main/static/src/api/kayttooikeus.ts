@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 
 import { getCommonOptions } from '../http';
 import { OrganisaatioHenkilo } from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
@@ -15,13 +15,18 @@ type MfaEnableRequest = string;
 type MfaDisableRequest = void;
 type MfaPostResponse = boolean;
 
-export const kayttooikeusApi = createApi({
-    reducerPath: 'kayttooikeusApi',
-    baseQuery: fetchBaseQuery({
+const staggeredBaseQuery = retry(
+    fetchBaseQuery({
         ...getCommonOptions(),
         headers: { ...getCommonOptions().headers, 'Content-Type': 'application/json; charset=utf-8' },
         baseUrl: '/kayttooikeus-service/',
     }),
+    { maxRetries: 5 }
+);
+
+export const kayttooikeusApi = createApi({
+    reducerPath: 'kayttooikeusApi',
+    baseQuery: staggeredBaseQuery,
     tagTypes: ['omattiedot', 'organisaatiot'],
     endpoints: (builder) => ({
         getOmattiedot: builder.query<Omattiedot, void>({
