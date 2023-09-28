@@ -7,7 +7,7 @@ import StaticUtils from '../StaticUtils';
 import { toLocalizedText } from '../../../localizabletext';
 import { Localisations, L10n } from '../../../types/localisation.type';
 import { Locale } from '../../../types/locale.type';
-import { TableHeading } from '../../../types/react-table.types';
+import { TableCellProps, TableHeading } from '../../../types/react-table.types';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import HaeJatkoaikaaButton from '../../omattiedot/HaeJatkoaikaaButton';
 import { update, path } from 'ramda';
@@ -68,10 +68,10 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
             { key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO' },
             {
                 key: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS',
-                Cell: (cellProps) => (
+                Cell: (cellProps: TableCellProps) => (
                     <AccessRightDetaisLink
                         cellProps={cellProps}
-                        clickHandler={(accessRightGroup) => this.showAccessRightGroupDetails(accessRightGroup)}
+                        clickHandler={(kayttooikeusRyhma) => this.showAccessRightGroupDetails(kayttooikeusRyhma)}
                     />
                 ),
             },
@@ -123,7 +123,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
         this._rows = this.props.kayttooikeus.kayttooikeus
             .filter(this._filterExistingKayttooikeus)
             .map((vanhentunutKayttooikeus: MyonnettyKayttooikeusryhma, idx: number) => ({
-                accessRightGroup: vanhentunutKayttooikeus,
+                kayttooikeusRyhma: vanhentunutKayttooikeus,
                 [headingList[0]]: toLocalizedText(
                     this.props.locale,
                     (
@@ -152,11 +152,11 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
             }));
     }
 
-    showAccessRightGroupDetails(accessRightGroup) {
+    showAccessRightGroupDetails(kayttooikeusRyhma: MyonnettyKayttooikeusryhma) {
         const accessRight: AccessRight = {
-            name: localizeTextGroup(accessRightGroup.ryhmaNames.texts, this.props.locale),
+            name: localizeTextGroup(kayttooikeusRyhma.ryhmaNames.texts, this.props.locale),
             description: localizeTextGroup(
-                [...(accessRightGroup.ryhmaKuvaus?.texts || []), ...accessRightGroup.ryhmaNames.texts],
+                [...(kayttooikeusRyhma.ryhmaKuvaus?.texts || []), ...kayttooikeusRyhma.ryhmaNames.texts],
                 this.props.locale
             ),
             onClose: () => this.setState(() => ({ accessRight: null })),

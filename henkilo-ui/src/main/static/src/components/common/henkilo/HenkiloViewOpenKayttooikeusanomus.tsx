@@ -131,10 +131,10 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
                 key: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA',
                 minWidth: 220,
                 notSortable: this.props.isAnomusView,
-                Cell: (cellProps: TableCellProps & { original: any }) => (
+                Cell: (cellProps: TableCellProps) => (
                     <AccessRightDetaisLink
                         cellProps={cellProps}
-                        clickHandler={(accessRightGroup) => this.showAccessRightGroupDetails(accessRightGroup)}
+                        clickHandler={(kayttooikeusRyhma) => this.showAccessRightGroupDetails(kayttooikeusRyhma)}
                     />
                 ),
             },
@@ -212,7 +212,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         const headingList = this.headingList.map((heading) => heading.key);
         this._rows = this._getKayttooikeusAnomukset(this.props).map(
             (haettuKayttooikeusRyhma: HaettuKayttooikeusryhma, idx: number) => ({
-                accessRightGroup: haettuKayttooikeusRyhma.kayttoOikeusRyhma,
+                kayttooikeusRyhma: haettuKayttooikeusRyhma.kayttoOikeusRyhma,
                 [headingList[0]]: moment(haettuKayttooikeusRyhma.anomus.anottuPvm),
                 [headingList[1]]:
                     haettuKayttooikeusRyhma.anomus.henkilo.etunimet +
@@ -504,11 +504,11 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         return this.state.kayttooikeusRyhmatByAnoja.find((ryhma) => ryhma.anojaOid === anojaOid);
     };
 
-    showAccessRightGroupDetails(accessRightGroup) {
+    showAccessRightGroupDetails(kayttooikeusRyhma) {
         const accessRight: AccessRight = {
-            name: localizeTextGroup(accessRightGroup.nimi.texts, this.props.locale),
+            name: localizeTextGroup(kayttooikeusRyhma.nimi.texts, this.props.locale),
             description: localizeTextGroup(
-                [...(accessRightGroup.kuvaus?.texts || []), ...accessRightGroup.nimi.texts],
+                [...(kayttooikeusRyhma.kuvaus?.texts || []), ...kayttooikeusRyhma.nimi.texts],
                 this.props.locale
             ),
             onClose: () => this.setState(() => ({ accessRight: null })),

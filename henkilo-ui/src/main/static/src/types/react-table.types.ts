@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { MyonnettyKayttooikeusryhma } from './domain/kayttooikeus/kayttooikeusryhma.types';
 
 export type TableHeading = {
     Cell?: React.ReactNode | string | ((arg0: TableCellProps) => React.ReactNode | string);
@@ -14,4 +15,7 @@ export type TableHeading = {
 
 export type TableCellProps = {
     value: any;
+    original?: {
+        kayttooikeusRyhma?: MyonnettyKayttooikeusryhma;
+    };
 };

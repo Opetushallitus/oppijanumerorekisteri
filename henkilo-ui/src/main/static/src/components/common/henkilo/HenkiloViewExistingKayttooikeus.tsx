@@ -94,10 +94,10 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
             {
                 key: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS',
                 minWidth: 150,
-                Cell: (cellProps: TableCellProps & { original: any }) => (
+                Cell: (cellProps: TableCellProps) => (
                     <AccessRightDetaisLink
                         cellProps={cellProps}
-                        clickHandler={(accessRightGroup) => this.showAccessRightGroupDetails(accessRightGroup)}
+                        clickHandler={(kayttooikeusRyhma) => this.showAccessRightGroupDetails(kayttooikeusRyhma)}
                     />
                 ),
             },
@@ -190,7 +190,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                     this.props.organisaatioCache[uusittavaKayttooikeusRyhma.organisaatioOid] ||
                     StaticUtils.defaultOrganisaatio(uusittavaKayttooikeusRyhma.organisaatioOid, this.props.l10n);
                 return {
-                    accessRightGroup: uusittavaKayttooikeusRyhma,
+                    kayttooikeusRyhma: uusittavaKayttooikeusRyhma,
                     [headingList[0]]:
                         toLocalizedText(this.props.locale, organisaatio.nimi) +
                         ' ' +
@@ -350,11 +350,11 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
         );
     }
 
-    showAccessRightGroupDetails(accessRightGroup) {
+    showAccessRightGroupDetails(kayttooikeusRyhma) {
         const accessRight: AccessRight = {
-            name: localizeTextGroup(accessRightGroup.ryhmaNames?.texts, this.props.locale),
+            name: localizeTextGroup(kayttooikeusRyhma.ryhmaNames?.texts, this.props.locale),
             description: localizeTextGroup(
-                [...(accessRightGroup.ryhmaKuvaus?.texts || []), ...(accessRightGroup.ryhmaNames?.texts || [])],
+                [...(kayttooikeusRyhma.ryhmaKuvaus?.texts || []), ...(kayttooikeusRyhma.ryhmaNames?.texts || [])],
                 this.props.locale
             ),
             onClose: () => this.setState(() => ({ accessRight: null })),
