@@ -29,13 +29,21 @@ import { PalveluRooli } from '../types/domain/kayttooikeus/PalveluRooli.types';
 export type AllowedKayttooikeus = Array<MyonnettyKayttooikeusryhma>;
 
 export type KayttooikeusAnomus = {
+    id: number;
     kayttoOikeusRyhma: {
         id: number;
+        nimi: string;
+        tunniste: string;
     };
     anomus: {
         organisaatioOid: string;
+        anottuPvm: string;
+        perustelut: string;
+        anomusTyyppi: string;
         henkilo: {
             oid: string;
+            etunimet: string;
+            sukunimi: string;
         };
     };
 };

@@ -23,7 +23,7 @@ import { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/Organisaati
 import type { OnChangeHandler, Options, Option } from 'react-select';
 
 type OwnProps = {
-    ryhmaSelectionAction: (arg0: any) => void;
+    ryhmaSelectionAction: OnChangeHandler<string, Option<string> | Options<string>>;
     selectedRyhma: string | null | undefined;
     selectedOrganisation?: Array<string> | string;
     selectedKayttooikeus: string | null | undefined;

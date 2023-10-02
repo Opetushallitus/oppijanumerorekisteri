@@ -34,6 +34,7 @@ import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 import { localizeTextGroup } from '../../../utilities/localisation.util';
 import { RyhmatState } from '../../../reducers/ryhmat.reducer';
+import { NotificationsState } from '../../../reducers/notifications.reducer';
 
 type OwnProps = {
     oidHenkilo: string;
@@ -48,9 +49,7 @@ type StateProps = {
     henkilo: HenkiloState;
     kayttooikeus: KayttooikeusRyhmaState;
     organisaatioCache: OrganisaatioCache;
-    notifications: {
-        existingKayttooikeus: any[];
-    };
+    notifications: NotificationsState;
     ryhmas?: RyhmatState;
 };
 
@@ -273,14 +272,10 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                         />
                     ),
                     [headingList[7]]: this.props.notifications.existingKayttooikeus.some((notification) => {
-                        return (
-                            notification.ryhmaIdList &&
-                            notification.ryhmaIdList.some(
-                                (ryhmaId) =>
-                                    ryhmaId === uusittavaKayttooikeusRyhma.ryhmaId &&
-                                    uusittavaKayttooikeusRyhma.organisaatioOid ===
-                                        (notification.organisaatioOid && notification.organisaatioOid)
-                            )
+                        return notification.ryhmaIdList?.some(
+                            (ryhmaId) =>
+                                `${ryhmaId}` === `${uusittavaKayttooikeusRyhma.ryhmaId}` &&
+                                uusittavaKayttooikeusRyhma.organisaatioOid === notification.organisaatioOid
                         );
                     }),
                     [headingList[8]]: (

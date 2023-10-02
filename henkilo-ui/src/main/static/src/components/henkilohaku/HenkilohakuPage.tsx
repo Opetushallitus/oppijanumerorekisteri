@@ -186,7 +186,7 @@ class HenkilohakuPage extends React.Component<Props, State> {
         }
     }
 
-    createRows(headingKeys: Array<string>): Array<any> {
+    createRows(headingKeys: Array<string>) {
         return this.props.henkilohakuResult.map((henkilo) => ({
             [headingKeys[0]]: <Link to={`/virkailija/${henkilo.oidHenkilo}`}>{henkilo.nimi || ''}</Link>,
             [headingKeys[1]]: henkilo.kayttajatunnus || '',
@@ -216,8 +216,11 @@ class HenkilohakuPage extends React.Component<Props, State> {
         this.setState({ ryhmaOid: undefined, henkilohakuModel }, this.searchQuery);
     }
 
-    selectRyhmaOid(ryhmaOption: any) {
-        const henkilohakuModel = { ...this.state.henkilohakuModel, organisaatioOids: [ryhmaOption.value] };
+    selectRyhmaOid(ryhmaOption: { value?: string }) {
+        const henkilohakuModel = {
+            ...this.state.henkilohakuModel,
+            organisaatioOids: ryhmaOption?.value ? [ryhmaOption.value] : undefined,
+        };
         this.setState({ ryhmaOid: ryhmaOption.value, henkilohakuModel }, this.searchQuery);
     }
 

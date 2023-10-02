@@ -24,7 +24,7 @@ import { localize, localizeTextGroup } from '../../../utilities/localisation.uti
 import './HenkiloViewOpenKayttooikeusanomus.css';
 import { TableCellProps, TableHeading } from '../../../types/react-table.types';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
-import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
+import { KayttooikeusAnomus, KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 import { HenkilonNimi } from '../../../types/domain/kayttooikeus/HenkilonNimi';
@@ -187,8 +187,8 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         };
     }
 
-    _getKayttooikeusAnomukset = (props: Props): Array<any> => {
-        return props.kayttooikeus && props.kayttooikeus.kayttooikeusAnomus ? props.kayttooikeus.kayttooikeusAnomus : [];
+    _getKayttooikeusAnomukset = (props: Props): Array<KayttooikeusAnomus> => {
+        return props.kayttooikeus?.kayttooikeusAnomus ? props.kayttooikeus.kayttooikeusAnomus : [];
     };
 
     componentWillReceiveProps(nextProps: Props) {
@@ -211,7 +211,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
     createRows() {
         const headingList = this.headingList.map((heading) => heading.key);
         this._rows = this._getKayttooikeusAnomukset(this.props).map(
-            (haettuKayttooikeusRyhma: HaettuKayttooikeusryhma, idx: number) => ({
+            (haettuKayttooikeusRyhma: KayttooikeusAnomus, idx: number) => ({
                 kayttooikeusRyhma: haettuKayttooikeusRyhma.kayttoOikeusRyhma,
                 [headingList[0]]: moment(haettuKayttooikeusRyhma.anomus.anottuPvm),
                 [headingList[1]]:
@@ -281,7 +281,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         );
     }
 
-    anomusHandlingButtonsForOmattiedot(haettuKayttooikeusRyhma: HaettuKayttooikeusryhma) {
+    anomusHandlingButtonsForOmattiedot(haettuKayttooikeusRyhma: KayttooikeusAnomus) {
         return (
             <div>
                 <div style={{ display: 'table-cell', paddingRight: '10px' }}>
@@ -293,7 +293,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         );
     }
 
-    anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma: HaettuKayttooikeusryhma, idx: number) {
+    anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma: KayttooikeusAnomus, idx: number) {
         const noPermission = this.hasNoPermission(
             haettuKayttooikeusRyhma.anomus.organisaatioOid,
             haettuKayttooikeusRyhma.kayttoOikeusRyhma.id

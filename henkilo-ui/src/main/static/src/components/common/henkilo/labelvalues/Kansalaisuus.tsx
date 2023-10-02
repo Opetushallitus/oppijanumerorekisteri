@@ -31,7 +31,7 @@ const Kansalaisuus = (props: Props) => {
         <div>
             <LabelValue
                 readOnly={props.readOnly}
-                updateModelFieldAction={(newOption: Array<any>) => {
+                updateModelFieldAction={(newOption) => {
                     if (newOption === null) {
                         props.updateModelFieldAction({
                             optionsName: 'kansalaisuus',

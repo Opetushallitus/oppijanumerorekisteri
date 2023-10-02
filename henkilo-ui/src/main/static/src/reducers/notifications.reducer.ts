@@ -11,13 +11,16 @@ import {
     YKSILOI_PUUTTUVAT_TIEDOT_FAILURE,
     RESET_BUTTON_NOTIFICATIONS,
 } from '../actions/actiontypes';
+import { NotificationType } from '../types/notification.types';
 
 export type Notification = {
     id: string;
-    type: string;
+    type: NotificationType;
     errorType: string;
     notL10nMessage: string;
     notL10nText: string;
+    organisaatioOid?: string;
+    ryhmaIdList?: Array<string>;
 };
 
 export type NotificationsState = {
