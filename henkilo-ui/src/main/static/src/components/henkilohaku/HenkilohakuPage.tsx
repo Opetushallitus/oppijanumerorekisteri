@@ -45,7 +45,7 @@ const initialState: State = {
         noOrganisation: false,
         subOrganisation: true,
         passivoitu: false,
-        dublicates: false,
+        duplikaatti: false,
         organisaatioOids: undefined,
         kayttooikeusryhmaId: undefined,
         ryhmaOids: undefined,
@@ -124,7 +124,7 @@ class HenkilohakuPage extends React.Component<Props, State> {
                 <HenkilohakuFilters
                     noOrganisationAction={this.updateToSearchModel('noOrganisation', true).bind(this)}
                     suborganisationAction={this.updateToSearchModel('subOrganisation', true).bind(this)}
-                    duplikaatitAction={this.updateToSearchModel('dublicates', true).bind(this)}
+                    duplikaatitAction={this.updateToSearchModel('duplikaatti', true).bind(this)}
                     passiivisetAction={this.updateToSearchModel('passivoitu', true).bind(this)}
                     initialValues={this.state.henkilohakuModel}
                     selectedOrganisation={this.state.henkilohakuModel.organisaatioOids}

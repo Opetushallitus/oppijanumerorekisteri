@@ -97,7 +97,7 @@ class HenkilohakuFilters extends React.Component<Props, State> {
                                 />
                                 <DuplikaatitOrganisationCheckbox
                                     L={this.props.L}
-                                    duplikaatitValue={this.props.initialValues.dublicates}
+                                    duplikaatitValue={this.props.initialValues.duplikaatti}
                                     duplikaatitAction={this.props.duplikaatitAction}
                                 />
                             </OphInline>

@@ -22,7 +22,7 @@ const initialState: HenkilohakuState = {
         noOrganisation: false,
         subOrganisation: true,
         passivoitu: false,
-        dublicates: false,
+        duplikaatti: false,
     },
     henkilohakuLoading: false,
     resultCount: 0,

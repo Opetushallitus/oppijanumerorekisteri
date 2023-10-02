@@ -2,7 +2,7 @@ export type HenkilohakuCriteria = {
     noOrganisation: boolean;
     subOrganisation: boolean;
     passivoitu: boolean;
-    dublicates: boolean;
+    duplikaatti: boolean;
     organisaatioOids?: Array<string>;
     kayttooikeusryhmaId?: string;
     ryhmaOids?: Array<string>;
