@@ -98,6 +98,20 @@ class OppijaControllerIntegrationTest {
     }
 
     @Test
+    void koosteAdminSeesFilteredByAuthors() throws Exception {
+        given(permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
+
+        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/kooste-filter-author.json"), fetch(KOOSTE + "?author=tuonti1"), koosteComparator);
+    }
+
+    @Test
+    void koosteAdminSeesFilteredById() throws Exception {
+        given(permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
+
+        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/kooste-filter-id.json"), fetch(KOOSTE + "?id=3"), koosteComparator);
+    }
+
+    @Test
     void koosteNormalUsersSeesOnlyOwn() throws Exception {
         given(permissionChecker.getAllOrganisaatioOids(any(), any())).willReturn(Set.of("tuonti1"));
 
