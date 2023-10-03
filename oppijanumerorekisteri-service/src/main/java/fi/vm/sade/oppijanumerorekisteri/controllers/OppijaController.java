@@ -113,7 +113,7 @@ public class OppijaController {
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Kooste oppijoiden tuonneista")
     org.springframework.data.domain.Page<TuontiRepository.TuontiKooste> tuontiKooste(@Valid TuontiKoosteRequest tuontiKoosteRequest) {
-        return oppijaService.tuontiKooste(tuontiKoosteRequest.forPage());
+        return oppijaService.tuontiKooste(tuontiKoosteRequest.forPage(), tuontiKoosteRequest.getId(), tuontiKoosteRequest.getAuthor());
     }
 
     @GetMapping("/tuontidata/{tuontiId}")

@@ -169,10 +169,10 @@ public class OppijaServiceImpl implements OppijaService {
     }
 
     @Override
-    public org.springframework.data.domain.Page<TuontiRepository.TuontiKooste> tuontiKooste(Pageable pagination) {
+    public org.springframework.data.domain.Page<TuontiRepository.TuontiKooste> tuontiKooste(Pageable pagination, Long id, String author) {
         final boolean isSuperUser = permissionChecker.isSuperUserOrCanReadAll();
         Set<String> userOrgs = isSuperUser ? Set.of() : permissionChecker.getAllOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT, KAYTTOOIKEUS_TUONTIDATA_READ);
-        return tuontiRepository.getTuontiKooste(isSuperUser, userOrgs, pagination);
+        return tuontiRepository.getTuontiKooste(isSuperUser, userOrgs, id, author, pagination);
     }
 
     @Override

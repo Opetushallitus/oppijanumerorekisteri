@@ -5,13 +5,17 @@ import lombok.Setter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.Min;
 
 @Getter
 @Setter
 public class TuontiKoosteRequest {
-
+    @Nullable
+    private Long id;
+    @Nullable
+    private String author;
     @Min(1)
     private int page = 1;
     @Min(1)
