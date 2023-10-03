@@ -34,7 +34,7 @@ public interface TuontiRepository extends CrudRepository<Tuonti, Long>, TuontiRe
     @Query(value = "select distinct id, oid, author, timestamp, total, inProgress, successful, failures, conflicts from tuontikooste where " +
                         "(true = :isSuperUser or org in :userOrgs) and " +
                         "(:filterId is null or id = :filterId) and " +
-                        "(:author is null or strpos(author, :author) > 0)",
+                        "(:filterAuthor is null or strpos(author, :filterAuthor) > 0)",
       countQuery = "select count(distinct id) from tuontikooste where " +
                         "(true = :isSuperUser or org in :userOrgs) and " +
                         "(:filterId is null or id = :filterId) and " +
