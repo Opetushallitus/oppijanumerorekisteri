@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../store';
-import { fetchOppijoidenTuontiYhteenveto, fetchOppijoidenTuontiListaus } from '../../actions/oppijoidentuonti.actions';
+import { fetchOppijoidenTuontiListaus } from '../../actions/oppijoidentuonti.actions';
 import OppijoidenTuontiYhteenveto from './OppijoidenTuontiYhteenveto';
 import OppijoidenTuontiListaus from './OppijoidenTuontiListaus';
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup';
-import { TuontiYhteenvetoState, TuontiListausState } from '../../reducers/oppijoidentuonti.reducer';
+import { TuontiListausState } from '../../reducers/oppijoidentuonti.reducer';
 import DelayedSearchInput from '../henkilohaku/DelayedSearchInput';
 import TuontiKoosteTable from './TuontiKoosteTable';
 
@@ -18,14 +18,12 @@ type SearchCriteria = {
 };
 
 type StateProps = {
-    yhteenveto: TuontiYhteenvetoState;
     listaus: TuontiListausState;
     isOppijaHakuLoading: boolean;
     translate: (key: string) => string;
 };
 
 type DispatchProps = {
-    fetchOppijoidenTuontiYhteenveto: () => void;
     fetchOppijoidenTuontiListaus: (criteria: SearchCriteria) => void;
 };
 
@@ -59,10 +57,7 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
         return (
             <div className="wrapper">
                 <h1 style={{ marginBottom: '20px' }}>{this.props.translate('OPPIJOIDEN_TUONTI_YHTEENVETO_OTSIKKO')}</h1>
-                <OppijoidenTuontiYhteenveto
-                    state={this.props.yhteenveto}
-                    translate={this.props.translate}
-                ></OppijoidenTuontiYhteenveto>
+                <OppijoidenTuontiYhteenveto />
 
                 <div className="flex-horizontal" style={{ margin: '20px 0' }}>
                     <h1 className="flex-item-1">{this.props.translate('OPPIJOIDEN_TUONTI_OPPIJAT_OTSIKKO')}</h1>
@@ -72,7 +67,7 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
                             onChange={() => this.setState({ ...this.state, tuontikooste: !this.state.tuontikooste })}
                             trueLabel={this.props.translate('OPPIJOIDEN_TUONTI_TUONTIKOOSTE')}
                             falseLabel={this.props.translate('OPPIJOIDEN_TUONTI_NAYTA_VIRHEET')}
-                        ></BooleanRadioButtonGroup>
+                        />
                     </div>
                 </div>
                 {this.state.tuontikooste ? (
@@ -100,10 +95,6 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
                 )}
             </div>
         );
-    }
-
-    componentDidMount() {
-        this.props.fetchOppijoidenTuontiYhteenveto();
     }
 
     onChangeSorting = (sortKey: string, sortDirection: string) => {
@@ -137,13 +128,11 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState): StateProps => ({
-    yhteenveto: state.oppijoidenTuontiYhteenveto,
     listaus: state.oppijoidenTuontiListaus,
     isOppijaHakuLoading: state.oppijoidenTuontiListaus.loading,
     translate: (key: string) => state.l10n.localisations[state.locale][key] || key,
 });
 
 export default connect<StateProps, DispatchProps, never, RootState>(mapStateToProps, {
-    fetchOppijoidenTuontiYhteenveto,
     fetchOppijoidenTuontiListaus,
 })(OppijoidenTuontiContainer);

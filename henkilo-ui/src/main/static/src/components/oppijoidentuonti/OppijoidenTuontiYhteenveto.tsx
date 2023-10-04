@@ -1,32 +1,24 @@
 import React from 'react';
-import type { TuontiYhteenvetoState } from '../../reducers/oppijoidentuonti.reducer';
+
 import './OppijoidenTuontiYhteenveto.css';
+import { useLocalisations } from '../../selectors';
+import { useGetOppijoidentuontiYhteenvetoQuery } from '../../api/oppijanumerorekisteri';
 
-type Props = {
-    state: TuontiYhteenvetoState;
-    translate: (key: string) => string;
+const OppijoidenTuontiYhteenveto = () => {
+    const { L } = useLocalisations();
+    const { data, isFetching } = useGetOppijoidentuontiYhteenvetoQuery();
+    return (
+        <div className="oph-bg-gray-lighten-5">
+            <dl className="side-by-side inverse">
+                <dt>{L['OPPIJOIDEN_TUONTI_YHTEENVETO_ONNISTUNEET']}</dt>
+                <dd>{isFetching ? '...' : data.onnistuneet}</dd>
+                <dt>{L['OPPIJOIDEN_TUONTI_YHTEENVETO_VIRHEET']}</dt>
+                <dd>{isFetching ? '...' : data.virheet}</dd>
+                <dt>{L['OPPIJOIDEN_TUONTI_YHTEENVETO_KESKENERAISET']}</dt>
+                <dd>{isFetching ? '...' : data.keskeneraiset}</dd>
+            </dl>
+        </div>
+    );
 };
-
-/**
- * Oppijoiden tuonnin yhteenveto -boxi.
- */
-class OppijoidenTuontiYhteenveto extends React.Component<Props> {
-    render() {
-        return (
-            <div className="oph-bg-gray-lighten-5">
-                {!this.props.state.loading && (
-                    <dl className="side-by-side inverse">
-                        <dt>{this.props.translate('OPPIJOIDEN_TUONTI_YHTEENVETO_ONNISTUNEET')}</dt>
-                        <dd>{this.props.state.data.onnistuneet}</dd>
-                        <dt>{this.props.translate('OPPIJOIDEN_TUONTI_YHTEENVETO_VIRHEET')}</dt>
-                        <dd>{this.props.state.data.virheet}</dd>
-                        <dt>{this.props.translate('OPPIJOIDEN_TUONTI_YHTEENVETO_KESKENERAISET')}</dt>
-                        <dd>{this.props.state.data.keskeneraiset}</dd>
-                    </dl>
-                )}
-            </div>
-        );
-    }
-}
 
 export default OppijoidenTuontiYhteenveto;

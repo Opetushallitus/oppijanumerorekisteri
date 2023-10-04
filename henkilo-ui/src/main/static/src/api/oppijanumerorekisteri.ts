@@ -10,6 +10,7 @@ import { FETCH_HENKILO_ASIOINTIKIELI_SUCCESS } from '../actions/actiontypes';
 import { Locale } from '../types/locale.type';
 import { TuontiKooste, TuontiKoosteCriteria } from '../types/tuontikooste.types';
 import { Tuontidata } from '../types/tuontidata.types';
+import { OppijaTuontiYhteenveto } from '../types/domain/oppijanumerorekisteri/oppijatuontiyhteenveto.types';
 
 type Passinumerot = string[];
 
@@ -190,6 +191,11 @@ export const oppijanumerorekisteriApi = createApi({
             },
             providesTags: ['tuontikooste'],
         }),
+        getOppijoidentuontiYhteenveto: builder.query<OppijaTuontiYhteenveto, void>({
+            query: () => ({
+                url: 'oppija/yhteenveto',
+            }),
+        }),
     }),
 });
 
@@ -204,4 +210,5 @@ export const {
     usePassivoiHenkiloMutation,
     useGetTuontikoosteQuery,
     useGetTuontidataQuery,
+    useGetOppijoidentuontiYhteenvetoQuery,
 } = oppijanumerorekisteriApi;
