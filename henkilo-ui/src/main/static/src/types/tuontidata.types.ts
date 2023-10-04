@@ -1,6 +1,12 @@
 export type Tuontidata = {
     tunniste: string;
-    henkilo: any;
+    henkilo: {
+        hetu: string;
+        etunimet: string;
+        kutsumanimi: string;
+        sukunimi: string;
+        kansalaisuus: { koodi: string }[];
+    };
     henkiloOid: string;
     henkiloNimi: string;
     conflict: boolean;

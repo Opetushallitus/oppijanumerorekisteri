@@ -11,6 +11,9 @@ import { Locale } from '../types/locale.type';
 import { TuontiKooste, TuontiKoosteCriteria } from '../types/tuontikooste.types';
 import { Tuontidata } from '../types/tuontidata.types';
 import { OppijaTuontiYhteenveto } from '../types/domain/oppijanumerorekisteri/oppijatuontiyhteenveto.types';
+import { OppijoidenTuontiCriteria } from '../components/oppijoidentuonti/OppijoidenTuontiContainer';
+import { Page } from '../types/Page.types';
+import { OppijaList } from '../types/domain/oppijanumerorekisteri/oppijalist.types';
 
 type Passinumerot = string[];
 
@@ -196,6 +199,11 @@ export const oppijanumerorekisteriApi = createApi({
                 url: 'oppija/yhteenveto',
             }),
         }),
+        getOppijoidenTuontiListaus: builder.query<Page<OppijaList>, OppijoidenTuontiCriteria>({
+            query: (criteria) => ({
+                url: `oppija?${new URLSearchParams(criteria).toString()}`,
+            }),
+        }),
     }),
 });
 
@@ -211,4 +219,5 @@ export const {
     useGetTuontikoosteQuery,
     useGetTuontidataQuery,
     useGetOppijoidentuontiYhteenvetoQuery,
+    useGetOppijoidenTuontiListausQuery,
 } = oppijanumerorekisteriApi;

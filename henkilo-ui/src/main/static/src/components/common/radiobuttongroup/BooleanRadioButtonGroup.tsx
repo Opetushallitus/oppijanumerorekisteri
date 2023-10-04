@@ -2,7 +2,7 @@ import React from 'react';
 
 type Props = {
     value: boolean;
-    onChange: (event: any) => void;
+    onChange: (event: boolean) => void;
     trueLabel: string;
     falseLabel: string;
 };

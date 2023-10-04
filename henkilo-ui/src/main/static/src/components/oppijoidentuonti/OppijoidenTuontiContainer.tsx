@@ -1,138 +1,87 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import type { RootState } from '../../store';
-import { fetchOppijoidenTuontiListaus } from '../../actions/oppijoidentuonti.actions';
+import React, { useState } from 'react';
+
 import OppijoidenTuontiYhteenveto from './OppijoidenTuontiYhteenveto';
 import OppijoidenTuontiListaus from './OppijoidenTuontiListaus';
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup';
-import { TuontiListausState } from '../../reducers/oppijoidentuonti.reducer';
 import DelayedSearchInput from '../henkilohaku/DelayedSearchInput';
 import TuontiKoosteTable from './TuontiKoosteTable';
+import { useLocalisations } from '../../selectors';
+import { useGetOppijoidenTuontiListausQuery } from '../../api/oppijanumerorekisteri';
 
-type SearchCriteria = {
-    page: number;
-    count: number;
+export type OppijoidenTuontiCriteria = {
+    page: string;
+    count: string;
     sortDirection: string;
     sortKey: string;
-    nimiHaku: string | null | undefined;
+    nimiHaku?: string;
 };
 
-type StateProps = {
-    listaus: TuontiListausState;
-    isOppijaHakuLoading: boolean;
-    translate: (key: string) => string;
+const defaultCriteria = {
+    page: '1',
+    count: '20',
+    sortDirection: 'DESC',
+    sortKey: 'CREATED',
 };
 
-type DispatchProps = {
-    fetchOppijoidenTuontiListaus: (criteria: SearchCriteria) => void;
-};
+const OppijoidenTuontiContainer = () => {
+    const { L } = useLocalisations();
+    const [criteria, setCriteria] = useState<OppijoidenTuontiCriteria>(defaultCriteria);
+    const [tuontikooste, setTuontikooste] = useState(false);
+    const { data, isFetching } = useGetOppijoidenTuontiListausQuery(criteria);
 
-type Props = StateProps & DispatchProps;
+    const onChangeSorting = (sortKey: string, sortDirection: string) => {
+        setCriteria({ ...criteria, sortKey, sortDirection });
+    };
 
-type State = {
-    criteria: SearchCriteria;
-    tuontikooste: boolean;
-};
+    const onChangeNimiHaku = (nimiHaku: string) => {
+        setCriteria({ ...criteria, nimiHaku });
+    };
 
-/**
- * Oppijoiden tuonti -näkymä.
- */
-class OppijoidenTuontiContainer extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            // oletushakukriteerit
-            criteria: {
-                page: 1,
-                count: 20,
-                sortDirection: 'DESC',
-                sortKey: 'CREATED',
-                nimiHaku: null,
-            },
-            tuontikooste: false,
-        };
-    }
+    const onFetchData = (page: number, count: number) => {
+        setCriteria({ ...criteria, page: String(page), count: String(count) });
+    };
 
-    render() {
-        return (
-            <div className="wrapper">
-                <h1 style={{ marginBottom: '20px' }}>{this.props.translate('OPPIJOIDEN_TUONTI_YHTEENVETO_OTSIKKO')}</h1>
-                <OppijoidenTuontiYhteenveto />
+    return (
+        <div className="wrapper">
+            <h1 style={{ marginBottom: '20px' }}>{L['OPPIJOIDEN_TUONTI_YHTEENVETO_OTSIKKO']}</h1>
+            <OppijoidenTuontiYhteenveto />
 
-                <div className="flex-horizontal" style={{ margin: '20px 0' }}>
-                    <h1 className="flex-item-1">{this.props.translate('OPPIJOIDEN_TUONTI_OPPIJAT_OTSIKKO')}</h1>
-                    <div className="flex-item-1 flex-align-right">
-                        <BooleanRadioButtonGroup
-                            value={this.state.tuontikooste}
-                            onChange={() => this.setState({ ...this.state, tuontikooste: !this.state.tuontikooste })}
-                            trueLabel={this.props.translate('OPPIJOIDEN_TUONTI_TUONTIKOOSTE')}
-                            falseLabel={this.props.translate('OPPIJOIDEN_TUONTI_NAYTA_VIRHEET')}
-                        />
-                    </div>
+            <div className="flex-horizontal" style={{ margin: '20px 0' }}>
+                <h1 className="flex-item-1">{L['OPPIJOIDEN_TUONTI_OPPIJAT_OTSIKKO']}</h1>
+                <div className="flex-item-1 flex-align-right">
+                    <BooleanRadioButtonGroup
+                        value={tuontikooste}
+                        onChange={() => setTuontikooste(!tuontikooste)}
+                        trueLabel={L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE']}
+                        falseLabel={L['OPPIJOIDEN_TUONTI_NAYTA_VIRHEET']}
+                    />
                 </div>
-                {this.state.tuontikooste ? (
-                    <TuontiKoosteTable />
-                ) : (
-                    <>
-                        <DelayedSearchInput
-                            setSearchQueryAction={this.onChangeNimiHaku.bind(this)}
-                            loading={this.props.isOppijaHakuLoading}
-                            defaultNameQuery={this.state.criteria.nimiHaku}
-                            minSearchValueLength={2}
-                            placeholder={this.props.translate('OPPIJOIDEN_TUONTI_HAE_HENKILOITA')}
-                        />
-
-                        <OppijoidenTuontiListaus
-                            loading={this.props.isOppijaHakuLoading}
-                            state={this.props.listaus}
-                            onFetchData={this.onFetchData}
-                            onChangeSorting={this.onChangeSorting}
-                            sortDirection={this.state.criteria.sortDirection}
-                            sortKey={this.state.criteria.sortKey}
-                            translate={this.props.translate}
-                        ></OppijoidenTuontiListaus>
-                    </>
-                )}
             </div>
-        );
-    }
+            {tuontikooste ? (
+                <TuontiKoosteTable />
+            ) : (
+                <>
+                    <DelayedSearchInput
+                        setSearchQueryAction={onChangeNimiHaku}
+                        loading={isFetching}
+                        defaultNameQuery={criteria.nimiHaku}
+                        minSearchValueLength={2}
+                        placeholder={L['OPPIJOIDEN_TUONTI_HAE_HENKILOITA']}
+                    />
+                    {data && (
+                        <OppijoidenTuontiListaus
+                            loading={isFetching}
+                            data={data}
+                            onFetchData={onFetchData}
+                            onChangeSorting={onChangeSorting}
+                            sortDirection={criteria.sortDirection}
+                            sortKey={criteria.sortKey}
+                        ></OppijoidenTuontiListaus>
+                    )}
+                </>
+            )}
+        </div>
+    );
+};
 
-    onChangeSorting = (sortKey: string, sortDirection: string) => {
-        const page = this.state.criteria.page;
-        const pageSize = this.state.criteria.count;
-        const criteria: SearchCriteria = {
-            ...this.state.criteria,
-            sortKey,
-            sortDirection,
-        };
-        this.setState({ criteria: criteria }, () => this.onFetchData(page, pageSize));
-    };
-
-    onChangeNimiHaku = (nimiHaku: string) => {
-        const criteria: SearchCriteria = {
-            ...this.state.criteria,
-            nimiHaku,
-        };
-        this.setState({ criteria: criteria }, () => this.onFetchData(criteria.page, criteria.count));
-    };
-
-    onFetchData = (page: number, count: number) => {
-        const criteria: SearchCriteria = {
-            ...this.state.criteria,
-            page: page,
-            count: count,
-        };
-        this.setState({ criteria: criteria });
-        this.props.fetchOppijoidenTuontiListaus(criteria);
-    };
-}
-
-const mapStateToProps = (state: RootState): StateProps => ({
-    listaus: state.oppijoidenTuontiListaus,
-    isOppijaHakuLoading: state.oppijoidenTuontiListaus.loading,
-    translate: (key: string) => state.l10n.localisations[state.locale][key] || key,
-});
-
-export default connect<StateProps, DispatchProps, never, RootState>(mapStateToProps, {
-    fetchOppijoidenTuontiListaus,
-})(OppijoidenTuontiContainer);
+export default OppijoidenTuontiContainer;
