@@ -1,37 +1,22 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import { fetchTuontidata } from '../../actions/tuontidata.actions';
+
 import OphModal from '../common/modal/OphModal';
 import Table from '../common/table/Table';
 import OphCheckboxButtonInput from '../common/forms/OphCheckboxButtonInput';
 import Button from '../common/button/Button';
-import type { RootState } from '../../store';
-import type { Tuontidata } from '../../types/tuontidata.types';
 import { useLocalisations } from '../../selectors';
+import { useGetTuontidataQuery } from '../../api/oppijanumerorekisteri';
 
 type OwnProps = {
     tuontiId: number;
     onClose: () => void;
 };
 
-type StateProps = {
-    tuontidata?: Tuontidata[];
-    loading: boolean;
-};
-
-type DispatchProps = {
-    fetchData: (tuontiId: number) => void;
-};
-
-type Props = OwnProps & StateProps & DispatchProps;
-
-const TuontiDetails: React.FC<Props> = ({ tuontiId, onClose, fetchData, tuontidata, loading }) => {
-    React.useEffect(() => {
-        fetchData(tuontiId);
-    }, [fetchData, tuontiId]);
-    const [showAll, setShowAll] = React.useState<boolean>(true);
+const TuontiDetails = ({ tuontiId, onClose }: OwnProps) => {
     const { L } = useLocalisations();
+    const { data, isFetching } = useGetTuontidataQuery({ tuontiId, L });
+    const [showAll, setShowAll] = React.useState<boolean>(true);
 
     const headings = [
         { key: 'tunniste', label: L['TUONTIDATA_TUNNISTE'] },
@@ -63,12 +48,12 @@ const TuontiDetails: React.FC<Props> = ({ tuontiId, onClose, fetchData, tuontida
             <Table
                 headings={headings}
                 noDataText={L['TUONTIDATA_EI_KONFLIKTEJA']}
-                data={(tuontidata || []).filter((row) => showAll || row.conflict)}
+                data={(data || []).filter((row) => showAll || row.conflict)}
                 striped
                 resizable
                 highlight
                 pageSize={20}
-                isLoading={loading}
+                isLoading={isFetching}
                 subComponent={(row) => <pre>{JSON.stringify(row.original.henkilo, undefined, 4)}</pre>}
             />
             <Button action={onClose}>{L['TUONTIDATA_SULJE']}</Button>
@@ -76,11 +61,4 @@ const TuontiDetails: React.FC<Props> = ({ tuontiId, onClose, fetchData, tuontida
     );
 };
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    tuontidata: state.tuontidata.payload,
-    loading: state.tuontidata.loading,
-});
-
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    fetchData: fetchTuontidata,
-})(TuontiDetails);
+export default TuontiDetails;

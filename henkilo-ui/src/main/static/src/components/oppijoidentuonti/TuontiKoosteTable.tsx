@@ -29,7 +29,7 @@ const TuontiKoosteTable = () => {
         sort: 'DESC',
     });
     const debouncedCriteria = useDebounce(criteria, 500);
-    const [showDetails, setShowDetails] = React.useState<number>(undefined);
+    const [showDetails, setShowDetails] = useState<number>(undefined);
     const onClose = () => setShowDetails(undefined);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { L } = useLocalisations();
