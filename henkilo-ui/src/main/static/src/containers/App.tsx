@@ -72,12 +72,18 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     }, []);
 
     useEffect(() => {
-        if (frontPropertiesInitialized && !isOmattiedotLoading && isLocaleSuccess && prequelsNotLoadedCount <= 0) {
+        if (
+            frontPropertiesInitialized &&
+            !isOmattiedotLoading &&
+            isLocaleSuccess &&
+            prequelsNotLoadedCount <= 0 &&
+            !!L
+        ) {
             setIsInitialized(true);
             moment.locale(locale);
             moment.defaultFormat = PropertySingleton.getState().PVM_MOMENT_FORMAATTI;
         }
-    }, [frontPropertiesInitialized, isOmattiedotLoading, isLocaleSuccess, prequelsNotLoadedCount]);
+    }, [frontPropertiesInitialized, isOmattiedotLoading, isLocaleSuccess, prequelsNotLoadedCount, L]);
 
     useEffect(() => {
         const route = routes[routes.length - 1];
