@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactTable from 'react-table';
 import { Link } from 'react-router';
 import moment from 'moment';
-import { TuontiKooste, TuontiKoosteRivi, TuontiKoosteCriteria } from '../../types/tuontikooste.types';
+
+import { TuontiKoosteRivi, TuontiKoosteCriteria } from '../../types/tuontikooste.types';
 import TableLoader from '../common/icons/TableLoader';
 import '../../oph-table.css';
 import TextButton from '../common/button/TextButton';
@@ -11,41 +12,33 @@ import SortIconNone from '../common/icons/SortIconNone';
 import SortAscIcon from '../common/icons/SortAscIcon';
 import SortDescIcon from '../common/icons/SortDescIcon';
 import { hasAnyPalveluRooli } from '../../utilities/palvelurooli.util';
-import type { KayttooikeusOrganisaatiot } from '../../types/domain/kayttooikeus/KayttooikeusPerustiedot.types';
+import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
+import { useLocalisations } from '../../selectors';
+import { useGetTuontikoosteQuery } from '../../api/oppijanumerorekisteri';
+import { useDebounce } from '../../useDebounce';
 
-type Props = {
-    criteria: TuontiKoosteCriteria;
-    fetch: (criteria: TuontiKoosteCriteria) => void;
-    setCriteria: (criteria: TuontiKoosteCriteria) => void;
-    loading: boolean;
-    data: TuontiKooste;
-    translate: (key: string) => string;
-    kayttooikeudet: KayttooikeusOrganisaatiot[];
-};
+import styles from './TuontiKoosteTable.module.css';
 
-const TuontiKoosteTable: React.FC<Props> = ({
-    fetch,
-    criteria,
-    setCriteria,
-    loading,
-    data,
-    translate,
-    kayttooikeudet,
-}) => {
-    const firstRender = React.useRef(true);
+const TuontiKoosteTable = () => {
+    const [criteria, setCriteria] = useState<TuontiKoosteCriteria>({
+        id: '',
+        author: '',
+        page: '1',
+        pageSize: '20',
+        field: 'id',
+        sort: 'DESC',
+    });
+    const debouncedCriteria = useDebounce(criteria, 500);
     const [showDetails, setShowDetails] = React.useState<number>(undefined);
     const onClose = () => setShowDetails(undefined);
-
-    const skipFetchOnMount = () => (firstRender.current = false);
-
-    React.useEffect(() => {
-        firstRender.current ? skipFetchOnMount() : fetch(criteria);
-    }, [fetch, criteria]);
+    const { data: omattiedot } = useGetOmattiedotQuery();
+    const { L } = useLocalisations();
+    const { data, isFetching } = useGetTuontikoosteQuery({ L, criteria: debouncedCriteria });
 
     const renderSortIcon = (sort: TuontiKoosteCriteria['sort']) =>
         sort === 'ASC' ? <SortAscIcon /> : <SortDescIcon />;
 
-    const canViewDetails = hasAnyPalveluRooli(kayttooikeudet, [
+    const canViewDetails = hasAnyPalveluRooli(omattiedot.organisaatiot, [
         'OPPIJANUMEROREKISTERI_TUONTIDATA_READ',
         'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
     ]);
@@ -54,7 +47,7 @@ const TuontiKoosteTable: React.FC<Props> = ({
         field,
         translationKey,
     }) => (
-        <span
+        <button
             style={{ display: 'block' }}
             onClick={() =>
                 setCriteria({
@@ -63,11 +56,10 @@ const TuontiKoosteTable: React.FC<Props> = ({
                     sort: criteria.field === field && criteria.sort === 'ASC' ? 'DESC' : 'ASC',
                 })
             }
-            className="oph-bold sortable-header"
+            className="reset-button-styles oph-bold sortable-header"
         >
-            {translate(translationKey)}
-            {criteria.field === field ? renderSortIcon(criteria.sort) : <SortIconNone />}
-        </span>
+            {L[translationKey]} {criteria.field === field ? renderSortIcon(criteria.sort) : <SortIconNone />}
+        </button>
     );
 
     const columns = [
@@ -119,32 +111,61 @@ const TuontiKoosteTable: React.FC<Props> = ({
     ];
 
     return (
-        <div className="oph-table">
-            {!!showDetails && <TuontiDetails tuontiId={showDetails} onClose={onClose} translate={translate} />}
-            <ReactTable
-                data={data?.content}
-                pages={data?.totalPages}
-                columns={columns}
-                sortable={false}
-                previousText={translate('TAULUKKO_EDELLINEN')}
-                nextText={translate('TAULUKKO_SEURAAVA')}
-                noDataText={translate('TAULUKKO_EI_RIVEJA')}
-                pageText={translate('TAULUKKO_SIVU')}
-                ofText="/"
-                rowsText={translate('TAULUKKO_RIVIA')}
-                loading={loading}
-                LoadingComponent={TableLoader}
-                className="OppijoidenTuontiListaus table -striped"
-                manual
-                onFetchData={(state) => {
-                    setCriteria({
-                        ...criteria,
-                        page: state.page + 1,
-                        pageSize: state.pageSize,
-                    });
-                }}
-            ></ReactTable>
-        </div>
+        <>
+            <div className={styles.searchForm}>
+                <div className={styles.searchInput}>
+                    <div>
+                        <label htmlFor="tuontikooste-id">{L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ID']}</label>
+                    </div>
+                    <input
+                        className="oph-input"
+                        id="tuontikooste-id"
+                        type="number"
+                        autoComplete="off"
+                        value={criteria.id || ''}
+                        onChange={(e) => setCriteria({ ...criteria, id: e.target.value })}
+                    />
+                </div>
+                <div className={styles.searchInput}>
+                    <div>
+                        <label htmlFor="tuontikooste-author">{L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KASITTELIJA']}</label>
+                    </div>
+                    <input
+                        className="oph-input"
+                        id="tuontikooste-author"
+                        autoComplete="off"
+                        value={criteria.author || ''}
+                        onChange={(e) => setCriteria({ ...criteria, author: e.target.value })}
+                    />
+                </div>
+            </div>
+            <div className="oph-table">
+                {!!showDetails && <TuontiDetails tuontiId={showDetails} onClose={onClose} />}
+                <ReactTable
+                    data={data?.content}
+                    pages={data?.totalPages}
+                    columns={columns}
+                    sortable={false}
+                    previousText={L['TAULUKKO_EDELLINEN']}
+                    nextText={L['TAULUKKO_SEURAAVA']}
+                    noDataText={L['TAULUKKO_EI_RIVEJA']}
+                    pageText={L['TAULUKKO_SIVU']}
+                    ofText="/"
+                    rowsText={L['TAULUKKO_RIVIA']}
+                    loading={isFetching}
+                    LoadingComponent={TableLoader}
+                    className="OppijoidenTuontiListaus table -striped"
+                    manual
+                    onFetchData={(state) => {
+                        setCriteria({
+                            ...criteria,
+                            page: String(state.page + 1),
+                            pageSize: String(state.pageSize),
+                        });
+                    }}
+                ></ReactTable>
+            </div>
+        </>
     );
 };
 

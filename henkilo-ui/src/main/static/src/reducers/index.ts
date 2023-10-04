@@ -18,7 +18,6 @@ import { haetutKayttooikeusryhmat } from './anomus.reducer';
 import { henkilohakuState } from './henkilohaku.reducer';
 import cas from './cas.reducer';
 import { oppijoidenTuontiYhteenveto, oppijoidenTuontiListaus } from './oppijoidentuonti.reducer';
-import { tuontiKoosteReducer } from './tuontikooste.reducer';
 import { tuontidataReducer } from './tuontidata.reducer';
 import { palvelukayttajat } from './palvelukayttaja.reducer';
 import { palvelutState } from './palvelut.reducer';
@@ -51,7 +50,6 @@ const rootReducer = {
     cas,
     oppijoidenTuontiYhteenveto,
     oppijoidenTuontiListaus,
-    tuontikooste: tuontiKoosteReducer,
     tuontidata: tuontidataReducer,
     palvelukayttajat,
     palvelutState,

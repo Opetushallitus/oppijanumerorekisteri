@@ -27,3 +27,14 @@
 .oph-table .sortable-header:hover {
     cursor: pointer;
 }
+
+.oph-table .reset-button-styles {
+    border: none;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    overflow: visible;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+}

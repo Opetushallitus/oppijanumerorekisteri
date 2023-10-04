@@ -8,6 +8,7 @@ import { Localisations } from '../types/localisation.type';
 import { fetchHenkilo } from '../actions/henkilo.actions';
 import { FETCH_HENKILO_ASIOINTIKIELI_SUCCESS } from '../actions/actiontypes';
 import { Locale } from '../types/locale.type';
+import { TuontiKooste, TuontiKoosteCriteria } from '../types/tuontikooste.types';
 
 type Passinumerot = string[];
 
@@ -33,7 +34,7 @@ const staggeredBaseQuery = retry(
 export const oppijanumerorekisteriApi = createApi({
     reducerPath: 'oppijanumerorekisteriApi',
     baseQuery: staggeredBaseQuery,
-    tagTypes: ['Passinumerot', 'locale'],
+    tagTypes: ['Passinumerot', 'locale', 'tuontikooste'],
     endpoints: (builder) => ({
         getLocale: builder.query<Locale, void>({
             query: () => ({
@@ -148,6 +149,26 @@ export const oppijanumerorekisteriApi = createApi({
                 dispatch(fetchHenkilo(oid));
             },
         }),
+        getTuontikooste: builder.query<TuontiKooste, { L: Localisations; criteria: TuontiKoosteCriteria }>({
+            query: ({ criteria }) => ({
+                url: `oppija/tuontikooste?${new URLSearchParams(criteria).toString()}`,
+            }),
+            async onQueryStarted({ L }, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                } catch (err) {
+                    dispatch(
+                        addGlobalNotification({
+                            key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
+                            title: L['KAYTTOOIKEUSRAPORTTI_ERROR'],
+                            type: NOTIFICATIONTYPES.ERROR,
+                            autoClose: 10000,
+                        })
+                    );
+                }
+            },
+            providesTags: ['tuontikooste'],
+        }),
     }),
 });
 
@@ -160,4 +181,5 @@ export const {
     useYksiloiHetutonMutation,
     usePuraYksilointiMutation,
     usePassivoiHenkiloMutation,
+    useGetTuontikoosteQuery,
 } = oppijanumerorekisteriApi;

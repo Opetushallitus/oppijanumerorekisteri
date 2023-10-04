@@ -40,8 +40,10 @@ export type TuontiKoosteRivi = {
 };
 
 export type TuontiKoosteCriteria = {
-    page: number;
-    pageSize: number;
+    id?: string;
+    author?: string;
+    page: string;
+    pageSize: string;
     field: keyof Omit<TuontiKoosteRivi, 'oid'>;
     sort: 'ASC' | 'DESC';
 };

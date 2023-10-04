@@ -9,6 +9,7 @@ import SortIconNone from '../icons/SortIconNone';
 import classNames from 'classnames/bind';
 import Loader from '../icons/Loader';
 import { TableHeading } from '../../../types/react-table.types';
+import { useLocalisations } from '../../../selectors';
 
 type Props = {
     headings: Array<TableHeading>;
@@ -28,7 +29,6 @@ type Props = {
     };
     isLoading?: boolean;
     pageSize?: number;
-    translate?: (key: string) => string;
     column?: object;
 };
 
@@ -39,13 +39,9 @@ const getHeaderProps = (state: any, _rowInfo: any, column: any) => {
     return {};
 };
 
-const Table: React.FC<Props> = ({
-    fetchMoreSettings = {},
-    resizable = false,
-    translate = (key: string) => key,
-    ...props
-}) => {
+const Table: React.FC<Props> = ({ fetchMoreSettings = {}, resizable = false, ...props }) => {
     const [pageSize, setPageSize] = React.useState<number>(0);
+    const { L } = useLocalisations();
 
     React.useEffect(() => {
         setPageSize(Math.min(...[props.pageSize, props.data.length].filter((x) => x !== undefined)));
@@ -104,11 +100,11 @@ const Table: React.FC<Props> = ({
                 })}
                 getTdProps={props.getTdProps}
                 onFetchData={props.onFetchData}
-                previousText={translate('TAULUKKO_EDELLINEN')}
-                nextText={translate('TAULUKKO_SEURAAVA')}
-                pageText={translate('TAULUKKO_SIVU')}
+                previousText={L['TAULUKKO_EDELLINEN']}
+                nextText={L['TAULUKKO_SEURAAVA']}
+                pageText={L['TAULUKKO_SIVU']}
                 ofText="/"
-                rowsText={translate('TAULUKKO_RIVIA')}
+                rowsText={L['TAULUKKO_RIVIA']}
             />
             <VisibilitySensor
                 onChange={(isVisible) => {

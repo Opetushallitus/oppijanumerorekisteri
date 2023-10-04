@@ -8,9 +8,6 @@ import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButt
 import { TuontiYhteenvetoState, TuontiListausState } from '../../reducers/oppijoidentuonti.reducer';
 import DelayedSearchInput from '../henkilohaku/DelayedSearchInput';
 import TuontiKoosteTable from './TuontiKoosteTable';
-import { TuontiKooste, TuontiKoosteCriteria } from '../../types/tuontikooste.types';
-import { fetchTuontiKooste } from '../../actions/tuontikooste.actions';
-import { OmattiedotState } from '../../reducers/omattiedot.reducer';
 
 type SearchCriteria = {
     page: number;
@@ -24,23 +21,18 @@ type StateProps = {
     yhteenveto: TuontiYhteenvetoState;
     listaus: TuontiListausState;
     isOppijaHakuLoading: boolean;
-    tuontiKooste?: TuontiKooste;
-    tuontiKoosteLoading: boolean;
-    omattiedot: OmattiedotState;
     translate: (key: string) => string;
 };
 
 type DispatchProps = {
     fetchOppijoidenTuontiYhteenveto: () => void;
     fetchOppijoidenTuontiListaus: (criteria: SearchCriteria) => void;
-    fetchTuontiKooste: (criteria: TuontiKoosteCriteria) => void;
 };
 
 type Props = StateProps & DispatchProps;
 
 type State = {
     criteria: SearchCriteria;
-    tuontikoosteCriteria: TuontiKoosteCriteria;
     tuontikooste: boolean;
 };
 
@@ -59,18 +51,8 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
                 sortKey: 'CREATED',
                 nimiHaku: null,
             },
-            tuontikoosteCriteria: {
-                page: 1,
-                pageSize: 20,
-                field: 'id',
-                sort: 'DESC',
-            },
             tuontikooste: false,
         };
-    }
-
-    setTuontiKoostiCriteria(criteria: TuontiKoosteCriteria) {
-        this.setState({ ...this.state, tuontikoosteCriteria: criteria });
     }
 
     render() {
@@ -94,15 +76,7 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
                     </div>
                 </div>
                 {this.state.tuontikooste ? (
-                    <TuontiKoosteTable
-                        fetch={this.props.fetchTuontiKooste}
-                        criteria={this.state.tuontikoosteCriteria}
-                        setCriteria={this.setTuontiKoostiCriteria.bind(this)}
-                        loading={this.props.tuontiKoosteLoading}
-                        data={this.props.tuontiKooste}
-                        translate={this.props.translate}
-                        kayttooikeudet={this.props.omattiedot.organisaatiot}
-                    />
+                    <TuontiKoosteTable />
                 ) : (
                     <>
                         <DelayedSearchInput
@@ -166,14 +140,10 @@ const mapStateToProps = (state: RootState): StateProps => ({
     yhteenveto: state.oppijoidenTuontiYhteenveto,
     listaus: state.oppijoidenTuontiListaus,
     isOppijaHakuLoading: state.oppijoidenTuontiListaus.loading,
-    tuontiKooste: state.tuontikooste.payload,
-    tuontiKoosteLoading: state.tuontikooste.loading,
-    omattiedot: state.omattiedot,
     translate: (key: string) => state.l10n.localisations[state.locale][key] || key,
 });
 
 export default connect<StateProps, DispatchProps, never, RootState>(mapStateToProps, {
     fetchOppijoidenTuontiYhteenveto,
     fetchOppijoidenTuontiListaus,
-    fetchTuontiKooste,
 })(OppijoidenTuontiContainer);
