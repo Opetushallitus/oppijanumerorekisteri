@@ -38,14 +38,14 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     const [isInitialized, setIsInitialized] = useState(false);
     const frontPropertiesInitialized = useSelector<RootState, boolean>((state) => state.frontProperties.initialized);
     const prequelsNotLoadedCount = useSelector<RootState, number>((state) => state.prequels.notLoadedCount);
-    const { data: locale, isSuccess: isLocaleSuccess } = useGetLocaleQuery(undefined, {
+    const { isSuccess: isLocaleSuccess } = useGetLocaleQuery(undefined, {
         skip: prequelsNotLoadedCount > 0,
     });
     const { data: omattiedot, isLoading: isOmattiedotLoading } = useGetOmattiedotQuery(undefined, {
         skip: prequelsNotLoadedCount > 0,
     });
+    const { L, locale } = useLocalisations();
     useGetOmatOrganisaatiotQuery({ oid: omattiedot?.oidHenkilo, locale }, { skip: !omattiedot?.oidHenkilo || !locale });
-    const { L } = useLocalisations();
     const dispatch = useAppDispatch();
 
     const setBackGround = (route: RouteType) => {
