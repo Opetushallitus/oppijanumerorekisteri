@@ -39,7 +39,7 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     const frontPropertiesInitialized = useSelector<RootState, boolean>((state) => state.frontProperties.initialized);
     const prequelsNotLoadedCount = useSelector<RootState, number>((state) => state.prequels.notLoadedCount);
     const { data: locale, isSuccess: isLocaleSuccess } = useGetLocaleQuery();
-    const { data: omattiedot, isSuccess: isOmattiedotSuccess } = useGetOmattiedotQuery();
+    const { data: omattiedot, isLoading: isOmattiedotLoading } = useGetOmattiedotQuery();
     useGetOmatOrganisaatiotQuery({ oid: omattiedot?.oidHenkilo, locale }, { skip: !omattiedot?.oidHenkilo || !locale });
     const { L } = useLocalisations();
     const dispatch = useAppDispatch();
@@ -68,12 +68,12 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     }, []);
 
     useEffect(() => {
-        if (frontPropertiesInitialized && isOmattiedotSuccess && isLocaleSuccess && prequelsNotLoadedCount === 0) {
+        if (frontPropertiesInitialized && !isOmattiedotLoading && isLocaleSuccess && prequelsNotLoadedCount === 0) {
             setIsInitialized(true);
             moment.locale(locale);
             moment.defaultFormat = PropertySingleton.getState().PVM_MOMENT_FORMAATTI;
         }
-    }, [frontPropertiesInitialized, isOmattiedotSuccess, isLocaleSuccess, prequelsNotLoadedCount]);
+    }, [frontPropertiesInitialized, isOmattiedotLoading, isLocaleSuccess, prequelsNotLoadedCount]);
 
     useEffect(() => {
         const route = routes[routes.length - 1];
