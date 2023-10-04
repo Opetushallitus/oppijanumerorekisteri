@@ -34,11 +34,11 @@ public interface TuontiRepository extends CrudRepository<Tuonti, Long>, TuontiRe
     @Query(value = "select distinct id, oid, author, timestamp, total, inProgress, successful, failures, conflicts from tuontikooste where " +
                         "(true = :isSuperUser or org in :userOrgs) and " +
                         "(:filterId is null or id = :filterId) and " +
-                        "(:filterAuthor is null or author like '%' || :filterAuthor || '%')",
+                        "(:filterAuthor is null or lower(author) like lower('%' || :filterAuthor || '%'))",
       countQuery = "select count(distinct id) from tuontikooste where " +
                         "(true = :isSuperUser or org in :userOrgs) and " +
                         "(:filterId is null or id = :filterId) and " +
-                        "(:filterAuthor is null or author like '%' || :filterAuthor || '%')",
+                        "(:filterAuthor is null or lower(author) like lower('%' || :filterAuthor || '%'))",
      nativeQuery = true)
     Page<TuontiKooste> getTuontiKooste(
             @Param("isSuperUser") boolean isSuperUser,
