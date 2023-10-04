@@ -39,7 +39,14 @@ const staggeredBaseQuery = retry(
 export const oppijanumerorekisteriApi = createApi({
     reducerPath: 'oppijanumerorekisteriApi',
     baseQuery: staggeredBaseQuery,
-    tagTypes: ['Passinumerot', 'locale', 'tuontikooste'],
+    tagTypes: [
+        'Passinumerot',
+        'locale',
+        'tuontikooste',
+        'tuontidata',
+        'oppijoidentuontiyhteenveto',
+        'oppijoidentuontilistaus',
+    ],
     endpoints: (builder) => ({
         getLocale: builder.query<Locale, void>({
             query: () => ({
@@ -192,17 +199,19 @@ export const oppijanumerorekisteriApi = createApi({
                     );
                 }
             },
-            providesTags: ['tuontikooste'],
+            providesTags: ['tuontidata'],
         }),
         getOppijoidentuontiYhteenveto: builder.query<OppijaTuontiYhteenveto, void>({
             query: () => ({
                 url: 'oppija/yhteenveto',
             }),
+            providesTags: ['oppijoidentuontiyhteenveto'],
         }),
         getOppijoidenTuontiListaus: builder.query<Page<OppijaList>, OppijoidenTuontiCriteria>({
             query: (criteria) => ({
                 url: `oppija?${new URLSearchParams(criteria).toString()}`,
             }),
+            providesTags: ['oppijoidentuontilistaus'],
         }),
     }),
 });
