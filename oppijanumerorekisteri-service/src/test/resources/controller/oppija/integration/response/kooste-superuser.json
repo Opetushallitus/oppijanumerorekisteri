@@ -9,6 +9,7 @@
       "timestamp": 1668416400000,
       "failures": 1,
       "id": 2,
+      "api": "YLEISTUNNISTE",
       "conflicts": 0
     },
     {
@@ -20,6 +21,7 @@
       "timestamp": 1668416400000,
       "failures": 1,
       "id": 3,
+      "api": null,
       "conflicts": 0
     },
     {
@@ -31,6 +33,7 @@
       "timestamp": 1668412800000,
       "failures": 1,
       "id": 1,
+      "api": "OPPIJA",
       "conflicts": 0
     }
   ],

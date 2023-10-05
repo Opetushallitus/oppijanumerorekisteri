@@ -48,7 +48,7 @@ public class OppijaController {
             authorizations = @Authorization("onr"),
             notes = "Käynnistää oppijoiden luonnin tausta-ajona, jonka tilaa voi seurata palautettavan tuonnin id:n avulla. Lisää automaattisesti oppijat käyttäjän organisaatioihin.")
     public OppijaTuontiPerustiedotReadDto create(@Valid @RequestBody OppijaTuontiCreateDto dto) {
-        return oppijaService.create(dto);
+        return oppijaService.create(dto, TuontiApi.OPPIJA);
     }
 
     @GetMapping("/tuonti={id}")
@@ -69,7 +69,7 @@ public class OppijaController {
             authorizations = @Authorization("onr"),
             notes = "Tarvitaan vain jos oppijoiden tuonnin automaattinen käsittely on keskeytynyt syystä tai toisesta.")
     public OppijaTuontiPerustiedotReadDto create(@PathVariable Long id) {
-        return oppijaService.create(id);
+        return oppijaService.create(id, TuontiApi.OPPIJA);
     }
 
     @GetMapping("/tuonti={id}/perustiedot")

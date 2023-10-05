@@ -22,7 +22,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -40,7 +39,6 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
@@ -98,7 +96,7 @@ public class OppijaServiceTest {
     }
 
     private OppijaTuontiReadDto create(OppijaTuontiCreateDto createDto) {
-        OppijaTuontiPerustiedotReadDto dto = oppijaService.create(createDto);
+        OppijaTuontiPerustiedotReadDto dto = oppijaService.create(createDto, TuontiApi.OPPIJA);
         int i = 0;
         while (i < 10) {
             ++i;

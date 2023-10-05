@@ -1,5 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.TuontiApi;
+
 public interface OppijaTuontiAsyncService {
 
     /**
@@ -7,6 +9,6 @@ public interface OppijaTuontiAsyncService {
      *
      * @param id oppijoiden tuonnin id
      */
-    void create(long id);
+    void create(long id, TuontiApi api);
 
 }

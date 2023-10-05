@@ -101,7 +101,7 @@ public class OppijaControllerTest {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
 
-        verify(oppijaServiceMock).create(any(OppijaTuontiCreateDto.class));
+        verify(oppijaServiceMock).create(any(OppijaTuontiCreateDto.class), eq(TuontiApi.OPPIJA));
     }
 
     @Test
@@ -117,7 +117,7 @@ public class OppijaControllerTest {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
 
-        verify(oppijaServiceMock).create(any(OppijaTuontiCreateDto.class));
+        verify(oppijaServiceMock).create(any(OppijaTuontiCreateDto.class), eq(TuontiApi.OPPIJA));
     }
 
     @Test

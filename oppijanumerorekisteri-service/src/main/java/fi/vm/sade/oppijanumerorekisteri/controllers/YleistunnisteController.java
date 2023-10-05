@@ -85,7 +85,7 @@ public class YleistunnisteController {
             authorizations = @Authorization("yleistunniste"),
             notes = "Käynnistää oppijoiden luonnin tausta-ajona, jonka tilaa voi seurata palautettavan tuonnin id:n avulla. Lisää automaattisesti oppijat käyttäjän organisaatioihin.")
     public OppijaTuontiPerustiedotReadDto create(@Valid @RequestBody YleistunnisteInput input) {
-        return oppijaService.create(input.mapToDto());
+        return oppijaService.create(input.mapToDto(), TuontiApi.YLEISTUNNISTE);
     }
 
     @GetMapping("/tuonti={id}")
@@ -104,7 +104,7 @@ public class YleistunnisteController {
             authorizations = @Authorization("yleistunniste"),
             notes = "Tarvitaan vain jos oppijoiden tuonnin automaattinen käsittely on keskeytynyt syystä tai toisesta.")
     public OppijaTuontiPerustiedotReadDto create(@PathVariable Long id) {
-        return oppijaService.create(id);
+        return oppijaService.create(id, TuontiApi.YLEISTUNNISTE);
     }
 
     @GetMapping("/tuonti={id}/perustiedot")

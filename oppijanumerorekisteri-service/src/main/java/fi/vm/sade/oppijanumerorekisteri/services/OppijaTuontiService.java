@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.TuontiApi;
 import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
 
 import java.util.Set;
@@ -22,7 +23,7 @@ public interface OppijaTuontiService {
      * @param dto oppijoiden tiedot
      * @return tuonnin tiedot
      */
-    OppijaTuontiPerustiedotReadDto create(OppijaTuontiCreateDto dto);
+    OppijaTuontiPerustiedotReadDto create(OppijaTuontiCreateDto dto, TuontiApi api);
 
     /**
      * Tallentaa oppijoiden tuonnin henkilöinä kantaan. Tämä on oppijoiden
@@ -31,7 +32,7 @@ public interface OppijaTuontiService {
      * @param id      oppijoiden tuonnin id
      * @return true jos oppijoiden tuonti on käsitelty kokonaan
      */
-    boolean create(long id);
+    boolean create(long id, TuontiApi api);
 
     /**
      * Luo ja palauttaa käyttäjän aktiiviset oppijan tuontiin liittyvät organisaatiot.

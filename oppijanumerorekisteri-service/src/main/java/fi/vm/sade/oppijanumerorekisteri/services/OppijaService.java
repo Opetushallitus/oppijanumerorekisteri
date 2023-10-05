@@ -31,7 +31,7 @@ public interface OppijaService {
      * @param dto oppijoiden tiedot
      * @return oppijoiden tuonnin perustiedot
      */
-    OppijaTuontiPerustiedotReadDto create(OppijaTuontiCreateDto dto);
+    OppijaTuontiPerustiedotReadDto create(OppijaTuontiCreateDto dto, TuontiApi api);
 
     /**
      * Useamman oppijan luonti (vaihe 2). Tarvitaan vain jos oppijoiden tuonnin
@@ -40,7 +40,7 @@ public interface OppijaService {
      * @param id oppijoiden tuonnin id
      * @return oppijoiden tuonnin perustiedot
      */
-    OppijaTuontiPerustiedotReadDto create(Long id);
+    OppijaTuontiPerustiedotReadDto create(Long id, TuontiApi api);
 
     /**
      * Palauttaa oppijoiden tuonnin perustiedot ID:lla.

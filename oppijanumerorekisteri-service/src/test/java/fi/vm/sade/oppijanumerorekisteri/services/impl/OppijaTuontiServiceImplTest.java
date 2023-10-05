@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.TuontiApi;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
@@ -78,7 +79,7 @@ public class OppijaTuontiServiceImplTest {
         initMocks();
         when(yksilointiService.namesMatch(any(), any(), any(), any())).thenReturn(true);
 
-        oppijaTuontiServiceImpl.create(1L);
+        oppijaTuontiServiceImpl.create(1L, TuontiApi.OPPIJA);
 
         verify(tuontiRivi, times(0)).setConflict(any());
     }
@@ -88,7 +89,7 @@ public class OppijaTuontiServiceImplTest {
         initMocks();
         when(yksilointiService.namesMatch(any(), any(), any(), any())).thenReturn(false);
 
-        oppijaTuontiServiceImpl.create(1L);
+        oppijaTuontiServiceImpl.create(1L, TuontiApi.OPPIJA);
 
         verify(tuontiRivi, times(1)).setConflict(true);
     }
@@ -98,7 +99,7 @@ public class OppijaTuontiServiceImplTest {
         initMocks();
         when(yksilointiService.namesMatch(any(), any(), any(), any())).thenReturn(true);
 
-        oppijaTuontiServiceImpl.create(1L);
+        oppijaTuontiServiceImpl.create(1L, TuontiApi.OPPIJA);
 
         verify(tuontiRivi, times(0)).setConflict(any());
     }

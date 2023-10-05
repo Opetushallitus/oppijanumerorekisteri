@@ -5,10 +5,10 @@ INSERT INTO henkilo(id, version, hetu, etunimet, kutsumanimi, sukunimi, oidhenki
 INSERT INTO tuonti_data(id, version, data) VALUES
 (1, 1, '{"sahkoposti":"foo@bar.qux","henkilot":[{"tunniste":"tunniste","henkilo":{"hetu":"240784-9105","etunimet":"Uuno","kutsumanimi":"Yksikkö","sukunimi":"Testaaja","passinumero":null,"sahkoposti":null,"syntymaaika":null,"sukupuoli":null,"aidinkieli":null,"kansalaisuus":[{"koodi":"246"}]}}]}');
 
-INSERT INTO tuonti(id, version, kasiteltavia, kasiteltyja, kasittelija_oid, ilmoitustarve_kasitelty, data_id, aikaleima) VALUES
-(1, 1, 1, 1, 'tuonti1', 1, true, {ts '2022-11-14 10:00:00.00'}),
-(2, 1, 1, 1, '', true, 1, {ts '2022-11-14 11:00:00.00'}), -- service user cannot be resolved
-(3, 1, 1, 0, '', true, 1, {ts '2022-11-14 10:30:00.00'}); -- tuonti_rivi not initialized
+INSERT INTO tuonti(id, version, kasiteltavia, kasiteltyja, kasittelija_oid, ilmoitustarve_kasitelty, data_id, aikaleima, api) VALUES
+(1, 1, 1, 1, 'tuonti1', 1, true, {ts '2022-11-14 10:00:00.00'}, 'OPPIJA'),
+(2, 1, 1, 1, '', true, 1, {ts '2022-11-14 11:00:00.00'}, 'YLEISTUNNISTE'), -- service user cannot be resolved
+(3, 1, 1, 0, '', true, 1, {ts '2022-11-14 10:30:00.00'}, null); -- tuonti_rivi not initialized
 
 INSERT INTO tuonti_rivi(id, version, henkilo_id, tuonti_id, tunniste) VALUES
 (1, 1, 1, 1, 'tunniste'),

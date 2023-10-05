@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.configurations.AsyncConfiguration;
+import fi.vm.sade.oppijanumerorekisteri.dto.TuontiApi;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaTuontiAsyncService;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaTuontiService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class OppijaTuontiAsyncServiceImpl implements OppijaTuontiAsyncService {
     @Override
     @Transactional(propagation = Propagation.NEVER)
     @Async(AsyncConfiguration.OPPIJOIDEN_TUONTI_EXECUTOR_QUALIFIER)
-    public void create(long id) {
+    public void create(long id, TuontiApi api) {
 
         int part = 1;
         int retry = 0;
@@ -34,7 +35,7 @@ public class OppijaTuontiAsyncServiceImpl implements OppijaTuontiAsyncService {
         while (retry++ < MAX_RETRIES) {
             try {
                 log.info("Batch: {} / Part: {} / Try: {}", id, part, retry);
-                if (oppijaTuontiService.create(id)) {
+                if (oppijaTuontiService.create(id, api)) {
                     break;
                 }
                 part++;

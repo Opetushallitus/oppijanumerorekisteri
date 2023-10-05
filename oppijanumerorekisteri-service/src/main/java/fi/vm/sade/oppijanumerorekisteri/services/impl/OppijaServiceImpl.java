@@ -67,11 +67,11 @@ public class OppijaServiceImpl implements OppijaService {
 
     @Override
     @Transactional(propagation = Propagation.NEVER)
-    public OppijaTuontiPerustiedotReadDto create(OppijaTuontiCreateDto createDto) {
+    public OppijaTuontiPerustiedotReadDto create(OppijaTuontiCreateDto createDto, TuontiApi api) {
         // tallennetaan tuonti käsittelemättömänä kantaan
-        OppijaTuontiPerustiedotReadDto readDto = oppijaTuontiService.create(createDto);
+        OppijaTuontiPerustiedotReadDto readDto = oppijaTuontiService.create(createDto, api);
         // käynnistetään eräajon luonnin toinen vaihe toisessa säikeessä
-        oppijaTuontiAsyncService.create(readDto.getId());
+        oppijaTuontiAsyncService.create(readDto.getId(), api);
 
         return readDto;
     }
@@ -84,9 +84,9 @@ public class OppijaServiceImpl implements OppijaService {
 
     @Override
     @Transactional(propagation = Propagation.NEVER)
-    public OppijaTuontiPerustiedotReadDto create(Long id) {
+    public OppijaTuontiPerustiedotReadDto create(Long id, TuontiApi api) {
         Tuonti entity = getTuontiEntity(id);
-        oppijaTuontiAsyncService.create(entity.getId());
+        oppijaTuontiAsyncService.create(entity.getId(), api);
         return mapper.map(entity, OppijaTuontiPerustiedotReadDto.class);
     }
 

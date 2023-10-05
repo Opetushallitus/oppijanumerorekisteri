@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.TuontiApi;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
@@ -55,7 +56,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
     private final YksilointiService yksilointiService;
 
     @Override
-    public OppijaTuontiPerustiedotReadDto create(OppijaTuontiCreateDto dto) {
+    public OppijaTuontiPerustiedotReadDto create(OppijaTuontiCreateDto dto, TuontiApi api) {
         BindException errors = new BindException(dto, "oppijaTuontiCreateDto");
         validator.validate(dto, errors);
         if (errors.hasErrors()) {
@@ -82,6 +83,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         tuonti.setData(tuontiData);
         tuonti.setKasiteltavia(dto.getHenkilot().size());
         tuonti.setOrganisaatiot(organisaatiot);
+        tuonti.setApi(api);
         tuonti = tuontiRepository.save(tuonti);
 
         return mapper.map(tuonti, OppijaTuontiPerustiedotReadDto.class);
@@ -89,7 +91,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean create(long id) {
+    public boolean create(long id, TuontiApi api) {
         Tuonti tuonti = tuontiRepository.findForUpdateById(id)
                 .orElseThrow(DataInconsistencyException::new);
         if (tuonti.isKasitelty()) {
@@ -121,6 +123,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
 
         tuonti.getHenkilot().addAll(rivit);
         tuonti.setKasiteltyja(toIndex);
+        tuonti.setApi(api);
         tuonti = tuontiRepository.save(tuonti);
         return tuonti.isKasitelty();
     }

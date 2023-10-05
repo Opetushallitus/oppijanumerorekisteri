@@ -3,6 +3,9 @@ package fi.vm.sade.oppijanumerorekisteri.models;
 import lombok.*;
 
 import javax.persistence.*;
+
+import fi.vm.sade.oppijanumerorekisteri.dto.TuontiApi;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -56,6 +59,10 @@ public class Tuonti extends IdentifiableAndVersionedEntity {
      */
     @Column(name = "ilmoitustarve_kasitelty")
     private boolean ilmoitustarveKasitelty;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "api")
+    private TuontiApi api;
 
     /**
      * Käsitelty data.
