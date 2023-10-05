@@ -3,8 +3,14 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getCommonOptions } from '../http';
 import { OrganisaatioHenkilo } from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { Omattiedot } from '../types/domain/kayttooikeus/Omattiedot.types';
-import { FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS, FETCH_OMATTIEDOT_SUCCESS } from '../actions/actiontypes';
+import {
+    FETCH_HENKILO_ASIOINTIKIELI_SUCCESS,
+    FETCH_HENKILO_SUCCESS,
+    FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS,
+    FETCH_OMATTIEDOT_SUCCESS,
+} from '../actions/actiontypes';
 import { Locale } from '../types/locale.type';
+import { KutsuRead } from '../types/domain/kayttooikeus/Kutsu.types';
 
 type MfaSetupResponse = {
     secretKey: string;
@@ -22,7 +28,7 @@ export const kayttooikeusApi = createApi({
         headers: { ...getCommonOptions().headers, 'Content-Type': 'application/json; charset=utf-8' },
         baseUrl: '/kayttooikeus-service/',
     }),
-    tagTypes: ['omattiedot', 'organisaatiot'],
+    tagTypes: ['omattiedot', 'organisaatiot', 'kutsuByToken'],
     endpoints: (builder) => ({
         getOmattiedot: builder.query<Omattiedot, void>({
             query: () => 'henkilo/current/omattiedot',
@@ -61,6 +67,24 @@ export const kayttooikeusApi = createApi({
             extraOptions: { maxRetries: 0 },
             invalidatesTags: ['omattiedot'],
         }),
+        getKutsuByToken: builder.query<KutsuRead, string>({
+            query: (token) => `kutsu/token/${token}`,
+            async onQueryStarted(_token, { dispatch, queryFulfilled }) {
+                const { data } = await queryFulfilled;
+                dispatch({ type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, lang: data.asiointikieli });
+                dispatch({
+                    type: FETCH_HENKILO_SUCCESS,
+                    henkilo: {
+                        ...data,
+                        etunimet: data.etunimi,
+                        asiointiKieli: {
+                            kieliKoodi: data.asiointikieli,
+                        },
+                    },
+                });
+            },
+            providesTags: ['kutsuByToken'],
+        }),
     }),
 });
 
@@ -70,4 +94,5 @@ export const {
     useGetMfaSetupQuery,
     usePostMfaEnableMutation,
     usePostMfaDisableMutation,
+    useGetKutsuByTokenQuery,
 } = kayttooikeusApi;

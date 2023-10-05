@@ -4,14 +4,11 @@ import { useSelector } from 'react-redux';
 import RekisteroidyPage from './RekisteroidyPage';
 import { fetchKieliKoodisto } from '../../actions/koodisto.actions';
 import Loader from '../common/icons/Loader';
-import { fetchKutsuByToken } from '../../actions/kutsu.actions';
 import VirhePage from '../common/page/VirhePage';
 import { useAppDispatch, type RootState } from '../../store';
 import type { KoodistoState } from '../../reducers/koodisto.reducer';
 import { useLocalisations } from '../../selectors';
-import { KutsuListState } from '../../reducers/kutsuList.reducer';
-import { CasState } from '../../reducers/cas.reducer';
-import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
+import { useGetKutsuByTokenQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
 
 type OwnProps = {
     location: { query: Record<string, string> };
@@ -20,29 +17,28 @@ type OwnProps = {
 const RekisteroidyContainer = (props: OwnProps) => {
     const dispatch = useAppDispatch();
     const { l10n } = useLocalisations();
-    const kutsuList = useSelector<RootState, KutsuListState>((state) => state.kutsuList);
-    const { data: omattiedot } = useGetOmattiedotQuery();
+    const { data: omattiedot, isLoading: isOmattiedotLoading } = useGetOmattiedotQuery();
     const koodisto = useSelector<RootState, KoodistoState>((state) => state.koodisto);
-    const cas = useSelector<RootState, CasState>((state) => state.cas);
+    const temporaryToken = props.location.query['temporaryKutsuToken'];
+    const { data: kutsu, isLoading: isKutsuLoading, isError } = useGetKutsuByTokenQuery(temporaryToken);
 
     useEffect(() => {
         dispatch<any>(fetchKieliKoodisto());
-        dispatch<any>(fetchKutsuByToken(props.location.query['temporaryKutsuToken']));
     }, []);
 
-    if (koodisto.kieliKoodistoLoading || kutsuList.kutsuByTokenLoading) {
+    if (koodisto.kieliKoodistoLoading || isKutsuLoading || isOmattiedotLoading || !l10n) {
         return <Loader />;
-    } else if (omattiedot.oidHenkilo !== undefined) {
+    } else if (omattiedot?.oidHenkilo !== undefined) {
         return <VirhePage text={'REKISTEROIDY_KIRJAUTUNUT'} />;
-    } else if (cas.temporaryTokenInvalid) {
+    } else if (isError) {
         return <VirhePage text={'REKISTEROIDY_TEMP_TOKEN_INVALID'} />;
     }
     return (
         <RekisteroidyPage
             koodisto={koodisto}
-            kutsu={kutsuList.kutsuByToken}
-            L={l10n[kutsuList.kutsuByToken.asiointikieli]}
-            locale={kutsuList.kutsuByToken.asiointikieli}
+            kutsu={{ ...kutsu, temporaryToken }}
+            L={l10n.localisations[kutsu.asiointikieli]}
+            locale={kutsu.asiointikieli}
         />
     );
 };

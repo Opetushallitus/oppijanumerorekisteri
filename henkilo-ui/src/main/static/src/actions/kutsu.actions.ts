@@ -3,9 +3,6 @@ import {
     DELETE_KUTSU_REQUEST,
     FETCH_KUTSU_REQUEST,
     FETCH_KUTSU_SUCCESS,
-    FETCH_KUTSUBYTOKEN_REQUEST,
-    FETCH_KUTSUBYTOKEN_SUCCESS,
-    FETCH_KUTSUBYTOKEN_FAILURE,
     CREATE_HENKILOBYTOKEN_FAILURE,
     CREATE_HENKILOBYTOKEN_SUCCESS,
     CREATE_HENKILOBYTOKEN_REQUEST,
@@ -13,8 +10,6 @@ import {
     RENEW_KUTSU_REQUEST,
     RENEW_KUTSU_SUCCESS,
     RENEW_KUTSU_FAILURE,
-    FETCH_HENKILO_ASIOINTIKIELI_SUCCESS,
-    FETCH_HENKILO_SUCCESS,
     FETCH_KUTSU_FAILURE,
 } from './actiontypes';
 
@@ -24,7 +19,6 @@ import { addGlobalNotification } from './notification.actions';
 import { localizeWithState } from '../utilities/localisation.util';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { AppDispatch, RootState } from '../store';
-import { KutsuByToken, KutsuRead } from '../types/domain/kayttooikeus/Kutsu.types';
 
 const requestDeleteKutsu = (id) => ({ type: DELETE_KUTSU_REQUEST, id });
 const receiveDeleteKutsu = (id) => ({
@@ -84,41 +78,6 @@ export const fetchKutsus = (payload, offset, amount) => async (dispatch: AppDisp
 };
 
 export const clearKutsuList = () => (dispatch: AppDispatch) => dispatch({ type: CLEAR_KUTSU_LIST });
-
-const kutsuByTokenRequest = () => ({ type: FETCH_KUTSUBYTOKEN_REQUEST });
-const kutsuByTokenSuccess = (kutsu: KutsuByToken) => ({
-    type: FETCH_KUTSUBYTOKEN_SUCCESS,
-    kutsu,
-    receivedAt: Date.now(),
-});
-const kutsuByTokenFailure = () => ({
-    type: FETCH_KUTSUBYTOKEN_FAILURE,
-    receivedAt: Date.now(),
-});
-
-export const fetchKutsuByToken = (temporaryToken: string) => (dispatch: AppDispatch) => {
-    dispatch(kutsuByTokenRequest());
-    const url = urls.url('kayttooikeus-service.kutsu.by-token', temporaryToken);
-    http.get<KutsuRead>(url)
-        .then((json) => {
-            dispatch(kutsuByTokenSuccess({ ...json, temporaryToken }));
-            dispatch({
-                type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS,
-                lang: json.asiointikieli,
-            });
-            dispatch({
-                type: FETCH_HENKILO_SUCCESS,
-                henkilo: {
-                    ...json,
-                    etunimet: json.etunimi,
-                    asiointiKieli: {
-                        kieliKoodi: json.asiointikieli,
-                    },
-                },
-            });
-        })
-        .catch(() => dispatch(kutsuByTokenFailure()));
-};
 
 const createHenkiloByTokenRequest = () => ({
     type: CREATE_HENKILOBYTOKEN_REQUEST,

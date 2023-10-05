@@ -2,9 +2,6 @@ import { AnyAction } from '@reduxjs/toolkit';
 import {
     FETCH_KUTSU_SUCCESS,
     FETCH_KUTSU_REQUEST,
-    FETCH_KUTSUBYTOKEN_REQUEST,
-    FETCH_KUTSUBYTOKEN_SUCCESS,
-    FETCH_KUTSUBYTOKEN_FAILURE,
     CLEAR_KUTSU_LIST,
     FETCH_KUTSU_FAILURE,
 } from '../actions/actiontypes';
@@ -36,15 +33,6 @@ const kutsuList = (
             });
         case FETCH_KUTSU_FAILURE:
             return { ...state, loaded: false };
-        case FETCH_KUTSUBYTOKEN_REQUEST:
-            return Object.assign({}, state, { kutsuByTokenLoading: true });
-        case FETCH_KUTSUBYTOKEN_SUCCESS:
-            return Object.assign({}, state, {
-                kutsuByTokenLoading: false,
-                kutsuByToken: action.kutsu,
-            });
-        case FETCH_KUTSUBYTOKEN_FAILURE:
-            return Object.assign({}, state, { kutsuByTokenLoading: false });
         case CLEAR_KUTSU_LIST:
             return Object.assign({}, state, { result: [] });
         default:
