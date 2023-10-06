@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { useReactTable, getCoreRowModel, PaginationState } from '@tanstack/react-table';
+import { useReactTable, getCoreRowModel, PaginationState, ColumnDef } from '@tanstack/react-table';
 import { Link } from 'react-router';
 import moment from 'moment';
 
@@ -61,11 +61,11 @@ const TuontiKoosteTable = () => {
         </button>
     );
 
-    const columns = useMemo(
+    const columns = useMemo<ColumnDef<TuontiKoosteRivi, TuontiKoosteRivi>[]>(
         () => [
             {
                 header: () => <TableHeader field="id" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ID" />,
-                accessorFn: (tuonti: TuontiKoosteRivi) => tuonti,
+                accessorFn: (tuonti) => tuonti,
                 cell: ({ getValue }) =>
                     getValue()?.conflicts && canViewDetails ? (
                         <TextButton action={() => setShowDetails(getValue()?.id)}>{getValue()?.id}</TextButton>
@@ -78,44 +78,44 @@ const TuontiKoosteTable = () => {
                 header: () => (
                     <TableHeader field="timestamp" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_AIKALEIMA" />
                 ),
-                accessorFn: (tuonti: TuontiKoosteRivi) => moment(tuonti.timestamp).format('l LT'),
+                accessorFn: (tuonti) => moment(tuonti.timestamp).format('l LT'),
                 id: 'timestamp',
             },
             {
                 header: () => (
                     <TableHeader field="author" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KASITTELIJA" />
                 ),
-                accessorFn: (tuonti: TuontiKoosteRivi) => tuonti,
+                accessorFn: (tuonti) => tuonti,
                 cell: ({ getValue }) => <Link to={`virkailija/${getValue()?.oid}`}>{getValue()?.author}</Link>,
                 id: 'author',
             },
             {
                 header: () => <TableHeader field="total" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_TOTAL" />,
-                accessorFn: (tuonti: TuontiKoosteRivi) => tuonti.total,
+                accessorFn: (tuonti) => tuonti.total,
                 id: 'total',
             },
             {
                 header: () => (
                     <TableHeader field="successful" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ONNISTUNEET" />
                 ),
-                accessorFn: (tuonti: TuontiKoosteRivi) => tuonti.successful,
+                accessorFn: (tuonti) => tuonti.successful,
                 id: 'successful',
             },
             {
                 header: () => <TableHeader field="failures" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_VIRHEET" />,
-                accessorFn: (tuonti: TuontiKoosteRivi) => tuonti.failures,
+                accessorFn: (tuonti) => tuonti.failures,
                 id: 'failures',
             },
             {
                 header: () => (
                     <TableHeader field="conflicts" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KONFLIKTIT" />
                 ),
-                accessorFn: (tuonti: TuontiKoosteRivi) => tuonti.conflicts,
+                accessorFn: (tuonti) => tuonti.conflicts,
                 id: 'conflicts',
             },
             {
                 header: () => <TableHeader field="inProgress" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_STATUS" />,
-                accessorFn: (tuonti: TuontiKoosteRivi) => tuonti,
+                accessorFn: (tuonti) => tuonti,
                 cell: ({ getValue }) => (getValue().inProgress ? null : <i className="fa fa-check" />),
                 id: 'inProgress',
             },
