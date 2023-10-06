@@ -6,6 +6,7 @@
 .react-table thead {
     background-color: #eee;
     border-bottom: 1px solid #d5d5d5;
+    font-weight: 600;
 }
 
 .oph-table .ReactTable.table .rt-resizable-header.rt-th,
