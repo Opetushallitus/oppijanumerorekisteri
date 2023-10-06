@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
-import ReactTable from 'react-table';
+import React, { useMemo, useState } from 'react';
+import { useReactTable, getCoreRowModel, PaginationState } from '@tanstack/react-table';
 import { Link } from 'react-router';
 import moment from 'moment';
 
 import { TuontiKoosteRivi, TuontiKoosteCriteria } from '../../types/tuontikooste.types';
-import TableLoader from '../common/icons/TableLoader';
-import '../../oph-table.css';
 import TextButton from '../common/button/TextButton';
 import TuontiDetails from './TuontiDetails';
 import SortIconNone from '../common/icons/SortIconNone';
@@ -16,6 +14,7 @@ import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { useLocalisations } from '../../selectors';
 import { useGetTuontikoosteQuery } from '../../api/oppijanumerorekisteri';
 import { useDebounce } from '../../useDebounce';
+import OphTable from '../OphTable';
 
 import styles from './TuontiKoosteTable.module.css';
 
@@ -62,53 +61,100 @@ const TuontiKoosteTable = () => {
         </button>
     );
 
-    const columns = [
-        {
-            Header: <TableHeader field="id" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ID" />,
-            accessor: (tuonti: TuontiKoosteRivi) =>
-                tuonti.conflicts && canViewDetails ? (
-                    <TextButton action={() => setShowDetails(tuonti.id)}>{tuonti.id}</TextButton>
-                ) : (
-                    tuonti.id
+    const columns = useMemo(
+        () => [
+            {
+                header: () => <TableHeader field="id" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ID" />,
+                accessorFn: (tuonti: TuontiKoosteRivi) => tuonti,
+                cell: ({ getValue }) =>
+                    getValue()?.conflicts && canViewDetails ? (
+                        <TextButton action={() => setShowDetails(getValue()?.id)}>{getValue()?.id}</TextButton>
+                    ) : (
+                        getValue()?.id
+                    ),
+                id: 'id',
+            },
+            {
+                header: () => (
+                    <TableHeader field="timestamp" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_AIKALEIMA" />
                 ),
-            id: 'id',
+                accessorFn: (tuonti: TuontiKoosteRivi) => moment(tuonti.timestamp).format('l LT'),
+                id: 'timestamp',
+            },
+            {
+                header: () => (
+                    <TableHeader field="author" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KASITTELIJA" />
+                ),
+                accessorFn: (tuonti: TuontiKoosteRivi) => tuonti,
+                cell: ({ getValue }) => <Link to={`virkailija/${getValue()?.oid}`}>{getValue()?.author}</Link>,
+                id: 'author',
+            },
+            {
+                header: () => <TableHeader field="total" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_TOTAL" />,
+                accessorFn: (tuonti: TuontiKoosteRivi) => tuonti.total,
+                id: 'total',
+            },
+            {
+                header: () => (
+                    <TableHeader field="successful" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ONNISTUNEET" />
+                ),
+                accessorFn: (tuonti: TuontiKoosteRivi) => tuonti.successful,
+                id: 'successful',
+            },
+            {
+                header: () => <TableHeader field="failures" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_VIRHEET" />,
+                accessorFn: (tuonti: TuontiKoosteRivi) => tuonti.failures,
+                id: 'failures',
+            },
+            {
+                header: () => (
+                    <TableHeader field="conflicts" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KONFLIKTIT" />
+                ),
+                accessorFn: (tuonti: TuontiKoosteRivi) => tuonti.conflicts,
+                id: 'conflicts',
+            },
+            {
+                header: () => <TableHeader field="inProgress" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_STATUS" />,
+                accessorFn: (tuonti: TuontiKoosteRivi) => tuonti,
+                cell: ({ getValue }) => (getValue().inProgress ? null : <i className="fa fa-check" />),
+                id: 'inProgress',
+            },
+        ],
+        [data]
+    );
+
+    const pagination: PaginationState = useMemo(
+        () => ({
+            pageIndex: data?.pageable.pageNumber - 1 ?? 0,
+            pageSize: data?.pageable.pageSize ?? 20,
+        }),
+        [data]
+    );
+
+    const table = useReactTable<TuontiKoosteRivi>({
+        data: data?.content ?? [],
+        pageCount: data?.totalPages ?? 0,
+        state: {
+            pagination,
         },
-        {
-            Header: <TableHeader field="timestamp" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_AIKALEIMA" />,
-            accessor: (tuonti: TuontiKoosteRivi) => moment(tuonti.timestamp).format('l LT'),
-            id: 'timestamp',
+        onPaginationChange: (updater) => {
+            if (typeof updater === 'function') {
+                const nextState = updater({
+                    pageIndex: data?.pageable.pageNumber - 1,
+                    pageSize: data?.pageable.pageSize,
+                });
+                setCriteria({
+                    ...criteria,
+                    page: String(nextState.pageIndex + 1),
+                    pageSize: String(nextState.pageSize),
+                });
+            }
         },
-        {
-            Header: <TableHeader field="author" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KASITTELIJA" />,
-            accessor: (tuonti: TuontiKoosteRivi) => <Link to={`virkailija/${tuonti.oid}`}>{tuonti.author}</Link>,
-            id: 'author',
-        },
-        {
-            Header: <TableHeader field="total" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_TOTAL" />,
-            accessor: (tuonti: TuontiKoosteRivi) => tuonti.total,
-            id: 'total',
-        },
-        {
-            Header: <TableHeader field="successful" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ONNISTUNEET" />,
-            accessor: (tuonti: TuontiKoosteRivi) => tuonti.successful,
-            id: 'successful',
-        },
-        {
-            Header: <TableHeader field="failures" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_VIRHEET" />,
-            accessor: (tuonti: TuontiKoosteRivi) => tuonti.failures,
-            id: 'failures',
-        },
-        {
-            Header: <TableHeader field="conflicts" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KONFLIKTIT" />,
-            accessor: (tuonti: TuontiKoosteRivi) => tuonti.conflicts,
-            id: 'conflicts',
-        },
-        {
-            Header: <TableHeader field="inProgress" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_STATUS" />,
-            accessor: (tuonti: TuontiKoosteRivi) => (tuonti.inProgress ? null : <i className="fa fa-check" />),
-            id: 'inProgress',
-        },
-    ];
+        getCoreRowModel: getCoreRowModel(),
+        manualPagination: true,
+        columns,
+        columnResizeMode: 'onChange',
+    });
 
     return (
         <>
@@ -139,32 +185,8 @@ const TuontiKoosteTable = () => {
                     />
                 </div>
             </div>
-            <div className="oph-table">
-                {!!showDetails && <TuontiDetails tuontiId={showDetails} onClose={onClose} />}
-                <ReactTable
-                    data={data?.content}
-                    pages={data?.totalPages}
-                    columns={columns}
-                    sortable={false}
-                    previousText={L['TAULUKKO_EDELLINEN']}
-                    nextText={L['TAULUKKO_SEURAAVA']}
-                    noDataText={L['TAULUKKO_EI_RIVEJA']}
-                    pageText={L['TAULUKKO_SIVU']}
-                    ofText="/"
-                    rowsText={L['TAULUKKO_RIVIA']}
-                    loading={isFetching}
-                    LoadingComponent={TableLoader}
-                    className="OppijoidenTuontiListaus table -striped"
-                    manual
-                    onFetchData={(state) => {
-                        setCriteria({
-                            ...criteria,
-                            page: String(state.page + 1),
-                            pageSize: String(state.pageSize),
-                        });
-                    }}
-                ></ReactTable>
-            </div>
+            {!!showDetails && <TuontiDetails tuontiId={showDetails} onClose={onClose} />}
+            <OphTable<TuontiKoosteRivi> table={table} isLoading={isFetching} />
         </>
     );
 };

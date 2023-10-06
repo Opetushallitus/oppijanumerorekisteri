@@ -1,21 +1,22 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router';
-import ReactTable from 'react-table';
-import '../../oph-table.css';
+import { useReactTable, getCoreRowModel, PaginationState } from '@tanstack/react-table';
 import moment from 'moment';
-import TableLoader from '../common/icons/TableLoader';
-import './OppijoidenTuontiListaus.css';
+
 import { OppijaList } from '../../types/domain/oppijanumerorekisteri/oppijalist.types';
 import SortIconNone from '../common/icons/SortIconNone';
 import SortAscIcon from '../common/icons/SortAscIcon';
 import SortDescIcon from '../common/icons/SortDescIcon';
 import { Page } from '../../types/Page.types';
 import { useLocalisations } from '../../selectors';
+import OphTable from '../OphTable';
+
+import './OppijoidenTuontiListaus.css';
 
 type Props = {
     data: Page<OppijaList>;
-    onFetchData: (arg0: number, arg1: number) => void;
-    onChangeSorting: (arg0: string, arg1: string) => void;
+    onPageChange: (pageNumber: number, pageSize: number) => void;
+    onSortingChange: (arg0: string, arg1: string) => void;
     sortKey: string;
     sortDirection: string;
     loading: boolean;
@@ -24,7 +25,7 @@ type Props = {
 /**
  * Oppijoiden tuonnin listausnäkymä.
  */
-const OppijoidenTuontiListaus = (props: Props) => {
+const OppijoidenTuontiListaus = ({ data, onPageChange, onSortingChange, sortKey, sortDirection, loading }: Props) => {
     const { L } = useLocalisations();
 
     function renderHeader(localizationKey: string) {
@@ -32,19 +33,7 @@ const OppijoidenTuontiListaus = (props: Props) => {
     }
 
     function renderSortIcon() {
-        return props.sortDirection === 'ASC' ? <SortAscIcon /> : <SortDescIcon />;
-    }
-
-    function renderAikaleima(arvo: string) {
-        return moment(arvo).format('l LT');
-    }
-
-    function renderHetuTaiSyntymaaika(henkilo: OppijaList) {
-        return henkilo.syntymaaika ? moment(henkilo.syntymaaika).format('l') : null;
-    }
-
-    function renderYksilointiTilaText(arvo: string) {
-        return YKSILOINTI_TILAT[arvo] ? YKSILOINTI_TILAT[arvo] : '';
+        return sortDirection === 'ASC' ? <SortAscIcon /> : <SortDescIcon />;
     }
 
     const YKSILOINTI_TILAT = {
@@ -60,77 +49,91 @@ const OppijoidenTuontiListaus = (props: Props) => {
         return <Link to={linkki}>{nimi}</Link>;
     }
 
-    const columns = [
-        {
-            Header: renderSortableHeader('OPPIJOIDEN_TUONTI_LUONTIAIKA', 'CREATED'),
-            accessor: (henkilo: OppijaList) => renderAikaleima(henkilo.luotu),
-            id: 'luotu',
-        },
-        {
-            Header: renderHeader('OPPIJOIDEN_TUONTI_KASITTELIJA'),
-            accessor: (henkilo: OppijaList) =>
-                henkilo.serviceUserOid ? (
-                    <Link to={`virkailija/${henkilo.serviceUserOid}`}>{henkilo.serviceUserName}</Link>
-                ) : null,
-            id: 'kasittelija',
-        },
-        {
-            Header: renderHeader('OPPIJOIDEN_TUONTI_OID'),
-            accessor: (henkilo: OppijaList) => henkilo.oid,
-            id: 'oid',
-        },
-        {
-            Header: renderHeader('OPPIJOIDEN_TUONTI_HENKILOTUNNUS_SYNTYMAIKA'),
-            accessor: renderHetuTaiSyntymaaika,
-            id: 'hetu',
-        },
-        {
-            Header: renderSortableHeader('OPPIJOIDEN_TUONTI_NIMI', 'NAME'),
-            accessor: (henkilo: OppijaList) => renderOppijaLinkki(henkilo),
-            id: 'nimi',
-        },
-        {
-            Header: renderHeader('OPPIJOIDEN_TUONTI_VIRHEET'),
-            accessor: (henkilo: OppijaList) => renderYksilointiTilaText(henkilo.yksilointiTila),
-            id: 'virheet',
-        },
-    ];
-    return (
-        <div className="oph-table">
-            <ReactTable
-                data={props.data.results}
-                pages={props.data.totalPages}
-                columns={columns}
-                sortable={false}
-                previousText={L['TAULUKKO_EDELLINEN']}
-                nextText={L['TAULUKKO_SEURAAVA']}
-                noDataText={L['TAULUKKO_EI_RIVEJA']}
-                pageText={L['TAULUKKO_SIVU']}
-                ofText="/"
-                rowsText={L['TAULUKKO_RIVIA']}
-                loading={props.loading}
-                LoadingComponent={TableLoader}
-                className="OppijoidenTuontiListaus table -striped"
-                manual
-                onFetchData={(state) => {
-                    props.onFetchData(state.page + 1, state.pageSize);
-                }}
-            ></ReactTable>
-        </div>
-    );
-
     function renderSortableHeader(localizationKey: string, headerKey: string) {
-        const newSortDirection = props.sortDirection === 'ASC' ? 'DESC' : 'ASC';
+        const newSortDirection = sortDirection === 'ASC' ? 'DESC' : 'ASC';
         return (
             <button
                 style={{ display: 'block' }}
-                onClick={() => props.onChangeSorting(headerKey, newSortDirection)}
+                onClick={() => onSortingChange(headerKey, newSortDirection)}
                 className="reset-button-styles oph-bold sortable-header"
             >
-                {L[localizationKey]} {props.sortKey === headerKey ? renderSortIcon() : <SortIconNone></SortIconNone>}
+                {L[localizationKey]} {sortKey === headerKey ? renderSortIcon() : <SortIconNone />}
             </button>
         );
     }
+
+    const columns = useMemo(
+        () => [
+            {
+                header: () => renderSortableHeader('OPPIJOIDEN_TUONTI_LUONTIAIKA', 'CREATED'),
+                accessorFn: (henkilo: OppijaList) => moment(henkilo.luotu).format('l LT'),
+                id: 'luotu',
+            },
+            {
+                header: () => renderHeader('OPPIJOIDEN_TUONTI_KASITTELIJA'),
+                accessorFn: (henkilo: OppijaList) => henkilo,
+                cell: ({ getValue }) =>
+                    getValue().serviceUserOid ? (
+                        <Link to={`virkailija/${getValue().serviceUserOid}`}>{getValue().serviceUserName}</Link>
+                    ) : null,
+                id: 'kasittelija',
+            },
+            {
+                header: () => renderHeader('OPPIJOIDEN_TUONTI_OID'),
+                accessorFn: (henkilo: OppijaList) => henkilo.oid,
+                id: 'oid',
+            },
+            {
+                header: () => renderHeader('OPPIJOIDEN_TUONTI_HENKILOTUNNUS_SYNTYMAIKA'),
+                accessorFn: (henkilo: OppijaList) =>
+                    henkilo.syntymaaika ? moment(henkilo.syntymaaika).format('l') : '',
+                id: 'hetu',
+            },
+            {
+                header: () => renderSortableHeader('OPPIJOIDEN_TUONTI_NIMI', 'NAME'),
+                accessorFn: (henkilo: OppijaList) => henkilo,
+                cell: ({ getValue }) => renderOppijaLinkki(getValue()),
+                id: 'nimi',
+            },
+            {
+                header: () => renderHeader('OPPIJOIDEN_TUONTI_VIRHEET'),
+                accessorFn: (henkilo: OppijaList) => YKSILOINTI_TILAT[henkilo.yksilointiTila] ?? '',
+                id: 'virheet',
+            },
+        ],
+        [data]
+    );
+
+    const pagination: PaginationState = useMemo(
+        () => ({
+            pageIndex: data?.number - 1 ?? 0,
+            pageSize: data?.size ?? 20,
+        }),
+        [data]
+    );
+
+    const table = useReactTable<OppijaList>({
+        data: data?.results ?? [],
+        pageCount: data?.totalPages ?? 0,
+        state: {
+            pagination,
+        },
+        onPaginationChange: (updater) => {
+            if (typeof updater === 'function') {
+                const nextState = updater({
+                    pageIndex: data?.number - 1,
+                    pageSize: data?.size,
+                });
+                onPageChange(nextState.pageIndex + 1, nextState.pageSize);
+            }
+        },
+        getCoreRowModel: getCoreRowModel(),
+        manualPagination: true,
+        columns,
+        columnResizeMode: 'onChange',
+    });
+
+    return <OphTable table={table} isLoading={loading} />;
 };
 
 export default OppijoidenTuontiListaus;

@@ -29,7 +29,7 @@ const OppijoidenTuontiContainer = () => {
     const [tuontikooste, setTuontikooste] = useState(false);
     const { data, isFetching } = useGetOppijoidenTuontiListausQuery(criteria);
 
-    const onChangeSorting = (sortKey: string, sortDirection: string) => {
+    const onSortingChange = (sortKey: string, sortDirection: string) => {
         setCriteria({ ...criteria, sortKey, sortDirection });
     };
 
@@ -37,7 +37,7 @@ const OppijoidenTuontiContainer = () => {
         setCriteria({ ...criteria, nimiHaku });
     };
 
-    const onFetchData = (page: number, count: number) => {
+    const onPageChange = (page: number, count: number) => {
         setCriteria({ ...criteria, page: String(page), count: String(count) });
     };
 
@@ -72,8 +72,8 @@ const OppijoidenTuontiContainer = () => {
                         <OppijoidenTuontiListaus
                             loading={isFetching}
                             data={data}
-                            onFetchData={onFetchData}
-                            onChangeSorting={onChangeSorting}
+                            onPageChange={onPageChange}
+                            onSortingChange={onSortingChange}
                             sortDirection={criteria.sortDirection}
                             sortKey={criteria.sortKey}
                         ></OppijoidenTuontiListaus>
