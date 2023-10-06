@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Sql("/db/migration/V20221109120000000__tuontikooste_view.sql")
 @Sql("/db/migration/V20221215120000000__tuontikooste_fix.sql")
 @Sql("/db/migration/V20230105120000000__tuontikooste_add_conflicts.sql")
-@Sql("/db/migration/V20231005000000000__add_api_for_tuontikooste.sql")
+@Sql("/db/migration/V20231005000000001__add_api_for_tuontikooste.sql")
 @ActiveProfiles("dev")
 @SpringBootTest(classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, H2Configuration.class})
 @AutoConfigureMockMvc
