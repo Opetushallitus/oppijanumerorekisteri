@@ -409,13 +409,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
             this._parseAnojaKayttooikeusryhmat(anojaOid);
         }
 
-        return (
-            <AnojaKayttooikeusryhmat
-                locale={this.props.locale}
-                data={this._findAnojaKayttooikeusData(anojaOid)}
-                l10n={this.props.l10n}
-            ></AnojaKayttooikeusryhmat>
-        );
+        return <AnojaKayttooikeusryhmat data={this._findAnojaKayttooikeusData(anojaOid)} />;
     }
 
     _getAnojaOidByRowIndex = (index: number): string => {

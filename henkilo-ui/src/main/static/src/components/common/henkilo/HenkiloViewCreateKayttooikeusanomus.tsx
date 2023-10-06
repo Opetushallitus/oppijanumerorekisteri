@@ -423,7 +423,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         const kayttooikeusryhmaSelection = {
             value: kayttooikeusryhma.id,
             label: kayttooikeusryhma.nimi.texts?.find((t) => t.lang === locale)?.text,
-            description: kayttooikeusryhma.kuvaus.texts?.find((t) => t.lang === locale)?.text,
+            description: kayttooikeusryhma.kuvaus?.texts?.find((t) => t.lang === locale)?.text,
         };
 
         const kayttooikeusryhmaSelections = this.state.kayttooikeusryhmaSelections;

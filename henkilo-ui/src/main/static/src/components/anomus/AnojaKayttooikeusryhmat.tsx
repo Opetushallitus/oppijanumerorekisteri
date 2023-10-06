@@ -1,79 +1,83 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { useReactTable, getCoreRowModel, ColumnDef } from '@tanstack/react-table';
+
 import { AnojaKayttooikeusryhmaData, KayttooikeusryhmaData } from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
 import Loader from '../common/icons/Loader';
 import './AnojaKayttoooikeusryhma.css';
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
-import type { Locale } from '../../types/locale.type';
-import type { L10n } from '../../types/localisation.type';
-import { localize } from '../../utilities/localisation.util';
-import ReactTable from 'react-table';
+import { useLocalisations } from '../../selectors';
+import OphTable from '../OphTable';
 
 type Props = {
-    data: AnojaKayttooikeusryhmaData | null | undefined;
-    locale: Locale;
-    l10n: L10n;
+    data?: AnojaKayttooikeusryhmaData;
 };
 
 /*
  * Komponentti anomuslistaukseen näyttämään anojan olemassa olevat ja rauenneet käyttöoikeudet
  */
-export const AnojaKayttooikeusryhmat = (props: Props) => {
-    const data: AnojaKayttooikeusryhmaData | null | undefined = props.data;
-    const error: boolean | null | undefined = data?.error;
-    const kayttooikeudet: Array<KayttooikeusryhmaData> | null | undefined = data?.kayttooikeudet;
-    const headings = [
-        {
-            Header: props.l10n[props.locale]['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_MAIN_HEADER'],
-            columns: [
-                {
-                    Header: props.l10n[props.locale][
-                        'HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_ORGANISAATIO_HEADER'
-                    ],
-                    accessor: 'organisaatioNimi',
-                },
-                {
-                    Header: props.l10n[props.locale][
-                        'HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_KAYTTOOIKEUS_HEADER'
-                    ],
-                    accessor: 'kayttooikeusryhmaNimi',
-                },
-                {
-                    Header: props.l10n[props.locale][
-                        'HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_VOIMASSAPVM_HEADER'
-                    ],
-                    accessor: 'voimassaPvm',
-                },
-            ],
-        },
-    ];
+export const AnojaKayttooikeusryhmat = ({ data }: Props) => {
+    const { L } = useLocalisations();
+    const columns = useMemo<ColumnDef<KayttooikeusryhmaData>[]>(
+        () => [
+            {
+                header: () => L['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_MAIN_HEADER'],
+                id: 'group',
+                columns: [
+                    {
+                        header: () => L['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_ORGANISAATIO_HEADER'],
+                        accessorFn: (row) => row.organisaatioNimi,
+                        id: 'organisaatioNimi',
+                    },
+                    {
+                        header: () => L['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_KAYTTOOIKEUS_HEADER'],
+                        accessorFn: (row) => row.kayttooikeusryhmaNimi,
+                        id: 'kayttooikeusryhmaNimi',
+                    },
+                    {
+                        header: () => L['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_VOIMASSAPVM_HEADER'],
+                        accessorFn: (row) => row.voimassaPvm,
+                        id: 'voimassaPvm',
+                    },
+                ],
+            },
+        ],
+        []
+    );
 
-    if (data === undefined) {
+    const table = useReactTable({
+        data: data?.kayttooikeudet ?? [],
+        pageCount: 1,
+        getCoreRowModel: getCoreRowModel(),
+        columns,
+    });
+
+    if (!data) {
         return (
             <div className="anoja-kayttooikeusryhmat">
                 <Loader />
             </div>
         );
-    } else if (error) {
+    } else if (data?.error) {
         return (
             <LocalNotification
                 type={NOTIFICATIONTYPES.ERROR}
-                title={localize('NOTIFICATION_ANOMUKSEN_ANOJAN_OIKEUKSIEN_HAKU_VIRHE', props.l10n, props.locale)}
+                title={L['NOTIFICATION_ANOMUKSEN_ANOJAN_OIKEUKSIEN_HAKU_VIRHE']}
                 toggle={true}
-            ></LocalNotification>
+            />
         );
-    } else if (kayttooikeudet && kayttooikeudet.length > 0) {
+    } else if (data?.kayttooikeudet.length > 0) {
         return (
             <div className="anoja-kayttooikeusryhmat">
-                <ReactTable data={kayttooikeudet} columns={headings} showPagination={false} minRows={0}></ReactTable>
+                <OphTable table={table} isLoading={false} />
             </div>
         );
     }
     return (
         <LocalNotification
             type={NOTIFICATIONTYPES.INFO}
-            title={localize('NOTIFICATION_ANOMUKSEN_ANOJAN_KAYTTOOIKEUDET_TYHJA', props.l10n, props.locale)}
+            title={L['NOTIFICATION_ANOMUKSEN_ANOJAN_KAYTTOOIKEUDET_TYHJA']}
             toggle={true}
-        ></LocalNotification>
+        />
     );
 };
