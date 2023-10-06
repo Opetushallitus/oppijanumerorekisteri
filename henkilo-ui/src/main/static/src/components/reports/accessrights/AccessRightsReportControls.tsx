@@ -7,6 +7,7 @@ import Button from '../../common/button/Button';
 import DownloadIcon from '../../common/icons/DownloadIcon';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import './AccessRightsReportControls.css';
+import { useLocalisations } from '../../../selectors';
 
 type Props = {
     disabled: boolean;
@@ -15,11 +16,9 @@ type Props = {
     setFilter: (name: string) => void;
     setOid: (oid: string) => void;
     dataExport?: () => void;
-    translate: (key: string) => string;
 };
 
 const AccessRightsReportControls: React.FC<Props> = ({
-    translate,
     disabled,
     setOid,
     filter,
@@ -29,6 +28,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
 }) => {
     const [selectedOrganisation, setSelectedOrganisation] = React.useState<OrganisaatioSelectObject[]>([]);
     const onSelect = (organisaatio: OrganisaatioSelectObject) => setSelectedOrganisation([organisaatio]);
+    const { L } = useLocalisations();
 
     React.useEffect(() => {
         setOid(selectedOrganisation[0] && selectedOrganisation[0].oid);
@@ -53,7 +53,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
                     <div className="flex-item-1 ">
                         <OphSelect
                             options={filterOptions}
-                            placeholder={translate('HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER')}
+                            placeholder={L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
                             value={filter}
                             clearable
                             onChange={(option: Option<string>) => setFilter(option && option.value)}
@@ -65,7 +65,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
                 <div className="flex-horizontal access-right-report-controls-row">
                     <div className="flex-item-1 ">
                         <Button action={dataExport}>
-                            {translate('KAYTTOOIKEUSRAPORTTI_EXPORT')}
+                            {L['KAYTTOOIKEUSRAPORTTI_EXPORT']}
                             <DownloadIcon />
                         </Button>
                     </div>
