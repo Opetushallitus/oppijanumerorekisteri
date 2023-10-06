@@ -125,7 +125,7 @@ const TuontiKoosteTable = () => {
 
     const pagination: PaginationState = useMemo(
         () => ({
-            pageIndex: data?.pageable.pageNumber - 1 ?? 0,
+            pageIndex: data?.pageable.pageNumber ?? 0,
             pageSize: data?.pageable.pageSize ?? 20,
         }),
         [data]
@@ -140,7 +140,7 @@ const TuontiKoosteTable = () => {
         onPaginationChange: (updater) => {
             if (typeof updater === 'function') {
                 const nextState = updater({
-                    pageIndex: data?.pageable.pageNumber - 1,
+                    pageIndex: data?.pageable.pageNumber,
                     pageSize: data?.pageable.pageSize,
                 });
                 setCriteria({

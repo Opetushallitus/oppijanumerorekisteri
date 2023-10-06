@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { Table, flexRender } from '@tanstack/react-table';
+import React, { useRef, ReactElement, Fragment } from 'react';
+import { Table, flexRender, Row } from '@tanstack/react-table';
 
 import { useLocalisations } from '../selectors';
 
@@ -9,13 +9,33 @@ import Loader from './common/icons/Loader';
 type Props<T> = {
     table: Table<T>;
     isLoading: boolean;
+    renderSubComponent?: (props: { row: Row<T> }) => ReactElement;
 };
 
-const OphTable = <T,>({ table, isLoading }: Props<T>) => {
+export const expanderColumn = {
+    id: 'expander',
+    header: () => null,
+    className: 'expander',
+    cell: ({ row }) => {
+        return (
+            row.getCanExpand() && (
+                <button
+                    className={`reset-button-styles expander-button ${row.getIsExpanded() ? 'open' : ''}`}
+                    onClick={row.getToggleExpandedHandler()}
+                    style={{ cursor: 'pointer' }}
+                >
+                    {row.getIsExpanded() ? '' : ''}
+                </button>
+            )
+        );
+    },
+};
+
+const OphTable = <T,>({ table, isLoading, renderSubComponent }: Props<T>) => {
     const { L } = useLocalisations();
     const pageRef = useRef<HTMLInputElement>();
     return (
-        <div className="react-table">
+        <div className={`react-table ${renderSubComponent ? 'expandable-table' : ''}`}>
             <table>
                 <thead>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -49,15 +69,26 @@ const OphTable = <T,>({ table, isLoading }: Props<T>) => {
                 <tbody>
                     {table.getRowModel().rows.map((row) => {
                         return (
-                            <tr key={row.id}>
-                                {row.getVisibleCells().map((cell) => {
-                                    return (
-                                        <td key={cell.id} style={{ width: cell.column.getSize() }} className="rt-td">
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </td>
-                                    );
-                                })}
-                            </tr>
+                            <Fragment key={row.id}>
+                                <tr key={row.id}>
+                                    {row.getVisibleCells().map((cell) => {
+                                        return (
+                                            <td
+                                                key={cell.id}
+                                                style={{ width: cell.column.getSize() }}
+                                                className="rt-td"
+                                            >
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            </td>
+                                        );
+                                    })}
+                                </tr>
+                                {row.getIsExpanded() && renderSubComponent && (
+                                    <tr>
+                                        <td colSpan={row.getVisibleCells().length}>{renderSubComponent({ row })}</td>
+                                    </tr>
+                                )}
+                            </Fragment>
                         );
                     })}
                 </tbody>
