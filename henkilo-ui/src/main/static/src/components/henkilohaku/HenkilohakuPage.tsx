@@ -1,11 +1,13 @@
 import './HenkilohakuPage.css';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, Row, SortingState } from '@tanstack/react-table';
+import { Link } from 'react-router';
+import { Option } from 'react-select';
+
 import HenkilohakuFilters from './HenkilohakuFilters';
-import Table from '../common/table/Table';
 import DelayedSearchInput from './DelayedSearchInput';
 import StaticUtils from '../common/StaticUtils';
 import Loader from '../common/icons/Loader';
-import { Link } from 'react-router';
 import { toLocalizedText } from '../../localizabletext';
 import {
     HenkilohakuCriteria,
@@ -13,7 +15,7 @@ import {
 } from '../../types/domain/kayttooikeus/HenkilohakuCriteria.types';
 import { HenkilohakuResult } from '../../types/domain/kayttooikeus/HenkilohakuResult.types';
 import { useLocalisations } from '../../selectors';
-import { Option } from 'react-select';
+import { OphTableWithInfiniteScroll } from '../OphTableWithInfiniteScroll';
 
 type Props = {
     henkilohakuAction: (arg0: HenkilohakuCriteria, arg1: HenkilohakuQueryparameters) => void;
@@ -26,23 +28,8 @@ type Props = {
     clearHenkilohaku: () => void;
 };
 
-const columnHeaders = [
-    {
-        key: 'HENKILO_NIMI',
-        maxWidth: 400,
-    },
-    {
-        key: 'USERNAME',
-        maxWidth: 200,
-    },
-    {
-        key: 'HENKILOHAKU_ORGANISAATIO',
-        notSortable: true,
-    },
-];
-
 const HenkilohakuPage = (props: Props) => {
-    const [sorted, setSorted] = useState<{ id: string; desc: boolean }[]>([]);
+    const [sorting, setSorting] = useState<SortingState>([]);
     const [nameQuery, setNameQuery] = useState(props.henkiloHakuFilters.nameQuery);
     const [noOrganisation, setNoOrganisation] = useState(props.henkiloHakuFilters.noOrganisation);
     const [subOrganisation, setSubOrganisation] = useState(props.henkiloHakuFilters.subOrganisation);
@@ -66,38 +53,16 @@ const HenkilohakuPage = (props: Props) => {
             kayttooikeusryhmaId,
             ryhmaOids: [ryhmaOid],
         });
-    }, [nameQuery, noOrganisation, subOrganisation, passivoitu, duplikaatti, organisaatioOids, kayttooikeusryhmaId]);
-
-    function onTableFetch(tableState: any) {
-        const sort = tableState.sorted[0];
-        const stateSort = sorted[0];
-        // Update sort state
-        if (sort) {
-            setSorted([{ ...sort }]);
-            // If sort state changed fetch new data
-            if (!stateSort || sort.id !== stateSort.id || sort.desc !== stateSort.desc) {
-                searchQuery(false);
-            }
-        }
-    }
-
-    function createRows(headingKeys: Array<string>) {
-        return props.henkilohakuResult.map((henkilo) => ({
-            [headingKeys[0]]: <Link to={`/virkailija/${henkilo.oidHenkilo}`}>{henkilo.nimi || ''}</Link>,
-            [headingKeys[1]]: henkilo.kayttajatunnus || '',
-            [headingKeys[2]]: (
-                <ul>
-                    {henkilo.organisaatioNimiList.map((organisaatio, idx2) => (
-                        <li key={idx2}>
-                            {(toLocalizedText(locale, organisaatio.localisedLabels) || organisaatio.identifier) +
-                                ' ' +
-                                StaticUtils.getOrganisaatiotyypitFlat(organisaatio.tyypit, L, true)}
-                        </li>
-                    ))}
-                </ul>
-            ),
-        }));
-    }
+    }, [
+        nameQuery,
+        noOrganisation,
+        subOrganisation,
+        passivoitu,
+        duplikaatti,
+        organisaatioOids,
+        kayttooikeusryhmaId,
+        sorting,
+    ]);
 
     const selectRyhmaOid = (option: Option<string>) => {
         setRyhmaOid(option.value);
@@ -112,7 +77,11 @@ const HenkilohakuPage = (props: Props) => {
             setPage(page + 1);
             const queryParams = {
                 offset: shouldNotClear ? 100 * page : 0,
-                orderBy: sorted.length ? (sorted[0].desc ? sorted[0].id + '_DESC' : sorted[0].id + '_ASC') : undefined,
+                orderBy: sorting.length
+                    ? sorting[0].desc
+                        ? sorting[0].id + '_DESC'
+                        : sorting[0].id + '_ASC'
+                    : undefined,
             };
 
             const henkilohakuModel = {
@@ -139,6 +108,55 @@ const HenkilohakuPage = (props: Props) => {
             props.henkilohakuCount(henkilohakuCountCriteria);
         }
     }
+
+    const columns = useMemo<ColumnDef<HenkilohakuResult, HenkilohakuResult>[]>(
+        () => [
+            {
+                id: 'HENKILO_NIMI',
+                header: () => L['HENKILO_NIMI'],
+                accessorFn: (row) => row,
+                cell: ({ getValue }) => (
+                    <Link to={`/virkailija/${getValue().oidHenkilo}`}>{getValue().nimi ?? ''}</Link>
+                ),
+                sortingFn: (a: Row<HenkilohakuResult>, b: Row<HenkilohakuResult>) =>
+                    a.original.nimi.localeCompare(b.original.nimi),
+            },
+            {
+                id: 'USERNAME',
+                header: () => L['USERNAME'],
+                accessorFn: (row) => row.kayttajatunnus ?? '',
+            },
+            {
+                id: 'HENKILOHAKU_ORGANISAATIO',
+                header: () => L['HENKILOHAKU_ORGANISAATIO'],
+                accessorFn: (row) => row,
+                cell: ({ getValue }) => (
+                    <ul>
+                        {getValue().organisaatioNimiList.map((organisaatio, idx2) => (
+                            <li key={idx2}>
+                                {(toLocalizedText(locale, organisaatio.localisedLabels) || organisaatio.identifier) +
+                                    ' ' +
+                                    StaticUtils.getOrganisaatiotyypitFlat(organisaatio.tyypit, L, true)}
+                            </li>
+                        ))}
+                    </ul>
+                ),
+                enableSorting: false,
+            },
+        ],
+        []
+    );
+
+    const table = useReactTable({
+        columns,
+        data: props.henkilohakuResult,
+        state: {
+            sorting,
+        },
+        onSortingChange: setSorting,
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+    });
 
     return (
         <div className="wrapper">
@@ -182,26 +200,13 @@ const HenkilohakuPage = (props: Props) => {
             </div>
             {props.henkilohakuResult.length ? (
                 <div className="henkilohakuTableWrapper">
-                    <Table
-                        headings={columnHeaders.map((template) =>
-                            Object.assign({}, template, {
-                                label: L[template.key] || template.key,
-                            })
-                        )}
-                        data={createRows(columnHeaders.map((template) => template.key))}
-                        noDataText=""
-                        striped
-                        highlight
-                        manual
-                        defaultSorted={sorted}
-                        onFetchData={onTableFetch}
-                        fetchMoreSettings={{
-                            isActive:
-                                props.henkilohakuResult.length !== props.henkilohakuResultCount &&
-                                !props.henkilohakuLoading,
-                            fetchMoreAction: () => searchQuery(true),
-                        }}
+                    <OphTableWithInfiniteScroll
+                        table={table}
                         isLoading={props.henkilohakuLoading}
+                        fetch={() => searchQuery(true)}
+                        isActive={
+                            props.henkilohakuResult.length !== props.henkilohakuResultCount && !props.henkilohakuLoading
+                        }
                     />
                 </div>
             ) : (
