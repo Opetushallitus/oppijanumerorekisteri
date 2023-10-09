@@ -5,8 +5,11 @@ import { useLocalisations } from '../selectors';
 
 import '../oph-table.css';
 import Loader from './common/icons/Loader';
+import SortAscIcon from './common/icons/SortAscIcon';
+import SortDescIcon from './common/icons/SortDescIcon';
+import SortIconNone from './common/icons/SortIconNone';
 
-type Props<T> = {
+export type OphTableProps<T> = {
     table: Table<T>;
     isLoading: boolean;
     renderSubComponent?: (props: { row: Row<T> }) => ReactElement;
@@ -31,7 +34,7 @@ export const expanderColumn = {
     },
 };
 
-const OphTable = <T,>({ table, isLoading, renderSubComponent }: Props<T>) => {
+const OphTable = <T,>({ table, isLoading, renderSubComponent }: OphTableProps<T>) => {
     const { L } = useLocalisations();
     const pageRef = useRef<HTMLInputElement>();
     return (
@@ -49,7 +52,30 @@ const OphTable = <T,>({ table, isLoading, renderSubComponent }: Props<T>) => {
                                         style={{ position: 'relative', width: header.getSize() }}
                                     >
                                         {header.isPlaceholder ? null : (
-                                            <div>{flexRender(header.column.columnDef.header, header.getContext())}</div>
+                                            <button
+                                                className="reset-button-styles"
+                                                onClick={header.column.getToggleSortingHandler()}
+                                            >
+                                                {flexRender(header.column.columnDef.header, header.getContext())}
+                                                {header.column.getIsSorted() === 'asc' ? (
+                                                    <>
+                                                        {' '}
+                                                        <SortAscIcon />
+                                                    </>
+                                                ) : header.column.getIsSorted() === 'desc' ? (
+                                                    <>
+                                                        {' '}
+                                                        <SortDescIcon />
+                                                    </>
+                                                ) : (
+                                                    header.column.getCanSort() && (
+                                                        <>
+                                                            {' '}
+                                                            <SortIconNone />
+                                                        </>
+                                                    )
+                                                )}
+                                            </button>
                                         )}
                                         {header.column.getCanResize() && (
                                             <button
