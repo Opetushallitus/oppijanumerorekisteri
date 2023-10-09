@@ -275,7 +275,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
             },
             {
                 id: 'haeJatkoaikaa',
-                header: () => L['HENKILO_KAYTTOOIKEUS_KASITTELIJA'],
+                header: () => L['OMATTIEDOT_HAE_JATKOAIKAA'],
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => (
                     <div>
