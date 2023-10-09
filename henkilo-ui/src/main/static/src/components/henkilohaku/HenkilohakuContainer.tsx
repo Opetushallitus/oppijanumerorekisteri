@@ -29,7 +29,6 @@ type StateProps = {
     allKayttooikeusryhmasLoading: boolean;
     henkilo: HenkiloState;
     henkilohakuState: HenkilohakuState;
-    isAdmin: boolean;
     omattiedot: OmattiedotState;
 };
 
@@ -66,8 +65,6 @@ class HenkilohakuContainer extends React.Component<Props> {
     render() {
         return !this.props.allKayttooikeusryhmasLoading ? (
             <HenkilohakuPage
-                l10n={this.props.l10n}
-                locale={this.props.locale}
                 henkilohakuAction={this.props.henkilohaku}
                 henkilohakuCount={this.props.henkilohakuCount}
                 henkilohakuResult={this.props.henkilohakuState.result}
@@ -76,7 +73,6 @@ class HenkilohakuContainer extends React.Component<Props> {
                 updateFilters={this.props.updateFilters}
                 henkilohakuLoading={this.props.henkilohakuState.henkilohakuLoading}
                 clearHenkilohaku={this.props.clearHenkilohaku}
-                isAdmin={this.props.isAdmin}
             />
         ) : (
             <Loader />
@@ -90,7 +86,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
     allKayttooikeusryhmasLoading: state.kayttooikeus.allKayttooikeusryhmasLoading,
     henkilohakuState: state.henkilohakuState,
-    isAdmin: state.omattiedot.isAdmin,
     omattiedot: state.omattiedot,
 });
 

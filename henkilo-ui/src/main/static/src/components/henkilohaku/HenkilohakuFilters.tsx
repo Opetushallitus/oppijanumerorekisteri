@@ -29,7 +29,7 @@ type OwnProps = {
     selectedKayttooikeus: string | null | undefined;
     duplikaatitAction: () => void;
     passiivisetAction: () => void;
-    suborganisationAction: () => void;
+    subOrganisationAction: () => void;
     noOrganisationAction: () => void;
     organisaatioSelectAction: (arg0: OrganisaatioSelectObject) => void;
     clearOrganisaatioSelection: () => void;
@@ -83,7 +83,7 @@ class HenkilohakuFilters extends React.Component<Props, State> {
                                 <SubOrganisationCheckbox
                                     L={this.props.L}
                                     subOrganisationValue={this.props.initialValues.subOrganisation}
-                                    subOrganisationAction={this.props.suborganisationAction}
+                                    subOrganisationAction={this.props.subOrganisationAction}
                                 />
                                 <NoOrganisationCheckbox
                                     L={this.props.L}
@@ -106,7 +106,7 @@ class HenkilohakuFilters extends React.Component<Props, State> {
                                 <SubOrganisationCheckbox
                                     L={this.props.L}
                                     subOrganisationValue={this.props.initialValues.subOrganisation}
-                                    subOrganisationAction={this.props.suborganisationAction}
+                                    subOrganisationAction={this.props.subOrganisationAction}
                                 />
                             </OphInline>
                         )}
