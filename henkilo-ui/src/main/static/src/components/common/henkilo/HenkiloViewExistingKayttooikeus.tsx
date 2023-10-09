@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import DatePicker from 'react-datepicker';
-import { update } from 'ramda';
+import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, SortingState } from '@tanstack/react-table';
 
 import { useAppDispatch, type RootState } from '../../../store';
-import Table from '../table/Table';
 import MyonnaButton from './buttons/MyonnaButton';
 import Notifications from '../notifications/Notifications';
 import SuljeButton from './buttons/SuljeButton';
@@ -19,7 +18,6 @@ import {
     fetchAllKayttooikeusAnomusForHenkilo,
     removePrivilege,
 } from '../../../actions/kayttooikeusryhma.actions';
-import { TableCellProps } from '../../../types/react-table.types';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import { removeNotification } from '../../../actions/notifications.actions';
@@ -32,6 +30,7 @@ import { localizeTextGroup } from '../../../utilities/localisation.util';
 import { NotificationsState } from '../../../reducers/notifications.reducer';
 import { useLocalisations } from '../../../selectors';
 import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
+import OphTable from '../../OphTable';
 
 type OwnProps = {
     oidHenkilo: string;
@@ -40,6 +39,7 @@ type OwnProps = {
 };
 
 const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
+    const [sorting, setSorting] = useState<SortingState>([]);
     const { L, locale, l10n } = useLocalisations();
     const dispatch = useAppDispatch();
     const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
@@ -47,13 +47,19 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     const notifications = useSelector<RootState, NotificationsState>((state) => state.notifications);
     const organisaatioCache = useSelector<RootState, OrganisaatioCache>((state) => state.organisaatio.cached);
     const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
-    const [dates, setDates] = useState(
-        kayttooikeus.kayttooikeus.filter(_filterExpiredKayttooikeus).map((kayttooikeusAnomus) => ({
-            alkupvm: moment(),
-            loppupvm: props.vuosia
-                ? moment().add(props.vuosia, 'years')
-                : moment(kayttooikeusAnomus.voimassaPvm, PropertySingleton.state.PVM_DBFORMAATTI).add(1, 'years'),
-        }))
+    const [dates, setDates] = useState<Record<number, { alkupvm: Moment; loppupvm: Moment }>>(
+        kayttooikeus.kayttooikeus.filter(_filterExpiredKayttooikeus).reduce(
+            (acc, kayttooikeus) => ({
+                ...acc,
+                [kayttooikeus.ryhmaId]: {
+                    alkupvm: moment(),
+                    loppupvm: props.vuosia
+                        ? moment().add(props.vuosia, 'years')
+                        : moment(kayttooikeus.voimassaPvm, PropertySingleton.state.PVM_DBFORMAATTI).add(1, 'years'),
+                },
+            }),
+            {}
+        )
     );
     const [emailOptions, setEmailOptions] = useState(
         createEmailOptions(henkilo, _filterExpiredKayttooikeus, kayttooikeus.kayttooikeus)
@@ -64,205 +70,49 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
         setEmailOptions(createEmailOptions(henkilo, _filterExpiredKayttooikeus, kayttooikeus.kayttooikeus));
     }, [henkilo]);
 
-    const headingList = [
-        { key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA', minWidth: 200 },
-        {
-            key: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS',
-            minWidth: 150,
-            Cell: (cellProps: TableCellProps) => (
-                <AccessRightDetaisLink
-                    cellProps={cellProps}
-                    clickHandler={(kayttooikeusRyhma) => showAccessRightGroupDetails(kayttooikeusRyhma)}
-                />
-            ),
-        },
-        {
-            key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM',
-            Cell: (cellProps) => cellProps.value.format(),
-        },
-        {
-            key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM',
-            Cell: (cellProps) => cellProps.value.format(),
-        },
-        {
-            key: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA',
-            minWidth: 125,
-            Cell: (cellProps) => cellProps.value.kasitelty.format() + ' / ' + cellProps.value.kasittelija,
-            sortMethod: (a, b) => {
-                const kasiteltyCompare = a.kasitelty.valueOf() - b.kasitelty.valueOf();
-                if (kasiteltyCompare !== 0) {
-                    return kasiteltyCompare;
-                }
-                return a.kasittelija.localeCompare(b.kasittelija);
-            },
-        },
-        {
-            key: 'HENKILO_KAYTTOOIKEUS_JATKOAIKA',
-            minWidth: 150,
-            notSortable: true,
-            hide: props.isOmattiedot,
-        },
-        {
-            key: 'HENKILO_KAYTTOOIKEUS_SULJE',
-            notSortable: true,
-            hide: props.isOmattiedot,
-        },
-        { key: 'HIGHLIGHT', hide: true },
-        {
-            key: 'HENKILO_KAYTTOOIKEUS_ANO_JATKOAIKA',
-            notSortable: true,
-            hide: !props.isOmattiedot,
-        },
-    ];
-    const tableHeadings = headingList.map((heading) => Object.assign({}, heading, { label: L[heading.key] || '' }));
-
-    function loppupvmAction(value: moment.Moment, idx: number) {
-        const newDates = [...dates];
-        newDates[idx].loppupvm = value;
+    function loppupvmAction(value: moment.Moment, ryhmaId: number) {
+        const newDates = { ...dates };
+        newDates[ryhmaId].loppupvm = value;
         setDates(newDates);
     }
 
-    const data = kayttooikeus.kayttooikeus.filter(_filterExpiredKayttooikeus).map((uusittavaKayttooikeusRyhma, idx) => {
-        const organisaatio =
-            organisaatioCache[uusittavaKayttooikeusRyhma.organisaatioOid] ||
-            StaticUtils.defaultOrganisaatio(uusittavaKayttooikeusRyhma.organisaatioOid, l10n.localisations);
-        return {
-            kayttooikeusRyhma: uusittavaKayttooikeusRyhma,
-            [headingList[0].key]:
-                toLocalizedText(locale, organisaatio.nimi) +
-                ' ' +
-                StaticUtils.getOrganisaatiotyypitFlat(organisaatio.tyypit, L),
-            [headingList[1].key]: uusittavaKayttooikeusRyhma.ryhmaNames?.texts.filter(
-                (text) => text.lang === locale.toUpperCase()
-            )[0].text,
-            [headingList[2].key]: moment(uusittavaKayttooikeusRyhma.alkuPvm, PropertySingleton.state.PVM_DBFORMAATTI),
-            [headingList[3].key]: moment(
-                uusittavaKayttooikeusRyhma.voimassaPvm,
-                PropertySingleton.state.PVM_DBFORMAATTI
-            ),
-            [headingList[4].key]: {
-                kasitelty: moment(uusittavaKayttooikeusRyhma.kasitelty),
-                kasittelija: uusittavaKayttooikeusRyhma.kasittelijaNimi || uusittavaKayttooikeusRyhma.kasittelijaOid,
-            },
-            [headingList[5].key]: (
-                <div>
-                    <div
-                        style={{
-                            display: 'table-cell',
-                            paddingRight: '10px',
-                        }}
-                    >
-                        <DatePicker
-                            className="oph-input"
-                            onChange={(date) => loppupvmAction(moment(date), idx)}
-                            selected={dates[idx].loppupvm.toDate()}
-                            showYearDropdown
-                            showWeekNumbers
-                            disabled={hasNoPermission(
-                                uusittavaKayttooikeusRyhma.organisaatioOid,
-                                uusittavaKayttooikeusRyhma.ryhmaId
-                            )}
-                            filterDate={(date) =>
-                                Number.isInteger(props.vuosia)
-                                    ? moment(date).isBefore(moment().add(props.vuosia, 'years'))
-                                    : true
-                            }
-                            dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
-                        />
-                    </div>
-                    <div style={{ display: 'table-cell' }}>
-                        <MyonnaButton
-                            myonnaAction={() =>
-                                updateKayttooikeusryhma(
-                                    uusittavaKayttooikeusRyhma.ryhmaId,
-                                    KAYTTOOIKEUDENTILA.MYONNETTY,
-                                    idx,
-                                    uusittavaKayttooikeusRyhma.organisaatioOid
-                                )
-                            }
-                            L={L}
-                            disabled={hasNoPermission(
-                                uusittavaKayttooikeusRyhma.organisaatioOid,
-                                uusittavaKayttooikeusRyhma.ryhmaId
-                            )}
-                        />
-                    </div>
-                </div>
-            ),
-            [headingList[6].key]: (
-                <SuljeButton
-                    suljeAction={() =>
-                        dispatch<any>(
-                            removePrivilege(
-                                props.oidHenkilo,
-                                uusittavaKayttooikeusRyhma.organisaatioOid,
-                                uusittavaKayttooikeusRyhma.ryhmaId
-                            )
-                        )
-                    }
-                    L={L}
-                    disabled={hasNoPermission(
-                        uusittavaKayttooikeusRyhma.organisaatioOid,
-                        uusittavaKayttooikeusRyhma.ryhmaId
-                    )}
-                />
-            ),
-            [headingList[7].key]: notifications.existingKayttooikeus.some((notification) => {
-                return notification.ryhmaIdList?.some(
-                    (ryhmaId) =>
-                        `${ryhmaId}` === `${uusittavaKayttooikeusRyhma.ryhmaId}` &&
-                        uusittavaKayttooikeusRyhma.organisaatioOid === notification.organisaatioOid
-                );
-            }),
-            [headingList[8].key]: (
-                <div>
-                    {createEmailSelectionIfMoreThanOne(idx)}
-                    <HaeJatkoaikaaButton
-                        haeJatkoaikaaAction={() => _createKayttooikeusAnomus(uusittavaKayttooikeusRyhma, idx)}
-                        disabled={isHaeJatkoaikaaButtonDisabled(idx, uusittavaKayttooikeusRyhma)}
-                    />
-                </div>
-            ),
-        };
-    });
-
-    function updateKayttooikeusryhma(id: number, kayttoOikeudenTila: string, idx: number, organisaatioOid: string) {
+    function updateKayttooikeusryhma(id: number, kayttoOikeudenTila: string, organisaatioOid: string) {
         dispatch<any>(
             addKayttooikeusToHenkilo(props.oidHenkilo, organisaatioOid, [
                 {
                     id,
                     kayttoOikeudenTila,
-                    alkupvm: moment(dates[idx].alkupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
-                    loppupvm: moment(dates[idx].loppupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
+                    alkupvm: moment(dates[id].alkupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
+                    loppupvm: moment(dates[id].loppupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
                 },
             ])
         );
     }
 
-    function isHaeJatkoaikaaButtonDisabled(idx: number, uusittavaKayttooikeusRyhma: MyonnettyKayttooikeusryhma) {
+    function isHaeJatkoaikaaButtonDisabled(uusittavaKayttooikeusRyhma: MyonnettyKayttooikeusryhma) {
         const anomusAlreadyExists = !!kayttooikeus.kayttooikeusAnomus.filter(
             (haettuKayttooikeusRyhma) =>
                 haettuKayttooikeusRyhma.kayttoOikeusRyhma.id === uusittavaKayttooikeusRyhma.ryhmaId &&
                 uusittavaKayttooikeusRyhma.organisaatioOid === haettuKayttooikeusRyhma.anomus.organisaatioOid
         )[0];
         return (
-            emailOptions.emailSelection[idx].value === '' ||
+            emailOptions.emailSelection[uusittavaKayttooikeusRyhma.ryhmaId].value === '' ||
             emailOptions.emailOptions.length === 0 ||
             anomusAlreadyExists
         );
     }
 
-    function createEmailSelectionIfMoreThanOne(idx: number): React.ReactNode {
+    function createEmailSelectionIfMoreThanOne(ryhmaId: number): React.ReactNode {
         return emailOptions.emailOptions.length > 1
             ? emailOptions.emailOptions.map((email, idx2) => (
                   <div key={idx2}>
                       <input
                           type="radio"
-                          checked={emailOptions.emailSelection[idx].value === email.value}
+                          checked={emailOptions.emailSelection[ryhmaId].value === email.value}
                           onChange={() =>
                               setEmailOptions({
                                   ...emailOptions,
-                                  emailSelection: update(idx, email, emailOptions.emailSelection),
+                                  emailSelection: { ...emailOptions.emailSelection, [ryhmaId]: email },
                               })
                           }
                       />
@@ -295,11 +145,11 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
         setAccessRight(accessRight);
     }
 
-    async function _createKayttooikeusAnomus(uusittavaKayttooikeusRyhma: MyonnettyKayttooikeusryhma, idx: number) {
+    async function _createKayttooikeusAnomus(uusittavaKayttooikeusRyhma: MyonnettyKayttooikeusryhma) {
         const kayttooikeusRyhmaIds = [uusittavaKayttooikeusRyhma.ryhmaId];
         const anomusData = {
             organisaatioOrRyhmaOid: uusittavaKayttooikeusRyhma.organisaatioOid,
-            email: emailOptions.emailSelection[idx].value,
+            email: emailOptions.emailSelection[uusittavaKayttooikeusRyhma.ryhmaId].value,
             perustelut: 'Uusiminen',
             kayttooikeusRyhmaIds,
             anojaOid: props.oidHenkilo,
@@ -314,6 +164,150 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
         );
     }
 
+    const renderJatkoaikaCell = (kayttooikeus: MyonnettyKayttooikeusryhma) => {
+        return (
+            <div>
+                <div style={{ display: 'table-cell', paddingRight: '10px', minWidth: '96px' }}>
+                    <DatePicker
+                        className="oph-input"
+                        onChange={(date) => loppupvmAction(moment(date), kayttooikeus.ryhmaId)}
+                        selected={dates[kayttooikeus.ryhmaId].loppupvm.toDate()}
+                        showYearDropdown
+                        showWeekNumbers
+                        disabled={hasNoPermission(kayttooikeus.organisaatioOid, kayttooikeus.ryhmaId)}
+                        filterDate={(date) =>
+                            Number.isInteger(props.vuosia)
+                                ? moment(date).isBefore(moment().add(props.vuosia, 'years'))
+                                : true
+                        }
+                        dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
+                    />
+                </div>
+                <div style={{ display: 'table-cell' }}>
+                    <MyonnaButton
+                        myonnaAction={() =>
+                            updateKayttooikeusryhma(
+                                kayttooikeus.ryhmaId,
+                                KAYTTOOIKEUDENTILA.MYONNETTY,
+                                kayttooikeus.organisaatioOid
+                            )
+                        }
+                        L={L}
+                        disabled={hasNoPermission(kayttooikeus.organisaatioOid, kayttooikeus.ryhmaId)}
+                    />
+                </div>
+            </div>
+        );
+    };
+
+    const columns = useMemo<ColumnDef<MyonnettyKayttooikeusryhma, MyonnettyKayttooikeusryhma>[]>(
+        () => [
+            {
+                id: 'organisaatio',
+                header: () => L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA'],
+                accessorFn: (row) => {
+                    const organisaatio =
+                        organisaatioCache[row.organisaatioOid] ||
+                        StaticUtils.defaultOrganisaatio(row.organisaatioOid, l10n.localisations);
+                    return (
+                        toLocalizedText(locale, organisaatio.nimi) +
+                        ' ' +
+                        StaticUtils.getOrganisaatiotyypitFlat(organisaatio.tyypit, L)
+                    );
+                },
+            },
+            {
+                id: 'kayttooikeus',
+                header: () => L['HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS'],
+                accessorFn: (row) => row,
+                cell: ({ getValue }) => (
+                    <AccessRightDetaisLink
+                        cellProps={{
+                            value: getValue().ryhmaNames?.texts.filter((text) => text.lang === locale.toUpperCase())[0]
+                                .text,
+                            original: { kayttooikeusRyhma: getValue() },
+                        }}
+                        clickHandler={(kayttooikeusRyhma) => showAccessRightGroupDetails(kayttooikeusRyhma)}
+                    />
+                ),
+            },
+            {
+                id: 'alkupvm',
+                header: () => L['HENKILO_KAYTTOOIKEUS_ALKUPVM'],
+                accessorFn: (row) => moment(row.alkuPvm, PropertySingleton.state.PVM_DBFORMAATTI).format(),
+            },
+            {
+                id: 'loppupvm',
+                header: () => L['HENKILO_KAYTTOOIKEUS_LOPPUPVM'],
+                accessorFn: (row) => moment(row.voimassaPvm, PropertySingleton.state.PVM_DBFORMAATTI).format(),
+            },
+            {
+                id: 'kasittelija',
+                header: () => L['HENKILO_KAYTTOOIKEUS_KASITTELIJA'],
+                accessorFn: (row) =>
+                    moment(row.kasitelty, PropertySingleton.state.PVM_DBFORMAATTI).format() +
+                    ' / ' +
+                    (row.kasittelijaNimi || row.kasittelijaOid),
+            },
+            {
+                id: 'jatkoaika',
+                header: () => L['HENKILO_KAYTTOOIKEUS_JATKOAIKA'],
+                accessorFn: (row) => row,
+                cell: ({ getValue }) => renderJatkoaikaCell(getValue()),
+                enableSorting: false,
+            },
+            {
+                id: 'sulje',
+                header: () => L['HENKILO_KAYTTOOIKEUS_SULJE'],
+                accessorFn: (row) => row,
+                cell: ({ getValue }) => (
+                    <SuljeButton
+                        suljeAction={() =>
+                            dispatch<any>(
+                                removePrivilege(props.oidHenkilo, getValue().organisaatioOid, getValue().ryhmaId)
+                            )
+                        }
+                        L={L}
+                        disabled={hasNoPermission(getValue().organisaatioOid, getValue().ryhmaId)}
+                    />
+                ),
+                enableSorting: false,
+            },
+            {
+                id: 'haeJatkoaikaa',
+                header: () => L['HENKILO_KAYTTOOIKEUS_KASITTELIJA'],
+                accessorFn: (row) => row,
+                cell: ({ getValue }) => (
+                    <div>
+                        {createEmailSelectionIfMoreThanOne(getValue().ryhmaId)}
+                        <HaeJatkoaikaaButton
+                            haeJatkoaikaaAction={() => _createKayttooikeusAnomus(getValue())}
+                            disabled={isHaeJatkoaikaaButtonDisabled(getValue())}
+                        />
+                    </div>
+                ),
+                enableSorting: false,
+            },
+        ],
+        [emailOptions, kayttooikeus.kayttooikeus, props]
+    );
+
+    const table = useReactTable({
+        columns,
+        data: kayttooikeus.kayttooikeus.filter(_filterExpiredKayttooikeus),
+        state: {
+            sorting,
+            columnVisibility: {
+                haeJatkoaikaa: props.isOmattiedot,
+                jatkoaika: !props.isOmattiedot,
+                sulje: !props.isOmattiedot,
+            },
+        },
+        onSortingChange: setSorting,
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+    });
+
     return (
         <div className="henkiloViewUserContentWrapper">
             {accessRight && <AccessRightDetails {...accessRight} />}
@@ -326,12 +320,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                 closeAction={(status, id) => dispatch(removeNotification(status, 'existingKayttooikeus', id))}
             />
             <div>
-                <Table
-                    getTdProps={() => ({ style: { textOverflow: 'unset' } })}
-                    headings={tableHeadings}
-                    data={data}
-                    noDataText={L['HENKILO_KAYTTOOIKEUS_VOIMASSAOLEVAT_TYHJA']}
-                />
+                <OphTable table={table} isLoading={false} />
             </div>
         </div>
     );

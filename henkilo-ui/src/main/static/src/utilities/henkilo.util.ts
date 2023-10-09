@@ -4,8 +4,9 @@ import { HenkiloState } from '../reducers/henkilo.reducer';
 import { MyonnettyKayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { WORK_ADDRESS, EMAIL } from '../types/constants';
 
+type RyhmaId = number;
 type CreateEmailOptions = {
-    emailSelection: Array<EmailOption>;
+    emailSelection: Record<RyhmaId, EmailOption>;
     missingEmail: boolean;
     showMissingEmailNotification: boolean;
     emailOptions: Array<EmailOption>;
@@ -19,7 +20,13 @@ export const createEmailOptions = (
     const emailOptions = parseEmailOptions(henkilo?.henkilo.yhteystiedotRyhma);
     if (emailOptions.length === 1) {
         return {
-            emailSelection: kayttooikeusryhmat.filter(filterKayttooikeusRyhma).map(() => emailOptions[0]),
+            emailSelection: kayttooikeusryhmat.filter(filterKayttooikeusRyhma).reduce(
+                (acc, kayttooikeus) => ({
+                    ...acc,
+                    [kayttooikeus.ryhmaId]: emailOptions[0],
+                }),
+                {}
+            ),
             missingEmail: false,
             showMissingEmailNotification: false,
             emailOptions,
@@ -29,14 +36,26 @@ export const createEmailOptions = (
             missingEmail: false,
             showMissingEmailNotification: false,
             emailOptions,
-            emailSelection: kayttooikeusryhmat.filter(filterKayttooikeusRyhma).map(() => ({ value: '' })),
+            emailSelection: kayttooikeusryhmat.filter(filterKayttooikeusRyhma).reduce(
+                (acc, kayttooikeus) => ({
+                    ...acc,
+                    [kayttooikeus.ryhmaId]: emailOptions[0],
+                }),
+                {}
+            ),
         };
     }
     return {
         missingEmail: true,
         showMissingEmailNotification: true,
         emailOptions,
-        emailSelection: kayttooikeusryhmat.filter(filterKayttooikeusRyhma).map(() => ({ value: '' })),
+        emailSelection: kayttooikeusryhmat.filter(filterKayttooikeusRyhma).reduce(
+            (acc, kayttooikeus) => ({
+                ...acc,
+                [kayttooikeus.ryhmaId]: { value: '' },
+            }),
+            {}
+        ),
     };
 };
 

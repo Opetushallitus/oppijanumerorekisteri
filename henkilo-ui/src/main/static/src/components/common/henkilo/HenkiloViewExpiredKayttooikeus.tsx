@@ -10,7 +10,7 @@ import { Locale } from '../../../types/locale.type';
 import { TableCellProps, TableHeading } from '../../../types/react-table.types';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import HaeJatkoaikaaButton from '../../omattiedot/HaeJatkoaikaaButton';
-import { update, path } from 'ramda';
+import { path } from 'ramda';
 import { EmailOption } from '../../../types/emailoption.type';
 import { createEmailOptions } from '../../../utilities/henkilo.util';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
@@ -48,7 +48,7 @@ type Props = OwnProps & DispatchProps & StateProps;
 
 type State = {
     emailOptions: Array<EmailOption>;
-    emailSelection: Array<EmailOption>;
+    emailSelection: Record<number, EmailOption>;
     missingEmail: boolean;
     showMissingEmailNotification: boolean;
     accessRight: AccessRight | null;
@@ -122,7 +122,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
     createRows(headingList: Array<string>) {
         this._rows = this.props.kayttooikeus.kayttooikeus
             .filter(this._filterExistingKayttooikeus)
-            .map((vanhentunutKayttooikeus: MyonnettyKayttooikeusryhma, idx: number) => ({
+            .map((vanhentunutKayttooikeus: MyonnettyKayttooikeusryhma) => ({
                 kayttooikeusRyhma: vanhentunutKayttooikeus,
                 [headingList[0]]: toLocalizedText(
                     this.props.locale,
@@ -142,10 +142,13 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
                 [headingList[4]]: vanhentunutKayttooikeus.tila === KAYTTOOIKEUDENTILA.VANHENTUNUT &&
                     !this.hideVanhentunutKayttooikeusUusintaButton(vanhentunutKayttooikeus) && (
                         <div>
-                            {this.createEmailSelectionIfMoreThanOne(idx)}
+                            {this.createEmailSelectionIfMoreThanOne(vanhentunutKayttooikeus.ryhmaId)}
                             <HaeJatkoaikaaButton
-                                haeJatkoaikaaAction={() => this._createKayttooikeusAnomus(vanhentunutKayttooikeus, idx)}
-                                disabled={this.isHaeJatkoaikaaButtonDisabled(idx, vanhentunutKayttooikeus)}
+                                haeJatkoaikaaAction={() => this._createKayttooikeusAnomus(vanhentunutKayttooikeus)}
+                                disabled={this.isHaeJatkoaikaaButtonDisabled(
+                                    vanhentunutKayttooikeus.ryhmaId,
+                                    vanhentunutKayttooikeus
+                                )}
                             />
                         </div>
                     ),
@@ -186,16 +189,16 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
         );
     }
 
-    createEmailSelectionIfMoreThanOne(idx: number): React.ReactNode {
+    createEmailSelectionIfMoreThanOne(ryhmaId: number): React.ReactNode {
         return this.state.emailOptions.length > 1
             ? this.state.emailOptions.map((email, idx2) => (
                   <div key={idx2}>
                       <input
                           type="radio"
-                          checked={this.state.emailSelection[idx].value === email.value}
+                          checked={this.state.emailSelection[ryhmaId].value === email.value}
                           onChange={() =>
                               this.setState({
-                                  emailSelection: update(idx, email, this.state.emailSelection),
+                                  emailSelection: { ...this.state.emailSelection, [ryhmaId]: email },
                               })
                           }
                       />
@@ -211,11 +214,11 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
         );
     }
 
-    async _createKayttooikeusAnomus(kayttooikeusryhma: MyonnettyKayttooikeusryhma, idx: number) {
+    async _createKayttooikeusAnomus(kayttooikeusryhma: MyonnettyKayttooikeusryhma) {
         const kayttooikeusRyhmaIds = [kayttooikeusryhma.ryhmaId];
         const anomusData = {
             organisaatioOrRyhmaOid: kayttooikeusryhma.organisaatioOid,
-            email: this.state.emailSelection[idx].value,
+            email: this.state.emailSelection[kayttooikeusryhma.ryhmaId].value,
             perustelut: 'Uusiminen',
             kayttooikeusRyhmaIds,
             anojaOid: this.props.oidHenkilo,
@@ -242,14 +245,16 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
             }, false);
     }
 
-    isHaeJatkoaikaaButtonDisabled(idx: number, vanhentunutKayttooikeusryhma: MyonnettyKayttooikeusryhma) {
+    isHaeJatkoaikaaButtonDisabled(ryhmaId: number, vanhentunutKayttooikeusryhma: MyonnettyKayttooikeusryhma) {
         const anomusAlreadyExists = !!this.props.kayttooikeus.kayttooikeusAnomus.filter(
             (haettuKayttooikeusRyhma) =>
                 haettuKayttooikeusRyhma.kayttoOikeusRyhma.id === vanhentunutKayttooikeusryhma.ryhmaId &&
                 vanhentunutKayttooikeusryhma.organisaatioOid === haettuKayttooikeusRyhma.anomus.organisaatioOid
         )[0];
         return (
-            this.state.emailSelection[idx].value === '' || this.state.emailOptions.length === 0 || anomusAlreadyExists
+            this.state.emailSelection[ryhmaId].value === '' ||
+            this.state.emailOptions.length === 0 ||
+            anomusAlreadyExists
         );
     }
 }
