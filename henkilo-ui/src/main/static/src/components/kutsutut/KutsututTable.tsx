@@ -1,20 +1,18 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import type { RootState } from '../../store';
+import React, { useState } from 'react';
 import moment from 'moment';
+
 import './KutsututTable.css';
 import Table from '../common/table/Table';
 import Button from '../common/button/Button';
 import { renewKutsu } from '../../actions/kutsu.actions';
 import { toLocalizedText } from '../../localizabletext';
 import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
-import { Localisations } from '../../types/localisation.type';
-import { GlobalNotificationConfig } from '../../types/notification.types';
 import { addGlobalNotification } from '../../actions/notification.actions';
-import { Locale } from '../../types/locale.type';
 import PopupButton from '../common/button/PopupButton';
 import KutsuDetails from './KutsuDetails';
 import { KutsuRead } from '../../types/domain/kayttooikeus/Kutsu.types';
+import { useLocalisations } from '../../selectors';
+import { useAppDispatch } from '../../store';
 
 type Sort = {
     id: string;
@@ -29,126 +27,74 @@ type OwnProps = {
     cancelInvitation: (kutsu: KutsuRead) => (arg0: React.MouseEvent<HTMLElement>) => void;
 };
 
-type StateProps = {
-    L: Localisations;
-    locale: Locale;
-};
+const KutsututTable = (props: OwnProps) => {
+    const [sorted, setSorted] = useState({ id: 'KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO', desc: 'true' });
+    const { L, locale } = useLocalisations();
+    const dispatch = useAppDispatch();
 
-type DispatchProps = {
-    addGlobalNotification: (arg0: GlobalNotificationConfig) => void;
-    renewKutsu: (arg0: number) => void;
-};
+    const headings = [
+        { key: 'KUTSUT_NIMI_OTSIKKO', label: L['KUTSUT_NIMI_OTSIKKO'] },
+        {
+            key: 'KUTSUT_SAHKOPOSTI_OTSIKKO',
+            label: L['KUTSUT_SAHKOPOSTI_OTSIKKO'],
+        },
+        {
+            key: 'KUTSUTUT_ORGANISAATIO_OTSIKKO',
+            label: L['KUTSUTUT_ORGANISAATIO_OTSIKKO'],
+            notSortable: true,
+        },
+        {
+            key: 'KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO',
+            label: L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO'],
+        },
+        {
+            key: 'KUTSUTUT_SAATE_OTSIKKO',
+            label: L['KUTSUTUT_SAATE_OTSIKKO'],
+            maxWidth: 100,
+            notSortable: true,
+        },
+        {
+            key: 'KUTSUTUT_LAHETA_UUDELLEEN',
+            label: L['KUTSUTUT_LAHETA_UUDELLEEN'],
+            notSortable: true,
+        },
+        {
+            key: 'KUTSU_PERUUTA',
+            label: L['KUTSUTUT_PERUUTA_KUTSU'],
+            notSortable: true,
+        },
+    ];
 
-type Props = OwnProps & StateProps & DispatchProps;
+    const data = props.kutsus.map((kutsu) => ({
+        id: kutsu.id,
+        KUTSUT_NIMI_OTSIKKO: createNimiCell(kutsu),
+        KUTSUT_SAHKOPOSTI_OTSIKKO: createSahkopostiCell(kutsu),
+        KUTSUTUT_ORGANISAATIO_OTSIKKO: createOrganisaatiotCell(kutsu),
+        KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO: createKutsuLahetettyCell(kutsu),
+        KUTSUTUT_SAATE_OTSIKKO: createSaateCell(kutsu),
+        KUTSUTUT_LAHETA_UUDELLEEN: createResendCell(kutsu),
+        KUTSU_PERUUTA: createPeruutaCell(kutsu),
+    }));
 
-type State = {
-    sorted: Array<any>;
-};
-
-class KutsututTable extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-
-        this.state = {
-            sorted: [{ id: 'KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO', desc: true }],
-        };
-    }
-
-    render() {
-        const L = this.props.L;
-        const headings = [
-            { key: 'KUTSUT_NIMI_OTSIKKO', label: L['KUTSUT_NIMI_OTSIKKO'] },
-            {
-                key: 'KUTSUT_SAHKOPOSTI_OTSIKKO',
-                label: L['KUTSUT_SAHKOPOSTI_OTSIKKO'],
-            },
-            {
-                key: 'KUTSUTUT_ORGANISAATIO_OTSIKKO',
-                label: L['KUTSUTUT_ORGANISAATIO_OTSIKKO'],
-                notSortable: true,
-            },
-            {
-                key: 'KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO',
-                label: L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO'],
-            },
-            {
-                key: 'KUTSUTUT_SAATE_OTSIKKO',
-                label: L['KUTSUTUT_SAATE_OTSIKKO'],
-                maxWidth: 100,
-                notSortable: true,
-            },
-            {
-                key: 'KUTSUTUT_LAHETA_UUDELLEEN',
-                label: L['KUTSUTUT_LAHETA_UUDELLEEN'],
-                notSortable: true,
-            },
-            {
-                key: 'KUTSU_PERUUTA',
-                label: L['KUTSUTUT_PERUUTA_KUTSU'],
-                notSortable: true,
-            },
-        ];
-
-        const data = this.props.kutsus.map((kutsu) => ({
-            id: kutsu.id,
-            KUTSUT_NIMI_OTSIKKO: this.createNimiCell(kutsu),
-            KUTSUT_SAHKOPOSTI_OTSIKKO: this.createSahkopostiCell(kutsu),
-            KUTSUTUT_ORGANISAATIO_OTSIKKO: this.createOrganisaatiotCell(kutsu),
-            KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO: this.createKutsuLahetettyCell(kutsu),
-            KUTSUTUT_SAATE_OTSIKKO: this.createSaateCell(kutsu),
-            KUTSUTUT_LAHETA_UUDELLEEN: this.createResendCell(kutsu),
-            KUTSU_PERUUTA: this.createPeruutaCell(kutsu),
-        }));
-
-        return (
-            <div className="kutsututTableWrapper oph-table">
-                <Table
-                    headings={headings}
-                    noDataText={this.props.L['KUTSUTUT_VIRKAILIJAT_TYHJA']}
-                    data={data}
-                    striped
-                    resizable
-                    manual={true}
-                    defaultSorted={this.state.sorted}
-                    onFetchData={this.onTableFetch.bind(this)}
-                    fetchMoreSettings={{
-                        isActive: !this.props.allFetched && !this.props.isLoading,
-                        fetchMoreAction: this.onSubmitWithoutClear.bind(this),
-                    }}
-                    isLoading={this.props.isLoading}
-                    subComponent={(row) => (
-                        <KutsuDetails
-                            kutsu={this.props.kutsus.find((kutsu) => kutsu.id === row.original.id)}
-                            L={this.props.L}
-                            locale={this.props.locale}
-                        />
-                    )}
-                />
-            </div>
-        );
-    }
-
-    createNimiCell(kutsu: KutsuRead) {
+    function createNimiCell(kutsu: KutsuRead) {
         return `${kutsu.etunimi} ${kutsu.sukunimi}`;
     }
 
-    createSahkopostiCell(kutsu: KutsuRead) {
+    function createSahkopostiCell(kutsu: KutsuRead) {
         return kutsu.sahkoposti;
     }
 
-    createOrganisaatiotCell(kutsu: KutsuRead) {
+    function createOrganisaatiotCell(kutsu: KutsuRead) {
         return (
             <div>
                 {kutsu.organisaatiot.map((org) => (
-                    <div key={org.organisaatioOid}>
-                        {toLocalizedText(this.props.locale, org.nimi) || org.organisaatioOid}
-                    </div>
+                    <div key={org.organisaatioOid}>{toLocalizedText(locale, org.nimi) || org.organisaatioOid}</div>
                 ))}
             </div>
         );
     }
 
-    createSaateCell(kutsu: KutsuRead) {
+    function createSaateCell(kutsu: KutsuRead) {
         return kutsu.saate ? (
             <PopupButton
                 popupClass={'oph-popup-default oph-popup-bottom'}
@@ -164,80 +110,86 @@ class KutsututTable extends React.Component<Props, State> {
                 simple={true}
                 popupContent={<p>{kutsu.saate}</p>}
             >
-                {this.props.L['AVAA']}
+                {L['AVAA']}
             </PopupButton>
         ) : null;
     }
 
-    createKutsuLahetettyCell(kutsu: KutsuRead) {
+    function createKutsuLahetettyCell(kutsu: KutsuRead) {
         const sent = moment(new Date(kutsu.aikaleima));
         return (
             <span>
                 {sent.format('DD/MM/YYYY H:mm')}{' '}
                 {sent.add(1, 'months').isBefore(moment()) ? (
-                    <span className="oph-red">{this.props.L['KUTSUTUT_VIRKAILIJAT_KUTSU_VANHENTUNUT']}</span>
+                    <span className="oph-red">{L['KUTSUTUT_VIRKAILIJAT_KUTSU_VANHENTUNUT']}</span>
                 ) : null}
             </span>
         );
     }
 
-    createResendCell(kutsu: KutsuRead) {
+    function createResendCell(kutsu: KutsuRead) {
         const resendAction = async () => {
-            await this.props.renewKutsu(kutsu.id);
-            this.props.addGlobalNotification({
-                key: 'KUTSU_CONFIRMATION_SUCCESS',
-                type: NOTIFICATIONTYPES.SUCCESS,
-                autoClose: 10000,
-                title: this.props.L['KUTSU_LUONTI_ONNISTUI'],
-            });
-            this.props.fetchKutsus(this.state.sorted[0]);
+            await dispatch<any>(renewKutsu(kutsu.id));
+            dispatch(
+                addGlobalNotification({
+                    key: 'KUTSU_CONFIRMATION_SUCCESS',
+                    type: NOTIFICATIONTYPES.SUCCESS,
+                    autoClose: 10000,
+                    title: L['KUTSU_LUONTI_ONNISTUI'],
+                })
+            );
+            props.fetchKutsus(sorted);
         };
-        return (
-            kutsu.tila === 'AVOIN' && (
-                <Button action={resendAction}>{this.props.L['KUTSUTUT_LAHETA_UUDELLEEN_NAPPI']}</Button>
-            )
-        );
+        return kutsu.tila === 'AVOIN' && <Button action={resendAction}>{L['KUTSUTUT_LAHETA_UUDELLEEN_NAPPI']}</Button>;
     }
 
-    createPeruutaCell(kutsu: KutsuRead) {
+    function createPeruutaCell(kutsu: KutsuRead) {
         return (
             kutsu.tila === 'AVOIN' && (
-                <Button cancel action={this.props.cancelInvitation(kutsu)}>
-                    {this.props.L['KUTSUTUT_PERUUTA_KUTSU_NAPPI']}
+                <Button cancel action={props.cancelInvitation(kutsu)}>
+                    {L['KUTSUTUT_PERUUTA_KUTSU_NAPPI']}
                 </Button>
             )
         );
     }
 
-    onTableFetch(tableState: any) {
+    function onTableFetch(tableState: { sorted: Sort[] }) {
         const newSort = tableState.sorted[0];
-        const stateSort = this.state.sorted[0];
         // Update sort state
         if (newSort) {
-            this.setState(
-                {
-                    sorted: [Object.assign({}, newSort)],
-                }, // If sort state changed fetch new data
-                () => {
-                    if (!stateSort || newSort.id !== stateSort.id || newSort.desc !== stateSort.desc) {
-                        this.props.fetchKutsus(newSort);
-                    }
-                }
-            );
+            setSorted(newSort);
+            if (!sorted || newSort.id !== sorted.id || newSort.desc !== sorted.desc) {
+                props.fetchKutsus(newSort);
+            }
         }
     }
 
-    onSubmitWithoutClear() {
-        this.props.fetchKutsus(this.state.sorted[0], true);
+    function onSubmitWithoutClear() {
+        props.fetchKutsus(sorted, true);
     }
-}
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    L: state.l10n.localisations[state.locale],
-    locale: state.locale,
-});
+    return (
+        <div className="kutsututTableWrapper oph-table">
+            <Table
+                headings={headings}
+                noDataText={L['KUTSUTUT_VIRKAILIJAT_TYHJA']}
+                data={data}
+                striped
+                resizable
+                manual={true}
+                defaultSorted={[sorted]}
+                onFetchData={onTableFetch}
+                fetchMoreSettings={{
+                    isActive: !props.allFetched && !props.isLoading,
+                    fetchMoreAction: onSubmitWithoutClear,
+                }}
+                isLoading={props.isLoading}
+                subComponent={(row) => (
+                    <KutsuDetails kutsu={props.kutsus.find((kutsu) => kutsu.id === row.original.id)} />
+                )}
+            />
+        </div>
+    );
+};
 
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    renewKutsu,
-    addGlobalNotification,
-})(KutsututTable);
+export default KutsututTable;

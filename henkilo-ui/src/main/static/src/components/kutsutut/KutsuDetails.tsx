@@ -2,15 +2,13 @@ import React, { useMemo } from 'react';
 import { useReactTable, getCoreRowModel, ColumnDef } from '@tanstack/react-table';
 
 import { toLocalizedText } from '../../localizabletext';
-import { Localisations } from '../../types/localisation.type';
 import { Locale } from '../../types/locale.type';
 import { KutsuRead as Kutsu } from '../../types/domain/kayttooikeus/Kutsu.types';
 import OphTable from '../OphTable';
+import { useLocalisations } from '../../selectors';
 
 type Props = {
     kutsu?: Kutsu;
-    L: Localisations;
-    locale: Locale;
 };
 
 export const resolveInvitationRights = (
@@ -26,7 +24,8 @@ export const resolveInvitationRights = (
           )
         : [];
 
-const KutsuDetails = ({ kutsu, L, locale }: Props) => {
+const KutsuDetails = ({ kutsu }: Props) => {
+    const { L, locale } = useLocalisations();
     const columns = useMemo<ColumnDef<{ organisaatio: string; ryhma: string }>[]>(
         () => [
             {
