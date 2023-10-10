@@ -9,50 +9,46 @@ import DelayedSearchInput from './DelayedSearchInput';
 import StaticUtils from '../common/StaticUtils';
 import Loader from '../common/icons/Loader';
 import { toLocalizedText } from '../../localizabletext';
-import {
-    HenkilohakuCriteria,
-    HenkilohakuQueryparameters,
-} from '../../types/domain/kayttooikeus/HenkilohakuCriteria.types';
+import { HenkilohakuCriteria } from '../../types/domain/kayttooikeus/HenkilohakuCriteria.types';
 import { HenkilohakuResult } from '../../types/domain/kayttooikeus/HenkilohakuResult.types';
 import { useLocalisations } from '../../selectors';
 import { OphTableWithInfiniteScroll } from '../OphTableWithInfiniteScroll';
+import { useSelector } from 'react-redux';
+import { HenkilohakuState } from '../../reducers/henkilohaku.reducer';
+import { RootState, useAppDispatch } from '../../store';
+import { clearHenkilohaku, henkilohaku, henkilohakuCount, updateFilters } from '../../actions/henkilohaku.actions';
 
-type Props = {
-    henkilohakuAction: (arg0: HenkilohakuCriteria, arg1: HenkilohakuQueryparameters) => void;
-    henkilohakuCount: (arg0: HenkilohakuCriteria) => void;
-    updateFilters: (arg0: HenkilohakuCriteria) => void;
-    henkilohakuResult: Array<HenkilohakuResult>;
-    henkilohakuResultCount: number;
-    henkiloHakuFilters: HenkilohakuCriteria;
-    henkilohakuLoading: boolean;
-    clearHenkilohaku: () => void;
-};
-
-const HenkilohakuPage = (props: Props) => {
+const HenkilohakuPage = () => {
+    const dispatch = useAppDispatch();
+    const { henkilohakuLoading, filters, result, resultCount } = useSelector<RootState, HenkilohakuState>(
+        (state) => state.henkilohakuState
+    );
     const [sorting, setSorting] = useState<SortingState>([]);
-    const [nameQuery, setNameQuery] = useState(props.henkiloHakuFilters.nameQuery);
-    const [noOrganisation, setNoOrganisation] = useState(props.henkiloHakuFilters.noOrganisation);
-    const [subOrganisation, setSubOrganisation] = useState(props.henkiloHakuFilters.subOrganisation);
-    const [passivoitu, setPassivoitu] = useState(props.henkiloHakuFilters.passivoitu);
-    const [duplikaatti, setDuplikaatti] = useState(props.henkiloHakuFilters.duplikaatti);
-    const [organisaatioOids, setOrganisaatioOids] = useState(props.henkiloHakuFilters.organisaatioOids);
-    const [kayttooikeusryhmaId, setKayttooikeusryhmaId] = useState(props.henkiloHakuFilters.kayttooikeusryhmaId);
-    const [ryhmaOid, setRyhmaOid] = useState(props.henkiloHakuFilters.ryhmaOids?.[0]);
+    const [nameQuery, setNameQuery] = useState(filters.nameQuery);
+    const [noOrganisation, setNoOrganisation] = useState(filters.noOrganisation);
+    const [subOrganisation, setSubOrganisation] = useState(filters.subOrganisation);
+    const [passivoitu, setPassivoitu] = useState(filters.passivoitu);
+    const [duplikaatti, setDuplikaatti] = useState(filters.duplikaatti);
+    const [organisaatioOids, setOrganisaatioOids] = useState(filters.organisaatioOids);
+    const [kayttooikeusryhmaId, setKayttooikeusryhmaId] = useState(filters.kayttooikeusryhmaId);
+    const [ryhmaOid, setRyhmaOid] = useState(filters.ryhmaOids?.[0]);
     const [page, setPage] = useState(0);
     const { L, locale } = useLocalisations();
 
     useEffect(() => {
         searchQuery();
-        props.updateFilters({
-            nameQuery,
-            noOrganisation,
-            subOrganisation,
-            passivoitu,
-            duplikaatti,
-            organisaatioOids,
-            kayttooikeusryhmaId,
-            ryhmaOids: [ryhmaOid],
-        });
+        dispatch<any>(
+            updateFilters({
+                nameQuery,
+                noOrganisation,
+                subOrganisation,
+                passivoitu,
+                duplikaatti,
+                organisaatioOids,
+                kayttooikeusryhmaId,
+                ryhmaOids: [ryhmaOid],
+            })
+        );
     }, [
         nameQuery,
         noOrganisation,
@@ -71,7 +67,7 @@ const HenkilohakuPage = (props: Props) => {
 
     function searchQuery(shouldNotClear?: boolean): void {
         if (!shouldNotClear) {
-            props.clearHenkilohaku();
+            dispatch<any>(clearHenkilohaku());
         }
         if (nameQuery || organisaatioOids?.length || kayttooikeusryhmaId) {
             setPage(page + 1);
@@ -104,8 +100,8 @@ const HenkilohakuPage = (props: Props) => {
                 isCountSearch: true,
             };
 
-            props.henkilohakuAction(henkilohakuCriteria, queryParams);
-            props.henkilohakuCount(henkilohakuCountCriteria);
+            dispatch<any>(henkilohaku(henkilohakuCriteria, queryParams));
+            dispatch<any>(henkilohakuCount(henkilohakuCountCriteria));
         }
     }
 
@@ -149,7 +145,7 @@ const HenkilohakuPage = (props: Props) => {
 
     const table = useReactTable({
         columns,
-        data: props.henkilohakuResult,
+        data: result,
         pageCount: 1,
         state: {
             sorting,
@@ -165,7 +161,7 @@ const HenkilohakuPage = (props: Props) => {
             <DelayedSearchInput
                 setSearchQueryAction={(s) => setNameQuery(s)}
                 defaultNameQuery={nameQuery}
-                loading={props.henkilohakuLoading}
+                loading={henkilohakuLoading}
                 minSearchValueLength={2}
             />
             <HenkilohakuFilters
@@ -194,24 +190,22 @@ const HenkilohakuPage = (props: Props) => {
             />
             <div className="oph-h3 oph-bold henkilohaku-result-header">
                 {L['HENKILOHAKU_HAKUTULOKSET']} (
-                {props.henkilohakuLoading || props.henkilohakuResultCount === 0
+                {henkilohakuLoading || resultCount === 0
                     ? L['HENKILOHAKU_EI_TULOKSIA']
-                    : `${props.henkilohakuResultCount} ${L['HENKILOHAKU_OSUMA']}`}
+                    : `${resultCount} ${L['HENKILOHAKU_OSUMA']}`}
                 )
             </div>
-            {props.henkilohakuResult.length ? (
+            {result.length ? (
                 <div className="henkilohakuTableWrapper">
                     <OphTableWithInfiniteScroll
                         table={table}
-                        isLoading={props.henkilohakuLoading}
+                        isLoading={henkilohakuLoading}
                         fetch={() => searchQuery(true)}
-                        isActive={
-                            props.henkilohakuResult.length !== props.henkilohakuResultCount && !props.henkilohakuLoading
-                        }
+                        isActive={result.length !== resultCount && !henkilohakuLoading}
                     />
                 </div>
             ) : (
-                props.henkilohakuLoading && <Loader />
+                henkilohakuLoading && <Loader />
             )}
         </div>
     );
