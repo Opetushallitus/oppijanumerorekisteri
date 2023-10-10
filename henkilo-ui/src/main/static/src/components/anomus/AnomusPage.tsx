@@ -12,6 +12,7 @@ import { OrganisaatioCache } from '../../reducers/organisaatio.reducer';
 import { OrganisaatioCriteria } from '../../types/domain/organisaatio/organisaatio.types';
 import { HenkilonNimi } from '../../types/domain/kayttooikeus/HenkilonNimi';
 import { L10n } from '../../types/localisation.type';
+import { HaettuKayttooikeusryhma } from '../../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
 
 /**
  * Haettujen käyttöoikeusryhmien haku ja myöntäminen/hylkääminen.
@@ -28,7 +29,7 @@ export type FetchHaetutKayttooikeusryhmatParameters = {
 type Props = {
     l10n: L10n;
     locale: Locale;
-    kayttooikeusAnomus: any;
+    kayttooikeusAnomus: HaettuKayttooikeusryhma[];
     organisaatioCache: OrganisaatioCache;
     clearHaetutKayttooikeusryhmat: () => void;
     fetchAllOrganisaatios: (criteria?: OrganisaatioCriteria) => void;

@@ -25,31 +25,12 @@ import {
 } from '../actions/actiontypes';
 import { Kayttooikeusryhma, MyonnettyKayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { PalveluRooli } from '../types/domain/kayttooikeus/PalveluRooli.types';
+import { HaettuKayttooikeusryhma } from '../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
 
 export type AllowedKayttooikeus = Array<MyonnettyKayttooikeusryhma>;
 
-export type KayttooikeusAnomus = {
-    id: number;
-    kayttoOikeusRyhma: {
-        id: number;
-        nimi: string;
-        tunniste: string;
-    };
-    anomus: {
-        organisaatioOid: string;
-        anottuPvm: string;
-        perustelut: string;
-        anomusTyyppi: string;
-        henkilo: {
-            oid: string;
-            etunimet: string;
-            sukunimi: string;
-        };
-    };
-};
-
 export type KayttooikeusRyhmaState = {
-    readonly kayttooikeusAnomus: Array<KayttooikeusAnomus>;
+    readonly kayttooikeusAnomus: Array<HaettuKayttooikeusryhma>;
     readonly kayttooikeusAnomusLoading: boolean;
     readonly kayttooikeus: Array<MyonnettyKayttooikeusryhma>;
     readonly kayttooikeusLoading: boolean;

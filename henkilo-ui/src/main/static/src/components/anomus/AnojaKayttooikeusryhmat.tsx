@@ -67,11 +67,7 @@ export const AnojaKayttooikeusryhmat = ({ data }: Props) => {
             />
         );
     } else if (data?.kayttooikeudet.length > 0) {
-        return (
-            <div className="anoja-kayttooikeusryhmat">
-                <OphTable table={table} isLoading={false} />
-            </div>
-        );
+        return <OphTable table={table} isLoading={false} />;
     }
     return (
         <LocalNotification

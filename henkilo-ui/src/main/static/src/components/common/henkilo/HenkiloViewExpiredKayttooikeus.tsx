@@ -192,6 +192,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
     const table = useReactTable({
         columns,
         data: kayttooikeus.kayttooikeus.filter(_filterExistingKayttooikeus),
+        pageCount: 1,
         state: {
             sorting,
             columnVisibility: {

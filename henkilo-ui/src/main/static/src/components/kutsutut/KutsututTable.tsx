@@ -160,6 +160,7 @@ const KutsututTable = ({ kutsus, isLoading, allFetched, fetchKutsus, cancelInvit
     const table = useReactTable({
         columns,
         data: kutsus ?? [],
+        pageCount: 1,
         state: {
             sorting,
         },
@@ -170,7 +171,7 @@ const KutsututTable = ({ kutsus, isLoading, allFetched, fetchKutsus, cancelInvit
     });
 
     return (
-        <div className="kutsututTableWrapper oph-table">
+        <div className="kutsututTableWrapper">
             <OphTableWithInfiniteScroll<KutsuRead>
                 table={table}
                 isLoading={isLoading}

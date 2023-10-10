@@ -6,6 +6,6 @@ export type HaettuKayttooikeusryhma = {
     id: number;
     anomus: Anomus;
     kayttoOikeusRyhma: Kayttooikeusryhma;
-    kasittelyPvm: string;
-    tyyppi: KayttoOikeudenTila;
+    kasittelyPvm: string | null;
+    tyyppi: KayttoOikeudenTila | null;
 };

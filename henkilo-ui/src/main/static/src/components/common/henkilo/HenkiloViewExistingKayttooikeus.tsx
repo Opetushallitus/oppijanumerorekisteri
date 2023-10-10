@@ -294,6 +294,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
 
     const table = useReactTable({
         columns,
+        pageCount: 1,
         data: kayttooikeus.kayttooikeus.filter(_filterExpiredKayttooikeus),
         state: {
             sorting,
@@ -319,9 +320,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                 L={L}
                 closeAction={(status, id) => dispatch(removeNotification(status, 'existingKayttooikeus', id))}
             />
-            <div>
-                <OphTable table={table} isLoading={false} />
-            </div>
+            <OphTable table={table} isLoading={false} />
         </div>
     );
 };

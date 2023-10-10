@@ -150,6 +150,7 @@ const HenkilohakuPage = (props: Props) => {
     const table = useReactTable({
         columns,
         data: props.henkilohakuResult,
+        pageCount: 1,
         state: {
             sorting,
         },
