@@ -16,8 +16,14 @@ import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.t
 import { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import type { Option } from 'react-select';
 
+export type Criteria = {
+    q?: string;
+    organisaatioOids?: string;
+    adminView?: boolean;
+};
+
 type OwnProps = {
-    onSubmit: (arg0: object) => void;
+    onSubmit: (arg0: Criteria) => void;
 };
 
 type StateProps = {

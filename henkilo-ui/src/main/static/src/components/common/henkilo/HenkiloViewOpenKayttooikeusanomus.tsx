@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import type { Moment } from 'moment';
 import DatePicker from 'react-datepicker';
 import { urls } from 'oph-urls-js';
+import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, Row, SortingState } from '@tanstack/react-table';
 
-import Table from '../table/Table';
 import StaticUtils from '../StaticUtils';
 import MyonnaButton from './buttons/MyonnaButton';
 import Button from '../button/Button';
@@ -16,10 +16,12 @@ import AnomusHylkaysPopup from '../../anomus/AnomusHylkaysPopup';
 import PropertySingleton from '../../../globals/PropertySingleton';
 import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { AnojaKayttooikeusryhmat } from '../../anomus/AnojaKayttooikeusryhmat';
-import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
+import {
+    Kayttooikeusryhma,
+    MyonnettyKayttooikeusryhma,
+} from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { localize, localizeTextGroup } from '../../../utilities/localisation.util';
 import './HenkiloViewOpenKayttooikeusanomus.css';
-import { TableCellProps } from '../../../types/react-table.types';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
@@ -32,6 +34,8 @@ import {
 } from '../../../actions/kayttooikeusryhma.actions';
 import { useLocalisations } from '../../../selectors';
 import { HaettuKayttooikeusryhma } from '../../../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
+import { OphTableWithInfiniteScroll } from '../../OphTableWithInfiniteScroll';
+import { expanderColumn } from '../../OphTable';
 
 export type KayttooikeusryhmaData = {
     voimassaPvm: string;
@@ -47,18 +51,12 @@ export type AnojaKayttooikeusryhmaData = {
 
 type OwnProps = {
     isOmattiedot: boolean;
-    isAnomusView?: boolean;
-    manualSortSettings?: {
-        manual: boolean;
-        defaultSorted: Array<any>;
-        onFetchData: (arg0: any) => void;
-    };
     fetchMoreSettings?: {
         fetchMoreAction?: () => void;
         isActive?: boolean;
     };
+    onSortingChange?: (sorting: SortingState) => void;
     tableLoading?: boolean;
-    striped?: boolean;
     piilotaOtsikko?: boolean;
     kayttooikeus: KayttooikeusRyhmaState;
     updateHaettuKayttooikeusryhmaAlt?: (
@@ -71,149 +69,46 @@ type OwnProps = {
     ) => void;
 };
 
-type Props = OwnProps;
-
-const _getKayttooikeusAnomukset = (props: Props): Array<HaettuKayttooikeusryhma> => {
-    return props.kayttooikeus?.kayttooikeusAnomus ?? [];
-};
-
-const HenkiloViewOpenKayttooikeusanomus = (props: Props) => {
+const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
+    const [sorting, setSorting] = useState<SortingState>([{ id: 'ANOTTU_PVM', desc: true }]);
     const dispatch = useAppDispatch();
     const { L, locale, l10n } = useLocalisations();
     const organisaatioCache = useSelector<RootState, OrganisaatioCache>((state) => state.organisaatio.cached);
     const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
-    const [dates, setDates] = useState<{ alkupvm: Moment; loppupvm: Moment }[]>(
-        _getKayttooikeusAnomukset(props).map(() => ({
-            alkupvm: moment(),
-            loppupvm: moment().add(1, 'years'),
-        }))
+    const [dates, setDates] = useState<{ [anomusId: number]: { alkupvm: Moment; loppupvm: Moment } }>(
+        props.kayttooikeus?.kayttooikeusAnomus.reduce(
+            (acc, kayttooikeus) => ({
+                ...acc,
+                [String(kayttooikeus.id)]: {
+                    alkupvm: moment(),
+                    loppupvm: moment().add(1, 'years'),
+                },
+            }),
+            {}
+        )
     );
     const [kayttooikeusRyhmatByAnoja, setKayttooikeusRyhmatByAnoja] = useState<AnojaKayttooikeusryhmaData[]>([]);
     const [showHylkaysPopup, setShowHylkaysPopup] = useState(false);
-    const [disabledHylkaaButtons, setDisabledHylkaaButtons] = useState<{
-        [key: number]: boolean;
-    }>({});
-    const [disabledMyonnettyButtons, setDisabledMyonnettyButtons] = useState<{
-        [key: number]: boolean;
-    }>({});
+    const [disabledHylkaaButtons, setDisabledHylkaaButtons] = useState<{ [anomusId: number]: boolean }>({});
+    const [disabledMyonnettyButtons, setDisabledMyonnettyButtons] = useState<{ [anomusId: number]: boolean }>({});
     const [accessRight, setAccessRight] = useState<AccessRight>();
-
-    const headingList = [
-        { key: 'ANOTTU_PVM', Cell: (cellProps) => cellProps.value?.format() },
-        {
-            key: 'HENKILO_KAYTTOOIKEUS_NIMI',
-            hide: !props.isAnomusView,
-            notSortable: props.isAnomusView,
-        },
-        {
-            key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO',
-            minWidth: 220,
-            notSortable: props.isAnomusView,
-        },
-        {
-            key: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA',
-            minWidth: 220,
-            notSortable: props.isAnomusView,
-            Cell: (cellProps: TableCellProps) => (
-                <AccessRightDetaisLink
-                    cellProps={cellProps}
-                    clickHandler={(kayttooikeusRyhma) => showAccessRightGroupDetails(kayttooikeusRyhma)}
-                />
-            ),
-        },
-        {
-            key: 'HENKILO_KAYTTOOIKEUSANOMUS_PERUSTELU',
-            minWidth: 70,
-            notSortable: true,
-        },
-        {
-            key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM',
-            notSortable: props.isAnomusView,
-            Cell: (cellProps) => cellProps.value?.format(),
-        },
-        {
-            key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM',
-            localizationKey: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM',
-            hide: !props.isOmattiedot,
-            notSortable: props.isAnomusView,
-            Cell: (cellProps) => cellProps.value?.format(),
-        },
-        {
-            key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM_MYONTO',
-            localizationKey: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM',
-            hide: props.isOmattiedot,
-            notSortable: true,
-        },
-        {
-            key: 'HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI',
-            minWidth: 50,
-            notSortable: props.isAnomusView,
-        },
-        { key: 'EMPTY_PLACEHOLDER', minWidth: 165, notSortable: true },
-    ];
-
-    const tableHeadings = headingList.map((heading) => ({
-        ...heading,
-        label: L[heading.localizationKey ? heading.localizationKey : heading.key],
-    }));
 
     useEffect(() => {
         setDates(
-            _getKayttooikeusAnomukset(props).map(() => ({
-                alkupvm: moment(),
-                loppupvm: moment().add(1, 'years'),
-            }))
+            props.kayttooikeus?.kayttooikeusAnomus.reduce(
+                (acc, kayttooikeus) => ({
+                    ...acc,
+                    [String(kayttooikeus.id)]: {
+                        alkupvm: moment(),
+                        loppupvm: moment().add(1, 'years'),
+                    },
+                }),
+                {}
+            )
         );
     }, [props]);
 
-    function loppupvmAction(value: Date, idx: number) {
-        const newDates = [...dates];
-        newDates[idx].loppupvm = moment(value);
-        setDates(newDates);
-    }
-
-    const _rows = _getKayttooikeusAnomukset(props).map(
-        (haettuKayttooikeusRyhma: HaettuKayttooikeusryhma, idx: number) => ({
-            kayttooikeusRyhma: haettuKayttooikeusRyhma.kayttoOikeusRyhma,
-            [headingList[0].key]: moment(haettuKayttooikeusRyhma.anomus.anottuPvm),
-            [headingList[1].key]:
-                haettuKayttooikeusRyhma.anomus.henkilo.etunimet + ' ' + haettuKayttooikeusRyhma.anomus.henkilo.sukunimi,
-            [headingList[2].key]:
-                toLocalizedText(locale, organisaatioCache[haettuKayttooikeusRyhma.anomus.organisaatioOid].nimi) +
-                ' ' +
-                StaticUtils.getOrganisaatiotyypitFlat(
-                    organisaatioCache[haettuKayttooikeusRyhma.anomus.organisaatioOid].tyypit,
-                    L
-                ),
-            [headingList[3].key]: toLocalizedText(
-                locale,
-                haettuKayttooikeusRyhma.kayttoOikeusRyhma.nimi,
-                haettuKayttooikeusRyhma.kayttoOikeusRyhma.tunniste
-            ),
-            [headingList[4].key]: createSelitePopupButton(haettuKayttooikeusRyhma.anomus.perustelut),
-            [headingList[5].key]: dates[idx]?.alkupvm,
-            [headingList[6].key]: dates[idx]?.loppupvm,
-            [headingList[7].key]: (
-                <DatePicker
-                    className="oph-input"
-                    onChange={(value) => loppupvmAction(value, idx)}
-                    selected={dates[idx]?.loppupvm.toDate()}
-                    showYearDropdown
-                    showWeekNumbers
-                    disabled={hasNoPermission(
-                        haettuKayttooikeusRyhma.anomus.organisaatioOid,
-                        haettuKayttooikeusRyhma.kayttoOikeusRyhma.id
-                    )}
-                    filterDate={(date) => moment(date).isBefore(moment().add(1, 'years'))}
-                    dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
-                />
-            ),
-            [headingList[8].key]: L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],
-            [headingList[9].key]: props.isOmattiedot
-                ? anomusHandlingButtonsForOmattiedot(haettuKayttooikeusRyhma)
-                : anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma, idx),
-        })
-    );
+    useEffect(() => (props.onSortingChange && sorting.length ? props.onSortingChange(sorting) : undefined), [sorting]);
 
     function createSelitePopupButton(perustelut: string) {
         return (
@@ -252,11 +147,10 @@ const HenkiloViewOpenKayttooikeusanomus = (props: Props) => {
     function localUpdateHaettuKayttooikeusryhma(
         id: number,
         tila: string,
-        idx: number,
         henkilo: HenkilonNimi,
         hylkaysperuste?: string
     ) {
-        const date = dates[idx];
+        const date = dates[id];
         const alkupvm: string = date?.alkupvm?.format(PropertySingleton.state.PVM_DBFORMAATTI);
         const loppupvm: string = date?.loppupvm?.format(PropertySingleton.state.PVM_DBFORMAATTI);
         if (props.updateHaettuKayttooikeusryhmaAlt) {
@@ -273,7 +167,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: Props) => {
         setShowHylkaysPopup(false);
     }
 
-    function anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma: HaettuKayttooikeusryhma, idx: number) {
+    function anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma: HaettuKayttooikeusryhma) {
         const noPermission = hasNoPermission(
             haettuKayttooikeusRyhma.anomus.organisaatioOid,
             haettuKayttooikeusRyhma.kayttoOikeusRyhma.id
@@ -288,7 +182,6 @@ const HenkiloViewOpenKayttooikeusanomus = (props: Props) => {
                             localUpdateHaettuKayttooikeusryhma(
                                 haettuKayttooikeusRyhma.id,
                                 KAYTTOOIKEUDENTILA.MYONNETTY,
-                                idx,
                                 henkilo
                             )
                         }
@@ -316,7 +209,6 @@ const HenkiloViewOpenKayttooikeusanomus = (props: Props) => {
                             <AnomusHylkaysPopup
                                 L={L}
                                 kayttooikeusryhmaId={haettuKayttooikeusRyhma.id}
-                                index={idx}
                                 henkilo={henkilo}
                                 action={localUpdateHaettuKayttooikeusryhma}
                             ></AnomusHylkaysPopup>
@@ -346,8 +238,9 @@ const HenkiloViewOpenKayttooikeusanomus = (props: Props) => {
         );
     }
 
-    function fetchKayttooikeusryhmatByAnoja(row: any) {
-        const anojaOid = props.kayttooikeus.kayttooikeusAnomus[row.index].anomus.henkilo.oid;
+    function fetchKayttooikeusryhmatByAnoja({ row }: { row: Row<HaettuKayttooikeusryhma> }) {
+        const anojaOid = props.kayttooikeus.kayttooikeusAnomus.find((a) => a.id === row.original.id)?.anomus.henkilo
+            .oid;
         if (!_hasAnojaKayttooikeusData(anojaOid)) {
             _parseAnojaKayttooikeusryhmat(anojaOid);
         }
@@ -427,7 +320,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: Props) => {
         );
     };
 
-    function showAccessRightGroupDetails(kayttooikeusRyhma) {
+    function showAccessRightGroupDetails(kayttooikeusRyhma: Kayttooikeusryhma) {
         const accessRight: AccessRight = {
             name: localizeTextGroup(kayttooikeusRyhma.nimi.texts, locale),
             description: localizeTextGroup(
@@ -439,6 +332,131 @@ const HenkiloViewOpenKayttooikeusanomus = (props: Props) => {
         setAccessRight(accessRight);
     }
 
+    const columns = useMemo<ColumnDef<HaettuKayttooikeusryhma, HaettuKayttooikeusryhma>[]>(
+        () => [
+            expanderColumn,
+            {
+                id: 'ANOTTU_PVM',
+                header: () => L['ANOTTU_PVM'],
+                accessorFn: (row) => moment(row.anomus.anottuPvm).format(),
+                sortingFn: (a, b) => a.original.anomus.anottuPvm.localeCompare(b.original.anomus.anottuPvm),
+            },
+            {
+                id: 'HENKILO_KAYTTOOIKEUS_NIMI',
+                header: () => L['HENKILO_KAYTTOOIKEUS_NIMI'],
+                accessorFn: (row) => row.anomus.henkilo.etunimet + ' ' + row.anomus.henkilo.sukunimi,
+                enableSorting: false,
+            },
+            {
+                id: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO',
+                header: () => L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO'],
+                accessorFn: (row) =>
+                    toLocalizedText(locale, organisaatioCache[row.anomus.organisaatioOid]?.nimi) +
+                    ' ' +
+                    StaticUtils.getOrganisaatiotyypitFlat(organisaatioCache[row.anomus.organisaatioOid]?.tyypit, L),
+                enableSorting: false,
+            },
+            {
+                id: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA',
+                header: () => L['HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA'],
+                accessorFn: (row) => row,
+                cell: ({ getValue }) => (
+                    <AccessRightDetaisLink<Kayttooikeusryhma>
+                        cellProps={{
+                            value: getValue().kayttoOikeusRyhma.nimi.texts.filter(
+                                (text) => text.lang === locale.toUpperCase()
+                            )[0].text,
+                            original: { kayttooikeusRyhma: getValue().kayttoOikeusRyhma },
+                        }}
+                        clickHandler={(kayttooikeusRyhma) => showAccessRightGroupDetails(kayttooikeusRyhma)}
+                    />
+                ),
+                enableSorting: false,
+            },
+            {
+                id: 'HENKILO_KAYTTOOIKEUSANOMUS_PERUSTELU',
+                header: () => L['HENKILO_KAYTTOOIKEUSANOMUS_PERUSTELU'],
+                key: 'HENKILO_KAYTTOOIKEUSANOMUS_PERUSTELU',
+                accessorFn: (row) => row,
+                cell: ({ getValue }) => createSelitePopupButton(getValue().anomus.perustelut),
+                enableSorting: false,
+            },
+            {
+                id: 'HENKILO_KAYTTOOIKEUS_ALKUPVM',
+                header: () => L['HENKILO_KAYTTOOIKEUS_ALKUPVM'],
+                accessorFn: (row) => row,
+                cell: ({ getValue }) => dates[getValue().id]?.alkupvm.format() ?? '',
+                enableSorting: false,
+            },
+            {
+                id: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM',
+                header: () => L['HENKILO_KAYTTOOIKEUS_LOPPUPVM'],
+                accessorFn: (row) => row,
+                cell: ({ getValue }) => dates[getValue().id]?.loppupvm.format() ?? '',
+                enableSorting: false,
+            },
+            {
+                id: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM_MYONTO',
+                header: () => L['HENKILO_KAYTTOOIKEUS_LOPPUPVM'],
+                accessorFn: (row) => row,
+                enableSorting: false,
+                cell: ({ getValue }) => (
+                    <DatePicker
+                        className="oph-input"
+                        onChange={(value) =>
+                            setDates({
+                                ...dates,
+                                [getValue().id]: { ...dates[getValue().id], loppupvm: moment(value) },
+                            })
+                        }
+                        selected={dates[getValue().id]?.loppupvm.toDate()}
+                        showYearDropdown
+                        showWeekNumbers
+                        disabled={hasNoPermission(getValue().anomus.organisaatioOid, getValue().kayttoOikeusRyhma.id)}
+                        filterDate={(date) => moment(date).isBefore(moment().add(1, 'years'))}
+                        dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
+                    />
+                ),
+            },
+            {
+                id: 'HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI',
+                header: () => L['HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI'],
+                accessorFn: (row) => L[row.anomus.anomusTyyppi],
+                enableSorting: false,
+            },
+            {
+                id: 'HENKILO_KAYTTOOIKEUSANOMUS_NAPIT',
+                header: () => '',
+                accessorFn: (row) => row,
+                enableSorting: false,
+                cell: ({ getValue }) =>
+                    props.isOmattiedot
+                        ? anomusHandlingButtonsForOmattiedot(getValue())
+                        : anomusHandlingButtonsForHenkilo(getValue()),
+            },
+        ],
+        [props.kayttooikeus?.kayttooikeusAnomus, dates]
+    );
+
+    const table = useReactTable({
+        columns,
+        pageCount: 1,
+        data: props.kayttooikeus?.kayttooikeusAnomus ?? [],
+        state: {
+            sorting,
+            columnVisibility: {
+                expander: !props.isOmattiedot,
+                HENKILO_KAYTTOOIKEUS_NIMI: !props.isOmattiedot,
+                HENKILO_KAYTTOOIKEUS_LOPPUPVM: props.isOmattiedot,
+                HENKILO_KAYTTOOIKEUS_LOPPUPVM_MYONTO: !props.isOmattiedot,
+            },
+        },
+        onSortingChange: setSorting,
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getRowCanExpand: () => true,
+    });
+
     return (
         <div className="henkiloViewUserContentWrapper">
             {accessRight && <AccessRightDetails {...accessRight} />}
@@ -448,16 +466,12 @@ const HenkiloViewOpenKayttooikeusanomus = (props: Props) => {
                         <p className="oph-h2 oph-bold">{L['HENKILO_AVOIMET_KAYTTOOIKEUDET_OTSIKKO']}</p>
                     </div>
                 )}
-                <Table
-                    getTdProps={() => ({ style: { textOverflow: 'unset' } })}
-                    headings={tableHeadings}
-                    data={_rows}
-                    noDataText={L['HENKILO_KAYTTOOIKEUS_AVOIN_TYHJA']}
-                    {...props.manualSortSettings}
-                    fetchMoreSettings={props.fetchMoreSettings}
+                <OphTableWithInfiniteScroll
+                    table={table}
                     isLoading={props.tableLoading}
-                    striped={props.striped}
-                    subComponent={props.isAnomusView ? fetchKayttooikeusryhmatByAnoja : undefined}
+                    fetch={props.fetchMoreSettings?.fetchMoreAction}
+                    isActive={props.fetchMoreSettings?.isActive}
+                    renderSubComponent={!props.isOmattiedot ? fetchKayttooikeusryhmatByAnoja : undefined}
                 />
             </div>
         </div>

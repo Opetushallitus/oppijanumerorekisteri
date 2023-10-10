@@ -1,8 +1,5 @@
-import * as React from 'react';
-import { MyonnettyKayttooikeusryhma } from './domain/kayttooikeus/kayttooikeusryhma.types';
-
 export type TableHeading = {
-    Cell?: React.ReactNode | string | ((arg0: TableCellProps) => React.ReactNode | string);
+    Cell?: any;
     key: string;
     localizationKey?: string;
     label?: string;
@@ -13,9 +10,9 @@ export type TableHeading = {
     hide?: boolean;
 };
 
-export type TableCellProps = {
+export type TableCellProps<T> = {
     value: any;
     original?: {
-        kayttooikeusRyhma?: MyonnettyKayttooikeusryhma;
+        kayttooikeusRyhma?: T;
     };
 };

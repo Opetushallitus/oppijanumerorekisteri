@@ -221,7 +221,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                 header: () => L['HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS'],
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => (
-                    <AccessRightDetaisLink
+                    <AccessRightDetaisLink<MyonnettyKayttooikeusryhma>
                         cellProps={{
                             value: getValue().ryhmaNames?.texts.filter((text) => text.lang === locale.toUpperCase())[0]
                                 .text,

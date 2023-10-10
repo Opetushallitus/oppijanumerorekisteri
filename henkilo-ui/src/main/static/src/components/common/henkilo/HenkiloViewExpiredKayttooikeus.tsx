@@ -145,7 +145,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
                 header: () => L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO'],
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => (
-                    <AccessRightDetaisLink
+                    <AccessRightDetaisLink<MyonnettyKayttooikeusryhma>
                         cellProps={{
                             value: getValue().ryhmaNames?.texts.filter((text) => text.lang === locale.toUpperCase())[0]
                                 .text,

@@ -5,9 +5,8 @@ import { Localisations } from '../../types/localisation.type';
 
 type Props = {
     L: Localisations;
-    action: (arg0: number, arg1: string, arg2: number, arg3: HenkilonNimi, arg4: string) => void;
+    action: (arg0: number, arg1: string, arg3: HenkilonNimi, arg4: string) => void;
     kayttooikeusryhmaId: number;
-    index: number;
     henkilo: HenkilonNimi;
 };
 
@@ -42,7 +41,6 @@ export default class AnomusHylkaysPopup extends React.Component<Props, State> {
                         this.props.action(
                             this.props.kayttooikeusryhmaId,
                             KAYTTOOIKEUDENTILA.HYLATTY,
-                            this.props.index,
                             this.props.henkilo,
                             this.state.hylkaysperuste
                         );

@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../oph-table.css';
 import Loader from '../common/icons/Loader';
-import HaetutKayttooikeusRyhmatHakuForm from './HaetutKayttooikeusRyhmatHakuForm';
+import HaetutKayttooikeusRyhmatHakuForm, { Criteria } from './HaetutKayttooikeusRyhmatHakuForm';
 import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
 import { Locale } from '../../types/locale.type';
 import { GlobalNotificationConfig } from '../../types/notification.types';
@@ -24,6 +24,7 @@ export type FetchHaetutKayttooikeusryhmatParameters = {
     adminView: boolean;
     anomuksenTilat: Array<string>;
     kayttoOikeudenTilas: Array<string>;
+    offset?: number;
 };
 
 type Props = {
@@ -53,8 +54,6 @@ type State = {
     sorted: Array<any>;
     allFetched: boolean;
     page: number;
-    kayttooikeus: any;
-    anomusModifiedHenkilo: any;
 };
 
 class AnomusPage extends React.Component<Props, State> {
@@ -74,8 +73,6 @@ class AnomusPage extends React.Component<Props, State> {
         sorted: [{ id: 'ANOTTU_PVM', desc: true }],
         allFetched: false,
         page: 0,
-        kayttooikeus: {},
-        anomusModifiedHenkilo: undefined,
     };
 
     componentDidMount() {
@@ -113,19 +110,13 @@ class AnomusPage extends React.Component<Props, State> {
                                 grantableKayttooikeusLoading: true,
                             }}
                             updateHaettuKayttooikeusryhmaAlt={this.updateHaettuKayttooikeusryhma.bind(this)}
-                            isAnomusView={true}
-                            manualSortSettings={{
-                                manual: true,
-                                defaultSorted: this.state.sorted,
-                                onFetchData: this.onTableFetch.bind(this),
-                            }}
                             fetchMoreSettings={{
                                 isActive: !this.state.allFetched && !this.props.haetutKayttooikeusryhmatLoading,
                                 fetchMoreAction: this.onSubmitWithoutClear.bind(this),
                             }}
+                            onSortingChange={this.onSortingChange.bind(this)}
                             tableLoading={this.props.haetutKayttooikeusryhmatLoading}
                             piilotaOtsikko={true}
-                            striped
                         />
                     </div>
                 )}
@@ -133,29 +124,15 @@ class AnomusPage extends React.Component<Props, State> {
         );
     }
 
-    onTableFetch(tableState: any) {
-        const sort = tableState.sorted[0];
-        const stateSort = this.state.sorted[0];
-        // Update sort state
-        if (sort) {
-            this.setState(
-                {
-                    sorted: [Object.assign({}, sort)],
-                }, // If sort state changed fetch new data
-                () => {
-                    if (!stateSort || sort.id !== stateSort.id || sort.desc !== stateSort.desc) {
-                        this.onSubmit();
-                    }
-                }
-            );
-        }
+    onSortingChange(sorting: [{ id: string; desc: boolean }]) {
+        this.setState({ sorted: [sorting[0]] }, () => this.onSubmit());
     }
 
-    onSubmitWithoutClear(criteria: any) {
+    onSubmitWithoutClear(criteria?: Criteria) {
         this.onSubmit(criteria, true);
     }
 
-    onSubmit(criteria?: any, shouldNotClear?: boolean) {
+    onSubmit(criteria?: Criteria, shouldNotClear?: boolean) {
         if (!shouldNotClear) {
             this.props.clearHaetutKayttooikeusryhmat();
         }
@@ -192,7 +169,6 @@ class AnomusPage extends React.Component<Props, State> {
                 loppupvm,
                 hylkaysperuste
             );
-            this.setState({ anomusModifiedHenkilo: henkilo });
             const notificationMessageKey =
                 kayttoOikeudenTila === KAYTTOOIKEUDENTILA.HYLATTY
                     ? 'HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'

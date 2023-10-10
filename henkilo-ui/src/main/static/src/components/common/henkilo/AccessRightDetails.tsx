@@ -2,7 +2,6 @@ import React from 'react';
 import OphModal from '../modal/OphModal';
 import './AccessRightDetails.css';
 import type { TableCellProps } from '../../../types/react-table.types';
-import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 
 export type AccessRight = {
     name: string;
@@ -10,12 +9,12 @@ export type AccessRight = {
     onClose: () => void;
 };
 
-export const AccessRightDetaisLink = ({
+export const AccessRightDetaisLink = <T,>({
     cellProps,
     clickHandler,
 }: {
-    cellProps: TableCellProps;
-    clickHandler: (kayttooikeusRyhma: MyonnettyKayttooikeusryhma) => void;
+    cellProps: TableCellProps<T>;
+    clickHandler: (kayttooikeusRyhma: T) => void;
 }) => (
     <button
         className="oph-button oph-button-ghost"
