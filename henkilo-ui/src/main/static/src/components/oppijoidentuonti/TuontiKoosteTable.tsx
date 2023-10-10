@@ -86,6 +86,12 @@ const TuontiKoosteTable = () => {
                 cell: ({ getValue }) => (getValue().inProgress ? null : <i className="fa fa-check" />),
                 id: 'inProgress',
             },
+            {
+                header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_API'] ?? '',
+                accessorFn: (tuonti) => tuonti.api ?? L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_EI_APIA'],
+                enableSorting: false,
+                id: 'api',
+            },
         ],
         [data]
     );

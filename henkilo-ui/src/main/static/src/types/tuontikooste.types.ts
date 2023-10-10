@@ -37,6 +37,7 @@ export type TuontiKoosteRivi = {
     total: number;
     inProgress: number;
     conflicts: number;
+    api: 'OPPIJA' | 'YLEISTUNNISTE' | null;
 };
 
 export type TuontiKoosteCriteria = {
