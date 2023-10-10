@@ -362,12 +362,12 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => (
                     <AccessRightDetaisLink<Kayttooikeusryhma>
-                        cellProps={{
-                            value: getValue().kayttoOikeusRyhma.nimi.texts.filter(
+                        nimi={
+                            getValue().kayttoOikeusRyhma.nimi.texts.filter(
                                 (text) => text.lang === locale.toUpperCase()
-                            )[0].text,
-                            original: { kayttooikeusRyhma: getValue().kayttoOikeusRyhma },
-                        }}
+                            )[0].text
+                        }
+                        kayttooikeusRyhma={getValue().kayttoOikeusRyhma}
                         clickHandler={(kayttooikeusRyhma) => showAccessRightGroupDetails(kayttooikeusRyhma)}
                     />
                 ),

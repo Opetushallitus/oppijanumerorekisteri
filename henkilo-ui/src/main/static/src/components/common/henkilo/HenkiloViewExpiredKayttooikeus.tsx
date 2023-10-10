@@ -146,11 +146,8 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => (
                     <AccessRightDetaisLink<MyonnettyKayttooikeusryhma>
-                        cellProps={{
-                            value: getValue().ryhmaNames?.texts.filter((text) => text.lang === locale.toUpperCase())[0]
-                                .text,
-                            original: { kayttooikeusRyhma: getValue() },
-                        }}
+                        nimi={getValue().ryhmaNames?.texts.filter((text) => text.lang === locale.toUpperCase())[0].text}
+                        kayttooikeusRyhma={getValue()}
                         clickHandler={(kayttooikeusRyhma) => showAccessRightGroupDetails(kayttooikeusRyhma)}
                     />
                 ),
