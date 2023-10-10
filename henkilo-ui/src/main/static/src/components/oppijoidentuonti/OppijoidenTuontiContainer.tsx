@@ -8,19 +8,21 @@ import TuontiKoosteTable from './TuontiKoosteTable';
 import { useLocalisations } from '../../selectors';
 import { useGetOppijoidenTuontiListausQuery } from '../../api/oppijanumerorekisteri';
 
+export type SortKey = 'CREATED' | 'NAME' | 'MODIFIED';
+export type SortDirection = 'DESC' | 'ASC';
 export type OppijoidenTuontiCriteria = {
     page: string;
     count: string;
-    sortDirection: string;
-    sortKey: string;
+    sortDirection: 'DESC' | 'ASC';
+    sortKey: SortKey;
     nimiHaku?: string;
 };
 
 const defaultCriteria = {
     page: '1',
     count: '20',
-    sortDirection: 'DESC',
-    sortKey: 'CREATED',
+    sortDirection: 'DESC' as const,
+    sortKey: 'CREATED' as const,
 };
 
 const OppijoidenTuontiContainer = () => {
@@ -29,7 +31,7 @@ const OppijoidenTuontiContainer = () => {
     const [tuontikooste, setTuontikooste] = useState(false);
     const { data, isFetching } = useGetOppijoidenTuontiListausQuery(criteria);
 
-    const onSortingChange = (sortKey: string, sortDirection: string) => {
+    const onSortingChange = (sortKey: SortKey, sortDirection: SortDirection) => {
         setCriteria({ ...criteria, sortKey, sortDirection });
     };
 

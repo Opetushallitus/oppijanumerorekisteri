@@ -6,9 +6,6 @@ import moment from 'moment';
 import { TuontiKoosteRivi, TuontiKoosteCriteria } from '../../types/tuontikooste.types';
 import TextButton from '../common/button/TextButton';
 import TuontiDetails from './TuontiDetails';
-import SortIconNone from '../common/icons/SortIconNone';
-import SortAscIcon from '../common/icons/SortAscIcon';
-import SortDescIcon from '../common/icons/SortDescIcon';
 import { hasAnyPalveluRooli } from '../../utilities/palvelurooli.util';
 import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { useLocalisations } from '../../selectors';
@@ -34,37 +31,15 @@ const TuontiKoosteTable = () => {
     const { L } = useLocalisations();
     const { data, isFetching } = useGetTuontikoosteQuery({ L, criteria: debouncedCriteria });
 
-    const renderSortIcon = (sort: TuontiKoosteCriteria['sort']) =>
-        sort === 'ASC' ? <SortAscIcon /> : <SortDescIcon />;
-
     const canViewDetails = hasAnyPalveluRooli(omattiedot.organisaatiot, [
         'OPPIJANUMEROREKISTERI_TUONTIDATA_READ',
         'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
     ]);
 
-    const TableHeader: React.FC<{ field: TuontiKoosteCriteria['field']; translationKey: string }> = ({
-        field,
-        translationKey,
-    }) => (
-        <button
-            style={{ display: 'block' }}
-            onClick={() =>
-                setCriteria({
-                    ...criteria,
-                    field,
-                    sort: criteria.field === field && criteria.sort === 'ASC' ? 'DESC' : 'ASC',
-                })
-            }
-            className="reset-button-styles oph-bold sortable-header"
-        >
-            {L[translationKey]} {criteria.field === field ? renderSortIcon(criteria.sort) : <SortIconNone />}
-        </button>
-    );
-
     const columns = useMemo<ColumnDef<TuontiKoosteRivi, TuontiKoosteRivi>[]>(
         () => [
             {
-                header: () => <TableHeader field="id" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ID" />,
+                header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ID'],
                 accessorFn: (tuonti) => tuonti,
                 cell: ({ getValue }) =>
                     getValue()?.conflicts && canViewDetails ? (
@@ -75,46 +50,38 @@ const TuontiKoosteTable = () => {
                 id: 'id',
             },
             {
-                header: () => (
-                    <TableHeader field="timestamp" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_AIKALEIMA" />
-                ),
+                header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_AIKALEIMA'],
                 accessorFn: (tuonti) => moment(tuonti.timestamp).format('l LT'),
                 id: 'timestamp',
             },
             {
-                header: () => (
-                    <TableHeader field="author" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KASITTELIJA" />
-                ),
+                header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KASITTELIJA'],
                 accessorFn: (tuonti) => tuonti,
                 cell: ({ getValue }) => <Link to={`virkailija/${getValue()?.oid}`}>{getValue()?.author}</Link>,
                 id: 'author',
             },
             {
-                header: () => <TableHeader field="total" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_TOTAL" />,
+                header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_TOTAL'],
                 accessorFn: (tuonti) => tuonti.total,
                 id: 'total',
             },
             {
-                header: () => (
-                    <TableHeader field="successful" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ONNISTUNEET" />
-                ),
+                header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ONNISTUNEET'],
                 accessorFn: (tuonti) => tuonti.successful,
                 id: 'successful',
             },
             {
-                header: () => <TableHeader field="failures" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_VIRHEET" />,
+                header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_VIRHEET'],
                 accessorFn: (tuonti) => tuonti.failures,
                 id: 'failures',
             },
             {
-                header: () => (
-                    <TableHeader field="conflicts" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KONFLIKTIT" />
-                ),
+                header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KONFLIKTIT'],
                 accessorFn: (tuonti) => tuonti.conflicts,
                 id: 'conflicts',
             },
             {
-                header: () => <TableHeader field="inProgress" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_STATUS" />,
+                header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_STATUS'],
                 accessorFn: (tuonti) => tuonti,
                 cell: ({ getValue }) => (getValue().inProgress ? null : <i className="fa fa-check" />),
                 id: 'inProgress',
@@ -136,6 +103,7 @@ const TuontiKoosteTable = () => {
         pageCount: data?.totalPages ?? 0,
         state: {
             pagination,
+            sorting: [{ id: criteria.field, desc: criteria.sort === 'DESC' }],
         },
         onPaginationChange: (updater) => {
             if (typeof updater === 'function') {
@@ -150,8 +118,19 @@ const TuontiKoosteTable = () => {
                 });
             }
         },
+        onSortingChange: (updater) => {
+            if (typeof updater === 'function') {
+                const nextState = updater([{ id: criteria.field, desc: criteria.sort === 'DESC' }]);
+                setCriteria({
+                    ...criteria,
+                    field: nextState[0].id as TuontiKoosteCriteria['field'],
+                    sort: nextState[0].desc ? 'DESC' : 'ASC',
+                });
+            }
+        },
         getCoreRowModel: getCoreRowModel(),
         manualPagination: true,
+        manualSorting: true,
         columns,
         columnResizeMode: 'onChange',
     });
