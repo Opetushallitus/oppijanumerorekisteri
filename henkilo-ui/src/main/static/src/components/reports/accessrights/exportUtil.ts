@@ -2,8 +2,8 @@ import { unparse } from 'papaparse';
 import moment from 'moment';
 
 import PropertySingleton from '../../../globals/PropertySingleton';
-import { AccessRightsReportRow } from '../../../reducers/report.reducer';
 import { Localisations } from '../../../types/localisation.type';
+import { AccessRightsReportRow } from '../../../api/kayttooikeus';
 
 const BOM = '\ufeff';
 const DELIMITER = ';';

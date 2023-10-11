@@ -9,8 +9,6 @@ import { useLocalisations } from '../../selectors';
 import OphTable from '../OphTable';
 import { SortDirection, SortKey } from './OppijoidenTuontiContainer';
 
-import './OppijoidenTuontiListaus.css';
-
 type Props = {
     data: Page<OppijaList>;
     onPageChange: (pageNumber: number, pageSize: number) => void;

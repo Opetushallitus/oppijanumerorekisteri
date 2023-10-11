@@ -3,11 +3,11 @@ import { Link } from 'react-router';
 import moment from 'moment';
 import { useReactTable, getCoreRowModel, getPaginationRowModel, ColumnDef } from '@tanstack/react-table';
 
-import type { AccessRightsReportRow } from '../../../reducers/report.reducer';
 import PropertySingleton from '../../../globals/PropertySingleton';
 import './AccessRightsReportData.css';
 import { useLocalisations } from '../../../selectors';
 import OphTable from '../../OphTable';
+import { AccessRightsReportRow } from '../../../api/kayttooikeus';
 
 type Props = {
     report: AccessRightsReportRow[];

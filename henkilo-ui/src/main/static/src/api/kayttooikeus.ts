@@ -21,6 +21,20 @@ type MfaEnableRequest = string;
 type MfaDisableRequest = void;
 type MfaPostResponse = boolean;
 
+export type AccessRightsReportRow = {
+    id: number;
+    personName: string;
+    personOid: string;
+    organisationName: string;
+    organisationOid: string;
+    accessRightName: string;
+    accessRightId: number;
+    startDate: string;
+    endDate: string;
+    modified: string;
+    modifiedBy: string;
+};
+
 export const kayttooikeusApi = createApi({
     reducerPath: 'kayttooikeusApi',
     baseQuery: fetchBaseQuery({
@@ -28,7 +42,7 @@ export const kayttooikeusApi = createApi({
         headers: { ...getCommonOptions().headers, 'Content-Type': 'application/json; charset=utf-8' },
         baseUrl: '/kayttooikeus-service/',
     }),
-    tagTypes: ['omattiedot', 'organisaatiot', 'kutsuByToken'],
+    tagTypes: ['omattiedot', 'organisaatiot', 'kutsuByToken', 'accessRightReport'],
     endpoints: (builder) => ({
         getOmattiedot: builder.query<Omattiedot, void>({
             query: () => 'henkilo/current/omattiedot',
@@ -85,6 +99,10 @@ export const kayttooikeusApi = createApi({
             },
             providesTags: ['kutsuByToken'],
         }),
+        getAccessRightReport: builder.query<AccessRightsReportRow[], string>({
+            query: (oid) => `reports/accessrights/${oid}`,
+            providesTags: ['accessRightReport'],
+        }),
     }),
 });
 
@@ -95,4 +113,5 @@ export const {
     usePostMfaEnableMutation,
     usePostMfaDisableMutation,
     useGetKutsuByTokenQuery,
+    useGetAccessRightReportQuery,
 } = kayttooikeusApi;

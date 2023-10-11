@@ -22,7 +22,6 @@ import { palvelutState } from './palvelut.reducer';
 import { kayttooikeusState } from './kayttooikeus.reducer';
 import { notificationList } from './notification.reducer';
 import { linkitykset } from './henkiloLinkitys.reducer';
-import { reportReducer } from './report.reducer';
 import existinceCheckReducer from './existence.reducer';
 import createPersonReducer from './create.reducer';
 
@@ -50,7 +49,6 @@ const rootReducer = {
     palvelutState,
     kayttooikeusState,
     linkitykset,
-    report: reportReducer,
     existenceCheck: existinceCheckReducer,
     createPerson: createPersonReducer,
 };

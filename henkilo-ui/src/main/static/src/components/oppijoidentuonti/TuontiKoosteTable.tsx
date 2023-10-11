@@ -13,8 +13,6 @@ import { useGetTuontikoosteQuery } from '../../api/oppijanumerorekisteri';
 import { useDebounce } from '../../useDebounce';
 import OphTable from '../OphTable';
 
-import styles from './TuontiKoosteTable.module.css';
-
 const TuontiKoosteTable = () => {
     const [criteria, setCriteria] = useState<TuontiKoosteCriteria>({
         id: '',
@@ -143,8 +141,8 @@ const TuontiKoosteTable = () => {
 
     return (
         <>
-            <div className={styles.searchForm}>
-                <div className={styles.searchInput}>
+            <div style={{ display: 'flex' }}>
+                <div style={{ margin: '0 2rem 1rem 0' }}>
                     <div>
                         <label htmlFor="tuontikooste-id">{L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ID']}</label>
                     </div>
@@ -157,7 +155,7 @@ const TuontiKoosteTable = () => {
                         onChange={(e) => setCriteria({ ...criteria, id: e.target.value })}
                     />
                 </div>
-                <div className={styles.searchInput}>
+                <div style={{ margin: '0 2rem 1rem 0' }}>
                     <div>
                         <label htmlFor="tuontikooste-author">{L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KASITTELIJA']}</label>
                     </div>
