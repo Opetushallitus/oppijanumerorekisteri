@@ -1,6 +1,5 @@
 import React from 'react';
 
-import './OppijoidenTuontiYhteenveto.css';
 import { useLocalisations } from '../../selectors';
 import { useGetOppijoidentuontiYhteenvetoQuery } from '../../api/oppijanumerorekisteri';
 
@@ -9,14 +8,20 @@ const OppijoidenTuontiYhteenveto = () => {
     const { data, isFetching } = useGetOppijoidentuontiYhteenvetoQuery();
     return (
         <div className="oph-bg-gray-lighten-5">
-            <dl className="side-by-side inverse">
-                <dt>{L['OPPIJOIDEN_TUONTI_YHTEENVETO_ONNISTUNEET']}</dt>
-                <dd>{isFetching ? '...' : data.onnistuneet}</dd>
-                <dt>{L['OPPIJOIDEN_TUONTI_YHTEENVETO_VIRHEET']}</dt>
-                <dd>{isFetching ? '...' : data.virheet}</dd>
-                <dt>{L['OPPIJOIDEN_TUONTI_YHTEENVETO_KESKENERAISET']}</dt>
-                <dd>{isFetching ? '...' : data.keskeneraiset}</dd>
-            </dl>
+            <table>
+                <tr>
+                    <td>{L['OPPIJOIDEN_TUONTI_YHTEENVETO_ONNISTUNEET']}</td>
+                    <td style={{ paddingLeft: '1rem', fontWeight: 600 }}>{isFetching ? '...' : data.onnistuneet}</td>
+                </tr>
+                <tr>
+                    <td>{L['OPPIJOIDEN_TUONTI_YHTEENVETO_VIRHEET']}</td>
+                    <td style={{ paddingLeft: '1rem', fontWeight: 600 }}>{isFetching ? '...' : data.virheet}</td>
+                </tr>
+                <tr>
+                    <td>{L['OPPIJOIDEN_TUONTI_YHTEENVETO_KESKENERAISET']}</td>
+                    <td style={{ paddingLeft: '1rem', fontWeight: 600 }}>{isFetching ? '...' : data.keskeneraiset}</td>
+                </tr>
+            </table>
         </div>
     );
 };
