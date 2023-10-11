@@ -11,6 +11,7 @@ import {
 } from '../actions/actiontypes';
 import { Locale } from '../types/locale.type';
 import { KutsuRead } from '../types/domain/kayttooikeus/Kutsu.types';
+import { PalvelukayttajaCriteria, PalvelukayttajaRead } from '../types/domain/kayttooikeus/palvelukayttaja.types';
 
 type MfaSetupResponse = {
     secretKey: string;
@@ -42,7 +43,7 @@ export const kayttooikeusApi = createApi({
         headers: { ...getCommonOptions().headers, 'Content-Type': 'application/json; charset=utf-8' },
         baseUrl: '/kayttooikeus-service/',
     }),
-    tagTypes: ['omattiedot', 'organisaatiot', 'kutsuByToken', 'accessRightReport'],
+    tagTypes: ['omattiedot', 'organisaatiot', 'kutsuByToken', 'accessRightReport', 'palvelukayttaja'],
     endpoints: (builder) => ({
         getOmattiedot: builder.query<Omattiedot, void>({
             query: () => 'henkilo/current/omattiedot',
@@ -103,6 +104,10 @@ export const kayttooikeusApi = createApi({
             query: (oid) => `reports/accessrights/${oid}`,
             providesTags: ['accessRightReport'],
         }),
+        getPalvelukayttajat: builder.query<PalvelukayttajaRead[], PalvelukayttajaCriteria>({
+            query: (criteria) => `palvelukayttaja?${new URLSearchParams(criteria).toString()}`,
+            providesTags: ['palvelukayttaja'],
+        }),
     }),
 });
 
@@ -114,4 +119,5 @@ export const {
     usePostMfaDisableMutation,
     useGetKutsuByTokenQuery,
     useGetAccessRightReportQuery,
+    useGetPalvelukayttajatQuery,
 } = kayttooikeusApi;

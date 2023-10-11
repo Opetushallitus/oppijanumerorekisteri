@@ -1,92 +1,71 @@
-import React from 'react';
-import { Localisations } from '../../types/localisation.type';
+import React, { useState } from 'react';
+
 import { PalvelukayttajaCriteria } from '../../types/domain/kayttooikeus/palvelukayttaja.types';
-import { PalvelukayttajatState } from '../../reducers/palvelukayttaja.reducer';
-import DelayedSearchInput from '../henkilohaku/DelayedSearchInput';
 import PalvelukayttajaHakuTaulukko from './PalvelukayttajaHakuTaulukko';
 import SubOrganisationCheckbox from '../henkilohaku/criterias/SubOrganisationCheckbox';
 import './PalvelukayttajaHakuPage.css';
 import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
-import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
-import { Locale } from '../../types/locale.type';
 import CloseButton from '../common/button/CloseButton';
+import { useLocalisations } from '../../selectors';
+import { useGetPalvelukayttajatQuery } from '../../api/kayttooikeus';
+import Loader from '../common/icons/Loader';
+import { useDebounce } from '../../useDebounce';
+import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 
-type PalvelukayttajaHakuPageProps = {
-    L: Localisations;
-    locale: Locale;
-    onCriteriaChange: (critera: PalvelukayttajaCriteria) => void;
-    palvelukayttajat: PalvelukayttajatState;
+const defaultCriteria = {
+    subOrganisation: 'true',
+    passivoitu: 'false',
+    nameQuery: '',
 };
 
-class PalvelukayttajaHakuPage extends React.Component<PalvelukayttajaHakuPageProps> {
-    render() {
-        return (
-            <div className="wrapper">
-                <span className="oph-h2 oph-bold">{this.props.L['PALVELUKAYTTAJAN_HAKU_OTSIKKO']}</span>
-                {this.renderCriteria()}
-                {this.props.palvelukayttajat.dirty && this.renderData()}
-            </div>
-        );
-    }
+const PalvelukayttajaHakuPage = () => {
+    const { L } = useLocalisations();
+    const [organisaatio, setOrganisaatio] = useState<OrganisaatioSelectObject>();
+    const [criteria, setCriteria] = useState<PalvelukayttajaCriteria>(defaultCriteria);
+    const debouncedCriteria = useDebounce(criteria, 500);
+    const { data, isFetching } = useGetPalvelukayttajatQuery(debouncedCriteria, {
+        skip: !debouncedCriteria.nameQuery && !debouncedCriteria.selection,
+    });
 
-    renderCriteria() {
-        return (
+    const setOrganisation = (selection?: OrganisaatioSelectObject) => {
+        setOrganisaatio(selection);
+        setCriteria({ ...criteria, selection: selection?.oid });
+    };
+
+    return (
+        <div className="wrapper">
+            <span className="oph-h2 oph-bold">{L['PALVELUKAYTTAJAN_HAKU_OTSIKKO']}</span>
             <div className="PalvelukayttajaHakuPage-criteria">
-                <DelayedSearchInput
-                    setSearchQueryAction={this.onNameQueryChange.bind(this)}
-                    defaultNameQuery={this.props.palvelukayttajat.criteria.nameQuery}
-                    loading={this.props.palvelukayttajat.loading}
+                <input
+                    className="oph-input"
+                    defaultValue={criteria.nameQuery}
+                    onChange={(e) => setCriteria({ ...criteria, nameQuery: e.target.value })}
                 />
-
                 <div className="flex-horizontal organisaatiosuodatus">
                     <div className="flex-item-1 valittu-organisaatio">
                         <input
                             className="oph-input flex-item-1 "
                             type="text"
-                            value={this.props.palvelukayttajat.criteria.selection?.name || ''}
-                            placeholder={this.props.L['PALVELUKAYTTAJA_HAKU_ORGANISAATIOSUODATUS']}
+                            value={organisaatio?.name ?? ''}
+                            placeholder={L['PALVELUKAYTTAJA_HAKU_ORGANISAATIOSUODATUS']}
                             readOnly
                         />
                     </div>
-                    <OrganisaatioSelectModal onSelect={this.onOrganisationChange} />
-                    <CloseButton closeAction={() => this.onOrganisationChange(undefined)} />
+                    <OrganisaatioSelectModal onSelect={setOrganisation} />
+                    <CloseButton closeAction={() => setOrganisation(undefined)} />
                 </div>
 
                 <SubOrganisationCheckbox
-                    L={this.props.L}
-                    subOrganisationValue={this.props.palvelukayttajat.criteria.subOrganisation}
-                    subOrganisationAction={this.onSubOrganisationChange}
+                    L={L}
+                    subOrganisationValue={criteria.subOrganisation === 'true'}
+                    subOrganisationAction={(elem) =>
+                        setCriteria({ ...criteria, subOrganisation: String(elem.currentTarget.checked) })
+                    }
                 />
             </div>
-        );
-    }
-
-    renderData() {
-        return <PalvelukayttajaHakuTaulukko L={this.props.L} palvelukayttajat={this.props.palvelukayttajat} />;
-    }
-
-    onNameQueryChange = (nameQuery: string) => {
-        if (this.props.palvelukayttajat.criteria.nameQuery !== nameQuery) {
-            this.props.onCriteriaChange({
-                ...this.props.palvelukayttajat.criteria,
-                nameQuery,
-            });
-        }
-    };
-
-    onSubOrganisationChange = (element: React.SyntheticEvent<HTMLInputElement>) => {
-        this.props.onCriteriaChange({
-            ...this.props.palvelukayttajat.criteria,
-            subOrganisation: element.currentTarget.checked,
-        });
-    };
-
-    onOrganisationChange = (selection?: OrganisaatioSelectObject) => {
-        this.props.onCriteriaChange({
-            ...this.props.palvelukayttajat.criteria,
-            selection,
-        });
-    };
-}
+            {isFetching ? <Loader /> : !!data?.length && <PalvelukayttajaHakuTaulukko palvelukayttajat={data} />}
+        </div>
+    );
+};
 
 export default PalvelukayttajaHakuPage;

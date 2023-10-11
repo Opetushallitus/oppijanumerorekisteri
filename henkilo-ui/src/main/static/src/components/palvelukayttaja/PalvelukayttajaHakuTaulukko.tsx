@@ -1,42 +1,26 @@
 import React, { ReactNode } from 'react';
 import { Link } from 'react-router';
-import { Localisations } from '../../types/localisation.type';
-import { PalvelukayttajaRead } from '../../types/domain/kayttooikeus/palvelukayttaja.types';
-import { PalvelukayttajatState } from '../../reducers/palvelukayttaja.reducer';
-import './PalvelukayttajaHakuTaulukko.css';
-import Loader from '../common/icons/Loader';
 
-type PalvelukayttajaHakuTaulukkoProps = {
-    L: Localisations;
-    palvelukayttajat: PalvelukayttajatState;
+import { PalvelukayttajaRead } from '../../types/domain/kayttooikeus/palvelukayttaja.types';
+import './PalvelukayttajaHakuTaulukko.css';
+import { useLocalisations } from '../../selectors';
+
+type Props = {
+    palvelukayttajat: PalvelukayttajaRead[];
 };
 
-class PalvelukayttajaHakuTaulukko extends React.Component<PalvelukayttajaHakuTaulukkoProps> {
-    render() {
-        return (
-            <table className="PalvelukayttajaHakuTaulukko">
-                <thead>
-                    <tr>
-                        <th>{this.props.L['HENKILO_PALVELUN_NIMI']}</th>
-                        <th>{this.props.L['HENKILO_KAYTTAJANIMI']}</th>
-                    </tr>
-                </thead>
-                <tbody>{this.props.palvelukayttajat.loading ? this.renderLoader() : this.renderData()}</tbody>
-            </table>
-        );
-    }
+const PalvelukayttajaHakuTaulukko = ({ palvelukayttajat }: Props) => {
+    const { L } = useLocalisations();
 
-    renderData = () => {
-        return this.props.palvelukayttajat.data.length
-            ? this.renderRivit(this.props.palvelukayttajat.data)
-            : this.renderKokoRivi(this.props.L['HENKILOHAKU_EI_TULOKSIA']);
+    const renderData = () => {
+        return palvelukayttajat.length ? renderRivit(palvelukayttajat) : renderKokoRivi(L['HENKILOHAKU_EI_TULOKSIA']);
     };
 
-    renderRivit(palvelukayttajat: Array<PalvelukayttajaRead>): ReactNode[] {
-        return palvelukayttajat.map(this.renderRivi);
+    function renderRivit(palvelukayttajat: Array<PalvelukayttajaRead>): ReactNode[] {
+        return palvelukayttajat.map(renderRivi);
     }
 
-    renderRivi(palvelukayttaja: PalvelukayttajaRead): ReactNode {
+    function renderRivi(palvelukayttaja: PalvelukayttajaRead): ReactNode {
         return (
             <tr key={palvelukayttaja.oid}>
                 <td>
@@ -47,17 +31,25 @@ class PalvelukayttajaHakuTaulukko extends React.Component<PalvelukayttajaHakuTau
         );
     }
 
-    renderLoader() {
-        return this.renderKokoRivi(<Loader />);
-    }
-
-    renderKokoRivi(sisalto: ReactNode) {
+    function renderKokoRivi(sisalto: ReactNode) {
         return (
             <tr>
                 <td colSpan={2}>{sisalto}</td>
             </tr>
         );
     }
-}
+
+    return (
+        <table className="PalvelukayttajaHakuTaulukko">
+            <thead>
+                <tr>
+                    <th>{L['HENKILO_PALVELUN_NIMI']}</th>
+                    <th>{L['HENKILO_KAYTTAJANIMI']}</th>
+                </tr>
+            </thead>
+            <tbody>{renderData()}</tbody>
+        </table>
+    );
+};
 
 export default PalvelukayttajaHakuTaulukko;

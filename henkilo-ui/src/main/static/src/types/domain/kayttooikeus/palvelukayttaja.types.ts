@@ -1,5 +1,3 @@
-import { OrganisaatioSelectObject } from '../../organisaatioselectobject.types';
-
 export type PalvelukayttajaCreate = {
     nimi: string;
 };
@@ -11,8 +9,8 @@ export type PalvelukayttajaRead = {
 };
 
 export type PalvelukayttajaCriteria = {
-    subOrganisation: boolean;
-    passivoitu: boolean;
+    subOrganisation: string;
+    passivoitu: string;
     nameQuery: string;
-    selection?: OrganisaatioSelectObject;
+    selection?: string;
 };

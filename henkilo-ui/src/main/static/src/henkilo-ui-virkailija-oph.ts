@@ -37,7 +37,6 @@ const urlConfig = {
     'kayttooikeus-service.henkilo.password': 'kayttooikeus-service/henkilo/$1/password',
 
     'kayttooikeus-service.virkailija': 'kayttooikeus-service/virkailija',
-    'kayttooikeus-service.palvelukayttaja': 'kayttooikeus-service/palvelukayttaja',
     'kayttooikeus-service.omattiedot.anomus.muokkaus': 'kayttooikeus-service/kayttooikeusanomus/peruminen/currentuser',
     'kayttooikeus-service.kayttooikeusryhma': 'kayttooikeus-service/kayttooikeusryhma',
     'kayttooikeus-service.kayttooikeusryhma.all': 'kayttooikeus-service/kayttooikeusryhma',
@@ -70,7 +69,6 @@ const urlConfig = {
     'kayttooikeus-service.organisaatio.root': 'kayttooikeus-service/organisaatio/root',
     'kayttooikeus-service.organisaatio.by-oid': 'kayttooikeus-service/organisaatio/$1',
     'kayttooikeus-service.organisaatio.names': 'kayttooikeus-service/organisaatio/names',
-    'kayttooikeus-service.report.access-rights-for-organisaatio': 'kayttooikeus-service/reports/accessrights/$1',
 
     'oppijanumerorekisteri-service.baseUrl': '/',
     'oppijanumerorekisteri-service.henkilo.oid': 'oppijanumerorekisteri-service/henkilo/$1',

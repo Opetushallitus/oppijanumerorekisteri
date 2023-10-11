@@ -17,7 +17,6 @@ import KayttooikeusryhmatHallintaContainer from './components/kayttooikeusryhmat
 import OppijaCreate from './components/henkilo/oppija/create/form';
 import VirkailijaCreateContainer from './components/henkilo/VirkailijaCreateContainer';
 import PalveluCreateContainer from './components/henkilo/PalveluCreateContainer';
-import PalvelukayttajaHakuContainer from './components/palvelukayttaja/PalvelukayttajaHakuContainer';
 import VahvaTunnistusLisatiedotContainer from './components/rekisterointi/VahvaTunnistusLisatiedotContainer';
 import HenkiloViewContainer from './components/henkilo/HenkiloViewContainer';
 import AdminRedirect from './components/henkilo/AdminRedirect';
@@ -30,6 +29,7 @@ import { HenkiloState } from './reducers/henkilo.reducer';
 import { NaviTab } from './types/navigation.type';
 import EmailVerificationContainer from './components/sahkopostivarmennus/EmailVerificationContainer';
 import EmailVerificationErrorContainer from './components/sahkopostivarmennus/EmailVerificationErrorContainer';
+import PalvelukayttajaHakuPage from './components/palvelukayttaja/PalvelukayttajaHakuPage';
 
 export type RouteType = {
     path: string;
@@ -197,7 +197,7 @@ export default (
         />
         <Route
             path="/palvelukayttaja"
-            component={PalvelukayttajaHakuContainer}
+            component={PalvelukayttajaHakuPage}
             title=""
             getNaviTabs={updatePalvelukayttajaNavigation}
         />
