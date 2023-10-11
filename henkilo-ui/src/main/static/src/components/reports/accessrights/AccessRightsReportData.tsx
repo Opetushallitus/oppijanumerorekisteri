@@ -1,7 +1,13 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router';
 import moment from 'moment';
-import { useReactTable, getCoreRowModel, getPaginationRowModel, ColumnDef } from '@tanstack/react-table';
+import {
+    useReactTable,
+    getCoreRowModel,
+    getPaginationRowModel,
+    ColumnDef,
+    getSortedRowModel,
+} from '@tanstack/react-table';
 
 import PropertySingleton from '../../../globals/PropertySingleton';
 import './AccessRightsReportData.css';
@@ -33,6 +39,7 @@ export const AccessRightsReport = ({ report }: Props) => {
                         {getValue().personOid}
                     </Link>
                 ),
+                sortingFn: (a, b) => a.original.personOid.localeCompare(b.original.personOid),
                 id: 'personOid',
             },
             {
@@ -54,12 +61,14 @@ export const AccessRightsReport = ({ report }: Props) => {
                 accessorFn: (row) => row,
                 header: () => L['HENKILO_KAYTTOOIKEUS_ALKUPVM'],
                 cell: ({ getValue }) => <div className="right">{formatDate(getValue().startDate)}</div>,
+                sortingFn: (a, b) => a.original.startDate.localeCompare(b.original.startDate),
                 id: 'startDate',
             },
             {
                 accessorFn: (row) => row,
                 header: () => L['HENKILO_KAYTTOOIKEUS_LOPPUPVM'],
                 cell: ({ getValue }) => <div className="right">{formatDate(getValue().endDate)}</div>,
+                sortingFn: (a, b) => a.original.endDate.localeCompare(b.original.endDate),
                 id: 'endDate',
             },
         ],
@@ -70,6 +79,7 @@ export const AccessRightsReport = ({ report }: Props) => {
         data: report,
         columns,
         getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     });
 
