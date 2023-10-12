@@ -124,6 +124,7 @@ export const kayttooikeusApi = createApi({
                 method: 'POST',
                 body: { ...criteria, isCountSearch: false },
             }),
+            // "infinite scroll" i.e. merge new results when offset is increased
             serializeQueryArgs: ({ endpointName, queryArgs }) =>
                 endpointName + JSON.stringify(queryArgs.criteria) + queryArgs.parameters?.orderBy,
             merge: (currentCache, newItems) => {

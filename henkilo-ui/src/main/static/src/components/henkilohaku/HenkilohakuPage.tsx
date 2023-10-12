@@ -147,7 +147,7 @@ const HenkilohakuPage = () => {
                     <OphTableWithInfiniteScroll
                         table={table}
                         isLoading={isFetching}
-                        fetch={() => setParameters({ ...parameters, offset: String(Number(parameters.offset) + 100) })}
+                        fetch={() => setParameters({ ...parameters, offset: String(Number(result.length) + 100) })}
                         isActive={
                             !!result.length && !!resultCount && String(result.length) !== resultCount && !isFetching
                         }
