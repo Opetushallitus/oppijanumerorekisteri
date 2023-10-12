@@ -14,7 +14,7 @@ import OppijoidenTuontiContainer from './components/oppijoidentuonti/OppijoidenT
 import VtjVertailuPage from './components/henkilo/vtjvertailu/VtjVertailuPage';
 import KayttooikeusryhmaPageContainer from './components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPageContainer';
 import KayttooikeusryhmatHallintaContainer from './components/kayttooikeusryhmat/listaus/KayttooikeusryhmatHallintaContainer';
-import OppijaCreate from './components/henkilo/oppija/create/form';
+import FormSwitch from './components/henkilo/oppija/create/form/FormSwitch';
 import VirkailijaCreateContainer from './components/henkilo/VirkailijaCreateContainer';
 import PalveluCreateContainer from './components/henkilo/PalveluCreateContainer';
 import VahvaTunnistusLisatiedotContainer from './components/rekisterointi/VahvaTunnistusLisatiedotContainer';
@@ -76,7 +76,7 @@ export default (
         <Route path="/virkailija/luonti" component={VirkailijaCreateContainer} title="" />
         <Route
             path="/oppija/luonti"
-            component={OppijaCreate}
+            component={FormSwitch}
             title="TITLE_OPPIJA_LUONTI"
             getNaviTabs={updateDefaultNavigation}
         />

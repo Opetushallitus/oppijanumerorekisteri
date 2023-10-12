@@ -5,7 +5,6 @@ import { Link } from 'react-router';
 import classNames from 'classnames/bind';
 import ophLogo from '../../img/logo_oph.svg';
 import okmLogo from '../../img/logo_okm.png';
-import { Localisations } from '../../types/localisation.type';
 import { urls } from 'oph-urls-js';
 import './TopNavigation.css';
 import { parsePalveluRoolit } from '../../utilities/palvelurooli.util';
@@ -13,7 +12,8 @@ import { HenkiloState } from '../../reducers/henkilo.reducer';
 import { RouteType } from '../../routes';
 import AngleDownIcon from '../common/icons/AngleDownIcon';
 import PlaceholderIcon from '../common/icons/PlaceholderIcon';
-import { KayttooikeusOrganisaatiot } from '../../types/domain/kayttooikeus/KayttooikeusPerustiedot.types';
+import { useLocalisations } from '../../selectors';
+import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
 
 type OwnProps = {
     pathName: string | null | undefined;
@@ -24,17 +24,17 @@ type OwnProps = {
 };
 
 type StateProps = {
-    L: Localisations;
-    isRekisterinpitaja: boolean;
-    organisaatiot: Array<KayttooikeusOrganisaatiot>;
     henkilo?: HenkiloState;
 };
 
 type Props = OwnProps & StateProps;
 
-const TopNavigation = ({ pathName, L, isRekisterinpitaja, organisaatiot, route, params, henkilo }: Props) => {
+const TopNavigation = ({ pathName, route, params, henkilo }: Props) => {
+    const { L } = useLocalisations();
+    const { data: omattiedot } = useGetOmattiedotQuery();
     const isNoAuthenticationPage = route.isUnauthenticated;
-    const organisaatioList = isNoAuthenticationPage || !Array.isArray(organisaatiot) ? [] : organisaatiot;
+    const organisaatioList =
+        isNoAuthenticationPage || !Array.isArray(omattiedot.organisaatiot) ? [] : omattiedot.organisaatiot;
     const roolit: Array<string> = parsePalveluRoolit(organisaatioList);
     const naviTabs = route.getNaviTabs && route.getNaviTabs(params && params['oid'], henkilo, route.henkiloType);
 
@@ -75,7 +75,7 @@ const TopNavigation = ({ pathName, L, isRekisterinpitaja, organisaatiot, route, 
                         naviTabs
                             .filter(
                                 (data) =>
-                                    isRekisterinpitaja ||
+                                    omattiedot.isAdmin ||
                                     !data.sallitutRoolit ||
                                     data.sallitutRoolit.some((sallittuRooli) => roolit.includes(sallittuRooli))
                             )
@@ -105,9 +105,6 @@ const TopNavigation = ({ pathName, L, isRekisterinpitaja, organisaatiot, route, 
 };
 
 const mapStateToProps = (state: RootState): StateProps => ({
-    L: state.l10n.localisations[state.locale],
-    isRekisterinpitaja: state.omattiedot.isAdmin,
-    organisaatiot: state.omattiedot.organisaatiot,
     henkilo: state.henkilo,
 });
 
