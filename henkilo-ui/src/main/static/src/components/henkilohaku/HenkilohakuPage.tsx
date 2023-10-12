@@ -32,7 +32,7 @@ const HenkilohakuPage = () => {
     const debounced = useDebounce(criteria, 500);
     const [parameters, setParameters] = useState<HenkilohakuQueryparameters>({
         offset: '0',
-        orderBy: 'HENKILO_NIMI_DESC',
+        orderBy: 'HENKILO_NIMI_ASC',
     });
     const skip = !debounced.nameQuery && !debounced.organisaatioOids?.length && !debounced.kayttooikeusryhmaId;
     const { data: result, isFetching } = useGetHenkiloHakuQuery({ criteria: debounced, parameters }, { skip });
@@ -50,7 +50,7 @@ const HenkilohakuPage = () => {
                 ? sorting[0].desc
                     ? sorting[0].id + '_DESC'
                     : sorting[0].id + '_ASC'
-                : 'HENKILO_NIMI_DESC',
+                : 'HENKILO_NIMI_ASC',
         });
     }, [sorting]);
 

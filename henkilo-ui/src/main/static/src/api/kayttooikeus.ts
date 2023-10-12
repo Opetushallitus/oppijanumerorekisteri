@@ -124,9 +124,11 @@ export const kayttooikeusApi = createApi({
                 method: 'POST',
                 body: { ...criteria, isCountSearch: false },
             }),
-            serializeQueryArgs: ({ endpointName, queryArgs }) => endpointName + JSON.stringify(queryArgs.criteria),
+            serializeQueryArgs: ({ endpointName, queryArgs }) =>
+                endpointName + JSON.stringify(queryArgs.criteria) + queryArgs.parameters?.orderBy,
             merge: (currentCache, newItems) => {
-                currentCache.push(...newItems);
+                const uniqueItems = [...new Map([...currentCache, ...newItems].map((x) => [x.oidHenkilo, x])).values()];
+                return uniqueItems;
             },
             forceRefetch: ({ currentArg, previousArg }) =>
                 JSON.stringify(currentArg?.parameters) !== JSON.stringify(previousArg?.parameters),
