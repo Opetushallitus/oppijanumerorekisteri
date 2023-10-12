@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import HenkilohakuPage from './HenkilohakuPage';
 import { useSelector } from 'react-redux';
 import { RouteActions } from 'react-router-redux';
@@ -34,8 +34,10 @@ const HenkilohakuContainer = ({ router }: OwnProps) => {
         router.replace('/oppijoidentuonti');
     }
 
-    dispatch<any>(fetchAllKayttooikeusryhma());
-    dispatch<any>(fetchAllRyhmas());
+    useEffect(() => {
+        dispatch<any>(fetchAllKayttooikeusryhma());
+        dispatch<any>(fetchAllRyhmas());
+    }, []);
 
     return !isLoading ? <HenkilohakuPage /> : <Loader />;
 };

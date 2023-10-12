@@ -12,6 +12,8 @@ import {
 import { Locale } from '../types/locale.type';
 import { KutsuRead } from '../types/domain/kayttooikeus/Kutsu.types';
 import { PalvelukayttajaCriteria, PalvelukayttajaRead } from '../types/domain/kayttooikeus/palvelukayttaja.types';
+import { HenkilohakuResult } from '../types/domain/kayttooikeus/HenkilohakuResult.types';
+import { Henkilohaku, HenkilohakuCriteria } from '../types/domain/kayttooikeus/HenkilohakuCriteria.types';
 
 type MfaSetupResponse = {
     secretKey: string;
@@ -43,7 +45,15 @@ export const kayttooikeusApi = createApi({
         headers: { ...getCommonOptions().headers, 'Content-Type': 'application/json; charset=utf-8' },
         baseUrl: '/kayttooikeus-service/',
     }),
-    tagTypes: ['omattiedot', 'organisaatiot', 'kutsuByToken', 'accessRightReport', 'palvelukayttaja'],
+    tagTypes: [
+        'omattiedot',
+        'organisaatiot',
+        'kutsuByToken',
+        'accessRightReport',
+        'palvelukayttaja',
+        'henkilohaku',
+        'henkilohakucount',
+    ],
     endpoints: (builder) => ({
         getOmattiedot: builder.query<Omattiedot, void>({
             query: () => 'henkilo/current/omattiedot',
@@ -108,6 +118,29 @@ export const kayttooikeusApi = createApi({
             query: (criteria) => `palvelukayttaja?${new URLSearchParams(criteria).toString()}`,
             providesTags: ['palvelukayttaja'],
         }),
+        getHenkiloHaku: builder.query<HenkilohakuResult[], Henkilohaku>({
+            query: ({ criteria, parameters }) => ({
+                url: `henkilo/henkilohaku?${new URLSearchParams(parameters).toString()}`,
+                method: 'POST',
+                body: { ...criteria, isCountSearch: false },
+            }),
+            serializeQueryArgs: ({ endpointName, queryArgs }) => endpointName + JSON.stringify(queryArgs.criteria),
+            merge: (currentCache, newItems) => {
+                currentCache.push(...newItems);
+            },
+            forceRefetch: ({ currentArg, previousArg }) =>
+                JSON.stringify(currentArg?.parameters) !== JSON.stringify(previousArg?.parameters),
+            providesTags: ['henkilohaku'],
+        }),
+        getHenkiloHakuCount: builder.query<string, HenkilohakuCriteria>({
+            query: (criteria) => ({
+                url: 'henkilo/henkilohakucount',
+                method: 'POST',
+                body: { ...criteria, isCountSearch: true },
+                responseHandler: 'text',
+            }),
+            providesTags: ['henkilohakucount'],
+        }),
     }),
 });
 
@@ -120,4 +153,6 @@ export const {
     useGetKutsuByTokenQuery,
     useGetAccessRightReportQuery,
     useGetPalvelukayttajatQuery,
+    useGetHenkiloHakuQuery,
+    useGetHenkiloHakuCountQuery,
 } = kayttooikeusApi;

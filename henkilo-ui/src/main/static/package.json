@@ -4,7 +4,7 @@
     "homepage": "/henkilo-ui",
     "dependencies": {
         "@hookform/resolvers": "^2.5.2",
-        "@reduxjs/toolkit": "^1.9.3",
+        "@reduxjs/toolkit": "^1.9.7",
         "@tanstack/react-table": "^8.10.3",
         "classnames": "2.2.5",
         "history": "3.3.0",
