@@ -135,7 +135,9 @@ const HenkilohakuPage = () => {
             />
             <div className="oph-h3 oph-bold henkilohaku-result-header">
                 {L['HENKILOHAKU_HAKUTULOKSET']} (
-                {isFetching || !resultCount || resultCount === '0'
+                {isFetching
+                    ? '...'
+                    : !resultCount || resultCount === '0'
                     ? L['HENKILOHAKU_EI_TULOKSIA']
                     : `${resultCount} ${L['HENKILOHAKU_OSUMA']}`}
                 )
