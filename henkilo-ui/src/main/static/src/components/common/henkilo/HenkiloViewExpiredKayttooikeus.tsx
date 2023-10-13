@@ -15,13 +15,13 @@ import {
     fetchAllKayttooikeusAnomusForHenkilo,
 } from '../../../actions/kayttooikeusryhma.actions';
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 import { localizeTextGroup } from '../../../utilities/localisation.util';
 import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
 import { useLocalisations } from '../../../selectors';
 import OphTable from '../../OphTable';
+import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
 
 type OwnProps = {
     isOmattiedot: boolean;
@@ -35,7 +35,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
     const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const organisaatioCache = useSelector<RootState, OrganisaatioCache>((state) => state.organisaatio.cached);
-    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const { data: omattiedot } = useGetOmattiedotQuery();
     const [emailOptions, setEmailOptions] = useState(
         createEmailOptions(henkilo, _filterExistingKayttooikeus, kayttooikeus.kayttooikeus)
     );
@@ -93,7 +93,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
             anojaOid: props.oidHenkilo,
         };
         await dispatch<any>(createKayttooikeusanomus(anomusData));
-        dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(omattiedot.data.oid));
+        dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(omattiedot.oidHenkilo));
     }
 
     function hideVanhentunutKayttooikeusUusintaButton(vanhentunutKayttooikeus: MyonnettyKayttooikeusryhma) {

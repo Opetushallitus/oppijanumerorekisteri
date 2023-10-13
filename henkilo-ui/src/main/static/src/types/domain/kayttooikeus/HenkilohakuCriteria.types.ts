@@ -5,12 +5,16 @@ export type HenkilohakuCriteria = {
     duplikaatti: boolean;
     organisaatioOids?: Array<string>;
     kayttooikeusryhmaId?: string;
-    ryhmaOids?: Array<string>;
     nameQuery?: string;
     isCountSearch?: boolean;
 };
 
 export type HenkilohakuQueryparameters = {
-    offset: number;
+    offset: string;
     orderBy?: string;
+};
+
+export type Henkilohaku = {
+    criteria: HenkilohakuCriteria;
+    parameters: HenkilohakuQueryparameters;
 };

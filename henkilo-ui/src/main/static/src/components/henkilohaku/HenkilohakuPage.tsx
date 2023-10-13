@@ -5,105 +5,59 @@ import { Link } from 'react-router';
 import { Option } from 'react-select';
 
 import HenkilohakuFilters from './HenkilohakuFilters';
-import DelayedSearchInput from './DelayedSearchInput';
 import StaticUtils from '../common/StaticUtils';
 import Loader from '../common/icons/Loader';
 import { toLocalizedText } from '../../localizabletext';
-import { HenkilohakuCriteria } from '../../types/domain/kayttooikeus/HenkilohakuCriteria.types';
+import {
+    HenkilohakuCriteria,
+    HenkilohakuQueryparameters,
+} from '../../types/domain/kayttooikeus/HenkilohakuCriteria.types';
 import { HenkilohakuResult } from '../../types/domain/kayttooikeus/HenkilohakuResult.types';
 import { useLocalisations } from '../../selectors';
 import { OphTableWithInfiniteScroll } from '../OphTableWithInfiniteScroll';
 import { useSelector } from 'react-redux';
 import { HenkilohakuState } from '../../reducers/henkilohaku.reducer';
 import { RootState, useAppDispatch } from '../../store';
-import { clearHenkilohaku, henkilohaku, henkilohakuCount, updateFilters } from '../../actions/henkilohaku.actions';
+import { updateFilters } from '../../actions/henkilohaku.actions';
+import { useGetHenkiloHakuCountQuery, useGetHenkiloHakuQuery } from '../../api/kayttooikeus';
+import { useDebounce } from '../../useDebounce';
 
 const HenkilohakuPage = () => {
     const dispatch = useAppDispatch();
-    const { henkilohakuLoading, filters, result, resultCount } = useSelector<RootState, HenkilohakuState>(
-        (state) => state.henkilohakuState
-    );
-    const [sorting, setSorting] = useState<SortingState>([]);
-    const [nameQuery, setNameQuery] = useState(filters.nameQuery);
-    const [noOrganisation, setNoOrganisation] = useState(filters.noOrganisation);
-    const [subOrganisation, setSubOrganisation] = useState(filters.subOrganisation);
-    const [passivoitu, setPassivoitu] = useState(filters.passivoitu);
-    const [duplikaatti, setDuplikaatti] = useState(filters.duplikaatti);
-    const [organisaatioOids, setOrganisaatioOids] = useState(filters.organisaatioOids);
-    const [kayttooikeusryhmaId, setKayttooikeusryhmaId] = useState(filters.kayttooikeusryhmaId);
-    const [ryhmaOid, setRyhmaOid] = useState(filters.ryhmaOids?.[0]);
-    const [page, setPage] = useState(0);
     const { L, locale } = useLocalisations();
+    const [sorting, setSorting] = useState<SortingState>([]);
+    const { filters } = useSelector<RootState, HenkilohakuState>((state) => state.henkilohakuState);
+    const [ryhmaOid, setRyhmaOid] = useState(filters.ryhmaOid);
+    const [criteria, setCriteria] = useState<HenkilohakuCriteria>(filters);
+    const debounced = useDebounce(criteria, 500);
+    const [parameters, setParameters] = useState<HenkilohakuQueryparameters>({
+        offset: '0',
+        orderBy: 'HENKILO_NIMI_ASC',
+    });
+    const skip = !debounced.nameQuery && !debounced.organisaatioOids?.length && !debounced.kayttooikeusryhmaId;
+    const { data: result, isFetching } = useGetHenkiloHakuQuery({ criteria: debounced, parameters }, { skip });
+    const { data: resultCount } = useGetHenkiloHakuCountQuery(debounced, { skip });
 
     useEffect(() => {
-        searchQuery();
-        dispatch<any>(
-            updateFilters({
-                nameQuery,
-                noOrganisation,
-                subOrganisation,
-                passivoitu,
-                duplikaatti,
-                organisaatioOids,
-                kayttooikeusryhmaId,
-                ryhmaOids: [ryhmaOid],
-            })
-        );
-    }, [
-        nameQuery,
-        noOrganisation,
-        subOrganisation,
-        passivoitu,
-        duplikaatti,
-        organisaatioOids,
-        kayttooikeusryhmaId,
-        sorting,
-    ]);
+        dispatch(updateFilters({ ...criteria, ryhmaOid }));
+        setParameters({ ...parameters, offset: '0' });
+    }, [criteria, ryhmaOid]);
+
+    useEffect(() => {
+        setParameters({
+            offset: String(0),
+            orderBy: sorting.length
+                ? sorting[0].desc
+                    ? sorting[0].id + '_DESC'
+                    : sorting[0].id + '_ASC'
+                : 'HENKILO_NIMI_ASC',
+        });
+    }, [sorting]);
 
     const selectRyhmaOid = (option: Option<string>) => {
         setRyhmaOid(option.value);
-        setOrganisaatioOids(option.value ? [option.value] : undefined);
+        setCriteria({ ...criteria, organisaatioOids: option.value ? [option.value] : undefined });
     };
-
-    function searchQuery(shouldNotClear?: boolean): void {
-        if (!shouldNotClear) {
-            dispatch<any>(clearHenkilohaku());
-        }
-        if (nameQuery || organisaatioOids?.length || kayttooikeusryhmaId) {
-            setPage(page + 1);
-            const queryParams = {
-                offset: shouldNotClear ? 100 * page : 0,
-                orderBy: sorting.length
-                    ? sorting[0].desc
-                        ? sorting[0].id + '_DESC'
-                        : sorting[0].id + '_ASC'
-                    : undefined,
-            };
-
-            const henkilohakuModel = {
-                nameQuery,
-                noOrganisation,
-                subOrganisation,
-                passivoitu,
-                duplikaatti,
-                organisaatioOids,
-                kayttooikeusryhmaId,
-            };
-
-            const henkilohakuCriteria: HenkilohakuCriteria = {
-                ...henkilohakuModel,
-                isCountSearch: false,
-            };
-
-            const henkilohakuCountCriteria: HenkilohakuCriteria = {
-                ...henkilohakuModel,
-                isCountSearch: true,
-            };
-
-            dispatch<any>(henkilohaku(henkilohakuCriteria, queryParams));
-            dispatch<any>(henkilohakuCount(henkilohakuCountCriteria));
-        }
-    }
 
     const columns = useMemo<ColumnDef<HenkilohakuResult, HenkilohakuResult>[]>(
         () => [
@@ -158,55 +112,49 @@ const HenkilohakuPage = () => {
     return (
         <div className="wrapper">
             <div className="oph-h2 oph-bold henkilohaku-main-header">{L['HENKILOHAKU_OTSIKKO']}</div>
-            <DelayedSearchInput
-                setSearchQueryAction={(s) => setNameQuery(s)}
-                defaultNameQuery={nameQuery}
-                loading={henkilohakuLoading}
-                minSearchValueLength={2}
+            <input
+                className="oph-input"
+                defaultValue={criteria.nameQuery}
+                onChange={(e) => setCriteria({ ...criteria, nameQuery: e.target.value })}
             />
             <HenkilohakuFilters
-                noOrganisationAction={() => setNoOrganisation(!noOrganisation)}
-                subOrganisationAction={() => setSubOrganisation(!subOrganisation)}
-                duplikaatitAction={() => setDuplikaatti(!duplikaatti)}
-                passiivisetAction={() => setPassivoitu(!passivoitu)}
-                initialValues={{
-                    nameQuery,
-                    noOrganisation,
-                    subOrganisation,
-                    passivoitu,
-                    duplikaatti,
-                    organisaatioOids,
-                    kayttooikeusryhmaId,
-                }}
-                selectedOrganisation={organisaatioOids}
-                organisaatioSelectAction={(o) => setOrganisaatioOids([o.oid])}
-                clearOrganisaatioSelection={() => setOrganisaatioOids(undefined)}
+                noOrganisationAction={() => setCriteria({ ...criteria, noOrganisation: !criteria.noOrganisation })}
+                subOrganisationAction={() => setCriteria({ ...criteria, subOrganisation: !criteria.subOrganisation })}
+                duplikaatitAction={() => setCriteria({ ...criteria, duplikaatti: !criteria.duplikaatti })}
+                passiivisetAction={() => setCriteria({ ...criteria, passivoitu: !criteria.passivoitu })}
+                initialValues={criteria}
+                selectedOrganisation={criteria.organisaatioOids}
+                organisaatioSelectAction={(o) => setCriteria({ ...criteria, organisaatioOids: [o.oid] })}
+                clearOrganisaatioSelection={() => setCriteria({ ...criteria, organisaatioOids: undefined })}
                 selectedRyhma={ryhmaOid}
                 ryhmaSelectionAction={selectRyhmaOid}
-                selectedKayttooikeus={kayttooikeusryhmaId}
-                kayttooikeusSelectionAction={(option: Option<string>) => {
-                    setKayttooikeusryhmaId(option.value);
-                }}
+                selectedKayttooikeus={criteria.kayttooikeusryhmaId}
+                kayttooikeusSelectionAction={(option: Option<string>) =>
+                    setCriteria({ ...criteria, kayttooikeusryhmaId: option.value })
+                }
             />
             <div className="oph-h3 oph-bold henkilohaku-result-header">
                 {L['HENKILOHAKU_HAKUTULOKSET']} (
-                {henkilohakuLoading || resultCount === 0
+                {isFetching
+                    ? '...'
+                    : !resultCount || resultCount === '0'
                     ? L['HENKILOHAKU_EI_TULOKSIA']
                     : `${resultCount} ${L['HENKILOHAKU_OSUMA']}`}
                 )
             </div>
-            {result.length ? (
+            {!!result?.length && (
                 <div className="henkilohakuTableWrapper">
                     <OphTableWithInfiniteScroll
                         table={table}
-                        isLoading={henkilohakuLoading}
-                        fetch={() => searchQuery(true)}
-                        isActive={result.length !== resultCount && !henkilohakuLoading}
+                        isLoading={isFetching}
+                        fetch={() => setParameters({ ...parameters, offset: String(Number(result.length) + 100) })}
+                        isActive={
+                            !!result.length && !!resultCount && String(result.length) !== resultCount && !isFetching
+                        }
                     />
                 </div>
-            ) : (
-                henkilohakuLoading && <Loader />
             )}
+            {!result?.length && isFetching && <Loader />}
         </div>
     );
 };

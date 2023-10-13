@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import HenkilohakuPage from './HenkilohakuPage';
 import { useSelector } from 'react-redux';
 import { RouteActions } from 'react-router-redux';
@@ -7,8 +7,8 @@ import { useAppDispatch, type RootState } from '../../store';
 import Loader from '../common/icons/Loader';
 import { fetchAllKayttooikeusryhma } from '../../actions/kayttooikeusryhma.actions';
 import { fetchAllRyhmas } from '../../actions/organisaatio.actions';
-import { OmattiedotState } from '../../reducers/omattiedot.reducer';
 import { parsePalveluRoolit, hasAnyPalveluRooli } from '../../utilities/palvelurooli.util';
+import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
 
 type OwnProps = {
     router: RouteActions;
@@ -16,7 +16,7 @@ type OwnProps = {
 
 const HenkilohakuContainer = ({ router }: OwnProps) => {
     const dispatch = useAppDispatch();
-    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const { data: omattiedot } = useGetOmattiedotQuery();
     const isLoading = useSelector<RootState, boolean>((state) => state.kayttooikeus.allKayttooikeusryhmasLoading);
     const vainOppijoidenTuonti = useMemo(() => {
         const kayttooikeudet = parsePalveluRoolit(omattiedot.organisaatiot);
@@ -34,8 +34,10 @@ const HenkilohakuContainer = ({ router }: OwnProps) => {
         router.replace('/oppijoidentuonti');
     }
 
-    dispatch<any>(fetchAllKayttooikeusryhma());
-    dispatch<any>(fetchAllRyhmas());
+    useEffect(() => {
+        dispatch<any>(fetchAllKayttooikeusryhma());
+        dispatch<any>(fetchAllRyhmas());
+    }, []);
 
     return !isLoading ? <HenkilohakuPage /> : <Loader />;
 };

@@ -29,8 +29,8 @@ import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './Access
 import { localizeTextGroup } from '../../../utilities/localisation.util';
 import { NotificationsState } from '../../../reducers/notifications.reducer';
 import { useLocalisations } from '../../../selectors';
-import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import OphTable from '../../OphTable';
+import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
 
 type OwnProps = {
     oidHenkilo: string;
@@ -46,7 +46,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const notifications = useSelector<RootState, NotificationsState>((state) => state.notifications);
     const organisaatioCache = useSelector<RootState, OrganisaatioCache>((state) => state.organisaatio.cached);
-    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const { data: omattiedot } = useGetOmattiedotQuery();
     const [dates, setDates] = useState<Record<number, { alkupvm: Moment; loppupvm: Moment }>>(
         kayttooikeus.kayttooikeus.filter(_filterExpiredKayttooikeus).reduce(
             (acc, kayttooikeus) => ({
@@ -155,7 +155,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
             anojaOid: props.oidHenkilo,
         };
         await dispatch<any>(createKayttooikeusanomus(anomusData));
-        dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(omattiedot.data.oid));
+        dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(omattiedot.oidHenkilo));
     }
 
     function _filterExpiredKayttooikeus(kayttooikeus: MyonnettyKayttooikeusryhma) {

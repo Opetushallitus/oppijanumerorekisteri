@@ -14,7 +14,6 @@ import { toLocalizedText } from '../../../localizabletext';
 import PopupButton from '../button/PopupButton';
 import AnomusHylkaysPopup from '../../anomus/AnomusHylkaysPopup';
 import PropertySingleton from '../../../globals/PropertySingleton';
-import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { AnojaKayttooikeusryhmat } from '../../anomus/AnojaKayttooikeusryhmat';
 import {
     Kayttooikeusryhma,
@@ -36,6 +35,7 @@ import { useLocalisations } from '../../../selectors';
 import { HaettuKayttooikeusryhma } from '../../../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
 import { OphTableWithInfiniteScroll } from '../../OphTableWithInfiniteScroll';
 import { expanderColumn } from '../../OphTable';
+import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
 
 export type KayttooikeusryhmaData = {
     voimassaPvm: string;
@@ -74,7 +74,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     const dispatch = useAppDispatch();
     const { L, locale, l10n } = useLocalisations();
     const organisaatioCache = useSelector<RootState, OrganisaatioCache>((state) => state.organisaatio.cached);
-    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const { data: omattiedot } = useGetOmattiedotQuery();
     const [dates, setDates] = useState<{ [anomusId: number]: { alkupvm: Moment; loppupvm: Moment } }>(
         props.kayttooikeus?.kayttooikeusAnomus.reduce(
             (acc, kayttooikeus) => ({
@@ -224,7 +224,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     async function cancelAnomus(haettuKayttooikeusRyhma: HaettuKayttooikeusryhma) {
         const url = urls.url('kayttooikeus-service.omattiedot.anomus.muokkaus');
         await http.put(url, haettuKayttooikeusRyhma.id);
-        dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(omattiedot.data.oid));
+        dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(omattiedot.oidHenkilo));
     }
 
     // If grantableKayttooikeus not loaded allow all. Otherwise require it to be in list.
