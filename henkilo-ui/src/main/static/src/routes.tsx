@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Route } from 'react-router';
 import App from './containers/App';
 import AccessRightReport from './components/reports/accessrights/AccessRightsReport';
-import KutsututPageContainer from './components/kutsutut/KutsututPageContainer';
+import { KutsututPage } from './components/kutsutut/KutsututPage';
 import KutsuminenPage from './components/kutsuminen/KutsuminenPage';
 import AnomusPage from './components/anomus/AnomusPage';
 import OmattiedotContainer from './components/omattiedot/OmattiedotPageContainer';
@@ -44,12 +44,7 @@ export default (
             getNaviTabs={updateDefaultNavigation}
         />
         <Route path="/anomukset" component={AnomusPage} title="TITLE_ANOMUKSET" getNaviTabs={updateDefaultNavigation} />
-        <Route
-            path="/kutsutut"
-            component={KutsututPageContainer}
-            title="TITLE_KUTSUTUT"
-            getNaviTabs={updateDefaultNavigation}
-        />
+        <Route path="/kutsutut" component={KutsututPage} title="TITLE_KUTSUTUT" getNaviTabs={updateDefaultNavigation} />
         <Route
             path="/kutsulomake"
             component={KutsuminenPage}

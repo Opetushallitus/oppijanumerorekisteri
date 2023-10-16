@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import moment from 'moment';
 import Modal from '../common/modal/Modal';
 import Button from '../common/button/Button';
@@ -7,303 +7,151 @@ import KutsututTable from './KutsututTable';
 import DelayedSearchInput from '../henkilohaku/DelayedSearchInput';
 import KutsututBooleanRadioButton from './KutsututBooleanRadioButton';
 import KayttooikeusryhmaSingleSelect from '../common/select/KayttooikeusryhmaSingleSelect';
-import { Localisations, L10n } from '../../types/localisation.type';
-import { Locale } from '../../types/locale.type';
-import { OrganisaatioWithChildren } from '../../types/domain/organisaatio/organisaatio.types';
+import { deleteKutsu } from '../../actions/kutsu.actions';
 import { KutsuRead } from '../../types/domain/kayttooikeus/Kutsu.types';
 import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import CloseButton from '../common/button/CloseButton';
 import { Option } from 'react-select';
+import { useLocalisations } from '../../selectors';
+import { RootState, useAppDispatch } from '../../store';
+import { useSelector } from 'react-redux';
 
-type Payload = {
+export type Payload = {
     searchTerm: string;
     organisaatioOids: string;
     tilas: Array<string>;
-    sortBy: string;
-    direction: string;
     view?: string;
     kayttooikeusryhmaIds?: string;
     subOrganisations?: boolean;
 };
 
-type Props = {
-    l10n: L10n;
-    locale: Locale;
-    kutsus: { result: Array<KutsuRead> };
-    deleteKutsu: (arg0: number) => void;
-    fetchKutsus: (arg0: Payload, arg1: number, arg2: number) => void;
-    kutsuListLoading: boolean;
-    clearKutsuList: () => void;
-    isAdmin: boolean;
-    isOphVirkailija: boolean;
-};
+export const KutsututPage = () => {
+    const dispatch = useAppDispatch();
+    const { L, locale } = useLocalisations();
+    const [payload, setPayload] = useState<Payload>({
+        searchTerm: '',
+        organisaatioOids: '',
+        tilas: ['AVOIN'],
+        view: null,
+        kayttooikeusryhmaIds: null,
+        subOrganisations: true,
+    });
+    const [organisaatioSelection, setOrganisaatioSelection] = useState('');
+    const [confirmDelete, setConfirmDelete] = useState<KutsuRead>();
+    const isKutsusLoaded = useSelector<RootState, boolean>((state) => state.kutsuList.loaded);
 
-export type Kutsu = {
-    id?: number;
-    etunimi?: string;
-    sukunimi?: string;
-    sahkoposti?: string;
-    organisaatiot: Array<OrganisaatioWithChildren>;
-    aikaleima: string;
-};
-
-type Sort = {
-    id: string;
-    desc: string;
-};
-
-type State = {
-    allFetched: boolean;
-    confirmDeleteFor?: Kutsu;
-    payload: Payload;
-    organisaatioSelection: string;
-};
-
-export default class KutsututPage extends React.Component<Props, State> {
-    L: Localisations;
-    defaultLimit: number;
-    defaultOffset: number;
-    offset: number;
-    kutsuTableHeaderToSort: {
-        [key: string]: string;
-    };
-
-    constructor(props: Props) {
-        super(props);
-
-        this.L = this.props.l10n[this.props.locale];
-
-        this.defaultLimit = 20;
-        this.defaultOffset = 0;
-
-        this.offset = 0;
-
-        this.kutsuTableHeaderToSort = {
-            KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO: 'AIKALEIMA',
-            KUTSUT_NIMI_OTSIKKO: 'NIMI',
-            KUTSUT_SAHKOPOSTI_OTSIKKO: 'SAHKOPOSTI',
-            DEFAULT: '',
-        };
-        // Default that is fetched at start. Needs to match to KutsututBooleanRadioButton falseLabel.
-
-        this.state = {
-            confirmDeleteFor: null,
-            allFetched: false,
-            payload: {
-                searchTerm: '',
-                organisaatioOids: '',
-                tilas: ['AVOIN'],
-                sortBy: 'AIKALEIMA',
-                direction: 'DESC',
-                view: null,
-                kayttooikeusryhmaIds: null,
-                subOrganisations: true,
-            },
-            organisaatioSelection: '',
-        };
-    }
-
-    componentDidUpdate(_prevProps: Props, prevState: State) {
-        // Update kutsus if payload changes. Basically payload.view change sets this for initial fetch.
-        if (Object.keys(this.state.payload).some((key) => this.state.payload[key] !== prevState.payload[key])) {
-            this.fetchKutsus();
+    async function cancelInvitationConfirmed() {
+        if (confirmDelete?.id) {
+            await dispatch<any>(deleteKutsu(confirmDelete.id));
+            setConfirmDelete(undefined);
         }
     }
 
-    componentWillReceiveProps(nextProps: Props) {
-        this.setState({
-            allFetched:
-                !nextProps.kutsuListLoading &&
-                (nextProps.kutsus.result.length < this.defaultLimit ||
-                    nextProps.kutsus.result.length === this.props.kutsus.result.length),
-        });
+    function clearOrganisaatioSelection(): void {
+        setPayload({ ...payload, organisaatioOids: '' });
+        setOrganisaatioSelection('');
     }
 
-    render() {
-        const kutsuResponse = this.props.kutsus;
-        return (
-            <div className="wrapper" id="kutsutut-page">
-                <div className="header">
-                    <span className="oph-h2 oph-bold">{this.L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</span>
-                    <span className="right">
-                        <KutsututBooleanRadioButton view={this.state.payload.view} setView={this.setView.bind(this)} />
-                    </span>
-                </div>
-                <div className="flex-horizontal flex-align-center kutsutut-filters">
-                    <div className="flex-item-1">
-                        <DelayedSearchInput
-                            setSearchQueryAction={this.onHakutermiChange.bind(this)}
-                            defaultNameQuery={this.state.payload.searchTerm}
-                            placeholder={this.L['KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO']}
-                            loading={this.props.kutsuListLoading}
-                        />
-                    </div>
-                </div>
-                <div className="flex-horizontal kutsutut-filters">
-                    <div className="flex-item-1 flex-inline">
-                        <input
-                            className="oph-input flex-item-1 kutsutut-organisaatiosuodatus"
-                            type="text"
-                            value={this.state.organisaatioSelection}
-                            placeholder={this.L['KUTSUTUT_ORGANISAATIOSUODATUS']}
-                            readOnly
-                        />
-                        <OrganisaatioSelectModal onSelect={this.onOrganisaatioChange.bind(this)} />
-                        <CloseButton closeAction={() => this.clearOrganisaatioSelection()}></CloseButton>
-                    </div>
-                    <div className="flex-item-1 flex-inline" id="radiator">
-                        <div className="flex-item-1">
-                            <KayttooikeusryhmaSingleSelect
-                                kayttooikeusSelection={this.state.payload.kayttooikeusryhmaIds}
-                                kayttooikeusSelectionAction={this.onKayttooikeusryhmaChange.bind(this)}
-                            />
-                        </div>
-                        <CloseButton closeAction={() => this.clearKayttooikeusryhmaSelection()}></CloseButton>
-                    </div>
-                </div>
-                <KutsututTable
-                    fetchKutsus={this.fetchKutsus.bind(this)}
-                    kutsus={kutsuResponse.result}
-                    cancelInvitation={this.cancelInvitationAction.bind(this)}
-                    allFetched={this.state.allFetched}
-                    isLoading={this.props.kutsuListLoading}
-                />
+    function onOrganisaatioChange(organisaatio: OrganisaatioSelectObject) {
+        setPayload({ ...payload, organisaatioOids: organisaatio.oid });
+        setOrganisaatioSelection(organisaatio.name);
+    }
 
-                {this.state.confirmDeleteFor !== null && (
-                    <Modal
-                        show={this.state.confirmDeleteFor !== null}
-                        onClose={this.cancelInvitationCancellation.bind(this)}
-                        closeOnOuterClick={true}
-                    >
-                        <div className="confirmation-modal">
-                            <span className="oph-h2 oph-strong">{this.L['PERUUTA_KUTSU_VAHVISTUS']}</span>
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        <th>{this.L['KUTSUT_NIMI_OTSIKKO']}</th>
-                                        <td>
-                                            {this.state.confirmDeleteFor && this.state.confirmDeleteFor.etunimi}{' '}
-                                            {this.state.confirmDeleteFor && this.state.confirmDeleteFor.sukunimi}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>{this.L['KUTSUT_SAHKOPOSTI_OTSIKKO']}</th>
-                                        <td>{this.state.confirmDeleteFor && this.state.confirmDeleteFor.sahkoposti}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{this.L['KUTSUTUT_ORGANISAATIO_OTSIKKO']}</th>
-                                        <td>
-                                            {this.state.confirmDeleteFor &&
-                                                this.state.confirmDeleteFor.organisaatiot.map((org) => (
-                                                    <div className="kutsuOrganisaatio" key={org.oid}>
-                                                        {org.nimi[this.props.locale]}
-                                                    </div>
-                                                ))}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>{this.L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO']}</th>
-                                        <td>
-                                            {this.state.confirmDeleteFor &&
-                                                moment(this.state.confirmDeleteFor.aikaleima).format()}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div className="row">
-                                <Button className="left action" action={this.cancelInvitationConfirmed.bind(this)}>
-                                    {this.L['PERUUTA_KUTSU']}
-                                </Button>
-                                <Button className="right cancel" action={this.cancelInvitationCancellation.bind(this)}>
-                                    {this.L['PERUUTA_KUTSUN_PERUUTTAMINEN']}
-                                </Button>
-                            </div>
-                            <div className="clear" />
-                        </div>
-                    </Modal>
-                )}
+    function onKayttooikeusryhmaChange(kayttooikeusOption: Option<string>) {
+        setPayload({ ...payload, kayttooikeusryhmaIds: kayttooikeusOption.value });
+    }
+
+    return (
+        <div className="wrapper" id="kutsutut-page">
+            <div className="header">
+                <span className="oph-h2 oph-bold">{L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</span>
+                <span className="right">
+                    <KutsututBooleanRadioButton
+                        view={payload.view}
+                        setView={(view) => setPayload({ ...payload, view })}
+                    />
+                </span>
             </div>
-        );
-    }
-
-    cancelInvitationAction(r: Kutsu) {
-        return () => {
-            this.setState({ confirmDeleteFor: r });
-        };
-    }
-
-    cancelInvitationCancellation() {
-        this.setState({ confirmDeleteFor: null });
-    }
-
-    async cancelInvitationConfirmed() {
-        if (this.state.confirmDeleteFor && this.state.confirmDeleteFor.id) {
-            await this.props.deleteKutsu(this.state.confirmDeleteFor.id);
-            this.setState({ confirmDeleteFor: null });
-        }
-        this.fetchKutsus();
-    }
-
-    setView(newView: string) {
-        this.setState({
-            payload: { ...this.state.payload, view: newView },
-        });
-    }
-
-    onHakutermiChange(searchTerm: string) {
-        if (searchTerm.length === 0 || searchTerm.length >= 3) {
-            this.setState({
-                payload: { ...this.state.payload, searchTerm },
-            });
-        }
-    }
-
-    clearOrganisaatioSelection(): void {
-        this.setState({
-            payload: { ...this.state.payload, organisaatioOids: '' },
-            organisaatioSelection: '',
-        });
-    }
-
-    onOrganisaatioChange(organisaatio: OrganisaatioSelectObject) {
-        const organisaatioOids = organisaatio.oid;
-        this.setState({
-            payload: { ...this.state.payload, organisaatioOids },
-            organisaatioSelection: organisaatio.name,
-        });
-    }
-
-    onKayttooikeusryhmaChange(kayttooikeusOption: Option<string>) {
-        this.setState({
-            payload: {
-                ...this.state.payload,
-                kayttooikeusryhmaIds: kayttooikeusOption.value,
-            },
-        });
-    }
-
-    clearKayttooikeusryhmaSelection(): void {
-        this.setState({
-            payload: { ...this.state.payload, kayttooikeusryhmaIds: undefined },
-        });
-    }
-
-    fetchKutsus(sort?: Sort, shouldNotClear?: boolean) {
-        let sortBy = this.state.payload.sortBy;
-        let direction = this.state.payload.direction;
-        if (!shouldNotClear) {
-            this.props.clearKutsuList();
-            this.offset = this.defaultOffset;
-        } else {
-            this.offset += this.defaultLimit;
-        }
-        if (sort) {
-            sortBy = this.kutsuTableHeaderToSort[sort.id];
-            direction = sort.desc ? 'DESC' : 'ASC';
-        }
-        this.setState({ payload: { ...this.state.payload, sortBy, direction } }, () =>
-            this.props.fetchKutsus(this.state.payload, this.offset, this.defaultLimit)
-        );
-    }
-}
+            <div className="flex-horizontal flex-align-center kutsutut-filters">
+                <div className="flex-item-1">
+                    <DelayedSearchInput
+                        setSearchQueryAction={(searchTerm) => setPayload({ ...payload, searchTerm })}
+                        defaultNameQuery={payload.searchTerm}
+                        placeholder={L['KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO']}
+                        loading={!isKutsusLoaded}
+                    />
+                </div>
+            </div>
+            <div className="flex-horizontal kutsutut-filters">
+                <div className="flex-item-1 flex-inline">
+                    <input
+                        className="oph-input flex-item-1 kutsutut-organisaatiosuodatus"
+                        type="text"
+                        value={organisaatioSelection}
+                        placeholder={L['KUTSUTUT_ORGANISAATIOSUODATUS']}
+                        readOnly
+                    />
+                    <OrganisaatioSelectModal onSelect={onOrganisaatioChange} />
+                    <CloseButton closeAction={() => clearOrganisaatioSelection()}></CloseButton>
+                </div>
+                <div className="flex-item-1 flex-inline" id="radiator">
+                    <div className="flex-item-1">
+                        <KayttooikeusryhmaSingleSelect
+                            kayttooikeusSelection={payload.kayttooikeusryhmaIds}
+                            kayttooikeusSelectionAction={onKayttooikeusryhmaChange}
+                        />
+                    </div>
+                    <CloseButton
+                        closeAction={() => setPayload({ ...payload, kayttooikeusryhmaIds: undefined })}
+                    ></CloseButton>
+                </div>
+            </div>
+            <KutsututTable payload={payload} cancelInvitation={(k) => setConfirmDelete(k)} />
+            {confirmDelete && (
+                <Modal show={!!confirmDelete} onClose={() => setConfirmDelete(undefined)} closeOnOuterClick={true}>
+                    <div className="confirmation-modal">
+                        <span className="oph-h2 oph-strong">{L['PERUUTA_KUTSU_VAHVISTUS']}</span>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <th>{L['KUTSUT_NIMI_OTSIKKO']}</th>
+                                    <td>
+                                        {confirmDelete.etunimi} {confirmDelete.sukunimi}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>{L['KUTSUT_SAHKOPOSTI_OTSIKKO']}</th>
+                                    <td>{confirmDelete.sahkoposti}</td>
+                                </tr>
+                                <tr>
+                                    <th>{L['KUTSUTUT_ORGANISAATIO_OTSIKKO']}</th>
+                                    <td>
+                                        {confirmDelete.organisaatiot.map((org) => (
+                                            <div className="kutsuOrganisaatio" key={org.organisaatioOid}>
+                                                {org.nimi[locale]}
+                                            </div>
+                                        ))}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>{L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO']}</th>
+                                    <td>{moment(confirmDelete.aikaleima).format()}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div className="row">
+                            <Button className="left action" action={cancelInvitationConfirmed}>
+                                {L['PERUUTA_KUTSU']}
+                            </Button>
+                            <Button className="right cancel" action={() => setConfirmDelete(undefined)}>
+                                {L['PERUUTA_KUTSUN_PERUUTTAMINEN']}
+                            </Button>
+                        </div>
+                        <div className="clear" />
+                    </div>
+                </Modal>
+            )}
+        </div>
+    );
+};

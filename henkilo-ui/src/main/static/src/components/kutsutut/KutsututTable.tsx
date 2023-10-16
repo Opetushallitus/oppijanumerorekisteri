@@ -11,33 +11,39 @@ import PopupButton from '../common/button/PopupButton';
 import KutsuDetails from './KutsuDetails';
 import { KutsuRead } from '../../types/domain/kayttooikeus/Kutsu.types';
 import { useLocalisations } from '../../selectors';
-import { useAppDispatch } from '../../store';
+import { RootState, useAppDispatch } from '../../store';
 import { OphTableWithInfiniteScroll } from '../OphTableWithInfiniteScroll';
 import { expanderColumn } from '../OphTable';
-
-type Sort = {
-    id: string;
-    desc: string;
-};
+import { clearKutsuList, fetchKutsus as doFetchKutsus } from '../../actions/kutsu.actions';
+import { Payload } from './KutsututPage';
+import { useSelector } from 'react-redux';
+import { KutsuListState } from '../../reducers/kutsuList.reducer';
 
 type OwnProps = {
-    kutsus: Array<KutsuRead>;
-    isLoading: boolean;
-    allFetched: boolean;
-    fetchKutsus: (sort?: Sort, shouldNotClear?: boolean) => void;
-    cancelInvitation: (kutsu: KutsuRead) => (arg0: React.MouseEvent<HTMLElement>) => void;
+    payload: Payload;
+    cancelInvitation: (kutsu: KutsuRead) => void;
 };
 
-const KutsututTable = ({ kutsus, isLoading, allFetched, fetchKutsus, cancelInvitation }: OwnProps) => {
-    const [sorting, setSorting] = useState<SortingState>([{ id: 'KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO', desc: true }]);
+const KutsututTable = ({ payload, cancelInvitation }: OwnProps) => {
+    const [sorting, setSorting] = useState<SortingState>([{ id: 'AIKALEIMA', desc: true }]);
     const { L, locale } = useLocalisations();
     const dispatch = useAppDispatch();
+    const [offset, setOffset] = useState(0);
+    const [allFetched, setAllFetched] = useState(false);
+    const defaultLimit = 20;
+    const { result, loaded } = useSelector<RootState, KutsuListState>((state) => state.kutsuList);
+    const [resultCount, setResultCount] = useState(result?.length ?? 0);
+    console.log(payload);
+    console.log(sorting);
 
     useEffect(() => {
-        if (sorting?.length) {
-            fetchKutsus({ id: sorting[0].id, desc: sorting[0].desc + '' });
-        }
-    }, [sorting]);
+        fetchKutsus();
+    }, [payload, sorting]);
+
+    useEffect(() => {
+        setAllFetched(loaded && (result.length < defaultLimit || result.length === resultCount));
+        setResultCount(result.length);
+    }, [result]);
 
     const resendAction = async (id: number) => {
         await dispatch<any>(renewKutsu(id));
@@ -49,19 +55,35 @@ const KutsututTable = ({ kutsus, isLoading, allFetched, fetchKutsus, cancelInvit
                 title: L['KUTSU_LUONTI_ONNISTUI'],
             })
         );
-        fetchKutsus({ id: sorting[0].id, desc: sorting[0].desc + '' });
+        fetchKutsus();
     };
+
+    function fetchKutsus(shouldNotClear?: boolean) {
+        if (!shouldNotClear) {
+            dispatch(clearKutsuList());
+            setOffset(0);
+        } else {
+            setOffset(offset + defaultLimit);
+        }
+        dispatch<any>(
+            doFetchKutsus(
+                { ...payload, sortBy: sorting[0]?.id ?? 'AIKALEIMA', direction: sorting[0]?.desc ? 'DESC' : 'ASC' },
+                offset,
+                defaultLimit
+            )
+        );
+    }
 
     const columns = useMemo<ColumnDef<KutsuRead, KutsuRead>[]>(
         () => [
             expanderColumn,
             {
-                id: 'KUTSUT_NIMI_OTSIKKO',
+                id: 'NIMI',
                 header: () => L['KUTSUT_NIMI_OTSIKKO'],
                 accessorFn: (row) => `${row.etunimi} ${row.sukunimi}`,
             },
             {
-                id: 'KUTSUT_SAHKOPOSTI_OTSIKKO',
+                id: 'SAHKOPOSTI',
                 header: () => L['KUTSUT_SAHKOPOSTI_OTSIKKO'],
                 accessorFn: (row) => row.sahkoposti,
             },
@@ -81,7 +103,7 @@ const KutsututTable = ({ kutsus, isLoading, allFetched, fetchKutsus, cancelInvit
                 enableSorting: false,
             },
             {
-                id: 'KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO',
+                id: 'AIKALEIMA',
                 header: () => L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO'],
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => {
@@ -143,7 +165,7 @@ const KutsututTable = ({ kutsus, isLoading, allFetched, fetchKutsus, cancelInvit
                 accessorFn: (row) => row,
                 cell: ({ getValue }) =>
                     getValue().tila === 'AVOIN' && (
-                        <Button cancel action={cancelInvitation(getValue())}>
+                        <Button cancel action={() => cancelInvitation(getValue())}>
                             {L['KUTSUTUT_PERUUTA_KUTSU_NAPPI']}
                         </Button>
                     ),
@@ -153,13 +175,9 @@ const KutsututTable = ({ kutsus, isLoading, allFetched, fetchKutsus, cancelInvit
         []
     );
 
-    function onSubmitWithoutClear() {
-        fetchKutsus({ id: sorting[0].id, desc: sorting[0].desc + '' }, true);
-    }
-
     const table = useReactTable({
         columns,
-        data: kutsus ?? [],
+        data: result ?? [],
         pageCount: 1,
         state: {
             sorting,
@@ -174,11 +192,11 @@ const KutsututTable = ({ kutsus, isLoading, allFetched, fetchKutsus, cancelInvit
         <div className="kutsututTableWrapper">
             <OphTableWithInfiniteScroll<KutsuRead>
                 table={table}
-                isLoading={isLoading}
-                fetch={onSubmitWithoutClear}
-                isActive={!allFetched && !isLoading}
+                isLoading={!loaded}
+                fetch={() => fetchKutsus(true)}
+                isActive={!allFetched && loaded && !!result?.length}
                 renderSubComponent={({ row }) => (
-                    <KutsuDetails kutsu={kutsus.find((kutsu) => kutsu.id === row.original.id)} />
+                    <KutsuDetails kutsu={result.find((kutsu) => kutsu.id === row.original.id)} />
                 )}
             />
         </div>

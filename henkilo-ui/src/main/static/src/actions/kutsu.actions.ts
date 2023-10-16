@@ -77,7 +77,7 @@ export const fetchKutsus = (payload, offset, amount) => async (dispatch: AppDisp
     }
 };
 
-export const clearKutsuList = () => (dispatch: AppDispatch) => dispatch({ type: CLEAR_KUTSU_LIST });
+export const clearKutsuList = () => ({ type: CLEAR_KUTSU_LIST });
 
 const createHenkiloByTokenRequest = () => ({
     type: CREATE_HENKILOBYTOKEN_REQUEST,
