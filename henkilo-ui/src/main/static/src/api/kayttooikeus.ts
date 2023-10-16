@@ -11,7 +11,11 @@ import {
 } from '../actions/actiontypes';
 import { Locale } from '../types/locale.type';
 import { KutsuRead } from '../types/domain/kayttooikeus/Kutsu.types';
-import { PalvelukayttajaCriteria, PalvelukayttajaRead } from '../types/domain/kayttooikeus/palvelukayttaja.types';
+import {
+    PalvelukayttajaCreate,
+    PalvelukayttajaCriteria,
+    PalvelukayttajaRead,
+} from '../types/domain/kayttooikeus/palvelukayttaja.types';
 import { HenkilohakuResult } from '../types/domain/kayttooikeus/HenkilohakuResult.types';
 import { Henkilohaku, HenkilohakuCriteria } from '../types/domain/kayttooikeus/HenkilohakuCriteria.types';
 
@@ -50,7 +54,7 @@ export const kayttooikeusApi = createApi({
         'organisaatiot',
         'kutsuByToken',
         'accessRightReport',
-        'palvelukayttaja',
+        'palvelukayttajat',
         'henkilohaku',
         'henkilohakucount',
     ],
@@ -116,7 +120,15 @@ export const kayttooikeusApi = createApi({
         }),
         getPalvelukayttajat: builder.query<PalvelukayttajaRead[], PalvelukayttajaCriteria>({
             query: (criteria) => `palvelukayttaja?${new URLSearchParams(criteria).toString()}`,
-            providesTags: ['palvelukayttaja'],
+            providesTags: ['palvelukayttajat'],
+        }),
+        postPalvelukayttaja: builder.mutation<PalvelukayttajaRead, PalvelukayttajaCreate>({
+            query: (body) => ({
+                url: 'palvelukayttaja',
+                method: 'POST',
+                body,
+            }),
+            invalidatesTags: ['palvelukayttajat'],
         }),
         getHenkiloHaku: builder.query<HenkilohakuResult[], Henkilohaku>({
             query: ({ criteria, parameters }) => ({
@@ -156,6 +168,7 @@ export const {
     useGetKutsuByTokenQuery,
     useGetAccessRightReportQuery,
     useGetPalvelukayttajatQuery,
+    usePostPalvelukayttajaMutation,
     useGetHenkiloHakuQuery,
     useGetHenkiloHakuCountQuery,
 } = kayttooikeusApi;
