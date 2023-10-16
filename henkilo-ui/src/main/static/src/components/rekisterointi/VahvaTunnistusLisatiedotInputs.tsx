@@ -35,7 +35,7 @@ export type Form = {
 type Props = {
     L: Localisations;
     form: Form;
-    onChange: (name: string, value: any) => void;
+    onChange: (name: string, value: string) => void;
 };
 
 class VahvaTunnistusLisatiedotInputs extends React.Component<Props> {

@@ -79,7 +79,7 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
         );
     }
 
-    onChange = (name: string, value: any) => {
+    onChange = (name: string, value: string) => {
         const values = { ...this.state.form.values, [name]: value };
         this.refreshForm(values);
     };
@@ -146,10 +146,10 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
         }
     };
 
-    onServerError = (error: any) => {
+    onServerError = (error: { errorType?: string }) => {
         const L = this.props.L;
 
-        if (error && error.errorType === 'PasswordException') {
+        if (error?.errorType === 'PasswordException') {
             this.refreshForm({ ...this.state.form.values }, [
                 {
                     name: 'password',

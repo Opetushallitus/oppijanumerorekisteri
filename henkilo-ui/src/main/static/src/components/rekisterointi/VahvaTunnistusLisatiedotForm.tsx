@@ -5,8 +5,8 @@ import { Localisations } from '../../types/localisation.type';
 type VahvaTunnistusLisatiedotFormProps = {
     L: Localisations;
     form: Form;
-    onChange: (name: string, value: any) => void;
-    onSubmit: () => Promise<any>;
+    onChange: (name: string, value: string) => void;
+    onSubmit: () => Promise<void>;
 };
 
 class VahvaTunnistusLisatiedotForm extends React.Component<VahvaTunnistusLisatiedotFormProps> {
