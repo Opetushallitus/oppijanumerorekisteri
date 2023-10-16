@@ -4,62 +4,60 @@ import Modal from '../common/modal/Modal';
 import Button from '../common/button/Button';
 import './KutsututPage.css';
 import KutsututTable from './KutsututTable';
-import DelayedSearchInput from '../henkilohaku/DelayedSearchInput';
 import KutsututBooleanRadioButton from './KutsututBooleanRadioButton';
 import KayttooikeusryhmaSingleSelect from '../common/select/KayttooikeusryhmaSingleSelect';
-import { deleteKutsu } from '../../actions/kutsu.actions';
 import { KutsuRead } from '../../types/domain/kayttooikeus/Kutsu.types';
 import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import CloseButton from '../common/button/CloseButton';
 import { Option } from 'react-select';
 import { useLocalisations } from '../../selectors';
-import { RootState, useAppDispatch } from '../../store';
-import { useSelector } from 'react-redux';
+import { useDeleteKutsuMutation } from '../../api/kayttooikeus';
+import { useDebounce } from '../../useDebounce';
 
-export type Payload = {
+export type KutsututSearchParams = {
     searchTerm: string;
     organisaatioOids: string;
-    tilas: Array<string>;
+    tilas: string;
     view?: string;
     kayttooikeusryhmaIds?: string;
-    subOrganisations?: boolean;
+    subOrganisations?: string;
 };
 
 export const KutsututPage = () => {
-    const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
-    const [payload, setPayload] = useState<Payload>({
+    const [params, setParams] = useState<KutsututSearchParams>({
         searchTerm: '',
         organisaatioOids: '',
-        tilas: ['AVOIN'],
+        tilas: 'AVOIN',
         view: null,
-        kayttooikeusryhmaIds: null,
-        subOrganisations: true,
+        kayttooikeusryhmaIds: '',
+        subOrganisations: 'true',
     });
+    const delayedParams = useDebounce(params, 500);
     const [organisaatioSelection, setOrganisaatioSelection] = useState('');
     const [confirmDelete, setConfirmDelete] = useState<KutsuRead>();
-    const isKutsusLoaded = useSelector<RootState, boolean>((state) => state.kutsuList.loaded);
+    const [deleteKutsu] = useDeleteKutsuMutation();
 
     async function cancelInvitationConfirmed() {
         if (confirmDelete?.id) {
-            await dispatch<any>(deleteKutsu(confirmDelete.id));
+            await deleteKutsu(confirmDelete.id);
             setConfirmDelete(undefined);
         }
     }
 
     function clearOrganisaatioSelection(): void {
-        setPayload({ ...payload, organisaatioOids: '' });
+        setParams({ ...params, organisaatioOids: '' });
         setOrganisaatioSelection('');
     }
 
     function onOrganisaatioChange(organisaatio: OrganisaatioSelectObject) {
-        setPayload({ ...payload, organisaatioOids: organisaatio.oid });
+        setParams({ ...params, organisaatioOids: organisaatio.oid });
         setOrganisaatioSelection(organisaatio.name);
     }
 
     function onKayttooikeusryhmaChange(kayttooikeusOption: Option<string>) {
-        setPayload({ ...payload, kayttooikeusryhmaIds: kayttooikeusOption.value });
+        setParams({ ...params, kayttooikeusryhmaIds: kayttooikeusOption.value });
     }
 
     return (
@@ -67,19 +65,16 @@ export const KutsututPage = () => {
             <div className="header">
                 <span className="oph-h2 oph-bold">{L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</span>
                 <span className="right">
-                    <KutsututBooleanRadioButton
-                        view={payload.view}
-                        setView={(view) => setPayload({ ...payload, view })}
-                    />
+                    <KutsututBooleanRadioButton view={params.view} setView={(view) => setParams({ ...params, view })} />
                 </span>
             </div>
             <div className="flex-horizontal flex-align-center kutsutut-filters">
                 <div className="flex-item-1">
-                    <DelayedSearchInput
-                        setSearchQueryAction={(searchTerm) => setPayload({ ...payload, searchTerm })}
-                        defaultNameQuery={payload.searchTerm}
+                    <input
+                        className="oph-input"
+                        defaultValue={params.searchTerm}
+                        onChange={(e) => setParams({ ...params, searchTerm: e.target.value })}
                         placeholder={L['KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO']}
-                        loading={!isKutsusLoaded}
                     />
                 </div>
             </div>
@@ -98,16 +93,16 @@ export const KutsututPage = () => {
                 <div className="flex-item-1 flex-inline" id="radiator">
                     <div className="flex-item-1">
                         <KayttooikeusryhmaSingleSelect
-                            kayttooikeusSelection={payload.kayttooikeusryhmaIds}
+                            kayttooikeusSelection={params.kayttooikeusryhmaIds}
                             kayttooikeusSelectionAction={onKayttooikeusryhmaChange}
                         />
                     </div>
                     <CloseButton
-                        closeAction={() => setPayload({ ...payload, kayttooikeusryhmaIds: undefined })}
+                        closeAction={() => setParams({ ...params, kayttooikeusryhmaIds: undefined })}
                     ></CloseButton>
                 </div>
             </div>
-            <KutsututTable payload={payload} cancelInvitation={(k) => setConfirmDelete(k)} />
+            <KutsututTable params={delayedParams} cancelInvitation={(k) => setConfirmDelete(k)} />
             {confirmDelete && (
                 <Modal show={!!confirmDelete} onClose={() => setConfirmDelete(undefined)} closeOnOuterClick={true}>
                     <div className="confirmation-modal">

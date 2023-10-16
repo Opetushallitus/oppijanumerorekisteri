@@ -3,7 +3,6 @@ import moment from 'moment';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, Row, SortingState } from '@tanstack/react-table';
 
 import Button from '../common/button/Button';
-import { renewKutsu } from '../../actions/kutsu.actions';
 import { toLocalizedText } from '../../localizabletext';
 import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
 import { addGlobalNotification } from '../../actions/notification.actions';
@@ -11,42 +10,40 @@ import PopupButton from '../common/button/PopupButton';
 import KutsuDetails from './KutsuDetails';
 import { KutsuRead } from '../../types/domain/kayttooikeus/Kutsu.types';
 import { useLocalisations } from '../../selectors';
-import { RootState, useAppDispatch } from '../../store';
+import { useAppDispatch } from '../../store';
 import { OphTableWithInfiniteScroll } from '../OphTableWithInfiniteScroll';
 import { expanderColumn } from '../OphTable';
-import { clearKutsuList, fetchKutsus as doFetchKutsus } from '../../actions/kutsu.actions';
-import { Payload } from './KutsututPage';
-import { useSelector } from 'react-redux';
-import { KutsuListState } from '../../reducers/kutsuList.reducer';
+import { KutsututSearchParams } from './KutsututPage';
+import { KutsututSortBy, useGetKutsututQuery, usePutRenewKutsuMutation } from '../../api/kayttooikeus';
 
 type OwnProps = {
-    payload: Payload;
+    params: KutsututSearchParams;
     cancelInvitation: (kutsu: KutsuRead) => void;
 };
 
-const KutsututTable = ({ payload, cancelInvitation }: OwnProps) => {
+const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
     const [sorting, setSorting] = useState<SortingState>([{ id: 'AIKALEIMA', desc: true }]);
     const { L, locale } = useLocalisations();
     const dispatch = useAppDispatch();
     const [offset, setOffset] = useState(0);
     const [allFetched, setAllFetched] = useState(false);
-    const defaultLimit = 20;
-    const { result, loaded } = useSelector<RootState, KutsuListState>((state) => state.kutsuList);
-    const [resultCount, setResultCount] = useState(result?.length ?? 0);
-    console.log(payload);
-    console.log(sorting);
+    const [renewKutsu] = usePutRenewKutsuMutation();
+    const { data, isFetching } = useGetKutsututQuery({
+        params,
+        sortBy: (sorting[0]?.id ?? 'AIKALEIMA') as KutsututSortBy,
+        direction: sorting[0]?.desc ? 'DESC' : 'ASC',
+        offset: String(offset),
+        amount: String(20),
+    });
+    const [resultCount, setResultCount] = useState(data?.length ?? 0);
 
     useEffect(() => {
-        fetchKutsus();
-    }, [payload, sorting]);
-
-    useEffect(() => {
-        setAllFetched(loaded && (result.length < defaultLimit || result.length === resultCount));
-        setResultCount(result.length);
-    }, [result]);
+        setAllFetched(!isFetching && data?.length && (data?.length < 20 || data?.length === resultCount));
+        setResultCount(data?.length ?? 0);
+    }, [data]);
 
     const resendAction = async (id: number) => {
-        await dispatch<any>(renewKutsu(id));
+        await renewKutsu(id);
         dispatch(
             addGlobalNotification({
                 key: 'KUTSU_CONFIRMATION_SUCCESS',
@@ -55,24 +52,7 @@ const KutsututTable = ({ payload, cancelInvitation }: OwnProps) => {
                 title: L['KUTSU_LUONTI_ONNISTUI'],
             })
         );
-        fetchKutsus();
     };
-
-    function fetchKutsus(shouldNotClear?: boolean) {
-        if (!shouldNotClear) {
-            dispatch(clearKutsuList());
-            setOffset(0);
-        } else {
-            setOffset(offset + defaultLimit);
-        }
-        dispatch<any>(
-            doFetchKutsus(
-                { ...payload, sortBy: sorting[0]?.id ?? 'AIKALEIMA', direction: sorting[0]?.desc ? 'DESC' : 'ASC' },
-                offset,
-                defaultLimit
-            )
-        );
-    }
 
     const columns = useMemo<ColumnDef<KutsuRead, KutsuRead>[]>(
         () => [
@@ -177,7 +157,7 @@ const KutsututTable = ({ payload, cancelInvitation }: OwnProps) => {
 
     const table = useReactTable({
         columns,
-        data: result ?? [],
+        data: data ?? [],
         pageCount: 1,
         state: {
             sorting,
@@ -192,11 +172,11 @@ const KutsututTable = ({ payload, cancelInvitation }: OwnProps) => {
         <div className="kutsututTableWrapper">
             <OphTableWithInfiniteScroll<KutsuRead>
                 table={table}
-                isLoading={!loaded}
-                fetch={() => fetchKutsus(true)}
-                isActive={!allFetched && loaded && !!result?.length}
+                isLoading={isFetching}
+                fetch={() => setOffset(offset + 20)}
+                isActive={!allFetched && !isFetching && !!data?.length}
                 renderSubComponent={({ row }) => (
-                    <KutsuDetails kutsu={result.find((kutsu) => kutsu.id === row.original.id)} />
+                    <KutsuDetails kutsu={data.find((kutsu) => kutsu.id === row.original.id)} />
                 )}
             />
         </div>
