@@ -28,7 +28,7 @@ import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.redu
 
 type OwnProps = {
     router: RouteActions;
-    routeParams: any;
+    routeParams: { id?: string };
 };
 
 type StateProps = {

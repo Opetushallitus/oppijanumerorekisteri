@@ -13,6 +13,7 @@ import { OrganisaatioCriteria } from '../../types/domain/organisaatio/organisaat
 import { HenkilonNimi } from '../../types/domain/kayttooikeus/HenkilonNimi';
 import { L10n } from '../../types/localisation.type';
 import { HaettuKayttooikeusryhma } from '../../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
+import { SortingState } from '@tanstack/react-table';
 
 /**
  * Haettujen käyttöoikeusryhmien haku ja myöntäminen/hylkääminen.
@@ -51,7 +52,7 @@ type Props = {
 
 type State = {
     parameters: FetchHaetutKayttooikeusryhmatParameters;
-    sorted: Array<any>;
+    sorted: SortingState;
     allFetched: boolean;
     page: number;
 };
@@ -124,7 +125,7 @@ class AnomusPage extends React.Component<Props, State> {
         );
     }
 
-    onSortingChange(sorting: [{ id: string; desc: boolean }]) {
+    onSortingChange(sorting: SortingState) {
         this.setState({ sorted: [sorting[0]] }, () => this.onSubmit());
     }
 

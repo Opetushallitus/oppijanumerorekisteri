@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../../../store';
 import Columns from 'react-columns';
@@ -6,7 +6,7 @@ import { Localisations } from '../../../../types/localisation.type';
 
 type OwnProps = {
     label: string;
-    valueGroup: any;
+    valueGroup: ReactNode;
 };
 
 type StateProps = {

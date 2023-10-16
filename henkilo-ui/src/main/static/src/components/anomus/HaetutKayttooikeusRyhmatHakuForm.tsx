@@ -15,6 +15,7 @@ import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import type { Option } from 'react-select';
+import { RyhmatState } from '../../reducers/ryhmat.reducer';
 
 export type Criteria = {
     q?: string;
@@ -33,7 +34,7 @@ type StateProps = {
     isAdmin: boolean;
     isOphVirkailija: boolean;
     haetutKayttooikeusryhmatLoading: boolean;
-    ryhmat: { ryhmas: Array<Record<string, any>> };
+    ryhmat: RyhmatState;
 };
 
 type Props = StateProps & OwnProps;
@@ -134,7 +135,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
         );
     }
 
-    _parseRyhmas(ryhmatState: { ryhmas: Array<Record<string, any>> }): Array<{ label: string; value: string }> {
+    _parseRyhmas(ryhmatState: RyhmatState): Array<{ label: string; value: string }> {
         const ryhmat = ryhmatState?.ryhmas;
         return ryhmat
             ? ryhmat

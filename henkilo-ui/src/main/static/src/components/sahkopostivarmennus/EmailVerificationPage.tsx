@@ -21,7 +21,7 @@ import { WORK_ADDRESS, EMAIL } from '../../types/constants';
 type Props = {
     locale: Locale;
     L: Localisations;
-    henkilo: Henkilo;
+    henkilo: Partial<Henkilo>;
     loginToken: string;
     router: RouteActions;
     errorNotification: (title: string) => void;
@@ -29,7 +29,7 @@ type Props = {
 
 type State = {
     validForm: boolean;
-    henkilo: Henkilo;
+    henkilo: Partial<Henkilo>;
     emailFieldCount: number;
 };
 

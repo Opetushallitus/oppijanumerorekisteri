@@ -299,7 +299,14 @@ export class HenkiloViewContactContentComponent extends React.Component<Props, S
         this.props.updateHenkiloAndRefetch(this.henkiloUpdate);
     }
 
-    _updateModelField(contactInfo: any, event: Option<string> & React.SyntheticEvent<HTMLInputElement>) {
+    _updateModelField(
+        contactInfo: {
+            label: string;
+            value: string;
+            inputValue: string;
+        },
+        event: Option<string> & React.SyntheticEvent<HTMLInputElement>
+    ) {
         const isContactInfoValid = this.validateContactInfo(contactInfo.label, event.currentTarget.value);
         StaticUtils.updateFieldByDotAnnotation(this.henkiloUpdate, event);
         let contactInfoErrorFields = this.state.contactInfoErrorFields;

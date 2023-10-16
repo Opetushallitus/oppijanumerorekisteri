@@ -121,7 +121,7 @@ class VirkailijaCreateContainer extends React.Component<Props, State> {
         }
     };
 
-    handleError = (error: any): void => {
+    handleError = (error: { errorType?: string }): void => {
         if (error.errorType === 'AccessDeniedException') {
             this.setState({
                 virheet: [...this.state.virheet, this.props.L['VIRKAILIJAN_LUONTI_EI_OIKEUKSIA']],

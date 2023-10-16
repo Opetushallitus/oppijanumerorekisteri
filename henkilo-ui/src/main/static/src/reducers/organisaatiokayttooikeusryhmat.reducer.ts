@@ -4,11 +4,12 @@ import {
     FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_FAILURE,
 } from '../actions/actiontypes';
+import { Kayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
 
 export type OrganisaatioKayttooikeusryhmatState = {
     kayttooikeusryhmatLoading: boolean;
     organisaatioOid: string | null | undefined;
-    kayttooikeusryhmat: Array<object>;
+    kayttooikeusryhmat: Array<Kayttooikeusryhma>;
 };
 
 export const OrganisaatioKayttooikeusryhmat = (

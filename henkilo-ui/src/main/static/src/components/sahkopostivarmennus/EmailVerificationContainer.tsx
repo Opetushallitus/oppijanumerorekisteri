@@ -33,7 +33,7 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 type State = {
     loading: boolean;
-    henkilo: Henkilo | any;
+    henkilo: Partial<Henkilo>;
 };
 
 /*
@@ -52,7 +52,7 @@ class EmailVerificationContainer extends React.Component<Props, State> {
         if (this.props.loginToken) {
             const url = urls.url('kayttooikeus-service.cas.henkilo.bylogintoken', this.props.loginToken);
             this.setState({ loading: true });
-            const henkilo = await http.get(url).catch((error) => {
+            const henkilo = await http.get<Henkilo>(url).catch((error) => {
                 this.props.errorNotification(this.props.L['REKISTEROIDY_TEMP_TOKEN_INVALID']);
                 this.setState({ loading: false });
                 throw error;

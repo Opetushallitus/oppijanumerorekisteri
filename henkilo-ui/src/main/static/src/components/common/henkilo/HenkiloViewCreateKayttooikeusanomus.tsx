@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../../store';
 import './HenkiloViewCreateKayttooikeusanomus.css';
@@ -15,6 +15,7 @@ import {
     createKayttooikeusanomus,
     fetchOrganisaatioKayttooikeusryhmat,
     fetchAllKayttooikeusAnomusForHenkilo,
+    KayttooikeusAnomus,
 } from '../../../actions/kayttooikeusryhma.actions';
 import { addGlobalNotification } from '../../../actions/notification.actions';
 import OrganisaatioSelectModal from '../select/OrganisaatioSelectModal';
@@ -37,7 +38,7 @@ import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooike
 
 type OwnProps = {
     ryhmaOptions: Array<{ label: string; value: string }>;
-    kayttooikeusryhmat: Array<any>;
+    kayttooikeusryhmat: Array<Kayttooikeusryhma>;
 };
 
 type StateProps = {
@@ -53,7 +54,7 @@ type StateProps = {
 
 type DispatchProps = {
     fetchOrganisaatioKayttooikeusryhmat: (arg0: string) => void;
-    createKayttooikeusanomus: (arg0: any) => void;
+    createKayttooikeusanomus: (arg0: KayttooikeusAnomus) => void;
     fetchAllKayttooikeusAnomusForHenkilo: (arg0: string) => void;
     addGlobalNotification: (arg0: GlobalNotificationConfig) => void;
 };
@@ -65,13 +66,17 @@ type State = {
     organisaatioSelection: string;
     organisaatioSelectionName: string;
     ryhmaSelection: string;
-    kayttooikeusryhmaSelections: Array<any>;
+    kayttooikeusryhmaSelections: {
+        value: number;
+        label?: string;
+        description?: string;
+    }[];
     perustelut: string;
     emailOptions: {
         emailSelection?: string;
         missingEmail: boolean;
         showMissingEmailNotification: boolean;
-        options?: any;
+        options?: { value: string; label: string }[];
     };
 };
 
@@ -335,7 +340,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         });
     }
 
-    _changePerustelut(event: any) {
+    _changePerustelut(event: ChangeEvent<HTMLTextAreaElement>) {
         this.setState({ perustelut: event.target.value });
     }
 
@@ -433,7 +438,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         });
     }
 
-    _removeKayttooikeusryhmaSelection(kayttooikeusryhmaSelection: any) {
+    _removeKayttooikeusryhmaSelection(kayttooikeusryhmaSelection: { value: number }) {
         const kayttooikeusryhmaSelections = this.state.kayttooikeusryhmaSelections.filter(
             (selection) => selection.value !== kayttooikeusryhmaSelection.value
         );

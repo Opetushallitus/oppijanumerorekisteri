@@ -33,7 +33,6 @@ export default class BasicinfoForm extends React.Component<Props> {
                     <li>
                         <label>{this.props.L['VIRKAILIJAN_TIEDOT_ETUNIMI']}</label>
                         <input
-                            autoFocus
                             type="text"
                             className="oph-input"
                             disabled={this.props.disabled}
@@ -82,8 +81,8 @@ export default class BasicinfoForm extends React.Component<Props> {
                         ></textarea>
                     </li>
                     <li>
-                        <label>&nbsp;</label>
-                        <div className="oph-field-text">
+                        <label htmlFor="tarkenne">&nbsp;</label>
+                        <div id="tarkenne" className="oph-field-text">
                             {this.props.L['VIRKAILIJAN_LISAYS_ASIOINTIKIELI_TARKENNE']}
                         </div>
                     </li>

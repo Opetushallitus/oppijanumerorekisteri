@@ -16,7 +16,7 @@ import KayttooikeusryhmaPageContainer from './components/kayttooikeusryhmat/kayt
 import KayttooikeusryhmatHallintaContainer from './components/kayttooikeusryhmat/listaus/KayttooikeusryhmatHallintaContainer';
 import FormSwitch from './components/henkilo/oppija/create/form/FormSwitch';
 import VirkailijaCreateContainer from './components/henkilo/VirkailijaCreateContainer';
-import PalveluCreateContainer from './components/henkilo/PalveluCreateContainer';
+import { PalvelukayttajaCreatePage } from './components/palvelukayttaja/PalvelukayttajaCreatePage';
 import VahvaTunnistusLisatiedotContainer from './components/rekisterointi/VahvaTunnistusLisatiedotContainer';
 import HenkiloViewContainer from './components/henkilo/HenkiloViewContainer';
 import AdminRedirect from './components/henkilo/AdminRedirect';
@@ -191,7 +191,7 @@ export default (
         />
         <Route
             path="/palvelukayttaja/luonti"
-            component={PalveluCreateContainer}
+            component={PalvelukayttajaCreatePage}
             title="TITLE_PALVELUKAYTTAJIEN_LUONTI"
             getNaviTabs={updatePalvelukayttajaNavigation}
         />

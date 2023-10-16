@@ -53,6 +53,14 @@ export type Kayttooikeus = {
     loppupvm: string;
 };
 
+export type KayttooikeusAnomus = {
+    organisaatioOrRyhmaOid: string;
+    email: string;
+    perustelut: string;
+    kayttooikeusRyhmaIds: number[];
+    anojaOid: string;
+};
+
 const requestAllKayttooikeusryhmasForHenkilo = (henkiloOid) => ({
     type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST,
     henkiloOid,
@@ -279,7 +287,7 @@ const createKayttooikeusanomusFailure = (error) => ({
     error,
 });
 
-export const createKayttooikeusanomus = (anomusData) => async (dispatch: AppDispatch) => {
+export const createKayttooikeusanomus = (anomusData: KayttooikeusAnomus) => async (dispatch: AppDispatch) => {
     dispatch(createKayttooikeusanomusRequest());
     const url = urls.url('kayttooikeus-service.henkilo.uusi.kayttooikeusanomus', anomusData.anojaOid);
     try {

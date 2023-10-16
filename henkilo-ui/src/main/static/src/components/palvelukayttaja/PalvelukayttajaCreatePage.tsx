@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from 'react';
 import { RouteActions } from 'react-router-redux';
 
-import WideRedNotification from '../../components/common/notifications/WideRedNotification';
+import WideRedNotification from '../common/notifications/WideRedNotification';
 import { useLocalisations } from '../../selectors';
 import { usePostPalvelukayttajaMutation } from '../../api/kayttooikeus';
 
@@ -9,7 +9,7 @@ type Props = {
     router: RouteActions;
 };
 
-const PalveluCreateContainer = ({ router }: Props) => {
+export const PalvelukayttajaCreatePage = ({ router }: Props) => {
     const { L } = useLocalisations();
     const [error, setError] = useState('');
     const [nimi, setNimi] = useState('');
@@ -56,5 +56,3 @@ const PalveluCreateContainer = ({ router }: Props) => {
         </div>
     );
 };
-
-export default PalveluCreateContainer;

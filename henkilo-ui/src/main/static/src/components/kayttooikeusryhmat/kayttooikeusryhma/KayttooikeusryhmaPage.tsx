@@ -32,6 +32,7 @@ import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.redu
 import ToggleKayttooikeusryhmaStateModal from './ToggleKayttooikeusryhmaStateModal';
 import PropertySingleton from '../../../globals/PropertySingleton';
 import { OrganisaatioViite } from '../../../types/domain/kayttooikeus/organisaatioviite.types';
+import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
 
 type Locales = 'FI' | 'SV' | 'EN';
 
@@ -66,7 +67,7 @@ type Props = {
     locale: Locale;
     fetchPalveluKayttooikeus: (palveluName: string) => void;
     kayttooikeusryhmaId?: string;
-    organisaatioCache: any;
+    organisaatioCache: OrganisaatioCache;
     addGlobalNotification: (payload: GlobalNotificationConfig) => void;
 };
 
@@ -74,7 +75,7 @@ type State = {
     kayttooikeusryhmaForm: KayttooikeusryhmaForm;
     palvelutSelection: Option<string>;
     palveluKayttooikeusSelection: Option<string>;
-    ryhmaRestrictionViite: any;
+    ryhmaRestrictionViite?: OrganisaatioViite;
     toggleTallenna: boolean;
     organisaatios: Array<OrganisaatioSelectObject>;
     isPassivoitu: boolean;
@@ -306,9 +307,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
 
     _parseExistingOrganisaatioData = (
         organisaatioViitteet: OrganisaatioViite[],
-        organisaatioCache: {
-            [key: string]: any;
-        }
+        organisaatioCache: OrganisaatioCache
     ): Array<OrganisaatioSelectObject> => {
         if (Object.keys(organisaatioCache).length === 0 || !organisaatioViitteet) {
             return [];

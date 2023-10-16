@@ -12,7 +12,7 @@ type OwnProps = {
     className?: string;
     placeholder: string;
     koodisto: Koodisto;
-    value: any;
+    value: string[] | null;
     onChange: OnChangeHandler<string, Options<string> | Option<string>>;
 };
 
