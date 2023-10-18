@@ -50,7 +50,6 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
                 className="organisaatio"
                 onClick={() => {
                     props.onSelect(organisaatio);
-                    setSearchWord('');
                     setModalVisible(false);
                 }}
                 style={renderParams.style}
