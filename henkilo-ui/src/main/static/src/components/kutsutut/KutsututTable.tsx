@@ -28,13 +28,16 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
     const [offset, setOffset] = useState(0);
     const [allFetched, setAllFetched] = useState(false);
     const [renewKutsu] = usePutRenewKutsuMutation();
-    const { data, isFetching } = useGetKutsututQuery({
-        params,
-        sortBy: (sorting[0]?.id ?? 'AIKALEIMA') as KutsututSortBy,
-        direction: sorting[0]?.desc ? 'DESC' : 'ASC',
-        offset: String(offset),
-        amount: String(20),
-    });
+    const { data, isFetching } = useGetKutsututQuery(
+        {
+            params,
+            sortBy: (sorting[0]?.id ?? 'AIKALEIMA') as KutsututSortBy,
+            direction: sorting[0]?.desc ? 'DESC' : 'ASC',
+            offset: String(offset),
+            amount: String(20),
+        },
+        { skip: params.view === null }
+    );
     const [resultCount, setResultCount] = useState(data?.length ?? 0);
 
     useEffect(() => {
