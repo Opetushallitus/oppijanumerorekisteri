@@ -14,7 +14,6 @@ import { ryhmatState } from './ryhmat.reducer';
 import { OrganisaatioKayttooikeusryhmat } from './organisaatiokayttooikeusryhmat.reducer';
 import { organisaatio } from './organisaatio.reducer';
 import { notifications } from './notifications.reducer';
-import { haetutKayttooikeusryhmat } from './anomus.reducer';
 import { henkilohakuState } from './henkilohaku.reducer';
 import cas from './cas.reducer';
 import { palvelutState } from './palvelut.reducer';
@@ -41,7 +40,6 @@ const rootReducer = {
     organisaatio,
     notificationList,
     notifications,
-    haetutKayttooikeusryhmat,
     henkilohakuState,
     cas,
     palvelutState,

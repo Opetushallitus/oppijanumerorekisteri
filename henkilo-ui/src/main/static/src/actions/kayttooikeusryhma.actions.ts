@@ -31,7 +31,6 @@ import {
     FETCH_ALL_KAYTTOOIKEUSRYHMA_REQUEST,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_SUCCESS,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_FAILURE,
-    CLEAR_HAETTU_KAYTTOOIKEUSRYHMA,
     FETCH_KAYTTOOIKEUSRYHMA_BY_ID_REQUEST,
     FETCH_KAYTTOOIKEUSRYHMA_BY_ID_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_BY_ID_FAILURE,
@@ -154,28 +153,6 @@ export const updateHaettuKayttooikeusryhma =
             throw error;
         }
     };
-
-export const updateHaettuKayttooikeusryhmaInAnomukset =
-    (id: number, kayttoOikeudenTila: string, alkupvm: string, loppupvm: string, hylkaysperuste: string) =>
-    async (dispatch: AppDispatch) => {
-        dispatch(requestHaettuKayttooikeusryhmaUpdate(id));
-        const url = urls.url('kayttooikeus-service.henkilo.kaytto-oikeus-anomus');
-        try {
-            await http.put(url, {
-                id,
-                kayttoOikeudenTila,
-                alkupvm,
-                loppupvm,
-                hylkaysperuste,
-            });
-            dispatch(receiveHaettuKayttooikeusryhmaUpdate(id));
-        } catch (error) {
-            dispatch(errorHaettuKayttooikeusryhmaUpdate(id));
-            throw error; // throw error to set notification in kayttooikeusanomukset
-        }
-    };
-
-export const clearHaettuKayttooikeusryhma = (id) => ({ type: CLEAR_HAETTU_KAYTTOOIKEUSRYHMA, id });
 
 //KAYTTOOIKEUSRYHMAT FOR ORGANISAATIO
 const requestOrganisaatioKayttooikeusryhmat = (organisaatioOid) => ({

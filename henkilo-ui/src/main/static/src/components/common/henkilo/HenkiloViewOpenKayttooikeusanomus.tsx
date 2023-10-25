@@ -34,7 +34,7 @@ import {
 import { useLocalisations } from '../../../selectors';
 import { HaettuKayttooikeusryhma } from '../../../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
 import { OphTableWithInfiniteScroll } from '../../OphTableWithInfiniteScroll';
-import { expanderColumn } from '../../OphTable';
+import OphTable, { expanderColumn } from '../../OphTable';
 import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
 
 export type KayttooikeusryhmaData = {
@@ -52,8 +52,8 @@ export type AnojaKayttooikeusryhmaData = {
 type OwnProps = {
     isOmattiedot: boolean;
     fetchMoreSettings?: {
-        fetchMoreAction?: () => void;
-        isActive?: boolean;
+        fetchMoreAction: () => void;
+        isActive: boolean;
     };
     onSortingChange?: (sorting: SortingState) => void;
     tableLoading?: boolean;
@@ -76,7 +76,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     const organisaatioCache = useSelector<RootState, OrganisaatioCache>((state) => state.organisaatio.cached);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const [dates, setDates] = useState<{ [anomusId: number]: { alkupvm: Moment; loppupvm: Moment } }>(
-        props.kayttooikeus?.kayttooikeusAnomus.reduce(
+        props.kayttooikeus?.kayttooikeusAnomus?.reduce(
             (acc, kayttooikeus) => ({
                 ...acc,
                 [String(kayttooikeus.id)]: {
@@ -85,7 +85,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 },
             }),
             {}
-        )
+        ) ?? {}
     );
     const [kayttooikeusRyhmatByAnoja, setKayttooikeusRyhmatByAnoja] = useState<AnojaKayttooikeusryhmaData[]>([]);
     const [showHylkaysPopup, setShowHylkaysPopup] = useState(false);
@@ -94,19 +94,20 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     const [accessRight, setAccessRight] = useState<AccessRight>();
 
     useEffect(() => {
+        const currentDates = { ...dates } ?? {};
         setDates(
-            props.kayttooikeus?.kayttooikeusAnomus.reduce(
+            props.kayttooikeus?.kayttooikeusAnomus?.reduce(
                 (acc, kayttooikeus) => ({
                     ...acc,
-                    [String(kayttooikeus.id)]: {
+                    [String(kayttooikeus.id)]: dates[String(kayttooikeus.id)] ?? {
                         alkupvm: moment(),
                         loppupvm: moment().add(1, 'years'),
                     },
                 }),
-                {}
-            )
+                currentDates
+            ) ?? {}
         );
-    }, [props]);
+    }, [props.kayttooikeus?.kayttooikeusAnomus]);
 
     useEffect(() => (props.onSortingChange && sorting.length ? props.onSortingChange(sorting) : undefined), [sorting]);
 
@@ -188,7 +189,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                         disabled={
                             noPermission ||
                             disabledMyonnettyButtons[haettuKayttooikeusRyhma.id] ||
-                            !dates[haettuKayttooikeusRyhma.id]?.loppupvm
+                            !dates?.[haettuKayttooikeusRyhma.id]?.loppupvm
                         }
                     />
                 </div>
@@ -473,13 +474,21 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                         <p className="oph-h2 oph-bold">{L['HENKILO_AVOIMET_KAYTTOOIKEUDET_OTSIKKO']}</p>
                     </div>
                 )}
-                <OphTableWithInfiniteScroll
-                    table={table}
-                    isLoading={props.tableLoading}
-                    fetch={props.fetchMoreSettings?.fetchMoreAction}
-                    isActive={props.fetchMoreSettings?.isActive}
-                    renderSubComponent={!props.isOmattiedot ? fetchKayttooikeusryhmatByAnoja : undefined}
-                />
+                {props.fetchMoreSettings ? (
+                    <OphTableWithInfiniteScroll
+                        table={table}
+                        isLoading={props.tableLoading}
+                        fetch={props.fetchMoreSettings?.fetchMoreAction}
+                        isActive={props.fetchMoreSettings?.isActive}
+                        renderSubComponent={!props.isOmattiedot ? fetchKayttooikeusryhmatByAnoja : undefined}
+                    />
+                ) : (
+                    <OphTable
+                        table={table}
+                        isLoading={props.tableLoading}
+                        renderSubComponent={!props.isOmattiedot ? fetchKayttooikeusryhmatByAnoja : undefined}
+                    />
+                )}
             </div>
         </div>
     );

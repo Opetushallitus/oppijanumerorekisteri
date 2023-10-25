@@ -18,6 +18,8 @@ import {
 } from '../types/domain/kayttooikeus/palvelukayttaja.types';
 import { HenkilohakuResult } from '../types/domain/kayttooikeus/HenkilohakuResult.types';
 import { Henkilohaku, HenkilohakuCriteria } from '../types/domain/kayttooikeus/HenkilohakuCriteria.types';
+import { HaettuKayttooikeusryhma } from '../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
+import { fetchOrganisations } from '../actions/organisaatio.actions';
 
 type MfaSetupResponse = {
     secretKey: string;
@@ -42,6 +44,26 @@ export type AccessRightsReportRow = {
     modifiedBy: string;
 };
 
+export type GetHaetutKayttooikeusryhmatRequest = {
+    q?: string;
+    organisaatioOids?: string;
+    orderBy: string;
+    limit: string;
+    showOwnAnomus: string;
+    adminView: string;
+    anomuksenTilat: string;
+    kayttoOikeudenTilas: string;
+    offset: string;
+};
+
+export type PutHaettuKayttooikeusryhmaRequest = {
+    id: number;
+    kayttoOikeudenTila: string;
+    alkupvm: string;
+    loppupvm: string;
+    hylkaysperuste: string;
+};
+
 export const kayttooikeusApi = createApi({
     reducerPath: 'kayttooikeusApi',
     baseQuery: fetchBaseQuery({
@@ -57,6 +79,7 @@ export const kayttooikeusApi = createApi({
         'palvelukayttajat',
         'henkilohaku',
         'henkilohakucount',
+        'haetutKayttooikeusryhmat',
     ],
     endpoints: (builder) => ({
         getOmattiedot: builder.query<Omattiedot, void>({
@@ -156,6 +179,30 @@ export const kayttooikeusApi = createApi({
             }),
             providesTags: ['henkilohakucount'],
         }),
+        getHaetutKayttooikeusryhmat: builder.query<HaettuKayttooikeusryhma[], GetHaetutKayttooikeusryhmatRequest>({
+            query: (parameters) =>
+                `kayttooikeusanomus/haettuKayttoOikeusRyhma?${new URLSearchParams(parameters).toString()}`,
+            // "infinite scroll" i.e. merge new results when offset is increased
+            serializeQueryArgs: ({ endpointName, queryArgs }) =>
+                endpointName + queryArgs?.orderBy + queryArgs?.q + queryArgs?.organisaatioOids + queryArgs?.adminView,
+            merge: (currentCache, newItems) => [
+                ...new Map([...currentCache, ...newItems].map((x) => [x.id, x])).values(),
+            ],
+            forceRefetch: ({ currentArg, previousArg }) => currentArg?.offset !== previousArg?.offset,
+            async onQueryStarted(_token, { dispatch, queryFulfilled }) {
+                const { data } = await queryFulfilled;
+                await dispatch<any>(fetchOrganisations(data.map((h) => h.anomus.organisaatioOid)));
+            },
+            providesTags: ['haetutKayttooikeusryhmat'],
+        }),
+        putHaettuKayttooikeusryhma: builder.mutation<void, PutHaettuKayttooikeusryhmaRequest>({
+            query: (body) => ({
+                url: 'kayttooikeusanomus',
+                method: 'PUT',
+                body,
+            }),
+            invalidatesTags: ['haetutKayttooikeusryhmat'],
+        }),
     }),
 });
 
@@ -171,4 +218,6 @@ export const {
     usePostPalvelukayttajaMutation,
     useGetHenkiloHakuQuery,
     useGetHenkiloHakuCountQuery,
+    useGetHaetutKayttooikeusryhmatQuery,
+    usePutHaettuKayttooikeusryhmaMutation,
 } = kayttooikeusApi;
