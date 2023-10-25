@@ -1,7 +1,6 @@
 package fi.vm.sade.henkiloui.configurations.security;
 
 import fi.vm.sade.henkiloui.configurations.properties.DevProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -21,11 +20,10 @@ public class SecurityDevConfiguration extends WebSecurityConfigurerAdapter {
 
     @SuppressWarnings("deprecation")
     @Bean
-    public static NoOpPasswordEncoder passwordEncoder() {
+    static NoOpPasswordEncoder passwordEncoder() {
         return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
     }
 
-    @Autowired
     public SecurityDevConfiguration(DevProperties devProperties) {
         this.devProperties = devProperties;
     }

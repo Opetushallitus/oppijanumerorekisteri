@@ -1,7 +1,6 @@
 package fi.vm.sade.henkiloui.configurations.properties;
 
 import fi.vm.sade.properties.OphProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
@@ -10,7 +9,6 @@ import org.springframework.util.StringUtils;
 public class UrlConfiguration extends OphProperties {
     private final Environment environment;
 
-    @Autowired
     public UrlConfiguration(Environment environment) {
         this.environment = environment;
         addFiles("/henkiloui-service-oph.properties");
@@ -30,7 +28,7 @@ public class UrlConfiguration extends OphProperties {
 
     private void addUrlIfConfigured(String configFilePath, String frontPropertyPath) {
         String environmentProperty = this.environment.getProperty(configFilePath);
-        if (!StringUtils.isEmpty(environmentProperty)) {
+        if (StringUtils.hasLength(environmentProperty)) {
             this.frontProperties.put(frontPropertyPath, environmentProperty);
         }
     }

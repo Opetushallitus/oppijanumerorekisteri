@@ -1,7 +1,6 @@
 package fi.vm.sade.henkiloui.controllers;
 
 import fi.vm.sade.henkiloui.configurations.ExposedResourceMessageBundleSource;
-import fi.vm.sade.henkiloui.service.LocalizationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +22,6 @@ public class LocalizationController {
     private static final Locale EN = new Locale("en");
     private static final Supplier<Stream<Locale>> LOCALES = () -> Stream.of(FI, SV, EN);
     private final ExposedResourceMessageBundleSource messageSource;
-    private final LocalizationService localizationService;
 
     @RequestMapping(method = GET)
     public Map<String, Map<String, String>> list() {

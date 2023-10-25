@@ -16,14 +16,14 @@ public class HttpClientConfiguration {
 
     @Bean
     @Primary
-    public OphHttpClient ophHttpClient() {
+    OphHttpClient ophHttpClient() {
         return new OphHttpClient.Builder(CALLER_ID)
                 .build();
     }
 
     @Bean
     @Qualifier("lokalisointi")
-    public OphHttpClient ophHttpClientLokalisointi(OphProperties ophProperties, Environment environment) {
+    OphHttpClient ophHttpClientLokalisointi(OphProperties ophProperties, Environment environment) {
         CasAuthenticator authenticator = new CasAuthenticator.Builder()
                 .webCasUrl(ophProperties.url("cas.url"))
                 .casServiceUrl(ophProperties.url("lokalisointi.login"))

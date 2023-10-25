@@ -3,9 +3,7 @@ package fi.vm.sade.henkiloui.configurations;
 import org.apache.catalina.connector.Connector;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
-import org.springframework.boot.web.server.WebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
-import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,15 +25,12 @@ public class ServletContainerConfiguration {
      */
     @Bean
     @ConditionalOnProperty("henkiloui.uses-ssl-proxy")
-    public WebServerFactoryCustomizer sslProxyCustomizer() {
-        return (WebServerFactory container) -> {
-            if (container instanceof ConfigurableServletWebServerFactory) {
-                TomcatServletWebServerFactory tomcat = (TomcatServletWebServerFactory) container;
-                tomcat.addConnectorCustomizers((Connector connector) -> {
-                    connector.setScheme("https");
-                    connector.setSecure(true);
-                });
-            }
+    WebServerFactoryCustomizer<TomcatServletWebServerFactory> sslProxyCustomizer() {
+        return container -> {
+            container.addConnectorCustomizers((Connector connector) -> {
+                connector.setScheme("https");
+                connector.setSecure(true);
+            });
         };
     }
 
