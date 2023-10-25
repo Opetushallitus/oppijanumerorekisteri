@@ -173,7 +173,6 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
             haettuKayttooikeusRyhma.kayttoOikeusRyhma.id
         );
         const henkilo = haettuKayttooikeusRyhma.anomus.henkilo;
-
         return (
             <div>
                 <div className="anomuslistaus-myonnabutton" style={{ display: 'table-cell', paddingRight: '10px' }}>
@@ -186,7 +185,11 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                             )
                         }
                         L={L}
-                        disabled={noPermission || disabledMyonnettyButtons[haettuKayttooikeusRyhma.id]}
+                        disabled={
+                            noPermission ||
+                            disabledMyonnettyButtons[haettuKayttooikeusRyhma.id] ||
+                            !dates[haettuKayttooikeusRyhma.id]?.loppupvm
+                        }
                     />
                 </div>
                 <div style={{ display: 'table-cell' }}>
@@ -339,7 +342,8 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 id: 'ANOTTU_PVM',
                 header: () => L['ANOTTU_PVM'],
                 accessorFn: (row) => moment(row.anomus.anottuPvm).format(),
-                sortingFn: (a, b) => a.original.anomus.anottuPvm.localeCompare(b.original.anomus.anottuPvm),
+                sortingFn: (a, b) =>
+                    moment(a.original.anomus.anottuPvm).isBefore(moment(b.original.anomus.anottuPvm)) ? -1 : 1,
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUS_NIMI',
@@ -392,7 +396,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 id: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM',
                 header: () => L['HENKILO_KAYTTOOIKEUS_LOPPUPVM'],
                 accessorFn: (row) => row,
-                cell: ({ getValue }) => dates[getValue().id]?.loppupvm.format() ?? '',
+                cell: ({ getValue }) => dates[getValue().id]?.loppupvm?.format() ?? '',
                 enableSorting: false,
             },
             {
@@ -406,10 +410,13 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                         onChange={(value) =>
                             setDates({
                                 ...dates,
-                                [getValue().id]: { ...dates[getValue().id], loppupvm: moment(value) },
+                                [getValue().id]: {
+                                    ...dates[getValue().id],
+                                    loppupvm: value ? moment(value) : undefined,
+                                },
                             })
                         }
-                        selected={dates[getValue().id]?.loppupvm.toDate()}
+                        selected={dates[getValue().id]?.loppupvm?.toDate()}
                         showYearDropdown
                         showWeekNumbers
                         disabled={hasNoPermission(getValue().anomus.organisaatioOid, getValue().kayttoOikeusRyhma.id)}
