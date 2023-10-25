@@ -4,7 +4,7 @@ import App from './containers/App';
 import AccessRightReport from './components/reports/accessrights/AccessRightsReport';
 import KutsututPageContainer from './components/kutsutut/KutsututPageContainer';
 import KutsuminenPage from './components/kutsuminen/KutsuminenPage';
-import AnomustListPageContainer from './components/anomus/AnomusPageContainer';
+import AnomusPage from './components/anomus/AnomusPage';
 import OmattiedotContainer from './components/omattiedot/OmattiedotPageContainer';
 import DuplikaatitContainer from './components/henkilo/duplikaatit/DuplikaatitContainer';
 import HenkilohakuContainer from './components/henkilohaku/HenkilohakuContainer';
@@ -49,12 +49,7 @@ export default (
             title="KAYTTOOIKEUSRAPORTTI_TITLE"
             getNaviTabs={updateDefaultNavigation}
         />
-        <Route
-            path="/anomukset"
-            component={AnomustListPageContainer}
-            title="TITLE_ANOMUKSET"
-            getNaviTabs={updateDefaultNavigation}
-        />
+        <Route path="/anomukset" component={AnomusPage} title="TITLE_ANOMUKSET" getNaviTabs={updateDefaultNavigation} />
         <Route
             path="/kutsutut"
             component={KutsututPageContainer}

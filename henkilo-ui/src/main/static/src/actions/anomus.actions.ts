@@ -44,5 +44,4 @@ export const fetchHaetutKayttooikeusryhmat =
         }
     };
 
-export const clearHaetutKayttooikeusryhmat = () => (dispatch: AppDispatch) =>
-    dispatch({ type: CLEAR_HAETUT_KAYTTOOIKEUSRYHMAT });
+export const clearHaetutKayttooikeusryhmat = () => ({ type: CLEAR_HAETUT_KAYTTOOIKEUSRYHMAT });

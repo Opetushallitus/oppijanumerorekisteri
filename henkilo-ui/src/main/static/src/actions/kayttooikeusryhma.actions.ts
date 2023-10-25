@@ -175,9 +175,7 @@ export const updateHaettuKayttooikeusryhmaInAnomukset =
         }
     };
 
-export const clearHaettuKayttooikeusryhma = (id) => (dispatch: AppDispatch) => {
-    dispatch({ type: CLEAR_HAETTU_KAYTTOOIKEUSRYHMA, id });
-};
+export const clearHaettuKayttooikeusryhma = (id) => ({ type: CLEAR_HAETTU_KAYTTOOIKEUSRYHMA, id });
 
 //KAYTTOOIKEUSRYHMAT FOR ORGANISAATIO
 const requestOrganisaatioKayttooikeusryhmat = (organisaatioOid) => ({
