@@ -64,6 +64,14 @@ export type PutHaettuKayttooikeusryhmaRequest = {
     hylkaysperuste: string;
 };
 
+type PostSalasananVaihtoRequest = {
+    loginToken: string;
+    newPassword: string;
+    currentPassword: string;
+};
+
+type CasLoginRedirectParams = Record<string, string>;
+
 export const kayttooikeusApi = createApi({
     reducerPath: 'kayttooikeusApi',
     baseQuery: fetchBaseQuery({
@@ -203,6 +211,13 @@ export const kayttooikeusApi = createApi({
             }),
             invalidatesTags: ['haetutKayttooikeusryhmat'],
         }),
+        postSalasananVaihto: builder.mutation<CasLoginRedirectParams, PostSalasananVaihtoRequest>({
+            query: (body) => ({
+                url: 'cas/salasananvaihto',
+                method: 'POST',
+                body,
+            }),
+        }),
     }),
 });
 
@@ -220,4 +235,5 @@ export const {
     useGetHenkiloHakuCountQuery,
     useGetHaetutKayttooikeusryhmatQuery,
     usePutHaettuKayttooikeusryhmaMutation,
+    usePostSalasananVaihtoMutation,
 } = kayttooikeusApi;

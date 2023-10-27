@@ -29,6 +29,7 @@ import { HenkiloState } from './reducers/henkilo.reducer';
 import { NaviTab } from './types/navigation.type';
 import EmailVerificationContainer from './components/sahkopostivarmennus/EmailVerificationContainer';
 import EmailVerificationErrorContainer from './components/sahkopostivarmennus/EmailVerificationErrorContainer';
+import { SalasananVaihtoPage } from './components/SalasananVaihtoPage';
 import PalvelukayttajaHakuPage from './components/palvelukayttaja/PalvelukayttajaHakuPage';
 
 export type RouteType = {
@@ -162,6 +163,12 @@ export default (
             isUnauthenticated
         />
         <Route path="/rekisteroidy" component={RekisteroidyContainer} title="TITLE_REKISTEROINTI" isUnauthenticated />
+        <Route
+            path="/salasananvaihto/:locale/:loginToken"
+            component={SalasananVaihtoPage}
+            title="TITLE_SALASANANVAIHTO"
+            isUnauthenticated
+        />
         <Route
             path="/oppijoidentuonti"
             component={OppijoidenTuontiContainer}

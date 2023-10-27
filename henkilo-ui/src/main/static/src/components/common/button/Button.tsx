@@ -4,6 +4,7 @@ import classNames from 'classnames/bind';
 import Loader from '../icons/Loader';
 
 type ButtonProps = {
+    id?: string;
     action?: (arg0: React.MouseEvent<HTMLElement>) => void;
     disabled?: boolean;
     href?: string;
@@ -40,6 +41,7 @@ class Button extends React.Component<ButtonProps> {
             </a>
         ) : (
             <button
+                id={this.props.id}
                 type="button"
                 className={className}
                 disabled={this.props.disabled || this.props.loading}

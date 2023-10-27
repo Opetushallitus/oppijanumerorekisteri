@@ -1,6 +1,6 @@
 import React from 'react';
 import './VahvaTunnistusLisatiedotPage.css';
-import InfoPage from '../common/page/InfoPage';
+
 import VahvaTunnistusLisatiedotForm from './VahvaTunnistusLisatiedotForm';
 import { Form } from './VahvaTunnistusLisatiedotInputs';
 import { Localisations } from '../../types/localisation.type';
@@ -15,7 +15,8 @@ type VahvaTunnistusLisatiedotPageProps = {
 class VahvaTunnistusLisatiedotPage extends React.Component<VahvaTunnistusLisatiedotPageProps> {
     render() {
         return (
-            <InfoPage topicLocalised={this.props.L['UUDELLEENREKISTEROINTI_OTSIKKO']}>
+            <div className="infoPageWrapper">
+                <h2 className="oph-h2 oph-bold">{this.props.L['UUDELLEENREKISTEROINTI_OTSIKKO']}</h2>
                 <div className="VahvaTunnistusLisatiedotPage_ohje">{this.props.L['UUDELLEENREKISTEROINTI_OHJE']}</div>
                 <VahvaTunnistusLisatiedotForm
                     L={this.props.L}
@@ -23,7 +24,7 @@ class VahvaTunnistusLisatiedotPage extends React.Component<VahvaTunnistusLisatie
                     onChange={this.props.onChange}
                     onSubmit={this.props.onSubmit}
                 />
-            </InfoPage>
+            </div>
         );
     }
 }

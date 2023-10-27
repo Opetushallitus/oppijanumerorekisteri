@@ -73,3 +73,17 @@ select option {
 .oph-label-short {
     width: 50px;
 }
+
+.infoPageWrapper {
+    padding: 40px;
+    background-color: white;
+    border: #d5d5d5 solid 1px;
+    border-radius: 2px;
+    max-width: 700px;
+    margin: 120px auto 0;
+}
+
+.infoPageWrapper > p {
+    text-align: center;
+    padding-bottom: 15px;
+}

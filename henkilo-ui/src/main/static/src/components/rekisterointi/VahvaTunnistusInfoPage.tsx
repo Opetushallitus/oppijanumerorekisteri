@@ -2,7 +2,6 @@ import React from 'react';
 import Button from '../common/button/Button';
 import { urls } from 'oph-urls-js';
 import { Localisations } from '../../types/localisation.type';
-import InfoPage from '../common/page/InfoPage';
 
 type Props = {
     loginToken: string;
@@ -21,14 +20,15 @@ class VahvaTunnistusInfoPage extends React.Component<Props> {
             locale: this.props.locale,
         });
         return (
-            <InfoPage topicLocalised={this.props.L['VAHVATUNNISTUSINFO_OTSIKKO']}>
+            <div className="infoPageWrapper">
+                <h2 className="oph-h2 oph-bold">{this.props.L['VAHVATUNNISTUSINFO_OTSIKKO']}</h2>
                 <span className="oph-bold">{this.props.L['VAHVATUNNISTUSINFO_TEKSTI']}</span>
                 <div style={{ textAlign: 'center', paddingTop: '25px' }}>
                     <Button href={identificationUrl} isButton big>
                         {this.props.L['VAHVATUNNISTUSINFO_LINKKI']}
                     </Button>
                 </div>
-            </InfoPage>
+            </div>
         );
     }
 }
