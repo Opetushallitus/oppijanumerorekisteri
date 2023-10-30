@@ -6,14 +6,11 @@ const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-const ReactRefreshTypeScript = require('react-refresh-typescript');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { createHash } = require('crypto');
 
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 const imageInlineSizeLimit = parseInt(process.env.IMAGE_INLINE_SIZE_LIMIT || '10000');
-const host = process.env.HOST || '0.0.0.0';
 
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
@@ -45,7 +42,7 @@ module.exports = function () {
                 : false
             : isEnvDevelopment && 'cheap-module-source-map',
         devServer: {
-            allowedHosts: 'all',
+            allowedHosts: 'auto',
             headers: {
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': '*',
@@ -68,7 +65,8 @@ module.exports = function () {
             devMiddleware: {
                 publicPath: '/henkilo-ui/'.slice(0, -1),
             },
-            host,
+            host: '127.0.0.1',
+            hot: true,
             historyApiFallback: {
                 disableDotRule: true,
                 index: '/henkilo-ui/',
@@ -203,7 +201,7 @@ module.exports = function () {
                                     },
                                 },
                                 {
-                                    loader: require.resolve('file-loader'),
+                                    loader: 'file-loader',
                                     options: {
                                         name: 'static/media/[name].[hash].[ext]',
                                     },
@@ -218,11 +216,8 @@ module.exports = function () {
                             exclude: /node_modules/,
                             use: [
                                 {
-                                    loader: require.resolve('ts-loader'),
+                                    loader: 'ts-loader',
                                     options: {
-                                        getCustomTransformers: () => ({
-                                            before: [isEnvDevelopment && ReactRefreshTypeScript()].filter(Boolean),
-                                        }),
                                         transpileOnly: isEnvDevelopment,
                                     },
                                 },
@@ -279,10 +274,6 @@ module.exports = function () {
                     FAST_REFRESH: 'true',
                 },
             }),
-            isEnvDevelopment &&
-                new ReactRefreshWebpackPlugin({
-                    overlay: false,
-                }),
             isEnvProduction &&
                 new MiniCssExtractPlugin({
                     // Options similar to the same options in webpackOptions.output
@@ -290,10 +281,9 @@ module.exports = function () {
                     filename: 'static/css/[name].[contenthash:8].css',
                     chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
                 }),
-            isEnvProduction &&
-                new CopyWebpackPlugin({
-                    patterns: [{ from: path.resolve(__dirname, 'public', 'favicon.ico') }],
-                }),
+            new CopyWebpackPlugin({
+                patterns: [{ from: path.resolve(__dirname, 'public', 'favicon.ico') }],
+            }),
             new WebpackManifestPlugin({
                 fileName: 'asset-manifest.json',
                 publicPath: '/henkilo-ui/',
