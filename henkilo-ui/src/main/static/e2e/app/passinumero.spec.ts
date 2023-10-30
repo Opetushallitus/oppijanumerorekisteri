@@ -34,7 +34,7 @@ test.describe('Person page', () => {
         );
 
         const passinumeroButton = await test.step('Page contains passinumero button', async () => {
-            await page.goto('/virkailija/1.2.246.562.24.00000007357');
+            await page.goto('/henkilo-ui/virkailija/1.2.246.562.24.00000007357');
             const button = await page.locator('#passinumero-button');
             expect(button).toHaveText('Hallitse passinumeroita');
             return button;

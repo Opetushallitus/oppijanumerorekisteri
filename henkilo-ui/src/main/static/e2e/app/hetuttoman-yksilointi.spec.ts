@@ -13,7 +13,7 @@ test.describe('hetuttoman yksilointi', () => {
                 },
             });
         });
-        await page.goto('/oppija/1.2.3.4.5');
+        await page.goto('/henkilo-ui/oppija/1.2.3.4.5');
         await page.getByText('Yksilöi ilman hetua').click();
         await page.getByText('Vahvista yksilöinti').click();
     };

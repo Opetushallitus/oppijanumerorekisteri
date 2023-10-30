@@ -18,7 +18,7 @@ test.describe('mfa setup', () => {
             await route.fulfill({ json: true });
         });
 
-        await page.goto('/omattiedot');
+        await page.goto('/henkilo-ui/omattiedot');
         await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Ei käytössä');
         await page.click('[data-test-id="start-mfa-setup"]');
 
@@ -41,7 +41,7 @@ test.describe('mfa setup', () => {
             await route.fulfill({ json: { ...omattiedot, idpEntityId: 'haka' } });
         });
 
-        await page.goto('/omattiedot');
+        await page.goto('/henkilo-ui/omattiedot');
         await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Ei käytössä');
         await expect(page.locator('[data-test-id="start-mfa-setup"]')).toBeHidden();
         await expect(page.locator('[data-test-id="login-suomifi"]')).toHaveAttribute(
@@ -55,7 +55,7 @@ test.describe('mfa setup', () => {
             await route.abort('failed');
         });
 
-        await page.goto('/omattiedot');
+        await page.goto('/henkilo-ui/omattiedot');
         await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Ei käytössä');
         await page.click('[data-test-id="start-mfa-setup"]');
 
@@ -69,7 +69,7 @@ test.describe('mfa setup', () => {
             await route.fulfill({ json: false });
         });
 
-        await page.goto('/omattiedot');
+        await page.goto('/henkilo-ui/omattiedot');
         await page.click('[data-test-id="start-mfa-setup"]');
         await inputToken(page, '123456');
         await expect(page.locator('[data-test-id="token-error"]')).toHaveText(
@@ -82,7 +82,7 @@ test.describe('mfa setup', () => {
             await route.fulfill({ status: 400, json: { message: 'Invalid token' } });
         });
 
-        await page.goto('/omattiedot');
+        await page.goto('/henkilo-ui/omattiedot');
         await page.click('[data-test-id="start-mfa-setup"]');
         await inputToken(page, '123456');
         await expect(page.locator('[data-test-id="token-error"]')).toHaveText('Väärä vahvistuskoodi');
@@ -93,7 +93,7 @@ test.describe('mfa setup', () => {
             await route.fulfill({ json: { ...omattiedot, mfaProvider: 'GAUTH' } });
         });
 
-        await page.goto('/omattiedot');
+        await page.goto('/henkilo-ui/omattiedot');
         await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Käytössä');
     });
 
@@ -105,7 +105,7 @@ test.describe('mfa setup', () => {
             await route.fulfill({ json: { ...omattiedot, idpEntityId: 'haka' } });
         });
 
-        await page.goto('/omattiedot');
+        await page.goto('/henkilo-ui/omattiedot');
         await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Ei käytössä');
         await expect(page.locator('[data-test-id="disable-mfa"]')).toBeHidden();
         await expect(page.locator('[data-test-id="login-suomifi"]')).toHaveAttribute(
@@ -122,7 +122,7 @@ test.describe('mfa setup', () => {
             await route.fulfill({ json: true });
         });
 
-        await page.goto('/omattiedot');
+        await page.goto('/henkilo-ui/omattiedot');
         await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Käytössä');
 
         await page.route('/kayttooikeus-service/henkilo/current/omattiedot', async (route) => {

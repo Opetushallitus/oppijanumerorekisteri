@@ -89,6 +89,20 @@ module.exports = function (webpackEnv) {
                 index: paths.publicUrlOrPath,
             },
             port: 3000,
+            proxy: [
+                {
+                    target: 'http://localhost:8080',
+                    context: (pathname) => !/^\/henkilo-ui/.test(pathname),
+                },
+                {
+                    target: 'http://localhost:8080',
+                    context: (pathname) => /^\/henkilo-ui\/l10n/.test(pathname),
+                },
+                {
+                    target: 'http://localhost:8080',
+                    context: (pathname) => /^\/henkilo-ui\/config\/frontProperties/.test(pathname),
+                },
+            ],
         },
         entry: paths.appIndexJs,
         output: {

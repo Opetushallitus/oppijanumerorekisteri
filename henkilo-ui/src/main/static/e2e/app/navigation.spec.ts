@@ -89,7 +89,7 @@ fixtures.forEach((fixture) => {
             await route.fulfill({ json: fixture.userInfo });
         });
 
-        await page.goto('/');
+        await page.goto('/henkilo-ui/');
         const tabs = page.locator('#topNavigation ul.tabs li a');
         await expect(tabs).toHaveText(fixture.expected);
     });
