@@ -74,7 +74,7 @@
     "scripts": {
         "dev": "concurrently --kill-others 'npm start' 'npm run nginx'",
         "nginx": "docker-compose -f ../../../nginx/docker-compose.yml up",
-        "start": "BROWSER=none node scripts/start.js",
+        "start": "NODE_ENV=development npx webpack serve -c ./config/webpack.config.js",
         "build": "GENERATE_SOURCEMAP=false node scripts/build.js",
         "lint": "eslint --ext .ts,.tsx src",
         "lint:fix": "eslint --ext .ts,.tsx src --fix",
