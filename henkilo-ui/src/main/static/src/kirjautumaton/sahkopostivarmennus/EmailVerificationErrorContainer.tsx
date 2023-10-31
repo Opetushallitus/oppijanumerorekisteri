@@ -5,9 +5,9 @@ import { RouteActions } from 'react-router-redux';
 import type { RootState } from '../../store';
 import { Localisations } from '../../types/localisation.type';
 import { Locale } from '../../types/locale.type';
-import VirhePage from '../common/page/VirhePage';
+import VirhePage from '../../components/common/page/VirhePage';
 import { urls } from 'oph-urls-js';
-import Button from '../common/button/Button';
+import Button from '../../components/common/button/Button';
 import { http } from '../../http';
 
 type OwnProps = {

@@ -10,7 +10,6 @@ import PropertySingleton from '../globals/PropertySingleton';
 import { addGlobalNotification } from '../actions/notification.actions';
 import { GlobalNotifications } from '../components/common/Notification/GlobalNotifications';
 import { ophLightGray } from '../components/navigation/navigation.utils';
-import background from '../img/unauthenticated_background.jpg';
 import { RouteType } from '../routes';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { fetchOrganisationNames } from '../actions/organisaatio.actions';
@@ -47,20 +46,6 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     useGetOmatOrganisaatiotQuery({ oid: omattiedot?.oidHenkilo, locale }, { skip: !omattiedot?.oidHenkilo || !locale });
     const dispatch = useAppDispatch();
 
-    const setBackGround = (route: RouteType) => {
-        if (route.isUnauthenticated) {
-            window.document.body.style.backgroundImage = `url('${background}')`;
-            window.document.body.style.backgroundRepeat = 'no-repeat';
-            window.document.body.style.backgroundSize = 'cover';
-            window.document.body.style.backgroundAttachment = 'fixed';
-            window.document.body.style.backgroundPosition = '0px 100px';
-            window.document.body.style.backgroundColor = 'white';
-        } else {
-            // If bgColor is not provided guess by if component has updated navibar on mount
-            window.document.body.style.backgroundColor = ophLightGray;
-        }
-    };
-
     useEffect(() => {
         dispatch<any>(fetchPrequels());
         dispatch<any>(fetchOrganisationNames());
@@ -79,7 +64,7 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     useEffect(() => {
         const route = routes[routes.length - 1];
         if (!lastPath || lastPath !== route.path) {
-            setBackGround(route);
+            window.document.body.style.backgroundColor = ophLightGray;
             setLastPath(location.pathname);
             setRoute(route);
         }

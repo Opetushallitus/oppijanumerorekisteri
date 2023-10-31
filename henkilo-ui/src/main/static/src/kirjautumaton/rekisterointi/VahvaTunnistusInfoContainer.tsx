@@ -1,7 +1,7 @@
 import React from 'react';
 
 import VahvaTunnistusInfoPage from './VahvaTunnistusInfoPage';
-import VirhePage from '../common/page/VirhePage';
+import VirhePage from '../../components/common/page/VirhePage';
 import { RouteType } from '../../routes';
 
 type OwnProps = { params: { loginToken?: string; locale?: string }; route: RouteType };

@@ -8,8 +8,6 @@ import AnomusPage from './components/anomus/AnomusPage';
 import OmattiedotContainer from './components/omattiedot/OmattiedotPageContainer';
 import DuplikaatitContainer from './components/henkilo/duplikaatit/DuplikaatitContainer';
 import HenkilohakuContainer from './components/henkilohaku/HenkilohakuContainer';
-import VahvaTunnistusInfoContainer from './components/rekisterointi/VahvaTunnistusInfoContainer';
-import RekisteroidyContainer from './components/rekisterointi/RekisteroidyContainer';
 import OppijoidenTuontiContainer from './components/oppijoidentuonti/OppijoidenTuontiContainer';
 import VtjVertailuPage from './components/henkilo/vtjvertailu/VtjVertailuPage';
 import KayttooikeusryhmaPageContainer from './components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPageContainer';
@@ -17,7 +15,6 @@ import KayttooikeusryhmatHallintaContainer from './components/kayttooikeusryhmat
 import FormSwitch from './components/henkilo/oppija/create/form/FormSwitch';
 import VirkailijaCreateContainer from './components/henkilo/VirkailijaCreateContainer';
 import { PalvelukayttajaCreatePage } from './components/palvelukayttaja/PalvelukayttajaCreatePage';
-import VahvaTunnistusLisatiedotContainer from './components/rekisterointi/VahvaTunnistusLisatiedotContainer';
 import HenkiloViewContainer from './components/henkilo/HenkiloViewContainer';
 import AdminRedirect from './components/henkilo/AdminRedirect';
 import {
@@ -27,9 +24,6 @@ import {
 } from './components/navigation/navigation.utils';
 import { HenkiloState } from './reducers/henkilo.reducer';
 import { NaviTab } from './types/navigation.type';
-import EmailVerificationContainer from './components/sahkopostivarmennus/EmailVerificationContainer';
-import EmailVerificationErrorContainer from './components/sahkopostivarmennus/EmailVerificationErrorContainer';
-import { SalasananVaihtoPage } from './components/SalasananVaihtoPage';
 import PalvelukayttajaHakuPage from './components/palvelukayttaja/PalvelukayttajaHakuPage';
 
 export type RouteType = {
@@ -37,7 +31,6 @@ export type RouteType = {
     component: React.ReactNode;
     title: string;
     getNaviTabs: (() => NaviTab[]) | ((oid: string, henkiloState: HenkiloState, henkiloType: string) => NaviTab[]);
-    isUnauthenticated?: boolean;
     backButton?: boolean;
     henkiloType?: string;
 };
@@ -132,43 +125,6 @@ export default (
             henkiloType="virkailija"
         />
         <Route path="/omattiedot" component={OmattiedotContainer} title="TITLE_OMAT_TIEDOT" />
-        <Route
-            path="/uudelleenrekisterointi/:locale/:loginToken/:tyosahkopostiosoite/:salasana"
-            component={VahvaTunnistusLisatiedotContainer}
-            title="TITLE_VIRKAILIJA_UUDELLEENTUNNISTAUTUMINEN"
-            isUnauthenticated
-        />
-        <Route
-            path="/vahvatunnistusinfo/virhe/:locale/:loginToken"
-            component={VahvaTunnistusInfoContainer}
-            title="TITLE_VIRHESIVU"
-            isUnauthenticated
-        />
-        <Route
-            path="/vahvatunnistusinfo/:locale/:loginToken"
-            component={VahvaTunnistusInfoContainer}
-            title="TITLE_VIRKAILIJA_UUDELLEENTUNNISTAUTUMINEN"
-            isUnauthenticated
-        />
-        <Route
-            path="/sahkopostivarmistus/:locale/:loginToken"
-            component={EmailVerificationContainer}
-            title="TITLE_SAHKOPOSTI_VARMISTAMINEN"
-            isUnauthenticated
-        />
-        <Route
-            path="/sahkopostivarmistus/virhe/:locale/:loginToken/:virhekoodi"
-            component={EmailVerificationErrorContainer}
-            title="TITLE_VIRHESIVU"
-            isUnauthenticated
-        />
-        <Route path="/rekisteroidy" component={RekisteroidyContainer} title="TITLE_REKISTEROINTI" isUnauthenticated />
-        <Route
-            path="/salasananvaihto/:locale/:loginToken"
-            component={SalasananVaihtoPage}
-            title="TITLE_SALASANANVAIHTO"
-            isUnauthenticated
-        />
         <Route
             path="/oppijoidentuonti"
             component={OppijoidenTuontiContainer}

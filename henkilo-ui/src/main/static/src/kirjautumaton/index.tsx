@@ -6,17 +6,17 @@ import { createHistory } from 'history';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { urls } from 'oph-urls-js';
 
-import frontUrls from './henkilo-ui-virkailija-oph';
+import frontUrls from '../henkilo-ui-virkailija-oph';
 import routes from './routes';
-import PropertySingleton from './globals/PropertySingleton';
-import { store } from './store';
+import PropertySingleton from '../globals/PropertySingleton';
+import { store } from '../store';
 
-import './reset.css';
-import './general-style.css';
+import '../reset.css';
+import '../general-style.css';
 import 'oph-virkailija-style-guide/oph-styles.css';
-import './index.css';
+import '../index.css';
 import 'react-datepicker/dist/react-datepicker.css';
-import './flex.css';
+import '../flex.css';
 
 urls.addProperties(frontUrls);
 urls.addCallerId(PropertySingleton.getState().opintopolkuCallerId);

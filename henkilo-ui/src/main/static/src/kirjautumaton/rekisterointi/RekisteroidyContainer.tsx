@@ -3,8 +3,8 @@ import { useSelector } from 'react-redux';
 
 import RekisteroidyPage from './RekisteroidyPage';
 import { fetchKieliKoodisto } from '../../actions/koodisto.actions';
-import Loader from '../common/icons/Loader';
-import VirhePage from '../common/page/VirhePage';
+import Loader from '../../components/common/icons/Loader';
+import VirhePage from '../../components/common/page/VirhePage';
 import { useAppDispatch, type RootState } from '../../store';
 import type { KoodistoState } from '../../reducers/koodisto.reducer';
 import { useLocalisations } from '../../selectors';

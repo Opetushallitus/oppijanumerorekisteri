@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useLocalisations } from '../selectors';
-import Button from './common/button/Button';
+import Button from '../components/common/button/Button';
 import { isValidPassword } from '../validation/PasswordValidator';
 import { usePostSalasananVaihtoMutation } from '../api/kayttooikeus';
 import { addGlobalNotification } from '../actions/notification.actions';
 import { useAppDispatch } from '../store';
-import { NOTIFICATIONTYPES } from './common/Notification/notificationtypes';
-import Loader from './common/icons/Loader';
+import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
+import Loader from '../components/common/icons/Loader';
+import { FETCH_HENKILO_ASIOINTIKIELI_SUCCESS } from '../actions/actiontypes';
 
 type Props = {
     params: {
@@ -25,6 +26,10 @@ export const SalasananVaihtoPage = ({ params: { loginToken, locale } }: Props) =
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
     const [postPasswordChange, { isLoading }] = usePostSalasananVaihtoMutation();
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch({ type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, lang: locale });
+    }, [locale]);
 
     const submit = () => {
         postPasswordChange({ loginToken, newPassword, currentPassword })

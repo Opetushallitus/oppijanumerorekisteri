@@ -1,10 +1,10 @@
 import React from 'react';
-import OphField from '../common/forms/OphField';
-import OphLabel from '../common/forms/OphLabel';
-import OphInput from '../common/forms/OphInput';
-import { LocalNotification } from '../common/Notification/LocalNotification';
+import OphField from '../../components/common/forms/OphField';
+import OphLabel from '../../components/common/forms/OphLabel';
+import OphInput from '../../components/common/forms/OphInput';
+import { LocalNotification } from '../../components/common/Notification/LocalNotification';
 import { Localisations } from '../../types/localisation.type';
-import Salasana from '../common/henkilo/labelvalues/Salasana';
+import Salasana from '../../components/common/henkilo/labelvalues/Salasana';
 
 export type Values = {
     password: string;

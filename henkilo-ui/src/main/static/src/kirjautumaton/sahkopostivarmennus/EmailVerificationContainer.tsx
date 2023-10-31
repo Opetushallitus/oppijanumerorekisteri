@@ -10,7 +10,7 @@ import { urls } from 'oph-urls-js';
 import { http } from '../../http';
 import { addGlobalNotification } from '../../actions/notification.actions';
 import { NOTIFICATIONTYPES } from '../../components/common/Notification/notificationtypes';
-import Loader from '../common/icons/Loader';
+import Loader from '../../components/common/icons/Loader';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { AppDispatch } from '../../store';
 

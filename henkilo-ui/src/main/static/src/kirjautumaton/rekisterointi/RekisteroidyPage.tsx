@@ -5,11 +5,11 @@ import { connect } from 'react-redux';
 
 import RekisteroidyPerustiedot from './content/RekisteroidyPerustiedot';
 import RekisteroidyOrganisaatiot from './content/RekisteroidyOrganisaatiot';
-import StaticUtils from '../common/StaticUtils';
+import StaticUtils from '../../components/common/StaticUtils';
 import RekisteroidyHaka from './content/RekisteroidyHaka';
 import { isValidPassword } from '../../validation/PasswordValidator';
 import type { KutsuByToken } from '../../types/domain/kayttooikeus/Kutsu.types';
-import NotificationButton from '../common/button/NotificationButton';
+import NotificationButton from '../../components/common/button/NotificationButton';
 import { KoodistoState } from '../../reducers/koodisto.reducer';
 import { RootState } from '../../store';
 import { createHenkiloByToken } from '../../actions/kutsu.actions';

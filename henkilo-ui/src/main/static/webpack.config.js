@@ -60,6 +60,10 @@ module.exports = function () {
             historyApiFallback: {
                 disableDotRule: true,
                 index: '/henkilo-ui/',
+                rewrites: [
+                    { from: /^\/henkilo-ui\/kirjautumaton/, to: '/henkilo-ui/kirjautumaton/index.html' },
+                    { to: '/henkilo-ui/index.html' },
+                ],
             },
             port: 3000,
             proxy: [
@@ -69,13 +73,16 @@ module.exports = function () {
                 },
             ],
         },
-        entry: path.resolve(__dirname, 'src', 'index.tsx'),
+        entry: {
+            main: path.resolve(__dirname, 'src', 'index.tsx'),
+            kirjautumaton: path.resolve(__dirname, 'src', 'kirjautumaton', 'index.tsx'),
+        },
         output: {
             path: path.resolve(__dirname, 'build'),
             pathinfo: isEnvDevelopment,
             filename: isEnvProduction
                 ? 'static/js/[name].[contenthash:8].js'
-                : isEnvDevelopment && 'static/js/bundle.js',
+                : isEnvDevelopment && 'static/js/[name].bundle.js',
             chunkFilename: isEnvProduction
                 ? 'static/js/[name].[contenthash:8].chunk.js'
                 : isEnvDevelopment && 'static/js/[name].chunk.js',
@@ -123,7 +130,7 @@ module.exports = function () {
                 shouldUseSourceMap && {
                     enforce: 'pre',
                     test: /\.(js|mjs|jsx|ts|tsx|css)$/,
-                    loader: require.resolve('source-map-loader'),
+                    loader: 'source-map-loader',
                 },
                 {
                     oneOf: [
@@ -170,6 +177,12 @@ module.exports = function () {
         plugins: [
             new HtmlWebpackPlugin({
                 template: path.resolve(__dirname, 'public', 'index.html'),
+                chunks: ['main'],
+            }),
+            new HtmlWebpackPlugin({
+                filename: 'kirjautumaton/index.html',
+                template: path.resolve(__dirname, 'public', 'index.html'),
+                chunks: ['kirjautumaton'],
             }),
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
@@ -190,7 +203,9 @@ module.exports = function () {
                         manifest[file.name] = file.path;
                         return manifest;
                     }, seed);
-                    const entrypointFiles = entrypoints.main.filter((fileName) => !fileName.endsWith('.map'));
+                    const entrypointFiles = entrypoints.main
+                        .filter((fileName) => !fileName.endsWith('.map'))
+                        .concat(entrypoints.kirjautumaton.filter((fileName) => !fileName.endsWith('.map')));
 
                     return {
                         files: manifestFiles,

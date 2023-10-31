@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../../store';
-import Etunimet from '../../common/henkilo/labelvalues/Etunimet';
-import Sukunimi from '../../common/henkilo/labelvalues/Sukunimi';
-import Kutsumanimi from '../../common/henkilo/labelvalues/Kutsumanimi';
-import Kayttajanimi from '../../common/henkilo/labelvalues/Kayttajanimi';
-import Salasana from '../../common/henkilo/labelvalues/Salasana';
-import Asiointikieli from '../../common/henkilo/labelvalues/Asiointikieli';
+import Etunimet from '../../../components/common/henkilo/labelvalues/Etunimet';
+import Sukunimi from '../../../components/common/henkilo/labelvalues/Sukunimi';
+import Kutsumanimi from '../../../components/common/henkilo/labelvalues/Kutsumanimi';
+import Kayttajanimi from '../../../components/common/henkilo/labelvalues/Kayttajanimi';
+import Salasana from '../../../components/common/henkilo/labelvalues/Salasana';
+import Asiointikieli from '../../../components/common/henkilo/labelvalues/Asiointikieli';
 import type { Localisations } from '../../../types/localisation.type';
 import type { Notification } from '../../../reducers/notifications.reducer';
 

@@ -3,9 +3,9 @@ import { urls } from 'oph-urls-js';
 import { connect } from 'react-redux';
 import type { RootState } from '../../../store';
 import type { Localisations } from '../../../types/localisation.type';
-import Asiointikieli from '../../common/henkilo/labelvalues/Asiointikieli';
-import IconButton from '../../common/button/IconButton';
-import HakaIcon from '../../common/icons/HakaIcon';
+import Asiointikieli from '../../../components/common/henkilo/labelvalues/Asiointikieli';
+import IconButton from '../../../components/common/button/IconButton';
+import HakaIcon from '../../../components/common/icons/HakaIcon';
 
 type OwnProps = {
     henkilo: {
