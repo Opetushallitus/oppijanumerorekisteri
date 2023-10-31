@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import moment from 'moment';
 
 import { useAppDispatch, type RootState } from '../store';
-import { fetchFrontProperties } from '../actions/frontProperties.actions';
 import TopNavigation from '../components/navigation/TopNavigation';
 import Loader from '../components/common/icons/Loader';
 import { fetchPrequels } from '../actions/prequel.actions';
@@ -36,7 +35,6 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     const [lastPath, setLastPath] = useState<string>(null);
     const [route, setRoute] = useState<RouteType>(routes[routes.length - 1]);
     const [isInitialized, setIsInitialized] = useState(false);
-    const frontPropertiesInitialized = useSelector<RootState, boolean>((state) => state.frontProperties.initialized);
     const prequelsNotLoadedCount = useSelector<RootState, number>((state) => state.prequels.notLoadedCount);
     const { isSuccess: isLocaleSuccess } = useGetLocaleQuery(undefined, {
         skip: prequelsNotLoadedCount > 0,
@@ -63,7 +61,6 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     };
 
     useEffect(() => {
-        dispatch<any>(fetchFrontProperties());
         dispatch<any>(fetchL10n());
         dispatch<any>(fetchPrequels());
         dispatch<any>(fetchOrganisationNames());
@@ -72,18 +69,12 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     }, []);
 
     useEffect(() => {
-        if (
-            frontPropertiesInitialized &&
-            !isOmattiedotLoading &&
-            isLocaleSuccess &&
-            prequelsNotLoadedCount <= 0 &&
-            !!L
-        ) {
+        if (!isOmattiedotLoading && isLocaleSuccess && prequelsNotLoadedCount <= 0 && !!L) {
             setIsInitialized(true);
             moment.locale(locale);
             moment.defaultFormat = PropertySingleton.getState().PVM_MOMENT_FORMAATTI;
         }
-    }, [frontPropertiesInitialized, isOmattiedotLoading, isLocaleSuccess, prequelsNotLoadedCount, L]);
+    }, [isOmattiedotLoading, isLocaleSuccess, prequelsNotLoadedCount, L]);
 
     useEffect(() => {
         const route = routes[routes.length - 1];

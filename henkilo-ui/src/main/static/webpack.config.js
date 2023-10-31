@@ -71,10 +71,6 @@ module.exports = function () {
                     target: 'http://localhost:8080',
                     context: (pathname) => /^\/henkilo-ui\/l10n/.test(pathname),
                 },
-                {
-                    target: 'http://localhost:8080',
-                    context: (pathname) => /^\/henkilo-ui\/config\/frontProperties/.test(pathname),
-                },
             ],
         },
         entry: path.resolve(__dirname, 'src', 'index.tsx'),

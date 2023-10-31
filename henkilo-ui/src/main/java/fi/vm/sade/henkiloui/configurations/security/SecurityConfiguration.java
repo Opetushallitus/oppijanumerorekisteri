@@ -111,7 +111,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/static/js/*").permitAll()
                 .antMatchers("/static/css/*").permitAll()
                 .antMatchers("/static/media/*").permitAll()
-                .antMatchers("/config/frontProperties").permitAll()
                 .antMatchers("/l10n").permitAll()
                 .antMatchers("/vahvatunnistusinfo/*/*").permitAll()
                 .antMatchers("/vahvatunnistusinfo/virhe/*/*").permitAll()

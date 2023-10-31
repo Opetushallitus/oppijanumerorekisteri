@@ -1,24 +1,15 @@
 import React from 'react';
-import { connect } from 'react-redux';
+
 import VahvaTunnistusInfoPage from './VahvaTunnistusInfoPage';
 import VirhePage from '../common/page/VirhePage';
-import { RootState } from '../../store';
-import type { Localisations } from '../../types/localisation.type';
 import { RouteType } from '../../routes';
 
-type OwnProps = { params: { loginType?: string; locale?: string }; route: RouteType };
+type OwnProps = { params: { loginToken?: string; locale?: string }; route: RouteType };
 
-type StateProps = {
-    L: Localisations;
-    loginToken: string;
-    locale: string;
-    virhe: boolean;
-};
-
-type Props = OwnProps & StateProps;
-
-const VahvaTunnistusInfoContainer: React.FC<Props> = (props: Props) => {
-    if (props.loginToken === 'vanha') {
+const VahvaTunnistusInfoContainer = ({ params, route }: OwnProps) => {
+    const { loginToken, locale } = params;
+    const virhe = route.path.indexOf('/vahvatunnistusinfo/virhe/') !== -1;
+    if (loginToken === 'vanha') {
         return (
             <VirhePage
                 theme="gray"
@@ -27,7 +18,7 @@ const VahvaTunnistusInfoContainer: React.FC<Props> = (props: Props) => {
                 buttonText="VAHVATUNNISTUSINFO_VIRHE_TOKEN_LINKKI"
             />
         );
-    } else if (props.loginToken === 'vaara') {
+    } else if (loginToken === 'vaara') {
         return (
             <VirhePage
                 topic="VAHVATUNNISTUSINFO_VIRHE_HETU_VAARA_OTSIKKO"
@@ -35,7 +26,7 @@ const VahvaTunnistusInfoContainer: React.FC<Props> = (props: Props) => {
                 buttonText="REKISTEROIDY_KIRJAUTUMISSIVULLE"
             />
         );
-    } else if (props.loginToken === 'palvelukayttaja') {
+    } else if (loginToken === 'palvelukayttaja') {
         return (
             <VirhePage
                 theme="gray"
@@ -44,7 +35,7 @@ const VahvaTunnistusInfoContainer: React.FC<Props> = (props: Props) => {
                 buttonText="REKISTEROIDY_KIRJAUTUMISSIVULLE"
             />
         );
-    } else if (props.loginToken === 'eiloydy') {
+    } else if (loginToken === 'eiloydy') {
         return (
             <VirhePage
                 theme="gray"
@@ -53,7 +44,7 @@ const VahvaTunnistusInfoContainer: React.FC<Props> = (props: Props) => {
                 buttonText="REKISTEROIDY_KIRJAUTUMISSIVULLE"
             />
         );
-    } else if (props.loginToken === 'passivoitu') {
+    } else if (loginToken === 'passivoitu') {
         return (
             <VirhePage
                 theme="gray"
@@ -62,7 +53,7 @@ const VahvaTunnistusInfoContainer: React.FC<Props> = (props: Props) => {
                 buttonText="REKISTEROIDY_KIRJAUTUMISSIVULLE"
             />
         );
-    } else if (props.loginToken === 'eivirkailija') {
+    } else if (loginToken === 'eivirkailija') {
         return (
             <VirhePage
                 theme="gray"
@@ -71,7 +62,7 @@ const VahvaTunnistusInfoContainer: React.FC<Props> = (props: Props) => {
                 buttonText="REKISTEROIDY_KIRJAUTUMISSIVULLE"
             />
         );
-    } else if (props.loginToken === 'vanhakutsu') {
+    } else if (loginToken === 'vanhakutsu') {
         return (
             <VirhePage
                 theme="gray"
@@ -80,18 +71,11 @@ const VahvaTunnistusInfoContainer: React.FC<Props> = (props: Props) => {
                 buttonText=""
             />
         );
-    } else if (props.virhe) {
+    } else if (virhe) {
         return <VirhePage topic="VAHVATUNNISTUSINFO_VIRHE_OTSIKKO" text="VAHVATUNNISTUSINFO_VIRHE_TEKSTI" />;
     } else {
-        return <VahvaTunnistusInfoPage {...props} />;
+        return <VahvaTunnistusInfoPage loginToken={loginToken} locale={locale} />;
     }
 };
 
-const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
-    L: state.l10n.localisations[ownProps.params['locale'].toLowerCase()],
-    loginToken: ownProps.params['loginToken'],
-    locale: ownProps.params['locale'],
-    virhe: ownProps.route.path.indexOf('/vahvatunnistusinfo/virhe/') !== -1,
-});
-
-export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(VahvaTunnistusInfoContainer);
+export default VahvaTunnistusInfoContainer;

@@ -1,7 +1,6 @@
 import { routerReducer as routing } from 'react-router-redux';
 
 import l10n from './l10n.reducer';
-import { frontProperties } from './frontProperties.reducer';
 import kutsuList from './kutsuList.reducer';
 import { henkilo } from './henkilo.reducer';
 import koodisto from './koodisto.reducer';
@@ -26,7 +25,6 @@ import createPersonReducer from './create.reducer';
 const rootReducer = {
     routing,
     kutsuList,
-    frontProperties,
     l10n,
     henkilo,
     koodisto,

@@ -99,10 +99,6 @@ const urlConfig = {
     'koodisto-service.koodisto.oppilaitostyypit': 'koodisto-service/rest/codeelement/codes/oppilaitostyyppi/1',
     'koodisto-service.koodisto.organisaatiotyypit': 'koodisto-service/rest/codeelement/codes/organisaatiotyyppi/3',
 
-    'cas-oppija.baseUrl': '/',
-    'cas-oppija.identification': 'cas-oppija/login',
-    'cas-oppija.kayttooikeus-service.cas.tunnistus': 'kayttooikeus-service/cas/tunnistus',
-
     'virkailija-raamit.baseUrl': '/',
     'virkailija-raamit.raamit.js': 'virkailija-raamit/apply-raamit.js',
     'virkailija-raamit.raamit.css': 'virkailija-raamit/apply-raamit.css',
