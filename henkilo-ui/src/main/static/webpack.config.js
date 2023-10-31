@@ -172,35 +172,11 @@ module.exports = function () {
             ].filter(Boolean),
         },
         plugins: [
-            new HtmlWebpackPlugin(
-                Object.assign(
-                    {},
-                    {
-                        inject: true,
-                        template: path.resolve(__dirname, 'public', 'index.html'),
-                    },
-                    isEnvProduction
-                        ? {
-                              minify: {
-                                  removeComments: true,
-                                  collapseWhitespace: true,
-                                  removeRedundantAttributes: true,
-                                  useShortDoctype: true,
-                                  removeEmptyAttributes: true,
-                                  removeStyleLinkTypeAttributes: true,
-                                  keepClosingSlash: true,
-                                  minifyJS: true,
-                                  minifyCSS: true,
-                                  minifyURLs: true,
-                              },
-                          }
-                        : undefined
-                )
-            ),
+            new HtmlWebpackPlugin({
+                template: path.resolve(__dirname, 'public', 'index.html'),
+            }),
             new webpack.DefinePlugin({
-                'process.env': {
-                    NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-                },
+                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
             }),
             isEnvProduction &&
                 new MiniCssExtractPlugin({
@@ -231,39 +207,19 @@ module.exports = function () {
                 contextRegExp: /moment$/,
             }),
             new ForkTsCheckerWebpackPlugin({
-                async: isEnvDevelopment,
                 typescript: {
-                    typescriptPath: resolve.sync('typescript', {
-                        basedir: path.resolve(__dirname, 'node_modules'),
-                    }),
                     configOverwrite: {
                         compilerOptions: {
                             sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
-                            skipLibCheck: true,
-                            inlineSourceMap: false,
-                            declarationMap: false,
                             noEmit: true,
                             incremental: true,
                             tsBuildInfoFile: path.resolve(__dirname, 'node_modules', '.cache', 'tsconfig.tsbuildinfo'),
                         },
                     },
-                    context: path.resolve(__dirname),
                     diagnosticOptions: {
                         syntactic: true,
                     },
                     mode: 'write-references',
-                },
-                issue: {
-                    include: [{ file: '**/src/**/*.{ts,tsx}' }],
-                    exclude: [
-                        { file: '**/src/**/__tests__/**' },
-                        { file: '**/src/**/?(*.){spec|test}.*' },
-                        { file: '**/src/setupProxy.*' },
-                    ],
-                },
-                logger: {
-                    log: (message) => console.log(message),
-                    error: (message) => console.error(message),
                 },
             }),
         ].filter(Boolean),
