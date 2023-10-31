@@ -5,6 +5,8 @@ import { Locale } from '../../types/locale.type';
 import type { Option } from 'react-select';
 import { Kayttaja } from '../../types/domain/kayttooikeus/kayttaja.types';
 import { TextGroup } from '../../types/domain/kayttooikeus/textgroup.types';
+import { Organisaatio } from '../../types/domain/organisaatio/organisaatio.types';
+import { toLocalizedText } from '../../localizabletext';
 
 class StaticUtils {
     static ddmmyyyyToDate(date: string) {
@@ -119,6 +121,10 @@ class StaticUtils {
                       .reduce((type1, type2) => type1.concat(', ', type2)) +
                   ')'
             : '';
+    }
+
+    static getOrganisationNameWithType(org: Organisaatio, L: Localisations, locale: Locale) {
+        return toLocalizedText(locale, org?.nimi) + ' ' + StaticUtils.getOrganisaatiotyypitFlat(org?.tyypit, L);
     }
 
     static defaultOrganisaatio = (organisaatioOid: string, l10n?: L10n) => ({

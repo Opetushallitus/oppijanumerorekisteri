@@ -10,7 +10,6 @@ import StaticUtils from '../StaticUtils';
 import MyonnaButton from './buttons/MyonnaButton';
 import Button from '../button/Button';
 import { http } from '../../../http';
-import { toLocalizedText } from '../../../localizabletext';
 import PopupButton from '../button/PopupButton';
 import AnomusHylkaysPopup from '../../anomus/AnomusHylkaysPopup';
 import PropertySingleton from '../../../globals/PropertySingleton';
@@ -355,10 +354,15 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
             {
                 id: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO',
                 header: () => L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO'],
-                accessorFn: (row) =>
-                    toLocalizedText(locale, organisaatioCache[row.anomus.organisaatioOid]?.nimi) +
-                    ' ' +
-                    StaticUtils.getOrganisaatiotyypitFlat(organisaatioCache[row.anomus.organisaatioOid]?.tyypit, L),
+                accessorFn: (row) => row,
+                cell: ({ getValue }) =>
+                    Object.keys(organisaatioCache).length
+                        ? StaticUtils.getOrganisationNameWithType(
+                              organisaatioCache[getValue().anomus.organisaatioOid],
+                              L,
+                              locale
+                          )
+                        : '...',
                 enableSorting: false,
             },
             {
@@ -443,7 +447,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                         : anomusHandlingButtonsForHenkilo(getValue()),
             },
         ],
-        [props.kayttooikeus?.kayttooikeusAnomus, dates]
+        [props.kayttooikeus?.kayttooikeusAnomus, dates, organisaatioCache]
     );
 
     const table = useReactTable({

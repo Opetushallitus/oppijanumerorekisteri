@@ -11,7 +11,6 @@ import SuljeButton from './buttons/SuljeButton';
 import StaticUtils from '../StaticUtils';
 import HaeJatkoaikaaButton from '../../omattiedot/HaeJatkoaikaaButton';
 import PropertySingleton from '../../../globals/PropertySingleton';
-import { toLocalizedText } from '../../../localizabletext';
 import {
     addKayttooikeusToHenkilo,
     createKayttooikeusanomus,
@@ -40,7 +39,7 @@ type OwnProps = {
 
 const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     const [sorting, setSorting] = useState<SortingState>([]);
-    const { L, locale, l10n } = useLocalisations();
+    const { L, locale } = useLocalisations();
     const dispatch = useAppDispatch();
     const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
@@ -205,16 +204,9 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
             {
                 id: 'organisaatio',
                 header: () => L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA'],
-                accessorFn: (row) => {
-                    const organisaatio =
-                        organisaatioCache[row.organisaatioOid] ||
-                        StaticUtils.defaultOrganisaatio(row.organisaatioOid, l10n.localisations);
-                    return (
-                        toLocalizedText(locale, organisaatio.nimi) +
-                        ' ' +
-                        StaticUtils.getOrganisaatiotyypitFlat(organisaatio.tyypit, L)
-                    );
-                },
+                accessorFn: (row) => row,
+                cell: ({ getValue }) =>
+                    StaticUtils.getOrganisationNameWithType(organisaatioCache[getValue().organisaatioOid], L, locale),
             },
             {
                 id: 'kayttooikeus',
@@ -286,7 +278,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                 enableSorting: false,
             },
         ],
-        [emailOptions, kayttooikeus.kayttooikeus, props]
+        [emailOptions, kayttooikeus.kayttooikeus, props, organisaatioCache]
     );
 
     const table = useReactTable({
