@@ -1,9 +1,0 @@
-{
-  "extends": "@istanbuljs/nyc-config-typescript",
-  "all": true,
-  "reporter": ["lcov"],
-  "check-coverage": true,
-  "include": [
-    "src"
-  ]
-}

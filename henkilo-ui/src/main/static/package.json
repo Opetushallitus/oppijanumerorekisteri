@@ -35,7 +35,6 @@
     },
     "devDependencies": {
         "@playwright/test": "1.29.2",
-        "@svgr/webpack": "^7.0.0",
         "@types/isomorphic-fetch": "0.0.36",
         "@types/lodash.debounce": "4.0.7",
         "@types/node": "^18",
@@ -57,7 +56,6 @@
         "eslint-plugin-react": "^7.32.2",
         "file-loader": "^6.2.0",
         "fork-ts-checker-webpack-plugin": "^9.0.2",
-        "fs-extra": "^10.0.0",
         "html-webpack-plugin": "^5.5.0",
         "mini-css-extract-plugin": "^2.4.5",
         "prettier": "2.8.8",

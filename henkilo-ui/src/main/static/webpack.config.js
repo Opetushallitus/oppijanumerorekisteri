@@ -2,7 +2,6 @@ const path = require('path');
 const webpack = require('webpack');
 const resolve = require('resolve');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
@@ -12,35 +11,26 @@ const { createHash } = require('crypto');
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 const imageInlineSizeLimit = parseInt(process.env.IMAGE_INLINE_SIZE_LIMIT || '10000');
 
+const isEnvDevelopment = process.env.NODE_ENV === 'development';
+const isEnvProduction = process.env.NODE_ENV === 'production';
+const isEnvProductionProfile = isEnvProduction && process.argv.includes('--profile');
+
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
 
-const createEnvironmentHash = (env) => {
+const createEnvironmentHash = () => {
     const hash = createHash('md5');
-    hash.update(JSON.stringify(env));
-
+    hash.update(JSON.stringify({ NODE_ENV: process.env.NODE_ENV }));
     return hash.digest('hex');
 };
 
 module.exports = function () {
-    const isEnvDevelopment = process.env.NODE_ENV === 'development';
-    const isEnvProduction = process.env.NODE_ENV === 'production';
-    const isEnvProductionProfile = isEnvProduction && process.argv.includes('--profile');
-    const env = {
-        NODE_ENV: process.env.NODE_ENV,
-        PUBLIC_URL: '/henkilo-ui',
-        FAST_REFRESH: true,
-    };
     return {
         target: ['browserslist'],
         stats: 'errors-warnings',
-        mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
+        mode: isEnvProduction ? 'production' : 'development',
         bail: isEnvProduction,
-        devtool: isEnvProduction
-            ? shouldUseSourceMap
-                ? 'source-map'
-                : false
-            : isEnvDevelopment && 'cheap-module-source-map',
+        devtool: isEnvProduction ? (shouldUseSourceMap ? 'source-map' : false) : 'cheap-module-source-map',
         devServer: {
             allowedHosts: 'auto',
             headers: {
@@ -63,7 +53,7 @@ module.exports = function () {
                 },
             },
             devMiddleware: {
-                publicPath: '/henkilo-ui/'.slice(0, -1),
+                publicPath: '/henkilo-ui',
             },
             host: '127.0.0.1',
             hot: true,
@@ -105,7 +95,7 @@ module.exports = function () {
         },
         cache: {
             type: 'filesystem',
-            version: createEnvironmentHash(env),
+            version: createEnvironmentHash(),
             cacheDirectory: path.resolve(__dirname, 'node_modules', '.cache'),
             store: 'pack',
             buildDependencies: {
@@ -113,37 +103,6 @@ module.exports = function () {
                 config: [__filename],
                 tsconfig: [path.resolve(__dirname, 'tsconfig.json')],
             },
-        },
-        infrastructureLogging: {
-            level: 'none',
-        },
-        optimization: {
-            minimize: isEnvProduction,
-            minimizer: [
-                new TerserPlugin({
-                    terserOptions: {
-                        parse: {
-                            ecma: 8,
-                        },
-                        compress: {
-                            ecma: 5,
-                            warnings: false,
-                            comparisons: false,
-                            inline: 2,
-                        },
-                        mangle: {
-                            safari10: true,
-                        },
-                        keep_classnames: isEnvProductionProfile,
-                        keep_fnames: isEnvProductionProfile,
-                        output: {
-                            ecma: 5,
-                            comments: false,
-                            ascii_only: true,
-                        },
-                    },
-                }),
-            ],
         },
         resolve: {
             extensions: [
@@ -185,32 +144,7 @@ module.exports = function () {
                                 },
                             },
                         },
-                        {
-                            test: /\.svg$/,
-                            use: [
-                                {
-                                    loader: require.resolve('@svgr/webpack'),
-                                    options: {
-                                        prettier: false,
-                                        svgo: false,
-                                        svgoConfig: {
-                                            plugins: [{ removeViewBox: false }],
-                                        },
-                                        titleProp: true,
-                                        ref: true,
-                                    },
-                                },
-                                {
-                                    loader: 'file-loader',
-                                    options: {
-                                        name: 'static/media/[name].[hash].[ext]',
-                                    },
-                                },
-                            ],
-                            issuer: {
-                                and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
-                            },
-                        },
+                        { test: /\.svg/, type: 'asset/inline' },
                         {
                             test: /\.(js|mjs|jsx|ts|tsx)?$/,
                             exclude: /node_modules/,
@@ -270,14 +204,10 @@ module.exports = function () {
             new webpack.DefinePlugin({
                 'process.env': {
                     NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-                    PUBLIC_URL: '/henkilo-ui',
-                    FAST_REFRESH: 'true',
                 },
             }),
             isEnvProduction &&
                 new MiniCssExtractPlugin({
-                    // Options similar to the same options in webpackOptions.output
-                    // both options are optional
                     filename: 'static/css/[name].[contenthash:8].css',
                     chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
                 }),
