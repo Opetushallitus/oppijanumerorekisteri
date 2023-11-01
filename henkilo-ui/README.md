@@ -1,90 +1,50 @@
 # Henkilö UI
 
-## Teknologiat
+Spring-boot backend that serves a React frontend app. Playwright tests with [mocked API responses](src/main/static/mock-api/).
 
-- Docker
-- Java 11
-- Maven
-- Spring Boot
-- Spring Security
-- Node
-- Typescript
-- Redux
-- React
+## Local env
 
-## Kehittäminen
+Don't bother with the java backend. Run webpack dev server with the script mentioned below.
 
-Lokaalikehitys onnistuu helpoiten käyttämällä tarkoitukseen kehitettyä [välityspalvelinta](nginx).
+### Prerequisites
 
-```
-cd src/main/static
-npm install
-npm run dev
-```
+Install
+- node 18
+- docker
+- tmux
 
-Kirjaudu sisään http://localhost:8080
+Install npm dependencies e.g. `cd src/main/static; nvm use 18; npm install`
 
-## Ennakkovaatimukset
+### Setup
 
-- Asennettu Java 11
-- henkiloui.yml (löytyy integraatiopalvelimelta tai kysy muilta kehittäjiltä)
-  - Lisää front propertyt esim. seuraavasti:
-  ```
-  server:
-    port: 8280
-  front:
-    kayttooikeus:
-      baseUrl: http://localhost:<port>
-    lokalisointi:
-      baseUrl: http://localhost:<port>
-    organisaatio:
-      baseUrl: http://localhost:<port>
-    koodisto:
-      baseUrl: http://localhost:<port>
-    oppijanumerorekisteri:
-      baseUrl: http://localhost:<port>
-  ```
-  - Näihin voi myös laittaa integraatiopalvelimen osoitteen kehittäjän tarpeista riippuen
-  - Jos käytät kirjautumista vaativia integraatiopalvelimen rajapintoja muista käydä kirjautumassa sinne ja tarvittaessa avaa dev konsolissa näkyvät linkit erikseen ennen sivun uudelleenpäivitystä!
+1. Run `./start-local-env.sh` in project root
+2. Login at http://localhost:8080
 
-## Backend
+### Approach
 
-### Kääntäminen:
+![deployment](http://www.plantuml.com/plantuml/png/JOr1RiKW34JtdC9YpmMwg7AFgWiALa41cnf8qjj_-0fIDcW6pvlPQhFIUaxAkiO2lQ8enxam8JMWtqZNmv_uKwpRmLRGItiyO507YbOkSVUWnnScBdaYI4SKfgdrvBW4fUOC6CydcSzxvFt2iAlt0tH0scDYqoC8_dMihUexkE1HDvCs9U0MK1x1LMI-lAq1_VVQci0w5k7hNwiDoVUSNW00)
 
-`mvn clean install`
+[//]: # (image source: http://www.plantuml.com/plantuml/uml/JOr1RiKW34JtdC9YpmMwg7AFgWiALa41cnf8qjj_-0fIDcW6pvlPQhFIUaxAkiO2lQ8enxam8JMWtqZNmv_uKwpRmLRGItiyO507YbOkSVUWnnScBdaYI4SKfgdrvBW4fUOC6CydcSzxvFt2iAlt0tH0scDYqoC8_dMihUexkE1HDvCs9U0MK1x1LMI-lAq1_VVQci0w5k7hNwiDoVUSNW00)
 
-Tämä ajaa testit ja luo
+- UI Access via nginx proxy
+- henkilo-ui requests proxied to local webpack dev server
+- All other requests proxied to selected development environment (see [nginx.conf](nginx/nginx.conf))
 
-### Ajaminen:
+### Troubleshooting
 
-Idea: SpringBoot VMOptions `-Dspring.profiles.active=dev -Dspring.config.location=<path-to-local-henkiloui.yml>/henkiloui.yml`
+#### I seem to be logged in as some strange "Varius Strabo" guy
 
-JAR: `java -jar target/henkiloui-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev --spring.config.additional-location=<path-to-local-henkiloui.yml>/henkiloui.yml`
+Just hard-reload the page. This is a feature of other part of the whole. Authentication is not properly
+picked up by _virkailija raamit_ component.
 
-Ui löytyy osoitteesta http://localhost:8280/henkilo-ui/
+#### There is something wrong with docker
 
-### CORS
+Nginx needs to access services in host machine. Some platforms (mac, win) has made this easy by adding
+virtual domain name _host.docker.internal_ which resolves to host address.
 
-Integraatiopalvelinta vastaan kehitettäessä on käytettävästä
-selaimesta otettava pois käytöstä tietoturva-asetuksia. Myös lokaalisti ajettavaa palvelinta kehitettäessä (eri localhost portti)
+_host.docker.internal_ can be replaced by IP address of the host or by some other clever trick.
 
-<b>Chrome:</b>
+#### I want to connect to different development environment
 
-Sulje kaikki chrome instanssit ennen seuraavan ajamista.
-
-Linux `$ google-chrome --disable-web-security`
-
-Windows `chrome.exe --user-data-dir="C:/Chrome dev session" --disable-web-security`
-
-OSX `$ open -a Google\ Chrome --args --disable-web-security --user-data-dir`
-
-Tämän jälkeen avaa sessio haluttuihin palveluihin integraatiopalvelimelle tekemällä niihin jokin kysely.
-
-<b>Huom. ei turvallinen selailuun kehityksen aikana! Käytä tällöin rinnalla eri selainta.</b>
-
-## API-dokumentaatio
-
-Rest API on dokumentoitu swaggerin avulla ja löytyy osoitteesta:
-https://virkailija.opintopolku.fi/henkilo-ui/swagger-ui.html
-
-Tämä sisältää vain UI:n pakolliset rajapinnat ja sitä ei ole tarkoitettu kutsuttavaksi mistään muualta.
+Go through [nginx.conf](nginx/nginx.conf) and replace all references to development environment with the desired one.
+Restart nginx. Delete cookies. Try again.
