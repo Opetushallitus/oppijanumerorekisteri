@@ -20,8 +20,12 @@ jobs:
           java-version: "11"
           distribution: "adopt"
           cache: "maven"
-      - name: Maven version
-        run: mvn --version
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
+          cache: "npm"
+          cache-dependency-path: src/main/static/package-lock.json
       - name: Cache SonarCloud packages
         uses: actions/cache@v3
         with:
@@ -34,17 +38,27 @@ jobs:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-pw-browsers
           restore-keys: ${{ runner.os }}-pw-browsers
-      - name: Build
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn clean install -B -Dbranch=$GITHUB_REF_NAME -Drevision=$GITHUB_SHA -DbuildNumber=$GITHUB_RUN_NUMBER/$GITHUB_RUN_ATTEMPT org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Opetushallitus_henkilo-ui
-      - uses: actions/upload-artifact@v3
+      - name: Build frontend
+        working-directory: src/main/static
+        run: |
+          npm ci
+          npm run lint
+          npm run prettier
+          npm run e2e:install-deps
+          CI=true npm run e2e:ci
+          npm run build
+      - name: Upload e2e test artifact
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: playwright-results
           path: src/main/static/playwright-results
           retention-days: 10
+      - name: Build backend
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn clean install -B -Dbranch=$GITHUB_REF_NAME -Drevision=$GITHUB_SHA -DbuildNumber=$GITHUB_RUN_NUMBER/$GITHUB_RUN_ATTEMPT org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Opetushallitus_henkilo-ui
       - name: Upload henkilo-ui-jar
         uses: actions/upload-artifact@v3
         with:

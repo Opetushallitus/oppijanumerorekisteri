@@ -24,9 +24,6 @@
 
         <maven.compiler.release>11</maven.compiler.release>
 
-        <frontend-plugin.version>1.12.1</frontend-plugin.version>
-        <nodejs.version>v18.18.2</nodejs.version>
-
         <buildNumber>default buildnumber</buildNumber>
         <branch>default branch</branch>
         <revision>default revision</revision>
@@ -131,106 +128,6 @@
             </resource>
         </resources>
         <plugins>
-            <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>${frontend-plugin.version}</version>
-                <configuration>
-                    <workingDirectory>src/main/static</workingDirectory>
-                </configuration>
-
-                <executions>
-                    <execution>
-                        <id>install node and npm</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                        <configuration>
-                            <nodeVersion>${nodejs.version}</nodeVersion>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>npm version</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>--version</arguments>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>npm ci</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>ci</arguments>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>npm run lint</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <environmentVariables>
-                                <CI>true</CI>
-                            </environmentVariables>
-                            <arguments>run lint</arguments>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>npm run prettier</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <environmentVariables>
-                                <CI>true</CI>
-                            </environmentVariables>
-                            <arguments>run prettier</arguments>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>install e2e dependencies</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>run e2e:install-deps</arguments>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>run e2e tests</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <environmentVariables>
-                                <CI>true</CI>
-                            </environmentVariables>
-                            <arguments>run e2e:ci</arguments>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>npm run build</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>run build</arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!-- Generate buildversion.txt (branch and revision attributes should be set on bamboo) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -259,7 +156,6 @@ buildTtime=${maven.build.timestamp}
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
