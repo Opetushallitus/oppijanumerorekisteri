@@ -32,8 +32,14 @@ public abstract class CasAuthenticatedServiceClient {
 
         if (isLoginToCas(response)) {
             // Oppijanumerorekisteri ohjaa CAS kirjautumissivulle, jos autentikaatiota
-            // ei ole tehty tai session vanhetessa. Luodaan uusi CAS ticket ja lähetetään
+            // ei ole tehty. Luodaan uusi CAS ticket ja yritetään uudelleen.
             log.info("Was redirected to CAS login");
+            requestBuilder.header("CasSecurityTicket", refreshCasTicket());
+            return httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
+        } else if (response.statusCode() == 401) {
+            // Oppijanumerorekisteri vastaa HTTP 401 kun sessio on vanhentunut.
+            // HUOM! Oppijanumerorekisteri vastaa HTTP 401 myös jos käyttöoikeudet eivät riitä.
+            log.info("Received HTTP 401 response");
             requestBuilder.header("CasSecurityTicket", refreshCasTicket());
             return httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
         } else {
