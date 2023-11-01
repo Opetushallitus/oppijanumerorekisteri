@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { RouteActions } from 'react-router-redux';
 
-import type { RootState } from '../../store';
+import type { KayttajaRootState } from '../store';
 import VahvaTunnistusLisatiedotPage from './VahvaTunnistusLisatiedotPage';
 import { Form, Values, Metadata, Errors } from './VahvaTunnistusLisatiedotInputs';
 import { Locale } from '../../types/locale.type';
@@ -162,7 +162,7 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
     };
 }
 
-const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
+const mapStateToProps = (state: KayttajaRootState, ownProps: OwnProps): StateProps => ({
     locale: ownProps.params['locale'],
     L: state.l10n.localisations[ownProps.params['locale']],
     loginToken: ownProps.params['loginToken'],
@@ -170,4 +170,6 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     tyosahkopostiosoite: ownProps.params['tyosahkopostiosoite'] === 'true',
 });
 
-export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(VahvaTunnistusLisatiedotContainer);
+export default connect<StateProps, object, OwnProps, KayttajaRootState>(mapStateToProps)(
+    VahvaTunnistusLisatiedotContainer
+);

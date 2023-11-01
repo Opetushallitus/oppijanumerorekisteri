@@ -9,7 +9,7 @@ import { urls } from 'oph-urls-js';
 import frontUrls from '../henkilo-ui-virkailija-oph';
 import routes from './routes';
 import PropertySingleton from '../globals/PropertySingleton';
-import { store } from '../store';
+import { store } from './store';
 
 import '../reset.css';
 import '../general-style.css';

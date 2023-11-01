@@ -1,6 +1,7 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import type { RootState } from '../../../store';
+import { useSelector } from 'react-redux';
+
+import type { KayttajaRootState } from '../../store';
 import Etunimet from '../../../components/common/henkilo/labelvalues/Etunimet';
 import Sukunimi from '../../../components/common/henkilo/labelvalues/Sukunimi';
 import Kutsumanimi from '../../../components/common/henkilo/labelvalues/Kutsumanimi';
@@ -32,53 +33,16 @@ type OwnProps = {
     isPasswordError: boolean;
     isLanguageError: boolean;
     isKutsumanimiError: boolean;
-};
-
-type StateProps = {
-    notifications: Notification[];
     L: Localisations;
 };
 
-type Props = OwnProps & StateProps;
+const RekisteroidyPerustiedot = (props: OwnProps) => {
+    const notifications = useSelector<KayttajaRootState, Notification[]>(
+        (state) => state.notifications.buttonNotifications
+    );
 
-class RekisteroidyPerustiedot extends React.Component<Props> {
-    render() {
-        return (
-            <div>
-                {this.props.henkilo && (
-                    <div>
-                        <p className="oph-h3 oph-bold">{this.props.L['REKISTEROIDY_PERUSTIEDOT']}</p>
-                        <Etunimet readOnly={true} />
-                        <Sukunimi readOnly={true} />
-                        <Kutsumanimi
-                            readOnly={false}
-                            defaultValue={this.props.henkilo.henkilo.kutsumanimi}
-                            updateModelFieldAction={this.props.updatePayloadModel}
-                            isError={this.props.isKutsumanimiError}
-                        />
-                        <Kayttajanimi
-                            disabled={false}
-                            defaultValue={this.props.henkilo.henkilo.kayttajanimi}
-                            updateModelFieldAction={this.props.updatePayloadModel}
-                            isError={this.isKayttajanimiError() || this.props.isUsernameError}
-                        />
-                        <Salasana
-                            disabled={false}
-                            updateModelFieldAction={this.props.updatePayloadModel}
-                            isError={this.isSalasanaError() || this.props.isPasswordError}
-                        />
-                        <Asiointikieli
-                            henkiloUpdate={this.props.henkilo.henkilo}
-                            updateModelFieldAction={this.props.updatePayloadModel}
-                        />
-                    </div>
-                )}
-            </div>
-        );
-    }
-
-    isKayttajanimiError() {
-        return !!this.props.notifications.filter(
+    function isKayttajanimiError() {
+        return !!notifications.filter(
             (notification) =>
                 notification.id === 'rekisteroidyPage' &&
                 (notification.errorType === 'UsernameAlreadyExistsException' ||
@@ -86,16 +50,44 @@ class RekisteroidyPerustiedot extends React.Component<Props> {
         )[0];
     }
 
-    isSalasanaError() {
-        return !!this.props.notifications.filter(
+    function isSalasanaError() {
+        return !!notifications.filter(
             (notification) => notification.id === 'rekisteroidyPage' && notification.errorType === 'PasswordException'
         )[0];
     }
-}
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    notifications: state.notifications.buttonNotifications,
-    L: state.l10n.localisations[state.locale],
-});
+    return (
+        <div>
+            {props.henkilo && (
+                <div>
+                    <p className="oph-h3 oph-bold">{props.L['REKISTEROIDY_PERUSTIEDOT']}</p>
+                    <Etunimet readOnly={true} />
+                    <Sukunimi readOnly={true} />
+                    <Kutsumanimi
+                        readOnly={false}
+                        defaultValue={props.henkilo.henkilo.kutsumanimi}
+                        updateModelFieldAction={props.updatePayloadModel}
+                        isError={props.isKutsumanimiError}
+                    />
+                    <Kayttajanimi
+                        disabled={false}
+                        defaultValue={props.henkilo.henkilo.kayttajanimi}
+                        updateModelFieldAction={props.updatePayloadModel}
+                        isError={isKayttajanimiError() || props.isUsernameError}
+                    />
+                    <Salasana
+                        disabled={false}
+                        updateModelFieldAction={props.updatePayloadModel}
+                        isError={isSalasanaError() || props.isPasswordError}
+                    />
+                    <Asiointikieli
+                        henkiloUpdate={props.henkilo.henkilo}
+                        updateModelFieldAction={props.updatePayloadModel}
+                    />
+                </div>
+            )}
+        </div>
+    );
+};
 
-export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(RekisteroidyPerustiedot);
+export default RekisteroidyPerustiedot;

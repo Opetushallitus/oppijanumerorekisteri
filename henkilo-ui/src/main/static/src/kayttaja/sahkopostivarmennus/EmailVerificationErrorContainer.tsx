@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { RouteActions } from 'react-router-redux';
 
-import type { RootState } from '../../store';
+import type { KayttajaRootState } from '../store';
 import { Localisations } from '../../types/localisation.type';
 import { Locale } from '../../types/locale.type';
 import VirhePage from '../../components/common/page/VirhePage';
@@ -92,11 +92,13 @@ class EmailVerificationErrorContainer extends React.Component<Props> {
     };
 }
 
-const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
+const mapStateToProps = (state: KayttajaRootState, ownProps: OwnProps): StateProps => ({
     L: state.l10n.localisations[ownProps.params['locale'].toLowerCase()],
     virhekoodi: ownProps.params['virhekoodi'],
     locale: ownProps.params['locale'],
     loginToken: ownProps.params['loginToken'],
 });
 
-export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(EmailVerificationErrorContainer);
+export default connect<StateProps, object, OwnProps, KayttajaRootState>(mapStateToProps)(
+    EmailVerificationErrorContainer
+);

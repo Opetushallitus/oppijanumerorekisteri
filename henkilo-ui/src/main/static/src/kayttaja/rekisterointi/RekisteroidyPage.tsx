@@ -11,7 +11,7 @@ import { isValidPassword } from '../../validation/PasswordValidator';
 import type { KutsuByToken } from '../../types/domain/kayttooikeus/Kutsu.types';
 import NotificationButton from '../../components/common/button/NotificationButton';
 import { KoodistoState } from '../../reducers/koodisto.reducer';
-import { RootState } from '../../store';
+import { KayttajaRootState } from '../store';
 import { createHenkiloByToken } from '../../actions/kutsu.actions';
 import { removeNotification } from '../../actions/notifications.actions';
 import { Locale } from '../../types/locale.type';
@@ -107,6 +107,7 @@ class RekisteroidyPage extends React.Component<Props, State> {
                             isPasswordError={this.isPasswordError()}
                             isUsernameError={!this.kayttajanimiIsNotEmpty(this.state.henkilo)}
                             isKutsumanimiError={!this.etunimetContainsKutsumanimi(this.state.henkilo)}
+                            L={this.props.L}
                         />
                         <NotificationButton
                             action={this.createHenkilo.bind(this)}
@@ -125,6 +126,7 @@ class RekisteroidyPage extends React.Component<Props, State> {
                             henkilo={{ henkilo: this.state.henkilo }}
                             updatePayloadModel={this.updatePayloadModelInput.bind(this)}
                             temporaryKutsuToken={this.props.kutsu.temporaryToken}
+                            L={this.props.L}
                         />
                     </div>
                 </div>
@@ -222,7 +224,7 @@ class RekisteroidyPage extends React.Component<Props, State> {
     }
 }
 
-export default connect<object, DispatchProps, OwnProps, RootState>(undefined, {
+export default connect<object, DispatchProps, OwnProps, KayttajaRootState>(undefined, {
     createHenkiloByToken,
     removeNotification,
 })(RekisteroidyPage);

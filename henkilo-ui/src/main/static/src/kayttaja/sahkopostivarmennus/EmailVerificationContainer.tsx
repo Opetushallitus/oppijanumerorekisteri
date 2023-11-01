@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { RouteActions } from 'react-router-redux';
 
-import type { RootState } from '../../store';
+import type { KayttajaAppDispatch, KayttajaRootState } from '../store';
 import { Locale } from '../../types/locale.type';
 import { EmailVerificationPage } from './EmailVerificationPage';
 import { Localisations } from '../../types/localisation.type';
@@ -12,7 +12,6 @@ import { addGlobalNotification } from '../../actions/notification.actions';
 import { NOTIFICATIONTYPES } from '../../components/common/Notification/notificationtypes';
 import Loader from '../../components/common/icons/Loader';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
-import { AppDispatch } from '../../store';
 
 type OwnProps = {
     params: { loginToken?: string; locale?: Locale };
@@ -77,13 +76,13 @@ class EmailVerificationContainer extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
+const mapStateToProps = (state: KayttajaRootState, ownProps: OwnProps): StateProps => ({
     L: state.l10n.localisations[ownProps.params['locale'].toLowerCase()],
     loginToken: ownProps.params['loginToken'],
     locale: ownProps.params['locale'],
 });
 
-const mapDispatchToProps = (dispatch: AppDispatch): DispatchProps => ({
+const mapDispatchToProps = (dispatch: KayttajaAppDispatch): DispatchProps => ({
     errorNotification: (title: string) =>
         dispatch(
             addGlobalNotification({
@@ -95,7 +94,7 @@ const mapDispatchToProps = (dispatch: AppDispatch): DispatchProps => ({
         ),
 });
 
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(
+export default connect<StateProps, DispatchProps, OwnProps, KayttajaRootState>(
     mapStateToProps,
     mapDispatchToProps
 )(EmailVerificationContainer);

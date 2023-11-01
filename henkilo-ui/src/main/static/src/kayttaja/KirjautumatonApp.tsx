@@ -13,6 +13,8 @@ import { useLocalisations } from '../selectors';
 import ophLogo from '../img/logo_oph.svg';
 import okmLogo from '../img/logo_okm.png';
 import { useGetLocalisationsQuery } from '../api/lokalisointi';
+import { useGetOmattiedotQuery } from '../api/kayttooikeus';
+import VirhePage from '../components/common/page/VirhePage';
 
 import 'moment/locale/fi';
 import 'moment/locale/sv';
@@ -24,8 +26,9 @@ type OwnProps = {
 
 const App = ({ children, routes }: OwnProps) => {
     const [isInitialized, setIsInitialized] = useState(false);
-    const { L, locale } = useLocalisations();
+    const { l10n, locale } = useLocalisations();
     const { isSuccess: isLocalisationsSuccess } = useGetLocalisationsQuery('henkilo-ui');
+    const { data: omattiedot, isSuccess: isOmattiedotSuccess } = useGetOmattiedotQuery();
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -44,27 +47,34 @@ const App = ({ children, routes }: OwnProps) => {
     }, [isLocalisationsSuccess]);
 
     useEffect(() => {
-        moment.locale(locale);
-        moment.defaultFormat = PropertySingleton.getState().PVM_MOMENT_FORMAATTI;
-        if (!['fi', 'sv'].includes(locale.toLowerCase())) {
-            dispatch(
-                addGlobalNotification({
-                    key: 'EN_LOCALE_KEY',
-                    type: NOTIFICATIONTYPES.WARNING,
-                    title: L['HENKILO_YHTEISET_ASIOINTIKIELI_EN_VAROITUS'],
-                })
-            );
+        if (locale) {
+            if (['fi', 'sv'].includes(locale.toLowerCase())) {
+                moment.locale(locale);
+                moment.defaultFormat = PropertySingleton.getState().PVM_MOMENT_FORMAATTI;
+            } else {
+                dispatch(
+                    addGlobalNotification({
+                        key: 'EN_LOCALE_KEY',
+                        type: NOTIFICATIONTYPES.WARNING,
+                        title: l10n[locale]['HENKILO_YHTEISET_ASIOINTIKIELI_EN_VAROITUS'],
+                    })
+                );
+            }
         }
-    }, [locale]);
+    }, [locale, l10n]);
 
     useEffect(() => {
         const route = routes[routes.length - 1];
-        if (isInitialized) {
-            window.document.title = L[route.title] || L['TITLE_DEFAULT'];
+        if (isInitialized && l10n && locale) {
+            window.document.title = l10n[locale][route.title] ?? l10n[locale]['TITLE_DEFAULT'];
         }
-    }, [routes, isInitialized]);
+    }, [routes, isInitialized, locale, l10n]);
 
-    return isInitialized ? (
+    return !isInitialized ? (
+        <Loader />
+    ) : isOmattiedotSuccess && omattiedot?.oidHenkilo ? (
+        <VirhePage text={'REKISTEROIDY_KIRJAUTUNUT'} />
+    ) : (
         <div className="oph-typography mainContainer">
             <GlobalNotifications />
             <div style={{ textAlign: 'center' }}>
@@ -75,8 +85,6 @@ const App = ({ children, routes }: OwnProps) => {
             </div>
             <div className="mainContent">{children}</div>
         </div>
-    ) : (
-        <Loader />
     );
 };
 

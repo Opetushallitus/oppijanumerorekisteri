@@ -1,7 +1,6 @@
 import React from 'react';
 import { urls } from 'oph-urls-js';
-import { connect } from 'react-redux';
-import type { RootState } from '../../../store';
+
 import type { Localisations } from '../../../types/localisation.type';
 import Asiointikieli from '../../../components/common/henkilo/labelvalues/Asiointikieli';
 import IconButton from '../../../components/common/button/IconButton';
@@ -20,34 +19,20 @@ type OwnProps = {
     };
     updatePayloadModel: () => void;
     temporaryKutsuToken: string;
-};
-
-type StateProps = {
     L: Localisations;
 };
 
-type Props = OwnProps & StateProps;
+const RekisteroidyPerustiedot = (props: OwnProps) => {
+    const hakaLoginUrl = urls.url('cas.haka', { temporaryToken: props.temporaryKutsuToken } || {});
+    return (
+        <div>
+            <p className="oph-h3 oph-bold">{props.L['REKISTEROIDY_HAKA_OTSIKKO']}</p>
+            <Asiointikieli henkiloUpdate={props.henkilo.henkilo} updateModelFieldAction={props.updatePayloadModel} />
+            <IconButton href={hakaLoginUrl}>
+                <HakaIcon />
+            </IconButton>
+        </div>
+    );
+};
 
-class RekisteroidyPerustiedot extends React.Component<Props> {
-    render() {
-        const hakaLoginUrl = urls.url('cas.haka', { temporaryToken: this.props.temporaryKutsuToken } || {});
-        return (
-            <div>
-                <p className="oph-h3 oph-bold">{this.props.L['REKISTEROIDY_HAKA_OTSIKKO']}</p>
-                <Asiointikieli
-                    henkiloUpdate={this.props.henkilo.henkilo}
-                    updateModelFieldAction={this.props.updatePayloadModel}
-                />
-                <IconButton href={hakaLoginUrl}>
-                    <HakaIcon />
-                </IconButton>
-            </div>
-        );
-    }
-}
-
-const mapStateToProps = (state: RootState): StateProps => ({
-    L: state.l10n.localisations[state.locale],
-});
-
-export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(RekisteroidyPerustiedot);
+export default RekisteroidyPerustiedot;
