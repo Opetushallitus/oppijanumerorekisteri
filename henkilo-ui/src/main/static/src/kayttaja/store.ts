@@ -8,6 +8,7 @@ import { lokalisointiApi } from '../api/lokalisointi';
 import l10n from '../reducers/l10n.reducer';
 import koodisto from '../reducers/koodisto.reducer';
 import { notifications } from '../reducers/notifications.reducer';
+import { notificationList } from '../reducers/notification.reducer';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const isClient = typeof window !== 'undefined';
@@ -17,6 +18,7 @@ const rootReducer = {
     l10n,
     koodisto,
     notifications,
+    notificationList,
 };
 
 export const store = configureStore({
