@@ -28,8 +28,7 @@ const App = () => {
     });
 
     const history = syncHistoryWithStore(browserHistory, store);
-
-    (window as any).opintopolku_caller_id = PropertySingleton.getState().opintopolkuCallerId;
+    window.opintopolku_caller_id = PropertySingleton.getState().opintopolkuCallerId;
 
     return (
         <Provider store={store}>
