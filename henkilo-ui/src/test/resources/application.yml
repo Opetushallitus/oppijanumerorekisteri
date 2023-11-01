@@ -1,7 +1,7 @@
 spring:
   mvc:
     pathmatch:
-      matching-strategy: ant_path_matcher
+      matching-strategy: ant-path-matcher
 host:
   host-virkailija: localhost
   host-cas: localhost
@@ -10,8 +10,3 @@ cas:
   service: http://localhost/kayttooikeus-service
   send-renew: false
   key: henkiloui-service
-henkiloui:
-  palvelukayttajat:
-    lokalisointi:
-      kayttajatunnus: henkiloui2lokalisointi
-      salasana: henkiloui2lokalisointi

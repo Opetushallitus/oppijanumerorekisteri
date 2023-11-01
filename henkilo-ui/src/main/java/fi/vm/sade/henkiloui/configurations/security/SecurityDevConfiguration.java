@@ -41,7 +41,6 @@ public class SecurityDevConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/static/js/*").permitAll()
                 .antMatchers("/static/css/*").permitAll()
                 .antMatchers("/static/media/*").permitAll()
-                .antMatchers("/l10n").permitAll()
                 .antMatchers("/vahvatunnistusinfo/*/*").permitAll()
                 .antMatchers("/vahvatunnistusinfo/virhe/*/*").permitAll()
                 .antMatchers("/uudelleenrekisterointi/**").permitAll()

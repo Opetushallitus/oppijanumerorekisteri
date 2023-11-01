@@ -1,6 +1,5 @@
 package fi.vm.sade.henkiloui.configurations;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -23,13 +22,5 @@ public class WebConfiguration implements WebMvcConfigurer {
                 .setViewName("forward:/");
         registry.addViewController("/{spring:\\w+}/**{spring:?!(\\.js|\\.css)$}")
                 .setViewName("forward:/");
-    }
-
-
-    @Bean
-    public ExposedResourceMessageBundleSource messageSource() {
-        ExposedResourceMessageBundleSource source = new ExposedResourceMessageBundleSource();
-        source.addBasenames("classpath:Messages");
-        return source;
     }
 }

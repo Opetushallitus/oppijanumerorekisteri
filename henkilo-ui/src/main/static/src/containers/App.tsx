@@ -15,9 +15,9 @@ import { RouteType } from '../routes';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { fetchOrganisationNames } from '../actions/organisaatio.actions';
 import { useLocalisations } from '../selectors';
-import { fetchL10n } from '../actions/l10n.actions';
 import { useGetOmatOrganisaatiotQuery, useGetOmattiedotQuery } from '../api/kayttooikeus';
 import { useGetLocaleQuery } from '../api/oppijanumerorekisteri';
+import { useGetLocalisationsQuery } from '../api/lokalisointi';
 
 import 'moment/locale/fi';
 import 'moment/locale/sv';
@@ -42,6 +42,7 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     const { data: omattiedot, isLoading: isOmattiedotLoading } = useGetOmattiedotQuery(undefined, {
         skip: prequelsNotLoadedCount > 0,
     });
+    const { isSuccess: isLocalisationsSuccess } = useGetLocalisationsQuery('henkilo-ui');
     const { L, locale } = useLocalisations();
     useGetOmatOrganisaatiotQuery({ oid: omattiedot?.oidHenkilo, locale }, { skip: !omattiedot?.oidHenkilo || !locale });
     const dispatch = useAppDispatch();
@@ -61,7 +62,6 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     };
 
     useEffect(() => {
-        dispatch<any>(fetchL10n());
         dispatch<any>(fetchPrequels());
         dispatch<any>(fetchOrganisationNames());
         const prequel = setInterval(() => dispatch<any>(fetchPrequels()), fetchPrequelsIntervalInMillis);
@@ -69,12 +69,12 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     }, []);
 
     useEffect(() => {
-        if (!isOmattiedotLoading && isLocaleSuccess && prequelsNotLoadedCount <= 0 && !!L) {
+        if (!isOmattiedotLoading && isLocaleSuccess && prequelsNotLoadedCount <= 0 && isLocalisationsSuccess) {
             setIsInitialized(true);
             moment.locale(locale);
             moment.defaultFormat = PropertySingleton.getState().PVM_MOMENT_FORMAATTI;
         }
-    }, [isOmattiedotLoading, isLocaleSuccess, prequelsNotLoadedCount, L]);
+    }, [isOmattiedotLoading, isLocaleSuccess, prequelsNotLoadedCount, isLocalisationsSuccess]);
 
     useEffect(() => {
         const route = routes[routes.length - 1];
