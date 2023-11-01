@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Route } from 'react-router';
 
 import KirjautumatonApp from './KirjautumatonApp';
-import VahvaTunnistusInfoContainer from './rekisterointi/VahvaTunnistusInfoContainer';
+import VahvaTunnistusInfoContainer from './vahvatunnistus/VahvaTunnistusInfoContainer';
+import VahvaTunnistusLisatiedotContainer from './vahvatunnistus/VahvaTunnistusLisatiedotContainer';
 import RekisteroidyContainer from './rekisterointi/RekisteroidyContainer';
-import VahvaTunnistusLisatiedotContainer from './rekisterointi/VahvaTunnistusLisatiedotContainer';
 import EmailVerificationContainer from './sahkopostivarmennus/EmailVerificationContainer';
 import EmailVerificationErrorContainer from './sahkopostivarmennus/EmailVerificationErrorContainer';
 import { SalasananVaihtoPage } from './SalasananVaihtoPage';

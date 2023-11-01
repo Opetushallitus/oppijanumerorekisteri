@@ -10,22 +10,22 @@ import background from '../img/unauthenticated_background.jpg';
 import { RouteType } from './routes';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { useLocalisations } from '../selectors';
-import { fetchL10n } from '../actions/l10n.actions';
 import ophLogo from '../img/logo_oph.svg';
 import okmLogo from '../img/logo_okm.png';
+import { useGetLocalisationsQuery } from '../api/lokalisointi';
 
 import 'moment/locale/fi';
 import 'moment/locale/sv';
 
 type OwnProps = {
     children: React.ReactNode;
-    location: { pathname?: string };
     routes: Array<RouteType>;
 };
 
 const App = ({ children, routes }: OwnProps) => {
     const [isInitialized, setIsInitialized] = useState(false);
     const { L, locale } = useLocalisations();
+    const { isSuccess: isLocalisationsSuccess } = useGetLocalisationsQuery('henkilo-ui');
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -35,15 +35,17 @@ const App = ({ children, routes }: OwnProps) => {
         window.document.body.style.backgroundAttachment = 'fixed';
         window.document.body.style.backgroundPosition = '0px 100px';
         window.document.body.style.backgroundColor = 'white';
-        dispatch<any>(fetchL10n());
     }, []);
 
     useEffect(() => {
-        if (L) {
+        if (isLocalisationsSuccess) {
             setIsInitialized(true);
-            moment.locale(locale);
-            moment.defaultFormat = PropertySingleton.getState().PVM_MOMENT_FORMAATTI;
         }
+    }, [isLocalisationsSuccess]);
+
+    useEffect(() => {
+        moment.locale(locale);
+        moment.defaultFormat = PropertySingleton.getState().PVM_MOMENT_FORMAATTI;
         if (!['fi', 'sv'].includes(locale.toLowerCase())) {
             dispatch(
                 addGlobalNotification({
@@ -53,7 +55,7 @@ const App = ({ children, routes }: OwnProps) => {
                 })
             );
         }
-    }, [L, locale]);
+    }, [locale]);
 
     useEffect(() => {
         const route = routes[routes.length - 1];
