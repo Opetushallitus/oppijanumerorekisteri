@@ -84,7 +84,6 @@
         "e2e:test": "wait-port -t 120000 http://:3000/henkilo-ui && playwright test",
         "e2e:ci": "concurrently -s first -k 'npm:e2e:serve' 'npm:e2e:test'"
     },
-    "proxy": "http://localhost:8080",
     "browserslist": [
         "last 1 version",
         "> 1%",

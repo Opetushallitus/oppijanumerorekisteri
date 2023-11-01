@@ -2,9 +2,13 @@
     "name": "mock-api",
     "version": "1.0.0",
     "main": "app.js",
+    "engines": {
+        "npm": "^9",
+        "node": "^18"
+    },
     "scripts": {
-        "mock-api": "npm run format && node ./src/app.js",
-        "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc"
+        "mock-api": "node ./src/app.js",
+        "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ../.prettierrc"
     },
     "dependencies": {
         "connect-api-mocker": "^1.10.0",
