@@ -2,9 +2,13 @@
 
 Spring-boot backend that serves a React frontend app. Playwright tests with [mocked API responses](src/main/static/mock-api/).
 
+## Frontend app
+
+React app with Redux (with an ongoing Redux Toolkit refactoring project). The React app has two separate bundles `main` and `kayttaja` as it servers both users with a CAS session (`main`) and users without a session (`kayttaja`).
+
 ## Local env
 
-Don't bother with the java backend. Run webpack dev server with the script mentioned below.
+Don't bother with the Java backend. Run Webpack dev server with the script mentioned below.
 
 ### Prerequisites
 
