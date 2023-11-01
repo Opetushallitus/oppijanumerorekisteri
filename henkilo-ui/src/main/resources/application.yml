@@ -8,11 +8,4 @@ management:
 spring:
   mvc:
     pathmatch:
-      matching-strategy: ant_path_matcher
-henkiloui:
-  lokalisointi_synkronointi:
-    aktiivinen: false
-  palvelukayttajat:
-    lokalisointi:
-      kayttajatunnus: henkiloui2lokalisointi
-      salasana: henkiloui2lokalisointi
+      matching-strategy: ant-path-matcher

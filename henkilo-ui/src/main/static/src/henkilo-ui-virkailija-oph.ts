@@ -4,9 +4,6 @@ const urlConfig = {
     'cas.me': 'cas/me',
     'cas.haka': 'service-provider-app/saml/login/alias/hakasp',
 
-    'henkilo-ui.baseUrl': '/',
-    'henkilo-ui.l10n': 'henkilo-ui/l10n',
-
     'lokalisointi.baseUrl': '/',
     'lokalisointi.localisation': 'lokalisointi/cxf/rest/v1/localisation',
 

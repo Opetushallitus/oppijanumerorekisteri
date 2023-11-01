@@ -4,6 +4,7 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import rootReducer from './reducers';
 import { kayttooikeusApi } from './api/kayttooikeus';
 import { oppijanumerorekisteriApi } from './api/oppijanumerorekisteri';
+import { lokalisointiApi } from './api/lokalisointi';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const isClient = typeof window !== 'undefined';
@@ -13,6 +14,7 @@ export const store = configureStore({
         ...rootReducer,
         [kayttooikeusApi.reducerPath]: kayttooikeusApi.reducer,
         [oppijanumerorekisteriApi.reducerPath]: oppijanumerorekisteriApi.reducer,
+        [lokalisointiApi.reducerPath]: lokalisointiApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
@@ -21,7 +23,8 @@ export const store = configureStore({
             serializableCheck: false,
         })
             .concat(kayttooikeusApi.middleware)
-            .concat(oppijanumerorekisteriApi.middleware),
+            .concat(oppijanumerorekisteriApi.middleware)
+            .concat(lokalisointiApi.middleware),
     devTools: isDev && isClient,
 });
 

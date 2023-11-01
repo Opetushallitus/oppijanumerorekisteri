@@ -24,12 +24,4 @@ public class WebConfiguration implements WebMvcConfigurer {
         registry.addViewController("/{spring:\\w+}/**{spring:?!(\\.js|\\.css)$}")
                 .setViewName("forward:/");
     }
-
-
-    @Bean
-    public ExposedResourceMessageBundleSource messageSource() {
-        ExposedResourceMessageBundleSource source = new ExposedResourceMessageBundleSource();
-        source.addBasenames("classpath:Messages");
-        return source;
-    }
 }
