@@ -3,12 +3,14 @@ package fi.vm.sade.oppijanumerorekisteri.configurations;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Response;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.RequestHandlerProvider;
 import springfox.documentation.spring.web.WebMvcRequestHandler;
@@ -33,7 +35,7 @@ import static springfox.documentation.spring.web.paths.Paths.ROOT;
 public class SwaggerConfiguration {
     @Bean
     public Docket henkiloApi() {
-        return new Docket(DocumentationType.SWAGGER_2)
+        var docket = new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .directModelSubstitute(Date.class, Integer.class) // unix time
                 .directModelSubstitute(Object.class, java.lang.Void.class) // 204 empty
@@ -41,6 +43,13 @@ public class SwaggerConfiguration {
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("fi.vm.sade.oppijanumerorekisteri.controllers"))
                 .build();
+        for (var method : List.of(HttpMethod.POST, HttpMethod.DELETE, HttpMethod.DELETE, HttpMethod.GET, HttpMethod.PUT, HttpMethod.PATCH, HttpMethod.HEAD)) {
+            docket.globalResponses(method, List.of(
+                    new Response("302", "Autentikaatio puuttuu (Redirect CAS login sivulle)", false, List.of(), List.of(), List.of(), List.of()),
+                    new Response("401", "Sessio on vanhentunut tai käyttöoikeudet ei riitä", false, List.of(), List.of(), List.of(), List.of())
+            ));
+        }
+        return docket;
     }
 
     @Bean
