@@ -18,33 +18,33 @@ export type RouteType = {
 export default (
     <Route path="/" component={KirjautumatonApp}>
         <Route
-            path="/kirjautumaton/uudelleenrekisterointi/:locale/:loginToken/:tyosahkopostiosoite/:salasana"
+            path="/kayttaja/uudelleenrekisterointi/:locale/:loginToken/:tyosahkopostiosoite/:salasana"
             component={VahvaTunnistusLisatiedotContainer}
             title="TITLE_VIRKAILIJA_UUDELLEENTUNNISTAUTUMINEN"
         />
         <Route
-            path="/kirjautumaton/vahvatunnistusinfo/virhe/:locale/:loginToken"
+            path="/kayttaja/vahvatunnistusinfo/virhe/:locale/:loginToken"
             component={VahvaTunnistusInfoContainer}
             title="TITLE_VIRHESIVU"
         />
         <Route
-            path="/kirjautumaton/vahvatunnistusinfo/:locale/:loginToken"
+            path="/kayttaja/vahvatunnistusinfo/:locale/:loginToken"
             component={VahvaTunnistusInfoContainer}
             title="TITLE_VIRKAILIJA_UUDELLEENTUNNISTAUTUMINEN"
         />
         <Route
-            path="/kirjautumaton/sahkopostivarmistus/:locale/:loginToken"
+            path="/kayttaja/sahkopostivarmistus/:locale/:loginToken"
             component={EmailVerificationContainer}
             title="TITLE_SAHKOPOSTI_VARMISTAMINEN"
         />
         <Route
-            path="/kirjautumaton/sahkopostivarmistus/virhe/:locale/:loginToken/:virhekoodi"
+            path="/kayttaja/sahkopostivarmistus/virhe/:locale/:loginToken/:virhekoodi"
             component={EmailVerificationErrorContainer}
             title="TITLE_VIRHESIVU"
         />
-        <Route path="/kirjautumaton/rekisteroidy" component={RekisteroidyContainer} title="TITLE_REKISTEROINTI" />
+        <Route path="/kayttaja/rekisteroidy" component={RekisteroidyContainer} title="TITLE_REKISTEROINTI" />
         <Route
-            path="/kirjautumaton/salasananvaihto/:locale/:loginToken"
+            path="/kayttaja/salasananvaihto/:locale/:loginToken"
             component={SalasananVaihtoPage}
             title="TITLE_SALASANANVAIHTO"
         />

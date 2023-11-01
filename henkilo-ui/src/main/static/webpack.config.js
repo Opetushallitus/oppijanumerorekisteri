@@ -61,7 +61,7 @@ module.exports = function () {
                 disableDotRule: true,
                 index: '/henkilo-ui/',
                 rewrites: [
-                    { from: /^\/henkilo-ui\/kirjautumaton/, to: '/henkilo-ui/kirjautumaton/index.html' },
+                    { from: /^\/henkilo-ui\/kayttaja/, to: '/henkilo-ui/kayttaja/index.html' },
                     { to: '/henkilo-ui/index.html' },
                 ],
             },
@@ -75,7 +75,7 @@ module.exports = function () {
         },
         entry: {
             main: path.resolve(__dirname, 'src', 'index.tsx'),
-            kirjautumaton: path.resolve(__dirname, 'src', 'kirjautumaton', 'index.tsx'),
+            kayttaja: path.resolve(__dirname, 'src', 'kayttaja', 'index.tsx'),
         },
         output: {
             path: path.resolve(__dirname, 'build'),
@@ -180,9 +180,9 @@ module.exports = function () {
                 chunks: ['main'],
             }),
             new HtmlWebpackPlugin({
-                filename: 'kirjautumaton/index.html',
+                filename: 'kayttaja/index.html',
                 template: path.resolve(__dirname, 'public', 'index.html'),
-                chunks: ['kirjautumaton'],
+                chunks: ['kayttaja'],
             }),
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
@@ -205,7 +205,7 @@ module.exports = function () {
                     }, seed);
                     const entrypointFiles = entrypoints.main
                         .filter((fileName) => !fileName.endsWith('.map'))
-                        .concat(entrypoints.kirjautumaton.filter((fileName) => !fileName.endsWith('.map')));
+                        .concat(entrypoints.kayttaja.filter((fileName) => !fileName.endsWith('.map')));
 
                     return {
                         files: manifestFiles,
