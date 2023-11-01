@@ -6,13 +6,17 @@ import org.apache.logging.log4j.Logger;
 
 import java.net.CookieManager;
 import java.net.http.HttpClient;
+import java.time.Duration;
 
 public class Main {
     private static final Logger log = LogManager.getLogger(Main.class);
 
     public static void main(String[] args) throws InterruptedException {
         log.info("Initializing clients");
-        var httpClient = HttpClient.newBuilder().cookieHandler(new CookieManager()).build();
+        var httpClient = HttpClient.newBuilder()
+          .cookieHandler(new CookieManager())
+          .connectTimeout(Duration.ofSeconds(10))
+          .build();
         var casClient = new CasClient(httpClient, Config.virkailijaUrl + "/cas");
         var oppijanumerorekisteriClient = new OppijanumerorekisteriClient(httpClient, casClient);
 

@@ -10,6 +10,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Map;
 
 public class CasClient {
@@ -39,6 +40,7 @@ public class CasClient {
         var request = HttpRequest.newBuilder(URI.create(baseUrl + "/v1/tickets/" + ticketGrantingTicket))
                 .POST(formBody(Map.of("service", service + "/j_spring_cas_security_check")))
                 .header("Content-Type", "application/x-www-form-urlencoded")
+                .timeout(Duration.ofSeconds(10))
                 .build();
 
         var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());

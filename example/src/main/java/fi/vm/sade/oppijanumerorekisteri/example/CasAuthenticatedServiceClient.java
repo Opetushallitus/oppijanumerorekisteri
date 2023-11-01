@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 
 public abstract class CasAuthenticatedServiceClient {
     private final Logger log = LogManager.getLogger(this.getClass());
@@ -24,7 +25,8 @@ public abstract class CasAuthenticatedServiceClient {
 
     protected HttpResponse<String> sendRequest(HttpRequest.Builder requestBuilder) throws IOException, InterruptedException {
         log.info("Sending CAS authenticated request");
-        requestBuilder.header("Caller-Id", Config.callerId)
+        requestBuilder.timeout(Duration.ofSeconds(10))
+                .header("Caller-Id", Config.callerId)
                 .header("CSRF", "CSRF")
                 .header("Cookie", "CSRF=CSRF");
         requestBuilder.header(CasClient.CAS_SECURITY_TICKET, getTicket());
