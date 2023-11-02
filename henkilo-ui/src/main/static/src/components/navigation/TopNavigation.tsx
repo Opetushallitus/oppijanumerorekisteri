@@ -30,6 +30,10 @@ type StateProps = {
 type Props = OwnProps & StateProps;
 
 const TopNavigation = ({ pathName, route, params, henkilo }: Props) => {
+    if (route.isUnauthenticated) {
+        return <div></div>;
+    }
+
     const { L } = useLocalisations();
     const { data: omattiedot } = useGetOmattiedotQuery();
     const organisaatioList = !Array.isArray(omattiedot.organisaatiot) ? [] : omattiedot.organisaatiot;
