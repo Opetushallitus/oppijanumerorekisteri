@@ -31,6 +31,7 @@ type Props = OwnProps & StateProps;
 
 const TopNavigation = ({ pathName, route, params, henkilo }: Props) => {
     if (route.isUnauthenticated) {
+        // this redirects in the unauthenticated route component so we can run it before the hooks
         return <div></div>;
     }
 

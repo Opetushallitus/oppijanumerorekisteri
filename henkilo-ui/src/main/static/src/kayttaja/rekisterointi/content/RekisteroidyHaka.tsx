@@ -23,7 +23,7 @@ type OwnProps = {
 };
 
 const RekisteroidyPerustiedot = (props: OwnProps) => {
-    const hakaLoginUrl = urls.url('cas.haka', { temporaryToken: props.temporaryKutsuToken } || {});
+    const hakaLoginUrl = urls.url('cas.haka', { temporaryToken: props.temporaryKutsuToken });
     return (
         <div>
             <p className="oph-h3 oph-bold">{props.L['REKISTEROIDY_HAKA_OTSIKKO']}</p>
