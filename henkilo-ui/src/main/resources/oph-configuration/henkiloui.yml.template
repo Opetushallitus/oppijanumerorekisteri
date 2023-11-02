@@ -9,9 +9,6 @@
 spring:
   main:
     banner-mode: "off"
-dev:
-  username: user
-  password: password
 cas:
   service: https://{{host_virkailija}}/henkilo-ui
   send-renew: false
