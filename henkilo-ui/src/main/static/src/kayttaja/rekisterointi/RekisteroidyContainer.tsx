@@ -3,12 +3,12 @@ import { useSelector } from 'react-redux';
 
 import RekisteroidyPage from './RekisteroidyPage';
 import { fetchKieliKoodisto } from '../../actions/koodisto.actions';
-import Loader from '../common/icons/Loader';
-import VirhePage from '../common/page/VirhePage';
-import { useAppDispatch, type RootState } from '../../store';
+import Loader from '../../components/common/icons/Loader';
+import VirhePage from '../../components/common/page/VirhePage';
+import { useAppDispatch, type KayttajaRootState } from '../store';
 import type { KoodistoState } from '../../reducers/koodisto.reducer';
 import { useLocalisations } from '../../selectors';
-import { useGetKutsuByTokenQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
+import { useGetKutsuByTokenQuery } from '../../api/kayttooikeus';
 
 type OwnProps = {
     location: { query: Record<string, string> };
@@ -17,8 +17,7 @@ type OwnProps = {
 const RekisteroidyContainer = (props: OwnProps) => {
     const dispatch = useAppDispatch();
     const { l10n } = useLocalisations();
-    const { data: omattiedot, isLoading: isOmattiedotLoading } = useGetOmattiedotQuery();
-    const koodisto = useSelector<RootState, KoodistoState>((state) => state.koodisto);
+    const koodisto = useSelector<KayttajaRootState, KoodistoState>((state) => state.koodisto);
     const temporaryToken = props.location.query['temporaryKutsuToken'];
     const { data: kutsu, isLoading: isKutsuLoading, isError } = useGetKutsuByTokenQuery(temporaryToken);
 
@@ -26,10 +25,8 @@ const RekisteroidyContainer = (props: OwnProps) => {
         dispatch<any>(fetchKieliKoodisto());
     }, []);
 
-    if (koodisto.kieliKoodistoLoading || isKutsuLoading || isOmattiedotLoading || !l10n) {
+    if (koodisto.kieliKoodistoLoading || isKutsuLoading) {
         return <Loader />;
-    } else if (omattiedot?.oidHenkilo !== undefined) {
-        return <VirhePage text={'REKISTEROIDY_KIRJAUTUNUT'} />;
     } else if (isError) {
         return <VirhePage text={'REKISTEROIDY_TEMP_TOKEN_INVALID'} />;
     }

@@ -7,7 +7,7 @@ import { Locale } from '../../types/locale.type';
 import { Localisations } from '../../types/localisation.type';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { http } from '../../http';
-import Button from '../common/button/Button';
+import Button from '../../components/common/button/Button';
 import { YhteystietoRyhma } from '../../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
 import { EmailVerificationList } from './EmailVerificationList';
 import {

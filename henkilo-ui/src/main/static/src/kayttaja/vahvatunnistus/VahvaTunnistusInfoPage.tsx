@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useLocalisations } from '../../selectors';
-import Button from '../common/button/Button';
+import Button from '../../components/common/button/Button';
 
 type Props = {
     loginToken: string;

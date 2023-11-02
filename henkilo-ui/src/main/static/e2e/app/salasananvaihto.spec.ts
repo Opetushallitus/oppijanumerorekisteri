@@ -2,7 +2,11 @@ import { expect, test } from '@playwright/test';
 
 test.describe('salasanan vaihto', () => {
     test('validoi kentät', async ({ page }) => {
-        await page.goto('/henkilo-ui/salasananvaihto/fi/loginToken');
+        await page.route('/kayttooikeus-service/henkilo/current/omattiedot', async (route) => {
+            await route.fulfill({ status: 401 });
+        });
+
+        await page.goto('/henkilo-ui/kayttaja/salasananvaihto/fi/loginToken');
         await page.fill('#currentPassword', 'currentPassword123!');
 
         await page.fill('#newPassword', 'newPassword123!');
@@ -29,7 +33,11 @@ test.describe('salasanan vaihto', () => {
     });
 
     test('uudelleenohjaa kirjautumiseen', async ({ page }) => {
-        await page.goto('/henkilo-ui/salasananvaihto/fi/loginToken');
+        await page.route('/kayttooikeus-service/henkilo/current/omattiedot', async (route) => {
+            await route.fulfill({ status: 401 });
+        });
+
+        await page.goto('/henkilo-ui/kayttaja/salasananvaihto/fi/loginToken');
         await page.fill('#currentPassword', 'currentPassword123!');
         await page.fill('#newPassword', 'newPassword123!newPassword123!');
         await page.fill('#passwordConfirmation', 'newPassword123!newPassword123!');

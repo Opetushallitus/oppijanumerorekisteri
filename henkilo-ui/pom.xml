@@ -194,46 +194,6 @@ buildTtime=${maven.build.timestamp}
         </plugins>
     </build>
 
-    <profiles>
-        <profile><!-- Spring Boot -plugari ajamaan oletusarvoisesti dev-profiililla -->
-            <id>dev</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>spring-boot-maven-plugin</artifactId>
-                        <groupId>org.springframework.boot</groupId>
-                        <configuration>
-                            <profiles>dev</profiles>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <!-- Generate javadoc -->
-            <id>javadoc</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>javadoc</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
     <repositories>
         <repository>
             <id>oph-sade-artifactory-snapshots</id>
