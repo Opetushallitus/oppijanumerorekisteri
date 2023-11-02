@@ -1,14 +1,14 @@
 # Henkilö UI
 
-Spring-boot backend that serves a React frontend app. Playwright tests with [mocked API responses](src/main/static/mock-api/).
+Spring-boot backend that just serves html files and static assets. The frontend is a React app. Playwright tests with manually maintained [mocked API responses](src/main/static/mock-api/) from other Opintopolku microservices.
 
 ## Frontend app
 
-React app with Redux (with an ongoing Redux Toolkit refactoring project). The React app has two separate bundles `main` and `kayttaja` as it servers both users with a CAS session (`main`) and users without a session (`kayttaja`).
+React with Redux (with an ongoing Redux Toolkit refactoring project). The React app has two separate bundles `main` and `kayttaja` as it servers both users with a CAS session (`main`) and users without a session (`kayttaja`). The sessionful SPA fetches a lot of stuff regarding the user and access rights on page load while the sessionless mostly needs just translations.
 
 ## Local env
 
-Don't bother with the Java backend. Run Webpack dev server with the script mentioned below.
+Don't bother with the Java backend. Run Webpack dev server with the script mentioned below. The script starts the webapp as well as an nginx server to proxy requests outside of the React app to a real Opintopolku test environment (testiopintopolku.fi by default).
 
 ### Prerequisites
 
