@@ -193,10 +193,7 @@ module.exports = function () {
                     chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
                 }),
             new CopyWebpackPlugin({
-                patterns: [
-                    { from: path.resolve(__dirname, 'public', 'favicon.ico') },
-                    { from: path.resolve(__dirname, 'public', 'font-awesome.min.css') },
-                ],
+                patterns: [{ from: path.resolve(__dirname, 'public', 'favicon.ico') }],
             }),
             new WebpackManifestPlugin({
                 fileName: 'asset-manifest.json',
