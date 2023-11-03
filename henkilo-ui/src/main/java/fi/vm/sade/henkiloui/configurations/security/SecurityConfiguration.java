@@ -18,9 +18,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
 @Configuration
 @EnableWebSecurity
@@ -94,6 +94,8 @@ public class SecurityConfiguration {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http, CasAuthenticationFilter casAuthenticationFilter,
             AuthenticationEntryPoint authenticationEntryPoint, SecurityContextRepository securityContextRepository) throws Exception {
+        HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+        requestCache.setMatchingRequestParameterName(null);
         http
             .headers(headers -> headers.disable())
             .csrf(csrf -> csrf.disable())
@@ -117,6 +119,7 @@ public class SecurityConfiguration {
             .securityContext(securityContext -> securityContext
                 .requireExplicitSave(true)
                 .securityContextRepository(securityContextRepository))
+            .requestCache(cache -> cache.requestCache(requestCache))
             .exceptionHandling(handling -> handling.authenticationEntryPoint(authenticationEntryPoint));
         return http.build();
     }
