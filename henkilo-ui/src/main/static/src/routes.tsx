@@ -25,14 +25,12 @@ import {
 import { HenkiloState } from './reducers/henkilo.reducer';
 import { NaviTab } from './types/navigation.type';
 import PalvelukayttajaHakuPage from './components/palvelukayttaja/PalvelukayttajaHakuPage';
-import { KayttajaRedirect } from './KayttajaRedirect';
 
 export type RouteType = {
     path: string;
     component: React.ReactNode;
     title: string;
     getNaviTabs: (() => NaviTab[]) | ((oid: string, henkiloState: HenkiloState, henkiloType: string) => NaviTab[]);
-    isUnauthenticated?: boolean;
     backButton?: boolean;
     henkiloType?: string;
 };
@@ -160,43 +158,6 @@ export default (
             component={PalvelukayttajaHakuPage}
             title=""
             getNaviTabs={updatePalvelukayttajaNavigation}
-        />
-        <Route
-            path="/uudelleenrekisterointi/:locale/:loginToken/:tyosahkopostiosoite/:salasana"
-            component={KayttajaRedirect}
-            title="TITLE_VIRKAILIJA_UUDELLEENTUNNISTAUTUMINEN"
-            isUnauthenticated
-        />
-        <Route
-            path="/vahvatunnistusinfo/virhe/:locale/:loginToken"
-            component={KayttajaRedirect}
-            title="TITLE_VIRHESIVU"
-            isUnauthenticated
-        />
-        <Route
-            path="/vahvatunnistusinfo/:locale/:loginToken"
-            component={KayttajaRedirect}
-            title="TITLE_VIRKAILIJA_UUDELLEENTUNNISTAUTUMINEN"
-            isUnauthenticated
-        />
-        <Route
-            path="/sahkopostivarmistus/:locale/:loginToken"
-            component={KayttajaRedirect}
-            title="TITLE_SAHKOPOSTI_VARMISTAMINEN"
-            isUnauthenticated
-        />
-        <Route
-            path="/sahkopostivarmistus/virhe/:locale/:loginToken/:virhekoodi"
-            component={KayttajaRedirect}
-            title="TITLE_VIRHESIVU"
-            isUnauthenticated
-        />
-        <Route path="/rekisteroidy" component={KayttajaRedirect} title="TITLE_REKISTEROINTI" isUnauthenticated />
-        <Route
-            path="/salasananvaihto/:locale/:loginToken"
-            component={KayttajaRedirect}
-            title="TITLE_SALASANANVAIHTO"
-            isUnauthenticated
         />
     </Route>
 );
