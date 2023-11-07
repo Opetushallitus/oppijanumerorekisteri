@@ -1,7 +1,3 @@
-spring:
-  mvc:
-    pathmatch:
-      matching-strategy: ant-path-matcher
 host:
   host-virkailija: localhost
   host-cas: localhost
