@@ -61,8 +61,8 @@ module.exports = function () {
                 disableDotRule: true,
                 index: '/henkilo-ui/',
                 rewrites: [
-                    { from: /^\/henkilo-ui\/kayttaja/, to: '/henkilo-ui/kayttaja/index.html' },
-                    { to: '/henkilo-ui/index.html' },
+                    { from: /^\/henkilo-ui\/kayttaja/, to: '/henkilo-ui/kayttaja.html' },
+                    { to: '/henkilo-ui/main.html' },
                 ],
             },
             port: 3000,
@@ -176,11 +176,12 @@ module.exports = function () {
         },
         plugins: [
             new HtmlWebpackPlugin({
+                filename: 'main.html',
                 template: path.resolve(__dirname, 'public', 'index.html'),
                 chunks: ['main'],
             }),
             new HtmlWebpackPlugin({
-                filename: 'kayttaja/index.html',
+                filename: 'kayttaja.html',
                 template: path.resolve(__dirname, 'public', 'index.html'),
                 chunks: ['kayttaja'],
             }),

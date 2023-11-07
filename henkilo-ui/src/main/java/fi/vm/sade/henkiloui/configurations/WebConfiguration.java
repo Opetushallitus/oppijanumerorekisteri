@@ -8,17 +8,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/kayttaja/rekisteroidy**")
-                .setViewName("forward:/kayttaja/index.html");
-        registry.addViewController("/kayttaja/salasananvaihto/**")
-                .setViewName("forward:/kayttaja/index.html");
-        registry.addViewController("/kayttaja/sahkopostivarmistus/**")
-                .setViewName("forward:/kayttaja/index.html");
-        registry.addViewController("/kayttaja/vahvatunnistusinfo/**")
-                .setViewName("forward:/kayttaja/index.html");
-        registry.addViewController("/kayttaja/uudelleenrekisterointi/**")
-                .setViewName("forward:/kayttaja/index.html");
-        registry.addViewController("/{spring:!kayttaja}**")
-                .setViewName("forward:/index.html");
+        registry.addViewController("/kayttaja/*")
+                 .setViewName("forward:/kayttaja.html");
+        registry.addViewController("/kayttaja/**")
+                 .setViewName("forward:/kayttaja.html");
+        registry.addViewController("/{path:\\w+}")
+                 .setViewName("forward:/main.html");
+        registry.addViewController("/{path:\\w+}/**")
+                 .setViewName("forward:/main.html");
     }
 }
