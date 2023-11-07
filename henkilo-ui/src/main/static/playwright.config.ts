@@ -59,23 +59,6 @@ const config: PlaywrightTestConfig = {
 
     /* Folder for test artifacts such as screenshots, videos, traces, etc. */
     outputDir: 'playwright-results/',
-
-    /* Run your local dev server before starting the tests */
-    webServer: [
-        {
-            command: 'npm start',
-            port: 3000,
-            timeout: 30 * 1000,
-            reuseExistingServer: true,
-        },
-        {
-            cwd: 'mock-api',
-            command: 'npm run mock-api',
-            port: 8080,
-            timeout: 10 * 1000,
-            reuseExistingServer: true,
-        },
-    ],
 };
 
 export default config;
