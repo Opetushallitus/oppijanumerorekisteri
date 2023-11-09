@@ -106,6 +106,7 @@ public class SecurityConfiguration {
                     .requestMatchers("/favicon.ico").permitAll()
                     .requestMatchers("/static/**").permitAll()
                     .requestMatchers("/kayttaja/**").permitAll()
+                    .requestMatchers("/kayttaja.html").permitAll()
                     .anyRequest().authenticated())
             .addFilterAt(casAuthenticationFilter, CasAuthenticationFilter.class)
             .addFilterBefore(singleSignOutFilter(), CasAuthenticationFilter.class)
