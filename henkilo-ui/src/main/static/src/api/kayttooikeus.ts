@@ -247,12 +247,10 @@ export const kayttooikeusApi = createApi({
             // "infinite scroll" i.e. merge new results when offset is increased
             serializeQueryArgs: ({ endpointName, queryArgs }) =>
                 endpointName + JSON.stringify(queryArgs.params) + queryArgs.sortBy + queryArgs.direction,
-            merge: (currentCache, newItems) => {
-                const uniqueItems = [...new Map([...currentCache, ...newItems].map((x) => [x.id, x])).values()];
-                return uniqueItems;
-            },
-            forceRefetch: ({ currentArg, previousArg }) =>
-                JSON.stringify(currentArg?.params) !== JSON.stringify(previousArg?.params),
+            merge: (currentCache, newItems) => [
+                ...new Map([...currentCache, ...newItems].map((x) => [x.id, x])).values(),
+            ],
+            forceRefetch: ({ currentArg, previousArg }) => currentArg?.offset !== previousArg?.offset,
             providesTags: ['kutsutut'],
         }),
         deleteKutsu: builder.mutation<void, number>({

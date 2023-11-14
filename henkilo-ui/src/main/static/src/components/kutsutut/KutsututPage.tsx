@@ -12,25 +12,31 @@ import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.t
 import CloseButton from '../common/button/CloseButton';
 import { Option } from 'react-select';
 import { useLocalisations } from '../../selectors';
-import { useDeleteKutsuMutation } from '../../api/kayttooikeus';
+import { useDeleteKutsuMutation, useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { useDebounce } from '../../useDebounce';
+import { KutsuView } from './KutsuViews';
 
 export type KutsututSearchParams = {
     searchTerm: string;
     organisaatioOids: string;
     tilas: string;
-    view?: string;
+    view: KutsuView;
     kayttooikeusryhmaIds?: string;
     subOrganisations?: string;
 };
 
+const getDefaultView = (isAdmin?: boolean, isVirkailija?: boolean): KutsuView => {
+    return isAdmin ? 'OPH' : isVirkailija ? 'KAYTTOOIKEUSRYHMA' : '';
+};
+
 export const KutsututPage = () => {
     const { L, locale } = useLocalisations();
+    const { data } = useGetOmattiedotQuery();
     const [params, setParams] = useState<KutsututSearchParams>({
         searchTerm: '',
         organisaatioOids: '',
         tilas: 'AVOIN',
-        view: null,
+        view: getDefaultView(data?.isAdmin, data?.isMiniAdmin),
         kayttooikeusryhmaIds: '',
         subOrganisations: 'true',
     });

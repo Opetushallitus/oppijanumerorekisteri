@@ -2,12 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../store';
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup';
-import KutsuViews from './KutsuViews';
+import KutsuViews, { KutsuView } from './KutsuViews';
 import { Localisations } from '../../types/localisation.type';
 
 type OwnProps = {
-    view?: string;
-    setView: (newView: string) => void;
+    view?: KutsuView;
+    setView: (newView: KutsuView) => void;
 };
 
 type StateProps = {

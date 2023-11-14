@@ -28,16 +28,13 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
     const [offset, setOffset] = useState(0);
     const [allFetched, setAllFetched] = useState(false);
     const [renewKutsu] = usePutRenewKutsuMutation();
-    const { data, isFetching } = useGetKutsututQuery(
-        {
-            params,
-            sortBy: (sorting[0]?.id ?? 'AIKALEIMA') as KutsututSortBy,
-            direction: sorting[0]?.desc ? 'DESC' : 'ASC',
-            offset: String(offset),
-            amount: String(20),
-        },
-        { skip: params.view === null }
-    );
+    const { data, isFetching } = useGetKutsututQuery({
+        params,
+        sortBy: (sorting[0]?.id ?? 'AIKALEIMA') as KutsututSortBy,
+        direction: sorting[0]?.desc ? 'DESC' : 'ASC',
+        offset: String(offset),
+        amount: String(20),
+    });
     const [resultCount, setResultCount] = useState(data?.length ?? 0);
 
     useEffect(() => {
@@ -46,15 +43,18 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
     }, [data]);
 
     const resendAction = async (id: number) => {
-        await renewKutsu(id);
-        dispatch(
-            addGlobalNotification({
-                key: 'KUTSU_CONFIRMATION_SUCCESS',
-                type: NOTIFICATIONTYPES.SUCCESS,
-                autoClose: 10000,
-                title: L['KUTSU_LUONTI_ONNISTUI'],
-            })
-        );
+        renewKutsu(id)
+            .unwrap()
+            .then(() =>
+                dispatch(
+                    addGlobalNotification({
+                        key: 'KUTSU_CONFIRMATION_SUCCESS',
+                        type: NOTIFICATIONTYPES.SUCCESS,
+                        autoClose: 10000,
+                        title: L['KUTSU_LUONTI_ONNISTUI'],
+                    })
+                )
+            );
     };
 
     const columns = useMemo<ColumnDef<KutsuRead, KutsuRead>[]>(
@@ -179,7 +179,7 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
                 fetch={() => setOffset(offset + 20)}
                 isActive={!allFetched && !isFetching && !!data?.length}
                 renderSubComponent={({ row }) => (
-                    <KutsuDetails kutsu={data.find((kutsu) => kutsu.id === row.original.id)} />
+                    <KutsuDetails kutsu={data?.find((kutsu) => kutsu.id === row.original.id)} />
                 )}
             />
         </div>
