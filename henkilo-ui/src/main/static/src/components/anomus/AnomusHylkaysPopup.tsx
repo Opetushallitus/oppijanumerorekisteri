@@ -1,58 +1,80 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+
 import { KAYTTOOIKEUDENTILA } from '../../globals/KayttooikeudenTila';
 import { HenkilonNimi } from '../../types/domain/kayttooikeus/HenkilonNimi';
-import { Localisations } from '../../types/localisation.type';
+import { useLocalisations } from '../../selectors';
+import { HaettuKayttooikeusryhma } from '../../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
+import { RootState } from '../../store';
+import { OrganisaatioCache } from '../../reducers/organisaatio.reducer';
+import StaticUtils from '../common/StaticUtils';
 
 type Props = {
-    L: Localisations;
-    action: (arg0: number, arg1: string, arg3: HenkilonNimi, arg4: string) => void;
-    kayttooikeusryhmaId: number;
-    henkilo: HenkilonNimi;
+    updateHaettuKayttooikeusryhma: (arg0: number, arg1: string, arg3: HenkilonNimi, arg4: string) => void;
+    kayttooikeusryhma: HaettuKayttooikeusryhma;
 };
 
-type State = {
-    hylkaysperuste: string;
+const AnomusHylkaysPopup = ({ kayttooikeusryhma, updateHaettuKayttooikeusryhma }: Props) => {
+    const [peruste, setPeruste] = useState('');
+    const organisaatioCache = useSelector<RootState, OrganisaatioCache>((state) => state.organisaatio.cached);
+    const { L, locale } = useLocalisations();
+    const henkilo = kayttooikeusryhma.anomus.henkilo;
+    const { organisaatioOid } = kayttooikeusryhma.anomus;
+    return (
+        <div className="anomus-hylkays-popup">
+            <table style={{ margin: '1rem 0' }}>
+                <tbody>
+                    <tr>
+                        <td style={{ fontWeight: 'bold', paddingRight: '0.5rem' }}>
+                            {L['HENKILO_KAYTTOOIKEUS_NIMI']}:
+                        </td>
+                        <td>{henkilo.etunimet + ' ' + henkilo.sukunimi}</td>
+                    </tr>
+                    <tr>
+                        <td style={{ fontWeight: 'bold', paddingRight: '0.5rem' }}>
+                            {L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO']}:
+                        </td>
+                        <td>
+                            {Object.keys(organisaatioCache).length
+                                ? StaticUtils.getOrganisationNameWithType(organisaatioCache[organisaatioOid], L, locale)
+                                : '...'}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style={{ fontWeight: 'bold', paddingRight: '0.5rem' }}>
+                            {L['HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA']}:
+                        </td>
+                        <td>
+                            {
+                                kayttooikeusryhma.kayttoOikeusRyhma.nimi.texts.filter(
+                                    (text) => text.lang === locale.toUpperCase()
+                                )[0].text
+                            }
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <textarea
+                className="oph-input"
+                placeholder={L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYSPERUSTE']}
+                name="hylkaysperuste"
+                id="hylkaysperuste"
+                value={peruste}
+                cols={20}
+                rows={10}
+                onChange={(event) => setPeruste(event.target.value)}
+            />
+            <button
+                className="oph-button oph-button-confirm"
+                style={{ textAlign: 'left', marginTop: '15px' }}
+                onClick={() =>
+                    updateHaettuKayttooikeusryhma(kayttooikeusryhma.id, KAYTTOOIKEUDENTILA.HYLATTY, henkilo, peruste)
+                }
+            >
+                {L['HENKILO_KAYTTOOIKEUSANOMUS_VAHVISTA_HYLKAYS']}
+            </button>
+        </div>
+    );
 };
 
-export default class AnomusHylkaysPopup extends React.Component<Props, State> {
-    state: State = {
-        hylkaysperuste: '',
-    };
-
-    render() {
-        return (
-            <div className="anomus-hylkays-popup">
-                <textarea
-                    className="oph-input"
-                    placeholder={this.props.L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYSPERUSTE']}
-                    name="hylkaysperuste"
-                    id="hylkaysperuste"
-                    value={this.state.hylkaysperuste}
-                    cols={20}
-                    rows={10}
-                    onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
-                        this.onHylkaysperusteChange(event.target.value);
-                    }}
-                ></textarea>
-                <button
-                    className="oph-button oph-button-confirm"
-                    style={{ textAlign: 'left', marginTop: '15px' }}
-                    onClick={() => {
-                        this.props.action(
-                            this.props.kayttooikeusryhmaId,
-                            KAYTTOOIKEUDENTILA.HYLATTY,
-                            this.props.henkilo,
-                            this.state.hylkaysperuste
-                        );
-                    }}
-                >
-                    {this.props.L['HENKILO_KAYTTOOIKEUSANOMUS_VAHVISTA_HYLKAYS']}
-                </button>
-            </div>
-        );
-    }
-
-    onHylkaysperusteChange = (value: string): void => {
-        this.setState({ hylkaysperuste: value });
-    };
-}
+export default AnomusHylkaysPopup;

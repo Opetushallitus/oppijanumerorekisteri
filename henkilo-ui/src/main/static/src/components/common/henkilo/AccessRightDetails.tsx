@@ -12,13 +12,15 @@ export const AccessRightDetaisLink = <T,>({
     nimi,
     kayttooikeusRyhma,
     clickHandler,
+    buttonClass,
 }: {
     nimi: string;
     kayttooikeusRyhma: T;
     clickHandler: (kayttooikeusRyhma: T) => void;
+    buttonClass?: string;
 }) => (
     <button
-        className="oph-button oph-button-ghost"
+        className={`oph-button oph-button-ghost ${buttonClass ?? ''}`}
         onClick={() => clickHandler(kayttooikeusRyhma)}
         style={{ cursor: 'help', textAlign: 'left' }}
     >

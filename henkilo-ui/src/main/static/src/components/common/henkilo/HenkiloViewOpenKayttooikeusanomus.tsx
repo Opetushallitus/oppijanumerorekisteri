@@ -35,6 +35,7 @@ import { HaettuKayttooikeusryhma } from '../../../types/domain/kayttooikeus/Haet
 import { OphTableWithInfiniteScroll } from '../../OphTableWithInfiniteScroll';
 import OphTable, { expanderColumn } from '../../OphTable';
 import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
+import OphModal from '../modal/OphModal';
 
 export type KayttooikeusryhmaData = {
     voimassaPvm: string;
@@ -87,10 +88,10 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
         ) ?? {}
     );
     const [kayttooikeusRyhmatByAnoja, setKayttooikeusRyhmatByAnoja] = useState<AnojaKayttooikeusryhmaData[]>([]);
-    const [showHylkaysPopup, setShowHylkaysPopup] = useState(false);
     const [disabledHylkaaButtons, setDisabledHylkaaButtons] = useState<{ [anomusId: number]: boolean }>({});
     const [disabledMyonnettyButtons, setDisabledMyonnettyButtons] = useState<{ [anomusId: number]: boolean }>({});
     const [accessRight, setAccessRight] = useState<AccessRight>();
+    const [hylkaaAnomus, setHylkaaAnomus] = useState<number>();
 
     useEffect(() => {
         const currentDates = { ...dates } ?? {};
@@ -116,7 +117,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 popupClass={'oph-popup-default oph-popup-bottom'}
                 popupButtonWrapperPositioning={'absolute'}
                 popupArrowStyles={{ marginLeft: '10px' }}
-                popupButtonClasses={'oph-button oph-button-ghost'}
+                popupButtonClasses={'oph-button oph-button-ghost anomuslistaus-avaabutton'}
                 popupStyle={{
                     left: '-20px',
                     width: '20rem',
@@ -164,7 +165,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
         if (tila === KAYTTOOIKEUDENTILA.HYLATTY) {
             setDisabledHylkaaButtons({ ...disabledHylkaaButtons, [id]: true });
         }
-        setShowHylkaysPopup(false);
+        setHylkaaAnomus(undefined);
     }
 
     function anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma: HaettuKayttooikeusryhma) {
@@ -193,32 +194,13 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                     />
                 </div>
                 <div style={{ display: 'table-cell' }}>
-                    <PopupButton
-                        popupClass={'oph-popup-default oph-popup-bottom'}
-                        popupTitle={
-                            <span className="oph-h3 oph-strong">{L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA_HAKEMUS']}</span>
-                        }
-                        popupArrowStyles={{ marginLeft: '230px' }}
-                        popupButtonClasses={'oph-button oph-button-cancel oph-button-small'}
-                        popupStyle={{
-                            right: '0px',
-                            width: '20rem',
-                            padding: '30px',
-                            position: 'absolute',
-                        }}
-                        toggle={showHylkaysPopup}
+                    <button
+                        className="oph-button oph-button-cancel oph-button-small"
                         disabled={noPermission || disabledHylkaaButtons[haettuKayttooikeusRyhma.id]}
-                        popupContent={
-                            <AnomusHylkaysPopup
-                                L={L}
-                                kayttooikeusryhmaId={haettuKayttooikeusRyhma.id}
-                                henkilo={henkilo}
-                                action={localUpdateHaettuKayttooikeusryhma}
-                            ></AnomusHylkaysPopup>
-                        }
+                        onClick={() => setHylkaaAnomus(haettuKayttooikeusRyhma.id)}
                     >
                         {L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA']}
-                    </PopupButton>
+                    </button>
                 </div>
             </div>
         );
@@ -378,6 +360,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                         }
                         kayttooikeusRyhma={getValue().kayttoOikeusRyhma}
                         clickHandler={(kayttooikeusRyhma) => showAccessRightGroupDetails(kayttooikeusRyhma)}
+                        buttonClass="anomuslistaus-detailsbutton"
                     />
                 ),
                 enableSorting: false,
@@ -471,6 +454,18 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
 
     return (
         <div className="henkiloViewUserContentWrapper">
+            {hylkaaAnomus && (
+                <OphModal
+                    title={L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA_HAKEMUS']}
+                    onClose={() => setHylkaaAnomus(undefined)}
+                    onOverlayClick={() => setHylkaaAnomus(undefined)}
+                >
+                    <AnomusHylkaysPopup
+                        kayttooikeusryhma={props.kayttooikeus?.kayttooikeusAnomus.find((a) => a.id === hylkaaAnomus)}
+                        updateHaettuKayttooikeusryhma={localUpdateHaettuKayttooikeusryhma}
+                    />
+                </OphModal>
+            )}
             {accessRight && <AccessRightDetails {...accessRight} />}
             <div>
                 {!props.piilotaOtsikko && (
