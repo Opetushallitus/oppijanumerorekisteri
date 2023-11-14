@@ -218,6 +218,9 @@ export const kayttooikeusApi = createApi({
                 body,
             }),
         }),
+        getCasLoginParams: builder.query<CasLoginRedirectParams, void>({
+            query: () => 'cas/loginparams',
+        }),
     }),
 });
 
@@ -236,4 +239,5 @@ export const {
     useGetHaetutKayttooikeusryhmatQuery,
     usePutHaettuKayttooikeusryhmaMutation,
     usePostSalasananVaihtoMutation,
+    useGetCasLoginParamsQuery,
 } = kayttooikeusApi;

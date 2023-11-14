@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useLocalisations } from '../selectors';
 import Button from '../components/common/button/Button';
 import { isValidPassword } from '../validation/PasswordValidator';
-import { usePostSalasananVaihtoMutation } from '../api/kayttooikeus';
+import { useGetCasLoginParamsQuery, usePostSalasananVaihtoMutation } from '../api/kayttooikeus';
 import { addGlobalNotification } from '../actions/notification.actions';
 import { useAppDispatch } from '../store';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
@@ -24,6 +24,7 @@ export const SalasananVaihtoPage = ({ params: { loginToken, locale } }: Props) =
     const [newPasswordError, setNewPasswordError] = useState(false);
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
     const [postPasswordChange, { isLoading }] = usePostSalasananVaihtoMutation();
+    const { data, isLoading: isLoginParamsLoading } = useGetCasLoginParamsQuery();
     const dispatch = useAppDispatch();
 
     const submit = () => {
@@ -48,11 +49,23 @@ export const SalasananVaihtoPage = ({ params: { loginToken, locale } }: Props) =
     const passwordsDoNotMatch =
         isValidPassword(newPassword) && !!passwordConfirmation && newPassword !== passwordConfirmation;
     const samePasswordError = !!currentPassword && currentPassword === newPassword;
-    const disabled = !currentPassword || !isValidPassword(newPassword) || newPassword !== passwordConfirmation;
-    return (
+    const disabled =
+        !currentPassword ||
+        !newPassword ||
+        !passwordConfirmation ||
+        newPasswordError ||
+        passwordsDoNotMatch ||
+        samePasswordError;
+    return isLoginParamsLoading ? (
+        <Loader />
+    ) : (
         <div className="infoPageWrapper" id="email-verification-page">
             <h2 className="oph-h2 oph-bold">{L['SALASANA_VANHENTUNEEN_VAIHTO_OTSIKKO']}</h2>
             <p style={{ textAlign: 'left' }}>{L['SALASANA_VANHENTUNEEN_VAIHTO_OHJE']}</p>
+            <p style={{ textAlign: 'left' }}>
+                {L['SALASANA_UNOHTUNUT_SALASANA']}{' '}
+                <a href={`/cas/login?${new URLSearchParams(data)}`}>{L['SALASANA_PALAA_KIRJAUTUMISEEN']}</a>
+            </p>
             <p id="passwordHint" style={{ textAlign: 'left' }}>
                 {L['SALASANA_SAANTO']}
             </p>
