@@ -47,6 +47,7 @@ export type AccessRightsReportRow = {
 export type GetHaetutKayttooikeusryhmatRequest = {
     q?: string;
     organisaatioOids?: string;
+    kayttooikeusRyhmaIds?: number[];
     orderBy: string;
     limit: string;
     showOwnAnomus: string;
@@ -188,11 +189,19 @@ export const kayttooikeusApi = createApi({
             providesTags: ['henkilohakucount'],
         }),
         getHaetutKayttooikeusryhmat: builder.query<HaettuKayttooikeusryhma[], GetHaetutKayttooikeusryhmatRequest>({
-            query: (parameters) =>
-                `kayttooikeusanomus/haettuKayttoOikeusRyhma?${new URLSearchParams(parameters).toString()}`,
+            query: ({ kayttooikeusRyhmaIds, ...rest }) => {
+                const params = new URLSearchParams(rest);
+                kayttooikeusRyhmaIds?.forEach((id) => params.append('kayttooikeusRyhmaIds', String(id)));
+                return `kayttooikeusanomus/haettuKayttoOikeusRyhma?${params.toString()}`;
+            },
             // "infinite scroll" i.e. merge new results when offset is increased
             serializeQueryArgs: ({ endpointName, queryArgs }) =>
-                endpointName + queryArgs?.orderBy + queryArgs?.q + queryArgs?.organisaatioOids + queryArgs?.adminView,
+                endpointName +
+                queryArgs?.orderBy +
+                queryArgs?.q +
+                queryArgs?.organisaatioOids +
+                queryArgs?.adminView +
+                queryArgs?.kayttooikeusRyhmaIds?.toString(),
             merge: (currentCache, newItems) => [
                 ...new Map([...currentCache, ...newItems].map((x) => [x.id, x])).values(),
             ],

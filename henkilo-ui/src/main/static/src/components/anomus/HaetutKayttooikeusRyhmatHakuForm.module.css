@@ -1,0 +1,18 @@
+.row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.selectRow {
+    composes: row;
+    max-width: 700px;
+}
+
+.row :global(button) {
+    white-space: nowrap;
+}
+
+.viewButtons {
+    flex-shrink: 0;
+}

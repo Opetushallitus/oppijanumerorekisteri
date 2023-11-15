@@ -5,6 +5,7 @@ type Props = {
     onChange: (event: boolean) => void;
     trueLabel: string;
     falseLabel: string;
+    className?: string;
 };
 
 /**
@@ -13,7 +14,7 @@ type Props = {
 class BooleanRadioButtonGroup extends React.Component<Props> {
     render() {
         return (
-            <fieldset className="oph-fieldset">
+            <fieldset className={`oph-fieldset ${this.props.className ?? ''}`}>
                 <div className="oph-radio-button-group">
                     <label>
                         <input
