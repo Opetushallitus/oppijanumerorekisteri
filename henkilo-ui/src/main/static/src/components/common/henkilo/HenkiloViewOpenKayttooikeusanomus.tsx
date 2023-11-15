@@ -298,34 +298,51 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
         setAccessRight(accessRight);
     }
 
+    const getHandledClassName = (h: HaettuKayttooikeusryhma) => {
+        return handledAnomusIds.find((id) => id === h.id) ? 'handled' : undefined;
+    };
+
     const columns = useMemo<ColumnDef<HaettuKayttooikeusryhma, HaettuKayttooikeusryhma>[]>(
         () => [
             expanderColumn,
             {
                 id: 'ANOTTU_PVM',
                 header: () => L['ANOTTU_PVM'],
-                accessorFn: (row) => moment(row.anomus.anottuPvm).format(),
+                accessorFn: (row) => row,
+                cell: ({ getValue }) => (
+                    <span className={getHandledClassName(getValue())}>
+                        {moment(getValue().anomus.anottuPvm).format()}
+                    </span>
+                ),
                 sortingFn: (a, b) =>
                     moment(a.original.anomus.anottuPvm).isBefore(moment(b.original.anomus.anottuPvm)) ? -1 : 1,
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUS_NIMI',
                 header: () => L['HENKILO_KAYTTOOIKEUS_NIMI'],
-                accessorFn: (row) => row.anomus.henkilo.etunimet + ' ' + row.anomus.henkilo.sukunimi,
+                accessorFn: (row) => row,
+                cell: ({ getValue }) => (
+                    <span className={getHandledClassName(getValue())}>
+                        {getValue().anomus.henkilo.etunimet + ' ' + getValue().anomus.henkilo.sukunimi}
+                    </span>
+                ),
                 enableSorting: false,
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO',
                 header: () => L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO'],
                 accessorFn: (row) => row,
-                cell: ({ getValue }) =>
-                    Object.keys(organisaatioCache).length
-                        ? StaticUtils.getOrganisationNameWithType(
-                              organisaatioCache[getValue().anomus.organisaatioOid],
-                              L,
-                              locale
-                          )
-                        : '...',
+                cell: ({ getValue }) => (
+                    <span className={getHandledClassName(getValue())}>
+                        {Object.keys(organisaatioCache).length
+                            ? StaticUtils.getOrganisationNameWithType(
+                                  organisaatioCache[getValue().anomus.organisaatioOid],
+                                  L,
+                                  locale
+                              )
+                            : '...'}
+                    </span>
+                ),
                 enableSorting: false,
             },
             {
@@ -358,7 +375,11 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 id: 'HENKILO_KAYTTOOIKEUS_ALKUPVM',
                 header: () => L['HENKILO_KAYTTOOIKEUS_ALKUPVM'],
                 accessorFn: (row) => row,
-                cell: ({ getValue }) => dates[getValue().id]?.alkupvm.format() ?? '',
+                cell: ({ getValue }) => (
+                    <span className={getHandledClassName(getValue())}>
+                        {dates[getValue().id]?.alkupvm.format() ?? ''}
+                    </span>
+                ),
                 enableSorting: false,
             },
             {
@@ -388,7 +409,10 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                         selected={dates[getValue().id]?.loppupvm?.toDate()}
                         showYearDropdown
                         showWeekNumbers
-                        disabled={hasNoPermission(getValue().anomus.organisaatioOid, getValue().kayttoOikeusRyhma.id)}
+                        disabled={
+                            hasNoPermission(getValue().anomus.organisaatioOid, getValue().kayttoOikeusRyhma.id) ||
+                            !!handledAnomusIds.find((i) => i === getValue().id)
+                        }
                         filterDate={(date) => moment(date).isBefore(moment().add(1, 'years'))}
                         dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
                     />
@@ -397,7 +421,10 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
             {
                 id: 'HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI',
                 header: () => L['HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI'],
-                accessorFn: (row) => L[row.anomus.anomusTyyppi],
+                accessorFn: (row) => row,
+                cell: ({ getValue }) => (
+                    <span className={getHandledClassName(getValue())}>{L[getValue().anomus.anomusTyyppi]}</span>
+                ),
                 enableSorting: false,
             },
             {
