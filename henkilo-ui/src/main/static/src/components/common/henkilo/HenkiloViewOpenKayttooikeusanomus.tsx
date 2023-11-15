@@ -158,10 +158,6 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     }
 
     function anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma: HaettuKayttooikeusryhma) {
-        const noPermission = hasNoPermission(
-            haettuKayttooikeusRyhma.anomus.organisaatioOid,
-            haettuKayttooikeusRyhma.kayttoOikeusRyhma.id
-        );
         const henkilo = haettuKayttooikeusRyhma.anomus.henkilo;
         return (
             <div>
@@ -172,7 +168,6 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                         confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA_CONFIRM']}
                         id={`myonna-${haettuKayttooikeusRyhma.id}`}
                         disabled={
-                            noPermission ||
                             !!handledAnomusIds.find((id) => id === haettuKayttooikeusRyhma.id) ||
                             !dates?.[haettuKayttooikeusRyhma.id]?.loppupvm
                         }
@@ -181,7 +176,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 <div style={{ display: 'table-cell' }}>
                     <button
                         className="oph-button oph-button-cancel oph-button-small"
-                        disabled={noPermission || !!handledAnomusIds.find((id) => id === haettuKayttooikeusRyhma.id)}
+                        disabled={!!handledAnomusIds.find((id) => id === haettuKayttooikeusRyhma.id)}
                         onClick={() => setHylkaaAnomus(haettuKayttooikeusRyhma.id)}
                     >
                         {L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA']}
@@ -197,17 +192,6 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
         if (omattiedot) {
             dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(omattiedot.oidHenkilo));
         }
-    }
-
-    // If grantableKayttooikeus not loaded allow all. Otherwise require it to be in list.
-    function hasNoPermission(organisaatioOid: string, kayttooikeusryhmaId: number) {
-        return (
-            !props.kayttooikeus.grantableKayttooikeusLoading &&
-            !(
-                props.kayttooikeus.grantableKayttooikeus[organisaatioOid] &&
-                props.kayttooikeus.grantableKayttooikeus[organisaatioOid].includes(kayttooikeusryhmaId)
-            )
-        );
     }
 
     function fetchKayttooikeusryhmatByAnoja({ row }: { row: Row<HaettuKayttooikeusryhma> }) {
@@ -409,10 +393,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                         selected={dates[getValue().id]?.loppupvm?.toDate()}
                         showYearDropdown
                         showWeekNumbers
-                        disabled={
-                            hasNoPermission(getValue().anomus.organisaatioOid, getValue().kayttoOikeusRyhma.id) ||
-                            !!handledAnomusIds.find((i) => i === getValue().id)
-                        }
+                        disabled={!!handledAnomusIds.find((i) => i === getValue().id)}
                         filterDate={(date) => moment(date).isBefore(moment().add(1, 'years'))}
                         dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
                     />

@@ -25,9 +25,6 @@ import {
     REMOVE_KAYTTOOIKEUS_REQUEST,
     REMOVE_KAYTTOOIKEUS_SUCCESS,
     REMOVE_KAYTTOOIKEUS_FAILURE,
-    FETCH_GRANTABLE_REQUEST,
-    FETCH_GRANTABLE_SUCCESS,
-    FETCH_GRANTABLE_FAILURE,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_REQUEST,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_SUCCESS,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_FAILURE,
@@ -238,7 +235,6 @@ export const addKayttooikeusToHenkilo =
                 );
                 dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(henkiloOid));
                 dispatch<any>(fetchHenkiloOrgs(henkiloOid));
-                dispatch<any>(getGrantablePrivileges(henkiloOid));
             })
             .catch(() =>
                 dispatch(
@@ -307,29 +303,6 @@ export const removePrivilege =
             })
             .catch((error) => dispatch(removePrivilegeFailure(error, data)));
     };
-
-// Get all privileges user can grant
-const getGrantablePrivilegesRequest = () => ({ type: FETCH_GRANTABLE_REQUEST });
-const getGrantablePrivilegesSuccess = (data) => ({
-    type: FETCH_GRANTABLE_SUCCESS,
-    data,
-});
-const getGrantablePrivilegesFailure = (error) => ({
-    type: FETCH_GRANTABLE_FAILURE,
-    error,
-});
-
-export const getGrantablePrivileges = (henkiloOid) => async (dispatch: AppDispatch) => {
-    const url = urls.url('kayttooikeus-service.henkilo.kayttooikeus-list-grantable', henkiloOid);
-    dispatch(getGrantablePrivilegesRequest());
-    try {
-        const data = await http.get(url);
-        dispatch(getGrantablePrivilegesSuccess(data));
-    } catch (error) {
-        dispatch(getGrantablePrivilegesFailure(error));
-        throw error;
-    }
-};
 
 // All kayttooikeusryhmas
 const fetchAllKayttooikeusryhmaRequest = () => ({

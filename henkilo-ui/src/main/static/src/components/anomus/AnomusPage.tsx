@@ -111,8 +111,6 @@ const AnomusPage = () => {
                     kayttooikeus={{
                         ...getEmptyKayttooikeusRyhmaState(),
                         kayttooikeusAnomus: data,
-                        grantableKayttooikeus: {},
-                        grantableKayttooikeusLoading: true,
                     }}
                     updateHaettuKayttooikeusryhmaAlt={updateHaettuKayttooikeusryhma}
                     fetchMoreSettings={{

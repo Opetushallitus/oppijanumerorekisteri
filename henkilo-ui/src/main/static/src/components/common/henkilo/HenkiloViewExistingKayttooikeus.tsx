@@ -121,17 +121,6 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
             : null;
     }
 
-    // If grantableKayttooikeus not loaded allow all. Otherwise require it to be in list.
-    function hasNoPermission(organisaatioOid: string, kayttooikeusryhmaId: number) {
-        return (
-            !kayttooikeus.grantableKayttooikeusLoading &&
-            !(
-                kayttooikeus.grantableKayttooikeus[organisaatioOid] &&
-                kayttooikeus.grantableKayttooikeus[organisaatioOid].includes(kayttooikeusryhmaId)
-            )
-        );
-    }
-
     function showAccessRightGroupDetails(kayttooikeusRyhma) {
         const accessRight = {
             name: localizeTextGroup(kayttooikeusRyhma.ryhmaNames?.texts, locale),
@@ -173,7 +162,6 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                         selected={dates[kayttooikeus.ryhmaId].loppupvm.toDate()}
                         showYearDropdown
                         showWeekNumbers
-                        disabled={hasNoPermission(kayttooikeus.organisaatioOid, kayttooikeus.ryhmaId)}
                         filterDate={(date) =>
                             Number.isInteger(props.vuosia)
                                 ? moment(date).isBefore(moment().add(props.vuosia, 'years'))
@@ -194,7 +182,6 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                         normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA']}
                         confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA_CONFIRM']}
                         id={`myonna-${kayttooikeus.ryhmaId}`}
-                        disabled={hasNoPermission(kayttooikeus.organisaatioOid, kayttooikeus.ryhmaId)}
                     />
                 </div>
             </div>
@@ -259,7 +246,6 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                             )
                         }
                         L={L}
-                        disabled={hasNoPermission(getValue().organisaatioOid, getValue().ryhmaId)}
                     />
                 ),
                 enableSorting: false,

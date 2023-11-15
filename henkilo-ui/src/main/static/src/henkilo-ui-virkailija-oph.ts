@@ -27,8 +27,6 @@ const urlConfig = {
     'kayttooikeus-service.henkilo.kaytto-oikeus-anomus': 'kayttooikeus-service/kayttooikeusanomus',
     'kayttooikeus-service.henkilo.uusi.kayttooikeusanomus': 'kayttooikeus-service/kayttooikeusanomus/$1',
     'kayttooikeus-service.henkilo.kayttooikeus-remove': 'kayttooikeus-service/kayttooikeusanomus/$1/$2/$3',
-    'kayttooikeus-service.henkilo.kayttooikeus-list-grantable':
-        'kayttooikeus-service/kayttooikeusanomus/henkilo/current/$1/canGrant',
     'kayttooikeus-service.henkilo.password': 'kayttooikeus-service/henkilo/$1/password',
 
     'kayttooikeus-service.virkailija': 'kayttooikeus-service/virkailija',

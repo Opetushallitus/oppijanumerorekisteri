@@ -6,8 +6,6 @@ import {
     FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST,
     FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_SUCCESS,
     FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_SUCCESS,
-    FETCH_GRANTABLE_REQUEST,
-    FETCH_GRANTABLE_SUCCESS,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_SUCCESS,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_FAILURE,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_REQUEST,
@@ -34,8 +32,6 @@ export type KayttooikeusRyhmaState = {
     readonly kayttooikeusAnomusLoading: boolean;
     readonly kayttooikeus: Array<MyonnettyKayttooikeusryhma>;
     readonly kayttooikeusLoading: boolean;
-    readonly grantableKayttooikeus: object;
-    readonly grantableKayttooikeusLoading: boolean;
     readonly allowedKayttooikeus: Record<string, AllowedKayttooikeus>;
     readonly allowedKayttooikeusLoading: boolean;
     readonly kayttooikeusryhma: Kayttooikeusryhma | null | undefined;
@@ -56,8 +52,6 @@ export const getEmptyKayttooikeusRyhmaState = (): KayttooikeusRyhmaState => {
         kayttooikeusAnomus: [],
         allowedKayttooikeus: {},
         allowedKayttooikeusLoading: false,
-        grantableKayttooikeus: {},
-        grantableKayttooikeusLoading: true,
         allKayttooikeusryhmas: [],
         allKayttooikeusryhmasLoading: false,
         kayttooikeusryhma: null,
@@ -117,15 +111,6 @@ export const kayttooikeus = (
                 },
                 allowedKayttooikeusLoading: false,
             };
-        case FETCH_GRANTABLE_REQUEST:
-            return Object.assign({}, state, {
-                grantableKayttooikeusLoading: true,
-            });
-        case FETCH_GRANTABLE_SUCCESS:
-            return Object.assign({}, state, {
-                grantableKayttooikeusLoading: false,
-                grantableKayttooikeus: action.data,
-            });
         case FETCH_ALL_KAYTTOOIKEUSRYHMA_REQUEST:
             return { ...state, allKayttooikeusryhmasLoading: true };
         case FETCH_ALL_KAYTTOOIKEUSRYHMA_SUCCESS:

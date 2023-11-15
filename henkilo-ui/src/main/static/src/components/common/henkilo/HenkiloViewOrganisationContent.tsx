@@ -93,7 +93,6 @@ class HenkiloViewOrganisationContent extends React.Component<Props, State> {
                                                 id={values.id}
                                                 L={this.props.L}
                                                 passivoiOrgAction={this.passivoiHenkiloOrganisation.bind(this)}
-                                                disabled={this.hasNoPermission(values.id)}
                                             />
                                         </div>
                                     </div>
@@ -103,14 +102,6 @@ class HenkiloViewOrganisationContent extends React.Component<Props, State> {
                     </div>
                 </div>
             </div>
-        );
-    }
-
-    // If grantableKayttooikeus not loaded allow all. Otherwise require it to be in list.
-    hasNoPermission(organisaatioOid: string) {
-        return (
-            !this.props.kayttooikeus.grantableKayttooikeusLoading &&
-            !this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid]
         );
     }
 
