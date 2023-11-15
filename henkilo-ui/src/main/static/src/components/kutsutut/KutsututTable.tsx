@@ -3,7 +3,6 @@ import moment from 'moment';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, Row, SortingState } from '@tanstack/react-table';
 
 import Button from '../common/button/Button';
-import { renewKutsu } from '../../actions/kutsu.actions';
 import { toLocalizedText } from '../../localizabletext';
 import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
 import { addGlobalNotification } from '../../actions/notification.actions';
@@ -14,54 +13,60 @@ import { useLocalisations } from '../../selectors';
 import { useAppDispatch } from '../../store';
 import { OphTableWithInfiniteScroll } from '../OphTableWithInfiniteScroll';
 import { expanderColumn } from '../OphTable';
-
-type Sort = {
-    id: string;
-    desc: string;
-};
+import { KutsututSearchParams } from './KutsututPage';
+import { KutsututSortBy, useGetKutsututQuery, usePutRenewKutsuMutation } from '../../api/kayttooikeus';
 
 type OwnProps = {
-    kutsus: Array<KutsuRead>;
-    isLoading: boolean;
-    allFetched: boolean;
-    fetchKutsus: (sort?: Sort, shouldNotClear?: boolean) => void;
-    cancelInvitation: (kutsu: KutsuRead) => (arg0: React.MouseEvent<HTMLElement>) => void;
+    params: KutsututSearchParams;
+    cancelInvitation: (kutsu: KutsuRead) => void;
 };
 
-const KutsututTable = ({ kutsus, isLoading, allFetched, fetchKutsus, cancelInvitation }: OwnProps) => {
-    const [sorting, setSorting] = useState<SortingState>([{ id: 'KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO', desc: true }]);
+const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
+    const [sorting, setSorting] = useState<SortingState>([{ id: 'AIKALEIMA', desc: true }]);
     const { L, locale } = useLocalisations();
     const dispatch = useAppDispatch();
+    const [offset, setOffset] = useState(0);
+    const [allFetched, setAllFetched] = useState(false);
+    const [renewKutsu] = usePutRenewKutsuMutation();
+    const { data, isFetching } = useGetKutsututQuery({
+        params,
+        sortBy: (sorting[0]?.id ?? 'AIKALEIMA') as KutsututSortBy,
+        direction: sorting[0]?.desc ? 'DESC' : 'ASC',
+        offset: String(offset),
+        amount: String(20),
+    });
+    const [resultCount, setResultCount] = useState(data?.length ?? 0);
 
     useEffect(() => {
-        if (sorting?.length) {
-            fetchKutsus({ id: sorting[0].id, desc: sorting[0].desc + '' });
-        }
-    }, [sorting]);
+        setAllFetched(!isFetching && data?.length && (data?.length < 20 || data?.length === resultCount));
+        setResultCount(data?.length ?? 0);
+    }, [data]);
 
     const resendAction = async (id: number) => {
-        await dispatch<any>(renewKutsu(id));
-        dispatch(
-            addGlobalNotification({
-                key: 'KUTSU_CONFIRMATION_SUCCESS',
-                type: NOTIFICATIONTYPES.SUCCESS,
-                autoClose: 10000,
-                title: L['KUTSU_LUONTI_ONNISTUI'],
-            })
-        );
-        fetchKutsus({ id: sorting[0].id, desc: sorting[0].desc + '' });
+        renewKutsu(id)
+            .unwrap()
+            .then(() =>
+                dispatch(
+                    addGlobalNotification({
+                        key: 'KUTSU_CONFIRMATION_SUCCESS',
+                        type: NOTIFICATIONTYPES.SUCCESS,
+                        autoClose: 10000,
+                        title: L['KUTSU_LUONTI_ONNISTUI'],
+                    })
+                )
+            );
     };
 
     const columns = useMemo<ColumnDef<KutsuRead, KutsuRead>[]>(
         () => [
             expanderColumn,
             {
-                id: 'KUTSUT_NIMI_OTSIKKO',
+                id: 'NIMI',
                 header: () => L['KUTSUT_NIMI_OTSIKKO'],
                 accessorFn: (row) => `${row.etunimi} ${row.sukunimi}`,
             },
             {
-                id: 'KUTSUT_SAHKOPOSTI_OTSIKKO',
+                id: 'SAHKOPOSTI',
                 header: () => L['KUTSUT_SAHKOPOSTI_OTSIKKO'],
                 accessorFn: (row) => row.sahkoposti,
             },
@@ -81,7 +86,7 @@ const KutsututTable = ({ kutsus, isLoading, allFetched, fetchKutsus, cancelInvit
                 enableSorting: false,
             },
             {
-                id: 'KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO',
+                id: 'AIKALEIMA',
                 header: () => L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO'],
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => {
@@ -143,7 +148,7 @@ const KutsututTable = ({ kutsus, isLoading, allFetched, fetchKutsus, cancelInvit
                 accessorFn: (row) => row,
                 cell: ({ getValue }) =>
                     getValue().tila === 'AVOIN' && (
-                        <Button cancel action={cancelInvitation(getValue())}>
+                        <Button cancel action={() => cancelInvitation(getValue())}>
                             {L['KUTSUTUT_PERUUTA_KUTSU_NAPPI']}
                         </Button>
                     ),
@@ -153,13 +158,9 @@ const KutsututTable = ({ kutsus, isLoading, allFetched, fetchKutsus, cancelInvit
         []
     );
 
-    function onSubmitWithoutClear() {
-        fetchKutsus({ id: sorting[0].id, desc: sorting[0].desc + '' }, true);
-    }
-
     const table = useReactTable({
         columns,
-        data: kutsus ?? [],
+        data: data ?? [],
         pageCount: 1,
         state: {
             sorting,
@@ -174,11 +175,11 @@ const KutsututTable = ({ kutsus, isLoading, allFetched, fetchKutsus, cancelInvit
         <div className="kutsututTableWrapper">
             <OphTableWithInfiniteScroll<KutsuRead>
                 table={table}
-                isLoading={isLoading}
-                fetch={onSubmitWithoutClear}
-                isActive={!allFetched && !isLoading}
+                isLoading={isFetching}
+                fetch={() => setOffset(offset + 20)}
+                isActive={!allFetched && !isFetching && !!data?.length}
                 renderSubComponent={({ row }) => (
-                    <KutsuDetails kutsu={kutsus.find((kutsu) => kutsu.id === row.original.id)} />
+                    <KutsuDetails kutsu={data?.find((kutsu) => kutsu.id === row.original.id)} />
                 )}
             />
         </div>

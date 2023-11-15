@@ -20,6 +20,7 @@ import { HenkilohakuResult } from '../types/domain/kayttooikeus/HenkilohakuResul
 import { Henkilohaku, HenkilohakuCriteria } from '../types/domain/kayttooikeus/HenkilohakuCriteria.types';
 import { HaettuKayttooikeusryhma } from '../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
 import { fetchOrganisations } from '../actions/organisaatio.actions';
+import { KutsututSearchParams } from '../components/kutsutut/KutsututPage';
 
 type MfaSetupResponse = {
     secretKey: string;
@@ -73,6 +74,15 @@ type PostSalasananVaihtoRequest = {
 
 type CasLoginRedirectParams = Record<string, string>;
 
+export type KutsututSortBy = 'AIKALEIMA' | 'NIMI' | 'SAHKOPOSTI';
+type KutsututRequest = {
+    params: KutsututSearchParams;
+    sortBy: KutsututSortBy;
+    direction: 'ASC' | 'DESC';
+    offset: string;
+    amount: string;
+};
+
 export const kayttooikeusApi = createApi({
     reducerPath: 'kayttooikeusApi',
     baseQuery: fetchBaseQuery({
@@ -89,6 +99,7 @@ export const kayttooikeusApi = createApi({
         'henkilohaku',
         'henkilohakucount',
         'haetutKayttooikeusryhmat',
+        'kutsutut',
     ],
     endpoints: (builder) => ({
         getOmattiedot: builder.query<Omattiedot, void>({
@@ -230,6 +241,26 @@ export const kayttooikeusApi = createApi({
         getCasLoginParams: builder.query<CasLoginRedirectParams, void>({
             query: () => 'cas/loginparams',
         }),
+        getKutsutut: builder.query<KutsuRead[], KutsututRequest>({
+            query: ({ params, sortBy, direction, offset, amount }) =>
+                `kutsu?${new URLSearchParams({ ...params, sortBy, direction, offset, amount }).toString()}`,
+            // "infinite scroll" i.e. merge new results when offset is increased
+            serializeQueryArgs: ({ endpointName, queryArgs }) =>
+                endpointName + JSON.stringify(queryArgs.params) + queryArgs.sortBy + queryArgs.direction,
+            merge: (currentCache, newItems) => [
+                ...new Map([...currentCache, ...newItems].map((x) => [x.id, x])).values(),
+            ],
+            forceRefetch: ({ currentArg, previousArg }) => currentArg?.offset !== previousArg?.offset,
+            providesTags: ['kutsutut'],
+        }),
+        deleteKutsu: builder.mutation<void, number>({
+            query: (id) => ({ url: `kutsu/${id}`, method: 'DELETE' }),
+            invalidatesTags: ['kutsutut'],
+        }),
+        putRenewKutsu: builder.mutation<void, number>({
+            query: (id) => ({ url: `kutsu/${id}/renew`, method: 'PUT' }),
+            invalidatesTags: ['kutsutut'],
+        }),
     }),
 });
 
@@ -249,4 +280,7 @@ export const {
     usePutHaettuKayttooikeusryhmaMutation,
     usePostSalasananVaihtoMutation,
     useGetCasLoginParamsQuery,
+    useGetKutsututQuery,
+    useDeleteKutsuMutation,
+    usePutRenewKutsuMutation,
 } = kayttooikeusApi;
