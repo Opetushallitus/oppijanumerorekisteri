@@ -60,8 +60,8 @@ export type PutHaettuKayttooikeusryhmaRequest = {
     id: number;
     kayttoOikeudenTila: string;
     alkupvm: string;
-    loppupvm: string;
-    hylkaysperuste: string;
+    loppupvm?: string;
+    hylkaysperuste?: string;
 };
 
 type PostSalasananVaihtoRequest = {

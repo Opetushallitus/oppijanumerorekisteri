@@ -5,7 +5,7 @@ import '../../oph-table.css';
 import HaetutKayttooikeusRyhmatHakuForm from './HaetutKayttooikeusRyhmatHakuForm';
 import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
 import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
-import { KAYTTOOIKEUDENTILA } from '../../globals/KayttooikeudenTila';
+import { KAYTTOOIKEUDENTILA, KayttooikeudenTila } from '../../globals/KayttooikeudenTila';
 import { getEmptyKayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma.reducer';
 import { HenkilonNimi } from '../../types/domain/kayttooikeus/HenkilonNimi';
 import { useLocalisations } from '../../selectors';
@@ -54,9 +54,9 @@ const AnomusPage = () => {
 
     function updateHaettuKayttooikeusryhma(
         id: number,
-        kayttoOikeudenTila: string,
+        kayttoOikeudenTila: KayttooikeudenTila,
         alkupvm: string,
-        loppupvm: string,
+        loppupvm: string | undefined,
         henkilo: HenkilonNimi,
         hylkaysperuste?: string
     ): void {
@@ -114,7 +114,7 @@ const AnomusPage = () => {
                     }}
                     updateHaettuKayttooikeusryhmaAlt={updateHaettuKayttooikeusryhma}
                     fetchMoreSettings={{
-                        isActive: !isLoading && data.length === Number(parameters.offset) + 20,
+                        isActive: !isLoading && data?.length === Number(parameters.offset) + 20,
                         fetchMoreAction: () =>
                             setParameters({ ...parameters, offset: String(Number(parameters.offset) + 20) }),
                     }}

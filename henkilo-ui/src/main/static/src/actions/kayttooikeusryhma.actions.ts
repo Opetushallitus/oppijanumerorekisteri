@@ -130,9 +130,9 @@ export const updateHaettuKayttooikeusryhma =
         id: number,
         kayttoOikeudenTila: string,
         alkupvm: string,
-        loppupvm: string,
+        loppupvm: string | undefined,
         oidHenkilo: { oid: string },
-        hylkaysperuste: string
+        hylkaysperuste?: string
     ) =>
     async (dispatch: AppDispatch) => {
         dispatch(requestHaettuKayttooikeusryhmaUpdate(id));

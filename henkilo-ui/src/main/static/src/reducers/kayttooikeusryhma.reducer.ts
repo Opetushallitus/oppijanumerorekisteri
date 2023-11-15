@@ -30,7 +30,7 @@ import { HaettuKayttooikeusryhma } from '../types/domain/kayttooikeus/HaettuKayt
 export type AllowedKayttooikeus = Array<MyonnettyKayttooikeusryhma>;
 
 export type KayttooikeusRyhmaState = {
-    readonly kayttooikeusAnomus: Array<HaettuKayttooikeusryhma>;
+    readonly kayttooikeusAnomus?: Array<HaettuKayttooikeusryhma>;
     readonly kayttooikeusAnomusLoading: boolean;
     readonly kayttooikeus: Array<MyonnettyKayttooikeusryhma>;
     readonly kayttooikeusLoading: boolean;

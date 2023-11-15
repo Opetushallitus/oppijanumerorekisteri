@@ -6,4 +6,6 @@ export const KAYTTOOIKEUDENTILA = {
     MYONNETTY: 'MYONNETTY',
     PERUUTETTU: 'PERUUTETTU',
     VANHENTUNUT: 'VANHENTUNUT',
-};
+} as const;
+
+export type KayttooikeudenTila = keyof typeof KAYTTOOIKEUDENTILA;

@@ -1,5 +1,5 @@
+import { KayttooikeudenTila } from '../../../globals/KayttooikeudenTila';
 import { Anomus } from './Anomus.types';
-import { KayttoOikeudenTila } from './KayttoOikeudenTila.types';
 import { Kayttooikeusryhma } from './kayttooikeusryhma.types';
 
 export type HaettuKayttooikeusryhma = {
@@ -7,5 +7,5 @@ export type HaettuKayttooikeusryhma = {
     anomus: Anomus;
     kayttoOikeusRyhma: Kayttooikeusryhma;
     kasittelyPvm: string | null;
-    tyyppi: KayttoOikeudenTila | null;
+    tyyppi: KayttooikeudenTila | null;
 };

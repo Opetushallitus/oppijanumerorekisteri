@@ -1,8 +1,8 @@
 import { TextGroup } from './textgroup.types';
 import { PalveluRooliModify } from './PalveluRooliModify.types';
 import { OrganisaatioViite } from './organisaatioviite.types';
-import { KayttoOikeudenTila } from './KayttoOikeudenTila.types';
 import { SallitutKayttajatyypit } from '../../../components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage';
+import { KayttooikeudenTila } from '../../../globals/KayttooikeudenTila';
 
 export type Kayttooikeusryhma = {
     id: number;
@@ -39,7 +39,7 @@ export type MyonnettyKayttooikeusryhma = {
     myonnettyTapahtumaId: number | null | undefined;
     alkuPvm: string | null | undefined;
     voimassaPvm: string | null | undefined;
-    tila: KayttoOikeudenTila;
+    tila: KayttooikeudenTila;
     kasitelty: string;
     kasittelijaOid: string;
     kasittelijaNimi: string;

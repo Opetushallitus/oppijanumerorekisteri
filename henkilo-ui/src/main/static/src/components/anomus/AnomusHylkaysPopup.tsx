@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { KAYTTOOIKEUDENTILA } from '../../globals/KayttooikeudenTila';
+import { KAYTTOOIKEUDENTILA, KayttooikeudenTila } from '../../globals/KayttooikeudenTila';
 import { HenkilonNimi } from '../../types/domain/kayttooikeus/HenkilonNimi';
 import { useLocalisations } from '../../selectors';
 import { HaettuKayttooikeusryhma } from '../../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
@@ -10,7 +10,7 @@ import { OrganisaatioCache } from '../../reducers/organisaatio.reducer';
 import StaticUtils from '../common/StaticUtils';
 
 type Props = {
-    updateHaettuKayttooikeusryhma: (arg0: number, arg1: string, arg3: HenkilonNimi, arg4: string) => void;
+    updateHaettuKayttooikeusryhma: (arg0: number, arg1: KayttooikeudenTila, arg3: HenkilonNimi, arg4: string) => void;
     kayttooikeusryhma: HaettuKayttooikeusryhma;
 };
 

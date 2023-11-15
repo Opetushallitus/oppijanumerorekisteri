@@ -5,7 +5,6 @@ import DatePicker from 'react-datepicker';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, SortingState } from '@tanstack/react-table';
 
 import { useAppDispatch, type RootState } from '../../../store';
-import MyonnaButton from './buttons/MyonnaButton';
 import Notifications from '../notifications/Notifications';
 import SuljeButton from './buttons/SuljeButton';
 import StaticUtils from '../StaticUtils';
@@ -30,6 +29,7 @@ import { NotificationsState } from '../../../reducers/notifications.reducer';
 import { useLocalisations } from '../../../selectors';
 import OphTable from '../../OphTable';
 import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
+import ConfirmButton from '../button/ConfirmButton';
 
 type OwnProps = {
     oidHenkilo: string;
@@ -89,7 +89,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     }
 
     function isHaeJatkoaikaaButtonDisabled(uusittavaKayttooikeusRyhma: MyonnettyKayttooikeusryhma) {
-        const anomusAlreadyExists = !!kayttooikeus.kayttooikeusAnomus.filter(
+        const anomusAlreadyExists = !!kayttooikeus.kayttooikeusAnomus?.filter(
             (haettuKayttooikeusRyhma) =>
                 haettuKayttooikeusRyhma.kayttoOikeusRyhma.id === uusittavaKayttooikeusRyhma.ryhmaId &&
                 uusittavaKayttooikeusRyhma.organisaatioOid === haettuKayttooikeusRyhma.anomus.organisaatioOid
@@ -139,7 +139,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                 [...(kayttooikeusRyhma.ryhmaKuvaus?.texts || []), ...(kayttooikeusRyhma.ryhmaNames?.texts || [])],
                 locale
             ),
-            onClose: () => setAccessRight(null),
+            onClose: () => setAccessRight(undefined),
         };
         setAccessRight(accessRight);
     }
@@ -183,15 +183,17 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                     />
                 </div>
                 <div style={{ display: 'table-cell' }}>
-                    <MyonnaButton
-                        myonnaAction={() =>
+                    <ConfirmButton
+                        action={() =>
                             updateKayttooikeusryhma(
                                 kayttooikeus.ryhmaId,
                                 KAYTTOOIKEUDENTILA.MYONNETTY,
                                 kayttooikeus.organisaatioOid
                             )
                         }
-                        L={L}
+                        normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA']}
+                        confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA_CONFIRM']}
+                        id={`myonna-${kayttooikeus.ryhmaId}`}
                         disabled={hasNoPermission(kayttooikeus.organisaatioOid, kayttooikeus.ryhmaId)}
                     />
                 </div>

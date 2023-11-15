@@ -7,7 +7,6 @@ import { urls } from 'oph-urls-js';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, Row, SortingState } from '@tanstack/react-table';
 
 import StaticUtils from '../StaticUtils';
-import MyonnaButton from './buttons/MyonnaButton';
 import Button from '../button/Button';
 import { http } from '../../../http';
 import PopupButton from '../button/PopupButton';
@@ -20,7 +19,7 @@ import {
 } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { localize, localizeTextGroup } from '../../../utilities/localisation.util';
 import './HenkiloViewOpenKayttooikeusanomus.css';
-import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
+import { KAYTTOOIKEUDENTILA, KayttooikeudenTila } from '../../../globals/KayttooikeudenTila';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
@@ -36,6 +35,7 @@ import { OphTableWithInfiniteScroll } from '../../OphTableWithInfiniteScroll';
 import OphTable, { expanderColumn } from '../../OphTable';
 import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
 import OphModal from '../modal/OphModal';
+import ConfirmButton from '../button/ConfirmButton';
 
 export type KayttooikeusryhmaData = {
     voimassaPvm: string;
@@ -61,11 +61,11 @@ type OwnProps = {
     kayttooikeus: KayttooikeusRyhmaState;
     updateHaettuKayttooikeusryhmaAlt?: (
         arg0: number,
-        arg1: string,
+        arg1: KayttooikeudenTila,
         arg2: string,
-        arg3: string,
+        arg3: string | undefined,
         arg4: HenkilonNimi,
-        arg5: string
+        arg5?: string
     ) => void;
 };
 
@@ -75,7 +75,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     const { L, locale, l10n } = useLocalisations();
     const organisaatioCache = useSelector<RootState, OrganisaatioCache>((state) => state.organisaatio.cached);
     const { data: omattiedot } = useGetOmattiedotQuery();
-    const [dates, setDates] = useState<{ [anomusId: number]: { alkupvm: Moment; loppupvm: Moment } }>(
+    const [dates, setDates] = useState<{ [anomusId: number]: { alkupvm: Moment; loppupvm?: Moment } }>(
         props.kayttooikeus?.kayttooikeusAnomus?.reduce(
             (acc, kayttooikeus) => ({
                 ...acc,
@@ -88,8 +88,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
         ) ?? {}
     );
     const [kayttooikeusRyhmatByAnoja, setKayttooikeusRyhmatByAnoja] = useState<AnojaKayttooikeusryhmaData[]>([]);
-    const [disabledHylkaaButtons, setDisabledHylkaaButtons] = useState<{ [anomusId: number]: boolean }>({});
-    const [disabledMyonnettyButtons, setDisabledMyonnettyButtons] = useState<{ [anomusId: number]: boolean }>({});
+    const [handledAnomusIds, setHandledAnomusIds] = useState<number[]>([]);
     const [accessRight, setAccessRight] = useState<AccessRight>();
     const [hylkaaAnomus, setHylkaaAnomus] = useState<number>();
 
@@ -145,26 +144,16 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
         );
     }
 
-    function localUpdateHaettuKayttooikeusryhma(
-        id: number,
-        tila: string,
-        henkilo: HenkilonNimi,
-        hylkaysperuste?: string
-    ) {
+    function handleAnomus(id: number, tila: KayttooikeudenTila, henkilo: HenkilonNimi, hylkaysperuste?: string) {
         const date = dates[id];
-        const alkupvm: string = date?.alkupvm?.format(PropertySingleton.state.PVM_DBFORMAATTI);
-        const loppupvm: string = date?.loppupvm?.format(PropertySingleton.state.PVM_DBFORMAATTI);
+        const alkupvm = date?.alkupvm?.format(PropertySingleton.state.PVM_DBFORMAATTI);
+        const loppupvm = date?.loppupvm?.format(PropertySingleton.state.PVM_DBFORMAATTI);
         if (props.updateHaettuKayttooikeusryhmaAlt) {
-            props.updateHaettuKayttooikeusryhmaAlt(id, tila, alkupvm, loppupvm, henkilo, hylkaysperuste ?? '');
+            props.updateHaettuKayttooikeusryhmaAlt(id, tila, alkupvm, loppupvm, henkilo, hylkaysperuste);
         } else {
-            dispatch<any>(updateHaettuKayttooikeusryhma(id, tila, alkupvm, loppupvm, henkilo, hylkaysperuste ?? ''));
+            dispatch<any>(updateHaettuKayttooikeusryhma(id, tila, alkupvm, loppupvm, henkilo, hylkaysperuste));
         }
-        if (tila === KAYTTOOIKEUDENTILA.MYONNETTY) {
-            setDisabledMyonnettyButtons({ ...disabledMyonnettyButtons, [id]: true });
-        }
-        if (tila === KAYTTOOIKEUDENTILA.HYLATTY) {
-            setDisabledHylkaaButtons({ ...disabledHylkaaButtons, [id]: true });
-        }
+        setHandledAnomusIds([...handledAnomusIds, id]);
         setHylkaaAnomus(undefined);
     }
 
@@ -177,18 +166,14 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
         return (
             <div>
                 <div className="anomuslistaus-myonnabutton" style={{ display: 'table-cell', paddingRight: '10px' }}>
-                    <MyonnaButton
-                        myonnaAction={() =>
-                            localUpdateHaettuKayttooikeusryhma(
-                                haettuKayttooikeusRyhma.id,
-                                KAYTTOOIKEUDENTILA.MYONNETTY,
-                                henkilo
-                            )
-                        }
-                        L={L}
+                    <ConfirmButton
+                        action={() => handleAnomus(haettuKayttooikeusRyhma.id, KAYTTOOIKEUDENTILA.MYONNETTY, henkilo)}
+                        normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA']}
+                        confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA_CONFIRM']}
+                        id={`myonna-${haettuKayttooikeusRyhma.id}`}
                         disabled={
                             noPermission ||
-                            disabledMyonnettyButtons[haettuKayttooikeusRyhma.id] ||
+                            !!handledAnomusIds.find((id) => id === haettuKayttooikeusRyhma.id) ||
                             !dates?.[haettuKayttooikeusRyhma.id]?.loppupvm
                         }
                     />
@@ -196,7 +181,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 <div style={{ display: 'table-cell' }}>
                     <button
                         className="oph-button oph-button-cancel oph-button-small"
-                        disabled={noPermission || disabledHylkaaButtons[haettuKayttooikeusRyhma.id]}
+                        disabled={noPermission || !!handledAnomusIds.find((id) => id === haettuKayttooikeusRyhma.id)}
                         onClick={() => setHylkaaAnomus(haettuKayttooikeusRyhma.id)}
                     >
                         {L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA']}
@@ -209,7 +194,9 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     async function cancelAnomus(haettuKayttooikeusRyhma: HaettuKayttooikeusryhma) {
         const url = urls.url('kayttooikeus-service.omattiedot.anomus.muokkaus');
         await http.put(url, haettuKayttooikeusRyhma.id);
-        dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(omattiedot.oidHenkilo));
+        if (omattiedot) {
+            dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(omattiedot.oidHenkilo));
+        }
     }
 
     // If grantableKayttooikeus not loaded allow all. Otherwise require it to be in list.
@@ -224,9 +211,9 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     }
 
     function fetchKayttooikeusryhmatByAnoja({ row }: { row: Row<HaettuKayttooikeusryhma> }) {
-        const anojaOid = props.kayttooikeus.kayttooikeusAnomus.find((a) => a.id === row.original.id)?.anomus.henkilo
+        const anojaOid = props.kayttooikeus.kayttooikeusAnomus?.find((a) => a.id === row.original.id)?.anomus.henkilo
             .oid;
-        if (!_hasAnojaKayttooikeusData(anojaOid)) {
+        if (anojaOid && !kayttooikeusRyhmatByAnoja.find((a) => a.anojaOid === anojaOid)) {
             _parseAnojaKayttooikeusryhmat(anojaOid);
         }
 
@@ -297,12 +284,6 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 : noLoppupvm;
         }
         return new Date(myonnettyKayttooikeusryhma.kasitelty).toString();
-    };
-
-    const _hasAnojaKayttooikeusData = (anojaOid: string): boolean => {
-        return kayttooikeusRyhmatByAnoja.some(
-            (anojaKayttooikeusryhmaData: AnojaKayttooikeusryhmaData) => anojaKayttooikeusryhmaData.anojaOid === anojaOid
-        );
     };
 
     function showAccessRightGroupDetails(kayttooikeusRyhma: Kayttooikeusryhma) {
@@ -452,17 +433,19 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
         getRowCanExpand: () => true,
     });
 
+    const hylattyKayttooikeusryhma =
+        hylkaaAnomus && props.kayttooikeus?.kayttooikeusAnomus?.find((a) => a.id === hylkaaAnomus);
     return (
         <div className="henkiloViewUserContentWrapper">
-            {hylkaaAnomus && (
+            {hylattyKayttooikeusryhma && (
                 <OphModal
                     title={L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA_HAKEMUS']}
                     onClose={() => setHylkaaAnomus(undefined)}
                     onOverlayClick={() => setHylkaaAnomus(undefined)}
                 >
                     <AnomusHylkaysPopup
-                        kayttooikeusryhma={props.kayttooikeus?.kayttooikeusAnomus.find((a) => a.id === hylkaaAnomus)}
-                        updateHaettuKayttooikeusryhma={localUpdateHaettuKayttooikeusryhma}
+                        kayttooikeusryhma={hylattyKayttooikeusryhma}
+                        updateHaettuKayttooikeusryhma={handleAnomus}
                     />
                 </OphModal>
             )}
@@ -476,7 +459,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 {props.fetchMoreSettings ? (
                     <OphTableWithInfiniteScroll
                         table={table}
-                        isLoading={props.tableLoading}
+                        isLoading={!!props.tableLoading}
                         fetch={props.fetchMoreSettings?.fetchMoreAction}
                         isActive={props.fetchMoreSettings?.isActive}
                         renderSubComponent={!props.isOmattiedot ? fetchKayttooikeusryhmatByAnoja : undefined}
@@ -484,7 +467,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 ) : (
                     <OphTable
                         table={table}
-                        isLoading={props.tableLoading}
+                        isLoading={!!props.tableLoading}
                         renderSubComponent={!props.isOmattiedot ? fetchKayttooikeusryhmatByAnoja : undefined}
                     />
                 )}
