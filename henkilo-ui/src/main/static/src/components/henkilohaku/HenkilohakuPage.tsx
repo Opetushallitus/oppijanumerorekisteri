@@ -99,7 +99,7 @@ const HenkilohakuPage = () => {
 
     const table = useReactTable({
         columns,
-        data: result,
+        data: result ?? [],
         pageCount: 1,
         state: {
             sorting,

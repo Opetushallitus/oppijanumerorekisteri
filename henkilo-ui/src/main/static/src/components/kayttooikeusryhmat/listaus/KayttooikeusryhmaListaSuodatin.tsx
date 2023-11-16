@@ -4,7 +4,6 @@ import { Link } from 'react-router';
 import './KayttooikeusryhmaListaSuodatin.css';
 import { Localisations } from '../../../types/localisation.type';
 import BooleanRadioButtonGroup from '../../common/radiobuttongroup/BooleanRadioButtonGroup';
-import OphInline from '../../common/forms/OphInline';
 
 type Props = {
     L: Localisations;
@@ -45,7 +44,7 @@ export default class KayttooikeusryhmaListaSuodatin extends React.Component<Prop
                     </div>
                     {this.props.isAdmin && (
                         <div className="oph-input-container flex-horizontal">
-                            <OphInline>
+                            <div className="flex-inline">
                                 <label className="oph-checkable" htmlFor="kayttooikeusryhmaNaytaPassivoidut">
                                     <input
                                         id="kayttooikeusryhmaNaytaPassivoidut"
@@ -59,7 +58,7 @@ export default class KayttooikeusryhmaListaSuodatin extends React.Component<Prop
                                         {this.props.L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PASSIVOIDUT']}
                                     </span>
                                 </label>
-                            </OphInline>
+                            </div>
                         </div>
                     )}
                 </div>

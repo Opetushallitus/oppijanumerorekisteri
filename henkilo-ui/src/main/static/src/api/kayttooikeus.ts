@@ -98,6 +98,7 @@ export const kayttooikeusApi = createApi({
         'palvelukayttajat',
         'henkilohaku',
         'henkilohakucount',
+        'henkilohakuorganisaatiot',
         'haetutKayttooikeusryhmat',
         'kutsutut',
     ],
@@ -261,6 +262,10 @@ export const kayttooikeusApi = createApi({
             query: (id) => ({ url: `kutsu/${id}/renew`, method: 'PUT' }),
             invalidatesTags: ['kutsutut'],
         }),
+        getHenkiloHakuOrganisaatiot: builder.query<OrganisaatioHenkilo[], string>({
+            query: (oid) => `henkilo/${oid}/organisaatio?requiredRoles=HENKILOHAKU`,
+            providesTags: ['henkilohakuorganisaatiot'],
+        }),
     }),
 });
 
@@ -283,4 +288,5 @@ export const {
     useGetKutsututQuery,
     useDeleteKutsuMutation,
     usePutRenewKutsuMutation,
+    useGetHenkiloHakuOrganisaatiotQuery,
 } = kayttooikeusApi;
