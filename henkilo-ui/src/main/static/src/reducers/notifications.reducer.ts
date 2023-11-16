@@ -14,11 +14,11 @@ import {
 import { NotificationType } from '../types/notification.types';
 
 export type Notification = {
-    id: string;
+    id?: string;
     type: NotificationType;
-    errorType: string;
+    errorType?: string;
     notL10nMessage: string;
-    notL10nText: string;
+    notL10nText?: string;
     organisaatioOid?: string;
     ryhmaIdList?: Array<string>;
 };

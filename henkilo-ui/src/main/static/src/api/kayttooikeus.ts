@@ -239,9 +239,6 @@ export const kayttooikeusApi = createApi({
                 body,
             }),
         }),
-        getCasLoginParams: builder.query<CasLoginRedirectParams, void>({
-            query: () => 'cas/loginparams',
-        }),
         getKutsutut: builder.query<KutsuRead[], KutsututRequest>({
             query: ({ params, sortBy, direction, offset, amount }) =>
                 `kutsu?${new URLSearchParams({ ...params, sortBy, direction, offset, amount }).toString()}`,
@@ -284,7 +281,6 @@ export const {
     useGetHaetutKayttooikeusryhmatQuery,
     usePutHaettuKayttooikeusryhmaMutation,
     usePostSalasananVaihtoMutation,
-    useGetCasLoginParamsQuery,
     useGetKutsututQuery,
     useDeleteKutsuMutation,
     usePutRenewKutsuMutation,
