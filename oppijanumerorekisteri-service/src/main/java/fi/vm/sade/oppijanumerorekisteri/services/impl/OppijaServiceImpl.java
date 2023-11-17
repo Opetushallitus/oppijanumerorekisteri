@@ -51,6 +51,7 @@ public class OppijaServiceImpl implements OppijaService {
     private final UserDetailsHelper userDetailsHelper;
     private final PermissionChecker permissionChecker;
     private final ObjectMapper objectMapper;
+    private final YksilointiService yksilointiService;
 
     @Override
     public String create(OppijaCreateDto dto) {
@@ -62,7 +63,7 @@ public class OppijaServiceImpl implements OppijaService {
         organisaatiot.forEach(entity::addOrganisaatio);
 
         entity = henkiloModificationService.createHenkilo(entity, kayttajaOid, true);
-        if (!entity.isYksiloity()) {
+        if (yksilointiService.isHenkiloValidForHetuttomanYksilointi(entity)) {
             HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(entity.getEtunimet(),
                 entity.getKutsumanimi(), entity.getSukunimi(), entity.getSyntymaaika());
             int duplikaatit = henkiloRepository.findDuplikaatitCount(criteria, entity.getOidHenkilo());

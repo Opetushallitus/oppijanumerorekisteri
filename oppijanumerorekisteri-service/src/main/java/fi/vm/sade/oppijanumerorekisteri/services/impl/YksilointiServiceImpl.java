@@ -51,8 +51,8 @@ public class YksilointiServiceImpl implements YksilointiService {
     private static final String KIELIKOODI_SV = "sv";
     private static final String RYHMAKUVAUS_VTJ_SAHKOINEN_OSOITE = "yhteystietotyyppi8";
 
-    private static final Predicate<String> stringNotEmpty = it -> !StringUtils.isEmpty(it);
-    private static final Predicate<Collection> collectionNotEmpty = it -> !CollectionUtils.isEmpty(it);
+    private static final Predicate<String> stringNotEmpty = it -> StringUtils.hasLength(it);
+    private static final Predicate<Collection<?>> collectionNotEmpty = it -> !CollectionUtils.isEmpty(it);
 
     private final DuplicateService duplicateService;
     private final KoodistoService koodistoService;
@@ -147,6 +147,21 @@ public class YksilointiServiceImpl implements YksilointiService {
             throw new ValidationException(String.format("Henkilöä '%s' ei voida yksilöidä koska hetu puuttuu", henkilo.getOidHenkilo()));
         }
         return yksiloiHenkilo(henkilo);
+    }
+
+    @Override
+    public boolean isHenkiloValidForHetuttomanYksilointi(Henkilo henkilo) {
+        return henkilo.getHetu() == null
+            && henkilo.isYksiloityVTJ() == false
+            && henkilo.isYksiloity() == false
+            && henkilo.isDuplicate() == false
+            && StringUtils.hasLength(henkilo.getEtunimet())
+            && StringUtils.hasLength(henkilo.getSukunimi())
+            && StringUtils.hasLength(henkilo.getKutsumanimi())
+            && StringUtils.hasLength(henkilo.getSukupuoli())
+            && henkilo.getSyntymaaika() != null
+            && henkilo.getAidinkieli() != null
+            && henkilo.getKansalaisuus() != null && henkilo.getKansalaisuus().size() > 0;
     }
 
     @Override
