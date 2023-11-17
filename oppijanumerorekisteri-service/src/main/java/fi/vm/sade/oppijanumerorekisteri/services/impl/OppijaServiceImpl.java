@@ -62,6 +62,16 @@ public class OppijaServiceImpl implements OppijaService {
         organisaatiot.forEach(entity::addOrganisaatio);
 
         entity = henkiloModificationService.createHenkilo(entity, kayttajaOid, true);
+        if (!entity.isYksiloity()) {
+            HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(entity.getEtunimet(),
+                entity.getKutsumanimi(), entity.getSukunimi(), entity.getSyntymaaika());
+            int duplikaatit = henkiloRepository.findDuplikaatitCount(criteria, entity.getOidHenkilo());
+            if (duplikaatit < 1) {
+                entity.setYksiloity(true);
+                henkiloRepository.save(entity);
+            }
+        }
+
         return entity.getOidHenkilo();
     }
 

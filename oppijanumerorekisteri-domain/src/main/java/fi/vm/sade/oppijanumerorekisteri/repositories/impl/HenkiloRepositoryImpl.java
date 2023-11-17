@@ -480,6 +480,21 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                 .fetch();
     }
 
+    @Override
+    public int findDuplikaatitCount(HenkiloDuplikaattiCriteria criteria, String masterOid) {
+        this.entityManager.createNativeQuery("SET pg_trgm.similarity_threshold = " + DUPLICATE_QUERY_SIMILARITY_THRESHOLD)
+                .executeUpdate();
+        Query duplicateQuery = this.entityManager.createNativeQuery("SELECT COUNT(*) " +
+                        "FROM henkilo " +
+                        "WHERE duplicate_search_str % duplicate_search_fmt(:namesAndBirthDate) " +
+                        "AND passivoitu = FALSE " +
+                        "AND duplicate = FALSE " +
+                        "AND oidhenkilo != :masterOid")
+                .setParameter("namesAndBirthDate", getNamesAndBirthDate(criteria))
+                .setParameter("masterOid", masterOid);
+        return ((Number) duplicateQuery.getSingleResult()).intValue();
+    }
+
     // NOTE: native postgres query
     @SuppressWarnings("unchecked")
     @Override
