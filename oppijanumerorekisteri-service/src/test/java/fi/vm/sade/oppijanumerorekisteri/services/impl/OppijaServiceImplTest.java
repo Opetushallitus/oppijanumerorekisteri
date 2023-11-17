@@ -89,7 +89,7 @@ public class OppijaServiceImplTest {
                 organisaatioServiceMock, mapperMock, henkiloRepositoryMock,
                 tuontiRepositoryMock,
                 organisaatioRepositoryMock, henkiloViiteRepositoryMock, userDetailsHelperMock,
-                permissionCheckerMock, objectMapperMock);
+                permissionCheckerMock, objectMapperMock, yksilointiService);
     }
 
     @Test
@@ -102,7 +102,7 @@ public class OppijaServiceImplTest {
         int page = 1;
         int count = 20;
 
-        Page<MasterHenkiloDto<OppijaReadDto>> henkilot = oppijaServiceImpl.listMastersBy(input, page, count);
+        oppijaServiceImpl.listMastersBy(input, page, count);
 
         ArgumentCaptor<OppijaTuontiCriteria> argumentCaptor = ArgumentCaptor.forClass(OppijaTuontiCriteria.class);
         verify(henkiloRepositoryMock).findBy(argumentCaptor.capture(), eq(count), eq(0), any());
@@ -118,7 +118,7 @@ public class OppijaServiceImplTest {
         int page = 1;
         int count = 20;
 
-        Page<MasterHenkiloDto<OppijaReadDto>> henkilot = oppijaServiceImpl.listMastersBy(input, page, count);
+        oppijaServiceImpl.listMastersBy(input, page, count);
 
         ArgumentCaptor<OppijaTuontiCriteria> argumentCaptor = ArgumentCaptor.forClass(OppijaTuontiCriteria.class);
         verify(henkiloRepositoryMock).findBy(argumentCaptor.capture(), eq(count), eq(0), any());
@@ -134,7 +134,7 @@ public class OppijaServiceImplTest {
         int page = 1;
         int count = 20;
 
-        Page<MasterHenkiloDto<OppijaReadDto>> henkilot = oppijaServiceImpl.listMastersBy(input, page, count);
+        oppijaServiceImpl.listMastersBy(input, page, count);
 
         ArgumentCaptor<OppijaTuontiCriteria> argumentCaptor = ArgumentCaptor.forClass(OppijaTuontiCriteria.class);
         verify(henkiloRepositoryMock).findBy(argumentCaptor.capture(), eq(count), eq(0), any());
