@@ -24,6 +24,10 @@ public interface HenkiloModificationService {
 
     HenkiloDto createHenkilo(HenkiloCreateDto henkiloDto);
 
+    Henkilo createAndYksiloiHenkilo(HenkiloCreateDto henkiloDto);
+
+    boolean isHenkiloValidForHetuttomanYksilointi(Henkilo henkilo);
+
     Henkilo createHenkilo(HuoltajaCreateDto huoltajaCreateDto, String kasittelijaOid);
 
     /**

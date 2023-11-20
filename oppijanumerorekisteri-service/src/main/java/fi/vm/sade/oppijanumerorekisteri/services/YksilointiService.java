@@ -28,8 +28,6 @@ public interface YksilointiService {
      */
     Henkilo yksiloiManuaalisesti(final String henkiloOid);
 
-    boolean isHenkiloValidForHetuttomanYksilointi(Henkilo henkilo);
-
     /**
      * Virkailijan käynnistämä hetuttoman henkilön yksilöinti.
      * @param henkiloOid Henkilön oid

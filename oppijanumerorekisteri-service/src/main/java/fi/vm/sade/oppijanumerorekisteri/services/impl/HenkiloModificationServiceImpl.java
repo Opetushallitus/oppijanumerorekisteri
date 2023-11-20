@@ -122,7 +122,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
         this.mapper.map(henkiloUpdateDto, henkiloSaved);
         // varmistetaan että tyhjä hetu tallentuu nullina
-        if (StringUtils.isEmpty(henkiloSaved.getHetu())) {
+        if (!StringUtils.hasLength(henkiloSaved.getHetu())) {
             henkiloUpdateDto.setHetu(null);
             henkiloSaved.setHetu(null);
         }
@@ -295,7 +295,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         setSyntymaaikaAndSukupuoliFromHetu(henkilo);
 
         // varmistetaan että tyhjä hetu tallentuu nullina
-        if (StringUtils.isEmpty(henkilo.getHetu())) {
+        if (!StringUtils.hasLength(henkilo.getHetu())) {
             henkilo.setHetu(null);
         }
 
@@ -407,6 +407,38 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
     @Override
     @Transactional
+    public Henkilo createAndYksiloiHenkilo(HenkiloCreateDto henkiloDto) {
+        Henkilo henkilo = this.mapper.map(henkiloDto, Henkilo.class);
+        Henkilo created = this.createHenkilo(henkilo);
+        if (isHenkiloValidForHetuttomanYksilointi(created)) {
+            HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(created.getEtunimet(),
+                created.getKutsumanimi(), created.getSukunimi(), created.getSyntymaaika());
+            int duplikaatit = this.henkiloDataRepository.findDuplikaatitCount(criteria, created.getOidHenkilo());
+            if (duplikaatit < 1) {
+                created.setYksiloity(true);
+                this.henkiloDataRepository.save(created);
+            }
+        }
+        return created;
+    }
+
+    @Override
+    public boolean isHenkiloValidForHetuttomanYksilointi(Henkilo henkilo) {
+        return henkilo.getHetu() == null
+            && henkilo.isYksiloityVTJ() == false
+            && henkilo.isYksiloity() == false
+            && henkilo.isDuplicate() == false
+            && StringUtils.hasLength(henkilo.getEtunimet())
+            && StringUtils.hasLength(henkilo.getSukunimi())
+            && StringUtils.hasLength(henkilo.getKutsumanimi())
+            && StringUtils.hasLength(henkilo.getSukupuoli())
+            && henkilo.getSyntymaaika() != null
+            && henkilo.getAidinkieli() != null
+            && henkilo.getKansalaisuus() != null && henkilo.getKansalaisuus().size() > 0;
+    }
+
+    @Override
+    @Transactional
     public HenkiloDto createHenkilo(HenkiloCreateDto henkiloDto) {
         Henkilo henkilo = this.mapper.map(henkiloDto, Henkilo.class);
         return this.mapper.map(this.createHenkilo(henkilo), HenkiloDto.class);
@@ -421,7 +453,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             throw new UnprocessableEntityException(errors);
         }
         Henkilo henkilo = this.mapper.map(huoltajaCreateDto, Henkilo.class);
-        return this.createHenkilo(henkilo, kasittelijaOid, StringUtils.isEmpty(henkilo.getHetu()));
+        return this.createHenkilo(henkilo, kasittelijaOid, !StringUtils.hasLength(henkilo.getHetu()));
     }
 
     @Override
@@ -448,7 +480,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         }
 
         // varmistetaan että tyhjä hetu tallentuu nullina
-        if (StringUtils.isEmpty(henkiloCreate.getHetu())) {
+        if (!StringUtils.hasLength(henkiloCreate.getHetu())) {
             henkiloCreate.setHetu(null);
         }
         setSyntymaaikaAndSukupuoliFromHetu(henkiloCreate);

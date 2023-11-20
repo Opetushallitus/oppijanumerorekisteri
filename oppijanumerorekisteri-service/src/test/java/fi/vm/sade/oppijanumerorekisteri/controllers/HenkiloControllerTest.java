@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import fi.vm.sade.auditlog.Target;
 import fi.vm.sade.oppijanumerorekisteri.FilesystemHelper;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
@@ -11,7 +12,10 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ConflictException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
+import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
@@ -335,9 +339,19 @@ public class HenkiloControllerTest {
                         .yhteystietoArvo("formally.correct@email.address")
                         .build())
                 .build()));
-        HenkiloDto henkiloDtoOutput = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "081296-967T", "1.2.3.4.5",
-                false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
-        given(this.henkiloModificationService.createHenkilo(any(HenkiloCreateDto.class))).willReturn(henkiloDtoOutput);
+        Henkilo henkiloDtoOutput = Henkilo.builder()
+                .oidHenkilo("1.2.3.4.5")
+                .hetu("081296-967T")
+                .etunimet("arpa")
+                .kutsumanimi("arpa")
+                .sukunimi("kuutio")
+                .aidinkieli(new Kielisyys("fi", "suomi"))
+                .asiointiKieli(new Kielisyys("fi", "suomi"))
+                .passivoitu(false)
+                .kansalaisuus(Set.of(new Kansalaisuus("246")))
+                .yhteystiedotRyhma(Set.of(EntityUtils.createYhteystiedotRyhma("arpa@kuutio.fi")))
+                .build();
+        given(this.henkiloModificationService.createAndYksiloiHenkilo(any(HenkiloCreateDto.class))).willReturn(henkiloDtoOutput);
         this.mvc.perform(post("/henkilo").content(this.objectMapper.writeValueAsString(henkiloDtoInput))
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))

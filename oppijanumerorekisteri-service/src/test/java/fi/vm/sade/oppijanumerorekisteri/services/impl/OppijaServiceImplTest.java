@@ -89,7 +89,7 @@ public class OppijaServiceImplTest {
                 organisaatioServiceMock, mapperMock, henkiloRepositoryMock,
                 tuontiRepositoryMock,
                 organisaatioRepositoryMock, henkiloViiteRepositoryMock, userDetailsHelperMock,
-                permissionCheckerMock, objectMapperMock, yksilointiService);
+                permissionCheckerMock, objectMapperMock);
     }
 
     @Test

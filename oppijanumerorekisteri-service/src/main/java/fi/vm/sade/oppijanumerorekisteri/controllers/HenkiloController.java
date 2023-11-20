@@ -234,7 +234,7 @@ public class HenkiloController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     public String createHenkiloFromHenkiloCreateDto(
             @ApiParam("Henkilön sukupuolen kelvolliset arvot löytyvät sukupuoli koodistosta.") @RequestBody @Validated HenkiloCreateDto henkilo) {
-        return this.henkiloModificationService.createHenkilo(henkilo).getOidHenkilo();
+        return this.henkiloModificationService.createAndYksiloiHenkilo(henkilo).getOidHenkilo();
     }
 
     @ApiOperation(value = "Henkilön olemassaolon tarkistus", authorizations = @Authorization("onr"), notes = "Tarkistaa henkilön olemassa olon annetun syötteen pohjalta.")

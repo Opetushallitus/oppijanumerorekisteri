@@ -150,21 +150,6 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     @Override
-    public boolean isHenkiloValidForHetuttomanYksilointi(Henkilo henkilo) {
-        return henkilo.getHetu() == null
-            && henkilo.isYksiloityVTJ() == false
-            && henkilo.isYksiloity() == false
-            && henkilo.isDuplicate() == false
-            && StringUtils.hasLength(henkilo.getEtunimet())
-            && StringUtils.hasLength(henkilo.getSukunimi())
-            && StringUtils.hasLength(henkilo.getKutsumanimi())
-            && StringUtils.hasLength(henkilo.getSukupuoli())
-            && henkilo.getSyntymaaika() != null
-            && henkilo.getAidinkieli() != null
-            && henkilo.getKansalaisuus() != null && henkilo.getKansalaisuus().size() > 0;
-    }
-
-    @Override
     @Transactional
     public Henkilo hetuttomanYksilointi(String henkiloOid) {
         Henkilo henkilo = getHenkiloByOid(henkiloOid);
