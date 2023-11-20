@@ -11,8 +11,8 @@ import './DetailsForm.css';
 
 type Props = ExistenceCheckState & {
     translate: (key: string) => string;
-    clear: () => void;
-    check: (payload: ExistenceCheckRequest) => void;
+    clearExistenceCheck: () => void;
+    doExistenceCheck: (payload: ExistenceCheckRequest) => void;
     cache: (payload: ExistenceCheckRequest) => void;
     create: () => void;
 };
@@ -69,11 +69,21 @@ const formFieldErrors: Record<string, string> = {
 
 const resolveErrorKey = (key: string): string => formFieldErrors[key] || 'LOMAKE_KENTTA_SISALTAA_VIRHEITA';
 
-const DetailsForm: React.FC<Props> = ({ translate, clear, check, cache, create, loading, status, oid, msgKey }) => {
+const DetailsForm: React.FC<Props> = ({
+    translate,
+    clearExistenceCheck,
+    doExistenceCheck,
+    cache,
+    create,
+    loading,
+    status,
+    oid,
+    msgKey,
+}) => {
     React.useEffect(() => {
-        clear();
+        clearExistenceCheck();
         cache(undefined);
-    }, [clear, cache]);
+    }, [clearExistenceCheck, cache]);
 
     const {
         register,
@@ -84,7 +94,7 @@ const DetailsForm: React.FC<Props> = ({ translate, clear, check, cache, create, 
 
     const onSubmit = (data: ExistenceCheckRequest): void => {
         cache(data);
-        check(data);
+        doExistenceCheck(data);
     };
 
     return (
@@ -101,7 +111,7 @@ const DetailsForm: React.FC<Props> = ({ translate, clear, check, cache, create, 
                             placeholder={translate(field.localizationKey)}
                             type="text"
                             {...register(field.name)}
-                            onFocus={clear}
+                            onFocus={clearExistenceCheck}
                         />
                         {!!errors[field.name] && (
                             <div className="oph-field-text oph-error">
@@ -118,7 +128,7 @@ const DetailsForm: React.FC<Props> = ({ translate, clear, check, cache, create, 
                     <Button
                         className="margin-left"
                         action={() => {
-                            clear();
+                            clearExistenceCheck();
                             cache(undefined);
                             reset();
                         }}

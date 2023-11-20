@@ -2,8 +2,8 @@ import React from 'react';
 import { RouteActions } from 'react-router-redux';
 
 import type { FormType } from './types';
-import AnonymousForm from '../anonymous';
-import SSNForm from '../ssn';
+import OppijaCreateSsnContainer from '../ssn/OppijaCreateSsnContainer';
+import OppijaCreateAnonymousContainer from '../anonymous/OppijaCreateAnonymousContainer';
 import FormPicker from './FormPicker';
 
 type Props = {
@@ -15,11 +15,11 @@ const FormSwitch: React.FC<Props> = ({ router }) => {
     const goBack = () => setFormType(undefined);
     switch (formType) {
         case 'ssn':
-            return <SSNForm goBack={goBack} />;
+            return <OppijaCreateSsnContainer goBack={goBack} />;
         case 'anonymous':
-            return <AnonymousForm router={router} goBack={goBack} />;
+            return <OppijaCreateAnonymousContainer router={router} goBack={goBack} />;
         default:
-            return <FormPicker setFormType={(type: FormType) => setFormType(type)} />;
+            return <FormPicker setFormType={(type) => setFormType(type)} />;
     }
 };
 

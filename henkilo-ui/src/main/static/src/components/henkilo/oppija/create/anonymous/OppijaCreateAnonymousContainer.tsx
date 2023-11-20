@@ -54,7 +54,7 @@ type State = {
 /**
  * Oppijan luonti -näkymä.
  */
-class OppijaCreateContainer extends React.Component<Props, State> {
+class OppijaCreateAnonymousContainer extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
@@ -165,4 +165,4 @@ export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateT
     fetchSukupuoliKoodisto,
     fetchKansalaisuusKoodisto,
     addGlobalNotification,
-})(OppijaCreateContainer) as React.FC<OwnProps>;
+})(OppijaCreateAnonymousContainer) as React.FC<OwnProps>;

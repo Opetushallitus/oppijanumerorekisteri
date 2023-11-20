@@ -4,7 +4,7 @@ import type { RootState } from '../../../../../store';
 import type { ExistenceCheckRequest, ExistenceCheckState } from '../../../../../reducers/existence.reducer';
 import { doExistenceCheck, clearExistenceCheck } from '../../../../../actions/existence.actions';
 import type { CreatePersonState } from '../../../../../reducers/create.reducer';
-import { createPerson as createPersonImported } from '../../../../../actions/create.actions';
+import { createPerson } from '../../../../../actions/create.actions';
 import CloseButton from '../../../../common/button/CloseButton';
 import Create from './Create';
 import DetailsForm from './DetailsForm';
@@ -20,22 +20,22 @@ type StateProps = {
 };
 
 type DispatchProps = {
-    clearDetailsForm: () => void;
-    checkExistence: (payload: ExistenceCheckRequest) => void;
+    clearExistenceCheck: () => void;
+    doExistenceCheck: (payload: ExistenceCheckRequest) => void;
     createPerson: (payload: ExistenceCheckRequest) => void;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-export const Container: React.FC<Props> = ({
+export const OppijaCreateSsnContainer = ({
     goBack,
     translate,
     person,
     existence,
-    checkExistence,
-    clearDetailsForm,
+    doExistenceCheck,
+    clearExistenceCheck,
     createPerson,
-}) => {
+}: Props) => {
     const [create, setCreate] = React.useState<boolean>(false);
     const [data, setData] = React.useState<ExistenceCheckRequest>();
 
@@ -54,7 +54,7 @@ export const Container: React.FC<Props> = ({
                             translate,
                             createPerson,
                             reset: () => {
-                                clearDetailsForm();
+                                clearExistenceCheck();
                                 setData(undefined);
                                 setCreate(false);
                             },
@@ -65,8 +65,8 @@ export const Container: React.FC<Props> = ({
                         {...{
                             ...existence,
                             translate,
-                            check: checkExistence,
-                            clear: clearDetailsForm,
+                            doExistenceCheck: doExistenceCheck,
+                            clearExistenceCheck: clearExistenceCheck,
                             cache: setData,
                             create: () => setCreate(true),
                         }}
@@ -78,15 +78,18 @@ export const Container: React.FC<Props> = ({
 };
 
 const mapStateToProps = (state: RootState): StateProps => ({
-    existence: { ...state.existenceCheck },
-    person: { ...state.createPerson },
+    existence: state.existenceCheck,
+    person: state.createPerson,
     translate: (key: string) => state.l10n.localisations[state.locale][key] || key,
 });
 
 const mapDispatchToProps = {
-    clearDetailsForm: clearExistenceCheck,
-    checkExistence: doExistenceCheck,
-    createPerson: createPersonImported,
+    clearExistenceCheck: clearExistenceCheck,
+    doExistenceCheck: doExistenceCheck,
+    createPerson: createPerson,
 };
 
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, mapDispatchToProps)(Container);
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(
+    mapStateToProps,
+    mapDispatchToProps
+)(OppijaCreateSsnContainer);
