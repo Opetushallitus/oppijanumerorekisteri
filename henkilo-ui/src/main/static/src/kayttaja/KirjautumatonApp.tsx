@@ -66,7 +66,7 @@ const App = ({ children, routes }: OwnProps) => {
     useEffect(() => {
         const route = routes[routes.length - 1];
         if (isInitialized && l10n && locale) {
-            window.document.title = l10n[locale][route.title] ?? l10n[locale]['TITLE_DEFAULT'];
+            window.document.title = l10n[locale]?.[route.title] ?? l10n[locale]?.['TITLE_DEFAULT'];
         }
     }, [routes, isInitialized, locale, l10n]);
 

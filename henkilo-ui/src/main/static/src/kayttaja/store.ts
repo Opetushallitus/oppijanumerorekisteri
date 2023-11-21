@@ -9,6 +9,8 @@ import l10n from '../reducers/l10n.reducer';
 import koodisto from '../reducers/koodisto.reducer';
 import { notifications } from '../reducers/notifications.reducer';
 import { notificationList } from '../reducers/notification.reducer';
+import { henkilo } from '../reducers/henkilo.reducer';
+import { locale } from '../reducers/locale.reducer';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const isClient = typeof window !== 'undefined';
@@ -16,7 +18,9 @@ const isClient = typeof window !== 'undefined';
 const rootReducer = {
     routing,
     l10n,
+    locale,
     koodisto,
+    henkilo,
     notifications,
     notificationList,
 };

@@ -144,7 +144,7 @@ export const kayttooikeusApi = createApi({
             query: (token) => `kutsu/token/${token}`,
             async onQueryStarted(_token, { dispatch, queryFulfilled }) {
                 const { data } = await queryFulfilled;
-                dispatch({ type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, lang: data.asiointikieli });
+                dispatch({ type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, lang: data.asiointikieli ?? 'fi' });
                 dispatch({
                     type: FETCH_HENKILO_SUCCESS,
                     henkilo: {
