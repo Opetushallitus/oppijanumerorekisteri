@@ -513,7 +513,7 @@ public class HenkiloModificationServiceImplTest {
     @Test
     public void findOrCreateHenkiloFromPerustietoDtoShouldFindByIdentification() {
         IdentificationDto identification = new IdentificationDto();
-        identification.setIdpEntityId("key");
+        identification.setIdpEntityId(IdpEntityId.email);
         identification.setIdentifier("value1");
         HenkiloPerustietoDto input = HenkiloPerustietoDto.builder().identifications(singletonList(identification)).build();
         Henkilo henkilo = new Henkilo();

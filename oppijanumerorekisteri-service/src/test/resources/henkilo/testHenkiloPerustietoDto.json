@@ -14,14 +14,12 @@
   ],
   "etunimet": "arpa",
   "hetu": "123456-9999",
-  "externalIds": [
-      "externalid1"
-  ],
+  "externalIds": ["externalid1"],
   "identifications": [
-        {
-            "idpEntityId": "key",
-            "identifier": "value1"
-        }
+    {
+      "idpEntityId": "oppijaToken",
+      "identifier": "value1"
+    }
   ],
   "kutsumanimi": "arpa",
   "oidHenkilo": "1.2.3.4.5",

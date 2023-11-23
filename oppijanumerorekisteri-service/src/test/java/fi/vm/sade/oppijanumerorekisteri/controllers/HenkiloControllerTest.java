@@ -397,7 +397,7 @@ public class HenkiloControllerTest {
     public void findByIdpAndIdentifier() throws Exception {
         HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "081296-967T", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
-        given(this.henkiloService.getHenkiloByIDPAndIdentifier("email", "arpa@kuutio.fi")).willReturn(henkiloDto);
+        given(this.henkiloService.getHenkiloByIDPAndIdentifier(IdpEntityId.email, "arpa@kuutio.fi")).willReturn(henkiloDto);
         this.mvc.perform(get("/henkilo/identification").param("idp", "email").param("id", "arpa@kuutio.fi"))
                 .andExpect(status().isOk()).andExpect(content().json(this.objectMapper.writeValueAsString(henkiloDto)));
         verifyReadAudit("1.2.3.4.5");
@@ -406,9 +406,43 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void findByIdpAndIdentifierNotFound() throws Exception {
-        given(this.henkiloService.getHenkiloByIDPAndIdentifier("email", "arpa@kuutio.fi")).willThrow(new NotFoundException());
+        given(this.henkiloService.getHenkiloByIDPAndIdentifier(IdpEntityId.email, "arpa@kuutio.fi")).willThrow(new NotFoundException());
         this.mvc.perform(get("/henkilo/identification").param("idp", "email").param("id", "arpa@kuutio.fi"))
                 .andExpect(status().isNotFound());
+        verifyReadNoAudit();
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void findByIdpAndIdentifierInvalidIdpEntityId() throws Exception {
+        this.mvc.perform(get("/henkilo/identification").param("idp", "invalid").param("id", "arpa@kuutio.fi"))
+                .andExpect(status().isBadRequest());
+        verifyReadNoAudit();
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void addIdentification() throws Exception {
+        IdentificationDto identificationDto = IdentificationDto.of(IdpEntityId.eidas, "pier");
+        given(this.identificationService.create(eq("1.2.3.4.5"), any())).willReturn(List.of(identificationDto));
+        this.mvc.perform(post("/henkilo/1.2.3.4.5/identification")
+                        .content("{ \"idpEntityId\": \"eidas\", \"identifier\": \"identifier\" }")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(this.objectMapper.writeValueAsString(List.of(identificationDto))));
+        verifyReadNoAudit();
+    }
+
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void addIdentificationWithInvalidIdpEntityId() throws Exception {
+        this.mvc.perform(post("/henkilo/1.2.3.4.5/identification")
+                        .content("{ \"idpEntityId\": \"invalid\", \"identifier\": \"identifier\" }")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
         verifyReadNoAudit();
     }
 

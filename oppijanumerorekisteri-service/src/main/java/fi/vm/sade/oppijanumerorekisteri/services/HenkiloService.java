@@ -45,7 +45,7 @@ public interface HenkiloService {
 
     List<HenkiloHetuAndOidDto> getHetusAndOids(Long syncedBeforeTimestamp, long offset, long limit);
 
-    HenkiloDto getHenkiloByIDPAndIdentifier(String idp, String identifier);
+    HenkiloDto getHenkiloByIDPAndIdentifier(IdpEntityId idp, String identifier);
 
     List<String> listPossibleHenkiloTypesAccessible();
 

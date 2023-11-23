@@ -2,6 +2,8 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
@@ -28,7 +30,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static fi.vm.sade.oppijanumerorekisteri.models.Identification.SAHKOPOSTI_IDP_ENTITY_ID;
 import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.*;
 import static java.util.Collections.emptyMap;
 import static java.util.function.Function.identity;
@@ -157,7 +158,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
                 .filter(Objects::nonNull)
                 .collect(toSet());
         Map<String, Henkilo> henkilotBySahkoposti = sahkopostit.isEmpty() ? emptyMap() : henkiloRepository
-                .findAndMapByIdentifiers(SAHKOPOSTI_IDP_ENTITY_ID, sahkopostit);
+                .findAndMapByIdentifiers(IdpEntityId.email, sahkopostit);
 
         TuontiRiviMapper tuontiRiviMapper = new TuontiRiviMapper(kasittelijaOid, organisaatiot, henkilotByOid, henkilotByHetu, henkilotByPassinumero, henkilotBySahkoposti);
         return henkilot.stream()
@@ -263,7 +264,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
             }
             if (oppija.getHenkilo().getSahkoposti() != null) {
                 henkilo.setIdentifications(Stream.of(Identification.builder()
-                        .idpEntityId(SAHKOPOSTI_IDP_ENTITY_ID)
+                        .idpEntityId(IdpEntityId.email)
                         .identifier(oppija.getHenkilo().getSahkoposti())
                         .build()).collect(toSet())
                 );

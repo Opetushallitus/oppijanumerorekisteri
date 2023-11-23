@@ -591,7 +591,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     }
 
     @Override
-    public Map<String, Henkilo> findAndMapByIdentifiers(String idpEntityId, Set<String> identifiers) {
+    public Map<String, Henkilo> findAndMapByIdentifiers(IdpEntityId idpEntityId, Set<String> identifiers) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
         QIdentification qIdentification = QIdentification.identification;
 

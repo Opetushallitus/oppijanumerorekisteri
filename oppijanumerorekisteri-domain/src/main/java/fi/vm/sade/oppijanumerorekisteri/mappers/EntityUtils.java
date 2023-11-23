@@ -1,6 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.mappers;
 
 import com.google.common.collect.Sets;
+
+import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import org.springframework.util.StringUtils;
@@ -86,8 +88,8 @@ public class EntityUtils {
                 Sets.newHashSet(), Sets.newHashSet());
     }
 
-    static public Identification createIdentification(String idpEntityId, String identifier) {
-        return new Identification(idpEntityId, identifier, null, null, null);
+    static public Identification createIdentification(IdpEntityId idpEntityId, String identifier) {
+        return new Identification(idpEntityId, identifier);
     }
 
 }

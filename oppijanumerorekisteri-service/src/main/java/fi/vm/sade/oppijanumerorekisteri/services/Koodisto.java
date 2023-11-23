@@ -11,6 +11,7 @@ public enum Koodisto {
     YHTEYSTIETOJEN_ALKUPERA("yhteystietojenalkupera", 1),
     KUNTA("kunta", 2),
     KIELI("kieli", 1),
+    HENKILON_TUNNISTETYYPIT("henkilontunnistetyypit", 1),
     ;
 
     private final String uri;

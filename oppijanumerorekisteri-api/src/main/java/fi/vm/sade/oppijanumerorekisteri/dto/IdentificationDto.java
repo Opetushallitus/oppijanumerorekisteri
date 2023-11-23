@@ -1,29 +1,33 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class IdentificationDto {
+import io.swagger.annotations.ApiModelProperty;
 
+public class IdentificationDto {
     @NotNull
-    @Size(min = 1)
-    private String idpEntityId;
+    @Valid
+    @ApiModelProperty("Koodisto 'henkilontunnistetyypit'")
+    private IdpEntityId idpEntityId;
+
     @NotNull
     @Size(min = 1)
     private String identifier;
 
-    public static IdentificationDto of(String idpEntityId, String identifier) {
+    public static IdentificationDto of(IdpEntityId idpEntityId, String identifier) {
         IdentificationDto dto = new IdentificationDto();
         dto.setIdpEntityId(idpEntityId);
         dto.setIdentifier(identifier);
         return dto;
     }
 
-    public String getIdpEntityId() {
+    public IdpEntityId getIdpEntityId() {
         return idpEntityId;
     }
 
-    public void setIdpEntityId(String idpEntityId) {
+    public void setIdpEntityId(IdpEntityId idpEntityId) {
         this.idpEntityId = idpEntityId;
     }
 
@@ -34,6 +38,4 @@ public class IdentificationDto {
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
-
-
 }

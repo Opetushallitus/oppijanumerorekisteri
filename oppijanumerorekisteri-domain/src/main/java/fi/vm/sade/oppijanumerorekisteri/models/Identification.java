@@ -3,7 +3,8 @@ package fi.vm.sade.oppijanumerorekisteri.models;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
+
+import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
 
 /**
  * Hetuttoman henkilön tunnistamiseen käytettävä tieto (esimerkiksi
@@ -20,43 +21,12 @@ import java.util.Date;
 @Table(name = "identification")
 @Entity
 public class Identification extends IdentifiableAndVersionedEntity {
-
     private static final long serialVersionUID = -2726844344901551508L;
 
-    public static final String SAHKOPOSTI_IDP_ENTITY_ID = "email";
-
-    /**
-     * Tunnisteen avain, esimerkiksi "email".
-     */
     @Column(name = "idpentityid", nullable = false)
-    private String idpEntityId;
+    @Enumerated(EnumType.STRING)
+    private IdpEntityId idpEntityId;
 
-    /**
-     * Tunnisteen arvo, esimerkiksi "example@example.com".
-     */
     @Column(nullable = false)
     private String identifier;
-
-    /**
-     * @deprecated Sarake löytyy henkilöpalvelun tietokannasta, mutta sille ei
-     * ole tällä hetkellä käyttöä oppijanumerorekisterin puolella
-     */
-    @Deprecated
-    private String authtoken;
-
-    /**
-     * @deprecated Sarake löytyy henkilöpalvelun tietokannasta, mutta sille ei
-     * ole tällä hetkellä käyttöä oppijanumerorekisterin puolella
-     */
-    @Deprecated
-    private String email;
-
-    /**
-     * @deprecated Sarake löytyy henkilöpalvelun tietokannasta, mutta sille ei
-     * ole tällä hetkellä käyttöä oppijanumerorekisterin puolella
-     */
-    @Temporal(TemporalType.TIMESTAMP)
-    @Deprecated
-    private Date expirationDate;
-
 }

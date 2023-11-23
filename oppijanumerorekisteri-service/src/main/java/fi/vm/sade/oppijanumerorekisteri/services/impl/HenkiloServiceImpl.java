@@ -269,7 +269,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public HenkiloDto getHenkiloByIDPAndIdentifier(String idp, String identifier) {
+    public HenkiloDto getHenkiloByIDPAndIdentifier(IdpEntityId idp, String identifier) {
         Henkilo henkilo = this.henkiloDataRepository.findByIdentification(IdentificationDto.of(idp, identifier))
                 .orElseThrow(NotFoundException::new);
         return this.mapper.map(henkilo, HenkiloDto.class);

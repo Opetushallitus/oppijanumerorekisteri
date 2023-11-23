@@ -309,7 +309,7 @@ public class HenkiloController {
     @RequestMapping(value = "/identification", method = RequestMethod.GET)
     @AuditLogRead(jsonPath = "$..oidHenkilo")
     public HenkiloDto findByIdpAndIdentifier(
-            @ApiParam(value = "Tunnistetiedon tyyppi", required = true) @RequestParam("idp") String idp,
+            @ApiParam(value = "Tunnistetiedon tyyppi", required = true) @RequestParam("idp") IdpEntityId idp,
             @ApiParam(value = "Varsinainen tunniste", required = true) @RequestParam("id") String identifier) {
         return this.henkiloService.getHenkiloByIDPAndIdentifier(idp, identifier);
     }
@@ -334,7 +334,7 @@ public class HenkiloController {
     @ApiOperation(value = "Henkilön tunnistetietojen poistaminen", authorizations = @Authorization("onr"))
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     public Iterable<IdentificationDto> removeIdentification(@PathVariable String oid,
-            @PathVariable String idpEntityId,
+            @PathVariable IdpEntityId idpEntityId,
             @PathVariable String identifier) {
         return identificationService.remove(oid, IdentificationDto.of(idpEntityId, identifier));
     }

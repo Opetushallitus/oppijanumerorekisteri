@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
@@ -147,6 +148,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<Map<String, Object>> forbiddenException(ForbiddenException exception, HttpServletRequest request) {
         return constructErrorResponse(exception, HttpStatus.FORBIDDEN, request);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, Object>> messageNotReadableException(HttpMessageNotReadableException e, HttpServletRequest request) {
+        return constructErrorResponse(e, HttpStatus.BAD_REQUEST, request);
     }
 
 }

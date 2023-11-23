@@ -8,6 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HakemusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDuplicateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -108,25 +109,25 @@ public class DuplicateServiceImplTest {
     }
 
     @Test
-    public void linkHenkiloseShouldMoveAllIdentificationsToNewMaster() {
+    public void linkHenkilosShouldMoveAllIdentificationsToNewMaster() {
         Henkilo henkilo1 = EntityUtils.createHenkilo("arpa noppa", "arpa", "kuutio", null, "1.2.3.4.5", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo");
-        Identification arpaIdentification1 = EntityUtils.createIdentification("email", "arpa@noppa.com");
-        Identification arpaIdentification2 = EntityUtils.createIdentification("haka", "arpahaka");
+        Identification arpaIdentification1 = EntityUtils.createIdentification(IdpEntityId.email, "arpa@noppa.com");
+        Identification arpaIdentification2 = EntityUtils.createIdentification(IdpEntityId.google, "arpahaka");
         HashSet<Identification> identification1 = new HashSet<>();
         identification1.add(arpaIdentification1);
         identification1.add(arpaIdentification2);
         henkilo1.setIdentifications(identification1);
 
         Henkilo henkilo2 = EntityUtils.createHenkilo("arpa2 noppa2", "arpa2", "kuutio2", null, "1.2.3.4.6", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo");
-        Identification arpa2Identification1 = EntityUtils.createIdentification("email", "arpa2@noppa2.com");
-        Identification arpa2Identification2 = EntityUtils.createIdentification("haka", "arpa2haka");
+        Identification arpa2Identification1 = EntityUtils.createIdentification(IdpEntityId.email, "arpa2@noppa2.com");
+        Identification arpa2Identification2 = EntityUtils.createIdentification(IdpEntityId.eidas, "eidas");
         HashSet<Identification> identification2 = new HashSet<>();
         identification2.add(arpa2Identification1);
         identification2.add(arpa2Identification2);
         henkilo2.setIdentifications(identification2);
 
         Henkilo henkilo3 = EntityUtils.createHenkilo("arpa3 noppa3", "arpa3", "kuutio3", null, "1.3.3.4.7", false, "fi", "FI", "2.3.34.56", new Date(), new Date(), "2.3.34.5", "arvo");
-        Identification arpa3Identification1 = EntityUtils.createIdentification("email", "arpa3@noppa3.com");
+        Identification arpa3Identification1 = EntityUtils.createIdentification(IdpEntityId.email, "arpa3@noppa3.com");
         HashSet<Identification> identification3 = new HashSet<>();
         identification3.add(arpa3Identification1);
         henkilo3.setIdentifications(identification3);
@@ -142,15 +143,15 @@ public class DuplicateServiceImplTest {
 
         assertThat(henkilo1.getIdentifications())
                 .extracting(Identification::getIdpEntityId, Identification::getIdentifier)
-                .containsExactlyInAnyOrder(Tuple.tuple("haka", "arpahaka"), Tuple.tuple("email", "arpa@noppa.com"));
+                .containsExactlyInAnyOrder(Tuple.tuple(IdpEntityId.google, "arpahaka"), Tuple.tuple(IdpEntityId.email, "arpa@noppa.com"));
         this.duplicateService.linkHenkilos(henkilo1.getOidHenkilo(), candidateOids);
         assertThat(henkilo1.getIdentifications())
                 .extracting(Identification::getIdpEntityId, Identification::getIdentifier)
-                .containsExactlyInAnyOrder(Tuple.tuple("haka", "arpahaka"),
-                        Tuple.tuple("email", "arpa@noppa.com"),
-                        Tuple.tuple("email", "arpa2@noppa2.com"),
-                        Tuple.tuple("email", "arpa3@noppa3.com"),
-                        Tuple.tuple("haka", "arpa2haka"));
+                .containsExactlyInAnyOrder(Tuple.tuple(IdpEntityId.google, "arpahaka"),
+                        Tuple.tuple(IdpEntityId.email, "arpa@noppa.com"),
+                        Tuple.tuple(IdpEntityId.email, "arpa2@noppa2.com"),
+                        Tuple.tuple(IdpEntityId.email, "arpa3@noppa3.com"),
+                        Tuple.tuple(IdpEntityId.eidas, "eidas"));
         assertThat(henkilo2.getIdentifications()).isEmpty();
         assertThat(henkilo3.getIdentifications()).isEmpty();
     }

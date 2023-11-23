@@ -6,6 +6,7 @@ import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
+import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
@@ -68,7 +69,7 @@ public class HenkiloModificationServiceTest {
     public void linkHenkilosWithoutIdentification() {
         Henkilo master = Henkilo.builder().etunimet("etu1").kutsumanimi("etu1").sukunimi("suku1")
                 .sukupuoli(null)
-                .identifications(singleton(new Identification("key1", "value1", null, null, null)))
+                .identifications(singleton(new Identification(IdpEntityId.email, "value1")))
                 .build();
         master = henkiloModificationService.createHenkilo(master);
         Henkilo slave = Henkilo.builder().etunimet("etu2").kutsumanimi("etu2").sukunimi("suku2")
@@ -82,7 +83,7 @@ public class HenkiloModificationServiceTest {
         assertThat(slaves).containsExactly(slave.getOidHenkilo());
         assertThat(identificationRepository.findByHenkiloOid(master.getOidHenkilo()))
                 .extracting(Identification::getIdpEntityId, Identification::getIdentifier)
-                .containsExactlyInAnyOrder(tuple("key1", "value1"));
+                .containsExactlyInAnyOrder(tuple(IdpEntityId.email, "value1"));
         assertThat(identificationRepository.findByHenkiloOid(slave.getOidHenkilo()))
                 .extracting(Identification::getIdpEntityId, Identification::getIdentifier)
                 .isEmpty();
@@ -93,12 +94,12 @@ public class HenkiloModificationServiceTest {
     public void linkHenkilosWithIdentification() {
         Henkilo master = Henkilo.builder().etunimet("etu1").kutsumanimi("etu1").sukunimi("suku1")
                 .sukupuoli(null)
-                .identifications(singleton(new Identification("key1", "value1", null, null, null)))
+                .identifications(singleton(new Identification(IdpEntityId.email, "value1")))
                 .build();
         master = henkiloModificationService.createHenkilo(master);
         Henkilo slave = Henkilo.builder().etunimet("etu2").kutsumanimi("etu2").sukunimi("suku2")
                 .sukupuoli(null)
-                .identifications(singleton(new Identification("key2", "value2", null, null, null)))
+                .identifications(singleton(new Identification(IdpEntityId.email, "value2")))
                 .build();
         slave = henkiloModificationService.createHenkilo(slave);
 
@@ -107,7 +108,7 @@ public class HenkiloModificationServiceTest {
         assertThat(slaves).containsExactly(slave.getOidHenkilo());
         assertThat(identificationRepository.findByHenkiloOid(master.getOidHenkilo()))
                 .extracting(Identification::getIdpEntityId, Identification::getIdentifier)
-                .containsExactlyInAnyOrder(tuple("key1", "value1"), tuple("key2", "value2"));
+                .containsExactlyInAnyOrder(tuple(IdpEntityId.email, "value1"), tuple(IdpEntityId.email, "value2"));
         assertThat(identificationRepository.findByHenkiloOid(slave.getOidHenkilo()))
                 .extracting(Identification::getIdpEntityId, Identification::getIdentifier)
                 .isEmpty();

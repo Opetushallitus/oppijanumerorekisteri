@@ -5,6 +5,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloVahvaTunnistusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
@@ -15,9 +16,12 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointivirheRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
+import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
+import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaTuontiService;
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 import fi.vm.sade.oppijanumerorekisteri.utils.YhteystietoryhmaUtils;
+import fi.vm.sade.oppijanumerorekisteri.validators.KoodiValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,6 +44,7 @@ public class IdentificationServiceImpl implements IdentificationService {
 
     private final OrikaConfiguration mapper;
 
+    private final KoodistoService koodistoService;
     private final YksilointiService yksilointiService;
     private final HenkiloModificationService henkiloModificationService;
     private final DuplicateService duplicateService;
@@ -61,9 +66,13 @@ public class IdentificationServiceImpl implements IdentificationService {
     @Override
     @Transactional
     public Iterable<IdentificationDto> create(String oid, IdentificationDto dto) {
+        boolean isValidIdp = KoodiValidator.isValid(koodistoService, Koodisto.HENKILON_TUNNISTETYYPIT, dto.getIdpEntityId().getIdpEntityId());
+        if (!isValidIdp) {
+            throw new ValidationException("Tuntematon koodiston 'henkilontunnistetyypit' koodi " + dto.getIdpEntityId().getIdpEntityId());
+        }
+
         Henkilo henkilo = henkiloRepository.findByIdentification(oid, dto)
                 .orElseGet(() -> save(oid, dto));
-
         return mapper.mapAsList(henkilo.getIdentifications(), IdentificationDto.class);
     }
 

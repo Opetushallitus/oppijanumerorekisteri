@@ -156,8 +156,8 @@ public class HenkiloMapperTest {
     public void henkiloPerustietoDtoIdentificationIdShouldMapToEntity() {
         HenkiloPerustietoDto dto = HenkiloPerustietoDto.builder()
                 .identifications(asList(
-                        IdentificationDto.of("key", "value1"),
-                        IdentificationDto.of("key", "value2")))
+                        IdentificationDto.of(IdpEntityId.email, "value1"),
+                        IdentificationDto.of(IdpEntityId.google, "value2")))
                 .build();
 
         Henkilo entity = this.modelmapper.map(dto, Henkilo.class);
@@ -165,7 +165,7 @@ public class HenkiloMapperTest {
 
         assertThat(dto.getIdentifications())
                 .extracting("idpEntityId", "identifier")
-                .containsExactlyInAnyOrder(tuple("key", "value1"), tuple("key", "value2"));
+                .containsExactlyInAnyOrder(tuple(IdpEntityId.email, "value1"), tuple(IdpEntityId.google, "value2"));
     }
 
     @Test
