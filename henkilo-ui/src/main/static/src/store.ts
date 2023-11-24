@@ -5,6 +5,7 @@ import rootReducer from './reducers';
 import { kayttooikeusApi } from './api/kayttooikeus';
 import { oppijanumerorekisteriApi } from './api/oppijanumerorekisteri';
 import { lokalisointiApi } from './api/lokalisointi';
+import { koodistoApi } from './api/koodisto';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const isClient = typeof window !== 'undefined';
@@ -15,6 +16,7 @@ export const store = configureStore({
         [kayttooikeusApi.reducerPath]: kayttooikeusApi.reducer,
         [oppijanumerorekisteriApi.reducerPath]: oppijanumerorekisteriApi.reducer,
         [lokalisointiApi.reducerPath]: lokalisointiApi.reducer,
+        [koodistoApi.reducerPath]: koodistoApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
@@ -24,7 +26,8 @@ export const store = configureStore({
         })
             .concat(kayttooikeusApi.middleware)
             .concat(oppijanumerorekisteriApi.middleware)
-            .concat(lokalisointiApi.middleware),
+            .concat(lokalisointiApi.middleware)
+            .concat(koodistoApi.middleware),
     devTools: isDev && isClient,
 });
 

@@ -19,6 +19,9 @@ import { KoodistoState } from '../../reducers/koodisto.reducer';
 import { OrganisaatioKayttooikeusryhmatState } from '../../reducers/organisaatiokayttooikeusryhmat.reducer';
 import { RyhmatState } from '../../reducers/ryhmat.reducer';
 import { KayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma.reducer';
+import { isOnrRekisterinpitaja } from '../../utilities/palvelurooli.util';
+import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
+import { Identifications } from './Identifications';
 
 export type View = 'omattiedot' | 'virkailija' | 'admin' | 'oppija';
 type Props = {
@@ -39,6 +42,8 @@ const HenkiloViewPage = (props: Props) => {
     const ryhmatState = useSelector<RootState, RyhmatState>((state) => state.ryhmatState);
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
     const { view, oidHenkilo, createBasicInfo, readOnlyButtons } = props;
+    const { data: omattiedot } = useGetOmattiedotQuery();
+    const isRekisterinpitaja = omattiedot ? isOnrRekisterinpitaja(omattiedot.organisaatiot) : false;
 
     const _parseRyhmaOptions = (): Array<{ label: string; value: string }> => {
         return (
@@ -61,6 +66,14 @@ const HenkiloViewPage = (props: Props) => {
                     view={view}
                 />
             </div>
+            {isRekisterinpitaja && henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && (
+                <div className="wrapper">
+                    <div className="header">
+                        <p className="oph-h2 oph-bold">{L.TUNNISTEET_OTSIKKO}</p>
+                    </div>
+                    <Identifications oid={henkilo.henkilo.oidHenkilo} />
+                </div>
+            )}
             {henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && !!henkilo.kayttajatieto?.username && (
                 <div className="wrapper">
                     <div className="header">

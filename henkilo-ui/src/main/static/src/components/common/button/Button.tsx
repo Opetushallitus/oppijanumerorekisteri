@@ -1,5 +1,5 @@
 import './Button.css';
-import React, { ReactNode } from 'react';
+import React, { CSSProperties, ReactNode } from 'react';
 import classNames from 'classnames/bind';
 import Loader from '../icons/Loader';
 
@@ -17,6 +17,7 @@ type ButtonProps = {
     key?: string;
     loading?: boolean;
     dataTestId?: string;
+    style?: CSSProperties;
 };
 
 class Button extends React.Component<ButtonProps> {
@@ -36,6 +37,7 @@ class Button extends React.Component<ButtonProps> {
                 onClick={this.props.action}
                 className={this.props.isButton ? className : ''}
                 data-test-id={this.props.dataTestId}
+                style={this.props.style}
             >
                 {this.props.children}
             </a>
@@ -47,6 +49,7 @@ class Button extends React.Component<ButtonProps> {
                 disabled={this.props.disabled || this.props.loading}
                 onClick={this.props.action}
                 data-test-id={this.props.dataTestId}
+                style={this.props.style}
             >
                 {this.props.loading && <Loader inButton={true} />}
                 {this.props.children}

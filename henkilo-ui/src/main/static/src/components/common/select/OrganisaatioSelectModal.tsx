@@ -5,7 +5,7 @@ import type { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/Org
 import type { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import type { RootState } from '../../../store';
 import { List, ListRowProps } from 'react-virtualized';
-import { useLocalisations } from '../../../selectors';
+import { useLocalisations, useOmatOrganisaatiot } from '../../../selectors';
 import { useSelector } from 'react-redux';
 import { OrganisaatioNameLookup } from '../../../reducers/organisaatio.reducer';
 import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../../utilities/organisaatio.util';
@@ -14,7 +14,6 @@ import './OrganisaatioSelect.css';
 import ValidationMessageButton from '../button/ValidationMessageButton';
 import { SpinnerInButton } from '../icons/SpinnerInButton';
 import OphModal from '../modal/OphModal';
-import { useGetOmatOrganisaatiotQuery, useGetOmattiedotQuery } from '../../../api/kayttooikeus';
 
 type OwnProps = {
     organisaatiot?: OrganisaatioHenkilo[];
@@ -25,8 +24,7 @@ type OwnProps = {
 const OrganisaatioSelectModal = (props: OwnProps) => {
     const { L, locale } = useLocalisations();
     const organisationNames = useSelector<RootState, OrganisaatioNameLookup>((state) => state.organisaatio.names);
-    const { data: omattiedot } = useGetOmattiedotQuery();
-    const { data: omattiedotOrganisations } = useGetOmatOrganisaatiotQuery({ oid: omattiedot.oidHenkilo, locale });
+    const omattiedotOrganisations = useOmatOrganisaatiot();
     const [isModalVisible, setModalVisible] = useState(false);
     const [searchWord, setSearchWord] = useState('');
     const [organisations, setOrganisations] = useState([]);

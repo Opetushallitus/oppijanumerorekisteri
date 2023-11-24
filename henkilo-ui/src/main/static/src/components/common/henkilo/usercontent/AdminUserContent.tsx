@@ -27,10 +27,9 @@ import HakaButton from '../buttons/HakaButton';
 import VtjOverrideButton from '../buttons/VtjOverrideButton';
 import PasswordButton from '../buttons/PasswordButton';
 import AktivoiButton from '../buttons/AktivoiButton';
-import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
+import { hasAnyPalveluRooli, isOnrRekisterinpitaja } from '../../../../utilities/palvelurooli.util';
 import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
 import Sukupuoli from '../labelvalues/Sukupuoli';
-import SahkopostitunnisteButton from '../buttons/SahkopostitunnisteButton';
 import PassinumeroButton from '../buttons/PassinumeroButton';
 import PoistaKayttajatunnusButton from '../buttons/PoistaKayttajatunnusButton';
 import { KoodistoState } from '../../../../reducers/koodisto.reducer';
@@ -131,10 +130,7 @@ class AdminUserContent extends React.Component<Props> {
             'OPPIJANUMEROREKISTERI_HENKILON_RU',
             'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
         ]);
-        const isOnrRekisterinpitaja: boolean = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, [
-            'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
-            'HENKILONHALLINTA_OPHREKISTERI',
-        ]);
+        const isRekisterinpitaja = isOnrRekisterinpitaja(this.props.omattiedot.organisaatiot);
         const editButton = hasHenkiloReadUpdateRights ? (
             <EditButton editAction={this.props.edit} disabled={duplicate || passivoitu} />
         ) : null;
@@ -143,7 +139,7 @@ class AdminUserContent extends React.Component<Props> {
         const passivoiButton =
             !passivoitu && hasHenkiloReadUpdateRights ? <PassivoiButton disabled={duplicate || passivoitu} /> : null;
         const poistaKayttajatunnusBtn =
-            isOnrRekisterinpitaja && !kayttajatunnukseton ? <PoistaKayttajatunnusButton /> : null;
+            isRekisterinpitaja && !kayttajatunnukseton ? <PoistaKayttajatunnusButton /> : null;
         const aktivoiButton =
             passivoitu && hasHenkiloReadUpdateRights ? (
                 <AktivoiButton L={this.props.L} oidHenkilo={this.props.henkilo.henkilo.oidHenkilo} />
@@ -155,13 +151,7 @@ class AdminUserContent extends React.Component<Props> {
                 disabled={duplicate || passivoitu}
             />
         );
-        const sahkopostiTunnisteButton = isOnrRekisterinpitaja ? (
-            <SahkopostitunnisteButton
-                oidHenkilo={this.props.oidHenkilo}
-                styles={buttonPopupStyles}
-            ></SahkopostitunnisteButton>
-        ) : null;
-        const passinumeroButton = isOnrRekisterinpitaja ? (
+        const passinumeroButton = isRekisterinpitaja ? (
             <PassinumeroButton
                 oid={this.props.oidHenkilo}
                 styles={buttonPopupStyles}
@@ -185,7 +175,6 @@ class AdminUserContent extends React.Component<Props> {
             poistaKayttajatunnusBtn,
             aktivoiButton,
             hakaButton,
-            sahkopostiTunnisteButton,
             passinumeroButton,
             vtjOverrideButton,
             passwordButton,

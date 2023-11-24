@@ -4,7 +4,7 @@ import classNames from 'classnames';
 type OphModalProps = {
     children: React.ReactNode;
     title?: string;
-    onClose: (arg0: React.SyntheticEvent<HTMLButtonElement>) => void;
+    onClose: (arg0: React.SyntheticEvent) => void;
     big?: boolean;
     onOverlayClick?: (arg0: React.SyntheticEvent) => void;
 };
@@ -19,7 +19,7 @@ class OphModal extends React.Component<OphModalProps> {
                 className="oph-overlay oph-overlay-bg oph-overlay-is-visible"
                 role="dialog"
                 tabIndex={-1}
-                onClick={(e) => this.props.onOverlayClick && this.props.onOverlayClick(e)}
+                onClick={(e) => (this.props.onOverlayClick ? this.props.onOverlayClick(e) : this.props.onClose(e))}
             >
                 <div
                     className={classNames('oph-modal', { 'oph-modal-big': this.props.big })}
