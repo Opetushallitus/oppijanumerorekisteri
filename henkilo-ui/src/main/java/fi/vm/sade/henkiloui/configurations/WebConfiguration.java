@@ -1,6 +1,11 @@
 package fi.vm.sade.henkiloui.configurations;
 
+import org.springframework.boot.web.server.ErrorPage;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
+import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -26,7 +31,16 @@ public class WebConfiguration implements WebMvcConfigurer {
                  .setViewName("forward:/main.html");
 
         // rest of the paths to non-static resources
+        registry.addViewController("/")
+                 .setViewName("forward:/main.html");
         registry.addViewController("/{path:!static}/**")
                  .setViewName("forward:/main.html");
+    }
+
+    @Bean
+    WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> containerCustomizer() {
+        return container -> {
+            container.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND, "/"));
+        };
     }
 }
