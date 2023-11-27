@@ -78,9 +78,8 @@
         "prettier:fix": "prettier --write 'src/**/*{ts,tsx}'",
         "e2e:install-deps": "playwright install chromium && npm --prefix mock-api ci",
         "e2e:mock-api": "npm --prefix mock-api run mock-api",
-        "e2e:serve": "concurrently -k 'npm:start' 'npm:e2e:mock-api'",
         "e2e:test": "playwright test",
-        "e2e:ci": "concurrently -s first -k 'npm:e2e:serve' 'npm:e2e:test'"
+        "e2e:ci": "concurrently -s first -k 'npm:e2e:mock-api' 'npm:e2e:test'"
     },
     "browserslist": [
         "last 1 version",
