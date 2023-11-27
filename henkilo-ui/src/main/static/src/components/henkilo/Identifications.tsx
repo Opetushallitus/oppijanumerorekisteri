@@ -91,7 +91,11 @@ export const Identifications = ({ oid }: Props) => {
                 header: () => '',
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => (
-                    <Button action={() => removeIdentification(getValue())} disabled={isDeleteLoading}>
+                    <Button
+                        action={() => removeIdentification(getValue())}
+                        disabled={isDeleteLoading}
+                        dataTestId="identification-remove-button"
+                    >
                         {L['TUNNISTEET_POISTA']}
                     </Button>
                 ),
@@ -118,13 +122,14 @@ export const Identifications = ({ oid }: Props) => {
     }, [tunnistetyypit]);
 
     return (
-        <div>
+        <div id="identifications">
             {data?.length > 0 && <OphTable table={table} isLoading={isLoading} />}
             {(isPostLoading || isDeleteLoading || isFetching || isLoading) && <Loader />}
             <Button
                 action={() => setShowAddModal(true)}
                 disabled={isTunnistetyypitLoading}
                 style={{ marginTop: '1rem' }}
+                dataTestId="identification-add-button"
             >
                 {L['TUNNISTEET_LISAA']}
             </Button>
@@ -143,6 +148,7 @@ export const Identifications = ({ oid }: Props) => {
                         <div style={{ marginTop: '1rem' }}>
                             <label htmlFor="newIdentifier">{L['TUNNISTEET_IDPENTITYID']}</label>
                             <OphSelect
+                                id="newIdpEntityId"
                                 options={idpEntityIdOptions}
                                 onChange={(option) => setNewIdpEntityId(option.value)}
                                 value={newIdpEntityId}
@@ -152,6 +158,7 @@ export const Identifications = ({ oid }: Props) => {
                             action={() => addIdentification()}
                             disabled={!newIdentifier || !newIdpEntityId || isPostLoading}
                             style={{ marginTop: '1rem' }}
+                            dataTestId="identification-confirm-add"
                         >
                             {L['TUNNISTEET_LISAA']}
                         </Button>

@@ -66,7 +66,7 @@ const HenkiloViewPage = (props: Props) => {
                     view={view}
                 />
             </div>
-            {isRekisterinpitaja && henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && (
+            {view !== 'omattiedot' && isRekisterinpitaja && henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && (
                 <div className="wrapper">
                     <div className="header">
                         <p className="oph-h2 oph-bold">{L.TUNNISTEET_OTSIKKO}</p>
