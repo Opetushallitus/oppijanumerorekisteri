@@ -215,6 +215,15 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
+    public String getOidByEidasId(String eidasId) {
+        return this.henkiloDataRepository
+                .findByIdentification(IdentificationDto.of(IdpEntityId.eidas, eidasId))
+                .orElseThrow(NotFoundException::new)
+                .getOidHenkilo();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<HenkiloPerustietoDto> getHenkiloPerustietoByOids(List<String> oids) {
         if(oids.size() > MAX_FETCH_PERSONS) {
             throw new IllegalArgumentException("Maximum amount of henkilös to be fetched is " + MAX_FETCH_PERSONS + ". Tried to fetch:" + oids.size());

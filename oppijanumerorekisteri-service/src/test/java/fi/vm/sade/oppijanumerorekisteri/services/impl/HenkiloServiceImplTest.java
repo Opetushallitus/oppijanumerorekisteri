@@ -36,6 +36,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -182,5 +183,19 @@ public class HenkiloServiceImplTest {
         impl.setPassportNumbers("oid", Set.of("makkara"));
 
         verify(henkilo, times(1 )).setPassinumerot(any());
+    }
+
+    @Test
+    public void getOidByEidasIdReturnsOid() {
+        Henkilo henkilo = Henkilo.builder().oidHenkilo("1.2.3.4.5").build();
+        when(henkiloRepository.findByIdentification(any())).thenReturn(Optional.of(henkilo));
+        String oid = impl.getOidByEidasId("eidas");
+        assertThat(oid).isEqualTo("1.2.3.4.5");
+    }
+
+    @Test
+    public void getOidByEidasIdThrowsNotFoundException() {
+        when(henkiloRepository.findByIdentification(any())).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> impl.getOidByEidasId("eidas"));
     }
 }

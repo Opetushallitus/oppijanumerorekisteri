@@ -33,6 +33,8 @@ public interface HenkiloService {
 
     String getOidByHetu(String hetu);
 
+    String getOidByEidasId(String eidasId);
+
     List<HenkiloPerustietoDto> getHenkiloPerustietoByOids(List<String> oids);
 
     List<HenkiloDto> getHenkilosByOids(List<String> oids);

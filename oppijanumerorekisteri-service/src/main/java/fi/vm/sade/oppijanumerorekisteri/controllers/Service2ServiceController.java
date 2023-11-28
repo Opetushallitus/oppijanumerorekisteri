@@ -42,6 +42,15 @@ public class Service2ServiceController {
         return this.henkiloService.getOidByHetu(hetu);
     }
 
+    @ApiOperation(value = "Hakee annettua eIDAS id:tä vastaavan henkilö OID:n", authorizations = @Authorization("onr"))
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
+    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
+            "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
+    @RequestMapping(value = "/oidByEidas/{eidasId}", method = RequestMethod.GET)
+    public String oidByEidasId(@PathVariable String eidasId) {
+        return this.henkiloService.getOidByEidasId(eidasId);
+    }
+
     @ApiOperation(value = "Hakee hetu & oid -yhdistelmät", authorizations = @Authorization("onr"))
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
