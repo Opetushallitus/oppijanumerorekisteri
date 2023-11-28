@@ -9,6 +9,7 @@ import { useAppDispatch, type KayttajaRootState } from '../store';
 import type { KoodistoState } from '../../reducers/koodisto.reducer';
 import { useLocalisations } from '../../selectors';
 import { useGetKutsuByTokenQuery } from '../../api/kayttooikeus';
+import { useTitle } from '../../useTitle';
 
 type OwnProps = {
     location: { query: Record<string, string> };
@@ -20,6 +21,8 @@ const RekisteroidyContainer = (props: OwnProps) => {
     const koodisto = useSelector<KayttajaRootState, KoodistoState>((state) => state.koodisto);
     const temporaryToken = props.location.query['temporaryKutsuToken'];
     const { data: kutsu, isLoading: isKutsuLoading, isError } = useGetKutsuByTokenQuery(temporaryToken);
+
+    useTitle(l10n.localisations[kutsu?.asiointikieli ?? 'fi']['TITLE_REKISTEROINTI']);
 
     useEffect(() => {
         dispatch<any>(fetchKieliKoodisto());

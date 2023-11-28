@@ -20,33 +20,15 @@ export default (
         <Route
             path="/kayttaja/uudelleenrekisterointi/:locale/:loginToken/:tyosahkopostiosoite/:salasana"
             component={VahvaTunnistusLisatiedotContainer}
-            title="TITLE_VIRKAILIJA_UUDELLEENTUNNISTAUTUMINEN"
         />
-        <Route
-            path="/kayttaja/vahvatunnistusinfo/virhe/:locale/:loginToken"
-            component={VahvaTunnistusInfoContainer}
-            title="TITLE_VIRHESIVU"
-        />
-        <Route
-            path="/kayttaja/vahvatunnistusinfo/:locale/:loginToken"
-            component={VahvaTunnistusInfoContainer}
-            title="TITLE_VIRKAILIJA_UUDELLEENTUNNISTAUTUMINEN"
-        />
-        <Route
-            path="/kayttaja/sahkopostivarmistus/:locale/:loginToken"
-            component={EmailVerificationContainer}
-            title="TITLE_SAHKOPOSTI_VARMISTAMINEN"
-        />
+        <Route path="/kayttaja/vahvatunnistusinfo/virhe/:locale/:loginToken" component={VahvaTunnistusInfoContainer} />
+        <Route path="/kayttaja/vahvatunnistusinfo/:locale/:loginToken" component={VahvaTunnistusInfoContainer} />
+        <Route path="/kayttaja/sahkopostivarmistus/:locale/:loginToken" component={EmailVerificationContainer} />
         <Route
             path="/kayttaja/sahkopostivarmistus/virhe/:locale/:loginToken/:virhekoodi"
             component={EmailVerificationErrorContainer}
-            title="TITLE_VIRHESIVU"
         />
-        <Route path="/kayttaja/rekisteroidy" component={RekisteroidyContainer} title="TITLE_REKISTEROINTI" />
-        <Route
-            path="/kayttaja/salasananvaihto/:locale/:loginToken"
-            component={SalasananVaihtoPage}
-            title="TITLE_SALASANANVAIHTO"
-        />
+        <Route path="/kayttaja/rekisteroidy" component={RekisteroidyContainer} />
+        <Route path="/kayttaja/salasananvaihto/:locale/:loginToken" component={SalasananVaihtoPage} />
     </Route>
 );

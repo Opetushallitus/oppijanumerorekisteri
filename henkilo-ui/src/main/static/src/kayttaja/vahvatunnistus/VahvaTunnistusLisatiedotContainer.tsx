@@ -66,6 +66,10 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
         };
     }
 
+    componentDidMount() {
+        document.title = this.props.L['TITLE_VIRKAILIJA_UUDELLEENTUNNISTAUTUMINEN'];
+    }
+
     render() {
         return (
             <div>

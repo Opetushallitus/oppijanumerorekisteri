@@ -8,6 +8,7 @@ import { addGlobalNotification } from '../actions/notification.actions';
 import { useAppDispatch } from '../store';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import Loader from '../components/common/icons/Loader';
+import { useTitle } from '../useTitle';
 
 type Props = {
     params: {
@@ -25,6 +26,8 @@ export const SalasananVaihtoPage = ({ params: { loginToken, locale } }: Props) =
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
     const [postPasswordChange, { isLoading }] = usePostSalasananVaihtoMutation();
     const dispatch = useAppDispatch();
+
+    useTitle(L['TITLE_SALASANANVAIHTO']);
 
     const submit = () => {
         postPasswordChange({ loginToken, newPassword, currentPassword })

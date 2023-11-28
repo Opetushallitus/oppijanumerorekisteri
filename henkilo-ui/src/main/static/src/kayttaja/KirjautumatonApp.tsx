@@ -7,7 +7,6 @@ import PropertySingleton from '../globals/PropertySingleton';
 import { addGlobalNotification } from '../actions/notification.actions';
 import { GlobalNotifications } from '../components/common/Notification/GlobalNotifications';
 import background from '../img/unauthenticated_background.jpg';
-import { RouteType } from './routes';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { useLocalisations } from '../selectors';
 import ophLogo from '../img/logo_oph.svg';
@@ -21,10 +20,9 @@ import 'moment/locale/sv';
 
 type OwnProps = {
     children: React.ReactNode;
-    routes: Array<RouteType>;
 };
 
-const App = ({ children, routes }: OwnProps) => {
+const App = ({ children }: OwnProps) => {
     const [isInitialized, setIsInitialized] = useState(false);
     const { l10n, locale } = useLocalisations();
     const { isSuccess: isLocalisationsSuccess } = useGetLocalisationsQuery('henkilo-ui');
@@ -56,19 +54,12 @@ const App = ({ children, routes }: OwnProps) => {
                     addGlobalNotification({
                         key: 'EN_LOCALE_KEY',
                         type: NOTIFICATIONTYPES.WARNING,
-                        title: l10n[locale]['HENKILO_YHTEISET_ASIOINTIKIELI_EN_VAROITUS'],
+                        title: l10n.localisations[locale]['HENKILO_YHTEISET_ASIOINTIKIELI_EN_VAROITUS'],
                     })
                 );
             }
         }
     }, [locale, l10n]);
-
-    useEffect(() => {
-        const route = routes[routes.length - 1];
-        if (isInitialized && l10n && locale) {
-            window.document.title = l10n[locale]?.[route.title] ?? l10n[locale]?.['TITLE_DEFAULT'];
-        }
-    }, [routes, isInitialized, locale, l10n]);
 
     return !isInitialized ? (
         <Loader />

@@ -1,9 +1,9 @@
 import React from 'react';
+
 import './VirhePage.css';
-import { connect } from 'react-redux';
-import type { RootState } from '../../../store';
 import Button from '../button/Button';
-import { Localisations } from '../../../types/localisation.type';
+import { useLocalisations } from '../../../selectors';
+import { useTitle } from '../../../useTitle';
 
 type OwnProps = {
     topic?: string;
@@ -12,31 +12,22 @@ type OwnProps = {
     theme?: string;
 };
 
-type StateProps = {
-    L: Localisations;
+const VirhePage = (props: OwnProps) => {
+    const { l10n } = useLocalisations();
+    const L = l10n.localisations['fi'];
+
+    useTitle(L['TITLE_VIRHESIVU']);
+
+    const classname = props.theme === 'gray' ? 'virhePageVirheWrapperGray' : 'virhePageVirheWrapper';
+    return (
+        <div className={classname} id="virhePageVirhe">
+            <p className="oph-h2 oph-bold oph-red">{props.topic ? L[props.topic] : L['VIRHE_PAGE_DEFAULT_OTSIKKO']}</p>
+            <div>
+                {props.text ? <p className="oph-bold">{L[props.text]}</p> : null}
+                {props.buttonText ? <Button href="/">{L[props.buttonText]}</Button> : null}
+            </div>
+        </div>
+    );
 };
 
-type Props = OwnProps & StateProps;
-
-class VirhePage extends React.Component<Props> {
-    render() {
-        const classname = this.props.theme === 'gray' ? 'virhePageVirheWrapperGray' : 'virhePageVirheWrapper';
-        return (
-            <div className={classname} id="virhePageVirhe">
-                <p className="oph-h2 oph-bold oph-red">
-                    {this.props.topic ? this.props.L[this.props.topic] : this.props.L['VIRHE_PAGE_DEFAULT_OTSIKKO']}
-                </p>
-                <div>
-                    {this.props.text ? <p className="oph-bold">{this.props.L[this.props.text]}</p> : null}
-                    {this.props.buttonText ? <Button href="/">{this.props.L[this.props.buttonText]}</Button> : null}
-                </div>
-            </div>
-        );
-    }
-}
-
-const mapStateToProps = (state: RootState): StateProps => ({
-    L: state.l10n.localisations['fi'],
-});
-
-export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(VirhePage);
+export default VirhePage;
