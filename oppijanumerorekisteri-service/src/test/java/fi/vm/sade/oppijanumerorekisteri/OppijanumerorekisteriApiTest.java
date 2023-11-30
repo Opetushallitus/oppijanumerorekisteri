@@ -66,4 +66,13 @@ public abstract class OppijanumerorekisteriApiTest {
     })
     protected @interface UserRekisterinpitaja {
     }
+
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @WithMockUser(roles = {
+            "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI",
+            "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_1.2.246.562.10.00000000001"
+    })
+    protected @interface UserOppijoidenTuoja {
+    }
 }
