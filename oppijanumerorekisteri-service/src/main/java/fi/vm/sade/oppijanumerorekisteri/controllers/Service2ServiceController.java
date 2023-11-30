@@ -46,9 +46,9 @@ public class Service2ServiceController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
-    @RequestMapping(value = "/oidByEidas/{eidasId}", method = RequestMethod.GET)
-    public String oidByEidasId(@PathVariable String eidasId) {
-        return this.henkiloService.getOidByEidasId(eidasId);
+    @PostMapping(value = "/oidByEidas")
+    public String oidByEidasId(@RequestBody OidByEidasRequest body) {
+        return this.henkiloService.getOidByEidasId(body.eidasId);
     }
 
     @ApiOperation(value = "Hakee hetu & oid -yhdistelmät", authorizations = @Authorization("onr"))
