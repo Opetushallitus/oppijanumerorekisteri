@@ -29,7 +29,7 @@ export const Identifications = ({ oid }: Props) => {
     const [showAddModal, setShowAddModal] = useState(false);
     const [newIdentifier, setNewIdentifier] = useState('');
     const [newIdpEntityId, setNewIdpEntityId] = useState('');
-    const { data, isLoading, isFetching } = useGetIdentificationsQuery(oid, { skip: !!oid });
+    const { data, isLoading, isFetching } = useGetIdentificationsQuery(oid, { skip: !oid });
     const [deleteIdentification, { isLoading: isDeleteLoading }] = useDeleteIdentificationMutation();
     const [postIdentification, { isLoading: isPostLoading }] = usePostIdentificationMutation();
     const { data: tunnistetyypit, isLoading: isTunnistetyypitLoading } = useGetHenkilontunnistetyypitQuery();
