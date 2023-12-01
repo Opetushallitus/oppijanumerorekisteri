@@ -119,7 +119,7 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
                 .uri(URI.create(getPalveluvaylaPathPrefix() + path))
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
-                .header("Authorization", getBasicAuthentication())
+                .header("x-authorization", getBasicAuthentication())
                 .header("x-road-client", getPalveluvaylaHeader());
     }
 
