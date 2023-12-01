@@ -236,9 +236,14 @@ public class VtjMuutostietoService {
         log.info("finishing perustieto task");
     }
 
+    public void handleMuutostietoFetchTask() {
+        log.info("starting muutostieto fetch task");
+        fetchMuutostietos();
+        log.info("finishing muutostieto fetch task");
+    }
+
     public void handleMuutostietoTask() {
         log.info("starting muutostieto task");
-        fetchMuutostietos();
         updateHenkilosWithMuutostietos();
         log.info("finishing muutostieto task");
     }

@@ -106,6 +106,14 @@ oppijanumerorekisteri:
       enabled: false
       asiayhteysKaytossa: false
   allow-fake-ssn: true
+  vtj-muutosrajapinta:
+    perustieto-enabled: false
+    muutostieto-enabled: false
+    fetch-enabled: false
+    base-url: https://localhost:8080
+    username: mutpT1x
+    password: pwd
+    palveluvayla-env: FI-TEST
 aws:
   region: eu-west-1
   henkiloModifiedTopic:
