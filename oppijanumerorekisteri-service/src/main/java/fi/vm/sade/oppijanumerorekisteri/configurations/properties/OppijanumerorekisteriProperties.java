@@ -24,10 +24,13 @@ public class OppijanumerorekisteriProperties {
     @Getter
     @Setter
     public static class VtjMuutosrajapinta {
-        private Boolean enabled = true;
-        private String baseUrl = "https://api.hiekkalaatikko.muutostietopalvelu.cloud.dvv.fi";
-        private String username = "Z02r0858";
-        private String password = "TLn6G36Bi53(x-rrL5UT";
+        private Boolean perustietoEnabled = false;
+        private Boolean muutostietoEnabled = false;
+        private Boolean fetchEnabled = false;
+        private String baseUrl = "https://proxy.qa.palveluvayla.opintopolku.fi";
+        private String username;
+        private String password;
+        private String palveluvaylaEnv = "FI-TEST";
     }
 
     @Getter

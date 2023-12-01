@@ -6,6 +6,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpRequest.Builder;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -93,9 +94,19 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     }
 
     private final String getBasicAuthentication() {
-        String creds = properties.getVtjMuutosrajapinta().getUsername() + ":"
-                + properties.getVtjMuutosrajapinta().getPassword();
+        String creds = properties.getVtjMuutosrajapinta().getUsername() + ":" + properties.getVtjMuutosrajapinta().getPassword();
         return "Basic " + Base64.getEncoder().encodeToString(creds.getBytes());
+    }
+
+    private final String getPalveluvaylaHeader() {
+        return properties.getVtjMuutosrajapinta().getPalveluvaylaEnv() + "/GOV/2769790-1/vtj-oph-client";
+    }
+
+    private final String getPalveluvaylaPathPrefix() {
+        return properties.getVtjMuutosrajapinta().getBaseUrl() +
+                "/r1/" +
+                properties.getVtjMuutosrajapinta().getPalveluvaylaEnv() +
+                "/GOV/0245437-2/VTJmutpa/VTJmutpa";
     }
 
     private HttpClient buildClient() {
@@ -103,16 +114,19 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
                 .build();
     }
 
-    @Override
-    public Long fetchMuutostietoKirjausavain() throws InterruptedException, ExecutionException {
-        String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        String uri = properties.getVtjMuutosrajapinta().getBaseUrl() + "/api/v1/kirjausavain/" + date;
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(uri))
+    private Builder httpRequestBuilder(String path) {
+        return HttpRequest.newBuilder()
+                .uri(URI.create(getPalveluvaylaPathPrefix() + path))
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .header("Authorization", getBasicAuthentication())
-                .build();
+                .header("x-road-client", getPalveluvaylaHeader());
+    }
+
+    @Override
+    public Long fetchMuutostietoKirjausavain() throws InterruptedException, ExecutionException {
+        String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        HttpRequest request = httpRequestBuilder("/api/v1/kirjausavain/" + date).build();
         AvainResponse avain = buildClient()
                 .sendAsync(request, BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)
@@ -124,14 +138,9 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     @Override
     public VtjMuutostietoResponse fetchHenkiloMuutostieto(Long avain, List<String> allHetus)
             throws InterruptedException, ExecutionException, JsonProcessingException {
-        String uri = properties.getVtjMuutosrajapinta().getBaseUrl() + "/api/v1/muutokset";
         MuutostietoRequestBody body = new MuutostietoRequestBody(avain, allHetus);
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = httpRequestBuilder("/api/v1/muutokset")
                 .POST(BodyPublishers.ofString(objectMapper.writeValueAsString(body)))
-                .uri(URI.create(uri))
-                .header("Accept", "application/json")
-                .header("Content-Type", "application/json")
-                .header("Authorization", getBasicAuthentication())
                 .build();
         return buildClient()
                 .sendAsync(request, BodyHandlers.ofString())
@@ -143,14 +152,9 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     @Override
     public List<VtjPerustieto> fetchHenkiloPerustieto(List<String> hetus)
             throws InterruptedException, ExecutionException, JsonProcessingException {
-        String uri = properties.getVtjMuutosrajapinta().getBaseUrl() + "/api/v1/perustiedot";
         PerustietoRequestBody body = new PerustietoRequestBody(hetus);
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = httpRequestBuilder("/api/v1/perustiedot")
                 .POST(BodyPublishers.ofString(objectMapper.writeValueAsString(body)))
-                .uri(URI.create(uri))
-                .header("Accept", "application/json")
-                .header("Content-Type", "application/json")
-                .header("Authorization", getBasicAuthentication())
                 .build();
         PerustietoResponse response = buildClient()
                 .sendAsync(request, BodyHandlers.ofString())
