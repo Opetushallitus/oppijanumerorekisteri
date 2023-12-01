@@ -48,14 +48,12 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     @Getter
     private static class MuutostietoRequestBody {
         public final Long viimeisinKirjausavain;
-        public final String tuotekoodi = "mutpT1";
         public final List<String> hetulista;
     }
 
     @RequiredArgsConstructor
     @Getter
     private static class PerustietoRequestBody {
-        public final String tuotekoodi = "mutpT1";
         public final List<String> hetulista;
     }
 
