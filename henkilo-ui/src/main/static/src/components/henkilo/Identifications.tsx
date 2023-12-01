@@ -20,7 +20,7 @@ import StaticUtils from '../common/StaticUtils';
 import Loader from '../common/icons/Loader';
 
 type Props = {
-    oid: string;
+    oid?: string;
 };
 
 export const Identifications = ({ oid }: Props) => {
@@ -29,7 +29,7 @@ export const Identifications = ({ oid }: Props) => {
     const [showAddModal, setShowAddModal] = useState(false);
     const [newIdentifier, setNewIdentifier] = useState('');
     const [newIdpEntityId, setNewIdpEntityId] = useState('');
-    const { data, isLoading, isFetching } = useGetIdentificationsQuery(oid);
+    const { data, isLoading, isFetching } = useGetIdentificationsQuery(oid, { skip: !!oid });
     const [deleteIdentification, { isLoading: isDeleteLoading }] = useDeleteIdentificationMutation();
     const [postIdentification, { isLoading: isPostLoading }] = usePostIdentificationMutation();
     const { data: tunnistetyypit, isLoading: isTunnistetyypitLoading } = useGetHenkilontunnistetyypitQuery();
@@ -122,7 +122,7 @@ export const Identifications = ({ oid }: Props) => {
     }, [tunnistetyypit]);
 
     return (
-        <div id="identifications">
+        <div id="identifications" style={{ wordBreak: 'break-word' }}>
             {data?.length > 0 && <OphTable table={table} isLoading={isLoading} />}
             {(isPostLoading || isDeleteLoading || isFetching || isLoading) && <Loader />}
             <Button
