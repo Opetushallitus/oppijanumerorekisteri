@@ -24,6 +24,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -330,13 +331,15 @@ public class HenkiloController {
         return identificationService.create(oid, identification);
     }
 
-    @DeleteMapping("/{oid}/identification/{idpEntityId}/{identifier}")
+    @DeleteMapping("/{oid}/identification/{idpEntityId}/**")
     @ApiOperation(value = "Henkilön tunnistetietojen poistaminen", authorizations = @Authorization("onr"))
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     public Iterable<IdentificationDto> removeIdentification(@PathVariable String oid,
             @PathVariable IdpEntityId idpEntityId,
-            @PathVariable String identifier) {
-        return identificationService.remove(oid, IdentificationDto.of(idpEntityId, identifier));
+            HttpServletRequest request) {
+        String requestUrl = request.getRequestURL().toString();
+        String identifier = requestUrl.split("identification/" + idpEntityId + "/")[1];
+        return identificationService.remove(oid, idpEntityId, identifier);
     }
 
     @ApiOperation(value = "Listaa sallitut henkilötyypit henkilöiden luontiin liittyen.", authorizations = @Authorization("onr"), notes = "Listaa ne henkilötyypit joita kirjautunt käyttäjä saa luoda henkilöhallintaan.")

@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloVahvaTunnistusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 
 import java.util.Collection;
@@ -25,7 +26,7 @@ public interface IdentificationService {
      */
     Iterable<IdentificationDto> create(String oid, IdentificationDto identification);
 
-    Iterable<IdentificationDto> remove(String oid, IdentificationDto identificationDto);
+    Iterable<IdentificationDto> remove(String oid, IdpEntityId idpEntityId, String identifier);
 
     /**
      * Käsittelee tunnistamattomat henkilöt liittämälle ne oikeisiin oideihin.

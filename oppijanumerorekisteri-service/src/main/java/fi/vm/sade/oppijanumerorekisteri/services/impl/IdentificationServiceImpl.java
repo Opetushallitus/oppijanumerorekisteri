@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloVahvaTunnistusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
@@ -85,12 +86,10 @@ public class IdentificationServiceImpl implements IdentificationService {
 
     @Override
     @Transactional
-    public Iterable<IdentificationDto> remove(String oid, IdentificationDto identificationDto) {
+    public Iterable<IdentificationDto> remove(String oid, IdpEntityId idpEntityId, String identifier) {
         Henkilo henkilo = getHenkiloByOid(oid);
-        Identification identification = mapper.map(identificationDto, Identification.class);
         henkilo.getIdentifications().removeIf(i ->
-                identification.getIdpEntityId().equals(i.getIdpEntityId()) &&
-                        identification.getIdentifier().equals(i.getIdentifier()));
+                idpEntityId.equals(i.getIdpEntityId()) && identifier.equals(i.getIdentifier()));
         this.henkiloModificationService.update(henkilo);
         return mapper.mapAsList(henkilo.getIdentifications(), IdentificationDto.class);
     }

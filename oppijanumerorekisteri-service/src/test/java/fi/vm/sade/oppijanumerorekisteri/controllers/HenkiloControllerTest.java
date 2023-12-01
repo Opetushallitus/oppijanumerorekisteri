@@ -434,6 +434,19 @@ public class HenkiloControllerTest {
         verifyReadNoAudit();
     }
 
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void removeIdentificationWithSlashes() throws Exception {
+        given(this.identificationService.remove(eq("1.2.3.4.5"), eq(IdpEntityId.eidas), eq("UK/FI/Lorem0ipsum0"))).willReturn(
+                List.of(IdentificationDto.of(IdpEntityId.email, "email"))
+        );
+        this.mvc.perform(delete("/henkilo/1.2.3.4.5/identification/eidas/UK/FI/Lorem0ipsum0")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        verify(this.identificationService).remove(eq("1.2.3.4.5"), eq(IdpEntityId.eidas), eq("UK/FI/Lorem0ipsum0"));
+        verifyReadNoAudit();
+    }
 
     @Test
     @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
