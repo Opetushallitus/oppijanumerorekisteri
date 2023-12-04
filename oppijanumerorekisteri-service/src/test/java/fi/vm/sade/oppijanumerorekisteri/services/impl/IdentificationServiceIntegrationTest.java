@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import com.amazonaws.services.sns.AmazonSNS;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
@@ -16,6 +15,8 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointivirheRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.MockVtjClient;
+import software.amazon.awssdk.services.sns.SnsClient;
+
 import org.assertj.core.groups.Tuple;
 import org.jresearch.orika.spring.OrikaSpringMapper;
 import org.junit.After;
@@ -51,7 +52,7 @@ public class IdentificationServiceIntegrationTest {
     private MockVtjClient mockVtjClient;
 
     @MockBean
-    private AmazonSNS amazonSNS;
+    private SnsClient snsClient;
 
     @MockBean
     private KayttooikeusClient kayttooikeusClient;
@@ -113,7 +114,7 @@ public class IdentificationServiceIntegrationTest {
         assertThat(notFoundVtjResult.isYksiloityVTJ()).isFalse();
         assertThat(notFoundVtjResult.isYksilointiYritetty()).isTrue();
 
-        assertPublished(objectMapper, amazonSNS, 1, everythingOkResult.getOidHenkilo());
+        assertPublished(objectMapper, snsClient, 1, everythingOkResult.getOidHenkilo());
     }
 
     @Test
@@ -154,6 +155,6 @@ public class IdentificationServiceIntegrationTest {
                             henkilo.getOidHenkilo(), yksilointivirhe.map(Yksilointivirhe::getViesti))
                     .isNotPresent();
         });
-        assertPublished(objectMapper, amazonSNS, 2, yksiloimattomat.stream().map(h -> h.getOidHenkilo()).toArray(String[]::new));
+        assertPublished(objectMapper, snsClient, 2, yksiloimattomat.stream().map(h -> h.getOidHenkilo()).toArray(String[]::new));
     }
 }

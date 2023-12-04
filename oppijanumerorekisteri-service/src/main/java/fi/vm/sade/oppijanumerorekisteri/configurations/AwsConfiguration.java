@@ -1,11 +1,12 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations;
 
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import com.amazonaws.services.sns.AmazonSNS;
-import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import lombok.Getter;
 import lombok.Setter;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.sns.SnsClient;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -27,16 +28,17 @@ public class AwsConfiguration {
     }
 
     @Bean
-    AWSCredentialsProvider getAwsCredentialsProvider() {
-        return DefaultAWSCredentialsProviderChain.getInstance();
+    AwsCredentialsProvider getAwsCredentialsProvider() {
+        return DefaultCredentialsProvider.create();
     }
 
     @Bean
     @Autowired
-    public AmazonSNS getAmazonSns(AWSCredentialsProvider credentialsProvider) {
-        return AmazonSNSClientBuilder.standard()
-                .withRegion(region)
-                .withCredentials(credentialsProvider)
+    SnsClient getSnsClient(AwsCredentialsProvider credentialsProvider) {
+        return SnsClient
+                .builder()
+                .region(Region.of(region))
+                .credentialsProvider(credentialsProvider)
                 .build();
     }
 }

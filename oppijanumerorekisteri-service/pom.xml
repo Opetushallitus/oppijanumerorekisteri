@@ -225,8 +225,8 @@
             <artifactId>db-scheduler-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-sns</artifactId>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sns</artifactId>
         </dependency>
         <dependency>
             <groupId>io.hypersistence</groupId>

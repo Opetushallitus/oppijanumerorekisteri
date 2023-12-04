@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import com.amazonaws.services.sns.AmazonSNS;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
@@ -18,6 +17,8 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.Sort;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
+import software.amazon.awssdk.services.sns.SnsClient;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,7 +65,7 @@ public class OppijaServiceTest {
     private DatabaseService databaseService;
 
     @MockBean
-    private AmazonSNS amazonSNS;
+    private SnsClient snsClient;
 
     @Autowired
     private OppijaService oppijaService;
@@ -146,7 +147,7 @@ public class OppijaServiceTest {
         Henkilo henkilo = henkilot.iterator().next();
         assertThat(henkilo).extracting(Henkilo::getHetu, Henkilo::getEtunimet, Henkilo::getSukunimi)
                 .containsExactly("180897-945K", "etu", "suku");
-        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, snsClient, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -187,7 +188,7 @@ public class OppijaServiceTest {
         Henkilo henkilo = henkilot.iterator().next();
         assertThat(henkilo).extracting(Henkilo::getHetu, Henkilo::getEtunimet, Henkilo::getSukunimi)
                 .containsExactly("180897-945K", "etu", "suku");
-        assertPublished(objectMapper, amazonSNS, 2, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, snsClient, 2, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -215,7 +216,7 @@ public class OppijaServiceTest {
         Henkilo henkilo = henkilot.iterator().next();
         Iterable<String> passinumerot = henkiloRepository.findPassinumerotByOid(henkilo.getOidHenkilo());
         assertThat(passinumerot).containsExactly("passi123");
-        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, snsClient, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -245,7 +246,7 @@ public class OppijaServiceTest {
         assertThat(identifications)
                 .extracting(Identification::getIdentifier)
                 .containsExactly("example@example.com");
-        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, snsClient, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -275,7 +276,7 @@ public class OppijaServiceTest {
         assertThat(henkilot).hasSize(1);
         Henkilo henkilo = henkilot.iterator().next();
         assertThat(henkilo.getSukupuoli()).isEqualTo("1");
-        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, snsClient, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -306,7 +307,7 @@ public class OppijaServiceTest {
             assertThat(henkilot).hasSize(1);
             Henkilo henkilo = henkilot.get(0);
             assertThat(henkilo.getAidinkieli().getKieliKoodi()).isEqualTo("sv");
-            assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
+            assertPublished(objectMapper, snsClient, 1, henkilo.getOidHenkilo());
         });
     }
 
@@ -341,7 +342,7 @@ public class OppijaServiceTest {
                     .map(Kansalaisuus::getKansalaisuusKoodi)
                     .collect(toList());
             assertThat(kansalaisuus).containsExactlyInAnyOrder("123", "456");
-            assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
+            assertPublished(objectMapper, snsClient, 1, henkilo.getOidHenkilo());
         });
     }
 
@@ -359,7 +360,7 @@ public class OppijaServiceTest {
                 .modified(new Date())
                 .build();
         henkiloRepository.save(henkilo);
-        reset(amazonSNS);
+        reset(snsClient);
 
         OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
                 .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
@@ -382,7 +383,7 @@ public class OppijaServiceTest {
                 .extracting(OppijaTuontiRiviReadDto::getTunniste, t -> t.getHenkilo().getOid())
                 .containsExactly(tuple("tunniste1", "oid2"));
         assertThat(henkiloRepository.findAll()).hasSize(1);
-        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, snsClient, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -400,7 +401,7 @@ public class OppijaServiceTest {
                 .modified(new Date())
                 .build();
         henkiloRepository.save(henkilo);
-        reset(amazonSNS);
+        reset(snsClient);
 
         OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
                 .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
@@ -422,7 +423,7 @@ public class OppijaServiceTest {
                 .extracting(OppijaTuontiRiviReadDto::getTunniste, t -> t.getHenkilo().getOid())
                 .containsExactly(tuple("tunniste1", "oid1"));
         assertThat(henkiloRepository.findAll()).hasSize(1);
-        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, snsClient, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -441,7 +442,7 @@ public class OppijaServiceTest {
                 .modified(new Date())
                 .build();
         henkiloRepository.save(henkilo);
-        reset(amazonSNS);
+        reset(snsClient);
 
         OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
                 .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
@@ -463,7 +464,7 @@ public class OppijaServiceTest {
                 .extracting(OppijaTuontiRiviReadDto::getTunniste, t -> t.getHenkilo().getOid())
                 .containsExactly(tuple("tunniste1", "oid1"));
         assertThat(henkiloRepository.findAll()).hasSize(1);
-        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, snsClient, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -481,7 +482,7 @@ public class OppijaServiceTest {
                 .modified(new Date())
                 .build();
         henkiloRepository.save(henkilo);
-        reset(amazonSNS);
+        reset(snsClient);
 
         OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
                 .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
@@ -503,7 +504,7 @@ public class OppijaServiceTest {
                 .extracting(OppijaTuontiRiviReadDto::getTunniste, t -> t.getHenkilo().getOid())
                 .containsExactly(tuple("tunniste1", "oid1"));
         assertThat(henkiloRepository.findAll()).hasSize(1);
-        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, snsClient, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -525,7 +526,7 @@ public class OppijaServiceTest {
                 .modified(new Date())
                 .build();
         henkiloRepository.save(henkilo);
-        reset(amazonSNS);
+        reset(snsClient);
 
         OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
                 .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
@@ -547,7 +548,7 @@ public class OppijaServiceTest {
                 .extracting(OppijaTuontiRiviReadDto::getTunniste, t -> t.getHenkilo().getOid())
                 .containsExactly(tuple("tunniste1", "oid1"));
         assertThat(henkiloRepository.findAll()).hasSize(1);
-        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, snsClient, 1, henkilo.getOidHenkilo());
     }
 
     @Test

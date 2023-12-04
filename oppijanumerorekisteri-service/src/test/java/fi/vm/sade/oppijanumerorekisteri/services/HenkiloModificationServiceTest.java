@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import com.amazonaws.services.sns.AmazonSNS;
 import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
@@ -15,6 +14,8 @@ import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
 import fi.vm.sade.oppijanumerorekisteri.utils.YhteystietoryhmaUtils;
+import software.amazon.awssdk.services.sns.SnsClient;
+
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,7 +52,7 @@ public class HenkiloModificationServiceTest {
     @Autowired
     private IdentificationRepository identificationRepository;
     @MockBean
-    private AmazonSNS amazonSns;
+    private SnsClient snsClient;
     @MockBean
     private KayttooikeusClient kayttooikeusClient;
     @MockBean
