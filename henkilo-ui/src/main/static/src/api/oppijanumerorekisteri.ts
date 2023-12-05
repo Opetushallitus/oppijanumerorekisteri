@@ -55,9 +55,7 @@ export const oppijanumerorekisteriApi = createApi({
             }),
             async onQueryStarted(_, { dispatch, queryFulfilled }) {
                 const { data } = await queryFulfilled;
-                const supportedLanguages = ['fi', 'sv'];
-                const lang = supportedLanguages.includes(data) ? data : 'fi';
-                dispatch({ type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, lang });
+                dispatch({ type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, data });
                 dispatch({ type: LOCATION_CHANGE });
             },
             providesTags: ['locale'],

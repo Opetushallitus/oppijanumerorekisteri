@@ -16,7 +16,7 @@ type OwnProps = {
 
 const RekisteroidyContainer = (props: OwnProps) => {
     const dispatch = useAppDispatch();
-    const { l10n } = useLocalisations();
+    const { l10n, locale } = useLocalisations();
     const koodisto = useSelector<KayttajaRootState, KoodistoState>((state) => state.koodisto);
     const temporaryToken = props.location.query['temporaryKutsuToken'];
     const { data: kutsu, isLoading: isKutsuLoading, isError } = useGetKutsuByTokenQuery(temporaryToken);
@@ -34,7 +34,7 @@ const RekisteroidyContainer = (props: OwnProps) => {
         <RekisteroidyPage
             koodisto={koodisto}
             kutsu={{ ...kutsu, temporaryToken }}
-            L={l10n.localisations[kutsu.asiointikieli]}
+            L={l10n.localisations[locale]}
             locale={kutsu.asiointikieli}
         />
     );
