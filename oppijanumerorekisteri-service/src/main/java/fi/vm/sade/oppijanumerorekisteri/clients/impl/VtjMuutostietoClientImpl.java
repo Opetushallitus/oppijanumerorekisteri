@@ -1,13 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpRequest.BodyPublishers;
-import java.net.http.HttpRequest.Builder;
-import java.net.http.HttpResponse.BodyHandlers;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
@@ -15,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -31,12 +27,31 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentials;
+import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
+import software.amazon.awssdk.auth.signer.Aws4Signer;
+import software.amazon.awssdk.auth.signer.params.Aws4SignerParams;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.http.ExecutableHttpRequest;
+import software.amazon.awssdk.http.HttpExecuteRequest;
+import software.amazon.awssdk.http.HttpExecuteResponse;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpMethod;
+import software.amazon.awssdk.http.apache.ApacheHttpClient;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.sts.StsClient;
+import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
+import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
+import software.amazon.awssdk.services.sts.model.Credentials;
 
 @Component
 @RequiredArgsConstructor
 public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     private final OppijanumerorekisteriProperties properties;
     private final ObjectMapper objectMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+    private final StsClient stsClient;
 
     @NoArgsConstructor
     @Setter
@@ -66,7 +81,7 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     }
 
 
-    AvainResponse parseAvainResponse(String content) {
+    AvainResponse parseAvainResponse(InputStream content) {
         try {
             return objectMapper.readValue(content, new TypeReference<AvainResponse>() {
             });
@@ -75,7 +90,7 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
         }
     }
 
-    VtjMuutostietoResponse parseMuutostietoResponse(String content) {
+    VtjMuutostietoResponse parseMuutostietoResponse(InputStream content) {
         try {
             return objectMapper.readValue(content, new TypeReference<VtjMuutostietoResponse>() {
             });
@@ -84,7 +99,7 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
         }
     }
 
-    PerustietoResponse parsePerustietoResponse(String content) {
+    PerustietoResponse parsePerustietoResponse(InputStream content) {
         try {
             return objectMapper.readValue(content, new TypeReference<PerustietoResponse>() {
             });
@@ -109,58 +124,83 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
                 "/GOV/0245437-2/VTJmutpa/VTJmutpa";
     }
 
-    private HttpClient buildClient() {
-        return HttpClient.newBuilder()
+    private InputStream executeRequest(SdkHttpFullRequest request) throws IOException {
+        SdkHttpClient httpClient =  ApacheHttpClient.builder().build();
+        HttpExecuteRequest executeRequest = HttpExecuteRequest.builder()
+                .request(request)
+                .contentStreamProvider(request.contentStreamProvider().orElse(null))
                 .build();
+        ExecutableHttpRequest executableHttpRequest = httpClient.prepareRequest(executeRequest);
+        HttpExecuteResponse res = executableHttpRequest.call();
+        if (!res.httpResponse().isSuccessful()) {
+            throw new RuntimeException("unsuccessful request (status " + res.httpResponse().statusCode() + ") to " + request.getUri());
+        }
+        return res.responseBody().orElseThrow(() -> new RuntimeException("no response body found for request " + request.getUri()));
     }
 
-    private Builder httpRequestBuilder(String path) {
-        return HttpRequest.newBuilder()
-                .uri(URI.create(getPalveluvaylaPathPrefix() + path))
-                .header("Accept", "application/json")
-                .header("Content-Type", "application/json")
-                .header("x-authorization", getBasicAuthentication())
-                .header("x-road-client", getPalveluvaylaHeader());
+    private SdkHttpFullRequest signRequest(SdkHttpFullRequest request) {
+        /* use user credentials instead of assuming role for now
+        AssumeRoleRequest assumeRole = AssumeRoleRequest.builder()
+                .roleArn(properties.getVtjMuutosrajapinta().getApigwRoleArn())
+                .roleSessionName("oppijanumerorekisteri")
+                .build();
+        AssumeRoleResponse response = stsClient.assumeRole(assumeRole);
+        Credentials credentials = response.credentials();
+        */
+        AwsCredentials awsCredentials = AwsBasicCredentials.create(
+                properties.getVtjMuutosrajapinta().getAccessKeyId(),
+                properties.getVtjMuutosrajapinta().getSecretAccessKey());
+
+        Aws4Signer signer = Aws4Signer.create();
+        Aws4SignerParams signerParams = Aws4SignerParams.builder()
+                .signingRegion(Region.EU_WEST_1)
+                .awsCredentials(awsCredentials)
+                .signingName("execute-api")
+                .build();
+
+        return signer.sign(request, signerParams);
+    }
+
+    private SdkHttpFullRequest httpRequestBuilder(String path, SdkHttpMethod method, Object body) throws JsonProcessingException {
+        URI uri = URI.create(getPalveluvaylaPathPrefix() + path);
+        final SdkHttpFullRequest.Builder builder = SdkHttpFullRequest.builder()
+                .method(method)
+                .uri(uri)
+                .appendHeader("Accept", "application/json")
+                .appendHeader("Content-Type", "application/json")
+                .appendHeader("x-authorization", getBasicAuthentication())
+                .appendHeader("x-road-client", getPalveluvaylaHeader());
+        if (body != null) {
+            builder.contentStreamProvider(RequestBody.fromString(objectMapper.writeValueAsString(body)).contentStreamProvider());
+        }
+
+        SdkHttpFullRequest request = builder.build();
+        return signRequest(request);
     }
 
     @Override
-    public Long fetchMuutostietoKirjausavain() throws InterruptedException, ExecutionException {
+    public Long fetchMuutostietoKirjausavain() throws InterruptedException, ExecutionException, IOException {
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        HttpRequest request = httpRequestBuilder("/api/v1/kirjausavain/" + date).build();
-        AvainResponse avain = buildClient()
-                .sendAsync(request, BodyHandlers.ofString())
-                .thenApply(HttpResponse::body)
-                .thenApply(this::parseAvainResponse)
-                .get();
-        return avain.getViimeisinKirjausavain();
+        SdkHttpFullRequest request = httpRequestBuilder("/api/v1/kirjausavain/" + date, SdkHttpMethod.GET, null);
+        InputStream response = executeRequest(request);
+        return parseAvainResponse(response).getViimeisinKirjausavain();
     }
 
     @Override
     public VtjMuutostietoResponse fetchHenkiloMuutostieto(Long avain, List<String> allHetus)
-            throws InterruptedException, ExecutionException, JsonProcessingException {
+            throws InterruptedException, ExecutionException, JsonProcessingException, IOException {
         MuutostietoRequestBody body = new MuutostietoRequestBody(avain, allHetus);
-        HttpRequest request = httpRequestBuilder("/api/v1/muutokset")
-                .POST(BodyPublishers.ofString(objectMapper.writeValueAsString(body)))
-                .build();
-        return buildClient()
-                .sendAsync(request, BodyHandlers.ofString())
-                .thenApply(HttpResponse::body)
-                .thenApply(this::parseMuutostietoResponse)
-                .get();
+        SdkHttpFullRequest request = httpRequestBuilder("/api/v1/muutokset", SdkHttpMethod.POST, body);
+        InputStream response = executeRequest(request);
+        return parseMuutostietoResponse(response);
     }
 
     @Override
     public List<VtjPerustieto> fetchHenkiloPerustieto(List<String> hetus)
-            throws InterruptedException, ExecutionException, JsonProcessingException {
+            throws InterruptedException, ExecutionException, JsonProcessingException, IOException {
         PerustietoRequestBody body = new PerustietoRequestBody(hetus);
-        HttpRequest request = httpRequestBuilder("/api/v1/perustiedot")
-                .POST(BodyPublishers.ofString(objectMapper.writeValueAsString(body)))
-                .build();
-        PerustietoResponse response = buildClient()
-                .sendAsync(request, BodyHandlers.ofString())
-                .thenApply(HttpResponse::body)
-                .thenApply(this::parsePerustietoResponse)
-                .get();
-        return response.perustiedot;
+        SdkHttpFullRequest request = httpRequestBuilder("/api/v1/perustiedot", SdkHttpMethod.POST, body);
+        InputStream response = executeRequest(request);
+        return parsePerustietoResponse(response).perustiedot;
     }
 }

@@ -6,6 +6,7 @@ import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sns.SnsClient;
+import software.amazon.awssdk.services.sts.StsClient;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -30,6 +31,16 @@ public class AwsConfiguration {
     @Bean
     AwsCredentialsProvider getAwsCredentialsProvider() {
         return DefaultCredentialsProvider.create();
+    }
+
+    @Bean
+    @Autowired
+    StsClient getStsClient(AwsCredentialsProvider credentialsProvider) {
+        return StsClient
+                .builder()
+                .region(Region.of(region))
+                .credentialsProvider(credentialsProvider)
+                .build();
     }
 
     @Bean

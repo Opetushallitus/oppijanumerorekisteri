@@ -26,11 +26,13 @@ public class OppijanumerorekisteriProperties {
     public static class VtjMuutosrajapinta {
         private Boolean perustietoEnabled = false;
         private Boolean muutostietoEnabled = false;
-        private Boolean fetchEnabled = false;
-        private String baseUrl = "https://proxy.qa.palveluvayla.opintopolku.fi";
+        private Boolean fetchEnabled = true;
+        private String baseUrl;
         private String username;
         private String password;
-        private String palveluvaylaEnv = "FI-TEST";
+        private String palveluvaylaEnv;
+        private String accessKeyId;
+        private String secretAccessKey;
     }
 
     @Getter

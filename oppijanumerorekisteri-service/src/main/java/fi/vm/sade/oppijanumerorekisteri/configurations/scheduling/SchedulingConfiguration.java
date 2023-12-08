@@ -82,7 +82,7 @@ public class SchedulingConfiguration {
     @ConditionalOnProperty(name = "oppijanumerorekisteri.vtj-muutosrajapinta.fetch-enabled", matchIfMissing = false)
     Task<Void> vtjMuutostietoFetchTask() {
         return Tasks
-                .recurring(new TaskWithoutDataDescriptor("vtj muutostieto fetch task"), FixedDelay.ofHours(1))
+                .recurring(new TaskWithoutDataDescriptor("vtj muutostieto fetch task"), FixedDelay.ofMinutes(1))
                 .execute((instance, ctx) -> vtjMuutostietoService.handleMuutostietoFetchTask());
     }
 
