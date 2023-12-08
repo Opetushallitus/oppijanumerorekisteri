@@ -87,7 +87,6 @@
         "not dead"
     ],
     "engines": {
-        "npm": "^9",
         "node": "^18"
     }
 }
