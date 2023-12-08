@@ -44,6 +44,9 @@ export const hasAnyPalveluRooli = (
     );
 };
 
+export const isOnrRekisterinpitaja = (organisaatiot: KayttooikeusOrganisaatiot[]) =>
+    hasAnyPalveluRooli(organisaatiot, ['OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'HENKILONHALLINTA_OPHREKISTERI']);
+
 /*
  * Check if given organisaatio contains at least one of the given palveluRooli
  */

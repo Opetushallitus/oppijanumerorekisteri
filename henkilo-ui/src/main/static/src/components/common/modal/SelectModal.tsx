@@ -58,7 +58,7 @@ class SelectModal extends React.Component<SelectModalProps, State> {
         this.setState({ visible: true });
     };
 
-    _onClose = (event?: React.SyntheticEvent<HTMLButtonElement>): void => {
+    _onClose = (event?: React.SyntheticEvent): void => {
         if (event) {
             event.preventDefault();
         }

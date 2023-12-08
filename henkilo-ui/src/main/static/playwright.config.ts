@@ -59,6 +59,13 @@ const config: PlaywrightTestConfig = {
 
     /* Folder for test artifacts such as screenshots, videos, traces, etc. */
     outputDir: 'playwright-results/',
+
+    webServer: {
+        command: 'NODE_ENV=development npx webpack serve',
+        port: 3000,
+        timeout: 120 * 1000,
+        reuseExistingServer: false,
+    },
 };
 
 export default config;

@@ -1,0 +1,10 @@
+[
+    {
+        "idpEntityId": "eidas",
+        "identifier": "jotain"
+    },
+    {
+        "idpEntityId": "oppijaToken",
+        "identifier": "tuniste"
+    }
+]

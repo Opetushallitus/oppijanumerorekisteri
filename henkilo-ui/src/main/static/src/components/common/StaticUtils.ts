@@ -7,6 +7,7 @@ import { Kayttaja } from '../../types/domain/kayttooikeus/kayttaja.types';
 import { TextGroup } from '../../types/domain/kayttooikeus/textgroup.types';
 import { Organisaatio } from '../../types/domain/organisaatio/organisaatio.types';
 import { toLocalizedText } from '../../localizabletext';
+import { Koodisto } from '../../types/domain/koodisto/koodisto.types';
 
 class StaticUtils {
     static ddmmyyyyToDate(date: string) {
@@ -147,6 +148,14 @@ class StaticUtils {
 
     static getKayttooikeusKestoVuosissa(kayttaja: Kayttaja) {
         return kayttaja.kayttajaTyyppi === 'PALVELU' ? null : 1;
+    }
+
+    static getKoodiNimi(koodiArvo: string, koodisto: Koodisto, locale: Locale) {
+        return (
+            koodisto
+                .find((k) => k.koodiArvo === koodiArvo)
+                ?.metadata?.find((m) => m.kieli?.toUpperCase() === locale.toUpperCase())?.nimi ?? koodiArvo
+        );
     }
 }
 

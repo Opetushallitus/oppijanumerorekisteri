@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useLocalisations } from '../../selectors';
 import Button from '../../components/common/button/Button';
+import { useTitle } from '../../useTitle';
 
 type Props = {
     loginToken: string;
@@ -20,6 +21,9 @@ const getHost = () => {
 const VahvaTunnistusInfoPage = ({ loginToken, locale }: Props) => {
     const { l10n } = useLocalisations();
     const L = l10n.localisations[locale.toLowerCase()];
+
+    useTitle(L['TITLE_VIRKAILIJA_UUDELLEENTUNNISTAUTUMINEN']);
+
     const casOppijaDomain = `https://${getHost()}`;
     const service = `${casOppijaDomain}/kayttooikeus-service/cas/tunnistus?${new URLSearchParams({
         loginToken,

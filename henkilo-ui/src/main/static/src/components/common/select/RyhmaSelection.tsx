@@ -2,8 +2,7 @@ import React, { useMemo } from 'react';
 import type { OnChangeHandler, Option } from 'react-select';
 
 import OphSelect from './OphSelect';
-import { useLocalisations } from '../../../selectors';
-import { useGetOmatOrganisaatiotQuery, useGetOmattiedotQuery } from '../../../api/kayttooikeus';
+import { useLocalisations, useOmatOrganisaatiot } from '../../../selectors';
 import { getOrganisaatioOptionsAndFilter } from '../../../utilities/organisaatio.util';
 
 type OwnProps = {
@@ -15,8 +14,7 @@ type OwnProps = {
 
 const RyhmaSelection = (props: OwnProps) => {
     const { L, locale } = useLocalisations();
-    const { data: omattiedot } = useGetOmattiedotQuery();
-    const { data: organisaatiot } = useGetOmatOrganisaatiotQuery({ oid: omattiedot.oidHenkilo, locale });
+    const organisaatiot = useOmatOrganisaatiot();
     const options = useMemo(
         () => organisaatiot && getOrganisaatioOptionsAndFilter(organisaatiot, locale, true),
         [organisaatiot]

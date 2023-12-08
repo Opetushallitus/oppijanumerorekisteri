@@ -1,89 +1,33 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 import { RouteActions } from 'react-router-redux';
+import { urls } from 'oph-urls-js';
 
-import type { KayttajaAppDispatch, KayttajaRootState } from '../store';
+import { useAppDispatch } from '../store';
 import { Locale } from '../../types/locale.type';
 import { EmailVerificationPage } from './EmailVerificationPage';
-import { Localisations } from '../../types/localisation.type';
-import { urls } from 'oph-urls-js';
 import { http } from '../../http';
 import { addGlobalNotification } from '../../actions/notification.actions';
 import { NOTIFICATIONTYPES } from '../../components/common/Notification/notificationtypes';
 import Loader from '../../components/common/icons/Loader';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
+import { useLocalisations } from '../../selectors';
+import { useTitle } from '../../useTitle';
 
 type OwnProps = {
     params: { loginToken?: string; locale?: Locale };
     router: RouteActions;
 };
 
-type StateProps = {
-    loginToken: string;
-    locale: Locale;
-    L: Localisations;
-};
+const EmailVerificationContainer = ({ params, router }: OwnProps) => {
+    const dispatch = useAppDispatch();
+    const { l10n } = useLocalisations();
+    const [loading, setLoading] = useState(true);
+    const [henkilo, setHenkilo] = useState<Partial<Henkilo>>({ yhteystiedotRyhma: [] });
+    const L = l10n.localisations[params.locale ?? 'fi'];
 
-type DispatchProps = {
-    errorNotification: (title: string) => void;
-};
+    useTitle(L['TITLE_SAHKOPOSTI_VARMISTAMINEN']);
 
-type Props = OwnProps & StateProps & DispatchProps;
-
-type State = {
-    loading: boolean;
-    henkilo: Partial<Henkilo>;
-};
-
-/*
- * Virkailijan sähköpostin varmentamisen käyttöliittymä
- */
-class EmailVerificationContainer extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            loading: true,
-            henkilo: { yhteystiedotRyhma: [] },
-        };
-    }
-
-    async componentDidMount() {
-        if (this.props.loginToken) {
-            const url = urls.url('kayttooikeus-service.cas.henkilo.bylogintoken', this.props.loginToken);
-            this.setState({ loading: true });
-            const henkilo = await http.get<Henkilo>(url).catch((error) => {
-                this.props.errorNotification(this.props.L['REKISTEROIDY_TEMP_TOKEN_INVALID']);
-                this.setState({ loading: false });
-                throw error;
-            });
-            this.setState({ henkilo, loading: false });
-        }
-    }
-
-    render() {
-        return this.state.loading ? (
-            <Loader />
-        ) : (
-            <EmailVerificationPage
-                henkilo={this.state.henkilo}
-                locale={this.props.locale}
-                L={this.props.L}
-                loginToken={this.props.loginToken}
-                router={this.props.router}
-                errorNotification={this.props.errorNotification}
-            />
-        );
-    }
-}
-
-const mapStateToProps = (state: KayttajaRootState, ownProps: OwnProps): StateProps => ({
-    L: state.l10n.localisations[ownProps.params['locale'].toLowerCase()],
-    loginToken: ownProps.params['loginToken'],
-    locale: ownProps.params['locale'],
-});
-
-const mapDispatchToProps = (dispatch: KayttajaAppDispatch): DispatchProps => ({
-    errorNotification: (title: string) =>
+    const errorNotification = (title: string) => {
         dispatch(
             addGlobalNotification({
                 key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
@@ -91,10 +35,38 @@ const mapDispatchToProps = (dispatch: KayttajaAppDispatch): DispatchProps => ({
                 type: NOTIFICATIONTYPES.ERROR,
                 autoClose: 10000,
             })
-        ),
-});
+        );
+    };
 
-export default connect<StateProps, DispatchProps, OwnProps, KayttajaRootState>(
-    mapStateToProps,
-    mapDispatchToProps
-)(EmailVerificationContainer);
+    useEffect(() => {
+        const fetchHenkilo = async () => {
+            const url = urls.url('kayttooikeus-service.cas.henkilo.bylogintoken', params.loginToken);
+            const henkilo = await http.get<Henkilo>(url).catch((error) => {
+                errorNotification(L['REKISTEROIDY_TEMP_TOKEN_INVALID']);
+                setLoading(false);
+                throw error;
+            });
+            setHenkilo(henkilo);
+            setLoading(false);
+        };
+
+        if (params.loginToken) {
+            fetchHenkilo();
+        }
+    }, []);
+
+    return loading ? (
+        <Loader />
+    ) : (
+        <EmailVerificationPage
+            henkilo={henkilo}
+            locale={params.locale}
+            L={L}
+            loginToken={params.loginToken}
+            router={router}
+            errorNotification={errorNotification}
+        />
+    );
+};
+
+export default EmailVerificationContainer;

@@ -10,6 +10,22 @@ const groupedDuplicates = groupBy((h) => {
     return h.yksiloityVTJ ? 'yksiloityVtj' : h.yksiloity ? 'yksiloity' : 'yksiloimaton';
 }, duplicates);
 
+const routeOmattiedotWithoutRoles = async (page: Page) => {
+    await page.route('/kayttooikeus-service/henkilo/current/omattiedot', async (route) => {
+        await route.fulfill({
+            json: {
+                ...omattiedot,
+                organisaatiot: [
+                    {
+                        organisaatioOid: '1.2.246.562.10.00000000001',
+                        kayttooikeudet: [],
+                    },
+                ],
+            },
+        });
+    });
+};
+
 const routeOmattiedotWithPurkuRole = async (page: Page) => {
     await page.route('/kayttooikeus-service/henkilo/current/omattiedot', async (route) => {
         await route.fulfill({
@@ -61,6 +77,7 @@ test.describe('Hae duplikaatit', () => {
     });
 
     test('linking duplicate to main is enabled only for yksiloimaton', async ({ page }) => {
+        await routeOmattiedotWithoutRoles(page);
         await page.goto('/henkilo-ui/virkailija/1.2.3.4.5/duplikaatit');
         groupedDuplicates.yksiloity?.forEach(async (duplicate) => {
             const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);

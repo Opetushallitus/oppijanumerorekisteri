@@ -11,7 +11,7 @@ test.describe('salasanan vaihto', () => {
 
         await page.fill('#newPassword', 'newPassword123!');
         await page.click('#passwordConfirmation');
-        await expect(page.locator('#passwordIsInvalid')).toContainText('Salasana ei täytä minimivaatimuksia.');
+        await expect(page.locator('#passwordIsInvalid')).toContainText('Salasana ei täytä muotovaatimuksia.');
         await expect(page.locator('#submit')).toBeDisabled();
 
         await page.fill('#newPassword', 'currentPassword123!');

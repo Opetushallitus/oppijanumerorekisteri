@@ -14,6 +14,7 @@ import { OppijaTuontiYhteenveto } from '../types/domain/oppijanumerorekisteri/op
 import { OppijoidenTuontiCriteria } from '../components/oppijoidentuonti/OppijoidenTuontiContainer';
 import { Page } from '../types/Page.types';
 import { OppijaList } from '../types/domain/oppijanumerorekisteri/oppijalist.types';
+import { Identification } from '../types/domain/oppijanumerorekisteri/Identification.types';
 
 type Passinumerot = string[];
 
@@ -41,6 +42,7 @@ export const oppijanumerorekisteriApi = createApi({
     baseQuery: staggeredBaseQuery,
     tagTypes: [
         'Passinumerot',
+        'identifications',
         'locale',
         'tuontikooste',
         'tuontidata',
@@ -212,6 +214,25 @@ export const oppijanumerorekisteriApi = createApi({
             }),
             providesTags: ['oppijoidentuontilistaus'],
         }),
+        getIdentifications: builder.query<Identification[], string>({
+            query: (oid) => `henkilo/${oid}/identification`,
+            providesTags: (_result, _error, oid) => [{ type: 'identifications', id: oid }],
+        }),
+        postIdentification: builder.mutation<Identification[], { oid: string; identification: Identification }>({
+            query: ({ oid, identification }) => ({
+                url: `henkilo/${oid}/identification`,
+                method: 'POST',
+                body: identification,
+            }),
+            invalidatesTags: (_result, _error, { oid }) => [{ type: 'identifications', id: oid }],
+        }),
+        deleteIdentification: builder.mutation<Identification[], { oid: string; identification: Identification }>({
+            query: ({ oid, identification }) => ({
+                url: `henkilo/${oid}/identification/${identification.idpEntityId}/${identification.identifier}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: (_result, _error, { oid }) => [{ type: 'identifications', id: oid }],
+        }),
     }),
 });
 
@@ -228,4 +249,7 @@ export const {
     useGetTuontidataQuery,
     useGetOppijoidentuontiYhteenvetoQuery,
     useGetOppijoidenTuontiListausQuery,
+    useGetIdentificationsQuery,
+    usePostIdentificationMutation,
+    useDeleteIdentificationMutation,
 } = oppijanumerorekisteriApi;
