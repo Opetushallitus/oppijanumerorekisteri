@@ -354,7 +354,6 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         assertThat(results).hasSize(0);
 
         results = this.dataRepository.findOidsModifiedSince(new HenkiloCriteria(), now.minusHours(1), 1, 100);
-        System.out.println(results);
         assertThat(results).hasSize(3);
         assertThat(results).containsAll(Sets.newHashSet("3_MINUTES_AGO", "2_MINUTES_AGO", "1_MINUTE_AGO"));
 

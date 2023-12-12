@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import org.springframework.stereotype.Component;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HuoltajaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
@@ -28,7 +29,8 @@ public class VtjMuutostietoValidator {
     public static final String KUNTAKOODI_TUNTEMATON = "999";
     public static final String KANSALAISUUSKOODI_TUNTEMATON = "998";
 
-    public void validateAndCorrectErrors(HenkiloForceUpdateDto henkiloForceUpdateDto) {
+    public void validateAndCorrectErrors(HenkiloForceReadDto henkiloForceReadDto,
+            HenkiloForceUpdateDto henkiloForceUpdateDto) {
         Stream.<Consumer<HenkiloForceUpdateDto>>of(
                 updateDto -> Optional.ofNullable(updateDto.getKotikunta())
                         .ifPresent(kotikunta -> replaceIfInvalid(
@@ -53,6 +55,7 @@ public class VtjMuutostietoValidator {
                                                 KANSALAISUUSKOODI_TUNTEMATON)))),
                 updateDto -> Optional.ofNullable(henkiloForceUpdateDto.getHuoltajat())
                         .ifPresent(huoltajat -> huoltajat.forEach(this::validateAndCorrectErrors)),
+                updateDto -> replaceInvalidKutsumanimi(henkiloForceReadDto, updateDto),
                 this::replaceInvalidEmailWithEmptyString)
                 .forEach(consumer -> consumer.accept(henkiloForceUpdateDto));
     }
@@ -71,12 +74,32 @@ public class VtjMuutostietoValidator {
                         }))));
     }
 
+    private void replaceInvalidKutsumanimi(HenkiloForceReadDto readDto,
+            HenkiloForceUpdateDto updateDto) {
+        // if etunimet change but kutsumanimi is not updated
+        if (updateDto.getEtunimet() != null && updateDto.getKutsumanimi() == null && readDto.getKutsumanimi() != null) {
+            KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(updateDto.getEtunimet());
+            if (!kutsumanimiValidator.isValid(readDto.getKutsumanimi())) {
+                updateDto.setKutsumanimi(updateDto.getEtunimet());
+            }
+        }
+
+        // if kutsumanimi changes
+        if (updateDto.getKutsumanimi() != null && updateDto.getEtunimet() == null) {
+            KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(readDto.getEtunimet());
+            if (!kutsumanimiValidator.isValid(updateDto.getKutsumanimi())) {
+                updateDto.setKutsumanimi(null);
+            }
+        }
+    }
+
     private void validateAndCorrectErrors(HuoltajaCreateDto huoltajaCreateDto) {
         Stream.<Consumer<HuoltajaCreateDto>>of(
                 updateDto -> Optional.ofNullable(updateDto.getKansalaisuusKoodi())
                         .ifPresent(kansalaisuuskoodit -> kansalaisuuskoodit
                                 .forEach(kansalaisuusKoodi -> replaceIfInvalid(
-                                        koodi -> KoodiValidator.isValid(koodistoService, Koodisto.MAAT_JA_VALTIOT_2, koodi),
+                                        koodi -> KoodiValidator.isValid(koodistoService, Koodisto.MAAT_JA_VALTIOT_2,
+                                                koodi),
                                         updateDto::setKansalaisuusKoodi,
                                         updateDto.getKansalaisuusKoodi(),
                                         KANSALAISUUSKOODI_TUNTEMATON))))

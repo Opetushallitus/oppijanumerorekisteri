@@ -62,10 +62,15 @@ oppijanumerorekisteri:
       asiayhteysKaytossa: {{oppijanumerorekisteri_asiayhteys_kaytossa | default('false')}}
   allow-fake-ssn: {{oppijanumerorekisteri_allow_fake_ssn | default('true')}}
   vtj-muutosrajapinta:
-    enabled: {{oppijanumerorekisteri_vtjmuutosrajapinta_enabled | default('false')}}
-    base-url: {{oppijanumerorekisteri_vtjmuutosrajapinta_baseurl}}
-    username: {{oppijanumerorekisteri_vtjmuutosrajapinta_username}}
-    password: {{oppijanumerorekisteri_vtjmuutosrajapinta_password}}
+    perustieto-enabled: {{oppijanumerorekisteri_vtjmuutosrajapinta_perustieto_enabled | default('false')}}
+    muutostieto-enabled: {{oppijanumerorekisteri_vtjmuutosrajapinta_muutostieto_enabled | default('false')}}
+    fetch-enabled: {{oppijanumerorekisteri_vtjmuutosrajapinta_fetch_enabled | default('false')}}
+    base-url: {{oppijanumerorekisteri_vtjmuutosrajapinta_baseurl | default('')}}
+    username: {{oppijanumerorekisteri_vtjmuutosrajapinta_username | default('')}}
+    password: {{oppijanumerorekisteri_vtjmuutosrajapinta_password | default('')}}
+    palveluvayla-env: {{oppijanumerorekisteri_palveluvayla_env | default('FI-TEST')}}
+    access-key-id: {{oppijanumerorekisteri_palveluvayla_access_key_id | default('')}}
+    secret-access-key: {{oppijanumerorekisteri_palveluvayla_secret_access_key | default('')}}
 aws:
   region: {{aws_region}}
   henkiloModifiedTopic:

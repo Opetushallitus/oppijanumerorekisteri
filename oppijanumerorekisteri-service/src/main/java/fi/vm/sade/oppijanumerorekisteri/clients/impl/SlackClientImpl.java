@@ -71,6 +71,7 @@ public class SlackClientImpl implements SlackClient {
         String url = properties.getSlackUrl();
         if (!StringUtils.hasLength(url)) {
             log.warn("Slack integration disabled. Message was: " + content);
+            return;
         }
 
         OphHttpRequest ophHttpRequest = OphHttpRequest.Builder

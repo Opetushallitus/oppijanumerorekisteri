@@ -24,7 +24,6 @@ import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.util.batchprocessing.BatchProcessor;
 import fi.vm.sade.oppijanumerorekisteri.util.batchprocessing.BatchingProcess;
-import fi.vm.sade.oppijanumerorekisteri.utils.OptionalUtils;
 import lombok.RequiredArgsConstructor;
 import ma.glasnost.orika.metadata.TypeBuilder;
 import org.joda.time.DateTime;
@@ -208,8 +207,8 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public String getOidByHetu(String hetu) {
-        return OptionalUtils.or(this.henkiloDataRepository.findOidByHetu(hetu),
-                () -> this.henkiloDataRepository.findOidByKaikkiHetut(hetu))
+        return henkiloDataRepository.findOidByHetu(hetu)
+                .or(() -> this.henkiloDataRepository.findOidByKaikkiHetut(hetu))
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -246,8 +245,8 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public HenkiloOidHetuNimiDto getHenkiloOidHetuNimiByHetu(String hetu) {
-        return OptionalUtils.or(henkiloDataRepository.findOidHetuNimiByHetu(hetu),
-                () -> henkiloDataRepository.findOidHetuNimiByKaikkiHetut(hetu))
+        return henkiloDataRepository.findOidHetuNimiByHetu(hetu)
+                .or(() -> henkiloDataRepository.findOidHetuNimiByKaikkiHetut(hetu))
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -450,7 +449,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     }
 
     private Optional<Henkilo> findByHetu(String hetu) {
-        return OptionalUtils.or(henkiloDataRepository.findByHetu(hetu),
-                () -> henkiloDataRepository.findByKaikkiHetut(hetu));
+        return henkiloDataRepository.findByHetu(hetu)
+                .or(() -> henkiloDataRepository.findByKaikkiHetut(hetu));
     }
 }

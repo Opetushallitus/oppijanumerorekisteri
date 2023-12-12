@@ -106,6 +106,16 @@ oppijanumerorekisteri:
       enabled: false
       asiayhteysKaytossa: false
   allow-fake-ssn: true
+  vtj-muutosrajapinta:
+    perustieto-enabled: false
+    muutostieto-enabled: false
+    fetch-enabled: true
+    base-url: https://proxy.qa.palveluvayla.opintopolku.fi
+    username: mutpT1x
+    password: pwd
+    palveluvayla-env: FI-TEST
+    access-key-id: ''
+    secret-access-key: ''
 aws:
   region: eu-west-1
   henkiloModifiedTopic:

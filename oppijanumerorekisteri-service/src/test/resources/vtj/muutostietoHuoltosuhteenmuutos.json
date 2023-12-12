@@ -1,0 +1,178 @@
+[
+  {
+    "tietoryhma": "HUOLTAJA",
+    "huoltaja": {
+      "henkilotunnus": "280790-9696",
+      "etunimet": "Henriikka Sandra",
+      "sukunimi": "Valkeavirta Tes",
+      "syntymapv": {
+        "arvo": "1984-06-01",
+        "tarkkuus": "PAIVA"
+      },
+      "sukupuoli": "MIES"
+    },
+    "huoltajanLaji": "LAKISAATEINEN_HUOLTAJA",
+    "huoltajanRooli": "ISA",
+    "huoltosuhteenAlkupv": {
+      "arvo": "2012-08-02",
+      "tarkkuus": "PAIVA"
+    },
+    "huoltosuhteenLoppupv": {
+      "arvo": "2030-08-01",
+      "tarkkuus": "PAIVA"
+    },
+    "oikeudet": [],
+    "muutosattribuutti": "LISATTY",
+    "lisatytOikeudet": [],
+    "poistetutOikeudet": [],
+    "muutetutOikeudet": [],
+    "huoltosuhteenMuutos": false,
+    "huollonOikeudenMuutos": false,
+    "huollonAsumisenMuutos": false
+  },
+  {
+    "tietoryhma": "HUOLTAJA",
+    "huoltaja": {
+      "henkilotunnus": "280790-9696",
+      "etunimet": "Henriikka Sandra",
+      "sukunimi": "Valkeavirta Tes",
+      "syntymapv": {
+        "arvo": "1984-06-01",
+        "tarkkuus": "PAIVA"
+      },
+      "sukupuoli": "MIES"
+    },
+    "huoltajanLaji": "LAKISAATEINEN_HUOLTAJA",
+    "huoltajanRooli": "ISA",
+    "huoltosuhteenAlkupv": {
+      "arvo": "2012-08-01",
+      "tarkkuus": "PAIVA"
+    },
+    "huoltosuhteenLoppupv": {
+      "arvo": "2030-08-02",
+      "tarkkuus": "PAIVA"
+    },
+    "oikeudet": [],
+    "muutosattribuutti": "MUUTETTU",
+    "lisatytOikeudet": [],
+    "poistetutOikeudet": [],
+    "muutetutOikeudet": [],
+    "huoltosuhteenMuutos": true,
+    "huollonOikeudenMuutos": false,
+    "huollonAsumisenMuutos": false,
+    "voimassaolevatTiedot": [
+      {
+        "tietoryhma": "HUOLTAJA",
+        "huoltaja": {
+          "henkilotunnus": "280790-9696",
+          "etunimet": "Henriikka Sandra",
+          "sukunimi": "Valkeavirta Tes",
+          "syntymapv": {
+            "arvo": "1984-06-01",
+            "tarkkuus": "PAIVA"
+          },
+          "sukupuoli": "MIES"
+        },
+        "huoltajanLaji": "LAKISAATEINEN_HUOLTAJA",
+        "huoltajanRooli": "ISA",
+        "huoltosuhteenAlkupv": {
+          "arvo": "2012-08-02",
+          "tarkkuus": "PAIVA"
+        },
+        "huoltosuhteenLoppupv": {
+          "arvo": "2030-08-01",
+          "tarkkuus": "PAIVA"
+        },
+        "oikeudet": []
+      }
+    ]
+  },
+  {
+    "tietoryhma": "HUOLTAJA_SUPPEA",
+    "huoltaja": {
+      "henkilotunnus": "280790-9696",
+      "etunimet": "Henriikka Sandra",
+      "sukunimi": "Valkeavirta Tes",
+      "syntymapv": {
+        "arvo": "1984-06-01",
+        "tarkkuus": "PAIVA"
+      },
+      "sukupuoli": "MIES"
+    },
+    "huoltajanLaji": "LAKISAATEINEN_HUOLTAJA",
+    "huoltajanRooli": "ISA",
+    "huoltosuhteenAlkupv": {
+      "arvo": "2012-08-02",
+      "tarkkuus": "PAIVA"
+    },
+    "huoltosuhteenLoppupv": {
+      "arvo": "2030-08-01",
+      "tarkkuus": "PAIVA"
+    },
+    "oikeudet": [],
+    "muutosattribuutti": "LISATTY",
+    "lisatytOikeudet": [],
+    "poistetutOikeudet": [],
+    "muutetutOikeudet": [],
+    "huoltosuhteenMuutos": false,
+    "huollonOikeudenMuutos": false,
+    "huollonAsumisenMuutos": false
+  },
+  {
+    "tietoryhma": "HUOLTAJA_SUPPEA",
+    "huoltaja": {
+      "henkilotunnus": "280790-9696",
+      "etunimet": "Henriikka Sandra",
+      "sukunimi": "Valkeavirta Tes",
+      "syntymapv": {
+        "arvo": "1984-06-01",
+        "tarkkuus": "PAIVA"
+      },
+      "sukupuoli": "MIES"
+    },
+    "huoltajanLaji": "LAKISAATEINEN_HUOLTAJA",
+    "huoltajanRooli": "ISA",
+    "huoltosuhteenAlkupv": {
+      "arvo": "2012-08-01",
+      "tarkkuus": "PAIVA"
+    },
+    "huoltosuhteenLoppupv": {
+      "arvo": "2012-08-02",
+      "tarkkuus": "PAIVA"
+    },
+    "oikeudet": [],
+    "muutosattribuutti": "MUUTETTU",
+    "lisatytOikeudet": [],
+    "poistetutOikeudet": [],
+    "muutetutOikeudet": [],
+    "huoltosuhteenMuutos": true,
+    "huollonOikeudenMuutos": false,
+    "huollonAsumisenMuutos": false,
+    "voimassaolevatTiedot": [
+      {
+        "tietoryhma": "HUOLTAJA_SUPPEA",
+        "huoltaja": {
+          "henkilotunnus": "280790-9696",
+          "etunimet": "Henriikka Sandra",
+          "sukunimi": "Valkeavirta Tes",
+          "syntymapv": {
+            "arvo": "1984-06-01",
+            "tarkkuus": "PAIVA"
+          },
+          "sukupuoli": "MIES"
+        },
+        "huoltajanLaji": "LAKISAATEINEN_HUOLTAJA",
+        "huoltajanRooli": "ISA",
+        "huoltosuhteenAlkupv": {
+          "arvo": "2012-08-02",
+          "tarkkuus": "PAIVA"
+        },
+        "huoltosuhteenLoppupv": {
+          "arvo": "2030-08-01",
+          "tarkkuus": "PAIVA"
+        },
+        "oikeudet": []
+      }
+    ]
+  }
+]
