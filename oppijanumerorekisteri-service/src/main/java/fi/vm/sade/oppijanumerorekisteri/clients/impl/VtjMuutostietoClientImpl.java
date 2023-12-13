@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -27,9 +26,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.AwsCredentials;
-import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
 import software.amazon.awssdk.auth.signer.Aws4Signer;
 import software.amazon.awssdk.auth.signer.params.Aws4SignerParams;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -42,16 +38,25 @@ import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sts.StsClient;
+import software.amazon.awssdk.services.sts.auth.StsAssumeRoleCredentialsProvider;
 import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
-import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
-import software.amazon.awssdk.services.sts.model.Credentials;
 
 @Component
-@RequiredArgsConstructor
 public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     private final OppijanumerorekisteriProperties properties;
     private final ObjectMapper objectMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
-    private final StsClient stsClient;
+    private final StsAssumeRoleCredentialsProvider credentialsProvider;
+
+    public VtjMuutostietoClientImpl(OppijanumerorekisteriProperties properties, StsClient stsClient) {
+        this.properties = properties;
+        this.credentialsProvider = StsAssumeRoleCredentialsProvider.builder()
+                    .stsClient(stsClient)
+                    .refreshRequest(() -> AssumeRoleRequest.builder()
+                            .roleArn(properties.getVtjMuutosrajapinta().getApigwRoleArn())
+                            .roleSessionName("palveluvayla")
+                            .build())
+                    .build();
+    }
 
     @NoArgsConstructor
     @Setter
@@ -139,25 +144,12 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     }
 
     private SdkHttpFullRequest signRequest(SdkHttpFullRequest request) {
-        /* use user credentials instead of assuming role for now
-        AssumeRoleRequest assumeRole = AssumeRoleRequest.builder()
-                .roleArn(properties.getVtjMuutosrajapinta().getApigwRoleArn())
-                .roleSessionName("oppijanumerorekisteri")
-                .build();
-        AssumeRoleResponse response = stsClient.assumeRole(assumeRole);
-        Credentials credentials = response.credentials();
-        */
-        AwsCredentials awsCredentials = AwsBasicCredentials.create(
-                properties.getVtjMuutosrajapinta().getAccessKeyId(),
-                properties.getVtjMuutosrajapinta().getSecretAccessKey());
-
         Aws4Signer signer = Aws4Signer.create();
         Aws4SignerParams signerParams = Aws4SignerParams.builder()
                 .signingRegion(Region.EU_WEST_1)
-                .awsCredentials(awsCredentials)
+                .awsCredentials(credentialsProvider.resolveCredentials())
                 .signingName("execute-api")
                 .build();
-
         return signer.sign(request, signerParams);
     }
 
