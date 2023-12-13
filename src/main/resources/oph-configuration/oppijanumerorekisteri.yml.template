@@ -69,8 +69,7 @@ oppijanumerorekisteri:
     username: {{oppijanumerorekisteri_vtjmuutosrajapinta_username | default('')}}
     password: {{oppijanumerorekisteri_vtjmuutosrajapinta_password | default('')}}
     palveluvayla-env: {{oppijanumerorekisteri_palveluvayla_env | default('FI-TEST')}}
-    access-key-id: {{oppijanumerorekisteri_palveluvayla_access_key_id | default('')}}
-    secret-access-key: {{oppijanumerorekisteri_palveluvayla_secret_access_key | default('')}}
+    apigw-role-arn: {{oppijanumerorekisteri_apigw_role_arn | default('')}}
 aws:
   region: {{aws_region}}
   henkiloModifiedTopic:

@@ -31,8 +31,7 @@ public class OppijanumerorekisteriProperties {
         private String username;
         private String password;
         private String palveluvaylaEnv;
-        private String accessKeyId;
-        private String secretAccessKey;
+        private String apigwRoleArn;
     }
 
     @Getter

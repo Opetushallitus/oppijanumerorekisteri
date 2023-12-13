@@ -110,12 +110,11 @@ oppijanumerorekisteri:
     perustieto-enabled: false
     muutostieto-enabled: false
     fetch-enabled: true
-    base-url: https://proxy.qa.palveluvayla.opintopolku.fi
+    base-url: http://localhost:8080
     username: mutpT1x
     password: pwd
     palveluvayla-env: FI-TEST
-    access-key-id: ''
-    secret-access-key: ''
+    apigw-role-arn: ''
 aws:
   region: eu-west-1
   henkiloModifiedTopic:
