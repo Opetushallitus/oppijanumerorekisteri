@@ -27,6 +27,7 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 public class SecurityConfiguration {
     private final CasProperties casProperties;
     private final OphProperties ophProperties;
+    public static final String SPRING_CAS_SECURITY_CHECK_PATH = "/j_spring_cas_security_check";
 
     public SecurityConfiguration(CasProperties casProperties,
                                  OphProperties ophProperties) {
@@ -37,7 +38,7 @@ public class SecurityConfiguration {
     @Bean
     ServiceProperties serviceProperties() {
         ServiceProperties serviceProperties = new ServiceProperties();
-        serviceProperties.setService(casProperties.getService() + "/j_spring_cas_security_check");
+        serviceProperties.setService(casProperties.getService() + SPRING_CAS_SECURITY_CHECK_PATH);
         serviceProperties.setSendRenew(casProperties.getSendRenew());
         serviceProperties.setAuthenticateAllArtifacts(true);
         return serviceProperties;
@@ -86,7 +87,7 @@ public class SecurityConfiguration {
         CasAuthenticationFilter casAuthenticationFilter = new CasAuthenticationFilter();
         casAuthenticationFilter.setAuthenticationManager(authenticationConfiguration.getAuthenticationManager());
         casAuthenticationFilter.setServiceProperties(serviceProperties);
-        casAuthenticationFilter.setFilterProcessesUrl("/j_spring_cas_security_check");
+        casAuthenticationFilter.setFilterProcessesUrl(SPRING_CAS_SECURITY_CHECK_PATH);
         casAuthenticationFilter.setSecurityContextRepository(securityContextRepository);
         return casAuthenticationFilter;
     }

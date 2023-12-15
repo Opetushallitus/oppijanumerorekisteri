@@ -17,10 +17,10 @@ public class CasUserDetailsService implements AuthenticationUserDetailsService<C
 
     @Override
     public UserDetails loadUserDetails(CasAssertionAuthenticationToken token) throws UsernameNotFoundException {
-        String username = token.getName();
-        Map<String, Object> attributes = token.getAssertion().getPrincipal().getAttributes();
+        var username = token.getName();
+        var attributes = token.getAssertion().getPrincipal().getAttributes();
         boolean strongAuth = SUOMI_FI_IDP_ENTITY_ID.equals(attributes.get("idpEntityId"));
-        String kayttajaTyyppi = (String) attributes.get("kayttajaTyyppi");
+        var kayttajaTyyppi = (String) attributes.get("kayttajaTyyppi");
         return new CasUserDetails(username, strongAuth, kayttajaTyyppi);
     }
 
