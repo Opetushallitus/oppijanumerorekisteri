@@ -25,6 +25,7 @@ import {
 import { HenkiloState } from './reducers/henkilo.reducer';
 import { NaviTab } from './types/navigation.type';
 import PalvelukayttajaHakuPage from './components/palvelukayttaja/PalvelukayttajaHakuPage';
+import { PalvelukayttajaInfo } from './containers/PalvelukayttajaInfo';
 
 export type RouteType = {
     path: string;
@@ -37,6 +38,7 @@ export type RouteType = {
 
 export default (
     <Route path="/" component={App} getNaviTabs={updateDefaultNavigation}>
+        <Route path="/palvelukayttajainfo" component={PalvelukayttajaInfo} title="Palvelukäyttäjä" />
         <Route
             path="/raportit/kayttooikeudet"
             component={AccessRightReport}
