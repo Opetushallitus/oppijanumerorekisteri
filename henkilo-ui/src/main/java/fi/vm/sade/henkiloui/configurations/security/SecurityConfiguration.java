@@ -46,7 +46,7 @@ public class SecurityConfiguration {
     @Bean
     AuthenticationProvider casAuthenticationProvider(ServiceProperties serviceProperties, TicketValidator ticketValidator) {
         CasAuthenticationProvider casAuthenticationProvider = new CasAuthenticationProvider();
-        casAuthenticationProvider.setUserDetailsService(new EmptyUserDetailsServiceImpl());
+        casAuthenticationProvider.setAuthenticationUserDetailsService(new CasUserDetailsService());
         casAuthenticationProvider.setServiceProperties(serviceProperties);
         casAuthenticationProvider.setTicketValidator(ticketValidator);
         casAuthenticationProvider.setKey(casProperties.getKey());
