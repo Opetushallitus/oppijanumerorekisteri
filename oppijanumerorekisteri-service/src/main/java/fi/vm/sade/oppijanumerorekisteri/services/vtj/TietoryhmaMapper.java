@@ -248,5 +248,5 @@ public abstract class TietoryhmaMapper {
     }
 
     public abstract HenkiloForceUpdateDto mutateUpdateDto(HenkiloForceUpdateDto update, JsonNode tietoryhma,
-            String locale);
+            String locale, boolean isTurvakielto);
 }

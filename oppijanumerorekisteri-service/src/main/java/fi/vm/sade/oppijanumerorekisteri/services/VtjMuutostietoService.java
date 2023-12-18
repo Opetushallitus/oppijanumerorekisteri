@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +20,12 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
+import fi.vm.sade.oppijanumerorekisteri.models.TurvakieltoKotikunta;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjMuutostieto;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjMuutostietoKirjausavain;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjPerustieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.TurvakieltoKotikuntaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.VtjMuutostietoKirjausavainRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.VtjMuutostietoRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.vtj.MuutostietoMapper;
@@ -32,6 +35,8 @@ import fi.vm.sade.oppijanumerorekisteri.validators.VtjMuutostietoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import static fi.vm.sade.oppijanumerorekisteri.services.vtj.TietoryhmaMapper.getStringValue;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -39,6 +44,7 @@ public class VtjMuutostietoService {
     private final VtjMuutostietoKirjausavainRepository kirjausavainRepository;
     private final VtjMuutostietoRepository muutostietoRepository;
     private final VtjMuutostietoClient muutostietoClient;
+    private final TurvakieltoKotikuntaRepository turvakieltoKotikuntaRepository;
     private final HenkiloRepository henkiloRepository;
     private final HenkiloModificationService henkiloModificationService;
     private final OrikaConfiguration mapper;
@@ -114,15 +120,15 @@ public class VtjMuutostietoService {
             return read.getAidinkieli().getKieliKoodi();
         }
         for (JsonNode tietoryhma : tietoryhmat) {
-            if ("AIDINKIELI".equals(TietoryhmaMapper.getStringValue(tietoryhma, "tietoryhma"))) {
-                return "swe".equals(TietoryhmaMapper.getStringValue(tietoryhma, "kielikoodiISO6392")) ? "sv" : "fi";
+            if ("AIDINKIELI".equals(getStringValue(tietoryhma, "tietoryhma"))) {
+                return "swe".equals(getStringValue(tietoryhma, "kielikoodiISO6392")) ? "sv" : "fi";
             }
         }
         return "fi";
     }
 
     private HenkiloForceUpdateDto mapToUpdateDto(HenkiloForceReadDto read, JsonNode tietoryhmat,
-            TietoryhmaMapper mapper) {
+            boolean isTurvakielto, TietoryhmaMapper mapper) {
         HenkiloForceUpdateDto update = new HenkiloForceUpdateDto();
         update.setOidHenkilo(read.getOidHenkilo());
         update.setTurvakielto(read.getTurvakielto());
@@ -131,7 +137,7 @@ public class VtjMuutostietoService {
         update.setKaikkiHetut(read.getKaikkiHetut());
         String locale = findYhteystietoLocale(read, tietoryhmat);
         for (JsonNode tietoryhma : tietoryhmat) {
-            mapper.mutateUpdateDto(update, tietoryhma, locale);
+            mapper.mutateUpdateDto(update, tietoryhma, locale, isTurvakielto);
         }
         VtjMuutostietoValidator validator = new VtjMuutostietoValidator(koodistoService);
         validator.validateAndCorrectErrors(read, update);
@@ -140,11 +146,35 @@ public class VtjMuutostietoService {
 
     private boolean isHenkilotunnusKorjaus(JsonNode tietoryhmat) {
         for (JsonNode tietoryhma : tietoryhmat) {
-            if ("HENKILOTUNNUS_KORJAUS".equals(TietoryhmaMapper.getStringValue(tietoryhma, "tietoryhma"))) {
+            if ("HENKILOTUNNUS_KORJAUS".equals(getStringValue(tietoryhma, "tietoryhma"))) {
                 return true;
             }
         }
         return false;
+    }
+
+    private boolean isTurvakielto(JsonNode tietoryhmat) {
+        for (JsonNode tietoryhma : tietoryhmat) {
+            if ("TURVAKIELTO".equals(getStringValue(tietoryhma, "tietoryhma"))
+                        && tietoryhma.get("turvakieltoAktiivinen").asBoolean()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void saveTurvakieltoKotikunta(Long henkiloId, JsonNode tietoryhmat) {
+        for (JsonNode tietoryhma : tietoryhmat) {
+            if ("KOTIKUNTA".equals(getStringValue(tietoryhma, "tietoryhma")) && tietoryhma.has("kuntakoodi")) {
+                String kotikunta = getStringValue(tietoryhma, "kuntakoodi");
+                turvakieltoKotikuntaRepository.findByHenkiloId(henkiloId)
+                    .or(() -> Optional.of(TurvakieltoKotikunta.builder().henkiloId(henkiloId).build()))
+                    .ifPresent(turvakieltoKotikunta -> {
+                        turvakieltoKotikunta.setKotikunta(kotikunta);
+                        turvakieltoKotikuntaRepository.save(turvakieltoKotikunta);
+                    });
+            }
+        }
     }
 
     protected Void savePerustieto(VtjPerustieto perustieto) {
@@ -155,10 +185,14 @@ public class VtjMuutostietoService {
                         henkilo.getOidHenkilo()), null);
                 return;
             }
+            boolean isTurvakielto = isTurvakielto(perustieto.tietoryhmat);
 
             HenkiloForceReadDto read = mapper.map(henkilo, HenkiloForceReadDto.class);
-            HenkiloForceUpdateDto update = mapToUpdateDto(read, perustieto.tietoryhmat, perustietoMapper);
+            HenkiloForceUpdateDto update = mapToUpdateDto(read, perustieto.tietoryhmat, isTurvakielto, perustietoMapper);
             henkiloModificationService.forceUpdateHenkilo(update);
+            if (isTurvakielto) {
+                saveTurvakieltoKotikunta(henkilo.getId(), perustieto.tietoryhmat);
+            }
             henkilo.setVtjBucket(henkilo.getId() % 100);
             henkiloRepository.save(henkilo);
         });
@@ -197,8 +231,9 @@ public class VtjMuutostietoService {
             }
 
             try {
+                boolean isTurvakielto = false;
                 HenkiloForceReadDto read = mapper.map(henkilo, HenkiloForceReadDto.class);
-                HenkiloForceUpdateDto update = mapToUpdateDto(read, muutostieto.tietoryhmat, muutostietoMapper);
+                HenkiloForceUpdateDto update = mapToUpdateDto(read, muutostieto.tietoryhmat, isTurvakielto, muutostietoMapper);
                 henkiloModificationService.forceUpdateHenkilo(update);
             } catch (UnprocessableEntityException uee) {
                 BindException be = (BindException) uee.getErrors();

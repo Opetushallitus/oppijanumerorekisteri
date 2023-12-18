@@ -1,64 +1,86 @@
 [
-    { "tietoryhma": "TURVAKIELTO", "turvakieltoAktiivinen": true },
-    { "tietoryhma": "SUKUPUOLI", "sukupuoli": "NAINEN" },
-    {
-      "tietoryhma": "HENKILON_NIMI",
-      "etunimi": "Mathilda Helena Sophie",
-      "sukunimi": "Aslan Tes",
-      "alkupv": { "tarkkuus": "PAIVA", "arvo": "2019-05-08" }
-    },
-    { "tietoryhma": "SYNTYMAKOTIKUNTA", "kuntakoodi": "091" },
-    { "tietoryhma": "SIVIILISAATY", "siviilisaaty": "AVIOLIITOSSA" },
-    {
-      "tietoryhma": "SYNTYMAPAIVA",
-      "syntymapv": { "arvo": "1958-01-30", "tarkkuus": "PAIVA" }
-    },
-    {
-      "tietoryhma": "VAKINAINEN_KOTIMAINEN_OSOITE",
-      "turvakiellonAlaisetKentat": ["KOTIMAINEN_POSTIOSOITE", "SAHKOPOSTIOSOITE", "VAKINAINEN_KOTIMAINEN_ASUINPAIKKATUNNUS", "KOTIKUNTA", "VAKINAINEN_KOTIMAINEN_OSOITE"]
-    },
-    {
-      "tietoryhma": "KOTIKUNTA",
-      "turvakiellonAlaisetKentat": ["KOTIMAINEN_POSTIOSOITE", "SAHKOPOSTIOSOITE", "VAKINAINEN_KOTIMAINEN_ASUINPAIKKATUNNUS", "KOTIKUNTA", "VAKINAINEN_KOTIMAINEN_OSOITE"]
-    },
-    {
-      "tietoryhma": "VAESTOKIRJANPITOKUNTA",
-      "kuntakoodi": "091",
-      "kuntaanMuuttopv": { "arvo": "2019-05-04", "tarkkuus": "PAIVA" }
-    },
-    {
-      "tietoryhma": "SAHKOPOSTIOSOITE",
-      "turvakiellonAlaisetKentat": ["KOTIMAINEN_POSTIOSOITE", "SAHKOPOSTIOSOITE", "VAKINAINEN_KOTIMAINEN_ASUINPAIKKATUNNUS", "KOTIKUNTA", "VAKINAINEN_KOTIMAINEN_OSOITE"]
-    },
-    {
-      "tietoryhma": "VAKINAINEN_KOTIMAINEN_ASUINPAIKKATUNNUS",
-      "turvakiellonAlaisetKentat": ["KOTIMAINEN_POSTIOSOITE", "SAHKOPOSTIOSOITE", "VAKINAINEN_KOTIMAINEN_ASUINPAIKKATUNNUS", "KOTIKUNTA", "VAKINAINEN_KOTIMAINEN_OSOITE"]
-    },
-    {
-      "tietoryhma": "KOTIMAINEN_POSTIOSOITE",
-      "turvakiellonAlaisetKentat": ["KOTIMAINEN_POSTIOSOITE", "SAHKOPOSTIOSOITE", "VAKINAINEN_KOTIMAINEN_ASUINPAIKKATUNNUS", "KOTIKUNTA", "VAKINAINEN_KOTIMAINEN_OSOITE"]
-    },
-    {
-      "tietoryhma": "AIDINKIELI",
-      "kielikoodi": "fi",
-      "kielikoodiISO6392": "fin",
-      "alkupv": { "arvo": "1986-06-02", "tarkkuus": "PAIVA" }
-    },
-    {
-      "tietoryhma": "KANSALAISUUS",
-      "henkilonKansalaisuudet": [
-        { "kansalaisuuskoodi": "fi" },
-        { "kansalaisuuskoodi": "sv" }
-      ]
-    },
-    {
-      "tietoryhma": "USKONTOKUNTALAJI",
-      "uskontokuntalaji": "EI_USKONTOKUNTAA"
-    },
-    {
-      "tietoryhma": "KUTSUMANIMI",
-      "nimilaji": "NYKYINEN_KUTSUMANIMI",
-      "nimi": "Helena",
-      "alkupv": { "arvo": "2019-05-10", "tarkkuus": "PAIVA" }
-    }
-  ]
+  { "tietoryhma": "TURVAKIELTO", "turvakieltoAktiivinen": true },
+  { "tietoryhma": "SUKUPUOLI", "sukupuoli": "NAINEN" },
+  {
+    "tietoryhma": "HENKILON_NIMI",
+    "etunimi": "Mathilda Helena Sophie",
+    "sukunimi": "Aslan Tes",
+    "alkupv": { "tarkkuus": "PAIVA", "arvo": "2019-05-08" }
+  },
+  { "tietoryhma": "SYNTYMAKOTIKUNTA", "kuntakoodi": "091" },
+  { "tietoryhma": "SIVIILISAATY", "siviilisaaty": "AVIOLIITOSSA" },
+  {
+    "tietoryhma": "SYNTYMAPAIVA",
+    "syntymapv": { "arvo": "1958-01-30", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "VAKINAINEN_KOTIMAINEN_OSOITE",
+    "turvakiellonAlaisetKentat": [
+      "KOTIMAINEN_POSTIOSOITE",
+      "SAHKOPOSTIOSOITE",
+      "VAKINAINEN_KOTIMAINEN_ASUINPAIKKATUNNUS",
+      "VAKINAINEN_KOTIMAINEN_OSOITE"
+    ]
+  },
+  {
+    "tietoryhma": "KOTIKUNTA",
+    "kuntakoodi": "091",
+    "kuntaanMuuttopv": { "arvo": "2019-05-04", "tarkkuus": "PAIVA" },
+    "kuntaanMuuttoPv": { "arvo": "2019-05-04", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "VAESTOKIRJANPITOKUNTA",
+    "kuntakoodi": "091",
+    "kuntaanMuuttopv": { "arvo": "2019-05-04", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "SAHKOPOSTIOSOITE",
+    "turvakiellonAlaisetKentat": [
+      "KOTIMAINEN_POSTIOSOITE",
+      "SAHKOPOSTIOSOITE",
+      "VAKINAINEN_KOTIMAINEN_ASUINPAIKKATUNNUS",
+      "VAKINAINEN_KOTIMAINEN_OSOITE"
+    ]
+  },
+  {
+    "tietoryhma": "VAKINAINEN_KOTIMAINEN_ASUINPAIKKATUNNUS",
+    "turvakiellonAlaisetKentat": [
+      "KOTIMAINEN_POSTIOSOITE",
+      "SAHKOPOSTIOSOITE",
+      "VAKINAINEN_KOTIMAINEN_ASUINPAIKKATUNNUS",
+      "VAKINAINEN_KOTIMAINEN_OSOITE"
+    ]
+  },
+  {
+    "tietoryhma": "KOTIMAINEN_POSTIOSOITE",
+    "turvakiellonAlaisetKentat": [
+      "KOTIMAINEN_POSTIOSOITE",
+      "SAHKOPOSTIOSOITE",
+      "VAKINAINEN_KOTIMAINEN_ASUINPAIKKATUNNUS",
+      "VAKINAINEN_KOTIMAINEN_OSOITE"
+    ]
+  },
+  {
+    "tietoryhma": "AIDINKIELI",
+    "kielikoodi": "fi",
+    "kielikoodiISO6392": "fin",
+    "alkupv": { "arvo": "1986-06-02", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "KANSALAISUUS",
+    "henkilonKansalaisuudet": [
+      { "kansalaisuuskoodi": "fi" },
+      { "kansalaisuuskoodi": "sv" }
+    ]
+  },
+  {
+    "tietoryhma": "USKONTOKUNTALAJI",
+    "uskontokuntalaji": "EI_USKONTOKUNTAA"
+  },
+  {
+    "tietoryhma": "KUTSUMANIMI",
+    "nimilaji": "NYKYINEN_KUTSUMANIMI",
+    "nimi": "Helena",
+    "alkupv": { "arvo": "2019-05-10", "tarkkuus": "PAIVA" }
+  }
+]

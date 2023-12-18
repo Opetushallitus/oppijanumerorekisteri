@@ -43,12 +43,14 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
+import fi.vm.sade.oppijanumerorekisteri.models.TurvakieltoKotikunta;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjMuutostieto;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjMuutostietoKirjausavain;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjPerustieto;
 import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.TurvakieltoKotikuntaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.VtjMuutostietoKirjausavainRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.VtjMuutostietoRepository;
 
@@ -70,6 +72,8 @@ public class VtjMuutostietoServiceTest {
     private KoodistoService koodistoService;
     @MockBean
     private SlackClient slackClient;
+    @MockBean
+    private TurvakieltoKotikuntaRepository turvakieltoKotikuntaRepository;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -212,6 +216,14 @@ public class VtjMuutostietoServiceTest {
         assertThat(actual.getKotikunta()).isNull();
         assertThat(actual.getYhteystiedotRyhma()).isEmpty();
         verify(henkiloRepository, times(1)).save(any());
+
+
+        ArgumentCaptor<TurvakieltoKotikunta> kotikuntaArg = ArgumentCaptor.forClass(TurvakieltoKotikunta.class);
+        verify(turvakieltoKotikuntaRepository, times(1)).save(kotikuntaArg.capture());
+        TurvakieltoKotikunta turvakieltoKotikunta = kotikuntaArg.getValue();
+        assertThat(turvakieltoKotikunta.getId()).isNull();
+        assertThat(turvakieltoKotikunta.getHenkiloId()).isEqualTo(1l);
+        assertThat(turvakieltoKotikunta.getKotikunta()).isEqualTo("091");
     }
 
     @Test

@@ -34,7 +34,7 @@ public class MuutostietoMapper extends TietoryhmaMapper {
     }
 
     @Override
-    public HenkiloForceUpdateDto mutateUpdateDto(HenkiloForceUpdateDto update, JsonNode tietoryhma, String locale) {
+    public HenkiloForceUpdateDto mutateUpdateDto(HenkiloForceUpdateDto update, JsonNode tietoryhma, String locale, boolean isTurvakielto) {
         switch (getStringValue(tietoryhma, "tietoryhma")) {
             case "HENKILON_NIMI":
                 if (isDataUpdate(tietoryhma)) {
