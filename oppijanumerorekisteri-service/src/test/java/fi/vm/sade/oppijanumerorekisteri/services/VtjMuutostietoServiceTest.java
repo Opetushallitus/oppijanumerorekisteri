@@ -72,7 +72,7 @@ public class VtjMuutostietoServiceTest {
     private KoodistoService koodistoService;
     @MockBean
     private SlackClient slackClient;
-    @MockBean
+    @Autowired
     private TurvakieltoKotikuntaRepository turvakieltoKotikuntaRepository;
     @Autowired
     private ObjectMapper objectMapper;
@@ -96,10 +96,12 @@ public class VtjMuutostietoServiceTest {
             .huoltajat(Set.of())
             .oidHenkilo("1.2.3.4.5")
             .build());
-    Optional<Henkilo> henkiloWithYhteystiedot = Optional.of(Henkilo.builder()
+
+    Henkilo.builder henkiloBuilder = Henkilo.builder()
             .etunimet("etu")
             .sukunimi("suku")
             .hetu(hetus.get(0))
+            .kotikunta("123")
             .yhteystiedotRyhma(Set.of(
                     new YhteystiedotRyhma("yhteystietotyyppi9", "alkupera1", false,
                             Set.of(new Yhteystieto(YhteystietoTyyppi.YHTEYSTIETO_KATUOSOITE,
@@ -112,8 +114,8 @@ public class VtjMuutostietoServiceTest {
                             Set.of(new Yhteystieto(YhteystietoTyyppi.YHTEYSTIETO_SAHKOPOSTI,
                                     "sahko@posti.fi")))))
             .huoltajat(Set.of())
-            .oidHenkilo("1.2.3.4.5")
-            .build());
+            .oidHenkilo("1.2.3.4.5");
+    Optional<Henkilo> henkiloWithYhteystiedot;
 
     @Before
     public void before() throws Exception {
@@ -136,6 +138,8 @@ public class VtjMuutostietoServiceTest {
                 objectMapper.readTree(new File("src/test/resources/vtj/perustietoHetuKorjaus.json")));
 
         henkilo.get().setId(1l);
+        henkiloWithYhteystiedot = Optional.of(henkiloBuilder.build());
+        henkiloWithYhteystiedot.get().setId(2l);
         when(koodistoService.list(Koodisto.KIELI))
                 .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI).koodi("fr").koodi("fi").koodi("sv")
                         .koodi("98")
@@ -217,12 +221,7 @@ public class VtjMuutostietoServiceTest {
         assertThat(actual.getYhteystiedotRyhma()).isEmpty();
         verify(henkiloRepository, times(1)).save(any());
 
-
-        ArgumentCaptor<TurvakieltoKotikunta> kotikuntaArg = ArgumentCaptor.forClass(TurvakieltoKotikunta.class);
-        verify(turvakieltoKotikuntaRepository, times(1)).save(kotikuntaArg.capture());
-        TurvakieltoKotikunta turvakieltoKotikunta = kotikuntaArg.getValue();
-        assertThat(turvakieltoKotikunta.getId()).isNull();
-        assertThat(turvakieltoKotikunta.getHenkiloId()).isEqualTo(1l);
+        TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(1l).get();
         assertThat(turvakieltoKotikunta.getKotikunta()).isEqualTo("091");
     }
 
@@ -523,6 +522,29 @@ public class VtjMuutostietoServiceTest {
         HenkiloForceUpdateDto actual = argument.getValue();
         assertThat(actual.getKotikunta()).isNull();
         assertThat(actual.getYhteystiedotRyhma()).isEmpty();
+
+        TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(2l).get();
+        assertThat(turvakieltoKotikunta.getKotikunta()).isEqualTo("123");
+    }
+
+    @Test
+    public void saveMuutostietoUpdatesTurvakieltoKotikunta() throws Exception {
+        Henkilo henkiloWithTurvakielto = henkiloBuilder.turvakielto(true).build();
+        henkiloWithTurvakielto.setId(3l);
+        turvakieltoKotikuntaRepository.save(TurvakieltoKotikunta.builder().henkiloId(3l).kotikunta("091").build());
+
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(Optional.of(henkiloWithTurvakielto));
+        VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoKunnastaToiseenMuutto.json");
+        muutostietoService.updateHenkilo(muutostieto);
+        verify(muutostietoRepository, times(1)).save(any());
+
+        ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
+        verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
+        HenkiloForceUpdateDto actual = argument.getValue();
+        assertThat(actual.getKotikunta()).isNull();
+
+        TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(3l).get();
+        assertThat(turvakieltoKotikunta.getKotikunta()).isEqualTo("287");
     }
 
     @Test

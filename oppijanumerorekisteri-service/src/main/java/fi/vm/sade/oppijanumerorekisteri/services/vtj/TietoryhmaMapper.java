@@ -46,7 +46,7 @@ public abstract class TietoryhmaMapper {
         }
     }
 
-    protected LocalDate parseDate(JsonNode date) {
+    protected static LocalDate parseDate(JsonNode date) {
         if (date == null) {
             return null;
         }

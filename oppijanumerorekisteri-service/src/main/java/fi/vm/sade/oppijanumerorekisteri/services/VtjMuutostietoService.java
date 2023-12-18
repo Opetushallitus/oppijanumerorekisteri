@@ -20,6 +20,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
+import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.TurvakieltoKotikunta;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjMuutostieto;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjMuutostietoKirjausavain;
@@ -223,6 +224,22 @@ public class VtjMuutostietoService {
         }
     }
 
+    private void updateTurvakieltoKotikunta(Henkilo henkilo, JsonNode tietoryhmat) {
+        String kotikunta = henkilo.getKotikunta();
+        for (JsonNode tietoryhma : tietoryhmat) {
+            if ("KOTIKUNTA".equals(getStringValue(tietoryhma, "tietoryhma"))
+                    && MuutostietoMapper.isDataUpdate(tietoryhma)
+                    && tietoryhma.has("kuntakoodi")) {
+                kotikunta = getStringValue(tietoryhma, "kuntakoodi");
+            }
+        }
+
+        TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(henkilo.getId())
+            .orElse(TurvakieltoKotikunta.builder().henkiloId(henkilo.getId()).build());
+        turvakieltoKotikunta.setKotikunta(kotikunta);
+        turvakieltoKotikuntaRepository.save(turvakieltoKotikunta);
+    }
+
     protected Void updateHenkilo(VtjMuutostieto muutostieto) {
         henkiloRepository.findByHetu(muutostieto.henkilotunnus).ifPresent(henkilo -> {
             if (henkilo.isPassivoitu()) {
@@ -231,7 +248,11 @@ public class VtjMuutostietoService {
             }
 
             try {
-                boolean isTurvakielto = false;
+                boolean isTurvakielto = henkilo.isTurvakielto() || isTurvakielto(muutostieto.tietoryhmat);
+                if (isTurvakielto) {
+                    updateTurvakieltoKotikunta(henkilo, muutostieto.tietoryhmat);
+                }
+
                 HenkiloForceReadDto read = mapper.map(henkilo, HenkiloForceReadDto.class);
                 HenkiloForceUpdateDto update = mapToUpdateDto(read, muutostieto.tietoryhmat, isTurvakielto, muutostietoMapper);
                 henkiloModificationService.forceUpdateHenkilo(update);

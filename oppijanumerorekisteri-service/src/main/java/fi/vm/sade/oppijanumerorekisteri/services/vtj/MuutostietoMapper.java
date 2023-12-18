@@ -23,7 +23,7 @@ public class MuutostietoMapper extends TietoryhmaMapper {
         super(koodistoService);
     }
 
-    private boolean isDataUpdate(JsonNode tietoryhma) {
+    public static boolean isDataUpdate(JsonNode tietoryhma) {
         String muutosattribuutti = getStringValue(tietoryhma, "muutosattribuutti");
         if (List.of("LISATTY", "KORJATTU", "MUUTETTU").contains(muutosattribuutti)) {
             LocalDate loppupv = parseDate(tietoryhma.get("loppupv"));
@@ -83,7 +83,7 @@ public class MuutostietoMapper extends TietoryhmaMapper {
                 }
                 break;
             case "KOTIKUNTA":
-                if (isTurvakiellonAlainen(tietoryhma)) {
+                if (isTurvakielto) {
                     update.setKotikunta(null);
                 } else if (isDataUpdate(tietoryhma)) {
                     update.setKotikunta(getStringValue(tietoryhma, "kuntakoodi"));
