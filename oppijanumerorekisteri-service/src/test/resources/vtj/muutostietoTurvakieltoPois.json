@@ -1,0 +1,11 @@
+[
+  {
+    "tietoryhma": "TURVAKIELTO",
+    "muutosattribuutti": "MUUTETTU",
+    "turvaLoppuPv": {
+      "arvo": "2019-06-26",
+      "tarkkuus": "PAIVA"
+    },
+    "turvakieltoAktiivinen": false
+  }
+]

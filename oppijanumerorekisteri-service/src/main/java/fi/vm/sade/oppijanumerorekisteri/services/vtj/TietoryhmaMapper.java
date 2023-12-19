@@ -125,7 +125,7 @@ public abstract class TietoryhmaMapper {
                 t -> "alkupera1".equals(t.getRyhmaAlkuperaTieto()) && ryhma.getKuvaus().equals(t.getRyhmaKuvaus()));
     }
 
-    protected boolean removeAllYhteystietoryhmas(Set<YhteystiedotRyhmaDto> yhteystietoryhmat) {
+    public static boolean removeAllYhteystietoryhmas(Set<YhteystiedotRyhmaDto> yhteystietoryhmat) {
         return yhteystietoryhmat.removeIf(t -> "alkupera1".equals(t.getRyhmaAlkuperaTieto()));
     }
 
@@ -248,5 +248,5 @@ public abstract class TietoryhmaMapper {
     }
 
     public abstract HenkiloForceUpdateDto mutateUpdateDto(HenkiloForceUpdateDto update, JsonNode tietoryhma,
-            String locale, boolean isTurvakielto);
+            String locale);
 }

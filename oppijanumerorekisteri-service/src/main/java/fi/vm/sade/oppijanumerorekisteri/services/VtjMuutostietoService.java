@@ -129,7 +129,7 @@ public class VtjMuutostietoService {
     }
 
     private HenkiloForceUpdateDto mapToUpdateDto(HenkiloForceReadDto read, JsonNode tietoryhmat,
-            boolean isTurvakielto, TietoryhmaMapper mapper) {
+            TietoryhmaMapper mapper) {
         HenkiloForceUpdateDto update = new HenkiloForceUpdateDto();
         update.setOidHenkilo(read.getOidHenkilo());
         update.setTurvakielto(read.getTurvakielto());
@@ -138,7 +138,7 @@ public class VtjMuutostietoService {
         update.setKaikkiHetut(read.getKaikkiHetut());
         String locale = findYhteystietoLocale(read, tietoryhmat);
         for (JsonNode tietoryhma : tietoryhmat) {
-            mapper.mutateUpdateDto(update, tietoryhma, locale, isTurvakielto);
+            mapper.mutateUpdateDto(update, tietoryhma, locale);
         }
         VtjMuutostietoValidator validator = new VtjMuutostietoValidator(koodistoService);
         validator.validateAndCorrectErrors(read, update);
@@ -154,11 +154,19 @@ public class VtjMuutostietoService {
         return false;
     }
 
-    private boolean isTurvakielto(JsonNode tietoryhmat) {
+    private boolean isTurvakieltoAdded(JsonNode tietoryhmat) {
         for (JsonNode tietoryhma : tietoryhmat) {
-            if ("TURVAKIELTO".equals(getStringValue(tietoryhma, "tietoryhma"))
-                        && tietoryhma.get("turvakieltoAktiivinen").asBoolean()) {
-                return true;
+            if ("TURVAKIELTO".equals(getStringValue(tietoryhma, "tietoryhma"))) {
+                return tietoryhma.get("turvakieltoAktiivinen").asBoolean();
+            }
+        }
+        return false;
+    }
+
+    private boolean isTurvakieltoRemoved(JsonNode tietoryhmat) {
+        for (JsonNode tietoryhma : tietoryhmat) {
+            if ("TURVAKIELTO".equals(getStringValue(tietoryhma, "tietoryhma"))) {
+                return !tietoryhma.get("turvakieltoAktiivinen").asBoolean();
             }
         }
         return false;
@@ -186,14 +194,13 @@ public class VtjMuutostietoService {
                         henkilo.getOidHenkilo()), null);
                 return;
             }
-            boolean isTurvakielto = isTurvakielto(perustieto.tietoryhmat);
-
             HenkiloForceReadDto read = mapper.map(henkilo, HenkiloForceReadDto.class);
-            HenkiloForceUpdateDto update = mapToUpdateDto(read, perustieto.tietoryhmat, isTurvakielto, perustietoMapper);
-            henkiloModificationService.forceUpdateHenkilo(update);
-            if (isTurvakielto) {
+            HenkiloForceUpdateDto update = mapToUpdateDto(read, perustieto.tietoryhmat, perustietoMapper);
+            if (isTurvakieltoAdded(perustieto.tietoryhmat)) {
+                update.setKotikunta(null);
                 saveTurvakieltoKotikunta(henkilo.getId(), perustieto.tietoryhmat);
             }
+            henkiloModificationService.forceUpdateHenkilo(update);
             henkilo.setVtjBucket(henkilo.getId() % 100);
             henkiloRepository.save(henkilo);
         });
@@ -223,7 +230,6 @@ public class VtjMuutostietoService {
             }
         }
     }
-
     private void updateTurvakieltoKotikunta(Henkilo henkilo, JsonNode tietoryhmat) {
         String kotikunta = henkilo.getKotikunta();
         for (JsonNode tietoryhma : tietoryhmat) {
@@ -234,10 +240,22 @@ public class VtjMuutostietoService {
             }
         }
 
-        TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(henkilo.getId())
-            .orElse(TurvakieltoKotikunta.builder().henkiloId(henkilo.getId()).build());
-        turvakieltoKotikunta.setKotikunta(kotikunta);
-        turvakieltoKotikuntaRepository.save(turvakieltoKotikunta);
+        if (kotikunta != null) {
+            TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(henkilo.getId())
+                .orElse(TurvakieltoKotikunta.builder().henkiloId(henkilo.getId()).build());
+            turvakieltoKotikunta.setKotikunta(kotikunta);
+            turvakieltoKotikuntaRepository.save(turvakieltoKotikunta);
+        }
+    }
+
+    private String removeTurvakieltoKotikunta(Henkilo henkilo, JsonNode tietoryhmat) {
+        Optional<TurvakieltoKotikunta> turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(henkilo.getId());
+        if (turvakieltoKotikunta.isPresent()) {
+            turvakieltoKotikuntaRepository.delete(turvakieltoKotikunta.get());
+            return turvakieltoKotikunta.get().getKotikunta();
+        } else {
+            return null;
+        }
     }
 
     protected Void updateHenkilo(VtjMuutostieto muutostieto) {
@@ -248,13 +266,20 @@ public class VtjMuutostietoService {
             }
 
             try {
-                boolean isTurvakielto = henkilo.isTurvakielto() || isTurvakielto(muutostieto.tietoryhmat);
+                boolean isTurvakielto = henkilo.isTurvakielto() || isTurvakieltoAdded(muutostieto.tietoryhmat);
                 if (isTurvakielto) {
                     updateTurvakieltoKotikunta(henkilo, muutostieto.tietoryhmat);
                 }
 
                 HenkiloForceReadDto read = mapper.map(henkilo, HenkiloForceReadDto.class);
-                HenkiloForceUpdateDto update = mapToUpdateDto(read, muutostieto.tietoryhmat, isTurvakielto, muutostietoMapper);
+                HenkiloForceUpdateDto update = mapToUpdateDto(read, muutostieto.tietoryhmat, muutostietoMapper);
+                if (isTurvakieltoRemoved(muutostieto.tietoryhmat)) {
+                    update.setKotikunta(removeTurvakieltoKotikunta(henkilo, muutostieto.tietoryhmat));
+                } else if (isTurvakielto) {
+                    TietoryhmaMapper.removeAllYhteystietoryhmas(update.getYhteystiedotRyhma());
+                    update.setKotikunta(null);
+                }
+
                 henkiloModificationService.forceUpdateHenkilo(update);
             } catch (UnprocessableEntityException uee) {
                 BindException be = (BindException) uee.getErrors();

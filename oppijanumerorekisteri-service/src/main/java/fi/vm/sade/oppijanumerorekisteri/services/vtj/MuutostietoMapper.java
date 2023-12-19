@@ -34,7 +34,7 @@ public class MuutostietoMapper extends TietoryhmaMapper {
     }
 
     @Override
-    public HenkiloForceUpdateDto mutateUpdateDto(HenkiloForceUpdateDto update, JsonNode tietoryhma, String locale, boolean isTurvakielto) {
+    public HenkiloForceUpdateDto mutateUpdateDto(HenkiloForceUpdateDto update, JsonNode tietoryhma, String locale) {
         switch (getStringValue(tietoryhma, "tietoryhma")) {
             case "HENKILON_NIMI":
                 if (isDataUpdate(tietoryhma)) {
@@ -77,15 +77,9 @@ public class MuutostietoMapper extends TietoryhmaMapper {
             case "TURVAKIELTO":
                 boolean turvakielto = tietoryhma.get("turvakieltoAktiivinen").asBoolean();
                 update.setTurvakielto(turvakielto);
-                if (turvakielto) {
-                    removeAllYhteystietoryhmas(update.getYhteystiedotRyhma());
-                    update.setKotikunta(null);
-                }
                 break;
             case "KOTIKUNTA":
-                if (isTurvakielto) {
-                    update.setKotikunta(null);
-                } else if (isDataUpdate(tietoryhma)) {
+                if (isDataUpdate(tietoryhma)) {
                     update.setKotikunta(getStringValue(tietoryhma, "kuntakoodi"));
                 }
                 break;
