@@ -9,6 +9,7 @@ import fi.vm.sade.oppijanumerorekisteri.audit.VirkailijaAuditLogger;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -36,6 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
     @Autowired
     private HenkiloRepository henkiloRepository;
+    @Autowired
+    private OidGenerator oidGenerator;
     @MockBean
     private VirkailijaAuditLogger auditLogger;
     @Captor
@@ -171,6 +174,62 @@ public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
                 post("/henkilo/1.2.246.562.24.27411130238/forcelink"),
                 List.of("1.2.246.562.24.16608157297")
         )).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @UserRekisterinpitaja
+    public void linkitysResultingInDuplicateBecomingMasterIsAllowed() throws Exception {
+        LocalDateTime now = new LocalDateTime();
+
+        Henkilo original = henkiloRepository.save(Henkilo.builder()
+                .oidHenkilo(oidGenerator.generateOID())
+                .hetu("080863-924N")
+                .kaikkiHetut(Set.of("080863-924N"))
+                .etunimet("Maija")
+                .kutsumanimi("Maija")
+                .sukunimi("Mehiläinen")
+                .yksiloityVTJ(true)
+                .yksiloity(false)
+                .created(now.toDate())
+                .modified(now.toDate())
+                .build());
+
+        Henkilo firstDuplicate = henkiloRepository.save(Henkilo.builder()
+                .oidHenkilo(oidGenerator.generateOID())
+                .etunimet("Maija")
+                .kutsumanimi("Maija")
+                .sukunimi("Mehiläinen")
+                .yksiloityVTJ(false)
+                .yksiloity(false)
+                .created(now.toDate())
+                .modified(now.toDate())
+                .build());
+
+        mvc.perform(createRequest(
+                post("/henkilo/" + original.getOidHenkilo() + "/link"),
+                List.of(firstDuplicate.getOidHenkilo())
+        )).andExpect(status().isOk());
+
+        assertLinked(original.getOidHenkilo(), firstDuplicate.getOidHenkilo());
+
+        Henkilo secondDuplicate = henkiloRepository.save(Henkilo.builder()
+                .oidHenkilo(oidGenerator.generateOID())
+                .etunimet("Maija")
+                .kutsumanimi("Maija")
+                .sukunimi("Mehiläinen")
+                .yksiloityVTJ(false)
+                .yksiloity(false)
+                .created(now.toDate())
+                .modified(now.toDate())
+                .build());
+
+        mvc.perform(createRequest(
+                post("/henkilo/" + firstDuplicate.getOidHenkilo() + "/link"),
+                List.of(secondDuplicate.getOidHenkilo())
+        )).andExpect(status().isOk());
+
+        assertLinked(firstDuplicate.getOidHenkilo(), original.getOidHenkilo());
+        assertLinked(firstDuplicate.getOidHenkilo(), secondDuplicate.getOidHenkilo());
     }
 
     void assertNotLinked(String masterOid, String slaveOid) {
