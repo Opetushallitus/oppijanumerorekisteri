@@ -178,7 +178,7 @@ public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
 
     @Test
     @UserRekisterinpitaja
-    public void linkitysResultingInDuplicateBecomingMasterIsAllowed() throws Exception {
+    public void linkitysResultingInDuplicateBecomingMasterIsNotAllowed() throws Exception {
         LocalDateTime now = new LocalDateTime();
 
         Henkilo original = henkiloRepository.save(Henkilo.builder()
@@ -226,10 +226,11 @@ public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
         mvc.perform(createRequest(
                 post("/henkilo/" + firstDuplicate.getOidHenkilo() + "/link"),
                 List.of(secondDuplicate.getOidHenkilo())
-        )).andExpect(status().isOk());
+        )).andExpect(status().isBadRequest());
 
-        assertLinked(firstDuplicate.getOidHenkilo(), original.getOidHenkilo());
-        assertLinked(firstDuplicate.getOidHenkilo(), secondDuplicate.getOidHenkilo());
+        assertLinked(original.getOidHenkilo(), firstDuplicate.getOidHenkilo());
+        assertNotLinked(original.getOidHenkilo(), secondDuplicate.getOidHenkilo());
+        assertNotLinked(firstDuplicate.getOidHenkilo(), secondDuplicate.getOidHenkilo());
     }
 
     void assertNotLinked(String masterOid, String slaveOid) {

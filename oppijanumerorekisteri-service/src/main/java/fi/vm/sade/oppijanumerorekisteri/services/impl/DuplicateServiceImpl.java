@@ -171,6 +171,12 @@ public class DuplicateServiceImpl implements DuplicateService {
     @Transactional(propagation = Propagation.MANDATORY)
     public LinkResult linkHenkilos(String henkiloOid, List<String> similarHenkiloOids) {
         log.info("Linkin henkilos {}, {}", henkiloOid, String.join(", ", similarHenkiloOids));
+        henkiloDataRepository.findByOidHenkilo(henkiloOid).ifPresent(henkilo -> {
+            if (henkilo.isDuplicate()) {
+                throw new ValidationException("Henkilo " + henkiloOid + "is already a duplicate");
+            }
+        });
+
         similarHenkiloOids = similarHenkiloOids.stream().filter(oid -> !henkiloOid.equals(oid)).distinct()
                 .collect(toList());
 
