@@ -135,7 +135,12 @@ class AdminUserContent extends React.Component<Props> {
             <EditButton editAction={this.props.edit} disabled={duplicate || passivoitu} />
         ) : null;
         const yksiloiHetutonButton = <YksiloiHetutonButton disabled={duplicate || passivoitu} />;
-        const puraHetuttomanYksilointiButton = <PuraHetuttomanYksilointiButton disabled={duplicate || passivoitu} />;
+        const puraHetuttomanYksilointiButton =
+            this.props.henkilo.henkilo.yksiloity &&
+            !this.props.henkilo.henkilo.hetu &&
+            !this.props.henkilo.henkilo.yksiloityVTJ ? (
+                <PuraHetuttomanYksilointiButton disabled={duplicate || passivoitu} />
+            ) : null;
         const passivoiButton =
             !passivoitu && hasHenkiloReadUpdateRights ? <PassivoiButton disabled={duplicate || passivoitu} /> : null;
         const poistaKayttajatunnusBtn =

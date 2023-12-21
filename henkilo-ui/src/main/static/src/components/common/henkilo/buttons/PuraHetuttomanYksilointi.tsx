@@ -19,10 +19,6 @@ type Props = OwnProps & StateProps;
 
 const PuraHetuttomanYksilointiButton = (props: Props) => {
     const [puraYksilointi] = usePuraYksilointiMutation();
-    if (props.henkilo.henkilo.yksiloityVTJ || (props.henkilo.henkilo.hetu && props.henkilo.henkilo.yksiloity)) {
-        return null;
-    }
-
     return (
         <ConfirmButton
             key="purayksilointi"
