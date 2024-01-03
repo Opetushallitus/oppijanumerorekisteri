@@ -95,24 +95,6 @@ public class VtjMuutostietoService {
         }
     }
 
-    private void fetchMuutostietos() {
-        for (int i = 0; i < 100; i++) {
-            final int bucketId = i;
-            log.info("fetching muutostieto for bucket " + bucketId);
-            long start = System.currentTimeMillis();
-
-            boolean ajanTasalla;
-            List<String> hetus = henkiloRepository.findHetusInVtjBucket(bucketId);
-            log.info("bucket " + bucketId + " size is " + hetus.size());
-            do {
-                ajanTasalla = transaction.execute(status -> fetchMuutostietoBatchForBucket(bucketId, hetus));
-            } while (!ajanTasalla);
-
-            long duration = System.currentTimeMillis() - start;
-            log.info("fetching muutostieto for bucket took " + duration + "ms");
-        }
-    }
-
     private String findYhteystietoLocale(HenkiloForceReadDto read, JsonNode tietoryhmat) {
         if (read.getAsiointiKieli() != null) {
             return read.getAsiointiKieli().getKieliKoodi();
@@ -207,29 +189,6 @@ public class VtjMuutostietoService {
         return null;
     }
 
-    private void updateNewHenkilosWithPerustieto() {
-        List<String> hetusWithoutBucket = henkiloRepository.findHetusWithoutVtjBucket();
-        log.info("found " + hetusWithoutBucket.size() + " hetus without vtj bucket");
-
-        List<List<String>> partitioned = Lists.partition(hetusWithoutBucket, 100);
-        for (List<String> partition : partitioned) {
-            try {
-                muutostietoClient.fetchHenkiloPerustieto(partition)
-                        .stream()
-                        .forEach(perustieto -> transaction.execute(status -> savePerustieto(perustieto)));
-            } catch (InterruptedException ie) {
-                log.error("interrupted while fetching perustieto", ie);
-                Thread.currentThread().interrupt();
-            } catch (UnprocessableEntityException uee) {
-                BindException bindException = (BindException) uee.getErrors();
-                log.error("exception while processing perustieto", bindException);
-                slackClient.sendToSlack("Virhe VTJ-perustietojen päivityksessä", bindException.getMessage());
-            } catch (Exception e) {
-                log.error("exception while fetching perustieto", e);
-                slackClient.sendToSlack("Virhe VTJ-perustietojen tallennuksessa", e.getMessage());
-            }
-        }
-    }
     private void updateTurvakieltoKotikunta(Henkilo henkilo, JsonNode tietoryhmat) {
         String kotikunta = henkilo.getKotikunta();
         for (JsonNode tietoryhma : tietoryhmat) {
@@ -297,7 +256,54 @@ public class VtjMuutostietoService {
         return null;
     }
 
-    private void updateHenkilosWithMuutostietos() {
+    public void handlePerustietoTask() {
+        log.info("starting perustieto task");
+        List<String> hetusWithoutBucket = henkiloRepository.findHetusWithoutVtjBucket();
+        log.info("found " + hetusWithoutBucket.size() + " hetus without vtj bucket");
+
+        List<List<String>> partitioned = Lists.partition(hetusWithoutBucket, 100);
+        for (List<String> partition : partitioned) {
+            try {
+                muutostietoClient.fetchHenkiloPerustieto(partition)
+                        .stream()
+                        .forEach(perustieto -> transaction.execute(status -> savePerustieto(perustieto)));
+            } catch (InterruptedException ie) {
+                log.error("interrupted while fetching perustieto", ie);
+                Thread.currentThread().interrupt();
+            } catch (UnprocessableEntityException uee) {
+                BindException bindException = (BindException) uee.getErrors();
+                log.error("exception while processing perustieto", bindException);
+                slackClient.sendToSlack("Virhe VTJ-perustietojen päivityksessä", bindException.getMessage());
+            } catch (Exception e) {
+                log.error("exception while fetching perustieto", e);
+                slackClient.sendToSlack("Virhe VTJ-perustietojen tallennuksessa", e.getMessage());
+            }
+        }
+        log.info("finishing perustieto task");
+    }
+
+    public void handleMuutostietoFetchTask() {
+        log.info("starting muutostieto fetch task");
+        for (int i = 0; i < 100; i++) {
+            final int bucketId = i;
+            log.info("fetching muutostieto for bucket " + bucketId);
+            long start = System.currentTimeMillis();
+
+            boolean ajanTasalla;
+            List<String> hetus = henkiloRepository.findHetusInVtjBucket(bucketId);
+            log.info("bucket " + bucketId + " size is " + hetus.size());
+            do {
+                ajanTasalla = transaction.execute(status -> fetchMuutostietoBatchForBucket(bucketId, hetus));
+            } while (!ajanTasalla);
+
+            long duration = System.currentTimeMillis() - start;
+            log.info("fetching muutostieto for bucket took " + duration + "ms");
+        }
+        log.info("finishing muutostieto fetch task");
+    }
+
+    public void handleMuutostietoTask() {
+        log.info("starting muutostieto task");
         List<VtjMuutostieto> muutostietos = muutostietoRepository.findByProcessedIsNullOrderByMuutospvAsc();
         log.info("found " + muutostietos.size() + " unprocessed muutostietos");
         muutostietos.stream().forEach(muutostieto -> {
@@ -309,23 +315,6 @@ public class VtjMuutostietoService {
                 muutostietoRepository.save(muutostieto);
             }
         });
-    }
-
-    public void handlePerustietoTask() {
-        log.info("starting perustieto task");
-        updateNewHenkilosWithPerustieto();
-        log.info("finishing perustieto task");
-    }
-
-    public void handleMuutostietoFetchTask() {
-        log.info("starting muutostieto fetch task");
-        fetchMuutostietos();
-        log.info("finishing muutostieto fetch task");
-    }
-
-    public void handleMuutostietoTask() {
-        log.info("starting muutostieto task");
-        updateHenkilosWithMuutostietos();
         log.info("finishing muutostieto task");
     }
 }
