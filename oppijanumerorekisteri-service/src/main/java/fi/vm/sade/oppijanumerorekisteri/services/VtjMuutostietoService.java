@@ -217,6 +217,19 @@ public class VtjMuutostietoService {
         }
     }
 
+    private void addOrRemoveTurvakieltoKotikunta(HenkiloForceUpdateDto update, Henkilo henkilo, JsonNode tietoryhmat) {
+        boolean isTurvakielto = henkilo.isTurvakielto() || isTurvakieltoAdded(tietoryhmat);
+        if (isTurvakielto) {
+            updateTurvakieltoKotikunta(henkilo, tietoryhmat);
+            TietoryhmaMapper.removeAllYhteystietoryhmas(update.getYhteystiedotRyhma());
+            update.setKotikunta(null);
+        }
+        
+        if (isTurvakieltoRemoved(tietoryhmat)) {
+            update.setKotikunta(removeTurvakieltoKotikunta(henkilo, tietoryhmat));
+        }
+    }
+
     protected Void updateHenkilo(VtjMuutostieto muutostieto) {
         henkiloRepository.findByHetu(muutostieto.henkilotunnus).ifPresent(henkilo -> {
             if (henkilo.isPassivoitu()) {
@@ -225,20 +238,9 @@ public class VtjMuutostietoService {
             }
 
             try {
-                boolean isTurvakielto = henkilo.isTurvakielto() || isTurvakieltoAdded(muutostieto.tietoryhmat);
-                if (isTurvakielto) {
-                    updateTurvakieltoKotikunta(henkilo, muutostieto.tietoryhmat);
-                }
-
                 HenkiloForceReadDto read = mapper.map(henkilo, HenkiloForceReadDto.class);
                 HenkiloForceUpdateDto update = mapToUpdateDto(read, muutostieto.tietoryhmat, muutostietoMapper);
-                if (isTurvakieltoRemoved(muutostieto.tietoryhmat)) {
-                    update.setKotikunta(removeTurvakieltoKotikunta(henkilo, muutostieto.tietoryhmat));
-                } else if (isTurvakielto) {
-                    TietoryhmaMapper.removeAllYhteystietoryhmas(update.getYhteystiedotRyhma());
-                    update.setKotikunta(null);
-                }
-
+                addOrRemoveTurvakieltoKotikunta(update, henkilo, muutostieto.tietoryhmat);
                 henkiloModificationService.forceUpdateHenkilo(update);
             } catch (UnprocessableEntityException uee) {
                 BindException be = (BindException) uee.getErrors();
