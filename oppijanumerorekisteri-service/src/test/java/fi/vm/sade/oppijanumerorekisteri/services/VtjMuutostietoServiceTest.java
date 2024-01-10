@@ -46,6 +46,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.models.KotikuntaHistoria;
 import fi.vm.sade.oppijanumerorekisteri.models.TurvakieltoKotikunta;
+import fi.vm.sade.oppijanumerorekisteri.models.TurvakieltoKotikuntaHistoria;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjMuutostieto;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjMuutostietoKirjausavain;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjPerustieto;
@@ -53,6 +54,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KotikuntaHistoriaRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.TurvakieltoKotikuntaHistoriaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TurvakieltoKotikuntaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.VtjMuutostietoKirjausavainRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.VtjMuutostietoRepository;
@@ -79,6 +81,8 @@ public class VtjMuutostietoServiceTest {
     private TurvakieltoKotikuntaRepository turvakieltoKotikuntaRepository;
     @Autowired
     private KotikuntaHistoriaRepository kotikuntaHistoriaRepository;
+    @Autowired
+    private TurvakieltoKotikuntaHistoriaRepository turvakieltoKotikuntaHistoriaRepository;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -128,6 +132,12 @@ public class VtjMuutostietoServiceTest {
                 .containsExactlyInAnyOrder(values);
     }
 
+    private void assertTurvakieltoKotikuntaHistoria(Long henkiloId, Tuple... values) {
+        assertThat(turvakieltoKotikuntaHistoriaRepository.findAllByHenkiloId(henkiloId))
+                .extracting(TurvakieltoKotikuntaHistoria::getKotikunta, TurvakieltoKotikuntaHistoria::getKuntaanMuuttopv, TurvakieltoKotikuntaHistoria::getKunnastaPoisMuuttopv)
+                .containsExactlyInAnyOrder(values);
+    }
+
     @Before
     public void before() throws Exception {
         muutostietos = List.of(
@@ -164,7 +174,7 @@ public class VtjMuutostietoServiceTest {
     }
 
     @Test
-    public void savePerustietoParsesCorrectForceUpdateDto() throws Exception {
+    public void savePerustieto() throws Exception {
         henkilo.get().setId(1l);
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         muutostietoService.savePerustieto(perustieto);
@@ -242,6 +252,12 @@ public class VtjMuutostietoServiceTest {
     public void savePerustietoParsesTurvakielto() throws Exception {
         henkilo.get().setId(2l);
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
+        kotikuntaHistoriaRepository.save(KotikuntaHistoria.builder()
+                        .henkiloId(2l)
+                        .kotikunta("123")
+                        .kuntaanMuuttopv(LocalDate.of(2015, 3, 12))
+                        .build());
+
         muutostietoService.savePerustieto(turvakielto);
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -254,6 +270,12 @@ public class VtjMuutostietoServiceTest {
 
         TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(2l).get();
         assertThat(turvakieltoKotikunta.getKotikunta()).isEqualTo("091");
+
+        assertKotikuntaHistoria(2l,
+                tuple("123", LocalDate.of(2015, 3, 12), LocalDate.of(2019, 5, 3)));
+
+        assertTurvakieltoKotikuntaHistoria(2l,
+                tuple("091", LocalDate.of(2019, 5, 4), null));
     }
 
     @Test
