@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletionException;
+import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -180,9 +181,10 @@ public class VtjMuutostietoService {
         }
     }
 
-    private void saveKotikuntaHistoria(Long henkiloId, JsonNode tietoryhmat) {
+    private void saveKotikuntaHistoria(Long henkiloId, JsonNode tietoryhmat, Function<JsonNode, Boolean> tietoryhmaValidator) {
         JsonNode tietoryhma = getTietoryhma(tietoryhmat, "KOTIKUNTA");
-        if (tietoryhma != null && tietoryhma.has("kuntakoodi")) {
+        if (tietoryhma != null && tietoryhma.has("kuntakoodi")
+                && (tietoryhmaValidator == null || tietoryhmaValidator.apply(tietoryhma))) {
             String kotikunta = getStringValue(tietoryhma, "kuntakoodi");
             LocalDate muuttopv = TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv"));
             Optional<KotikuntaHistoria> existingKotikuntaHistoria = kotikuntaHistoriaRepository.findByHenkiloIdAndKunnastaPoisMuuttopvIsNull(henkiloId);
@@ -209,7 +211,7 @@ public class VtjMuutostietoService {
                 update.setKotikunta(null);
                 saveTurvakieltoKotikuntaPerustieto(henkilo.getId(), perustieto.tietoryhmat);
             }
-            saveKotikuntaHistoria(henkilo.getId(), perustieto.tietoryhmat);
+            saveKotikuntaHistoria(henkilo.getId(), perustieto.tietoryhmat, null);
             henkiloModificationService.forceUpdateHenkilo(update);
             henkilo.setVtjBucket(henkilo.getId() % 100);
             henkiloRepository.save(henkilo);
@@ -269,6 +271,7 @@ public class VtjMuutostietoService {
                 HenkiloForceReadDto read = mapper.map(henkilo, HenkiloForceReadDto.class);
                 HenkiloForceUpdateDto update = mapToUpdateDto(read, muutostieto.tietoryhmat, muutostietoMapper);
                 addOrRemoveTurvakieltoKotikunta(update, henkilo, muutostieto.tietoryhmat);
+                saveKotikuntaHistoria(henkilo.getId(), muutostieto.tietoryhmat, MuutostietoMapper::isDataUpdate);
                 henkiloModificationService.forceUpdateHenkilo(update);
             } catch (UnprocessableEntityException uee) {
                 BindException be = (BindException) uee.getErrors();

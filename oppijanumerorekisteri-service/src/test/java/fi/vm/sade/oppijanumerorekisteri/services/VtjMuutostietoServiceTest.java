@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.assertj.core.groups.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -121,6 +122,12 @@ public class VtjMuutostietoServiceTest {
             .oidHenkilo("1.2.3.4.5");
     Optional<Henkilo> henkiloWithYhteystiedot;
 
+    private void assertKotikuntaHistoria(Long henkiloId, Tuple... values) {
+        assertThat(kotikuntaHistoriaRepository.findAllByHenkiloId(henkiloId))
+                .extracting(KotikuntaHistoria::getKotikunta, KotikuntaHistoria::getKuntaanMuuttopv, KotikuntaHistoria::getKunnastaPoisMuuttopv)
+                .containsExactlyInAnyOrder(values);
+    }
+
     @Before
     public void before() throws Exception {
         muutostietos = List.of(
@@ -211,11 +218,7 @@ public class VtjMuutostietoServiceTest {
         }
         verify(henkiloRepository, times(1)).save(any());
 
-        List<KotikuntaHistoria> kotikuntaHistoria = kotikuntaHistoriaRepository.findAllByHenkiloId(1l);
-        assertThat(kotikuntaHistoria.size()).isEqualTo(1);
-        assertThat(kotikuntaHistoria.get(0).getKotikunta()).isEqualTo("091");
-        assertThat(kotikuntaHistoria.get(0).getKuntaanMuuttopv()).isEqualTo(LocalDate.of(2019, 5, 4));
-        assertThat(kotikuntaHistoria.get(0).getKunnastaPoisMuuttopv()).isNull();
+        assertKotikuntaHistoria(1l, tuple("091", LocalDate.of(2019, 5, 4), null));
     }
 
     @Test
@@ -230,11 +233,9 @@ public class VtjMuutostietoServiceTest {
 
         muutostietoService.savePerustieto(perustieto);
 
-        assertThat(kotikuntaHistoriaRepository.findAllByHenkiloId(11l))
-                .extracting(KotikuntaHistoria::getKotikunta, KotikuntaHistoria::getKuntaanMuuttopv, KotikuntaHistoria::getKunnastaPoisMuuttopv)
-                .containsExactlyInAnyOrder(
-                        tuple("123", LocalDate.of(2015, 3, 12), LocalDate.of(2019, 5, 3)),
-                        tuple("091", LocalDate.of(2019, 5, 4), null));
+        assertKotikuntaHistoria(11l,
+                tuple("123", LocalDate.of(2015, 3, 12), LocalDate.of(2019, 5, 3)),
+                tuple("091", LocalDate.of(2019, 5, 4), null));
     }
 
     @Test
@@ -518,7 +519,15 @@ public class VtjMuutostietoServiceTest {
 
     @Test
     public void saveMuutostietoSavesKunnastaToiseenMuutto() throws Exception {
+        henkilo.get().setId(13245l);
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
+
+        kotikuntaHistoriaRepository.save(KotikuntaHistoria.builder()
+                        .henkiloId(13245l)
+                        .kotikunta("222")
+                        .kuntaanMuuttopv(LocalDate.of(2012, 1, 5))
+                        .build());
+
         VtjMuutostieto muutostieto = getMuutostieto(
                 "src/test/resources/vtj/muutostietoKunnastaToiseenMuutto.json");
         muutostietoService.updateHenkilo(muutostieto);
@@ -545,6 +554,10 @@ public class VtjMuutostietoServiceTest {
                     break;
             }
         }
+
+        assertKotikuntaHistoria(13245l,
+                tuple("222", LocalDate.of(2012, 1, 5), LocalDate.of(2019, 6, 26)),
+                tuple("287", LocalDate.of(2019, 6, 27), null));
     }
 
     private HenkiloForceUpdateDto doUpdateHenkilo(Optional<Henkilo> henkilo, String updateJson) throws Exception {

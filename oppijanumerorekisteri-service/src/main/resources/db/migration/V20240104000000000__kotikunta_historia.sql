@@ -31,3 +31,5 @@ ALTER TABLE turvakielto_kotikunta_historia
 CREATE UNIQUE INDEX unique_turvakielto_kotikunta_historia_henkilo_id_idx
     ON turvakielto_kotikunta_historia (henkilo_id)
     WHERE kunnasta_pois_muuttopv IS NULL;
+
+ALTER TABLE turvakielto_kotikunta ADD CONSTRAINT unique_turvakielto_kotikunta_henkilo_id UNIQUE (henkilo_id);
