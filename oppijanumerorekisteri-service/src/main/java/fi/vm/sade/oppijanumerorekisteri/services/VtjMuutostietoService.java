@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletionException;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import fi.vm.sade.oppijanumerorekisteri.clients.VtjMuutostietoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.model.VtjMuutostietoResponse;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotRyhmaDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -184,24 +186,19 @@ public class VtjMuutostietoService {
         });
     }
 
-    private void saveTurvakieltoKotikuntaPerustieto(Long henkiloId, JsonNode tietoryhmat) {
-        JsonNode tietoryhma = getTietoryhma(tietoryhmat, "KOTIKUNTA");
-        if (tietoryhma != null && tietoryhma.has("kuntakoodi")) {
-            String kotikunta = getStringValue(tietoryhma, "kuntakoodi");
-            LocalDate muuttopv = TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv"));
-            turvakieltoKotikuntaRepository.findByHenkiloId(henkiloId)
-                .or(() -> Optional.of(TurvakieltoKotikunta.builder().henkiloId(henkiloId).build()))
-                .ifPresent(turvakieltoKotikunta -> {
-                    turvakieltoKotikunta.setKotikunta(kotikunta);
-                    turvakieltoKotikuntaRepository.save(turvakieltoKotikunta);
-                });
-            setKunnastaPoisMuuttopv(henkiloId, muuttopv.minusDays(1));
-            TurvakieltoKotikuntaHistoria kotikuntaHistoria = TurvakieltoKotikuntaHistoria.builder().henkiloId(henkiloId).kotikunta(kotikunta).kuntaanMuuttopv(muuttopv).build();
-            turvakieltoKotikuntaHistoriaRepository.save(kotikuntaHistoria);
-        }
+    private void insertOrUpdateTurvakieltoKotikunta(Long henkiloId, String kotikunta, LocalDate muuttopv) {
+        turvakieltoKotikuntaRepository.findByHenkiloId(henkiloId)
+            .or(() -> Optional.of(TurvakieltoKotikunta.builder().henkiloId(henkiloId).build()))
+            .ifPresent(turvakieltoKotikunta -> {
+                turvakieltoKotikunta.setKotikunta(kotikunta);
+                turvakieltoKotikuntaRepository.save(turvakieltoKotikunta);
+            });
+        setKunnastaPoisMuuttopv(henkiloId, muuttopv.minusDays(1));
+        TurvakieltoKotikuntaHistoria kotikuntaHistoria = TurvakieltoKotikuntaHistoria.builder().henkiloId(henkiloId).kotikunta(kotikunta).kuntaanMuuttopv(muuttopv).build();
+        turvakieltoKotikuntaHistoriaRepository.save(kotikuntaHistoria);
     }
 
-    private void saveKotikuntaHistoria(Long henkiloId, JsonNode tietoryhmat, Function<JsonNode, Boolean> tietoryhmaValidator) {
+    private String saveKotikuntaHistoria(Long henkiloId, JsonNode tietoryhmat, Function<JsonNode, Boolean> tietoryhmaValidator) {
         JsonNode tietoryhma = getTietoryhma(tietoryhmat, "KOTIKUNTA");
         if (tietoryhma != null && tietoryhma.has("kuntakoodi")
                 && (tietoryhmaValidator == null || tietoryhmaValidator.apply(tietoryhma))) {
@@ -210,7 +207,9 @@ public class VtjMuutostietoService {
             setKunnastaPoisMuuttopv(henkiloId, muuttopv.minusDays(1));
             KotikuntaHistoria kotikuntaHistoria = KotikuntaHistoria.builder().henkiloId(henkiloId).kotikunta(kotikunta).kuntaanMuuttopv(muuttopv).build();
             kotikuntaHistoriaRepository.save(kotikuntaHistoria);
+            return kotikunta;
         }
+        return null;
     }
 
     protected Void savePerustieto(VtjPerustieto perustieto) {
@@ -225,7 +224,12 @@ public class VtjMuutostietoService {
             HenkiloForceUpdateDto update = mapToUpdateDto(read, perustieto.tietoryhmat, perustietoMapper);
             if (isTurvakieltoAdded(perustieto.tietoryhmat)) {
                 update.setKotikunta(null);
-                saveTurvakieltoKotikuntaPerustieto(henkilo.getId(), perustieto.tietoryhmat);
+                JsonNode tietoryhma = getTietoryhma(perustieto.tietoryhmat, "KOTIKUNTA");
+                if (tietoryhma != null && tietoryhma.has("kuntakoodi")) {
+                    String kotikunta = getStringValue(tietoryhma, "kuntakoodi");
+                    LocalDate muuttopv = TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv"));
+                    insertOrUpdateTurvakieltoKotikunta(henkilo.getId(), kotikunta, muuttopv);
+                }
             } else {
                 saveKotikuntaHistoria(henkilo.getId(), perustieto.tietoryhmat, null);
             }
@@ -237,43 +241,76 @@ public class VtjMuutostietoService {
     }
 
     private void updateTurvakieltoKotikunta(Henkilo henkilo, JsonNode tietoryhmat) {
-        String kotikunta = henkilo.getKotikunta();
         for (JsonNode tietoryhma : tietoryhmat) {
             if ("KOTIKUNTA".equals(getStringValue(tietoryhma, "tietoryhma"))
                     && MuutostietoMapper.isDataUpdate(tietoryhma)
                     && tietoryhma.has("kuntakoodi")) {
-                kotikunta = getStringValue(tietoryhma, "kuntakoodi");
+                String kotikunta = getStringValue(tietoryhma, "kuntakoodi");
+                LocalDate muuttopv = TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv"));
+                TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(henkilo.getId())
+                    .orElse(TurvakieltoKotikunta.builder().henkiloId(henkilo.getId()).build());
+                turvakieltoKotikunta.setKotikunta(kotikunta);
+                turvakieltoKotikuntaRepository.save(turvakieltoKotikunta);
+                setKunnastaPoisMuuttopv(henkilo.getId(), muuttopv.minusDays(1));
+                TurvakieltoKotikuntaHistoria kotikuntaHistoria = TurvakieltoKotikuntaHistoria.builder().henkiloId(henkilo.getId()).kotikunta(kotikunta).kuntaanMuuttopv(muuttopv).build();
+                turvakieltoKotikuntaHistoriaRepository.save(kotikuntaHistoria);
             }
-        }
-
-        if (kotikunta != null) {
-            TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(henkilo.getId())
-                .orElse(TurvakieltoKotikunta.builder().henkiloId(henkilo.getId()).build());
-            turvakieltoKotikunta.setKotikunta(kotikunta);
-            turvakieltoKotikuntaRepository.save(turvakieltoKotikunta);
         }
     }
 
-    private String removeTurvakieltoKotikunta(Henkilo henkilo, JsonNode tietoryhmat) {
+    private String removeTurvakieltoKotikunta(Henkilo henkilo, VtjMuutostieto muutostieto) {
         Optional<TurvakieltoKotikunta> turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(henkilo.getId());
         if (turvakieltoKotikunta.isPresent()) {
             turvakieltoKotikuntaRepository.delete(turvakieltoKotikunta.get());
-            return turvakieltoKotikunta.get().getKotikunta();
-        } else {
-            return null;
+        }
+
+        JsonNode kotikuntaTietoryhma = getTietoryhma(muutostieto.tietoryhmat, "KOTIKUNTA");
+        if (kotikuntaTietoryhma != null && MuutostietoMapper.isDataUpdate(kotikuntaTietoryhma)) {
+            return saveKotikuntaHistoria(henkilo.getId(), muutostieto.tietoryhmat, MuutostietoMapper::isDataUpdate);
+        } else if (turvakieltoKotikunta.isPresent()) {
+            String kotikunta = turvakieltoKotikunta.get().getKotikunta();
+            LocalDate muuttopv = muutostieto.muutospv.toLocalDate();
+            setKunnastaPoisMuuttopv(henkilo.getId(), muuttopv.minusDays(1));
+            KotikuntaHistoria kotikuntaHistoria = KotikuntaHistoria.builder().henkiloId(henkilo.getId()).kotikunta(kotikunta).kuntaanMuuttopv(muuttopv).build();
+            kotikuntaHistoriaRepository.save(kotikuntaHistoria);
+            return kotikunta;
+        }
+
+        return null;
+    }
+
+    private void addTurvakieltoKotikunta(Henkilo henkilo, VtjMuutostieto muutostieto) {
+        JsonNode kotikuntaTietoryhma = getTietoryhma(muutostieto.tietoryhmat, "KOTIKUNTA");
+        if (kotikuntaTietoryhma != null && MuutostietoMapper.isDataUpdate(kotikuntaTietoryhma)) {
+            String kotikunta = getStringValue(kotikuntaTietoryhma, "kuntakoodi");
+            LocalDate muuttopv = TietoryhmaMapper.parseDate(kotikuntaTietoryhma.get("kuntaanMuuttopv"));
+            insertOrUpdateTurvakieltoKotikunta(henkilo.getId(), kotikunta, muuttopv);
+        } else if (henkilo.getKotikunta() != null) {
+            String kotikunta = henkilo.getKotikunta();
+            LocalDate muuttopv = muutostieto.muutospv.toLocalDate();
+            insertOrUpdateTurvakieltoKotikunta(henkilo.getId(), kotikunta, muuttopv);
         }
     }
 
-    private void addOrRemoveTurvakieltoKotikunta(HenkiloForceUpdateDto update, Henkilo henkilo, JsonNode tietoryhmat) {
-        boolean isTurvakielto = henkilo.isTurvakielto() || isTurvakieltoAdded(tietoryhmat);
-        if (isTurvakielto) {
-            updateTurvakieltoKotikunta(henkilo, tietoryhmat);
-            TietoryhmaMapper.removeAllYhteystietoryhmas(update.getYhteystiedotRyhma());
+    private Predicate<YhteystiedotRyhmaDto> isVtjYhteystietoryhma = ytr -> "alkupera1".equals(ytr.getRyhmaAlkuperaTieto());
+
+    private void handleKotikuntaChanges(HenkiloForceUpdateDto update, Henkilo henkilo, VtjMuutostieto muutostieto) {
+        if (isTurvakieltoAdded(muutostieto.tietoryhmat)) {
+            addTurvakieltoKotikunta(henkilo, muutostieto);
+            update.getYhteystiedotRyhma().removeIf(isVtjYhteystietoryhma);
             update.setKotikunta(null);
-        }
-        
-        if (isTurvakieltoRemoved(tietoryhmat)) {
-            update.setKotikunta(removeTurvakieltoKotikunta(henkilo, tietoryhmat));
+        } else if (isTurvakieltoRemoved(muutostieto.tietoryhmat)) {
+            String kotikunta = removeTurvakieltoKotikunta(henkilo, muutostieto);
+            if (kotikunta == null) {
+                log.warn("could not find kotikunta when removing turvakielto for henkilo " + henkilo.getOidHenkilo());
+            }
+            update.setKotikunta(kotikunta);
+        } else if (henkilo.isTurvakielto()) {
+            updateTurvakieltoKotikunta(henkilo, muutostieto.tietoryhmat);
+            update.getYhteystiedotRyhma().removeIf(isVtjYhteystietoryhma);
+            update.setKotikunta(null);
+        } else {
+            saveKotikuntaHistoria(henkilo.getId(), muutostieto.tietoryhmat, MuutostietoMapper::isDataUpdate);
         }
     }
 
@@ -287,17 +324,16 @@ public class VtjMuutostietoService {
             try {
                 HenkiloForceReadDto read = mapper.map(henkilo, HenkiloForceReadDto.class);
                 HenkiloForceUpdateDto update = mapToUpdateDto(read, muutostieto.tietoryhmat, muutostietoMapper);
-                addOrRemoveTurvakieltoKotikunta(update, henkilo, muutostieto.tietoryhmat);
-                saveKotikuntaHistoria(henkilo.getId(), muutostieto.tietoryhmat, MuutostietoMapper::isDataUpdate);
+                handleKotikuntaChanges(update, henkilo, muutostieto);
                 henkiloModificationService.forceUpdateHenkilo(update);
             } catch (UnprocessableEntityException uee) {
                 BindException be = (BindException) uee.getErrors();
                 log.error("exception while processing muutostieto for henkilo " + henkilo.getOidHenkilo(), be);
-                slackClient.sendToSlack("Virhe VTJ-muutostietojen päivityksessä", be.getMessage());
+                slackClient.sendToSlack("Virhe VTJ-muutostietojen päivityksessä henkilölle " + henkilo.getOidHenkilo(), be.getMessage());
                 muutostieto.setError(true);
             } catch (Exception e) {
                 log.error("failed to handle muutostieto for henkilo " + henkilo.getOidHenkilo(), e);
-                slackClient.sendToSlack("Virhe muutostiedon käsittelyssä", e.getMessage());
+                slackClient.sendToSlack("Virhe muutostiedon käsittelyssä henkilölle " + henkilo.getOidHenkilo(), e.getMessage());
                 muutostieto.setError(true);
             }
         });

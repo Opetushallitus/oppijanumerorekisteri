@@ -125,10 +125,6 @@ public abstract class TietoryhmaMapper {
                 t -> "alkupera1".equals(t.getRyhmaAlkuperaTieto()) && ryhma.getKuvaus().equals(t.getRyhmaKuvaus()));
     }
 
-    public static boolean removeAllYhteystietoryhmas(Set<YhteystiedotRyhmaDto> yhteystietoryhmat) {
-        return yhteystietoryhmat.removeIf(t -> "alkupera1".equals(t.getRyhmaAlkuperaTieto()));
-    }
-
     protected YhteystiedotRyhmaDto removeAndCreateNewYhteystiedotRyhmaDto(HenkiloForceUpdateDto update,
             VtjYhteystiedotRyhma ryhmaKuvaus) {
         Set<YhteystiedotRyhmaDto> ryhmas = update.getYhteystiedotRyhma();

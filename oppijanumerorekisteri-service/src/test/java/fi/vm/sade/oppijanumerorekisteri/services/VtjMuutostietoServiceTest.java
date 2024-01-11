@@ -124,7 +124,6 @@ public class VtjMuutostietoServiceTest {
                                     "sahko@posti.fi")))))
             .huoltajat(Set.of())
             .oidHenkilo("1.2.3.4.5");
-    Optional<Henkilo> henkiloWithYhteystiedot;
 
     private void assertKotikuntaHistoria(Long henkiloId, Tuple... values) {
         assertThat(kotikuntaHistoriaRepository.findAllByHenkiloId(henkiloId))
@@ -158,8 +157,6 @@ public class VtjMuutostietoServiceTest {
         henkilotunnusKorjaus = new VtjPerustieto(hetus.get(0),
                 objectMapper.readTree(new File("src/test/resources/vtj/perustietoHetuKorjaus.json")));
 
-        henkiloWithYhteystiedot = Optional.of(henkiloBuilder.build());
-        henkiloWithYhteystiedot.get().setId(2l);
         when(koodistoService.list(Koodisto.KIELI))
                 .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI).koodi("fr").koodi("fi").koodi("sv")
                         .koodi("98")
@@ -582,8 +579,8 @@ public class VtjMuutostietoServiceTest {
                 tuple("287", LocalDate.of(2019, 6, 27), null));
     }
 
-    private HenkiloForceUpdateDto doUpdateHenkilo(Optional<Henkilo> henkilo, String updateJson) throws Exception {
-        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
+    private HenkiloForceUpdateDto doUpdateHenkilo(Henkilo henkilo, String updateJson) throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(Optional.of(henkilo));
         VtjMuutostieto muutostieto = getMuutostieto(updateJson);
         muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
@@ -594,63 +591,119 @@ public class VtjMuutostietoServiceTest {
     }
 
     @Test
-    public void saveMuutostietoSavesTurvakielto() throws Exception {
-        HenkiloForceUpdateDto actual = doUpdateHenkilo(henkiloWithYhteystiedot, "src/test/resources/vtj/muutostietoTurvakielto.json");
+    public void saveMuutostietoSavesTurvakieltoWithExistingKotikunta() throws Exception {
+        Long henkiloId = 321l;
+        var henkilo = henkiloBuilder.build();
+        henkilo.setId(henkiloId);
+        kotikuntaHistoriaRepository.save(KotikuntaHistoria.builder()
+                        .henkiloId(henkiloId)
+                        .kotikunta("123")
+                        .kuntaanMuuttopv(LocalDate.of(2015, 3, 12))
+                        .build());
+
+        HenkiloForceUpdateDto actual = doUpdateHenkilo(henkilo, "src/test/resources/vtj/muutostietoTurvakielto.json");
 
         assertThat(actual.getKotikunta()).isNull();
         assertThat(actual.getYhteystiedotRyhma()).isEmpty();
-        TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(2l).get();
+        TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(henkiloId).get();
         assertThat(turvakieltoKotikunta.getKotikunta()).isEqualTo("123");
+        assertKotikuntaHistoria(henkiloId,
+                tuple("123", LocalDate.of(2015, 3, 12), LocalDate.now().minusDays(1)));
+        assertTurvakieltoKotikuntaHistoria(henkiloId,
+                tuple("123", LocalDate.now(), null));
     }
 
     @Test
     public void saveMuutostietoSavesTurvakieltoWithNewKotikunta() throws Exception {
-        HenkiloForceUpdateDto actual = doUpdateHenkilo(henkiloWithYhteystiedot, "src/test/resources/vtj/muutostietoTurvakieltoKunnastaMuutto.json");
+        Long henkiloId = 322l;
+        var henkilo = henkiloBuilder.build();
+        henkilo.setId(henkiloId);
+        kotikuntaHistoriaRepository.save(KotikuntaHistoria.builder()
+                        .henkiloId(henkiloId)
+                        .kotikunta("123")
+                        .kuntaanMuuttopv(LocalDate.of(2015, 3, 12))
+                        .build());
+
+        HenkiloForceUpdateDto actual = doUpdateHenkilo(henkilo, "src/test/resources/vtj/muutostietoTurvakieltoKunnastaMuutto.json");
 
         assertThat(actual.getKotikunta()).isNull();
         assertThat(actual.getYhteystiedotRyhma()).isEmpty();
-        TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(2l).get();
+        TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(henkiloId).get();
         assertThat(turvakieltoKotikunta.getKotikunta()).isEqualTo("287");
+        assertTurvakieltoKotikuntaHistoria(henkiloId,
+                tuple("287", LocalDate.of(2019, 6, 27), null));
+        assertKotikuntaHistoria(henkiloId,
+                tuple("123", LocalDate.of(2015, 3, 12), LocalDate.of(2019, 6, 26)));
     }
 
     @Test
     public void saveMuutostietoUpdatesTurvakieltoKotikunta() throws Exception {
+        Long henkiloId = 323l;
         Henkilo henkiloWithTurvakielto = henkiloBuilder.turvakielto(true).kotikunta(null).build();
-        henkiloWithTurvakielto.setId(3l);
-        turvakieltoKotikuntaRepository.save(TurvakieltoKotikunta.builder().henkiloId(3l).kotikunta("091").build());
+        henkiloWithTurvakielto.setId(henkiloId);
+        turvakieltoKotikuntaHistoriaRepository.save(TurvakieltoKotikuntaHistoria.builder()
+                        .henkiloId(henkiloId)
+                        .kotikunta("123")
+                        .kuntaanMuuttopv(LocalDate.of(2015, 3, 12))
+                        .build());
+        turvakieltoKotikuntaRepository.save(TurvakieltoKotikunta.builder().henkiloId(henkiloId).kotikunta("091").build());
 
-        HenkiloForceUpdateDto actual = doUpdateHenkilo(Optional.of(henkiloWithTurvakielto), "src/test/resources/vtj/muutostietoKunnastaToiseenMuutto.json");
+        HenkiloForceUpdateDto actual = doUpdateHenkilo(henkiloWithTurvakielto, "src/test/resources/vtj/muutostietoKunnastaToiseenMuutto.json");
 
         assertThat(actual.getKotikunta()).isNull();
         assertThat(actual.getTurvakielto()).isTrue();
-        TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(3l).get();
+        TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(henkiloId).get();
         assertThat(turvakieltoKotikunta.getKotikunta()).isEqualTo("287");
+        assertKotikuntaHistoria(henkiloId);
+        assertTurvakieltoKotikuntaHistoria(henkiloId,
+                tuple("123", LocalDate.of(2015, 3, 12), LocalDate.of(2019, 6, 26)),
+                tuple("287", LocalDate.of(2019, 6, 27), null));
     }
 
     @Test
     public void saveMuutostietoRemovesTurvakieltoKotikuntaWithExistingKotikunta() throws Exception {
+        Long henkiloId = 324l;
         Henkilo henkiloWithTurvakielto = henkiloBuilder.turvakielto(true).kotikunta(null).build();
-        henkiloWithTurvakielto.setId(4l);
-        turvakieltoKotikuntaRepository.save(TurvakieltoKotikunta.builder().henkiloId(4l).kotikunta("091").build());
+        henkiloWithTurvakielto.setId(henkiloId);
+        turvakieltoKotikuntaHistoriaRepository.save(TurvakieltoKotikuntaHistoria.builder()
+                        .henkiloId(henkiloId)
+                        .kotikunta("091")
+                        .kuntaanMuuttopv(LocalDate.of(2015, 3, 12))
+                        .build());
+        turvakieltoKotikuntaRepository.save(TurvakieltoKotikunta.builder().henkiloId(henkiloId).kotikunta("091").build());
 
-        HenkiloForceUpdateDto actual = doUpdateHenkilo(Optional.of(henkiloWithTurvakielto), "src/test/resources/vtj/muutostietoTurvakieltoPois.json");
+        HenkiloForceUpdateDto actual = doUpdateHenkilo(henkiloWithTurvakielto, "src/test/resources/vtj/muutostietoTurvakieltoPois.json");
 
         assertThat(actual.getKotikunta()).isEqualTo("091");
         assertThat(actual.getTurvakielto()).isFalse();
-        assertThat(turvakieltoKotikuntaRepository.findByHenkiloId(4l)).isEmpty();
+        assertThat(turvakieltoKotikuntaRepository.findByHenkiloId(henkiloId)).isEmpty();
+        assertKotikuntaHistoria(henkiloId,
+                tuple("091", LocalDate.now(), null));
+        assertTurvakieltoKotikuntaHistoria(henkiloId,
+                tuple("091", LocalDate.of(2015, 3, 12), LocalDate.now().minusDays(1)));
     }
 
     @Test
     public void saveMuutostietoRemovesTurvakieltoKotikuntaWithNewKotikunta() throws Exception {
+        Long henkiloId = 325l;
         Henkilo henkiloWithTurvakielto = henkiloBuilder.turvakielto(true).kotikunta(null).build();
-        henkiloWithTurvakielto.setId(5l);
-        turvakieltoKotikuntaRepository.save(TurvakieltoKotikunta.builder().henkiloId(5l).kotikunta("091").build());
+        henkiloWithTurvakielto.setId(henkiloId);
+        turvakieltoKotikuntaHistoriaRepository.save(TurvakieltoKotikuntaHistoria.builder()
+                        .henkiloId(henkiloId)
+                        .kotikunta("091")
+                        .kuntaanMuuttopv(LocalDate.of(2015, 3, 12))
+                        .build());
+        turvakieltoKotikuntaRepository.save(TurvakieltoKotikunta.builder().henkiloId(henkiloId).kotikunta("091").build());
 
-        HenkiloForceUpdateDto actual = doUpdateHenkilo(Optional.of(henkiloWithTurvakielto), "src/test/resources/vtj/muutostietoTurvakieltoPoisKunnastaMuutto.json");
+        HenkiloForceUpdateDto actual = doUpdateHenkilo(henkiloWithTurvakielto, "src/test/resources/vtj/muutostietoTurvakieltoPoisKunnastaMuutto.json");
 
         assertThat(actual.getKotikunta()).isEqualTo("287");
         assertThat(actual.getTurvakielto()).isFalse();
-        assertThat(turvakieltoKotikuntaRepository.findByHenkiloId(5l)).isEmpty();
+        assertThat(turvakieltoKotikuntaRepository.findByHenkiloId(henkiloId)).isEmpty();
+        assertKotikuntaHistoria(henkiloId,
+                tuple("287", LocalDate.of(2019, 6, 27), null));
+        assertTurvakieltoKotikuntaHistoria(henkiloId,
+                tuple("091", LocalDate.of(2015, 3, 12), LocalDate.of(2019, 6, 26)));
     }
 
     @Test

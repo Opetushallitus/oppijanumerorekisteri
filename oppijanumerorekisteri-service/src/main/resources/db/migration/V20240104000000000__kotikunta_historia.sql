@@ -5,7 +5,7 @@ CREATE TABLE kotikunta_historia (
     kotikunta text not null,
     kuntaan_muuttopv date not null,
     kunnasta_pois_muuttopv date not null
-)
+);
 
 ALTER TABLE kotikunta_historia
     ADD CONSTRAINT fk_kotikunta_historia_henkilo_id
@@ -22,7 +22,7 @@ CREATE TABLE turvakielto_kotikunta_historia (
     kotikunta text not null,
     kuntaan_muuttopv date not null,
     kunnasta_pois_muuttopv date not null
-)
+);
 
 ALTER TABLE turvakielto_kotikunta_historia
     ADD CONSTRAINT fk_turvakielto_kotikunta_historia_henkilo_id
