@@ -173,6 +173,19 @@ public class VtjMuutostietoService {
         return null;
     }
 
+    private void saveTurvakieltoKotikuntaHistoria(Long henkiloId, String kotikunta, LocalDate muuttopv) {
+        try {
+            TurvakieltoKotikuntaHistoria kotikuntaHistoria = TurvakieltoKotikuntaHistoria.builder()
+                    .henkiloId(henkiloId)
+                    .kotikunta(kotikunta)
+                    .kuntaanMuuttopv(muuttopv)
+                    .build();
+            turvakieltoKotikuntaHistoriaRepository.save(kotikuntaHistoria);
+        } catch (Exception e) {
+            log.error("failed to save turvakieltokotikuntahistoria for henkilo " + henkiloId, e);
+        }
+    }
+
     private void setKunnastaPoisMuuttopv(Long henkiloId, LocalDate muuttopv) {
         Optional<KotikuntaHistoria> existingKotikuntaHistoria = kotikuntaHistoriaRepository.findByHenkiloIdAndKunnastaPoisMuuttopvIsNull(henkiloId);
         existingKotikuntaHistoria.ifPresent(existing -> {
@@ -187,27 +200,34 @@ public class VtjMuutostietoService {
     }
 
     private void insertOrUpdateTurvakieltoKotikunta(Long henkiloId, String kotikunta, LocalDate muuttopv) {
-        turvakieltoKotikuntaRepository.findByHenkiloId(henkiloId)
-            .or(() -> Optional.of(TurvakieltoKotikunta.builder().henkiloId(henkiloId).build()))
-            .ifPresent(turvakieltoKotikunta -> {
-                turvakieltoKotikunta.setKotikunta(kotikunta);
-                turvakieltoKotikuntaRepository.save(turvakieltoKotikunta);
-            });
-        setKunnastaPoisMuuttopv(henkiloId, muuttopv.minusDays(1));
-        TurvakieltoKotikuntaHistoria kotikuntaHistoria = TurvakieltoKotikuntaHistoria.builder().henkiloId(henkiloId).kotikunta(kotikunta).kuntaanMuuttopv(muuttopv).build();
-        turvakieltoKotikuntaHistoriaRepository.save(kotikuntaHistoria);
+        try {
+            turvakieltoKotikuntaRepository.findByHenkiloId(henkiloId)
+                .or(() -> Optional.of(TurvakieltoKotikunta.builder().henkiloId(henkiloId).build()))
+                .ifPresent(turvakieltoKotikunta -> {
+                    turvakieltoKotikunta.setKotikunta(kotikunta);
+                    turvakieltoKotikuntaRepository.save(turvakieltoKotikunta);
+                });
+            setKunnastaPoisMuuttopv(henkiloId, muuttopv.minusDays(1));
+            saveTurvakieltoKotikuntaHistoria(henkiloId, kotikunta, muuttopv);
+        } catch (Exception e) {
+            log.error("failed to save turvakieltokotikunta for henkilo " + henkiloId, e);
+        }
     }
 
     private String saveKotikuntaHistoria(Long henkiloId, JsonNode tietoryhmat, Function<JsonNode, Boolean> tietoryhmaValidator) {
-        JsonNode tietoryhma = getTietoryhma(tietoryhmat, "KOTIKUNTA");
-        if (tietoryhma != null && tietoryhma.has("kuntakoodi")
-                && (tietoryhmaValidator == null || tietoryhmaValidator.apply(tietoryhma))) {
-            String kotikunta = getStringValue(tietoryhma, "kuntakoodi");
-            LocalDate muuttopv = TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv"));
-            setKunnastaPoisMuuttopv(henkiloId, muuttopv.minusDays(1));
-            KotikuntaHistoria kotikuntaHistoria = KotikuntaHistoria.builder().henkiloId(henkiloId).kotikunta(kotikunta).kuntaanMuuttopv(muuttopv).build();
-            kotikuntaHistoriaRepository.save(kotikuntaHistoria);
-            return kotikunta;
+        try {
+            JsonNode tietoryhma = getTietoryhma(tietoryhmat, "KOTIKUNTA");
+            if (tietoryhma != null && tietoryhma.has("kuntakoodi")
+                    && (tietoryhmaValidator == null || tietoryhmaValidator.apply(tietoryhma))) {
+                String kotikunta = getStringValue(tietoryhma, "kuntakoodi");
+                LocalDate muuttopv = TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv"));
+                setKunnastaPoisMuuttopv(henkiloId, muuttopv.minusDays(1));
+                KotikuntaHistoria kotikuntaHistoria = KotikuntaHistoria.builder().henkiloId(henkiloId).kotikunta(kotikunta).kuntaanMuuttopv(muuttopv).build();
+                kotikuntaHistoriaRepository.save(kotikuntaHistoria);
+                return kotikunta;
+            }
+        } catch (Exception e) {
+            log.error("failed to save kotikuntahistoria for henkilo " + henkiloId, e);
         }
         return null;
     }
@@ -241,20 +261,23 @@ public class VtjMuutostietoService {
     }
 
     private void updateTurvakieltoKotikunta(Henkilo henkilo, JsonNode tietoryhmat) {
-        for (JsonNode tietoryhma : tietoryhmat) {
-            if ("KOTIKUNTA".equals(getStringValue(tietoryhma, "tietoryhma"))
-                    && MuutostietoMapper.isDataUpdate(tietoryhma)
-                    && tietoryhma.has("kuntakoodi")) {
-                String kotikunta = getStringValue(tietoryhma, "kuntakoodi");
-                LocalDate muuttopv = TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv"));
-                TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(henkilo.getId())
-                    .orElse(TurvakieltoKotikunta.builder().henkiloId(henkilo.getId()).build());
-                turvakieltoKotikunta.setKotikunta(kotikunta);
-                turvakieltoKotikuntaRepository.save(turvakieltoKotikunta);
-                setKunnastaPoisMuuttopv(henkilo.getId(), muuttopv.minusDays(1));
-                TurvakieltoKotikuntaHistoria kotikuntaHistoria = TurvakieltoKotikuntaHistoria.builder().henkiloId(henkilo.getId()).kotikunta(kotikunta).kuntaanMuuttopv(muuttopv).build();
-                turvakieltoKotikuntaHistoriaRepository.save(kotikuntaHistoria);
+        try {
+            for (JsonNode tietoryhma : tietoryhmat) {
+                if ("KOTIKUNTA".equals(getStringValue(tietoryhma, "tietoryhma"))
+                        && MuutostietoMapper.isDataUpdate(tietoryhma)
+                        && tietoryhma.has("kuntakoodi")) {
+                    String kotikunta = getStringValue(tietoryhma, "kuntakoodi");
+                    LocalDate muuttopv = TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv"));
+                    TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(henkilo.getId())
+                        .orElse(TurvakieltoKotikunta.builder().henkiloId(henkilo.getId()).build());
+                    turvakieltoKotikunta.setKotikunta(kotikunta);
+                    turvakieltoKotikuntaRepository.save(turvakieltoKotikunta);
+                    setKunnastaPoisMuuttopv(henkilo.getId(), muuttopv.minusDays(1));
+                    saveTurvakieltoKotikuntaHistoria(henkilo.getId(), kotikunta, muuttopv);
+                }
             }
+        } catch (Exception e) {
+            log.error("failed to save turvakieltokotikunta for henkilo " + henkilo.getId(), e);
         }
     }
 
