@@ -8,7 +8,6 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
@@ -30,12 +29,12 @@ public class HenkiloUpdatePostValidator implements Validator {
     private final HenkiloRepository henkiloRepository;
 
     @Override
-    public boolean supports(@NotNull Class<?> aClass) {
+    public boolean supports(Class<?> aClass) {
         return HenkiloUpdateDto.class.equals(aClass);
     }
 
     @Override
-    public void validate(Object o, @NotNull Errors errors) {
+    public void validate(Object o, Errors errors) {
         HenkiloUpdateDto henkiloUpdateDto = (HenkiloUpdateDto) o;
 
         this.henkiloRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo())

@@ -10,7 +10,6 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.EmailService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -114,7 +113,6 @@ public class OppijaTuontiServiceImplTest {
         when(orikaConfiguration.map(any(), any())).thenReturn(tuontiRivi);
     }
 
-    @NotNull
     private Optional<Tuonti> tuonti() {
         return Optional.of(Tuonti.builder().ilmoitustarveKasitelty(false).kasiteltavia(1).kasiteltyja(0)
                 .organisaatiot(of(Organisaatio.builder().build()))

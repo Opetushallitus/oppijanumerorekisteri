@@ -4,7 +4,6 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HuoltajaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -15,12 +14,12 @@ public class HuoltajaCreatePostValidator implements Validator {
     private final KoodistoService koodistoService;
 
     @Override
-    public boolean supports(@NotNull Class<?> aClass) {
+    public boolean supports(Class<?> aClass) {
         return HuoltajaCreateDto.class.equals(aClass);
     }
 
     @Override
-    public void validate(Object o, @NotNull Errors errors) {
+    public void validate(Object o, Errors errors) {
         HuoltajaCreateDto henkilo = (HuoltajaCreateDto) o;
         KoodiValidator koodiValidator = new KoodiValidator(koodistoService, errors);
 
