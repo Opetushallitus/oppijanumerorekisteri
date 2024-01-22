@@ -78,7 +78,7 @@ class OppijaControllerIntegrationTest {
 
     @Test
     void listNormalUsersSeesOnlyOwn() throws Exception {
-        given(permissionChecker.getAllOrganisaatioOids(any(), any())).willReturn(Set.of("tuonti1"));
+        given(permissionChecker.getAllOrganisaatioOids(any(), any(), any(), any())).willReturn(Set.of("tuonti1"));
 
         JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/list-tuonti1.json"), fetch(BASE_PATH), listComparator);
     }
@@ -114,7 +114,7 @@ class OppijaControllerIntegrationTest {
 
     @Test
     void koosteNormalUsersSeesOnlyOwn() throws Exception {
-        given(permissionChecker.getAllOrganisaatioOids(any(), any())).willReturn(Set.of("tuonti1"));
+        given(permissionChecker.getAllOrganisaatioOids(any(), any(), any(), any())).willReturn(Set.of("tuonti1"));
 
         JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/kooste-tuonti1.json"), fetch(KOOSTE), koosteComparator);
     }

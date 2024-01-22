@@ -20,7 +20,7 @@ Below is non-exhaustive list of the key technologies & frameworks used in the pr
 
 ## Vaatimukset
 - PostgreSQL 10.6
-- Java 11
+- Java 21
 - Maven 3.6
 
 ## Rakenne

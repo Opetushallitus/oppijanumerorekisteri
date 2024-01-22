@@ -37,13 +37,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <maven.compiler.release>11</maven.compiler.release>
+        <maven.compiler.release>21</maven.compiler.release>
 
         <database.name>oppijanumerorekisteri</database.name>
         <database.user>oph</database.user>
         <database.password>oph</database.password>
 
-        <ryhmasahkoposti.version>14.8-SNAPSHOT</ryhmasahkoposti.version>
+        <ryhmasahkoposti.version>16.0-SNAPSHOT</ryhmasahkoposti.version>
 
         <!-- library versions -->
         <springfox.version>3.0.0</springfox.version>
@@ -61,8 +61,6 @@
         <sonar.organization>opetushallitus</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.coverage.jacoco.xmlReportPaths>**/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-        <sonar.scanner.force-deprecated-java-version>true</sonar.scanner.force-deprecated-java-version>
-
     </properties>
 
     <dependencyManagement>
@@ -111,13 +109,7 @@
             <dependency>
                 <groupId>fi.vm.sade.koodisto</groupId>
                 <artifactId>koodisto-api</artifactId>
-                <version>2016-04-SNAPSHOT</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-lang</groupId>
-                        <artifactId>commons-lang</artifactId>
-                    </exclusion>
-                </exclusions>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>fi.vm.sade</groupId>
@@ -133,6 +125,12 @@
                 <groupId>fi.vm.sade.viestintapalvelu</groupId>
                 <artifactId>ryhmasahkoposti-api</artifactId>
                 <version>${ryhmasahkoposti.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>fi.vm.sade.generic</groupId>
+                        <artifactId>generic-common</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.swagger</groupId>
@@ -152,7 +150,7 @@
             <dependency>
                 <groupId>org.jresearch.orika</groupId>
                 <artifactId>org.jresearch.orika.spring</artifactId>
-                <version>1.0.12</version>
+                <version>1.0.15</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -193,8 +191,8 @@
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-inline</artifactId>
-                <version>5.2.0</version>
+                <artifactId>mockito-core</artifactId>
+                <version>5.8.0</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
@@ -259,9 +257,17 @@ buildTtime=${maven.build.timestamp}
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                        <argLine>--add-opens java.base/java.lang=ALL-UNNAMED -Dnet.bytebuddy.experimental=true</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.7</version>
+                <version>0.8.11</version>
                 <executions>
                     <execution>
                         <goals>
