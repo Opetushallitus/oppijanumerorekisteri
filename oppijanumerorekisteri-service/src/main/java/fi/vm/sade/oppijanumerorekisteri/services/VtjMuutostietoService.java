@@ -256,6 +256,7 @@ public class VtjMuutostietoService {
             henkiloModificationService.forceUpdateHenkilo(update);
             henkilo.setVtjBucket(henkilo.getId() % 100);
             henkiloRepository.save(henkilo);
+            log.info(henkilo.getOidHenkilo() + " updated with perustieto");
         });
         return null;
     }
