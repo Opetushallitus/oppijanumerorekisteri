@@ -26,6 +26,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.auth.signer.Aws4Signer;
 import software.amazon.awssdk.auth.signer.params.Aws4SignerParams;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -42,6 +43,7 @@ import software.amazon.awssdk.services.sts.auth.StsAssumeRoleCredentialsProvider
 import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
 
 @Component
+@Slf4j
 public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     private final OppijanumerorekisteriProperties properties;
     private final ObjectMapper objectMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
@@ -129,18 +131,29 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
                 "/GOV/0245437-2/VTJmutpa/VTJmutpa";
     }
 
-    private InputStream executeRequest(SdkHttpFullRequest request) throws IOException {
+    private HttpExecuteResponse executeRequest(SdkHttpFullRequest request) throws IOException {
         SdkHttpClient httpClient =  ApacheHttpClient.builder().build();
         HttpExecuteRequest executeRequest = HttpExecuteRequest.builder()
                 .request(request)
                 .contentStreamProvider(request.contentStreamProvider().orElse(null))
                 .build();
         ExecutableHttpRequest executableHttpRequest = httpClient.prepareRequest(executeRequest);
-        HttpExecuteResponse res = executableHttpRequest.call();
-        if (!res.httpResponse().isSuccessful()) {
-            throw new RuntimeException("unsuccessful request (status " + res.httpResponse().statusCode() + ") to " + request.getUri());
+        return executableHttpRequest.call();
+    }
+
+    private InputStream executeRequestWithRetry(SdkHttpFullRequest request) throws IOException, InterruptedException {
+        for (int i = 0; i < 3; i++) {
+            HttpExecuteResponse res = executeRequest(request);
+            if (res.httpResponse().statusCode() == 429) {
+                log.warn("429 (too many requests) response for " + request.getUri());
+                Thread.sleep(15000);
+                continue;
+            } else if (!res.httpResponse().isSuccessful()) {
+                throw new RuntimeException("unsuccessful request (status " + res.httpResponse().statusCode() + ") to " + request.getUri());
+            }
+            return res.responseBody().orElseThrow(() -> new RuntimeException("no response body found for request " + request.getUri()));
         }
-        return res.responseBody().orElseThrow(() -> new RuntimeException("no response body found for request " + request.getUri()));
+        throw new RuntimeException("failed to request after 2 retries " + request.getUri());
     }
 
     private SdkHttpFullRequest signRequest(SdkHttpFullRequest request) {
@@ -174,7 +187,7 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     public Long fetchMuutostietoKirjausavain() throws InterruptedException, ExecutionException, IOException {
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         SdkHttpFullRequest request = httpRequestBuilder("/api/v1/kirjausavain/" + date, SdkHttpMethod.GET, null);
-        InputStream response = executeRequest(request);
+        InputStream response = executeRequestWithRetry(request);
         return parseAvainResponse(response).getViimeisinKirjausavain();
     }
 
@@ -183,7 +196,7 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
             throws InterruptedException, ExecutionException, JsonProcessingException, IOException {
         MuutostietoRequestBody body = new MuutostietoRequestBody(avain, allHetus);
         SdkHttpFullRequest request = httpRequestBuilder("/api/v1/muutokset", SdkHttpMethod.POST, body);
-        InputStream response = executeRequest(request);
+        InputStream response = executeRequestWithRetry(request);
         return parseMuutostietoResponse(response);
     }
 
@@ -192,7 +205,7 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
             throws InterruptedException, ExecutionException, JsonProcessingException, IOException {
         PerustietoRequestBody body = new PerustietoRequestBody(hetus);
         SdkHttpFullRequest request = httpRequestBuilder("/api/v1/perustiedot", SdkHttpMethod.POST, body);
-        InputStream response = executeRequest(request);
+        InputStream response = executeRequestWithRetry(request);
         return parsePerustietoResponse(response).perustiedot;
     }
 }
