@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -46,7 +47,10 @@ import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
 @Slf4j
 public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     private final OppijanumerorekisteriProperties properties;
-    private final ObjectMapper objectMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+    private final ObjectMapper objectMapper = JsonMapper.builder()
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .addModule(new JavaTimeModule())
+            .build();
     private final StsAssumeRoleCredentialsProvider credentialsProvider;
 
     public VtjMuutostietoClientImpl(OppijanumerorekisteriProperties properties, StsClient stsClient) {
