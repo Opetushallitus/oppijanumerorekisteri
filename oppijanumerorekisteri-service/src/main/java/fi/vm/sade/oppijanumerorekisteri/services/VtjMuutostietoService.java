@@ -234,29 +234,34 @@ public class VtjMuutostietoService {
 
     protected Void savePerustieto(VtjPerustieto perustieto) {
         henkiloRepository.findByHetu(perustieto.henkilotunnus).ifPresent(henkilo -> {
-            if (isHenkilotunnusKorjaus(perustieto.tietoryhmat)) {
-                slackClient.sendToSlack(String.format(
-                        "VTJ-perustietojen tallennus käyttäjälle %s estetty HENKILOTUNNUS_KORJAUS-tietoryhmän vuoksi",
-                        henkilo.getOidHenkilo()), null);
-                return;
-            }
-            HenkiloForceReadDto read = mapper.map(henkilo, HenkiloForceReadDto.class);
-            HenkiloForceUpdateDto update = mapToUpdateDto(read, perustieto.tietoryhmat, perustietoMapper);
-            if (isTurvakieltoAdded(perustieto.tietoryhmat)) {
-                update.setKotikunta(null);
-                JsonNode tietoryhma = getTietoryhma(perustieto.tietoryhmat, "KOTIKUNTA");
-                if (tietoryhma != null && tietoryhma.has("kuntakoodi")) {
-                    String kotikunta = getStringValue(tietoryhma, "kuntakoodi");
-                    LocalDate muuttopv = TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv"));
-                    insertOrUpdateTurvakieltoKotikunta(henkilo.getId(), kotikunta, muuttopv);
+            try {
+                if (isHenkilotunnusKorjaus(perustieto.tietoryhmat)) {
+                    slackClient.sendToSlack(String.format(
+                            "VTJ-perustietojen tallennus käyttäjälle %s estetty HENKILOTUNNUS_KORJAUS-tietoryhmän vuoksi",
+                            henkilo.getOidHenkilo()), null);
+                    return;
                 }
-            } else {
-                saveKotikuntaHistoria(henkilo.getId(), perustieto.tietoryhmat, null);
+                HenkiloForceReadDto read = mapper.map(henkilo, HenkiloForceReadDto.class);
+                HenkiloForceUpdateDto update = mapToUpdateDto(read, perustieto.tietoryhmat, perustietoMapper);
+                if (isTurvakieltoAdded(perustieto.tietoryhmat)) {
+                    update.setKotikunta(null);
+                    JsonNode tietoryhma = getTietoryhma(perustieto.tietoryhmat, "KOTIKUNTA");
+                    if (tietoryhma != null && tietoryhma.has("kuntakoodi")) {
+                        String kotikunta = getStringValue(tietoryhma, "kuntakoodi");
+                        LocalDate muuttopv = TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv"));
+                        insertOrUpdateTurvakieltoKotikunta(henkilo.getId(), kotikunta, muuttopv);
+                    }
+                } else {
+                    saveKotikuntaHistoria(henkilo.getId(), perustieto.tietoryhmat, null);
+                }
+                henkiloModificationService.forceUpdateHenkilo(update);
+                henkilo.setVtjBucket(henkilo.getId() % 100);
+                henkiloRepository.save(henkilo);
+                log.info(henkilo.getOidHenkilo() + " updated with perustieto");
+            } catch (Exception e) {
+                log.error("failed to save perustieto for henkilo " + henkilo.getOidHenkilo(), e);
+                slackClient.sendToSlack("Virhe VTJ-perustietojen tallennuksessa henkilölle " + henkilo.getOidHenkilo(), e.getMessage());
             }
-            henkiloModificationService.forceUpdateHenkilo(update);
-            henkilo.setVtjBucket(henkilo.getId() % 100);
-            henkiloRepository.save(henkilo);
-            log.info(henkilo.getOidHenkilo() + " updated with perustieto");
         });
         return null;
     }
