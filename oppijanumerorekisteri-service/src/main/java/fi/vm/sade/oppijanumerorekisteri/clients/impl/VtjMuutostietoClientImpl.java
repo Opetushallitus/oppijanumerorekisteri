@@ -154,6 +154,9 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
                 Thread.sleep(15000);
                 continue;
             } else if (!res.httpResponse().isSuccessful()) {
+                String errorMessage = "unsuccessful request (status " + res.httpResponse().statusCode() + ") to " + request.getUri();
+                String responseBody = res.responseBody() != null ? res.responseBody().toString() : "null";
+                log.error(errorMessage + ". Response body was:\n" + responseBody);
                 throw new RuntimeException("unsuccessful request (status " + res.httpResponse().statusCode() + ") to " + request.getUri());
             }
             return res.responseBody().orElseThrow(() -> new RuntimeException("no response body found for request " + request.getUri()));
