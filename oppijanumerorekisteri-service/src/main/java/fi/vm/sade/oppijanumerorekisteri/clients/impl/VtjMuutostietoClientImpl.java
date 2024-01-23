@@ -84,6 +84,7 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     @Setter
     @Getter
     private static class PerustietoResponse {
+        public boolean ajanTasalla;
         public List<VtjPerustieto> perustiedot;
     }
 
