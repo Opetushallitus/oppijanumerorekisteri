@@ -29,7 +29,7 @@ const KayttooikeusryhmanOrganisaatiorajoite = (props: Props) => {
     const koodisto = useSelector<RootState, KoodistoState>((state) => state.koodisto);
     const oppilaitostyypitOptions: Options<string> = koodisto.oppilaitostyypit.map((oppilaitostyyppi) => ({
         label: oppilaitostyyppi[locale],
-        value: oppilaitostyyppi.value,
+        value: oppilaitostyyppi.koodiUri,
     }));
     const organisaatiotyypitOptions: Options<string> = koodisto.organisaatiotyyppiKoodisto.map(
         (organisaatiotyyppi) => ({

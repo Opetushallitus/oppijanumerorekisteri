@@ -17,15 +17,17 @@ import {
     FETCH_ORGANISAATIOTYYPIT_SUCCESS,
     FETCH_ORGANISAATIOTYYPIT_FAILURE,
 } from '../actions/actiontypes';
-import { Koodisto } from '../types/domain/koodisto/koodisto.types';
+import { Koodi, Koodisto } from '../types/domain/koodisto/koodisto.types';
 
 export type KoodistoStateKoodi = {
+    koodiUri: string;
     value: string;
     [kieli: string]: string;
 };
 
 const mapKoodistoValuesByLocale = (koodisto: Koodisto): KoodistoStateKoodi[] =>
-    koodisto.map((koodi) => ({
+    koodisto.map((koodi: Koodi) => ({
+        koodiUri: koodi.koodiUri,
         value: koodi.koodiArvo.toLowerCase(),
         ...Object.fromEntries(koodi.metadata.map((k) => [k.kieli.toLowerCase(), k.nimi])),
     }));

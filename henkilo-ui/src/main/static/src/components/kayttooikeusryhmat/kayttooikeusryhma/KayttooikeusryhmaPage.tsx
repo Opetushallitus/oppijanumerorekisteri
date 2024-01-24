@@ -342,7 +342,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     };
 
     _isOppilaitosId = (input: string): boolean => {
-        return !this._isOrganisaatioOid(input) && !this._isOrganisaatiotyyppi(input) && !this._isRyhmaOid(input);
+        return input.startsWith('oppilaitostyyppi_');
     };
 
     _isOrganisaatiotyyppi = (input: string): boolean => {
@@ -355,7 +355,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
 
     _parseExistingOppilaitostyyppiData = (organisaatioViitteet: OrganisaatioViite[]): Array<string> => {
         const oppilaitostyypit: Array<string> = this.props.koodisto.oppilaitostyypit.map(
-            (oppilaitostyyppiKoodi) => oppilaitostyyppiKoodi.value
+            (oppilaitostyyppiKoodi) => oppilaitostyyppiKoodi.koodiUri
         );
         const oppilaitosOrganisaatioViiteet = organisaatioViitteet.filter((organisaatioViite) =>
             this._isOppilaitosId(organisaatioViite.organisaatioTyyppi)
