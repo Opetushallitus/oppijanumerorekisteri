@@ -79,7 +79,7 @@ public class VtjMuutostietoValidator {
                 String etunimet = Optional.ofNullable(updateDto.getEtunimet()).orElse(readDto.getEtunimet());
                 String kutsumanimi = Optional.ofNullable(updateDto.getKutsumanimi()).orElse(readDto.getKutsumanimi());
                 KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(etunimet);
-                if (!kutsumanimiValidator.isValid(kutsumanimi)) {
+                if (kutsumanimi != null && !kutsumanimiValidator.isValid(kutsumanimi)) {
                         updateDto.setKutsumanimi(etunimet);
                 }
         }

@@ -44,6 +44,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
+import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
 import fi.vm.sade.oppijanumerorekisteri.models.KotikuntaHistoria;
 import fi.vm.sade.oppijanumerorekisteri.models.TurvakieltoKotikunta;
 import fi.vm.sade.oppijanumerorekisteri.models.TurvakieltoKotikuntaHistoria;
@@ -99,8 +100,10 @@ public class VtjMuutostietoServiceTest {
     Optional<Henkilo> henkilo = Optional.of(Henkilo.builder()
             .etunimet("etu")
             .sukunimi("suku")
+            .kutsumanimi("etu")
             .kansalaisuus(Set.of(new Kansalaisuus("152")))
             .hetu(hetus.get(0))
+            .aidinkieli(Kielisyys.builder().kieliKoodi("fi").build())
             .yhteystiedotRyhma(Set.of())
             .huoltajat(Set.of())
             .oidHenkilo("1.2.3.4.5")
@@ -109,6 +112,7 @@ public class VtjMuutostietoServiceTest {
     Henkilo.builder henkiloBuilder = Henkilo.builder()
             .etunimet("etu")
             .sukunimi("suku")
+            .kutsumanimi("etu")
             .hetu(hetus.get(0))
             .kotikunta("123")
             .yhteystiedotRyhma(Set.of(
