@@ -260,6 +260,7 @@ public class VtjMuutostietoServiceTest {
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
         verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
         HenkiloForceUpdateDto actual = argument.getValue();
+        assertThat(actual.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
         assertThat(actual.getTurvakielto()).isTrue();
         assertThat(actual.getKotikunta()).isNull();
         assertThat(actual.getYhteystiedotRyhma()).isEmpty();
