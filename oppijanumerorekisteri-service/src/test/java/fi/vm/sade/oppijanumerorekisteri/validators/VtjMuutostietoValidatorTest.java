@@ -100,7 +100,7 @@ public class VtjMuutostietoValidatorTest {
         henkiloForceReadDto.setEtunimet("James Jooseppi");
         henkiloForceReadDto.setKutsumanimi("James");
         validator.validateAndCorrectErrors(henkiloForceReadDto, henkiloForceUpdateDto);
-        assertThat(henkiloForceUpdateDto.getKutsumanimi()).isNull();
+        assertThat(henkiloForceUpdateDto.getKutsumanimi()).isEqualTo("James Jooseppi");
     }
 
     @Test
