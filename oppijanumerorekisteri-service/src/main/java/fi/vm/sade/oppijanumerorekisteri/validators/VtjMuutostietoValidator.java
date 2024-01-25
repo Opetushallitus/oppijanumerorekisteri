@@ -40,7 +40,7 @@ public class VtjMuutostietoValidator {
                                 KUNTAKOODI_TUNTEMATON)),
                 updateDto -> Optional.ofNullable(updateDto.getAidinkieli())
                         .ifPresent(aidinkieli -> replaceIfInvalid(
-                                KoodiValidator.isValid(koodistoService, Koodisto.KIELI, aidinkieli.getKieliKoodi()),
+                                KoodiValidator.isValid(koodistoService, Koodisto.KIELI, aidinkieli.getKieliKoodi().toUpperCase()),
                                 aidinkieli::setKieliKoodi,
                                 aidinkieli.getKieliKoodi(),
                                 KIELIKOODI_TUNTEMATON)),
