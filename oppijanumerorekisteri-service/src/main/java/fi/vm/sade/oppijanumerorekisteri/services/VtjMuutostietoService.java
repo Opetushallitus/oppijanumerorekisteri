@@ -374,10 +374,10 @@ public class VtjMuutostietoService {
     }
 
     private void reportMissingPerustieto(List<String> requestedHetus, List<VtjPerustieto> receivedPerustietos) {
-        Set<String> requested = new HashSet<String>(requestedHetus);
-        Set<String> received = new HashSet<String>(receivedPerustietos.stream().map(perustieto -> perustieto.henkilotunnus).toList());
+        Set<String> requested = new HashSet<>(requestedHetus);
+        Set<String> received = new HashSet<>(receivedPerustietos.stream().map(perustieto -> perustieto.henkilotunnus).toList());
         requested.removeAll(received);
-        if (requested.size() > 0) {
+        if (!requested.isEmpty()) {
             log.warn("did not get perustieto for all hetus");
             slackClient.sendToSlack("Perustietoja ei löytynyt kaikille henkilötunnuksille", null);
         }
@@ -386,7 +386,7 @@ public class VtjMuutostietoService {
     public void handlePerustietoTask() {
         log.info("starting perustieto task");
         List<String> hetusWithoutBucket = henkiloRepository.findHetusWithoutVtjBucket();
-        if (hetusWithoutBucket.size() < 1) {
+        if (hetusWithoutBucket.isEmpty()) {
             log.info("did not find any hetus without vtj bucket. ending task.");
             return;
         }

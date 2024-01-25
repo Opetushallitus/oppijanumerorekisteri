@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -155,9 +156,12 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
                 continue;
             } else if (!res.httpResponse().isSuccessful()) {
                 String errorMessage = "unsuccessful request (status " + res.httpResponse().statusCode() + ") to " + request.getUri();
-                String responseBody = res.responseBody() != null ? res.responseBody().toString() : "null";
-                log.error(errorMessage + ". Response body was:\n" + responseBody);
-                throw new RuntimeException("unsuccessful request (status " + res.httpResponse().statusCode() + ") to " + request.getUri());
+                if (res.responseBody().isPresent()) {
+                    log.error(errorMessage + ". response body was: " + IOUtils.toString(res.responseBody().get(), "utf8"));
+                } else {
+                    log.error(errorMessage);
+                }
+                throw new RuntimeException(errorMessage);
             }
             return res.responseBody().orElseThrow(() -> new RuntimeException("no response body found for request " + request.getUri()));
         }
