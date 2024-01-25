@@ -162,7 +162,7 @@ public class VtjMuutostietoServiceTest {
                 objectMapper.readTree(new File("src/test/resources/vtj/perustietoHetuKorjaus.json")));
 
         when(koodistoService.list(Koodisto.KIELI))
-                .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI).koodi("fr").koodi("fi").koodi("sv")
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI).koodi("FR").koodi("FI").koodi("SV")
                         .koodi("98")
                         .build());
         when(koodistoService.list(Koodisto.KUNTA))
