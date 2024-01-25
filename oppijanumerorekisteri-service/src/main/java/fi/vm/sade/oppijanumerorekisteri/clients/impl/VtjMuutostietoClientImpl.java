@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
@@ -157,7 +158,7 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
             } else if (!res.httpResponse().isSuccessful()) {
                 String errorMessage = "unsuccessful request (status " + res.httpResponse().statusCode() + ") to " + request.getUri();
                 if (res.responseBody().isPresent()) {
-                    log.error(errorMessage + ". response body was: " + IOUtils.toString(res.responseBody().get(), "UTF-8"));
+                    log.error(errorMessage + ". response body was: " + IOUtils.toString(res.responseBody().get(), StandardCharsets.UTF_8));
                 } else {
                     log.error(errorMessage);
                 }
