@@ -2,8 +2,10 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletionException;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -371,17 +373,31 @@ public class VtjMuutostietoService {
         return null;
     }
 
+    private void reportMissingPerustieto(List<String> requestedHetus, List<VtjPerustieto> receivedPerustietos) {
+        Set<String> requested = new HashSet<String>(requestedHetus);
+        Set<String> received = new HashSet<String>(receivedPerustietos.stream().map(perustieto -> perustieto.henkilotunnus).toList());
+        requested.removeAll(received);
+        if (requested.size() > 0) {
+            log.warn("did not get perustieto for all hetus");
+            slackClient.sendToSlack("Perustietoja ei löytynyt kaikille henkilötunnuksille", null);
+        }
+    }
+
     public void handlePerustietoTask() {
         log.info("starting perustieto task");
         List<String> hetusWithoutBucket = henkiloRepository.findHetusWithoutVtjBucket();
-        log.info("found " + hetusWithoutBucket.size() + " hetus without vtj bucket");
+        if (hetusWithoutBucket.size() < 1) {
+            log.info("did not find any hetus without vtj bucket. ending task.");
+            return;
+        }
 
+        log.info("found " + hetusWithoutBucket.size() + " hetus without vtj bucket");
         List<List<String>> partitioned = Lists.partition(hetusWithoutBucket, 100);
         for (List<String> partition : partitioned) {
             try {
-                muutostietoClient.fetchHenkiloPerustieto(partition)
-                        .stream()
-                        .forEach(perustieto -> transaction.execute(status -> savePerustieto(perustieto)));
+                List<VtjPerustieto> perustietoList = muutostietoClient.fetchHenkiloPerustieto(partition);
+                reportMissingPerustieto(partition, perustietoList);
+                perustietoList.stream().forEach(perustieto -> transaction.execute(status -> savePerustieto(perustieto)));
             } catch (InterruptedException ie) {
                 log.error("interrupted while fetching perustieto", ie);
                 Thread.currentThread().interrupt();
