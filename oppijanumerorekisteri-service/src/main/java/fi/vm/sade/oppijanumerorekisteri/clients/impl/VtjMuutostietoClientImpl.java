@@ -157,7 +157,7 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
             } else if (!res.httpResponse().isSuccessful()) {
                 String errorMessage = "unsuccessful request (status " + res.httpResponse().statusCode() + ") to " + request.getUri();
                 if (res.responseBody().isPresent()) {
-                    log.error(errorMessage + ". response body was: " + IOUtils.toString(res.responseBody().get(), "utf8"));
+                    log.error(errorMessage + ". response body was: " + IOUtils.toString(res.responseBody().get(), "UTF-8"));
                 } else {
                     log.error(errorMessage);
                 }
