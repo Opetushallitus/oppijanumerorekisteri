@@ -72,7 +72,7 @@ public class SchedulingConfiguration {
     @ConditionalOnProperty(name = "oppijanumerorekisteri.vtj-muutosrajapinta.perustieto-enabled", matchIfMissing = false)
     Task<Void> vtjPerustietoTask() {
         return Tasks
-                .recurring(new TaskWithoutDataDescriptor("vtj perustieto task"), FixedDelay.ofMinutes(1))
+                .recurring(new TaskWithoutDataDescriptor("vtj perustieto task"), FixedDelay.ofMinutes(15))
                 .execute((instance, ctx) -> vtjMuutostietoService.handlePerustietoTask());
     }
 
