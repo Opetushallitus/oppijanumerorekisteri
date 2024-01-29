@@ -2,8 +2,10 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletionException;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -234,29 +236,34 @@ public class VtjMuutostietoService {
 
     protected Void savePerustieto(VtjPerustieto perustieto) {
         henkiloRepository.findByHetu(perustieto.henkilotunnus).ifPresent(henkilo -> {
-            if (isHenkilotunnusKorjaus(perustieto.tietoryhmat)) {
-                slackClient.sendToSlack(String.format(
-                        "VTJ-perustietojen tallennus käyttäjälle %s estetty HENKILOTUNNUS_KORJAUS-tietoryhmän vuoksi",
-                        henkilo.getOidHenkilo()), null);
-                return;
-            }
-            HenkiloForceReadDto read = mapper.map(henkilo, HenkiloForceReadDto.class);
-            HenkiloForceUpdateDto update = mapToUpdateDto(read, perustieto.tietoryhmat, perustietoMapper);
-            if (isTurvakieltoAdded(perustieto.tietoryhmat)) {
-                update.setKotikunta(null);
-                JsonNode tietoryhma = getTietoryhma(perustieto.tietoryhmat, "KOTIKUNTA");
-                if (tietoryhma != null && tietoryhma.has("kuntakoodi")) {
-                    String kotikunta = getStringValue(tietoryhma, "kuntakoodi");
-                    LocalDate muuttopv = TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv"));
-                    insertOrUpdateTurvakieltoKotikunta(henkilo.getId(), kotikunta, muuttopv);
+            try {
+                if (isHenkilotunnusKorjaus(perustieto.tietoryhmat)) {
+                    slackClient.sendToSlack(String.format(
+                            "VTJ-perustietojen tallennus käyttäjälle %s estetty HENKILOTUNNUS_KORJAUS-tietoryhmän vuoksi",
+                            henkilo.getOidHenkilo()), null);
+                    return;
                 }
-            } else {
-                saveKotikuntaHistoria(henkilo.getId(), perustieto.tietoryhmat, null);
+                HenkiloForceReadDto read = mapper.map(henkilo, HenkiloForceReadDto.class);
+                HenkiloForceUpdateDto update = mapToUpdateDto(read, perustieto.tietoryhmat, perustietoMapper);
+                if (isTurvakieltoAdded(perustieto.tietoryhmat)) {
+                    update.setKotikunta(null);
+                    JsonNode tietoryhma = getTietoryhma(perustieto.tietoryhmat, "KOTIKUNTA");
+                    if (tietoryhma != null && tietoryhma.has("kuntakoodi")) {
+                        String kotikunta = getStringValue(tietoryhma, "kuntakoodi");
+                        LocalDate muuttopv = TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv"));
+                        insertOrUpdateTurvakieltoKotikunta(henkilo.getId(), kotikunta, muuttopv);
+                    }
+                } else {
+                    saveKotikuntaHistoria(henkilo.getId(), perustieto.tietoryhmat, null);
+                }
+                henkiloModificationService.forceUpdateHenkilo(update);
+                henkilo.setVtjBucket(henkilo.getId() % 100);
+                henkiloRepository.save(henkilo);
+                log.info(henkilo.getOidHenkilo() + " updated with perustieto");
+            } catch (Exception e) {
+                log.error("failed to save perustieto for henkilo " + henkilo.getOidHenkilo(), e);
+                slackClient.sendToSlack("Virhe VTJ-perustietojen tallennuksessa henkilölle " + henkilo.getOidHenkilo(), e.getMessage());
             }
-            henkiloModificationService.forceUpdateHenkilo(update);
-            henkilo.setVtjBucket(henkilo.getId() % 100);
-            henkiloRepository.save(henkilo);
-            log.info(henkilo.getOidHenkilo() + " updated with perustieto");
         });
         return null;
     }
@@ -366,17 +373,31 @@ public class VtjMuutostietoService {
         return null;
     }
 
+    private void reportMissingPerustieto(List<String> requestedHetus, List<VtjPerustieto> receivedPerustietos) {
+        Set<String> requested = new HashSet<>(requestedHetus);
+        Set<String> received = new HashSet<>(receivedPerustietos.stream().map(perustieto -> perustieto.henkilotunnus).toList());
+        requested.removeAll(received);
+        if (!requested.isEmpty()) {
+            log.warn("did not get perustieto for all hetus");
+            slackClient.sendToSlack("Perustietoja ei löytynyt kaikille henkilötunnuksille", null);
+        }
+    }
+
     public void handlePerustietoTask() {
         log.info("starting perustieto task");
         List<String> hetusWithoutBucket = henkiloRepository.findHetusWithoutVtjBucket();
-        log.info("found " + hetusWithoutBucket.size() + " hetus without vtj bucket");
+        if (hetusWithoutBucket.isEmpty()) {
+            log.info("did not find any hetus without vtj bucket. ending task.");
+            return;
+        }
 
+        log.info("found " + hetusWithoutBucket.size() + " hetus without vtj bucket");
         List<List<String>> partitioned = Lists.partition(hetusWithoutBucket, 100);
         for (List<String> partition : partitioned) {
             try {
-                muutostietoClient.fetchHenkiloPerustieto(partition)
-                        .stream()
-                        .forEach(perustieto -> transaction.execute(status -> savePerustieto(perustieto)));
+                List<VtjPerustieto> perustietoList = muutostietoClient.fetchHenkiloPerustieto(partition);
+                reportMissingPerustieto(partition, perustietoList);
+                perustietoList.stream().forEach(perustieto -> transaction.execute(status -> savePerustieto(perustieto)));
             } catch (InterruptedException ie) {
                 log.error("interrupted while fetching perustieto", ie);
                 Thread.currentThread().interrupt();

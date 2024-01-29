@@ -23,8 +23,6 @@ import java.time.LocalTime;
 
 /**
  * Ajastuksen aktivointi.
- *
- * *Task-luokat sisältävät ajastusten konfiguroinnit
  */
 @Slf4j
 @Configuration
@@ -74,7 +72,7 @@ public class SchedulingConfiguration {
     @ConditionalOnProperty(name = "oppijanumerorekisteri.vtj-muutosrajapinta.perustieto-enabled", matchIfMissing = false)
     Task<Void> vtjPerustietoTask() {
         return Tasks
-                .recurring(new TaskWithoutDataDescriptor("vtj perustieto task"), FixedDelay.ofHours(1))
+                .recurring(new TaskWithoutDataDescriptor("vtj perustieto task"), FixedDelay.ofMinutes(15))
                 .execute((instance, ctx) -> vtjMuutostietoService.handlePerustietoTask());
     }
 

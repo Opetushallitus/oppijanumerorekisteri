@@ -142,8 +142,10 @@ public abstract class TietoryhmaMapper {
         JsonNode localized = tietoryhma.get(fieldName).get(locale);
         if (localized != null) {
             return localized.asText();
-        } else {
+        } else if (tietoryhma.get(fieldName).get("fi") != null) {
             return tietoryhma.get(fieldName).get("fi").asText();
+        } else {
+            return null;
         }
     }
 

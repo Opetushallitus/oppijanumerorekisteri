@@ -100,7 +100,7 @@ public class VtjMuutostietoValidatorTest {
         henkiloForceReadDto.setEtunimet("James Jooseppi");
         henkiloForceReadDto.setKutsumanimi("James");
         validator.validateAndCorrectErrors(henkiloForceReadDto, henkiloForceUpdateDto);
-        assertThat(henkiloForceUpdateDto.getKutsumanimi()).isNull();
+        assertThat(henkiloForceUpdateDto.getKutsumanimi()).isEqualTo("James Jooseppi");
     }
 
     @Test
@@ -110,7 +110,7 @@ public class VtjMuutostietoValidatorTest {
                     .thenReturn(true);
             utilities.when(() -> KoodiValidator.isValid(any(), eq(Koodisto.MAAT_JA_VALTIOT_2), eq("validMaa")))
                     .thenReturn(true);
-            utilities.when(() -> KoodiValidator.isValid(any(), eq(Koodisto.KIELI), eq("validKieli")))
+            utilities.when(() -> KoodiValidator.isValid(any(), eq(Koodisto.KIELI), eq("VALIDKIELI")))
                     .thenReturn(true);
             HenkiloForceUpdateDto henkiloForceUpdateDto = new HenkiloForceUpdateDto();
             henkiloForceUpdateDto.setKotikunta("validKunta");

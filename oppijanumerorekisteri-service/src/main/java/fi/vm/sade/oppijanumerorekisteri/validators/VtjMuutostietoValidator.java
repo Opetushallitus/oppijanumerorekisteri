@@ -40,7 +40,7 @@ public class VtjMuutostietoValidator {
                                 KUNTAKOODI_TUNTEMATON)),
                 updateDto -> Optional.ofNullable(updateDto.getAidinkieli())
                         .ifPresent(aidinkieli -> replaceIfInvalid(
-                                KoodiValidator.isValid(koodistoService, Koodisto.KIELI, aidinkieli.getKieliKoodi()),
+                                KoodiValidator.isValid(koodistoService, Koodisto.KIELI, aidinkieli.getKieliKoodi().toUpperCase()),
                                 aidinkieli::setKieliKoodi,
                                 aidinkieli.getKieliKoodi(),
                                 KIELIKOODI_TUNTEMATON)),
@@ -74,22 +74,14 @@ public class VtjMuutostietoValidator {
                         }))));
     }
 
-    private void replaceInvalidKutsumanimi(HenkiloForceReadDto readDto,
-            HenkiloForceUpdateDto updateDto) {
-        // if etunimet change but kutsumanimi is not updated
-        if (updateDto.getEtunimet() != null && updateDto.getKutsumanimi() == null && readDto.getKutsumanimi() != null) {
-            KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(updateDto.getEtunimet());
-            if (!kutsumanimiValidator.isValid(readDto.getKutsumanimi())) {
-                updateDto.setKutsumanimi(updateDto.getEtunimet());
-            }
-        }
-
-        // if kutsumanimi changes
-        if (updateDto.getKutsumanimi() != null && updateDto.getEtunimet() == null) {
-            KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(readDto.getEtunimet());
-            if (!kutsumanimiValidator.isValid(updateDto.getKutsumanimi())) {
-                updateDto.setKutsumanimi(null);
-            }
+    private void replaceInvalidKutsumanimi(HenkiloForceReadDto readDto, HenkiloForceUpdateDto updateDto) {
+        if (updateDto.getEtunimet() != null || updateDto.getKutsumanimi() != null) {
+                String etunimet = Optional.ofNullable(updateDto.getEtunimet()).orElse(readDto.getEtunimet());
+                String kutsumanimi = Optional.ofNullable(updateDto.getKutsumanimi()).orElse(readDto.getKutsumanimi());
+                KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(etunimet);
+                if (kutsumanimi != null && !kutsumanimiValidator.isValid(kutsumanimi)) {
+                        updateDto.setKutsumanimi(etunimet);
+                }
         }
     }
 

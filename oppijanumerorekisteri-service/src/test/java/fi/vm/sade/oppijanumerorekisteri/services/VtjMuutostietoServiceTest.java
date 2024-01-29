@@ -44,6 +44,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
+import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
 import fi.vm.sade.oppijanumerorekisteri.models.KotikuntaHistoria;
 import fi.vm.sade.oppijanumerorekisteri.models.TurvakieltoKotikunta;
 import fi.vm.sade.oppijanumerorekisteri.models.TurvakieltoKotikuntaHistoria;
@@ -99,8 +100,10 @@ public class VtjMuutostietoServiceTest {
     Optional<Henkilo> henkilo = Optional.of(Henkilo.builder()
             .etunimet("etu")
             .sukunimi("suku")
+            .kutsumanimi("etu")
             .kansalaisuus(Set.of(new Kansalaisuus("152")))
             .hetu(hetus.get(0))
+            .aidinkieli(Kielisyys.builder().kieliKoodi("fi").build())
             .yhteystiedotRyhma(Set.of())
             .huoltajat(Set.of())
             .oidHenkilo("1.2.3.4.5")
@@ -109,6 +112,7 @@ public class VtjMuutostietoServiceTest {
     Henkilo.builder henkiloBuilder = Henkilo.builder()
             .etunimet("etu")
             .sukunimi("suku")
+            .kutsumanimi("etu")
             .hetu(hetus.get(0))
             .kotikunta("123")
             .yhteystiedotRyhma(Set.of(
@@ -158,7 +162,7 @@ public class VtjMuutostietoServiceTest {
                 objectMapper.readTree(new File("src/test/resources/vtj/perustietoHetuKorjaus.json")));
 
         when(koodistoService.list(Koodisto.KIELI))
-                .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI).koodi("fr").koodi("fi").koodi("sv")
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI).koodi("FR").koodi("FI").koodi("SV")
                         .koodi("98")
                         .build());
         when(koodistoService.list(Koodisto.KUNTA))
@@ -260,6 +264,7 @@ public class VtjMuutostietoServiceTest {
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
         verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
         HenkiloForceUpdateDto actual = argument.getValue();
+        assertThat(actual.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
         assertThat(actual.getTurvakielto()).isTrue();
         assertThat(actual.getKotikunta()).isNull();
         assertThat(actual.getYhteystiedotRyhma()).isEmpty();

@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
@@ -10,10 +11,12 @@ import java.util.List;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -46,7 +49,10 @@ import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
 @Slf4j
 public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     private final OppijanumerorekisteriProperties properties;
-    private final ObjectMapper objectMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+    private final ObjectMapper objectMapper = JsonMapper.builder()
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .addModule(new JavaTimeModule())
+            .build();
     private final StsAssumeRoleCredentialsProvider credentialsProvider;
 
     public VtjMuutostietoClientImpl(OppijanumerorekisteriProperties properties, StsClient stsClient) {
@@ -84,6 +90,7 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     @Setter
     @Getter
     private static class PerustietoResponse {
+        public boolean ajanTasalla;
         public List<VtjPerustieto> perustiedot;
     }
 
@@ -149,7 +156,13 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
                 Thread.sleep(15000);
                 continue;
             } else if (!res.httpResponse().isSuccessful()) {
-                throw new RuntimeException("unsuccessful request (status " + res.httpResponse().statusCode() + ") to " + request.getUri());
+                String errorMessage = "unsuccessful request (status " + res.httpResponse().statusCode() + ") to " + request.getUri();
+                if (res.responseBody().isPresent()) {
+                    log.error(errorMessage + ". response body was: " + IOUtils.toString(res.responseBody().get(), StandardCharsets.UTF_8));
+                } else {
+                    log.error(errorMessage);
+                }
+                throw new RuntimeException(errorMessage);
             }
             return res.responseBody().orElseThrow(() -> new RuntimeException("no response body found for request " + request.getUri()));
         }
