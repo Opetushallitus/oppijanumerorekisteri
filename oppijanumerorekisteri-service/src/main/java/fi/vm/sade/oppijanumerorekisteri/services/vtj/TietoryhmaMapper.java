@@ -51,19 +51,7 @@ public abstract class TietoryhmaMapper {
             return null;
         }
 
-        switch (getStringValue(date, "tarkkuus")) {
-            case "PAIVA":
-                return LocalDate.parse(getStringValue(date, "arvo"));
-            case "KUUKAUSI":
-                return LocalDate.parse(getStringValue(date, "arvo") + "-01");
-            case "VUOSI":
-                return LocalDate.parse(getStringValue(date, "arvo") + "-01-01");
-            case "EI_TIEDOSSA":
-                return null;
-            default:
-                log.debug("failed to parse a date with tarkkuus " + getStringValue(date, "tarkkuus"));
-                return null;
-        }
+        return LocalDate.parse(getStringValue(date, "arvo"));
     }
 
     protected String getSukupuoli(JsonNode tietoryhma) {
