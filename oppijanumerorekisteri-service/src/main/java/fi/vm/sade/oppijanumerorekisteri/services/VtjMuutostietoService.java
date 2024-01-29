@@ -139,9 +139,10 @@ public class VtjMuutostietoService {
         return update;
     }
 
-    private boolean isHenkilotunnusKorjaus(JsonNode tietoryhmat) {
+    private boolean isHenkilotunnusKorjaus(JsonNode tietoryhmat, Henkilo henkilo) {
         for (JsonNode tietoryhma : tietoryhmat) {
-            if ("HENKILOTUNNUS_KORJAUS".equals(getStringValue(tietoryhma, "tietoryhma"))) {
+            if ("HENKILOTUNNUS_KORJAUS".equals(getStringValue(tietoryhma, "tietoryhma"))
+                    && !henkilo.getHetu().equals(getStringValue(tietoryhmat, "aktiivinenHenkilotunnus"))) {
                 return true;
             }
         }
@@ -237,7 +238,7 @@ public class VtjMuutostietoService {
     protected Void savePerustieto(VtjPerustieto perustieto) {
         henkiloRepository.findByHetu(perustieto.henkilotunnus).ifPresent(henkilo -> {
             try {
-                if (isHenkilotunnusKorjaus(perustieto.tietoryhmat)) {
+                if (isHenkilotunnusKorjaus(perustieto.tietoryhmat, henkilo)) {
                     slackClient.sendToSlack(String.format(
                             "VTJ-perustietojen tallennus käyttäjälle %s estetty HENKILOTUNNUS_KORJAUS-tietoryhmän vuoksi",
                             henkilo.getOidHenkilo()), null);
