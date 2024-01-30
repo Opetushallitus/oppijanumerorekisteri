@@ -142,7 +142,7 @@ public class VtjMuutostietoService {
     private boolean isHenkilotunnusKorjaus(JsonNode tietoryhmat, Henkilo henkilo) {
         for (JsonNode tietoryhma : tietoryhmat) {
             if ("HENKILOTUNNUS_KORJAUS".equals(getStringValue(tietoryhma, "tietoryhma"))
-                    && !henkilo.getHetu().equals(getStringValue(tietoryhmat, "aktiivinenHenkilotunnus"))) {
+                    && !henkilo.getHetu().equals(getStringValue(tietoryhma, "aktiivinenHenkilotunnus"))) {
                 return true;
             }
         }
