@@ -186,6 +186,7 @@ public class VtjMuutostietoService {
             turvakieltoKotikuntaHistoriaRepository.save(kotikuntaHistoria);
         } catch (Exception e) {
             log.error("failed to save turvakieltokotikuntahistoria for henkilo " + henkiloId, e);
+            slackClient.sendToSlack("Virhe turvakieltokotikuntahistorian tallennuksessa henkilölle " + henkiloId, e.getMessage());
         }
     }
 
@@ -214,6 +215,7 @@ public class VtjMuutostietoService {
             saveTurvakieltoKotikuntaHistoria(henkiloId, kotikunta, muuttopv);
         } catch (Exception e) {
             log.error("failed to save turvakieltokotikunta for henkilo " + henkiloId, e);
+            slackClient.sendToSlack("Virhe turvakieltokotikunnan tallennuksessa henkilölle " + henkiloId, e.getMessage());
         }
     }
 
@@ -231,6 +233,7 @@ public class VtjMuutostietoService {
             }
         } catch (Exception e) {
             log.error("failed to save kotikuntahistoria for henkilo " + henkiloId, e);
+            slackClient.sendToSlack("Virhe kotikuntahistorian tallennuksessa henkilölle " + henkiloId, e.getMessage());
         }
         return null;
     }
