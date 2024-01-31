@@ -32,7 +32,7 @@ export const AccessRightsReport = () => {
                 filter={filter}
                 setFilter={setFilter}
                 setOid={setOid}
-                dataExport={oid && report?.length && (() => exportReport(report, L))}
+                dataExport={oid && report?.length ? () => exportReport(report, L) : undefined}
             />
             {isFetching && <Loader />}
             {report && oid && <Report report={report} />}

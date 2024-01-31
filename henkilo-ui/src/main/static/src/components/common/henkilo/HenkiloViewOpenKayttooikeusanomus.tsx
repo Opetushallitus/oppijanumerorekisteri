@@ -93,7 +93,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     const [hylkaaAnomus, setHylkaaAnomus] = useState<number>();
 
     useEffect(() => {
-        const currentDates = { ...dates } ?? {};
+        const currentDates = { ...dates };
         setDates(
             props.kayttooikeus?.kayttooikeusAnomus?.reduce(
                 (acc, kayttooikeus) => ({

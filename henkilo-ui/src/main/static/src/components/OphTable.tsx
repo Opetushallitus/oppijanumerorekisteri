@@ -27,7 +27,7 @@ export const expanderColumn = {
                     onClick={row.getToggleExpandedHandler()}
                     style={{ cursor: 'pointer' }}
                 >
-                    {row.getIsExpanded() ? '' : ''}
+                    {''}
                 </button>
             )
         );

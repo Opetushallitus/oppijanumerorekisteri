@@ -26,13 +26,14 @@ const Success: React.FC<ResultProps> = ({ translate, oid, reset }) => (
     </>
 );
 
-const Error: React.FC<ResultProps> = ({ translate }) => (
+const ErrorMessage: React.FC<ResultProps> = ({ translate }) => (
     <div className="create-result oph-alert-error">
         <ReactMarkdown>{translate('CREATE_PERSON_FAILURE')}</ReactMarkdown>
     </div>
 );
 
-const Result: React.FC<ResultProps> = (props) => (props.status === 201 ? <Success {...props} /> : <Error {...props} />);
+const Result: React.FC<ResultProps> = (props) =>
+    props.status === 201 ? <Success {...props} /> : <ErrorMessage {...props} />;
 
 const Create: React.FC<Props> = ({ createPerson, payload, ...rest }) => {
     React.useEffect(() => {

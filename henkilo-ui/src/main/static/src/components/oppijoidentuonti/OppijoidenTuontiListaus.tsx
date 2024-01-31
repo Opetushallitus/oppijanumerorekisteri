@@ -85,7 +85,7 @@ const OppijoidenTuontiListaus = ({ data, onPageChange, onSortingChange, sortKey,
 
     const pagination: PaginationState = useMemo(
         () => ({
-            pageIndex: data?.number - 1 ?? 0,
+            pageIndex: data?.number ? data?.number - 1 : 0,
             pageSize: data?.size ?? 20,
         }),
         [data]
