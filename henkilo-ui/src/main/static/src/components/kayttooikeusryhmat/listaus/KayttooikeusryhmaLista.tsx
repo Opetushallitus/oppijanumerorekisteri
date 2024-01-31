@@ -72,9 +72,9 @@ export default class KayttooikeusryhmaLista extends React.Component<Props, State
     }
 
     _onToggle = (index: number): void => {
-        this.setState({
-            showItems: update(index, !this.state.showItems[index], this.state.showItems),
-        });
+        this.setState((prevState) => ({
+            showItems: update(index, !prevState.showItems[index], prevState.showItems),
+        }));
     };
 
     naytaSallitutFilter = (kayttooikeusryhma: Kayttooikeusryhma) => {
