@@ -25,13 +25,11 @@ import { L10n } from '../../../types/localisation.type';
 import { Locale } from '../../../types/locale.type';
 import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { OrganisaatioState } from '../../../reducers/organisaatio.reducer';
-import { RyhmatState } from '../../../reducers/ryhmat.reducer';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
 import { NOTIFICATIONTYPES } from '../Notification/notificationtypes';
 import { GlobalNotificationConfig } from '../../../types/notification.types';
 import { OrganisaatioKayttooikeusryhmatState } from '../../../reducers/organisaatiokayttooikeusryhmat.reducer';
 import type { Option } from 'react-select';
-import type { OrganisaatioNameLookup } from '../../../reducers/organisaatio.reducer';
 import { OrganisaatioWithChildren } from '../../../types/domain/organisaatio/organisaatio.types';
 import type { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
@@ -44,9 +42,7 @@ type OwnProps = {
 type StateProps = {
     l10n: L10n;
     locale: Locale;
-    organisationNames: OrganisaatioNameLookup;
     omattiedot: OmattiedotState;
-    ryhmas: RyhmatState;
     henkilo: HenkiloState;
     organisaatioKayttooikeusryhmat: OrganisaatioKayttooikeusryhmatState;
     organisaatios: OrganisaatioState;
@@ -483,11 +479,9 @@ const mapStateToProps = (state: RootState): StateProps => ({
     l10n: state.l10n.localisations,
     locale: state.locale,
     henkilo: state.henkilo,
-    organisationNames: state.organisaatio.names,
     omattiedot: state.omattiedot,
     organisaatioKayttooikeusryhmat: state.OrganisaatioKayttooikeusryhmat,
     organisaatios: state.organisaatio,
-    ryhmas: state.ryhmatState,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {

@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../../store';
-import type { NotificationsState } from '../../../reducers/notifications.reducer';
 import classNames from 'classnames/bind';
 import './PasswordPopupContent.css';
 import { Localisations } from '../../../types/localisation.type';
@@ -19,7 +18,6 @@ type OwnProps = {
 
 type StateProps = {
     L: Localisations;
-    notifications: NotificationsState;
 };
 
 type DispatchProps = {
@@ -147,7 +145,6 @@ class PasswordPopupContent extends React.Component<Props, State> {
 
 const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
-    notifications: state.notifications,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {

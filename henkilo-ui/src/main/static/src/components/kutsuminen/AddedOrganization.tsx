@@ -29,7 +29,6 @@ import { Locale } from '../../types/locale.type';
 import { RyhmatState } from '../../reducers/ryhmat.reducer';
 
 type OwnProps = {
-    addedOrgs: readonly KutsuOrganisaatio[];
     addedOrg: KutsuOrganisaatio;
     index: number;
 };

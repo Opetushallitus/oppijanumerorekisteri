@@ -58,7 +58,7 @@ class VtjVertailuPage extends React.Component<Props> {
         ) : (
             <div className="wrapper">
                 <p className="oph-h2 oph-bold">{this.props.L['HENKILO_VTJ_VERTAILU']}</p>
-                <VtjVertailuListaus henkilo={this.props.henkilo} L={this.props.L} />
+                <VtjVertailuListaus henkilo={this.props.henkilo} />
                 <Button action={this.overrideHenkiloInformation.bind(this)} disabled={this.isDisabled()}>
                     {this.props.L['HENKILO_VTJ_YLIAJA']}
                 </Button>

@@ -8,7 +8,6 @@ import OphTable from '../../OphTable';
 import { YhteystietoRyhma } from '../../../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
 
 type Props = {
-    L: Record<string, string>;
     henkilo: HenkiloState;
 };
 

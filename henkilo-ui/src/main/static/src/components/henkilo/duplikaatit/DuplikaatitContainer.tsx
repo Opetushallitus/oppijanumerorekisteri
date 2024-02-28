@@ -25,10 +25,8 @@ type OwnProps = {
 };
 
 type StateProps = {
-    oidHenkilo: string;
     henkilo: HenkiloState;
     koodisto: KoodistoState;
-    henkiloType: string;
     L: Localisations;
 };
 
@@ -47,24 +45,24 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 class VirkailijaDuplikaatitContainer extends React.Component<Props> {
     async componentDidMount() {
-        this.props.fetchHenkilo(this.props.oidHenkilo);
-        this.props.fetchKayttaja(this.props.oidHenkilo);
+        const oidHenkilo = this.props.params.oid;
+        this.props.fetchHenkilo(oidHenkilo);
+        this.props.fetchKayttaja(oidHenkilo);
         this.props.fetchKansalaisuusKoodisto();
         this.props.fetchMaatJaValtiotKoodisto();
         this.props.fetchKieliKoodisto();
-        this.props.fetchHenkiloMaster(this.props.oidHenkilo);
-        this.props.fetchHenkiloDuplicates(this.props.oidHenkilo);
-        this.props.fetchHenkiloHakemukset(this.props.oidHenkilo);
+        this.props.fetchHenkiloMaster(oidHenkilo);
+        this.props.fetchHenkiloDuplicates(oidHenkilo);
+        this.props.fetchHenkiloHakemukset(oidHenkilo);
     }
 
     render() {
-        return <DuplikaatitPage L={this.props.L} henkiloType={this.props.henkiloType} henkilo={this.props.henkilo} />;
+        const henkiloType = this.props.route.henkiloType;
+        return <DuplikaatitPage L={this.props.L} henkiloType={henkiloType} henkilo={this.props.henkilo} />;
     }
 }
 
-const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
-    oidHenkilo: ownProps.params['oid'],
-    henkiloType: ownProps.route['henkiloType'],
+const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
     koodisto: state.koodisto,
     L: state.l10n.localisations[state.locale],

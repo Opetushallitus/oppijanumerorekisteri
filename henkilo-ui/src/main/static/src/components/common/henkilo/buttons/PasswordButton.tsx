@@ -3,10 +3,8 @@ import { connect } from 'react-redux';
 import CSS from 'csstype';
 
 import type { RootState } from '../../../../store';
-import type { NotificationsState } from '../../../../reducers/notifications.reducer';
 import PopupButton from '../../button/PopupButton';
 import PasswordPopupContent from '../../button/PasswordPopupContent';
-import { removeNotification } from '../../../../actions/notifications.actions';
 import { Localisations } from '../../../../types/localisation.type';
 
 type OwnProps = {
@@ -17,14 +15,9 @@ type OwnProps = {
 
 type StateProps = {
     L: Localisations;
-    notifications: NotificationsState;
 };
 
-type DispatchProps = {
-    removeNotification: (status: string, group: string, id: string) => void;
-};
-
-type Props = OwnProps & StateProps & DispatchProps;
+type Props = OwnProps & StateProps;
 
 class PasswordButton extends React.Component<Props> {
     render() {
@@ -48,10 +41,7 @@ class PasswordButton extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: RootState): StateProps => ({
-    notifications: state.notifications,
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    removeNotification,
-})(PasswordButton);
+export default connect<StateProps, null, OwnProps, RootState>(mapStateToProps)(PasswordButton);

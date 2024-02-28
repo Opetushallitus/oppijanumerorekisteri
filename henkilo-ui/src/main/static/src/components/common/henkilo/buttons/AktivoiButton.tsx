@@ -8,14 +8,14 @@ type Props = {
     oidHenkilo: string;
 };
 
-const AktivoiButton = (props: Props) => {
+const AktivoiButton = ({ L, oidHenkilo }: Props) => {
     const [aktivoiHenkilo] = useAktivoiHenkiloMutation();
     return (
         <ConfirmButton
             key="aktivoi"
-            action={() => aktivoiHenkilo(props)}
-            normalLabel={props.L['AKTIVOI_LINKKI']}
-            confirmLabel={props.L['AKTIVOI_LINKKI_CONFIRM']}
+            action={() => aktivoiHenkilo({ L, oidHenkilo })}
+            normalLabel={L['AKTIVOI_LINKKI']}
+            confirmLabel={L['AKTIVOI_LINKKI_CONFIRM']}
             id="aktivoi"
         />
     );

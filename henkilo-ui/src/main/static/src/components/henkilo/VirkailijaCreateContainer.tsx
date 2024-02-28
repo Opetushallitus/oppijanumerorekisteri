@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { RouteActions } from 'react-router-redux';
 
 import type { RootState } from '../../store';
 import { http } from '../../http';
@@ -13,15 +12,9 @@ import { isValidPassword } from '../../validation/PasswordValidator';
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import { isValidKayttajatunnus } from '../../validation/KayttajatunnusValidator';
 
-type OwnProps = {
-    router: RouteActions;
-};
-
 type StateProps = {
     L: Localisations;
 };
-
-type Props = OwnProps & StateProps;
 
 type State = {
     virkailija: VirkailijaCreate;
@@ -31,8 +24,8 @@ type State = {
 /**
  * Virkailijan luonti -näkymä.
  */
-class VirkailijaCreateContainer extends React.Component<Props, State> {
-    constructor(props: Props) {
+class VirkailijaCreateContainer extends React.Component<StateProps, State> {
+    constructor(props: StateProps) {
         super(props);
 
         this.state = {
@@ -151,4 +144,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(VirkailijaCreateContainer);
+export default connect<StateProps, object, null, RootState>(mapStateToProps)(VirkailijaCreateContainer);
