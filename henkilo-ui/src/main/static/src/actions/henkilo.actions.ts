@@ -173,7 +173,7 @@ const requestKayttajatietoUpdateFailure = () => ({
     type: UPDATE_KAYTTAJATIETO_FAILURE,
 });
 export const updateAndRefetchKayttajatieto =
-    (oid, username) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    (oid: string, username: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
         dispatch(requestKayttajatietoUpdate(username));
         const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
         try {
@@ -181,16 +181,17 @@ export const updateAndRefetchKayttajatieto =
             dispatch(requestKayttajatietoUpdateSuccess(kayttajatieto));
             dispatch<any>(fetchKayttajatieto(oid));
         } catch (error) {
-            if (error.errorType === 'IllegalArgumentException') {
-                dispatch(
-                    addGlobalNotification({
-                        autoClose: 10000,
-                        title: localizeWithState('NOTIFICATION_HENKILOTIEDOT_KAYTTAJANIMI_EXISTS', getState()),
-                        type: NOTIFICATIONTYPES.ERROR,
-                        key: 'NOTIFICATION_HENKILOTIEDOT_KAYTTAJANIMI_EXISTS',
-                    })
-                );
-            }
+            const errorKey = error.message?.includes('username_unique')
+                ? 'NOTIFICATION_HENKILOTIEDOT_KAYTTAJANIMI_EXISTS'
+                : 'NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE';
+            dispatch(
+                addGlobalNotification({
+                    autoClose: 10000,
+                    title: localizeWithState(errorKey, getState()),
+                    type: NOTIFICATIONTYPES.ERROR,
+                    key: errorKey,
+                })
+            );
             dispatch(requestKayttajatietoUpdateFailure());
         }
     };
