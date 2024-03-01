@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 
 import java.util.Collection;
+import java.util.Map;
 
 import static java.util.Collections.emptyList;
 
