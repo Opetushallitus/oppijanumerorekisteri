@@ -28,6 +28,7 @@ const App = ({ children }: OwnProps) => {
     const { isSuccess: isLocalisationsSuccess } = useGetLocalisationsQuery('henkilo-ui');
     const { data: omattiedot, isSuccess: isOmattiedotSuccess } = useGetOmattiedotQuery();
     const dispatch = useAppDispatch();
+    const L = l10n?.localisations[locale] ?? {};
 
     useEffect(() => {
         window.document.body.style.backgroundImage = `url('${background}')`;
@@ -54,7 +55,7 @@ const App = ({ children }: OwnProps) => {
                     addGlobalNotification({
                         key: 'EN_LOCALE_KEY',
                         type: NOTIFICATIONTYPES.WARNING,
-                        title: l10n.localisations[locale]['HENKILO_YHTEISET_ASIOINTIKIELI_EN_VAROITUS'],
+                        title: L['HENKILO_YHTEISET_ASIOINTIKIELI_EN_VAROITUS'],
                     })
                 );
             }
@@ -64,7 +65,12 @@ const App = ({ children }: OwnProps) => {
     return !isInitialized ? (
         <Loader />
     ) : isOmattiedotSuccess && omattiedot?.oidHenkilo ? (
-        <VirhePage text={'REKISTEROIDY_KIRJAUTUNUT'} />
+        <VirhePage>
+            <p className="oph-bold">{L['KAYTTAJA_ULOSKIRJAUTUMISEN_PAKOTUS']}</p>
+            <p className="oph-bold">
+                <a href="/cas/logout">{L['KAYTTAJA_ULOSKIRJAUTUMISEN_LINKKI']}</a>
+            </p>
+        </VirhePage>
     ) : (
         <div className="oph-typography mainContainer">
             <GlobalNotifications />
