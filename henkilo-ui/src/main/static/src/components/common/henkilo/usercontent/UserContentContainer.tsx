@@ -88,69 +88,6 @@ class UserContentContainer extends React.Component<Props, State> {
         });
     }
 
-    render() {
-        const kayttajaTyyppi =
-            this.props.henkilo && this.props.henkilo.kayttaja && this.props.henkilo.kayttaja.kayttajaTyyppi;
-        const userContentProps = {
-            readOnly: this.state.readOnly,
-            discardAction: this._discard.bind(this),
-            updateAction: this._update.bind(this),
-            updateModelAction: this._updateModelField.bind(this),
-            updateDateAction: this._updateModelField.bind(this),
-            henkiloUpdate: this.state.henkiloUpdate,
-            edit: this._edit.bind(this),
-            oidHenkilo: this.props.oidHenkilo,
-            isValidForm: this._validForm(),
-        };
-        let content;
-        if (kayttajaTyyppi === 'PALVELU') {
-            content = <PalveluUserContent {...userContentProps} />;
-        } else if (this.props.view === 'oppija') {
-            content = <OppijaUserContent {...userContentProps} />;
-        } else if (this.props.view === 'admin') {
-            content = <AdminUserContent {...userContentProps} />;
-        } else if (this.props.view === 'virkailija') {
-            content = <VirkailijaUserContent {...userContentProps} />;
-        } else if (this.props.view === 'omattiedot') {
-            content = <OmattiedotUserContent {...userContentProps} />;
-        } else {
-            throw new Error(`Unidentified view ${this.props.view}`);
-        }
-        return (
-            <div className="henkiloViewUserContentWrapper">
-                <div className="header">
-                    <p className="oph-h2 oph-bold">
-                        {this.props.L['HENKILO_PERUSTIEDOT_OTSIKKO'] + this._additionalInfo()}
-                    </p>
-                </div>
-                {content}
-
-                <LocalNotification
-                    title={this.props.L['NOTIFICATION_HENKILOTIEDOT_VIRHE_OTSIKKO']}
-                    type={NOTIFICATIONTYPES.WARNING}
-                    toggle={!this.state.readOnly && !this._validForm()}
-                >
-                    <ul>
-                        {this._validKutsumanimi() ? null : (
-                            <li>{this.props.L['NOTIFICATION_HENKILOTIEDOT_KUTSUMANIMI_VIRHE']}</li>
-                        )}
-                    </ul>
-                    <ul>
-                        {this._validKayttajatunnus() ? null : (
-                            <li>{this.props.L['NOTIFICATION_HENKILOTIEDOT_KAYTTAJATUNNUS_VIRHE']}</li>
-                        )}
-                    </ul>
-                </LocalNotification>
-                <LocalNotification
-                    title={this.props.L['HENKILO_YKSILOINTIVIRHE_OTSIKKO']}
-                    type={NOTIFICATIONTYPES.ERROR}
-                >
-                    <ul>{this._validYksilointi() ? null : <li>{this._getYksilointivirhe()}</li>}</ul>
-                </LocalNotification>
-            </div>
-        );
-    }
-
     _edit() {
         this.props.resetButtonNotifications();
         this.setState({ readOnly: false });
@@ -263,6 +200,69 @@ class UserContentContainer extends React.Component<Props, State> {
                   virhe.uudelleenyritysAikaleima
               ).format(PropertySingleton.getState().PVM_DATE_TIME_FORMAATTI)}`
             : this.props.L[virheKey];
+    }
+
+    render() {
+        const kayttajaTyyppi =
+            this.props.henkilo && this.props.henkilo.kayttaja && this.props.henkilo.kayttaja.kayttajaTyyppi;
+        const userContentProps = {
+            readOnly: this.state.readOnly,
+            discardAction: this._discard.bind(this),
+            updateAction: this._update.bind(this),
+            updateModelAction: this._updateModelField.bind(this),
+            updateDateAction: this._updateModelField.bind(this),
+            henkiloUpdate: this.state.henkiloUpdate,
+            edit: this._edit.bind(this),
+            oidHenkilo: this.props.oidHenkilo,
+            isValidForm: this._validForm(),
+        };
+        let content;
+        if (kayttajaTyyppi === 'PALVELU') {
+            content = <PalveluUserContent {...userContentProps} />;
+        } else if (this.props.view === 'oppija') {
+            content = <OppijaUserContent {...userContentProps} />;
+        } else if (this.props.view === 'admin') {
+            content = <AdminUserContent {...userContentProps} />;
+        } else if (this.props.view === 'virkailija') {
+            content = <VirkailijaUserContent {...userContentProps} />;
+        } else if (this.props.view === 'omattiedot') {
+            content = <OmattiedotUserContent {...userContentProps} />;
+        } else {
+            throw new Error(`Unidentified view ${this.props.view}`);
+        }
+        return (
+            <div className="henkiloViewUserContentWrapper">
+                <div className="header">
+                    <p className="oph-h2 oph-bold">
+                        {this.props.L['HENKILO_PERUSTIEDOT_OTSIKKO'] + this._additionalInfo()}
+                    </p>
+                </div>
+                {content}
+
+                <LocalNotification
+                    title={this.props.L['NOTIFICATION_HENKILOTIEDOT_VIRHE_OTSIKKO']}
+                    type={NOTIFICATIONTYPES.WARNING}
+                    toggle={!this.state.readOnly && !this._validForm()}
+                >
+                    <ul>
+                        {this._validKutsumanimi() ? null : (
+                            <li>{this.props.L['NOTIFICATION_HENKILOTIEDOT_KUTSUMANIMI_VIRHE']}</li>
+                        )}
+                    </ul>
+                    <ul>
+                        {this._validKayttajatunnus() ? null : (
+                            <li>{this.props.L['NOTIFICATION_HENKILOTIEDOT_KAYTTAJATUNNUS_VIRHE']}</li>
+                        )}
+                    </ul>
+                </LocalNotification>
+                <LocalNotification
+                    title={this.props.L['HENKILO_YKSILOINTIVIRHE_OTSIKKO']}
+                    type={NOTIFICATIONTYPES.ERROR}
+                >
+                    <ul>{this._validYksilointi() ? null : <li>{this._getYksilointivirhe()}</li>}</ul>
+                </LocalNotification>
+            </div>
+        );
     }
 }
 
