@@ -1,5 +1,9 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
+import { clone } from 'ramda';
+import moment from 'moment';
+import { urls } from 'oph-urls-js';
+
 import type { RootState } from '../../../../store';
 import StaticUtils from '../../StaticUtils';
 import { Localisations } from '../../../../types/localisation.type';
@@ -17,18 +21,12 @@ import { isValidKayttajatunnus } from '../../../../validation/KayttajatunnusVali
 import { Kayttaja } from '../../../../types/domain/kayttooikeus/kayttaja.types';
 import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
 import { http } from '../../../../http';
-import { urls } from 'oph-urls-js';
 import { updateAnomusilmoitus } from '../../../../actions/omattiedot.actions';
-import moment from 'moment';
 import PropertySingleton from '../../../../globals/PropertySingleton';
-import { clone } from 'ramda';
 import { resetButtonNotifications } from '../../../../actions/notifications.actions';
 import { View } from '../../../henkilo/HenkiloViewPage';
 
 type OwnProps = {
-    readOnly?: boolean;
-    basicInfo?: () => ReactNode;
-    readOnlyButtons?: ReactNode;
     oidHenkilo: string;
     view: View;
 };

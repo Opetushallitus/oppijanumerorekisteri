@@ -1,4 +1,4 @@
-import React, { ReactNode, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 import UserContentContainer from '../common/henkilo/usercontent/UserContentContainer';
@@ -25,8 +25,6 @@ import { Identifications } from './Identifications';
 
 export type View = 'omattiedot' | 'virkailija' | 'admin' | 'oppija';
 type Props = {
-    createBasicInfo?: () => ReactNode;
-    readOnlyButtons?: ReactNode;
     oidHenkilo: string;
     view: View;
 };
@@ -41,7 +39,7 @@ export const HenkiloViewPage = (props: Props) => {
     );
     const ryhmatState = useSelector<RootState, RyhmatState>((state) => state.ryhmatState);
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
-    const { view, oidHenkilo, createBasicInfo, readOnlyButtons } = props;
+    const { view, oidHenkilo } = props;
     const { data: omattiedot } = useGetOmattiedotQuery();
     const isRekisterinpitaja = omattiedot ? isOnrRekisterinpitaja(omattiedot.organisaatiot) : false;
 
@@ -59,12 +57,7 @@ export const HenkiloViewPage = (props: Props) => {
     return (
         <div>
             <div className="wrapper">
-                <UserContentContainer
-                    basicInfo={createBasicInfo}
-                    readOnlyButtons={readOnlyButtons}
-                    oidHenkilo={oidHenkilo}
-                    view={view}
-                />
+                <UserContentContainer oidHenkilo={oidHenkilo} view={view} />
             </div>
             {view !== 'omattiedot' && isRekisterinpitaja && henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && (
                 <div className="wrapper">
