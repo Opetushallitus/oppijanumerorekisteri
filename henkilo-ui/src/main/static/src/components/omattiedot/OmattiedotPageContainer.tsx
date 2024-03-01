@@ -17,7 +17,7 @@ import {
     fetchAllOrganisaatios,
     fetchAllRyhmas,
 } from '../../actions/organisaatio.actions';
-import HenkiloViewPage from '../henkilo/HenkiloViewPage';
+import { HenkiloViewPage } from '../henkilo/HenkiloViewPage';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
 import Loader from '../common/icons/Loader';
 import { useGetOmattiedotQuery } from '../../api/kayttooikeus';

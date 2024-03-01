@@ -31,7 +31,7 @@ type Props = {
     view: View;
 };
 
-const HenkiloViewPage = (props: Props) => {
+export const HenkiloViewPage = (props: Props) => {
     const { L, locale } = useLocalisations();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
@@ -154,5 +154,3 @@ const HenkiloViewPage = (props: Props) => {
         </div>
     );
 };
-
-export default HenkiloViewPage;

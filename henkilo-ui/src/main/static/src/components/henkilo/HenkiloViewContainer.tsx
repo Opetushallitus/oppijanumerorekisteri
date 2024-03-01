@@ -22,7 +22,7 @@ import {
     fetchAllKayttooikeusAnomusForHenkilo,
     fetchAllKayttooikeusryhmasForHenkilo,
 } from '../../actions/kayttooikeusryhma.actions';
-import HenkiloViewPage, { View } from './HenkiloViewPage';
+import { HenkiloViewPage, View } from './HenkiloViewPage';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
