@@ -15,11 +15,15 @@ import { KutsuOrganisaatio } from '../types/domain/kayttooikeus/OrganisaatioHenk
 
 export type KutsuminenOrganisaatiosState = readonly KutsuOrganisaatio[];
 
+function copy<T>(x: T): T {
+    return JSON.parse(JSON.stringify(x));
+}
+
 export const kutsuminenOrganisaatios = (
     state: KutsuminenOrganisaatiosState = [], // NOSONAR
     action: AnyAction
 ): KutsuminenOrganisaatiosState => {
-    const newOrganisaatios = [...state];
+    const newOrganisaatios = copy([...state]); // Copied here because this reducer mutates the state
     let kutsu: KutsuOrganisaatio | undefined;
     switch (action.type) {
         case KUTSU_ADD_ORGANISAATIO:
