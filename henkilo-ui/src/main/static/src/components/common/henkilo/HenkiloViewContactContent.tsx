@@ -27,6 +27,7 @@ import { RootState } from '../../../store';
 import { View } from '../../henkilo/HenkiloViewPage';
 import { Yhteystieto } from '../../../types/domain/oppijanumerorekisteri/yhteystieto.types';
 import { YhteystietoRyhma } from '../../../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
+import { copy } from '../../../utilities/copy';
 
 type OwnProps = {
     readOnly: boolean;
@@ -113,7 +114,7 @@ export class HenkiloViewContactContentComponent extends React.Component<Props, S
     constructor(props: Props) {
         super(props);
 
-        this.henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
+        this.henkiloUpdate = copy(this.props.henkilo.henkilo);
         this.contactInfoTemplate = [
             { label: 'YHTEYSTIETO_SAHKOPOSTI', value: null, inputValue: null },
             { label: 'YHTEYSTIETO_PUHELINNUMERO', value: null, inputValue: null },
@@ -277,7 +278,7 @@ export class HenkiloViewContactContentComponent extends React.Component<Props, S
     }
 
     _discard() {
-        this.henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
+        this.henkiloUpdate = copy(this.props.henkilo.henkilo);
         this.setState({
             readOnly: true,
             contactInfo: this._preEditData.contactInfo,

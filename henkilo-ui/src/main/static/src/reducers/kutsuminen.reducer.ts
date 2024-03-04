@@ -12,12 +12,9 @@ import {
     FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_FAILURE,
 } from '../actions/actiontypes';
 import { KutsuOrganisaatio } from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
+import { copy } from '../utilities/copy';
 
 export type KutsuminenOrganisaatiosState = readonly KutsuOrganisaatio[];
-
-function copy<T>(x: T): T {
-    return JSON.parse(JSON.stringify(x));
-}
 
 export const kutsuminenOrganisaatios = (
     state: KutsuminenOrganisaatiosState = [], // NOSONAR

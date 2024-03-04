@@ -67,7 +67,7 @@ class UserContentContainer extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        const henkiloUpdate = props.henkilo.henkilo ? JSON.parse(JSON.stringify(props.henkilo.henkilo)) : {};
+        const henkiloUpdate: any = props.henkilo.henkilo ? copy(props.henkilo.henkilo) : {};
         henkiloUpdate.anomusilmoitus = props.omattiedot && props.omattiedot.anomusilmoitus;
 
         this.state = {
@@ -116,7 +116,7 @@ class UserContentContainer extends React.Component<Props, State> {
     }
 
     _discard() {
-        const henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
+        const henkiloUpdate = copy(this.props.henkilo.henkilo);
         henkiloUpdate.anomusilmoitus = this.props.omattiedot && this.props.omattiedot.anomusilmoitus;
         this.setState({
             henkiloUpdate: henkiloUpdate,
