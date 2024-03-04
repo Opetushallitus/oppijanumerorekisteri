@@ -25,6 +25,7 @@ import { updateAnomusilmoitus } from '../../../../actions/omattiedot.actions';
 import PropertySingleton from '../../../../globals/PropertySingleton';
 import { resetButtonNotifications } from '../../../../actions/notifications.actions';
 import { View } from '../../../henkilo/HenkiloViewPage';
+import { copy } from '../../../../utilities/copy';
 
 type OwnProps = {
     oidHenkilo: string;
