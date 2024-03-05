@@ -44,7 +44,7 @@ const AnomusPage = () => {
     }, []);
 
     function onSubmit(criteria: Partial<GetHaetutKayttooikeusryhmatRequest>) {
-        const newParameters = Object.assign({}, parameters, criteria);
+        const newParameters = { ...parameters, ...criteria };
         newParameters.orderBy = sorted.length
             ? sorted[0].desc
                 ? sorted[0].id + '_DESC'

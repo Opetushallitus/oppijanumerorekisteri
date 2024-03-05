@@ -121,11 +121,12 @@ export const notifications = (
                     : [state[action.group].filter((notification) => notification.type === action.status)[0]];
             }
 
-            return Object.assign({}, state, {
+            return {
+                ...state,
                 [action.group]: state[action.group].filter(
                     (notification) => removeNotifications.indexOf(notification) === -1
                 ),
-            });
+            };
         }
         case PASSIVOI_HENKILO_FAILURE:
         case YKSILOI_HENKILO_FAILURE:

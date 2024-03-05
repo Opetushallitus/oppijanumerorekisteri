@@ -59,17 +59,12 @@ export const organisaatio = (
         case FETCH_ALL_ORGANISAATIOS_HIERARCHY_FAILURE:
             return { ...state, organisaatioHierarkiaLoading: false };
         case FETCH_ALL_ORGANISAATIOS_FAILURE:
-            return Object.assign({}, state, {
-                organisaatioLoading: false,
-                organisaatiot: initialState,
-            });
+            return { ...state, organisaatioLoading: false };
         case FETCH_ORGANISATIONS_SUCCESS: {
             const uncachedOrganisaatios = action.organisations
                 .filter((organisaatio) => Object.keys(state.cached).indexOf(organisaatio.oid) === -1)
                 .map((organisaatio) => [organisaatio.oid, organisaatio]);
-            return Object.assign({}, state, {
-                cached: { ...state.cached, ...Object.fromEntries(uncachedOrganisaatios) },
-            });
+            return { ...state, cached: { ...state.cached, ...Object.fromEntries(uncachedOrganisaatios) } };
         }
         case FETCH_ORGANISATION_NAMES:
             return { ...state, names: action.payload };

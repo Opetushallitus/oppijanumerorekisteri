@@ -128,7 +128,7 @@ class StaticUtils {
         return toLocalizedText(locale, org?.nimi) + ' ' + StaticUtils.getOrganisaatiotyypitFlat(org?.tyypit, L);
     }
 
-    static defaultOrganisaatio = (organisaatioOid: string, l10n?: L10n) => ({
+    static defaultOrganisaatio = (organisaatioOid: string, l10n?: L10n): Organisaatio => ({
         oid: organisaatioOid,
         nimi: {
             fi: (l10n && l10n['fi'] && l10n['fi']['ORGANISAATIO_NIMI_EI_LOYDY']) || organisaatioOid,
@@ -136,6 +136,8 @@ class StaticUtils {
             en: (l10n && l10n['en'] && l10n['en']['ORGANISAATIO_NIMI_EI_LOYDY']) || organisaatioOid,
         },
         tyypit: [],
+        parentOidPath: '',
+        status: 'PASSIIVINEN',
     });
 
     static getLocalisedText(description: TextGroup | null | undefined, locale: Locale) {

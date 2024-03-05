@@ -9,11 +9,12 @@ export type PrequelsState = {
 export const prequels = (state: Readonly<PrequelsState> = { notLoadedCount: 2 }, action: AnyAction): PrequelsState => {
     switch (action.type) {
         case FETCH_PREQUEL_REQUEST:
-            return Object.assign({}, state);
+            return state;
         case FETCH_PREQUEL_SUCCESS:
-            return Object.assign({}, state, {
+            return {
+                ...state,
                 notLoadedCount: state.notLoadedCount !== 0 ? state.notLoadedCount - 1 : state.notLoadedCount,
-            });
+            };
         default:
             return state;
     }

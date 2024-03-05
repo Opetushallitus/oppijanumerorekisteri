@@ -83,14 +83,15 @@ const initialState: HenkiloState = {
     hakemukset: [],
 };
 
-const mapOrgHenkilosWithOrganisations = (henkiloOrgs: HenkiloOrg[], organisations: OrganisaatioCache) => {
-    return henkiloOrgs.map((henkiloOrg) =>
-        Object.assign(
-            {},
-            henkiloOrg,
-            organisations[henkiloOrg.organisaatioOid] || StaticUtils.defaultOrganisaatio(henkiloOrg.organisaatioOid)
-        )
-    );
+const mapOrgHenkilosWithOrganisations = (
+    henkiloOrgs: HenkiloOrg[],
+    organisations: OrganisaatioCache
+): StoreOrganisaatio[] => {
+    return henkiloOrgs.map((henkiloOrg) => {
+        const org =
+            organisations[henkiloOrg.organisaatioOid] || StaticUtils.defaultOrganisaatio(henkiloOrg.organisaatioOid);
+        return { ...henkiloOrg, ...org };
+    });
 };
 
 const isKayttoEstetty = (data?: { status: number; path: string; message: string }) =>
@@ -109,12 +110,9 @@ export const henkilo = (state: Readonly<HenkiloState> = initialState, action: An
     switch (action.type) {
         case UPDATE_HENKILO_REQUEST:
         case FETCH_HENKILO_REQUEST:
-            return Object.assign({}, state, { henkiloLoading: true });
+            return { ...state, henkiloLoading: true };
         case FETCH_HENKILO_SUCCESS:
-            return Object.assign({}, state, {
-                henkiloLoading: false,
-                henkilo: action.henkilo,
-            });
+            return { ...state, henkiloLoading: false, henkilo: action.henkilo };
         case FETCH_HENKILO_FAILURE:
             return {
                 ...state,
@@ -122,7 +120,7 @@ export const henkilo = (state: Readonly<HenkiloState> = initialState, action: An
                 henkiloKayttoEstetty: isKayttoEstetty(action.data),
             };
         case UPDATE_HENKILO_FAILURE:
-            return Object.assign({}, state, { henkiloLoading: false });
+            return { ...state, henkiloLoading: false };
         case FETCH_KAYTTAJA_REQUEST:
             return { ...state, kayttajaLoading: true };
         case FETCH_KAYTTAJA_FAILURE:
@@ -130,20 +128,14 @@ export const henkilo = (state: Readonly<HenkiloState> = initialState, action: An
         case FETCH_KAYTTAJA_SUCCESS:
             return { ...state, kayttajaLoading: false, kayttaja: action.kayttaja };
         case FETCH_KAYTTAJATIETO_REQUEST:
-            return Object.assign({}, state, { kayttajatietoLoading: true });
+            return { ...state, kayttajatietoLoading: true };
         case FETCH_KAYTTAJATIETO_SUCCESS:
         case FETCH_KAYTTAJATIETO_FAILURE:
-            return Object.assign({}, state, {
-                kayttajatietoLoading: false,
-                kayttajatieto: action.kayttajatieto,
-            });
+            return { ...state, kayttajatietoLoading: false, kayttajatieto: action.kayttajatieto };
         case UPDATE_KAYTTAJATIETO_REQUEST:
-            return Object.assign({}, state, { kayttajatietoLoading: true });
+            return { ...state, kayttajatietoLoading: true };
         case UPDATE_KAYTTAJATIETO_SUCCESS:
-            return Object.assign({}, state, {
-                kayttatietoLoading: false,
-                kayttajatieto: action.kayttajatieto,
-            });
+            return { ...state, kayttajatietoLoading: false, kayttajatieto: action.kayttajatieto };
         case UPDATE_KAYTTAJATIETO_FAILURE:
             return {
                 ...state,
@@ -151,38 +143,33 @@ export const henkilo = (state: Readonly<HenkiloState> = initialState, action: An
                 kayttajatieto: state.kayttajatieto,
             };
         case FETCH_HENKILOORGS_REQUEST:
-            return Object.assign({}, state, { henkiloOrgsLoading: true });
+            return { ...state, henkiloOrgsLoading: true };
         case FETCH_HENKILOORGS_SUCCESS:
-            return Object.assign({}, state, {
+            return {
+                ...state,
                 henkiloOrgsLoading: false,
                 henkiloOrgs: mapOrgHenkilosWithOrganisations(action.henkiloOrgs, action.organisations),
-            });
+            };
         case FETCH_HENKILO_MASTER_REQUEST:
-            return Object.assign({}, state, { masterLoading: true });
+            return { ...state, masterLoading: true };
         case FETCH_HENKILO_MASTER_SUCCESS:
-            return Object.assign({}, state, {
-                masterLoading: false,
-                master: action.master,
-            });
+            return { ...state, masterLoading: false, master: action.master };
         case FETCH_HENKILO_MASTER_FAILURE:
-            return Object.assign({}, state, { masterLoading: false });
+            return { ...state, masterLoading: false };
         case FETCH_HENKILO_SLAVES_SUCCESS:
-            return Object.assign({}, state, { slaves: action.slaves });
+            return { ...state, slaves: action.slaves };
         case FETCH_HENKILO_SLAVES_FAILURE:
-            return Object.assign({}, state, { slaves: [] });
+            return { ...state, slaves: [] };
         case UPDATE_HENKILO_UNLINK_SUCCESS: {
             const slaves = state.slaves.filter((slave) => slave.oidHenkilo !== action.unlinkedSlaveOid);
-            return Object.assign({}, state, { slaves });
+            return { ...state, slaves };
         }
         case FETCH_HENKILO_DUPLICATES_REQUEST:
-            return Object.assign({}, state, { duplicatesLoading: true });
+            return { ...state, duplicatesLoading: true };
         case FETCH_HENKILO_DUPLICATES_SUCCESS:
-            return Object.assign({}, state, {
-                duplicatesLoading: false,
-                duplicates: action.duplicates,
-            });
+            return { ...state, duplicatesLoading: false, duplicates: action.duplicates };
         case FETCH_HENKILO_DUPLICATES_FAILURE:
-            return Object.assign({}, state, { duplicatesLoading: false });
+            return { ...state, duplicatesLoading: false };
         case FETCH_HENKILO_HAKEMUKSET.REQUEST:
             return { ...state, hakemuksetLoading: true };
         case FETCH_HENKILO_HAKEMUKSET.SUCCESS:
@@ -204,7 +191,7 @@ export const henkilo = (state: Readonly<HenkiloState> = initialState, action: An
         case FETCH_HENKILO_YKSILOINTITIETO_FAILURE:
             return { ...state, yksilointitiedotLoading: false };
         case CLEAR_HENKILO:
-            return Object.assign({}, state, { ...initialState });
+            return { ...state, ...initialState };
         default:
             return state;
     }

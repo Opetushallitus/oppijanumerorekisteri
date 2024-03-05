@@ -22,20 +22,11 @@ export const OrganisaatioKayttooikeusryhmat = (
 ): OrganisaatioKayttooikeusryhmatState => {
     switch (action.type) {
         case FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_REQUEST:
-            return Object.assign({}, state, {
-                kayttooikeusryhmatLoading: true,
-                organisaatioOid: action.organisaatioOid,
-            });
+            return { ...state, kayttooikeusryhmatLoading: true, organisaatioOid: action.organisaatioOid };
         case FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_SUCCESS:
-            return Object.assign({}, state, {
-                kayttooikeusryhmatLoading: false,
-                kayttooikeusryhmat: action.kayttooikeusryhmat,
-            });
+            return { ...state, kayttooikeusryhmatLoading: false, kayttooikeusryhmat: action.kayttooikeusryhmat };
         case FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_FAILURE:
-            return Object.assign({}, state, {
-                kayttooikeusryhmatLoading: false,
-                kayttooikeusryhmat: [],
-            });
+            return { ...state, kayttooikeusryhmatLoading: false, kayttooikeusryhmat: [] };
         default:
             return state;
     }

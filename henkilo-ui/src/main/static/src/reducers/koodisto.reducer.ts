@@ -76,47 +76,48 @@ const koodisto = (
 ): KoodistoState => {
     switch (action.type) {
         case FETCH_KANSALAISUUSKOODISTO_REQUEST:
-            return Object.assign({}, state, { kansalaisuusKoodistoLoading: true });
+            return { ...state, kansalaisuusKoodistoLoading: true };
         case FETCH_KANSALAISUUSKOODISTO_SUCCESS:
-            return Object.assign({}, state, {
+            return {
+                ...state,
                 kansalaisuusKoodistoLoading: false,
                 kansalaisuus: mapKoodistoValuesByLocale(action.kansalaisuus),
                 kansalaisuusKoodisto: action.kansalaisuus,
-            });
+            };
         case FETCH_KIELIKOODISTO_REQUEST:
-            return Object.assign({}, state, { kieliKoodistoLoading: true });
+            return { ...state, kieliKoodistoLoading: true };
         case FETCH_KIELIKOODISTO_SUCCESS:
-            return Object.assign({}, state, {
+            return {
+                ...state,
                 kieliKoodistoLoading: false,
                 kieli: mapKoodistoValuesByLocale(action.kieli),
                 kieliKoodisto: action.kieli,
-            });
+            };
         case FETCH_SUKUPUOLIKOODISTO_REQUEST:
-            return Object.assign({}, state, { sukupuoliKoodistoLoading: true });
+            return { ...state, sukupuoliKoodistoLoading: true };
         case FETCH_SUKUPUOLIKOODISTO_SUCCESS:
-            return Object.assign({}, state, {
+            return {
+                ...state,
                 sukupuoliKoodistoLoading: false,
                 sukupuoli: mapKoodistoValuesByLocale(action.sukupuoli),
                 sukupuoliKoodisto: action.sukupuoli,
-            });
+            };
         case FETCH_YHTEYSTIETOTYYPITKOODISTO_REQUEST:
-            return Object.assign({}, state, {
-                yhteystietotyypitKoodistoLoading: true,
-            });
+            return { ...state, yhteystietotyypitKoodistoLoading: true };
         case FETCH_YHTEYSTIETOTYYPITKOODISTO_SUCCESS:
-            return Object.assign({}, state, {
+            return {
+                ...state,
                 yhteystietotyypitKoodistoLoading: false,
                 yhteystietotyypit: mapKoodistoValuesByLocale(action.yhteystietotyypit),
-            });
+            };
         case FETCH_MAATJAVALTIOTKOODISTO_REQUEST:
-            return Object.assign({}, state, {
-                maatjavaltiot1KoodistoLoading: true,
-            });
+            return { ...state, maatjavaltiot1KoodistoLoading: true };
         case FETCH_MAATJAVALTIOTKOODISTO_SUCCESS:
-            return Object.assign({}, state, {
+            return {
+                ...state,
                 maatjavaltiot1KoodistoLoading: false,
                 maatjavaltiot1: mapKoodistoValuesByLocale(action.maatjavaltiot1),
-            });
+            };
         case FETCH_OPPILAITOSTYYPIT_REQUEST:
             return { ...state, oppilaitostyypitLoading: true };
         case FETCH_OPPILAITOSTYYPIT_SUCCESS:

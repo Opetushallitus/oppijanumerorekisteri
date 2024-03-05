@@ -12,7 +12,7 @@ const cas = (
 ): CasState => {
     switch (action.type) {
         case CREATE_HENKILOBYTOKEN_SUCCESS:
-            return Object.assign({}, state, { authToken: action.authToken });
+            return { ...state, authToken: action.authToken };
         default:
             return state;
     }

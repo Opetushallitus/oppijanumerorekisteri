@@ -69,24 +69,15 @@ export const kayttooikeus = (
 ): KayttooikeusRyhmaState => {
     switch (action.type) {
         case FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST:
-            return Object.assign({}, state, { kayttooikeusLoading: true });
+            return { ...state, kayttooikeusLoading: true };
         case FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_SUCCESS:
-            return Object.assign({}, state, {
-                kayttooikeusLoading: false,
-                kayttooikeus: action.kayttooikeus,
-            });
+            return { ...state, kayttooikeusLoading: false, kayttooikeus: action.kayttooikeus };
         case FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_REQUEST:
-            return Object.assign({}, state, { kayttooikeusAnomusLoading: true });
+            return { ...state, kayttooikeusAnomusLoading: true };
         case FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_SUCCESS:
-            return Object.assign({}, state, {
-                kayttooikeusAnomusLoading: false,
-                kayttooikeusAnomus: action.kayttooikeusAnomus,
-            });
+            return { ...state, kayttooikeusAnomusLoading: false, kayttooikeusAnomus: action.kayttooikeusAnomus };
         case FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_FAILURE:
-            return Object.assign({}, state, {
-                kayttooikeusAnomusLoading: false,
-                kayttooikeusAnomus: [],
-            });
+            return { ...state, kayttooikeusAnomusLoading: false, kayttooikeusAnomus: [] };
         case FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_REQUEST:
             return {
                 ...state,
@@ -96,13 +87,14 @@ export const kayttooikeus = (
                 allowedKayttooikeusLoading: true,
             };
         case FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_SUCCESS:
-            return Object.assign({}, state, {
+            return {
+                ...state,
                 allowedKayttooikeus: {
                     ...state.allowedKayttooikeus,
                     [action.oidHenkilo]: [...action.allowedKayttooikeus],
                 },
                 allowedKayttooikeusLoading: false,
-            });
+            };
         case FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_FAILURE:
             return {
                 ...state,
