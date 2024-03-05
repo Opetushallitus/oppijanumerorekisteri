@@ -7,7 +7,7 @@ export type LocalisationState = {
     localisations: L10n;
 };
 const l10n = (
-    state: LocalisationState = {
+    state: Readonly<LocalisationState> = {
         localisations: { fi: {}, sv: {}, en: {} },
     },
     action: AnyAction

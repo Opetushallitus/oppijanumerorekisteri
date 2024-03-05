@@ -28,7 +28,7 @@ export const initialState: CreatePersonState = {
 };
 
 export const createPersonReducer = (
-    state: CreatePersonState = initialState, // NOSONAR
+    state: Readonly<CreatePersonState> = initialState,
     action: RequestAction | SuccessAction | FailureAction | never
 ): CreatePersonState => {
     switch (action.type) {

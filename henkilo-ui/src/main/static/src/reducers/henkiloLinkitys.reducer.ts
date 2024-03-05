@@ -12,7 +12,7 @@ export type HenkiloLinkitysState = {
     };
 };
 
-export const linkitykset = (state: HenkiloLinkitysState = {}, action: AnyAction): HenkiloLinkitysState => {
+export const linkitykset = (state: Readonly<HenkiloLinkitysState> = {}, action: AnyAction): HenkiloLinkitysState => {
     switch (action.type) {
         case FETCH_HENKILO_LINKITYKSET_REQUEST:
             return { ...state, [action.oidHenkilo]: {} };

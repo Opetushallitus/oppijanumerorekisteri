@@ -53,7 +53,7 @@ export type KoodistoState = {
 };
 
 const koodisto = (
-    state: KoodistoState = {
+    state: Readonly<KoodistoState> = {
         kieliKoodistoLoading: true,
         kansalaisuusKoodistoLoading: true,
         sukupuoliKoodistoLoading: false,

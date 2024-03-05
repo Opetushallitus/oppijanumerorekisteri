@@ -70,7 +70,7 @@ const createButtonNotification = (type, buttonNotification) => ({
 });
 
 export const notifications = (
-    state = {
+    state: Readonly<NotificationsState> = {
         existingKayttooikeus: [],
         buttonNotifications: [],
         updatePassword: [],

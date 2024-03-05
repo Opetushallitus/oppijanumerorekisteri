@@ -15,7 +15,10 @@ const initialState: HenkilohakuState = {
     },
 };
 
-export const henkilohakuState = (state = initialState, action: AnyAction): HenkilohakuState => {
+export const henkilohakuState = (
+    state: Readonly<HenkilohakuState> = initialState,
+    action: AnyAction
+): HenkilohakuState => {
     switch (action.type) {
         case UPDATE_HENKILOHAKU_FILTERS:
             return { ...state, filters: action.filters };

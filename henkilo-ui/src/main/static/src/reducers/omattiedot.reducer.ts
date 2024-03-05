@@ -28,7 +28,7 @@ const initialState: OmattiedotState = {
     organisaatiot: [],
 };
 
-const omattiedot = (state: OmattiedotState = initialState, action: AnyAction): OmattiedotState => {
+const omattiedot = (state: Readonly<OmattiedotState> = initialState, action: AnyAction): OmattiedotState => {
     switch (action.type) {
         case FETCH_OMATTIEDOT_SUCCESS:
             return {

@@ -58,7 +58,7 @@ export const statusToMessage = {
 };
 
 export const existenceCheckReducer = (
-    state: ExistenceCheckState = initialState, // NOSONAR
+    state: Readonly<ExistenceCheckState> = initialState,
     action: ClearAction | RequestAction | SuccessAction | FailureAction | never
 ): ExistenceCheckState => {
     switch (action.type) {

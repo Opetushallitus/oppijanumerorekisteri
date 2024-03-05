@@ -64,7 +64,7 @@ export const getEmptyKayttooikeusRyhmaState = (): KayttooikeusRyhmaState => {
 };
 
 export const kayttooikeus = (
-    state: KayttooikeusRyhmaState = getEmptyKayttooikeusRyhmaState(),
+    state: Readonly<KayttooikeusRyhmaState> = getEmptyKayttooikeusRyhmaState(),
     action: AnyAction
 ): KayttooikeusRyhmaState => {
     switch (action.type) {

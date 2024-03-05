@@ -8,7 +8,7 @@ export type PalvelutState = {
 };
 
 export const palvelutState = (
-    state: PalvelutState = { palvelutLoading: false, palvelut: [] },
+    state: Readonly<PalvelutState> = { palvelutLoading: false, palvelut: [] },
     action: PalvelutAction
 ): PalvelutState => {
     switch (action.type) {

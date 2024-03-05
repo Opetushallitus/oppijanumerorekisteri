@@ -105,7 +105,7 @@ const isKayttoEstettyOppijanumerorekisteri = (data?: { status: number; path: str
     return false;
 };
 
-export const henkilo = (state: HenkiloState = initialState, action: AnyAction): HenkiloState => {
+export const henkilo = (state: Readonly<HenkiloState> = initialState, action: AnyAction): HenkiloState => {
     switch (action.type) {
         case UPDATE_HENKILO_REQUEST:
         case FETCH_HENKILO_REQUEST:

@@ -13,7 +13,7 @@ export type OrganisaatioKayttooikeusryhmatState = {
 };
 
 export const OrganisaatioKayttooikeusryhmat = (
-    state: OrganisaatioKayttooikeusryhmatState = {
+    state: Readonly<OrganisaatioKayttooikeusryhmatState> = {
         kayttooikeusryhmatLoading: false,
         organisaatioOid: null,
         kayttooikeusryhmat: [],

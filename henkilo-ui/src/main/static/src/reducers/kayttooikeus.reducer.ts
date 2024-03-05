@@ -7,7 +7,7 @@ export type KayttooikeusState = {
 };
 
 export const kayttooikeusState = (
-    state: KayttooikeusState = {
+    state: Readonly<KayttooikeusState> = {
         palveluKayttooikeus: [],
     },
     action: PalveluKayttooikeusAction

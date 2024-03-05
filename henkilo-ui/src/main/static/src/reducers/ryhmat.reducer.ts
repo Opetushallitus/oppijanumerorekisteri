@@ -12,7 +12,7 @@ const initialState: RyhmatState = {
     ryhmas: [],
 };
 
-export const ryhmatState = (state: RyhmatState = initialState, action: AnyAction): RyhmatState => {
+export const ryhmatState = (state: Readonly<RyhmatState> = initialState, action: AnyAction): RyhmatState => {
     switch (action.type) {
         case FETCH_ALL_RYHMAT_REQUEST:
             return { ...state, ryhmasLoading: true, ryhmas: [] };

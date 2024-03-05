@@ -6,7 +6,10 @@ export type CasState = {
     temporaryTokenInvalid: boolean;
 };
 
-const cas = (state: CasState = { authToken: '', temporaryTokenInvalid: false }, action: AnyAction): CasState => {
+const cas = (
+    state: Readonly<CasState> = { authToken: '', temporaryTokenInvalid: false },
+    action: AnyAction
+): CasState => {
     switch (action.type) {
         case CREATE_HENKILOBYTOKEN_SUCCESS:
             return Object.assign({}, state, { authToken: action.authToken });

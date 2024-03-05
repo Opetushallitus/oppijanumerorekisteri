@@ -10,7 +10,7 @@ export function toSupportedLocale(locale: string): Locale {
     }
 }
 
-export const locale = (state: Locale = 'fi', action: AnyAction): Locale => {
+export const locale = (state: Readonly<Locale> = 'fi', action: AnyAction): Locale => {
     switch (action.type) {
         case FETCH_HENKILO_ASIOINTIKIELI_SUCCESS:
             return toSupportedLocale(action.lang);
