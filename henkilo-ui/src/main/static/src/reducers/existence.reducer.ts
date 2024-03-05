@@ -59,7 +59,7 @@ export const statusToMessage = {
 
 export const existenceCheckReducer = (
     state: Readonly<ExistenceCheckState> = initialState,
-    action: ClearAction | RequestAction | SuccessAction | FailureAction | never
+    action: ClearAction | RequestAction | SuccessAction | FailureAction
 ): ExistenceCheckState => {
     switch (action.type) {
         case FETCH_EXISTENCE_CHECK_REQUEST:
