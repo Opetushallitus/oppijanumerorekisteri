@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import com.google.common.collect.Lists;
 import fi.vm.sade.oppijanumerorekisteri.KoodistoServiceMock;
 import fi.vm.sade.oppijanumerorekisteri.aspects.AuditlogAspectHelper;
 import fi.vm.sade.oppijanumerorekisteri.clients.HenkiloModifiedTopic;
@@ -29,6 +28,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.google.common.collect.Lists;
+
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
@@ -41,6 +42,7 @@ import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -118,7 +120,7 @@ public class HenkiloModificationServiceImplTest {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa noppa", "arpa", "kuutio", "123456-9999",
                 "1.2.3.4.5", false, "fi", "suomi", "246",
                 new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
-        long yhteystiedotRyhmaId = henkilo.getYhteystiedotRyhma().stream().mapToLong(YhteystiedotRyhma::getId).max().orElse(0L) + 1;
+        long yhteystiedotRyhmaId = 2;
         henkilo.getYhteystiedotRyhma().add(YhteystiedotRyhma.builder()
                 .ryhmaKuvaus("yhteystietotyyppi5").ryhmaAlkuperaTieto("alkupera1")
                 .id(yhteystiedotRyhmaId).readOnly(true)

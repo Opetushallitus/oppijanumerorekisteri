@@ -1,5 +1,8 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="ehcache.xsd">
+    xmlns="http://www.ehcache.org/v3"
+    xmlns:jsr107="http://www.ehcache.org/v3/jsr107"
+    xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.0.xsd http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.0.xsd"
+       xsi:noNamespaceSchemaLocation="ehcache.xsd">
     <cache name="koodistot"
            maxEntriesLocalHeap="10"
            timeToLiveSeconds="300">

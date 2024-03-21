@@ -16,7 +16,9 @@ spring:
       enabled: true
       settings:
         web-allow-others: true
-
+  jpa:
+    properties:
+      hibernate.id.db_structure_naming_strategy: single
 host:
   host-cas: localhost
   host-virkailija: localhost

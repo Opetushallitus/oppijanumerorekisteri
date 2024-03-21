@@ -13,7 +13,7 @@ import lombok.*;
 import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;

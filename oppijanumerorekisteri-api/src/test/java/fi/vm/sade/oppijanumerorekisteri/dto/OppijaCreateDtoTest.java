@@ -6,9 +6,9 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -20,8 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class OppijaCreateDtoTest {
 
-    private static final Validator javaxValidator = Validation.buildDefaultValidatorFactory().getValidator();
-    private static final SpringValidatorAdapter validator = new SpringValidatorAdapter(javaxValidator);
+    private static final Validator jakartaValidator = Validation.buildDefaultValidatorFactory().getValidator();
+    private static final SpringValidatorAdapter validator = new SpringValidatorAdapter(jakartaValidator);
 
     private static Stream<Arguments> parameters() {
         return Stream.of(

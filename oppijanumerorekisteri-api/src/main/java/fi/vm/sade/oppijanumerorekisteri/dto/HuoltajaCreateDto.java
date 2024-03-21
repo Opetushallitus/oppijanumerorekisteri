@@ -4,7 +4,7 @@ import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
 import lombok.Setter;
 import lombok.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.Set;
 

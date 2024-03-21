@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.http.entity.ContentType;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.*;
 
 import static fi.vm.sade.oppijanumerorekisteri.clients.impl.HttpClientUtil.ioExceptionToRestClientException;

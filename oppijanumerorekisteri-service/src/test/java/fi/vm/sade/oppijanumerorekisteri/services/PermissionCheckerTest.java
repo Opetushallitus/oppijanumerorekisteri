@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import com.google.common.collect.Lists;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
@@ -15,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -85,7 +85,7 @@ public class PermissionCheckerTest {
     @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
     public void isAllowedToAccessPersonByPalveluRooliAsAdmin() throws Exception {
         boolean hasAccess = this.permissionChecker
-                .isAllowedToModifyPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
+                .isAllowedToModifyPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", List.of()), null);
         assertThat(hasAccess).isTrue();
     }
 
@@ -93,7 +93,7 @@ public class PermissionCheckerTest {
     @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
     public void isAllowedToAccessPersonByPalveluRooliAsRekisterinpitaja() throws Exception {
         boolean hasAccess = this.permissionChecker
-                .isAllowedToModifyPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
+                .isAllowedToModifyPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", List.of()), null);
         assertThat(hasAccess).isTrue();
     }
 
@@ -101,7 +101,7 @@ public class PermissionCheckerTest {
     @WithMockUser(value = "1.2.3.4.5")
     public void isAllowedToAccessPersonByPalveluRooliOwnData() throws Exception {
         boolean hasAccess = this.permissionChecker
-                .isAllowedToModifyPerson("1.2.3.4.5", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
+                .isAllowedToModifyPerson("1.2.3.4.5", Maps.newHashMap("JOKUPALVELU", List.of()), null);
         assertThat(hasAccess).isTrue();
     }
 
@@ -112,7 +112,7 @@ public class PermissionCheckerTest {
                 anyMap(), eq(null), anySet()))
                 .willReturn(true);
         boolean hasAccess = this.permissionChecker
-                .isAllowedToModifyPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
+                .isAllowedToModifyPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", List.of()), null);
         assertThat(hasAccess).isTrue();
     }
 
@@ -123,7 +123,7 @@ public class PermissionCheckerTest {
                 anyMap(), eq(null), anySet()))
                 .willReturn(false);
         boolean hasAccess = this.permissionChecker
-                .isAllowedToModifyPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
+                .isAllowedToModifyPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", List.of()), null);
         assertThat(hasAccess).isFalse();
     }
 

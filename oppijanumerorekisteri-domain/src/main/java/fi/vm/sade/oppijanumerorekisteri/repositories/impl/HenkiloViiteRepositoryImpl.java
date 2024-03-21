@@ -5,7 +5,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.QHenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepositoryCustom;
 import org.springframework.util.CollectionUtils;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 import java.util.List;
 import java.util.Set;
 

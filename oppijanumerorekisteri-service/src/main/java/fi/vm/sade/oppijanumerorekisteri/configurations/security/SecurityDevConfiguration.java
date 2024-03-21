@@ -1,55 +1,55 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations.security;
 
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Profile("dev")
 @Configuration
-@EnableGlobalMethodSecurity(jsr250Enabled = false, prePostEnabled = true, securedEnabled = true)
 @EnableWebSecurity
-public class SecurityDevConfiguration extends WebSecurityConfigurerAdapter {
+public class SecurityDevConfiguration {
     private DevProperties devProperties;
 
-    @Autowired
     public SecurityDevConfiguration(DevProperties devProperties) {
         this.devProperties = devProperties;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.httpBasic()
-        .and()
-        .headers().disable()
-        .csrf().disable()
-        .authorizeRequests()
-            .antMatchers("/buildversion.txt").permitAll()
-            .antMatchers("/swagger-ui/**").permitAll()
-            .antMatchers("/swagger-resources/**").permitAll()
-            .antMatchers("/v2/api-docs").permitAll()
-            .anyRequest().authenticated();
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .httpBasic(it -> {})
+            .headers(headers -> headers.disable())
+            .csrf(csrf -> csrf.disable())
+            .securityMatcher("/**")
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/buildversion.txt").permitAll()
+                .requestMatchers("/swagger-ui/**").permitAll()
+                .requestMatchers("/swagger-resources/**").permitAll()
+                .requestMatchers("/v2/api-docs").permitAll()
+                .anyRequest().authenticated());
+        return http.build();
     }
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
+    BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .passwordEncoder(passwordEncoder())
-                .withUser(devProperties.getUsername())
+    @Bean
+    UserDetailsService userDetailsService() {
+        UserDetails user = User.withUsername(devProperties.getUsername())
                 .password(passwordEncoder().encode(devProperties.getPassword()))
-                .roles("APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA");
+                .roles("APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+                .build();
+        return new InMemoryUserDetailsManager(user);
     }
-    
 }

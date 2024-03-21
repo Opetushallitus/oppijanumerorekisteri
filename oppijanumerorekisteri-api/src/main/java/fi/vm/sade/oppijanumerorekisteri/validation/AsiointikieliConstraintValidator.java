@@ -2,8 +2,8 @@ package fi.vm.sade.oppijanumerorekisteri.validation;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.KielisyysDto;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class AsiointikieliConstraintValidator implements ConstraintValidator<ValidateAsiointikieli, KielisyysDto> {
     @Override

@@ -7,7 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.AsiayhteysHakemusRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaContext;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 
 public class AsiayhteysHakemusRepositoryImpl implements AsiayhteysHakemusRepositoryCustom {

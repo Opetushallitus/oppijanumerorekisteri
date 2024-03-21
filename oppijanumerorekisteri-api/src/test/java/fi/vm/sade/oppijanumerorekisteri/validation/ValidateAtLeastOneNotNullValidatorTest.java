@@ -13,7 +13,7 @@ import org.mockito.Answers;
 import org.mockito.Mock;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.Collection;
 import java.util.List;
 
@@ -50,7 +50,8 @@ public class ValidateAtLeastOneNotNullValidatorTest {
     }
 
     private ValidateAtLeastOneNotNull createAnnotation(Collection<String> value) {
-        AnnotationDescriptor.Builder<ValidateAtLeastOneNotNull> builder = new AnnotationDescriptor.Builder(ValidateAtLeastOneNotNull.class);
+        AnnotationDescriptor.Builder<ValidateAtLeastOneNotNull> builder =
+            new AnnotationDescriptor.Builder<ValidateAtLeastOneNotNull>(ValidateAtLeastOneNotNull.class);
         builder.setAttribute("value", value.toArray(new String[value.size()]));
         AnnotationDescriptor<ValidateAtLeastOneNotNull> descriptor = builder.build();
 //        descriptor.setValue("value", value.toArray(new String[value.size()]));

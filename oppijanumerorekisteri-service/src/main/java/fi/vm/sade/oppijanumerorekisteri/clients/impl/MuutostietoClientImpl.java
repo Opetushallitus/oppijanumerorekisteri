@@ -17,7 +17,7 @@ import org.apache.http.entity.ContentType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import static java.util.function.Function.identity;
 

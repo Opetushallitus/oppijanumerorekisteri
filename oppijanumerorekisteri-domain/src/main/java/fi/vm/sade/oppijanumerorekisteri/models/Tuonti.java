@@ -2,7 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.models;
 
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.TuontiApi;
 

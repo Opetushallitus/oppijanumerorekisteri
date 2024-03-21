@@ -12,7 +12,7 @@ import org.joda.time.DateTime;
 import org.springframework.data.jpa.repository.JpaContext;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

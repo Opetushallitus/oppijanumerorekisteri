@@ -10,7 +10,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.AsiayhteysCriteria
 import org.springframework.data.jpa.repository.JpaContext;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 
 import static java.util.Arrays.asList;
