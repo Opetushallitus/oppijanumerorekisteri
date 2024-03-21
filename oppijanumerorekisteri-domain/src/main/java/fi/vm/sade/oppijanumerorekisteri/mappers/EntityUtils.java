@@ -1,11 +1,11 @@
 package fi.vm.sade.oppijanumerorekisteri.mappers;
 
-import com.google.common.collect.Sets;
-
 import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import org.springframework.util.StringUtils;
+
+import com.google.common.collect.Sets;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -73,7 +73,6 @@ public class EntityUtils {
         YhteystiedotRyhma yhteystiedotRyhma = new YhteystiedotRyhma("yhteystietotyyppi2",
                 "alkupera2", false,
                 null);
-        yhteystiedotRyhma.setId(1L);
         Yhteystieto yhteystieto = EntityUtils.createYhteystieto(yhteystietoArvo);
         yhteystiedotRyhma.setYhteystieto(Collections.singleton(yhteystieto));
         return yhteystiedotRyhma;

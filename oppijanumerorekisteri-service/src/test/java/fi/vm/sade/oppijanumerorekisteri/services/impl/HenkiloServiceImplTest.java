@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import com.google.common.collect.Lists;
 import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
@@ -105,7 +104,7 @@ public class HenkiloServiceImplTest {
     @Test
     public void getShouldReturnHenkilo() {
         when(henkiloRepository.findBy(any(OppijaCriteria.class), anyLong(), anyLong()))
-                .thenReturn(Lists.newArrayList(HenkiloHakuDto.builder().oidHenkilo("1.2.3.4").build()));
+                .thenReturn(List.of(HenkiloHakuDto.builder().oidHenkilo("1.2.3.4").build()));
 
         HenkiloHakuDto henkilo = impl.getByHakutermi("haku1");
 

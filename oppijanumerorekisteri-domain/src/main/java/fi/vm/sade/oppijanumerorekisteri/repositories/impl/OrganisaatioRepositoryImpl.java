@@ -7,7 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.QOrganisaatio;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaContext;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 
 public class OrganisaatioRepositoryImpl implements OrganisaatioRepositoryCustom {

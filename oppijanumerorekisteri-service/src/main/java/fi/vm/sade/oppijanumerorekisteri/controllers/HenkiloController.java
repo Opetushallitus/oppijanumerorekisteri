@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import com.google.common.collect.Sets;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
@@ -26,10 +25,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
@@ -284,7 +283,7 @@ public class HenkiloController {
             @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService)
             throws IOException {
         return this.permissionChecker.filterUnpermittedHenkilo(
-                this.henkiloService.getMastersByOids(Sets.newHashSet(oids)),
+                this.henkiloService.getMastersByOids(new HashSet(oids)),
                 Collections.singletonMap(PALVELU_OPPIJANUMEROREKISTERI,
                         Arrays.asList(KAYTTOOIKEUS_READ, KAYTTOOIKEUS_HENKILON_RU)),
                 permissionService);

@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Persistable;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Getter
 @Setter

@@ -6,7 +6,6 @@ import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
@@ -24,7 +23,6 @@ public class HenkiloCreatePostValidator implements Validator {
     private KoodistoService koodistoService;
     private HenkiloRepository henkiloRepository;
 
-    @Autowired
     public HenkiloCreatePostValidator(KoodistoService koodistoService, HenkiloRepository henkiloRepository) {
         this.koodistoService = koodistoService;
         this.henkiloRepository = henkiloRepository;

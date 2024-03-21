@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories;
 
-import com.google.common.collect.Sets;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.enums.CleanupStep;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
@@ -22,7 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.persistence.PersistenceException;
+import jakarta.persistence.PersistenceException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.Month;
@@ -237,26 +236,26 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
         List<String> results = this.dataRepository.findOidsModifiedSince(new HenkiloCriteria(), now.minusHours(1), null, null);
         assertThat(results).hasSize(4);
-        assertThat(results).containsAll(Sets.newHashSet("1_MINUTE_AGO", "2_MINUTES_AGO", "3_MINUTES_AGO", "4_MINUTES_AGO"));
+        assertThat(results).containsAll(Set.of("1_MINUTE_AGO", "2_MINUTES_AGO", "3_MINUTES_AGO", "4_MINUTES_AGO"));
 
         results = this.dataRepository.findOidsModifiedSince(new HenkiloCriteria(), now.minusHours(1), 2, null);
         assertThat(results).hasSize(2);
-        assertThat(results).containsAll(Sets.newHashSet("2_MINUTES_AGO", "1_MINUTE_AGO"));
+        assertThat(results).containsAll(Set.of("2_MINUTES_AGO", "1_MINUTE_AGO"));
 
         results = this.dataRepository.findOidsModifiedSince(new HenkiloCriteria(), now.minusHours(1), null, 2);
         assertThat(results).hasSize(2);
-        assertThat(results).containsAll(Sets.newHashSet("4_MINUTES_AGO", "3_MINUTES_AGO"));
+        assertThat(results).containsAll(Set.of("4_MINUTES_AGO", "3_MINUTES_AGO"));
 
         results = this.dataRepository.findOidsModifiedSince(new HenkiloCriteria(), now.minusHours(1), 1, 1);
         assertThat(results).hasSize(1);
-        assertThat(results).containsAll(Sets.newHashSet("3_MINUTES_AGO"));
+        assertThat(results).containsAll(Set.of("3_MINUTES_AGO"));
 
         results = this.dataRepository.findOidsModifiedSince(new HenkiloCriteria(), now.minusHours(1), 100, 100);
         assertThat(results).hasSize(0);
 
         results = this.dataRepository.findOidsModifiedSince(new HenkiloCriteria(), now.minusHours(1), 1, 100);
         assertThat(results).hasSize(3);
-        assertThat(results).containsAll(Sets.newHashSet("3_MINUTES_AGO", "2_MINUTES_AGO", "1_MINUTE_AGO"));
+        assertThat(results).containsAll(Set.of("3_MINUTES_AGO", "2_MINUTES_AGO", "1_MINUTE_AGO"));
 
     }
 

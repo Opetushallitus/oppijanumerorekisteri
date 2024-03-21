@@ -37,12 +37,8 @@
             <artifactId>lombok</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-jaxb-annotations</artifactId>
+            <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -52,10 +48,15 @@
         <dependency>
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-jpa</artifactId>
+            <classifier>jakarta</classifier>
+            <version>${querydsl.version}</version>
         </dependency>
         <dependency>
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-apt</artifactId>
+            <classifier>jakarta</classifier>
+            <version>${querydsl.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jresearch.orika</groupId>
@@ -63,15 +64,12 @@
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-java8</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
             <artifactId>hibernate-envers</artifactId>
+            <version>6.4.4.Final</version>
         </dependency>
         <dependency>
             <groupId>io.hypersistence</groupId>
-            <artifactId>hypersistence-utils-hibernate-55</artifactId>
+            <artifactId>hypersistence-utils-hibernate-63</artifactId>
         </dependency>
         <!--Test-->
         <dependency>
@@ -91,27 +89,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <!-- Generate querydsl metadata -->
-            <plugin>
-                <groupId>com.mysema.maven</groupId>
-                <artifactId>apt-maven-plugin</artifactId>
-                <version>${apt-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <!--<phase>process-resources</phase>-->
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>target/generated-sources/java</outputDirectory>
-                            <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>

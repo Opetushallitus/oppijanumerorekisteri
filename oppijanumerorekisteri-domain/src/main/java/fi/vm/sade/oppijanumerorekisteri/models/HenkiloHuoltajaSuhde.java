@@ -3,7 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.models;
 import lombok.*;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.Date;
 

@@ -4,7 +4,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
 import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

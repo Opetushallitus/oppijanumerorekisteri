@@ -16,7 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Min;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;

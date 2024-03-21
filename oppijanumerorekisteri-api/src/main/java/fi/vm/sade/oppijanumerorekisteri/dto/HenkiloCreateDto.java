@@ -5,9 +5,9 @@ import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
 import lombok.*;
 import lombok.Setter;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;

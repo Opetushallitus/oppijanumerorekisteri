@@ -4,10 +4,10 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Setter;
 import lombok.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 
 @Getter

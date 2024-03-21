@@ -2,8 +2,8 @@ package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import fi.vm.sade.oppijanumerorekisteri.repositories.populator.Populator;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 public abstract class AbstractRepositoryTest {
     @PersistenceContext

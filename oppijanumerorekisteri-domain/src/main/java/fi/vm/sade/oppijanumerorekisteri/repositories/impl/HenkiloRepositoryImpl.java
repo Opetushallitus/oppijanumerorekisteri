@@ -6,6 +6,7 @@ import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLTemplates;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
@@ -25,8 +26,8 @@ import org.springframework.data.jpa.repository.JpaContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -57,7 +58,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     }
 
     private JPAQueryFactory jpa() {
-        return new JPAQueryFactory(this.entityManager);
+        return new JPAQueryFactory(JPQLTemplates.DEFAULT, this.entityManager);
     }
 
     @Override

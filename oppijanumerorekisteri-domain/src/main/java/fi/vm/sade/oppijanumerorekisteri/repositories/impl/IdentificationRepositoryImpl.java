@@ -7,7 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.QIdentification;
 import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaContext;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 public class IdentificationRepositoryImpl implements IdentificationRepositoryCustom {
 
