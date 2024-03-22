@@ -2,7 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Generated;
 import lombok.Getter;
@@ -24,22 +24,22 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public class HenkiloExistenceCheckDto {
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotEmpty(message = "Cannot be empty")
     @Pattern(message = "Invalid pattern. Must contain an alphabetic character.", regexp = "(?U)^\\p{Graph}+( \\p{Graph}+)*+$")
     private final String etunimet;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotEmpty(message = "Cannot be empty")
     @Pattern(message = "Invalid pattern. Must contain an alphabetic character", regexp = "(?U)^\\p{Graph}+$")
     private final String kutsumanimi;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotEmpty(message = "Cannot be empty")
     @Pattern(message = "Invalid pattern. Must contain an alphabetic character", regexp = "(?U)^\\p{Graph}+( \\p{Graph}+)*+$")
     private final String sukunimi;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotEmpty(message = "Cannot be empty")
     @ValidateHetu
     @Setter

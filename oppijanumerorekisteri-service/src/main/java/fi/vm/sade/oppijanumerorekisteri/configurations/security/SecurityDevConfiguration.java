@@ -34,7 +34,7 @@ public class SecurityDevConfiguration {
                 .requestMatchers("/buildversion.txt").permitAll()
                 .requestMatchers("/swagger-ui/**").permitAll()
                 .requestMatchers("/swagger-resources/**").permitAll()
-                .requestMatchers("/v2/api-docs").permitAll()
+                .requestMatchers("/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated());
         return http.build();
     }
