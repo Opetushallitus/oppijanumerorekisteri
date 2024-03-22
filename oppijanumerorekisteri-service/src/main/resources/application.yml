@@ -13,7 +13,8 @@ spring:
     serialization:
       write-dates-as-timestamps: true
   cache:
-    type: EHCACHE
+    jcache:
+      config: classpath:ehcache.xml
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.postgresql.Driver
@@ -38,7 +39,6 @@ spring:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
       ddl-auto: validate
     show-sql: false
-    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
     properties:
       hibernate.id.new_generator_mappings: true
       hibernate.integration.envers.enabled: true
@@ -59,7 +59,6 @@ logging:
     fi.vm.sade.auditlog.Audit: info
     fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter: warn
     org.apache.http.client.protocol.ResponseProcessCookies: error
-    io.swagger.models.parameters.AbstractSerializableParameter: error
     fi.vm.sade.oppijanumerorekisteri.aspects.LogExecutionTimeAspect: debug
 dev:
   username: user
