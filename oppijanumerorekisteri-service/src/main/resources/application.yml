@@ -60,6 +60,8 @@ logging:
     fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter: warn
     org.apache.http.client.protocol.ResponseProcessCookies: error
     fi.vm.sade.oppijanumerorekisteri.aspects.LogExecutionTimeAspect: debug
+springdoc.packagesToScan: fi.vm.sade.oppijanumerorekisteri.controllers
+springdoc.pathsToMatch: /**
 dev:
   username: user
   password: password

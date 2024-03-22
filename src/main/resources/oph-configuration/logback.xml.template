@@ -45,7 +45,6 @@
     <logger name="org.springframework.boot.autoconfigure.security.AuthenticationManagerConfiguration" level="info" />
     <logger name="fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter" level="error" />
     <logger name="org.hibernate.SQL" level="error" />
-    <logger name="io.swagger.models.parameters.AbstractSerializableParameter" level="error" />
 
     <!-- Auditlog  -->
     <logger name="fi.vm.sade.oppijanumerorekisteri.audit.AuditHelper" level="INFO" additivity="false">
