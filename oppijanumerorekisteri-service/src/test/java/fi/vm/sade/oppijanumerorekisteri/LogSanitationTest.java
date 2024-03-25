@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(Parameterized.class)
 @WebAppConfiguration
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest
 @ContextConfiguration(classes = {TestApplication.class})
 public class LogSanitationTest {
 

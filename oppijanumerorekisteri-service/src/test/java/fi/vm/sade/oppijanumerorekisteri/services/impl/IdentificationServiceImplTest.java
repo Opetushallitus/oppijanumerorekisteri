@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.SuspendableIdentificationException;
@@ -8,6 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
+import fi.vm.sade.oppijanumerorekisteri.models.KoodiType;
 import fi.vm.sade.oppijanumerorekisteri.models.Yksilointivirhe;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;

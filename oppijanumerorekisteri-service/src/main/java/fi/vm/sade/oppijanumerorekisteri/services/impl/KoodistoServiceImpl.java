@@ -1,7 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
+import fi.vm.sade.oppijanumerorekisteri.models.KoodiType;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import org.springframework.cache.annotation.CacheConfig;
