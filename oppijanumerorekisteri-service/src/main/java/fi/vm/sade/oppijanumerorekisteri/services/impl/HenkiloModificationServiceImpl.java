@@ -321,6 +321,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     @Transactional
     @Override
     public Henkilo update(Henkilo henkilo) {
+        log.info("Updating henkilo " + henkilo.getOidHenkilo());
         setSyntymaaikaAndSukupuoliFromHetu(henkilo);
 
         // varmistetaan että tyhjä hetu tallentuu nullina
