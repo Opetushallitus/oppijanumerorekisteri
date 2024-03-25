@@ -40,6 +40,7 @@ spring:
       ddl-auto: validate
     show-sql: false
     properties:
+      hibernate.id.db_structure_naming_strategy: single
       hibernate.id.new_generator_mappings: true
       hibernate.integration.envers.enabled: true
       # https://hibernate.atlassian.net/browse/HHH-12368
