@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.oppijanumerorekisteri.models.KoodiType;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import io.swagger.v3.oas.annotations.Hidden;

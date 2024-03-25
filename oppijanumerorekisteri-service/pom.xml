@@ -56,10 +56,6 @@
             <artifactId>kayttooikeus-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>fi.vm.sade.koodisto</groupId>
-            <artifactId>koodisto-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>fi.vm.sade.rajapinnat</groupId>
             <artifactId>vtj-api</artifactId>
         </dependency>
