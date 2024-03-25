@@ -11,7 +11,6 @@ spring:
   jpa:
     properties:
       hibernate.integration.envers.enabled: {{oppijanumerorekisteri_versiointi_kaytossa | default('true')}}
-      org.hibernate.envers.store_data_at_delete: true
   datasource:
     url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/{{postgresql_oppijanumerorekisteri_db | default('authentication')}}?ApplicationName=oppijanumerorekisteri-service
     username: {{postgres_app_user}}

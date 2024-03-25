@@ -53,7 +53,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {OrikaConfiguration.class, KoodistoServiceMock.class}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(classes = {OrikaConfiguration.class, KoodistoServiceMock.class})
 public class HenkiloServiceTest {
 
     private final String OID = "1.2.3.4.5";

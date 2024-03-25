@@ -47,7 +47,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {OrikaConfiguration.class, KoodistoServiceMock.class}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(classes = {OrikaConfiguration.class, KoodistoServiceMock.class})
 public class HenkiloModificationServiceImplTest {
     @Autowired
     private OrikaConfiguration mapper;
