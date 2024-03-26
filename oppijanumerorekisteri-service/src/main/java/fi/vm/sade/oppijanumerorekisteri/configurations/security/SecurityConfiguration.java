@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations.security;
 
+import fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter;
 import fi.vm.sade.javautils.kayttooikeusclient.OphUserDetailsServiceImpl;
 import fi.vm.sade.oppijanumerorekisteri.configurations.ConfigEnums;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.CasProperties;
@@ -81,7 +82,7 @@ public class SecurityConfiguration {
             AuthenticationConfiguration authenticationConfiguration,
             ServiceProperties serviceProperties,
             SecurityContextRepository securityContextRepository) throws Exception {
-        CasAuthenticationFilter casAuthenticationFilter = new CasAuthenticationFilter();
+        CasAuthenticationFilter casAuthenticationFilter = new OpintopolkuCasAuthenticationFilter(serviceProperties);
         casAuthenticationFilter.setAuthenticationManager(authenticationConfiguration.getAuthenticationManager());
         casAuthenticationFilter.setServiceProperties(serviceProperties);
         casAuthenticationFilter.setFilterProcessesUrl(SPRING_CAS_SECURITY_CHECK_PATH);
