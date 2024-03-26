@@ -336,6 +336,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         // jos käyttäjää ei ole tiedossa (esim. yksilöinnin tausta-ajo),
         // pidetään käsittelijä ennallaan
         kayttajaOid.ifPresent(henkilo::setKasittelijaOid);
+        log.info("Saving henkilo " + henkilo.getOidHenkilo());
         Henkilo tallennettu = henkiloDataRepository.save(henkilo);
 
         // päivitettäessä henkilöä, päivitetään samalla kaikkien slave-henkilöiden
@@ -345,6 +346,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
                 .map(slave -> {
                     slave.setModified(nyt);
                     kayttajaOid.ifPresent(slave::setKasittelijaOid);
+                    log.info("Saving duplicate " + slave.getOidHenkilo() + "of henkilo " + tallennettu.getOidHenkilo());
                     return henkiloDataRepository.save(slave);
                     // rakenne ei ole rekursiivinen (vaikka kantarakenne mahdollistaakin)
                     // joten päivitystä ei tarvitse tehdä rekursiivisesti
