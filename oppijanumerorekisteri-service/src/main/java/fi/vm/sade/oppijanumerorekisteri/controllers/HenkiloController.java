@@ -13,11 +13,13 @@ import lombok.AllArgsConstructor;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.core.env.Environment;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -40,6 +42,7 @@ import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerIm
 @RequestMapping("/henkilo")
 @Validated
 @RequiredArgsConstructor
+@Slf4j
 public class HenkiloController {
     private final HenkiloService henkiloService;
     private final HenkiloModificationService henkiloModificationService;
@@ -387,7 +390,12 @@ public class HenkiloController {
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
     @ApiOperation(value = "Päivittään yksilöidyn henkilön tiedot VTJ:stä", authorizations = @Authorization("onr"))
     public void paivitaYksilointitiedot(@PathVariable String oid) {
-        yksilointiService.paivitaYksilointitiedot(oid);
+        try {
+            yksilointiService.paivitaYksilointitiedot(oid);
+        } catch (ObjectOptimisticLockingFailureException e) {
+            log.error("Optimistic locking failed for " + e.getPersistentClassName() + " with identifier " + e.getIdentifier());
+            throw e;
+        }
     }
 
     @GetMapping("/{oid}/yksilointitiedot")
