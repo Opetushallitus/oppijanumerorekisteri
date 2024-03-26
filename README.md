@@ -10,7 +10,7 @@ Below is non-exhaustive list of the key technologies & frameworks used in the pr
 * Spring Security (CAS)
 * Postgresql
 * QueryDSL
-* JPA / Hibernate5
+* JPA / Hibernate
 * Flyway
 * Orika
 * Lombok
@@ -43,7 +43,7 @@ Palvelinpuoli
 
 ## Ajaminen
 
-    java -jar oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-<versio>.jar
+    java --add-opens java.base/java.lang=ALL-UNNAMED -Dnet.bytebuddy.experimental=true -jar oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-<versio>.jar
 
 Ilman parametreja sovellus käyttää [application.yml](oppijanumerorekisteri-service/src/main/resources/application.yml)
 -tiedoston mukaisia oletuskonfiguraatioita. Tavallisesti tämä ei toimi, koska yhteyttä vaadittuihin palveluihin ei saada, joten palveluiden sijainti tulee uudelleenmääritellä.
@@ -93,24 +93,9 @@ Vaihtoehtoisesti voidaan ajaa kohdan 3 tavalla suoraan komentorivillä tai alla 
 
 Huom! Valitse tunnukseksi jonkin luokalla olevan käyttäjän OID. Tällöin oidia kysyvät rajapinnat toimivat oikein.
 
-## Lombok
-Käytössä on lombok joten IDE tarvitsee pluginin ymmärtääkseen tämän annotaatioita.
-
-## Url.properties ja CSRF
-Aina ulkoisia riippuvuuksia lisättäessä lisättävä osoite url.properties:iin
-https://github.com/Opetushallitus/java-utils/tree/master/java-properties
-
-Näiden hakemiseen käytetään httpclient:ia jos CAS autentikointia ei tarvita
-https://github.com/Opetushallitus/java-utils/tree/master/httpclient
-
-Jos CAS autentikointia tarvitaan on käytettävä muuta clientia.
-
 ## Auditlokitus
 Koska käsitellään henkilötietoja kaikki servicekutsut lokitetaan alla olevan projektin mukaisesti
 https://github.com/Opetushallitus/auditlogger
-
-Muutokset laitetaan oppijanumerorekisterin omaan pakettiin 
-https://github.com/Opetushallitus/auditlogger/tree/master/src/main/java/fi/vm/sade/auditlog/oppijanumerorekisteri
 
 ## Lokitus
 Normaalissa kehityskäytössä lokitetaan vain konsoliin. Jos kehitysympäristössä tai muissa ympäristöissä halutaan lokittaa tiedostoon on sovellukselle annettava polku `logback.xml`-tiedostoon. Tällöin ajokomento voi näyttää esimerkiksi seuraavanlaiselta: 
