@@ -2,8 +2,8 @@ package fi.vm.sade.oppijanumerorekisteri.models;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 
 /**
  * Kansalaisuus koodistosta "maatjavaltiot2".

@@ -1,15 +1,14 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public class IdentificationDto {
     @NotNull
     @Valid
-    @ApiModelProperty("Koodisto 'henkilontunnistetyypit'")
+    @Schema(name = "Koodisto 'henkilontunnistetyypit'")
     private IdpEntityId idpEntityId;
 
     @NotNull

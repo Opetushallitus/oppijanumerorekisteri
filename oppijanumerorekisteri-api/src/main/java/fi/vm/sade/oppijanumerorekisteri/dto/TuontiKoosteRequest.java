@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.lang.Nullable;
 
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Min;
 
 @Getter
 @Setter

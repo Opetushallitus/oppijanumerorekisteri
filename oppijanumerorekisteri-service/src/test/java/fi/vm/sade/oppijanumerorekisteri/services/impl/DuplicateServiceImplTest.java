@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import com.google.common.collect.Lists;
 import fi.vm.sade.oppijanumerorekisteri.KoodistoServiceMock;
 import fi.vm.sade.oppijanumerorekisteri.aspects.AuditlogAspectHelper;
 import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
@@ -37,7 +36,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {OrikaConfiguration.class, DuplicateServiceImpl.class, KoodistoServiceMock.class}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(classes = {OrikaConfiguration.class, DuplicateServiceImpl.class, KoodistoServiceMock.class})
 public class DuplicateServiceImplTest {
     @Autowired
     private OrikaConfiguration mapper;
@@ -88,9 +87,9 @@ public class DuplicateServiceImplTest {
         HakemusDto hakemusDto2 = new HakemusDto(hakemus2);
 
         HashMap<String, List<HakemusDto>> ataruApplications = new HashMap<String, List<HakemusDto>>() { { put("1.2.3.4.6", Arrays.asList(hakemusDto1)); } };
-        HashMap<String, List<HakemusDto>> hakuAppApplications = new HashMap<String, List<HakemusDto>>() { { put("1.3.3.4.7", Arrays.asList(hakemusDto2)); put("1.2.3.4.6", Lists.newArrayList(hakemusDto2)); } };
+        HashMap<String, List<HakemusDto>> hakuAppApplications = new HashMap<String, List<HakemusDto>>() { { put("1.3.3.4.7", Arrays.asList(hakemusDto2)); put("1.2.3.4.6", List.of(hakemusDto2)); } };
 
-        hakuAppApplications.put("1.3.3.4.7", Lists.newArrayList(hakemusDto2));
+        hakuAppApplications.put("1.3.3.4.7", List.of(hakemusDto2));
 
         given(this.ataruClient.fetchApplicationsByOid(any())).willReturn(ataruApplications);
         given(this.hakuappClient.fetchApplicationsByOid(any())).willReturn(hakuAppApplications);

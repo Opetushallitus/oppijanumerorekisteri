@@ -9,7 +9,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HetuRepository;
 import org.springframework.data.jpa.repository.JpaContext;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.Collection;
 
 @Repository

@@ -9,13 +9,12 @@ spring:
   main:
     banner-mode: "off"
     allow-circular-references: true # HuoltajaCreateDtoMapper
-  session:
-    store-type: jdbc
   jackson:
     serialization:
       write-dates-as-timestamps: true
   cache:
-    type: EHCACHE
+    jcache:
+      config: classpath:ehcache.xml
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.postgresql.Driver
@@ -39,10 +38,10 @@ spring:
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
       ddl-auto: validate
-      use-new-id-generator-mappings: true
     show-sql: false
-    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
     properties:
+      hibernate.id.db_structure_naming_strategy: single
+      hibernate.id.new_generator_mappings: true
       hibernate.integration.envers.enabled: true
       # https://hibernate.atlassian.net/browse/HHH-12368
       hibernate.jdbc.lob.non_contextual_creation: true
@@ -61,8 +60,9 @@ logging:
     fi.vm.sade.auditlog.Audit: info
     fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter: warn
     org.apache.http.client.protocol.ResponseProcessCookies: error
-    io.swagger.models.parameters.AbstractSerializableParameter: error
     fi.vm.sade.oppijanumerorekisteri.aspects.LogExecutionTimeAspect: debug
+springdoc.packagesToScan: fi.vm.sade.oppijanumerorekisteri.controllers
+springdoc.pathsToMatch: /**
 dev:
   username: user
   password: password

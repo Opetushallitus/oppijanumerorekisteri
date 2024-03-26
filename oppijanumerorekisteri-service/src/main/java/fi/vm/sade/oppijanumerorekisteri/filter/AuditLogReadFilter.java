@@ -7,7 +7,6 @@ import fi.vm.sade.oppijanumerorekisteri.audit.AuditMessageFields;
 import fi.vm.sade.oppijanumerorekisteri.audit.OnrOperation;
 import fi.vm.sade.oppijanumerorekisteri.audit.VirkailijaAuditLogger;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.annotation.Order;
@@ -15,10 +14,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -32,7 +31,6 @@ public class AuditLogReadFilter extends AuditLogFilter {
 
     private final VirkailijaAuditLogger auditLogger;
 
-    @Autowired
     public AuditLogReadFilter(@Qualifier("requestMappingHandlerMapping") RequestMappingHandlerMapping reqMap, VirkailijaAuditLogger auditLogger) {
         super(reqMap);
         this.auditLogger = auditLogger;

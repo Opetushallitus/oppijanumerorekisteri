@@ -3,7 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.models;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * Duplikaattien henkilöiden tunnistamiseen.

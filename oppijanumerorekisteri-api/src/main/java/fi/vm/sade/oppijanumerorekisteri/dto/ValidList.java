@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.*;
 
 /**

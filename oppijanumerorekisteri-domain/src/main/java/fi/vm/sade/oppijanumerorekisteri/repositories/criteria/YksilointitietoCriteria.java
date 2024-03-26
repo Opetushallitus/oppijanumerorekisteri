@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 @Getter
 @Setter
