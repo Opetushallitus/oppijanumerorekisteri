@@ -5,6 +5,8 @@ import fi.vm.sade.javautils.kayttooikeusclient.OphUserDetailsServiceImpl;
 import fi.vm.sade.oppijanumerorekisteri.configurations.ConfigEnums;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.CasProperties;
 import fi.vm.sade.properties.OphProperties;
+
+import org.apereo.cas.client.session.SessionMappingStorage;
 import org.apereo.cas.client.session.SingleSignOutFilter;
 import org.apereo.cas.client.validation.Cas30ServiceTicketValidator;
 import org.apereo.cas.client.validation.TicketValidator;
@@ -32,12 +34,15 @@ public class SecurityConfiguration {
     private CasProperties casProperties;
     private OphProperties ophProperties;
     private Environment environment;
+    private SessionMappingStorage sessionMappingStorage;
+
     public static final String SPRING_CAS_SECURITY_CHECK_PATH = "/j_spring_cas_security_check";
 
-    public SecurityConfiguration(CasProperties casProperties, OphProperties ophProperties, Environment environment) {
+    public SecurityConfiguration(CasProperties casProperties, OphProperties ophProperties, Environment environment, SessionMappingStorage sessionMappingStorage) {
         this.casProperties = casProperties;
         this.ophProperties = ophProperties;
         this.environment = environment;
+        this.sessionMappingStorage = sessionMappingStorage;
     }
 
     @Bean
@@ -97,6 +102,7 @@ public class SecurityConfiguration {
     //
     @Bean
     SingleSignOutFilter singleSignOutFilter() {
+        SingleSignOutFilter.setSessionMappingStorage(sessionMappingStorage);
         SingleSignOutFilter singleSignOutFilter = new SingleSignOutFilter();
         singleSignOutFilter.setIgnoreInitConfiguration(true);
         return singleSignOutFilter;
