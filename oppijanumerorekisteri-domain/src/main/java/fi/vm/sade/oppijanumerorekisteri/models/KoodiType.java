@@ -21,14 +21,14 @@ public class KoodiType {
     protected long lockingVersion;
     
     @Data
-    public class KoodistoItemType {
+    public static class KoodistoItemType {
         protected String koodistoUri;
         protected String organisaatioOid;
         protected List<Integer> koodistoVersio;
     }
 
     @Data
-    public class KoodiMetadataType {
+    public static class KoodiMetadataType {
         protected KieliType kieli;
         protected String nimi;
         protected String kuvaus;
@@ -41,7 +41,7 @@ public class KoodiType {
         protected String sisaltaaKoodiston;
     }
 
-    public enum KieliType {
+    public static enum KieliType {
         FI,
         SV,
         EN;
@@ -56,7 +56,7 @@ public class KoodiType {
     
     }
 
-    public enum TilaType {
+    public static enum TilaType {
         PASSIIVINEN,
         LUONNOS,
         HYVAKSYTTY;
@@ -68,6 +68,5 @@ public class KoodiType {
         public static TilaType fromValue(String v) {
             return valueOf(v);
         }
-    
     }
 }
