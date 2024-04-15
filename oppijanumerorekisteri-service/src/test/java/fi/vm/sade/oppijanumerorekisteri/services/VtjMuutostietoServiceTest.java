@@ -168,9 +168,14 @@ public class VtjMuutostietoServiceTest {
         when(koodistoService.list(Koodisto.KUNTA))
                 .thenReturn(new KoodiTypeListBuilder(Koodisto.KUNTA).koodi("091").koodi("287").build());
         when(koodistoService.list(Koodisto.MAAT_JA_VALTIOT_2))
-                .thenReturn(new KoodiTypeListBuilder(Koodisto.MAAT_JA_VALTIOT_2).koodi("246")
-                        .koodi("250").koodi("123")
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.MAAT_JA_VALTIOT_2)
+                        .koodi("246")
+                        .koodi("250")
+                        .koodi("123")
                         .koodi("456")
+                        .koodi("729")
+                        .koodi("736")
+                        .koodi("998")
                         .build());
     }
 
@@ -880,5 +885,21 @@ public class VtjMuutostietoServiceTest {
         assertThat(huoltaja2.getSyntymaaika()).isEqualTo(LocalDate.of(1994, 10, 11));
         assertThat(huoltaja2.getHuoltajuusAlku()).isEqualTo(LocalDate.of(2020, 5, 14));
         assertThat(huoltaja2.getHuoltajuusLoppu()).isEqualTo(LocalDate.of(2036, 12, 30));
+    }
+
+    @Test
+    public void saveMuutostietoSavesFixedKansalaisuus() throws Exception {
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
+        VtjMuutostieto muutostieto = getMuutostieto(
+                "src/test/resources/vtj/muutostietoKansalaisuusVanhaSudan.json");
+        muutostietoService.updateHenkilo(muutostieto);
+        verify(muutostietoRepository, times(1)).save(any());
+
+        ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
+        verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
+        HenkiloForceUpdateDto actual = argument.getValue();
+        assertThat(actual.getKansalaisuus().stream().map(k -> k.getKansalaisuusKoodi())
+                .collect(Collectors.toSet()))
+                .isEqualTo(Set.of("729"));
     }
 }

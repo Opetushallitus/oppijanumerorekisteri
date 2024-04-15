@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.vtj;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -33,6 +34,10 @@ import static java.util.stream.Collectors.joining;
 @RequiredArgsConstructor
 public abstract class TietoryhmaMapper {
     private final KoodistoService koodistoService;
+
+    private final Map<String, String> FIXED_KANSALAISUUSKOODIS = Map.of(
+            "736", "729",
+            "230", "231");
 
     protected void setKuolinpaiva(HenkiloForceUpdateDto update, JsonNode tietoryhma) {
         if (tietoryhma.get("kuollut").asBoolean()) {
@@ -73,7 +78,9 @@ public abstract class TietoryhmaMapper {
         JsonNode henkilonKansalaisuudet = tietoryhma.get("henkilonKansalaisuudet");
         Set<KansalaisuusDto> kansalaisuudet = new HashSet<>();
         for (JsonNode kansalaisuus : henkilonKansalaisuudet) {
-            KansalaisuusDto dto = new KansalaisuusDto(getStringValue(kansalaisuus, "kansalaisuuskoodi"));
+            String kansalaisuuskoodi = getStringValue(kansalaisuus, "kansalaisuuskoodi");
+            String fixedKansalaisuuskoodi = FIXED_KANSALAISUUSKOODIS.getOrDefault(kansalaisuuskoodi, kansalaisuuskoodi);
+            KansalaisuusDto dto = new KansalaisuusDto(fixedKansalaisuuskoodi);
             kansalaisuudet.add(dto);
         }
         return kansalaisuudet;
@@ -163,8 +170,8 @@ public abstract class TietoryhmaMapper {
                         getStringValue(tietoryhma, "huoneistokirjain"),
                         huoneistonumero,
                         getStringValue(tietoryhma, "jakokirjain"))
-                .map(StringUtils::trimWhitespace)
                 .filter(StringUtils::hasLength)
+                .map(String::strip)
                 .collect(joining(" "));
         setYhteystietoArvo(yhteystiedotRyhma, YhteystietoTyyppi.YHTEYSTIETO_KATUOSOITE, katuosoite);
         setYhteystietoArvo(yhteystiedotRyhma, YhteystietoTyyppi.YHTEYSTIETO_POSTINUMERO,
@@ -193,7 +200,9 @@ public abstract class TietoryhmaMapper {
     }
 
     protected KielisyysDto getKielisyys(JsonNode tietoryhma) {
-        return new KielisyysDto(getStringValue(tietoryhma, "kielikoodi"), getStringValue(tietoryhma, "nimi"));
+        String kielikoodi = getStringValue(tietoryhma, "kielikoodi");
+        String fixedKielikoodi = kielikoodi == "iw" ? "he" : kielikoodi;
+        return new KielisyysDto(fixedKielikoodi, getStringValue(tietoryhma, "nimi"));
     }
 
     protected boolean huoltajaMatches(HuoltajaCreateDto huoltajaCreateDto, JsonNode huoltaja) {

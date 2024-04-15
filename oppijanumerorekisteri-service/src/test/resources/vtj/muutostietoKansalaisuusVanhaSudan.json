@@ -1,0 +1,57 @@
+[
+  {
+    "tietoryhma": "KANSALAISUUS",
+    "muutosattribuutti": "MUUTETTU",
+    "henkilonKansalaisuudet": [
+      {
+        "kansalaisuuskoodi": "736",
+        "voimassaolo": "AKTIIVI",
+        "saamispv": {
+          "arvo": "2020-12-01",
+          "tarkkuus": "PAIVA"
+        }
+      }
+    ],
+    "korjattavatKansalaisuudet": [],
+    "korjatutKansalaisuudet": [],
+    "poistetutKansalaisuudet": [],
+    "lisatytKansalaisuudet": [
+      {
+        "kansalaisuuskoodi": "736",
+        "voimassaolo": "AKTIIVI",
+        "saamispv": {
+          "arvo": "2020-12-01",
+          "tarkkuus": "PAIVA"
+        }
+      }
+    ],
+    "muutetutKansalaisuudet": [
+      {
+        "kansalaisuuskoodi": "152",
+        "voimassaolo": "PASSIIVI",
+        "menetyspv": {
+          "arvo": "2020-12-01",
+          "tarkkuus": "PAIVA"
+        }
+      }
+    ]
+  },
+  {
+    "tietoryhma": "POISSAOLO",
+    "muutosattribuutti": "MUUTETTU",
+    "poissaolo": "KOTIPAIKKA_MUUALLA_KUIN_POHJOISMAISSA",
+    "siirtopv": {
+      "arvo": "2017-06-01",
+      "tarkkuus": "PAIVA"
+    }
+  },
+  {
+    "tietoryhma": "VAESTOKIRJANPITOKUNTA",
+    "muutosattribuutti": "MUUTETTU",
+    "kuntakoodi": "257",
+    "kuntaanMuuttopv": {
+      "arvo": "1979-01-02",
+      "tarkkuus": "PAIVA"
+    }
+  }
+]
