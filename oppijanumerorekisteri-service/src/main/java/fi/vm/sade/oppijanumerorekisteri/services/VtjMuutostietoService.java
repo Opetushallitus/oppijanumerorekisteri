@@ -219,6 +219,49 @@ public class VtjMuutostietoService {
         }
     }
 
+    private String handleKotikuntaPoistettu(Long henkiloId, JsonNode tietoryhmat) {
+        try {
+            var kotikuntaHistoriaList = kotikuntaHistoriaRepository.findAllByHenkiloId(henkiloId);
+            getKotikuntaPoistettuTietoryhma(tietoryhmat).ifPresent(tietoryhma -> {
+                var poistettuKotikunta = getStringValue(tietoryhma, "kuntakoodi");
+                var poistettuMuuttopv = TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv"));
+
+                var voimassaolevatTiedot = tietoryhma.get("voimassaolevatTiedot").get(0);
+                var voimassaolevaKotikunta = getStringValue(voimassaolevatTiedot, "kuntakoodi");
+                var voimassaolevaMuttopv = TietoryhmaMapper.parseDate(voimassaolevatTiedot.get("kuntaanMuuttopv"));
+
+                kotikuntaHistoriaList.stream()
+                        .filter(x -> x.getKotikunta().equals(poistettuKotikunta) && x.getKuntaanMuuttopv().equals(poistettuMuuttopv))
+                        .findFirst()
+                        .ifPresent(historia -> {
+                            log.info("Deleting kotikuntahistoria entry for henkilo {} with kotikunta {} and muuttopv {}", henkiloId, historia.getKotikunta(), historia.getKuntaanMuuttopv());
+                            kotikuntaHistoriaRepository.delete(historia);
+                        });
+                kotikuntaHistoriaList.stream()
+                        .filter(x -> x.getKotikunta().equals(voimassaolevaKotikunta) && x.getKuntaanMuuttopv().equals(voimassaolevaMuttopv))
+                        .findFirst()
+                        .ifPresent(historia -> {
+                            log.info("Updating kotikuntahistoria entry for henkilo {} with kotikunta {} and muuttopv {}", henkiloId, historia.getKotikunta(), historia.getKuntaanMuuttopv());
+                            historia.setKunnastaPoisMuuttopv(null);
+                            kotikuntaHistoriaRepository.save(historia);
+                        });
+            });
+        } catch (Exception e) {
+            log.error("failed to handle KOTIKUNTA POISTETTU tietoryhma for henkilo " + henkiloId, e);
+            slackClient.sendToSlack("Virhe kotikuntahistorian päivityksessä henkilölle " + henkiloId, e.getMessage());
+        }
+        return null;
+    }
+
+    private Optional<JsonNode> getKotikuntaPoistettuTietoryhma(JsonNode tietoryhmat) {
+        for (JsonNode tietoryhma : tietoryhmat) {
+            if ("KOTIKUNTA".equals(getStringValue(tietoryhma, "tietoryhma")) && MuutostietoMapper.isPoistettu(tietoryhma)) {
+                return Optional.of(tietoryhma);
+            }
+        }
+        return Optional.empty();
+    }
+
     private String saveKotikuntaHistoria(Long henkiloId, JsonNode tietoryhmat, Function<JsonNode, Boolean> tietoryhmaValidator) {
         try {
             JsonNode tietoryhma = getTietoryhma(tietoryhmat, "KOTIKUNTA");
@@ -345,6 +388,7 @@ public class VtjMuutostietoService {
             update.getYhteystiedotRyhma().removeIf(isVtjYhteystietoryhma);
             update.setKotikunta(null);
         } else {
+            handleKotikuntaPoistettu(henkilo.getId(), muutostieto.tietoryhmat);
             saveKotikuntaHistoria(henkilo.getId(), muutostieto.tietoryhmat, MuutostietoMapper::isDataUpdate);
         }
     }

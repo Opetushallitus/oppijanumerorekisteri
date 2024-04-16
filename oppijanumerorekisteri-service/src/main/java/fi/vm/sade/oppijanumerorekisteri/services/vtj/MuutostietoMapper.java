@@ -33,6 +33,11 @@ public class MuutostietoMapper extends TietoryhmaMapper {
         return false;
     }
 
+    public static boolean isPoistettu(JsonNode tietoryhma) {
+        String muutosattribuutti = getStringValue(tietoryhma, "muutosattribuutti");
+        return "POISTETTU".equals(muutosattribuutti);
+    }
+
     @Override
     public HenkiloForceUpdateDto mutateUpdateDto(HenkiloForceUpdateDto update, JsonNode tietoryhma, String locale) {
         switch (getStringValue(tietoryhma, "tietoryhma")) {
@@ -79,7 +84,10 @@ public class MuutostietoMapper extends TietoryhmaMapper {
                 update.setTurvakielto(turvakielto);
                 break;
             case "KOTIKUNTA":
-                if (isDataUpdate(tietoryhma)) {
+                if (isPoistettu(tietoryhma)) {
+                    var voimassaolevatTiedot = tietoryhma.get("voimassaolevatTiedot").get(0);
+                    update.setKotikunta(getStringValue(voimassaolevatTiedot, "kuntakoodi"));
+                } else if (isDataUpdate(tietoryhma)) {
                     update.setKotikunta(getStringValue(tietoryhma, "kuntakoodi"));
                 }
                 break;
@@ -142,7 +150,7 @@ public class MuutostietoMapper extends TietoryhmaMapper {
                 break;
             case "HUOLTAJA":
                 Set<HuoltajaCreateDto> huoltajat = update.getHuoltajat();
-                if ("POISTETTU".equals(getStringValue(tietoryhma, "muutosattribuutti"))) {
+                if (isPoistettu(tietoryhma)) {
                     JsonNode huoltajaJson = tietoryhma.get("huoltaja");
                     huoltajat.removeIf(huoltaja -> huoltajaMatches(huoltaja, huoltajaJson));
                 } else if (isDataUpdate(tietoryhma)) {

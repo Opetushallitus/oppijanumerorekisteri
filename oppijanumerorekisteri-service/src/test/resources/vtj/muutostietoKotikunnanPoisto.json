@@ -1,0 +1,138 @@
+[
+  {
+    "alkupv": {
+      "arvo": "2024-01-01",
+      "tarkkuus": "PAIVA"
+    },
+    "katunimi": {
+      "fi": "Piispansilta"
+    },
+    "katunumero": "11",
+    "kuntakoodi": "049",
+    "tietoryhma": "VAKINAINEN_KOTIMAINEN_OSOITE",
+    "postinumero": "02230",
+    "osoitenumero": 1,
+    "rakennustunnus": "ISOOMENA",
+    "huoneistonumero": "1",
+    "huoneistokirjain": "A",
+    "postitoimipaikka": {
+      "fi": "ESPOO",
+      "sv": "ESPOO"
+    },
+    "muutosattribuutti": "POISTETTU",
+    "voimassaolevatTiedot": [
+      {
+        "alkupv": {
+          "arvo": "2020-01-01",
+          "tarkkuus": "PAIVA"
+        },
+        "katunimi": {
+          "fi": "Töölönlahdenkatu"
+        },
+        "katunumero": "4",
+        "kuntakoodi": "091",
+        "tietoryhma": "VAKINAINEN_KOTIMAINEN_OSOITE",
+        "jakokirjain": "a",
+        "postinumero": "00100",
+        "osoitenumero": 1,
+        "rakennustunnus": "OODI",
+        "huoneistonumero": "1",
+        "huoneistokirjain": "A",
+        "postitoimipaikka": {
+          "fi": "HELSINKI",
+          "sv": "HELSINKI"
+        }
+      }
+    ]
+  },
+  {
+    "alkupv": {
+      "arvo": "2020-01-01",
+      "tarkkuus": "PAIVA"
+    },
+    "loppupv": {
+      "arvo": "2023-12-31",
+      "tarkkuus": "PAIVA"
+    },
+    "katunimi": {
+      "fi": "Töölönlahdenkatu"
+    },
+    "katunumero": "4",
+    "kuntakoodi": "091",
+    "tietoryhma": "VAKINAINEN_KOTIMAINEN_OSOITE",
+    "jakokirjain": "a",
+    "postinumero": "00100",
+    "osoitenumero": 1,
+    "rakennustunnus": "OODI",
+    "huoneistonumero": "1",
+    "huoneistokirjain": "A",
+    "postitoimipaikka": {
+      "fi": "HELSINKI",
+      "sv": "HELSINKI"
+    },
+    "muutosattribuutti": "KORJATTAVA"
+  },
+  {
+    "alkupv": {
+      "arvo": "2020-01-01",
+      "tarkkuus": "PAIVA"
+    },
+    "katunimi": {
+      "fi": "Töölönlahdenkatu"
+    },
+    "katunumero": "4",
+    "kuntakoodi": "091",
+    "tietoryhma": "VAKINAINEN_KOTIMAINEN_OSOITE",
+    "jakokirjain": "a",
+    "postinumero": "00100",
+    "osoitenumero": 1,
+    "rakennustunnus": "OODI",
+    "huoneistonumero": "1",
+    "huoneistokirjain": "A",
+    "postitoimipaikka": {
+      "fi": "HELSINKI",
+      "sv": "HELSINKI"
+    },
+    "muutosattribuutti": "KORJATTU"
+  },
+  {
+    "kuntakoodi": "049",
+    "tietoryhma": "KOTIKUNTA",
+    "kuntaanMuuttoPv": {
+      "arvo": "2024-01-01",
+      "tarkkuus": "PAIVA"
+    },
+    "kuntaanMuuttopv": {
+      "arvo": "2024-01-01",
+      "tarkkuus": "PAIVA"
+    },
+    "muutosattribuutti": "POISTETTU",
+    "voimassaolevatTiedot": [
+      {
+        "kuntakoodi": "091",
+        "tietoryhma": "KOTIKUNTA",
+        "kuntaanMuuttoPv": {
+          "arvo": "2020-01-01",
+          "tarkkuus": "PAIVA"
+        },
+        "kuntaanMuuttopv": {
+          "arvo": "2020-01-01",
+          "tarkkuus": "PAIVA"
+        }
+      }
+    ]
+  },
+  {
+    "kuntakoodi": "091",
+    "tietoryhma": "KOTIKUNTA",
+    "kuntaanMuuttoPv": {
+      "arvo": "2020-01-01",
+      "tarkkuus": "PAIVA"
+    },
+    "kuntaanMuuttopv": {
+      "arvo": "2020-01-01",
+      "tarkkuus": "PAIVA"
+    },
+    "muutosattribuutti": "LISATIETO"
+  }
+]

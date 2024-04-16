@@ -589,6 +589,46 @@ public class VtjMuutostietoServiceTest {
                 tuple("287", LocalDate.of(2019, 6, 27), null));
     }
 
+    @Test
+    public void handleKotikuntaPoistettuMuutostieto() throws Exception {
+        var henkiloId = 828282L;
+        var henkilo = henkiloBuilder
+                .kotikunta("049")
+                .build();
+        henkilo.setId(henkiloId);
+
+        kotikuntaHistoriaRepository.save(KotikuntaHistoria.builder()
+                .henkiloId(henkiloId)
+                .kotikunta("091")
+                .kuntaanMuuttopv(LocalDate.of(2020, 1, 1))
+                .kunnastaPoisMuuttopv(LocalDate.of(2023, 12, 31))
+                .build());
+        kotikuntaHistoriaRepository.save(KotikuntaHistoria.builder()
+                .henkiloId(henkiloId)
+                .kotikunta("049")
+                .kuntaanMuuttopv(LocalDate.of(2024, 1, 1))
+                .build());
+
+        assertKotikuntaHistoria(
+                henkiloId,
+                tuple("091", LocalDate.of(2020, 1, 1), LocalDate.of(2023, 12, 31)),
+                tuple("049", LocalDate.of(2024, 1, 1), null)
+        );
+
+        when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(Optional.of(henkilo));
+        var muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoKotikunnanPoisto.json");
+        muutostietoService.updateHenkilo(muutostieto);
+
+        ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
+        verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
+        HenkiloForceUpdateDto actual = argument.getValue();
+        assertThat(actual.getKotikunta()).isEqualTo("091");
+        assertKotikuntaHistoria(
+                henkiloId,
+                tuple("091", LocalDate.of(2020, 1, 1), null)
+        );
+    }
+
     private HenkiloForceUpdateDto doUpdateHenkilo(Henkilo henkilo, String updateJson) throws Exception {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(Optional.of(henkilo));
         VtjMuutostieto muutostieto = getMuutostieto(updateJson);
