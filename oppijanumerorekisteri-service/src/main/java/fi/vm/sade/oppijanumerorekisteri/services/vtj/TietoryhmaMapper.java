@@ -35,7 +35,7 @@ import static java.util.stream.Collectors.joining;
 public abstract class TietoryhmaMapper {
     private final KoodistoService koodistoService;
 
-    private final Map<String, String> FIXED_KANSALAISUUSKOODIS = Map.of(
+    private static final Map<String, String> FIXED_KANSALAISUUSKOODIS = Map.of(
             "736", "729",
             "230", "231");
 
@@ -201,7 +201,7 @@ public abstract class TietoryhmaMapper {
 
     protected KielisyysDto getKielisyys(JsonNode tietoryhma) {
         String kielikoodi = getStringValue(tietoryhma, "kielikoodi");
-        String fixedKielikoodi = kielikoodi == "iw" ? "he" : kielikoodi;
+        String fixedKielikoodi = "iw".equals(kielikoodi) ? "he" : kielikoodi;
         return new KielisyysDto(fixedKielikoodi, getStringValue(tietoryhma, "nimi"));
     }
 
