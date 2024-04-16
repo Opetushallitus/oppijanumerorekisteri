@@ -404,8 +404,9 @@ public class VtjMuutostietoServiceTest {
     }
 
     private VtjMuutostieto getMuutostieto(String path) throws Exception {
-        return new VtjMuutostieto(hetus.get(0), LocalDateTime.now(), objectMapper.readTree(new File(path)),
-                null, false);
+        try (var is = getClass().getResourceAsStream(path)) {
+            return new VtjMuutostieto(hetus.get(0), LocalDateTime.now(), objectMapper.readTree(is), null, false);
+        }
     }
 
     @Test
@@ -415,7 +416,7 @@ public class VtjMuutostietoServiceTest {
                         .hetu(hetus.get(0))
                         .passivoitu(true)
                         .build()));
-        VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoEtunimenmuutos.json");
+        VtjMuutostieto muutostieto = getMuutostieto("/vtj/muutostietoEtunimenmuutos.json");
         muutostietoService.updateHenkilo(muutostieto);
 
         verify(muutostietoRepository, times(1)).save(any());
@@ -429,7 +430,7 @@ public class VtjMuutostietoServiceTest {
         when(henkiloModificationService.forceUpdateHenkilo(any()))
                 .thenThrow(new UnprocessableEntityException(
                         new BindException(new HenkiloForceUpdateDto(), "henkiloForceUpdateDto")));
-        VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoEtunimenmuutos.json");
+        VtjMuutostieto muutostieto = getMuutostieto("/vtj/muutostietoEtunimenmuutos.json");
         muutostietoService.updateHenkilo(muutostieto);
         verify(henkiloModificationService, times(1)).forceUpdateHenkilo(any());
 
@@ -443,7 +444,7 @@ public class VtjMuutostietoServiceTest {
     public void saveMuutostietoSavesEtunimenmuutos() throws Exception {
         henkilo.get().setId(6l);
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
-        VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoEtunimenmuutos.json");
+        VtjMuutostieto muutostieto = getMuutostieto("/vtj/muutostietoEtunimenmuutos.json");
         muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
@@ -458,7 +459,7 @@ public class VtjMuutostietoServiceTest {
     public void saveMuutostietoSavesHenkilotunnusmuutos() throws Exception {
         henkilo.get().setId(7l);
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
-        VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoHenkilotunnusmuutos.json");
+        VtjMuutostieto muutostieto = getMuutostieto("/vtj/muutostietoHenkilotunnusmuutos.json");
         muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
@@ -472,7 +473,7 @@ public class VtjMuutostietoServiceTest {
     public void saveMuutostietoSavesSukupuolenmuutos() throws Exception {
         henkilo.get().setId(8l);
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
-        VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoSukupuolenmuutos.json");
+        VtjMuutostieto muutostieto = getMuutostieto("/vtj/muutostietoSukupuolenmuutos.json");
         muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
@@ -487,7 +488,7 @@ public class VtjMuutostietoServiceTest {
     public void saveMuutostietoSavesSukunimenmuutos() throws Exception {
         henkilo.get().setId(9l);
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
-        VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoSukunimenmuutos.json");
+        VtjMuutostieto muutostieto = getMuutostieto("/vtj/muutostietoSukunimenmuutos.json");
         muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
@@ -508,8 +509,7 @@ public class VtjMuutostietoServiceTest {
             .yhteystiedotRyhma(Set.of())
             .oidHenkilo("1.2.3.4.5")
             .build()));
-        VtjMuutostieto muutostieto = getMuutostieto(
-                "src/test/resources/vtj/muutostietoKutsumanimenmuutos.json");
+        VtjMuutostieto muutostieto = getMuutostieto("/vtj/muutostietoKutsumanimenmuutos.json");
         muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
@@ -522,7 +522,7 @@ public class VtjMuutostietoServiceTest {
     @Test
     public void saveMuutostietoSavesKuolema() throws Exception {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
-        VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoKuolema.json");
+        VtjMuutostieto muutostieto = getMuutostieto("/vtj/muutostietoKuolema.json");
         muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
@@ -535,8 +535,7 @@ public class VtjMuutostietoServiceTest {
     @Test
     public void saveMuutostietoSavesKuolinpaivanPoisto() throws Exception {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
-        VtjMuutostieto muutostieto = getMuutostieto(
-                "src/test/resources/vtj/muutostietoKuolinpaivanPoisto.json");
+        VtjMuutostieto muutostieto = getMuutostieto("/vtj/muutostietoKuolinpaivanPoisto.json");
         muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
@@ -557,8 +556,7 @@ public class VtjMuutostietoServiceTest {
                         .kuntaanMuuttopv(LocalDate.of(2012, 1, 5))
                         .build());
 
-        VtjMuutostieto muutostieto = getMuutostieto(
-                "src/test/resources/vtj/muutostietoKunnastaToiseenMuutto.json");
+        VtjMuutostieto muutostieto = getMuutostieto("/vtj/muutostietoKunnastaToiseenMuutto.json");
         muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
@@ -616,7 +614,7 @@ public class VtjMuutostietoServiceTest {
         );
 
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(Optional.of(henkilo));
-        var muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoKotikunnanPoisto.json");
+        var muutostieto = getMuutostieto("/vtj/muutostietoKotikunnanPoisto.json");
         muutostietoService.updateHenkilo(muutostieto);
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
@@ -651,7 +649,7 @@ public class VtjMuutostietoServiceTest {
                         .kuntaanMuuttopv(LocalDate.of(2015, 3, 12))
                         .build());
 
-        HenkiloForceUpdateDto actual = doUpdateHenkilo(henkilo, "src/test/resources/vtj/muutostietoTurvakielto.json");
+        HenkiloForceUpdateDto actual = doUpdateHenkilo(henkilo, "/vtj/muutostietoTurvakielto.json");
 
         assertThat(actual.getKotikunta()).isNull();
         assertThat(actual.getYhteystiedotRyhma()).isEmpty();
@@ -674,7 +672,7 @@ public class VtjMuutostietoServiceTest {
                         .kuntaanMuuttopv(LocalDate.of(2015, 3, 12))
                         .build());
 
-        HenkiloForceUpdateDto actual = doUpdateHenkilo(henkilo, "src/test/resources/vtj/muutostietoTurvakieltoKunnastaMuutto.json");
+        HenkiloForceUpdateDto actual = doUpdateHenkilo(henkilo, "/vtj/muutostietoTurvakieltoKunnastaMuutto.json");
 
         assertThat(actual.getKotikunta()).isNull();
         assertThat(actual.getYhteystiedotRyhma()).isEmpty();
@@ -698,7 +696,7 @@ public class VtjMuutostietoServiceTest {
                         .build());
         turvakieltoKotikuntaRepository.save(TurvakieltoKotikunta.builder().henkiloId(henkiloId).kotikunta("091").build());
 
-        HenkiloForceUpdateDto actual = doUpdateHenkilo(henkiloWithTurvakielto, "src/test/resources/vtj/muutostietoKunnastaToiseenMuutto.json");
+        HenkiloForceUpdateDto actual = doUpdateHenkilo(henkiloWithTurvakielto, "/vtj/muutostietoKunnastaToiseenMuutto.json");
 
         assertThat(actual.getKotikunta()).isNull();
         assertThat(actual.getTurvakielto()).isTrue();
@@ -722,7 +720,7 @@ public class VtjMuutostietoServiceTest {
                         .build());
         turvakieltoKotikuntaRepository.save(TurvakieltoKotikunta.builder().henkiloId(henkiloId).kotikunta("091").build());
 
-        HenkiloForceUpdateDto actual = doUpdateHenkilo(henkiloWithTurvakielto, "src/test/resources/vtj/muutostietoTurvakieltoPois.json");
+        HenkiloForceUpdateDto actual = doUpdateHenkilo(henkiloWithTurvakielto, "/vtj/muutostietoTurvakieltoPois.json");
 
         assertThat(actual.getKotikunta()).isEqualTo("091");
         assertThat(actual.getTurvakielto()).isFalse();
@@ -745,7 +743,7 @@ public class VtjMuutostietoServiceTest {
                         .build());
         turvakieltoKotikuntaRepository.save(TurvakieltoKotikunta.builder().henkiloId(henkiloId).kotikunta("091").build());
 
-        HenkiloForceUpdateDto actual = doUpdateHenkilo(henkiloWithTurvakielto, "src/test/resources/vtj/muutostietoTurvakieltoPoisKunnastaMuutto.json");
+        HenkiloForceUpdateDto actual = doUpdateHenkilo(henkiloWithTurvakielto, "/vtj/muutostietoTurvakieltoPoisKunnastaMuutto.json");
 
         assertThat(actual.getKotikunta()).isEqualTo("287");
         assertThat(actual.getTurvakielto()).isFalse();
@@ -759,8 +757,7 @@ public class VtjMuutostietoServiceTest {
     @Test
     public void saveMuutostietoSavesKansalaisuus() throws Exception {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
-        VtjMuutostieto muutostieto = getMuutostieto(
-                "src/test/resources/vtj/muutostietoKansalaisuudenLisaysJaPassivointi.json");
+        VtjMuutostieto muutostieto = getMuutostieto("/vtj/muutostietoKansalaisuudenLisaysJaPassivointi.json");
         muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
@@ -775,8 +772,7 @@ public class VtjMuutostietoServiceTest {
     @Test
     public void saveMuutostietoSavesPostiosoitteenmuutos() throws Exception {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
-        VtjMuutostieto muutostieto = getMuutostieto(
-                "src/test/resources/vtj/muutostietoPostiosoitteenmuutos.json");
+        VtjMuutostieto muutostieto = getMuutostieto("/vtj/muutostietoPostiosoitteenmuutos.json");
         muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
@@ -805,7 +801,7 @@ public class VtjMuutostietoServiceTest {
     @Test
     public void saveMuutostietoSavesAidinkielenmuutos() throws Exception {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
-        VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoAidinkieli.json");
+        VtjMuutostieto muutostieto = getMuutostieto("/vtj/muutostietoAidinkieli.json");
         muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
@@ -818,7 +814,7 @@ public class VtjMuutostietoServiceTest {
     @Test
     public void saveMuutostietoSavesNewHuoltaja() throws Exception {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
-        VtjMuutostieto muutostieto = getMuutostieto("src/test/resources/vtj/muutostietoHuoltosuhteenmuutos.json");
+        VtjMuutostieto muutostieto = getMuutostieto("/vtj/muutostietoHuoltosuhteenmuutos.json");
         muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
@@ -858,8 +854,7 @@ public class VtjMuutostietoServiceTest {
                 .oidHenkilo("1.2.3.4.5")
                 .build());
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkiloWithHuoltaja);
-        VtjMuutostieto muutostieto = getMuutostieto(
-                "src/test/resources/vtj/muutostietoHuoltosuhteenmuutos.json");
+        VtjMuutostieto muutostieto = getMuutostieto("/vtj/muutostietoHuoltosuhteenmuutos.json");
         muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
@@ -899,8 +894,7 @@ public class VtjMuutostietoServiceTest {
                 .oidHenkilo("1.2.3.4.5")
                 .build());
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkiloWithHuoltaja);
-        VtjMuutostieto muutostieto = getMuutostieto(
-                "src/test/resources/vtj/muutostietoHuoltajanPoisto.json");
+        VtjMuutostieto muutostieto = getMuutostieto("/vtj/muutostietoHuoltajanPoisto.json");
         muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
@@ -930,8 +924,7 @@ public class VtjMuutostietoServiceTest {
     @Test
     public void saveMuutostietoSavesFixedKansalaisuus() throws Exception {
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
-        VtjMuutostieto muutostieto = getMuutostieto(
-                "src/test/resources/vtj/muutostietoKansalaisuusVanhaSudan.json");
+        VtjMuutostieto muutostieto = getMuutostieto("/vtj/muutostietoKansalaisuusVanhaSudan.json");
         muutostietoService.updateHenkilo(muutostieto);
         verify(muutostietoRepository, times(1)).save(any());
 
