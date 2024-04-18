@@ -99,6 +99,8 @@ oppijanumerorekisteri:
   scheduling:
     yksilointi:
       enabled: false
+    export:
+      enabled: false
   allow-fake-ssn: true
   vtj-muutosrajapinta:
     perustieto-enabled: false

@@ -11,6 +11,7 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.security.OphSessionMappin
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.VtjMuutostietoService;
 import fi.vm.sade.oppijanumerorekisteri.services.death.CleanupService;
+import fi.vm.sade.oppijanumerorekisteri.services.export.ExportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,6 +19,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.IOException;
 import java.time.LocalTime;
 
 /**
@@ -32,6 +34,7 @@ public class SchedulingConfiguration {
     private final OphSessionMappingStorage sessionMappingStorage;
     private final IdentificationService identificationService;
     private final VtjMuutostietoService vtjMuutostietoService;
+    private final ExportService exportService;
 
     @Bean
     @ConditionalOnProperty(name = "oppijanumerorekisteri.scheduling.yksilointi.enabled", matchIfMissing = true)
@@ -88,5 +91,17 @@ public class SchedulingConfiguration {
                         new Daily(LocalTime.of(properties.getScheduling().getDeathCleanup().getHour(),
                                 properties.getScheduling().getDeathCleanup().getMinute())))
                 .execute((instance, ctx) -> cleanupService.run());
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "oppijanumerorekisteri.scheduling.export.enabled", matchIfMissing = false)
+    Task<Void> exportTask() {
+        log.info("Creating koodisto export task");
+        return Tasks.recurring(new TaskWithoutDataDescriptor("Export"), FixedDelay.ofHours(1))
+                .execute((taskInstance, executionContext) -> {
+                        log.info("Running oppijanumerorekisteri export task");
+                        exportService.createSchema();
+                        log.info("Oppijanumerorekisteri export task completed");
+                });
     }
 }

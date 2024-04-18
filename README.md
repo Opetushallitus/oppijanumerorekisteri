@@ -63,7 +63,7 @@ Helpointa on osoittaa `oppijanumerorekisteri-service` käyttämään palveluita 
 Kaikki paitsi baseUrl-konfiguraatio on myös mahdollista laittaa erilliseen tiedostoon:
 
 ```yaml
-spring.datasource.username: <tietokannan_tunnus>
+spring.datasource.username: <tietokannan_tunnus>å
 spring.datasource.password: <tietokannan_salasana>
 authentication.default.username: <oma_virkailija_tunnus>
 authentication.default.password: <oma_virkailija_salasana>
