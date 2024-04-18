@@ -45,8 +45,6 @@ public interface HenkiloService {
 
     Optional<YhteystiedotDto> getHenkiloYhteystiedot(String henkiloOid, String ryhma);
 
-    List<HenkiloHetuAndOidDto> getHetusAndOids(Long syncedBeforeTimestamp, long offset, long limit);
-
     HenkiloDto getHenkiloByIDPAndIdentifier(IdpEntityId idp, String identifier);
 
     List<String> listPossibleHenkiloTypesAccessible();

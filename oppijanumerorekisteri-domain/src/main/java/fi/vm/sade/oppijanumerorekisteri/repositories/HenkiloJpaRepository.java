@@ -83,8 +83,6 @@ public interface HenkiloJpaRepository {
 
     List<YhteystietoHakuDto> findYhteystiedot(YhteystietoCriteria criteria);
 
-    List<Henkilo> findHetusAndOids(Long syncedBeforeTimestamp, long offset, long limit);
-
     List<HenkiloPerustietoDto> findByOidIn(List<String> oidList);
 
     /**

@@ -29,9 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
@@ -85,35 +83,6 @@ public class Service2ServiceControllerTest  {
 
     @Test
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
-    public void getHetusAndOidsTest() throws Exception{
-        given(this.henkiloService.getHetusAndOids(null, 0, 100)).willReturn(Arrays.asList(
-                new HenkiloHetuAndOidDto("0.0.0.0.1", "111111-111", new Date(1420063200000L)),
-                new HenkiloHetuAndOidDto("0.0.0.0.2", "111111-112", new Date(100L)),
-                new HenkiloHetuAndOidDto("0.0.0.0.3", "111111-113", new Date(100L))));
-        this.mvc.perform(get("/s2s/hetusAndOids?sinceVtjUpdated=-1")
-                .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk())
-                .andExpect(content().json("[\n" +
-                        "  {\n" +
-                        "    \"oidHenkilo\": \"0.0.0.0.1\",\n" +
-                        "    \"hetu\": \"111111-111\",\n" +
-                        "    \"vtjsynced\": 1420063200000\n" +
-                        "  },\n" +
-                        "  {\n" +
-                        "    \"oidHenkilo\": \"0.0.0.0.2\",\n" +
-                        "    \"hetu\": \"111111-112\",\n" +
-                        "    \"vtjsynced\": 100\n" +
-                        "  },\n" +
-                        "  {\n" +
-                        "    \"oidHenkilo\": \"0.0.0.0.3\",\n" +
-                        "    \"hetu\": \"111111-113\",\n" +
-                        "    \"vtjsynced\": 100\n" +
-                        "  }\n" +
-                        "]"));
-    }
-    
-    @Test
-    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void findDuplicateHenkilosAllowedForRekisterinpitaja() throws Exception {
         findDuplicateHenkilosTest();
     }
@@ -150,14 +119,14 @@ public class Service2ServiceControllerTest  {
                 .andExpect(status().isOk()).andExpect(content()
                 .json("[\"1.2.3\"]"));
         verify(this.henkiloService).findHenkiloOidsModifiedSince(new HenkiloCriteria(), new DateTime(2015,10,12,10,10,10), null, null);
-        
+
         given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any(), any(), any())).willReturn(emptyList());
         this.mvc.perform(get("/s2s/changedSince/2015-10-12")
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().json("[]"));
         verify(this.henkiloService).findHenkiloOidsModifiedSince(new HenkiloCriteria(), new DateTime(2015,10,12,0,0,0), null, null);
     }
-    
+
     @Test
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void findChangedPersonsGetByTimestamp() throws Exception {

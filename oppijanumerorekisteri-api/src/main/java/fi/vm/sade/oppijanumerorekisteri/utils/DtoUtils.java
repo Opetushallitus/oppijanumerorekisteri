@@ -84,14 +84,6 @@ public class DtoUtils {
                 false, false, false, null, Collections.singleton(yhteystiedotRyhmaDto), emptySet());
     }
 
-    public static HenkiloHetuAndOidDto createHenkiloHetuAndOidDto(String henkiloOid, String hetu, Date vtjsynced) {
-        HenkiloHetuAndOidDto henkiloHetuAndOidDto = new HenkiloHetuAndOidDto();
-        henkiloHetuAndOidDto.setOidHenkilo(henkiloOid);
-        henkiloHetuAndOidDto.setHetu(hetu);
-        henkiloHetuAndOidDto.setVtjsynced(vtjsynced);
-        return henkiloHetuAndOidDto;
-    }
-
     public static HenkiloUpdateDto createHenkiloUpdateDto(String etunimet, String kutsumanimi, String sukunimi, String hetu,
                                                           String oidHenkilo, String kielikoodi, String kielityyppi,
                                                           String kansalaisuuskoodi, String yhteystietoArvo) {

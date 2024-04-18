@@ -50,21 +50,6 @@ public class Service2ServiceController {
         return this.henkiloService.getOidByEidasId(body.eidasId);
     }
 
-    @ApiOperation(value = "Hakee hetu & oid -yhdistelmät", authorizations = @Authorization("onr"))
-    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
-            "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
-    @RequestMapping(value = "/hetusAndOids", method = RequestMethod.GET)
-    public List<HenkiloHetuAndOidDto> hetusAndOidsOrderedByLastVtjSyncTimestamp(
-            @ApiParam(value = "Hakee vain ne identiteetit, jotka on päivitetty VTJ:stä ennen annettua ajanhetkeä")
-            @RequestParam(value = "syncedBeforeTimestamp", required = false)
-                    Long syncedBeforeTimestamp,
-            @RequestParam(value = "offset", required = false, defaultValue = "0")
-                    long offset,
-            @RequestParam(value = "limit", required = false, defaultValue = "100")
-                    long limit) {
-        return this.henkiloService.getHetusAndOids(syncedBeforeTimestamp, offset, limit);
-    }
-
     @ApiOperation(value = "Hakee henkilöviittaukset oid-listalla ja/tai muokkausaikaleimalla", authorizations = @Authorization("onr"))
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ'," +

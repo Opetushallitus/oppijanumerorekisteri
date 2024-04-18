@@ -10,7 +10,6 @@ import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
-import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
@@ -211,20 +210,6 @@ public class HenkiloServiceTest {
     public void getOidByHetuWithKaikkiHetut() {
         given(this.henkiloDataRepositoryMock.findOidByKaikkiHetut("1.2.3.4.5")).willReturn(Optional.of("123456-9999"));
         assertThat(this.service.getOidByHetu("1.2.3.4.5")).isEqualTo("123456-9999");
-    }
-
-    @Test
-    public void getHetusAndOids() {
-        Henkilo henkiloMock = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                "fi", "suomi", "246", new Date(), new Date(0L), "1.2.3.4.1", "arpa@kuutio.fi");
-        HenkiloHetuAndOidDto henkiloHetuAndOidDto = DtoUtils.createHenkiloHetuAndOidDto("1.2.3.4.5", "123456-9999",
-                new Date(0L));
-
-        given(this.henkiloDataRepositoryMock.findHetusAndOids(null, 0, 100))
-                .willReturn(Collections.singletonList(henkiloMock));
-
-        assertThat(this.service.getHetusAndOids(null, 0, 100).get(0))
-                .isEqualToComparingFieldByFieldRecursively(henkiloHetuAndOidDto);
     }
 
     @Test(expected = NotFoundException.class)

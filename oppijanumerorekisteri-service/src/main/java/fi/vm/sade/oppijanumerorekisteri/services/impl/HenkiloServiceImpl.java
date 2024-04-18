@@ -270,13 +270,6 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<HenkiloHetuAndOidDto> getHetusAndOids(Long syncedBeforeTimestamp, long offset, long limit) {
-        List<Henkilo> hetusAndOids = this.henkiloDataRepository.findHetusAndOids(syncedBeforeTimestamp, offset, limit);
-        return mapper.mapAsList(hetusAndOids, HenkiloHetuAndOidDto.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public HenkiloDto getHenkiloByIDPAndIdentifier(IdpEntityId idp, String identifier) {
         Henkilo henkilo = this.henkiloDataRepository.findByIdentification(IdentificationDto.of(idp, identifier))
                 .orElseThrow(NotFoundException::new);

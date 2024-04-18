@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.SubQueryExpression;
@@ -220,36 +219,6 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                         yhteystieto.yhteystietoTyyppi.as("yhteystietoTyyppi"),
                         yhteystieto.yhteystietoArvo.as("arvo")
                 )).fetch();
-    }
-
-    @Override
-    public List<Henkilo> findHetusAndOids(Long syncedBeforeTimestamp, long offset, long limit) {
-        JPAQuery<Henkilo> query = jpa()
-                .select(Projections.bean(Henkilo.class,
-                        henkilo.oidHenkilo,
-                        henkilo.hetu,
-                        henkilo.vtjsynced)
-                )
-                .from(henkilo);
-
-        // always select all identities that have never been synced. also, select those that have been synced earlier
-        // than syncedBeforeTimestamp (if given, otherwise select everything)
-        BooleanBuilder builder = new BooleanBuilder();
-        builder.or(henkilo.vtjsynced.isNull());
-        if (syncedBeforeTimestamp != null) {
-            builder.or(henkilo.vtjsynced.before(new Date(syncedBeforeTimestamp)));
-        } else {
-            builder.or(henkilo.vtjsynced.isNotNull());
-        }
-        query = query.where(builder);
-
-        // paginate
-        query = query.offset(offset).limit(limit);
-
-        // sort
-        query = query.orderBy(henkilo.vtjsynced.asc());
-
-        return query.fetch();
     }
 
     @Override
