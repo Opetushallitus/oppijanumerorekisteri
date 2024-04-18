@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.joda.time.DateTime;
 import org.springframework.core.env.Environment;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -186,14 +185,5 @@ public class Service2ServiceController {
     @ApiOperation(value = "Palauttaa henkilön tiedot muutostietopalvelua varten", authorizations = @Authorization("onr"))
     public HenkiloForceReadDto getByHetuForMuutostieto(@PathVariable String hetu) {
         return henkiloService.getByHetuForMuutostieto(hetu);
-    }
-
-    @ApiOperation(value = "Päivittää henkilön tietoja muutostietopalvelun antamilla muutoksilla.",
-            authorizations = @Authorization("onr"),
-            notes = "Päivittää kutsussa annettuun OID:n täsmäävän henkilön tiedot")
-    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_MUUTOSTIETOPALVELU')")
-    @RequestMapping(value = "/henkilo/muutostiedot", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public HenkiloForceReadDto forceUpdateHenkilo(@Validated @RequestBody HenkiloForceUpdateDto henkiloUpdateDto) {
-        return this.henkiloModificationService.forceUpdateHenkilo(henkiloUpdateDto);
     }
 }

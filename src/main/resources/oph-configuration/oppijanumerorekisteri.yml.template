@@ -42,9 +42,6 @@ authentication:
   ataru:
     username: {{oppijanumerorekisteri_ataru_username}}
     password: {{oppijanumerorekisteri_ataru_password}}
-  henkilotietomuutos:
-    username: {{authentication_app_username_to_henkilotietomuutos}}
-    password: {{authentication_app_password_to_henkilotietomuutos}}
   viestintapalvelu:
     username: {{oppijanumerorekisteri_viestinta_username}}
     password: {{oppijanumerorekisteri_viestinta_password}}
@@ -57,9 +54,6 @@ oppijanumerorekisteri:
   scheduling:
     yksilointi:
       enabled: {{oppijanumerorekisteri_yksilointi_enabled | default('true')}}
-    vtjsync:
-      enabled: {{oppijanumerorekisteri_vtjsync_enabled | default('true')}}
-      asiayhteysKaytossa: {{oppijanumerorekisteri_asiayhteys_kaytossa | default('false')}}
   allow-fake-ssn: {{oppijanumerorekisteri_allow_fake_ssn | default('true')}}
   vtj-muutosrajapinta:
     perustieto-enabled: {{oppijanumerorekisteri_vtjmuutosrajapinta_perustieto_enabled | default('false')}}

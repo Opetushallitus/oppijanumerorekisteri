@@ -90,9 +90,6 @@ authentication:
   ataru:
     username: ${authentication.default.username}
     password: ${authentication.default.password}
-  henkilotietomuutos:
-    username: ${authentication.default.username}
-    password: ${authentication.default.password}
   viestintapalvelu:
     username: ${authentication.default.username}
     password: ${authentication.default.password}
@@ -102,9 +99,6 @@ oppijanumerorekisteri:
   scheduling:
     yksilointi:
       enabled: false
-    vtjsync:
-      enabled: false
-      asiayhteysKaytossa: false
   allow-fake-ssn: true
   vtj-muutosrajapinta:
     perustieto-enabled: false
