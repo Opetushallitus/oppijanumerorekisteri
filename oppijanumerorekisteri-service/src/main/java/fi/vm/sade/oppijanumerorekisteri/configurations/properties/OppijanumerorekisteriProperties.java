@@ -41,8 +41,6 @@ public class OppijanumerorekisteriProperties {
 
         private final Yksilointi yksilointi = new Yksilointi();
 
-        private final Vtjsync vtjsync = new Vtjsync();
-
         private final DeathCleanup deathCleanup = new DeathCleanup();
 
         @Getter
@@ -52,14 +50,6 @@ public class OppijanumerorekisteriProperties {
             private Long batchSize = 300L;
             private Long vtjRequestDelayInMillis = 200L;
             private Long fixedDelayInMillis = 900000L;
-        }
-
-        @Getter
-        @Setter
-        public static class Vtjsync {
-            private Boolean enabled = true;
-            private Long fixedDelayInMillis = 300000L;
-            private Boolean asiayhteysKaytossa = false;
         }
 
         @Getter
