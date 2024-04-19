@@ -65,9 +65,6 @@ public class YksilointiServiceImpl implements YksilointiService {
     private final YhteystietoRepository yhteystietoRepository;
     private final YksilointitietoRepository yksilointitietoRepository;
     private final YksilointivirheRepository yksilointivirheRepository;
-    private final AsiayhteysPalveluRepository asiayhteysPalveluRepository;
-    private final AsiayhteysHakemusRepository asiayhteysHakemusRepository;
-    private final AsiayhteysKayttooikeusRepository asiayhteysKayttooikeusRepository;
     private final OrikaConfiguration mapper;
 
     private final VtjClient vtjClient;
@@ -611,59 +608,6 @@ public class YksilointiServiceImpl implements YksilointiService {
         dto.setOppijanumerorekisteri(mapper.map(yksilointitieto.getHenkilo(), HenkiloOidHetuNimiDto.class));
         dto.setVaestotietojarjestelma(mapper.map(yksilointitieto, NimiDto.class));
         return dto;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Iterable<String> listPalvelutunnisteet(String oid) {
-        Henkilo henkilo = getHenkiloByOid(oid);
-        return asiayhteysPalveluRepository.findByHenkilo(henkilo).stream()
-                .map(AsiayhteysPalvelu::getPalvelutunniste)
-                .collect(toSet());
-    }
-
-    @Override
-    @Transactional
-    public void enableYksilointi(String oid, String palvelutunniste) {
-        Henkilo henkilo = getHenkiloByOid(oid);
-        if (!asiayhteysPalveluRepository.findByHenkiloAndPalvelutunniste(henkilo, palvelutunniste).isPresent()) {
-            AsiayhteysPalvelu asiayhteys = new AsiayhteysPalvelu(henkilo, palvelutunniste, new Date());
-            asiayhteysPalveluRepository.save(asiayhteys);
-            henkiloModificationService.update(henkilo);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void disableYksilointi(String oid, String palvelutunniste) {
-        Henkilo henkilo = getHenkiloByOid(oid);
-        asiayhteysPalveluRepository.findByHenkiloAndPalvelutunniste(henkilo, palvelutunniste).ifPresent(asiayhteys -> {
-            asiayhteysPalveluRepository.delete(asiayhteys);
-            henkiloModificationService.update(henkilo);
-        });
-    }
-
-    @Override
-    @Transactional
-    public void enableYksilointi(String oid, AsiayhteysHakemusDto dto) {
-        Henkilo henkilo = getHenkiloByOid(oid);
-        AsiayhteysHakemus entity = asiayhteysHakemusRepository
-                .findByHenkiloAndHakemusOid(henkilo, dto.getHakemusOid())
-                .orElseGet(() -> new AsiayhteysHakemus(henkilo));
-        mapper.map(dto, entity);
-        asiayhteysHakemusRepository.save(entity);
-        henkiloModificationService.update(henkilo);
-    }
-
-    @Override
-    @Transactional
-    public void enableYksilointi(String oid, AsiayhteysKayttooikeusDto dto) {
-        Henkilo henkilo = getHenkiloByOid(oid);
-        AsiayhteysKayttooikeus entity = asiayhteysKayttooikeusRepository.findByHenkilo(henkilo)
-                .orElseGet(() -> new AsiayhteysKayttooikeus(henkilo));
-        mapper.map(dto, entity);
-        asiayhteysKayttooikeusRepository.save(entity);
-        henkiloModificationService.update(henkilo);
     }
 
     @Override

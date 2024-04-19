@@ -49,9 +49,6 @@ class YksilointiServiceImplExistenceCheckTest {
                 null,
                 null,
                 null,
-                null,
-                null,
-                null,
                 vtjClient,
                 null,
                 oppijanumerorekisteriProperties);

@@ -86,46 +86,6 @@ public interface YksilointiService {
     Page<YksilointiVertailuDto> listEpaonnistunutYksilointi(int page, int count);
 
     /**
-     * Listaa palvelutunnisteet joilla yksilöinti on aktiivinen henkilölle.
-     *
-     * @param oid henkilö oid
-     * @return palvelutunnisteet
-     */
-    Iterable<String> listPalvelutunnisteet(String oid);
-
-    /**
-     * Aktivoi yksilöinnin annetulle palvelutunnisteelle.
-     *
-     * @param oid henkilö oid
-     * @param palvelutunniste palvelutunniste
-     */
-    void enableYksilointi(String oid, String palvelutunniste);
-
-    /**
-     * Kytkee yksilöinnin pois päältä annetulta palvelutunnisteelta
-     *
-     * @param oid henkilö oid
-     * @param palvelutunniste palvelutunniste
-     */
-    void disableYksilointi(String oid, String palvelutunniste);
-
-    /**
-     * Aktivoi yksilöinnin annetulle hakemukselle.
-     *
-     * @param oid henkilö oid
-     * @param dto hakemuksen tiedot
-     */
-    void enableYksilointi(String oid, AsiayhteysHakemusDto dto);
-
-    /**
-     * Aktivoi yksilöinnin käyttöoikeuden perusteella.
-     *
-     * @param oid henkilö oid
-     * @param dto käyttöoikeuden tiedot
-     */
-    void enableYksilointi(String oid, AsiayhteysKayttooikeusDto dto);
-
-    /**
      * Tarkista löytyykö annetulla hetulla henkilö
      * 1. oppijanumerorekisteristä
      * 2. vtj:stä

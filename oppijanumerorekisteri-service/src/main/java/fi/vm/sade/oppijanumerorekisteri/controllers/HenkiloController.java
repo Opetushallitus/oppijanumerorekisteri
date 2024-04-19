@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -423,42 +422,6 @@ public class HenkiloController {
             @RequestParam(required = false, defaultValue = "1") @Min(1) int page,
             @RequestParam(required = false, defaultValue = "20") @Min(1) int count) {
         return yksilointiService.listEpaonnistunutYksilointi(page, count);
-    }
-
-    @GetMapping("/{oid}/asiayhteys/palvelu/")
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
-            "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
-    @ApiOperation(value = "Listaa palvelutunnisteet joilla yksilöinti on aktiivinen henkilölle", authorizations = @Authorization("onr"))
-    public Iterable<String> listPalvelutunnisteet(@PathVariable String oid) {
-        return yksilointiService.listPalvelutunnisteet(oid);
-    }
-
-    @PutMapping("/{oid}/asiayhteys/palvelu/{palvelutunniste}")
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
-    @ApiOperation(value = "Aktivoi yksilöinnin annetulle palvelutunnisteelle", authorizations = @Authorization("onr"))
-    public void enableYksilointi(@PathVariable String oid, @PathVariable String palvelutunniste) {
-        yksilointiService.enableYksilointi(oid, palvelutunniste);
-    }
-
-    @DeleteMapping("/{oid}/asiayhteys/palvelu/{palvelutunniste}")
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
-    @ApiOperation(value = "Kytkee yksilöinnin pois päältä annetulta palvelutunnisteelta", authorizations = @Authorization("onr"))
-    public void disableYksilointi(@PathVariable String oid, @PathVariable String palvelutunniste) {
-        yksilointiService.disableYksilointi(oid, palvelutunniste);
-    }
-
-    @PostMapping("/{oid}/asiayhteys/hakemus")
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
-    @ApiOperation(value = "Aktivoi yksilöinnin annetulle hakemukselle", authorizations = @Authorization("onr"))
-    public void enableYksilointi(@PathVariable String oid, @Valid @RequestBody AsiayhteysHakemusDto dto) {
-        yksilointiService.enableYksilointi(oid, dto);
-    }
-
-    @PutMapping("/{oid}/asiayhteys/kayttooikeus")
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
-    @ApiOperation(value = "Aktivoi yksilöinnin käyttöoikeuden perusteella", authorizations = @Authorization("onr"))
-    public void enableYksilointi(@PathVariable String oid, @Valid @RequestBody AsiayhteysKayttooikeusDto dto) {
-        yksilointiService.enableYksilointi(oid, dto);
     }
 
     @GetMapping("/{oid}/slaves")

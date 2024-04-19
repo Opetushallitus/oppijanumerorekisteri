@@ -11,7 +11,6 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
-import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysPalvelu;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
@@ -53,7 +52,6 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     private final KielisyysRepository kielisyysRepository;
     private final KansalaisuusRepository kansalaisuusRepository;
     private final YksilointitietoRepository yksilointitietoRepository;
-    private final AsiayhteysPalveluRepository asiayhteysPalveluRepository;
 
     private final KayttooikeusClient kayttooikeusClient;
 
@@ -421,10 +419,6 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     private HenkiloPerustietoDto createHenkilo(HenkiloPerustietoDto dto) {
         Henkilo entity = this.mapper.map(dto, Henkilo.class);
         entity = this.createHenkilo(entity);
-        if (dto.getPalveluasiayhteys() != null) {
-            AsiayhteysPalvelu asiayhteys = new AsiayhteysPalvelu(entity, dto.getPalveluasiayhteys(), new Date());
-            asiayhteysPalveluRepository.save(asiayhteys);
-        }
         return this.mapper.map(entity, HenkiloPerustietoDto.class);
     }
 

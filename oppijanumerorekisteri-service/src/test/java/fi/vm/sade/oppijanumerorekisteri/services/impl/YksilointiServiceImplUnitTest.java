@@ -52,12 +52,6 @@ public class YksilointiServiceImplUnitTest {
     @Mock
     private YksilointivirheRepository yksilointivirheRepository;
     @Mock
-    private AsiayhteysPalveluRepository asiayhteysPalveluRepository;
-    @Mock
-    private AsiayhteysHakemusRepository asiayhteysHakemusRepository;
-    @Mock
-    private AsiayhteysKayttooikeusRepository asiayhteysKayttooikeusRepository;
-    @Mock
     private OrikaConfiguration mapper;
     @Mock
     private VtjClient vtjClient;
