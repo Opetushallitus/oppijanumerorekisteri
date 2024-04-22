@@ -1,7 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Setter;
 import lombok.*;
 
@@ -12,7 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 public class OppijaTuontiRiviReadDto {
 
-    @ApiModelProperty("Lähdejärjestelmän käyttämä tunniste henkilölle")
+    @Schema(description = "Lähdejärjestelmän käyttämä tunniste henkilölle")
     private String tunniste;
 
     private OppijaReadDto henkilo;

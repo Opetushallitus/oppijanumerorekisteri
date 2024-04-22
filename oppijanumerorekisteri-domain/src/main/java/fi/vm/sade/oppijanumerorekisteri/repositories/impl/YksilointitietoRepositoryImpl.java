@@ -6,7 +6,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepositoryCu
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YksilointitietoCriteria;
 import org.springframework.data.jpa.repository.JpaContext;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 public class YksilointitietoRepositoryImpl implements YksilointitietoRepositoryCustom {
 

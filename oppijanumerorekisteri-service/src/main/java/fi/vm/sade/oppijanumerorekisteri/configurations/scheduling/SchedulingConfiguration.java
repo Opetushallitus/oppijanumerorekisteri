@@ -36,6 +36,13 @@ public class SchedulingConfiguration {
     private final ExportService exportService;
 
     @Bean
+    Task<Void> casClientSessionCleanerTask() {
+        return Tasks
+                .recurring(new TaskWithoutDataDescriptor("cas client session cleaner"), FixedDelay.ofHours(1))
+                .execute((instance, ctx) -> sessionMappingStorage.clean());
+    }
+
+    @Bean
     @ConditionalOnProperty(name = "oppijanumerorekisteri.scheduling.yksilointi.enabled", matchIfMissing = true)
     Task<Void> yksilointiTask() {
         return Tasks
@@ -50,13 +57,6 @@ public class SchedulingConfiguration {
                     long duration = System.currentTimeMillis() - start;
                     log.info("Identification completed, duration: " + duration + "ms");
                 });
-    }
-
-    @Bean
-    Task<Void> casClientSessionCleanerTask() {
-        return Tasks
-                .recurring(new TaskWithoutDataDescriptor("cas client session cleaner"), FixedDelay.ofHours(1))
-                .execute((instance, ctx) -> sessionMappingStorage.clean());
     }
 
     @Bean

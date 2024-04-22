@@ -1,14 +1,15 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Setter;
 import lombok.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import java.util.List;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Getter
 @Setter
@@ -19,12 +20,12 @@ public class OppijaTuontiCreateDto {
 
     @Size(min = 1)
     @Email
-    @ApiModelProperty(value = "Sähköposti, johon lähetetään hälytyksiä, kun virkailijalta tarvitaan toimenpiteitä")
+    @Schema(description = "Sähköposti, johon lähetetään hälytyksiä, kun virkailijalta tarvitaan toimenpiteitä")
     private String sahkoposti;
 
     @NotEmpty
     @Valid
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     private List<OppijaTuontiRiviCreateDto> henkilot;
 
 }

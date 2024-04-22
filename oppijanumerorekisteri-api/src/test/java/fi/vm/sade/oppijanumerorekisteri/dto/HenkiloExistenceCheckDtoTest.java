@@ -6,16 +6,16 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 
-import javax.validation.Validation;
-import javax.validation.Validator;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class HenkiloExistenceCheckDtoTest {
 
-    private static final Validator javaxValidator = Validation.buildDefaultValidatorFactory().getValidator();
-    private static final SpringValidatorAdapter validator = new SpringValidatorAdapter(javaxValidator);
+    private static final Validator jakartaValidator = Validation.buildDefaultValidatorFactory().getValidator();
+    private static final SpringValidatorAdapter validator = new SpringValidatorAdapter(jakartaValidator);
 
     private static Stream<Arguments> parameters() {
         return Stream.of(

@@ -1,8 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.utils;
 
-import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oppijanumerorekisteri.dto.KoodiNimiReadDto;
+import fi.vm.sade.oppijanumerorekisteri.models.KoodiType;
+import fi.vm.sade.oppijanumerorekisteri.models.KoodiType.KoodiMetadataType;
 
 import java.util.Map;
 import java.util.Objects;

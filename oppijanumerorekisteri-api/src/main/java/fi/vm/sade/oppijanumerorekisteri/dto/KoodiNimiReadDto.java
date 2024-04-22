@@ -1,7 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,13 +35,13 @@ public class KoodiNimiReadDto {
     @AllArgsConstructor
     public static class Nimi {
         @JsonProperty(LANG_FI)
-        @ApiModelProperty
+        @Schema
         String fi;
         @JsonProperty(LANG_SV)
-        @ApiModelProperty
+        @Schema
         String sv;
         @JsonProperty(LANG_EN)
-        @ApiModelProperty
+        @Schema
         String en;
     }
 }

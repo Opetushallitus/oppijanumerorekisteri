@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import com.google.common.collect.Sets;
 import com.querydsl.core.types.Predicate;
 import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
 import fi.vm.sade.oppijanumerorekisteri.KoodistoServiceMock;
@@ -41,6 +40,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -53,7 +53,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {OrikaConfiguration.class, KoodistoServiceMock.class}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(classes = {OrikaConfiguration.class, KoodistoServiceMock.class})
 public class HenkiloServiceTest {
 
     private final String OID = "1.2.3.4.5";
@@ -346,7 +346,7 @@ public class HenkiloServiceTest {
         given(this.henkiloViiteRepositoryMock.findBy(any())).willReturn(singletonList(
                 new HenkiloViiteDto("OID", "MASTER")));
         HenkiloCriteria criteria = new HenkiloCriteria() {{
-            setHenkiloOids(Sets.newHashSet("OID1", "OID2"));
+            setHenkiloOids(Set.of("OID1", "OID2"));
         }};
         results = this.service.findHenkiloViittees(criteria.getHenkiloOids());
         assertThat(results).size().isEqualTo(2);

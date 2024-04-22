@@ -6,8 +6,8 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepositoryCustom;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import org.springframework.data.jpa.repository.JpaContext;
 
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import java.util.List;
 import java.util.Optional;
 

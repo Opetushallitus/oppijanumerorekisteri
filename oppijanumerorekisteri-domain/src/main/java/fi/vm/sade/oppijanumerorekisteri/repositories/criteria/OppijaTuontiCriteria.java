@@ -8,12 +8,12 @@ import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QOrganisaatio;
 import fi.vm.sade.oppijanumerorekisteri.models.QTuonti;
 import fi.vm.sade.oppijanumerorekisteri.models.QTuontiRivi;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -33,10 +33,10 @@ public class OppijaTuontiCriteria {
 
     private Long tuontiId;
 
-    @ApiModelProperty("ISO 8601 -muodossa, esim. 2017-09-05T10:04:59Z")
+    @Schema(description = "ISO 8601 -muodossa, esim. 2017-09-05T10:04:59Z")
     private DateTime muokattuJalkeen;
 
-    @ApiModelProperty(hidden = true)
+    @Schema(hidden = true)
     private Set<String> organisaatioOids;
 
     private boolean vainVirheet;

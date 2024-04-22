@@ -5,7 +5,12 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.HenkiloServiceImpl;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.joda.time.DateTime;
 import org.springframework.core.env.Environment;
@@ -14,14 +19,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Min;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
-@Api(tags = "Service To Service")
+@Tag(name = "Service To Service")
 @Validated
 @RestController
 @RequestMapping("/s2s")
@@ -32,8 +36,8 @@ public class Service2ServiceController {
 
     private final Environment environment;
 
-    @ApiOperation(value = "Hakee annettua henkilötunnusta vastaavan henkilö OID:n", authorizations = @Authorization("onr"))
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
+    @Operation(summary ="Hakee annettua henkilötunnusta vastaavan henkilö OID:n")
+    @ApiResponses(value = {@ApiResponse(responseCode = "404", description = "Not Found")})
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @RequestMapping(value = "/oidByHetu/{hetu}", method = RequestMethod.GET)
@@ -41,8 +45,8 @@ public class Service2ServiceController {
         return this.henkiloService.getOidByHetu(hetu);
     }
 
-    @ApiOperation(value = "Hakee annettua eIDAS id:tä vastaavan henkilö OID:n", authorizations = @Authorization("onr"))
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
+    @Operation(summary ="Hakee annettua eIDAS id:tä vastaavan henkilö OID:n")
+    @ApiResponses(value = {@ApiResponse(responseCode = "404", description = "Not Found")})
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @PostMapping(value = "/oidByEidas")
@@ -50,7 +54,7 @@ public class Service2ServiceController {
         return this.henkiloService.getOidByEidasId(body.eidasId);
     }
 
-    @ApiOperation(value = "Hakee henkilöviittaukset oid-listalla ja/tai muokkausaikaleimalla", authorizations = @Authorization("onr"))
+    @Operation(summary = "Hakee henkilöviittaukset oid-listalla ja/tai muokkausaikaleimalla")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ'," +
             "'APP_OPPIJANUMEROREKISTERI_DUPLICATE_READ')")
@@ -59,9 +63,8 @@ public class Service2ServiceController {
         return this.henkiloService.findHenkiloViittees(criteria.getHenkiloOids());
     }
 
-    @ApiOperation(value = "Hakee muuttuneet henkilöt annetusta päivämäärästä aikajärjestyksessä",
-            authorizations = @Authorization("onr"),
-            notes = "Sivutusta käytettäessä OID:t palautetaan vanhemmasta uudempaan mutta sivun sisäinen järjestys voi muuttua matkalla!")
+    @Operation(summary ="Hakee muuttuneet henkilöt annetusta päivämäärästä aikajärjestyksessä",
+            description = "Sivutusta käytettäessä OID:t palautetaan vanhemmasta uudempaan mutta sivun sisäinen järjestys voi muuttua matkalla!")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @RequestMapping(value = "/changedSince/{at}", method = RequestMethod.GET)
@@ -70,9 +73,8 @@ public class Service2ServiceController {
         return this.henkiloService.findHenkiloOidsModifiedSince(new HenkiloCriteria(), at, offset, amount);
     }
 
-    @ApiOperation(value = "Hakee muuttuneet henkilöt annetusta päivämäärästä hakuehdoilla aikajärjestyksessä",
-            authorizations = @Authorization("onr"),
-            notes = "Sivutusta käytettäessä OID:t palautetaan vanhemmasta uudempaan mutta sivun sisäinen järjestys voi muuttua matkalla!")
+    @Operation(summary ="Hakee muuttuneet henkilöt annetusta päivämäärästä hakuehdoilla aikajärjestyksessä",
+            description = "Sivutusta käytettäessä OID:t palautetaan vanhemmasta uudempaan mutta sivun sisäinen järjestys voi muuttua matkalla!")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @RequestMapping(value = "/changedSince/{at}", method = RequestMethod.POST)
@@ -82,17 +84,16 @@ public class Service2ServiceController {
         return this.henkiloService.findHenkiloOidsModifiedSince(criteria, at, offset, amount);
     }
 
-    @ApiOperation(value = "Hakee tai luo uuden henkilön annetuista henkilön perustiedoista",
-            authorizations = @Authorization("onr"),
-            notes = "Henkilöllä on neljä erilaista tunnistetietoa: OID, hetu, external id ja identification."
+    @Operation(summary ="Hakee tai luo uuden henkilön annetuista henkilön perustiedoista",
+                description = "Henkilöllä on neljä erilaista tunnistetietoa: OID, hetu, external id ja identification."
                     + " Jos OID on annettu ja henkilöä ei löydy sillä, palautetaan 404."
                     + " Muussa tapauksessa henkilöä yritetään etsiä muilla tunnistetiedoilla."
                     + " Jos henkilöä ei löydy, luodaan uusi henkilö annetuista tiedoista (ml. kaikki tunnistetiedot).")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Henkilö löytyi jollakin annetuista tunnisteista"),
-            @ApiResponse(code = 201, message = "Henkilö luotiin annetuista perustiedoista"),
-            @ApiResponse(code = 400, message = "Henkilön tiedot virheelliset"),
-            @ApiResponse(code = 404, message = "Henkilöä ei löydy annetulla OID:lla"),
+            @ApiResponse(responseCode = "200", description = "Henkilö löytyi jollakin annetuista tunnisteista"),
+            @ApiResponse(responseCode = "201", description = "Henkilö luotiin annetuista perustiedoista"),
+            @ApiResponse(responseCode = "400", description = "Henkilön tiedot virheelliset"),
+            @ApiResponse(responseCode = "404", description = "Henkilöä ei löydy annetulla OID:lla"),
     })
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
     @RequestMapping(value = "/findOrCreateHenkiloPerustieto", method = RequestMethod.POST)
@@ -107,10 +108,9 @@ public class Service2ServiceController {
         }
     }
 
-    @ApiIgnore
-    @ApiOperation(value = "Hakee henkilöiden perustiedot annetuilla hakukriteereillä",
-            authorizations = @Authorization("onr"),
-            notes = "Korvaava rajapinta: POST /kayttooikeus-service/virkailija/haku")
+    @Hidden
+    @Operation(summary ="Hakee henkilöiden perustiedot annetuilla hakukriteereillä",
+            description = "Korvaava rajapinta: POST /kayttooikeus-service/virkailija/haku")
     @PostMapping("/henkilo/perustiedot")
     @Deprecated // riippuvuus käyttöoikeuspalveluun
     public Iterable<HenkiloHakuDto> list(@Validated @RequestBody HenkiloHakuCriteria criteria,
@@ -119,35 +119,34 @@ public class Service2ServiceController {
         return henkiloService.list(criteria, offset, amount);
     }
 
-    @ApiOperation(value = "Hakee henkilöiden perustiedot kunnan ja syntymäajan mukaan",
-            authorizations = @Authorization("onr"),
-            notes = "Tulosjoukko on sivutettu " + HenkiloServiceImpl.MAX_FETCH_PERSONS + " henkilön kokoisiin paloihin.")
+    @Operation(summary ="Hakee henkilöiden perustiedot kunnan ja syntymäajan mukaan",
+            description = "Tulosjoukko on sivutettu " + HenkiloServiceImpl.MAX_FETCH_PERSONS + " henkilön kokoisiin paloihin.")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
     @GetMapping("/henkilo/list/{municipal}/{birthdate}")
     public Slice<HenkiloMunicipalDobDto> findByMunicipalAndBirthdate(
-            @ApiParam("Koodisto \"kunta\"") @PathVariable("municipal") final String municipal,
-            @ApiParam("Syntymäaika ISO pvm (YYYY-MM-DD)") @PathVariable("birthdate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate birthdate,
-            @ApiParam(value = "Tulosjoukon sivutus [1..N)") @RequestParam(defaultValue = "1") @Min(1) final int page) {
+            @Parameter(description = "Koodisto \"kunta\"") @PathVariable("municipal") final String municipal,
+            @Parameter(description = "Syntymäaika ISO pvm (YYYY-MM-DD)") @PathVariable("birthdate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate birthdate,
+            @Parameter(description = "Tulosjoukon sivutus [1..N)") @RequestParam(defaultValue = "1") @Min(1) final int page) {
         return henkiloService.findByMunicipalAndBirthdate(municipal, birthdate, page);
     }
 
-    @ApiIgnore
-    @ApiOperation(value = "Hakee henkilöiden perustiedot sekä yhteystiedot annetuilla hakukriteereillä",
-            notes = "Korvaava rajapinta: POST /kayttooikeus-service/virkailija/haku")
+    @Hidden
+    @Operation(summary ="Hakee henkilöiden perustiedot sekä yhteystiedot annetuilla hakukriteereillä",
+            description = "Korvaava rajapinta: POST /kayttooikeus-service/virkailija/haku")
     @PostMapping("/henkilo/yhteystiedot")
     @Deprecated // riippuvuus käyttöoikeuspalveluun
     public Iterable<HenkiloYhteystiedotDto> listWithYhteystiedot(@RequestBody HenkiloHakuCriteria criteria) {
         return henkiloService.listWithYhteystiedot(criteria);
     }
 
-    @ApiOperation(value = "Hakee tai luo uudet henkilöt annetuista henkilöiden perustiedoista", authorizations = @Authorization("onr"))
+    @Operation(summary ="Hakee tai luo uudet henkilöt annetuista henkilöiden perustiedoista")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
     @RequestMapping(value = "/henkilo/findOrCreateMultiple", method = RequestMethod.POST)
     public List<HenkiloPerustietoDto> findOrCreate(@Validated @RequestBody ValidList<HenkiloPerustietoDto> henkilot) {
         return henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(henkilot);
     }
 
-    @ApiOperation(value = "Hakee annetun henkilön kaikki yhteystiedot", authorizations = @Authorization("onr"))
+    @Operation(summary ="Hakee annetun henkilön kaikki yhteystiedot")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @RequestMapping(value = "/yhteystiedot/{oid}", method = RequestMethod.GET)
@@ -155,7 +154,7 @@ public class Service2ServiceController {
         return henkiloService.getHenkiloYhteystiedot(oid);
     }
 
-    @ApiOperation(value = "Hakee henkilöiden perustiedot annetuilla hakukriteereillä", authorizations = @Authorization("onr"))
+    @Operation(summary ="Hakee henkilöiden perustiedot annetuilla hakukriteereillä")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @PostMapping("/henkilo/perustiedotAsAdmin")
@@ -167,7 +166,7 @@ public class Service2ServiceController {
 
     @GetMapping("/henkilo/hetu={hetu}")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_MUUTOSTIETOPALVELU')")
-    @ApiOperation(value = "Palauttaa henkilön tiedot muutostietopalvelua varten", authorizations = @Authorization("onr"))
+    @Operation(summary ="Palauttaa henkilön tiedot muutostietopalvelua varten")
     public HenkiloForceReadDto getByHetuForMuutostieto(@PathVariable String hetu) {
         return henkiloService.getByHetuForMuutostieto(hetu);
     }

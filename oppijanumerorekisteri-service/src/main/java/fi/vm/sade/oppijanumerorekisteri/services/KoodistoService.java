@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.oppijanumerorekisteri.models.KoodiType;
 
 public interface KoodistoService {
 

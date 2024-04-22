@@ -5,18 +5,30 @@ import org.joda.time.LocalDate;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+      registry.addViewController("/swagger-ui/")
+          .setViewName("forward:/swagger-ui/index.html");
+    }
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new String2JodaDateTimeConverter());
     }
-    
+
+    @Override
+    public void configurePathMatch(PathMatchConfigurer configurer) {
+      configurer.setUseTrailingSlashMatch(true);
+    }
+
     /*
-     * Parse DateTime from 
+     * Parse DateTime from
      * 1. Standard ISO string
      * 2. Standard date ISO string (treated as beginning of day)
      * 3. Unix timestamp

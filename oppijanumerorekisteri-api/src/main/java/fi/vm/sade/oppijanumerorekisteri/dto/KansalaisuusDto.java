@@ -1,10 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Setter;
 import lombok.*;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
 @Getter
@@ -15,7 +15,7 @@ import java.io.Serializable;
 public class KansalaisuusDto implements Serializable {
     private static final long serialVersionUID = -1616181528688301217L;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotEmpty
     private String kansalaisuusKoodi;
 }

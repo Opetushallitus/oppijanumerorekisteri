@@ -4,7 +4,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import fi.vm.sade.oppijanumerorekisteri.services.YleistunnisteService;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Setter;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -12,12 +18,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.net.HttpURLConnection;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +40,7 @@ import java.util.stream.Collectors;
  * OppijaController sillä erotuksella että vastauksista on poistettu
  * arkaluontoiseksi katsottavaa informaatiota
  */
-@Api(tags = "Yleistunniste - Oppijanumeron käyttö yleistunnisteena")
+@Tag(name = "Yleistunniste - Oppijanumeron käyttö yleistunnisteena")
 @RestController
 @RequestMapping(YleistunnisteController.REQUEST_MAPPING)
 @RequiredArgsConstructor
@@ -50,67 +55,61 @@ public class YleistunnisteController {
 
     private final YleistunnisteService yleistunnisteService;
 
-    @ApiOperation(value = "OID:n tarkistus",
-            authorizations = @Authorization("onr"),
-            notes = "Tarkistaa onko annettu oid oppijanumero vai ei. Palauttaa myös mahdolliset linkitetyt oid:it.")
+    @Operation(summary = "OID:n tarkistus",
+            description =  "Tarkistaa onko annettu oid oppijanumero vai ei. Palauttaa myös mahdolliset linkitetyt oid:it.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Henkilölle löytyi oppijanumero", response = FilteredStudent.class),
-            @ApiResponse(code = 404, message = "Henkilöä ei löydy annetuin tiedoin"),
+            @ApiResponse(responseCode = "200", description = "Henkilölle löytyi oppijanumero", content = @Content(schema = @Schema(implementation = FilteredStudent.class))),
+            @ApiResponse(responseCode = "404", description = "Henkilöä ei löydy annetuin tiedoin"),
     })
     @GetMapping(value = "/hae/{oid}")
-    public FilteredStudent tarkistaOid(@ApiParam("Tarkistettava OID")
+    public FilteredStudent tarkistaOid(@Parameter(description = "Tarkistettava OID")
                                                 @PathVariable final String oid) {
         OppijaReadDto person = yleistunnisteService.tarkista(oid);
         oppijaService.decorateHenkilosWithLinkedOids(List.of(person));
         return new FilteredStudent(person);
     }
 
-    @ApiOperation(value = "Oppijanumeron haku yksittäiselle henkilölle",
-            authorizations = @Authorization("onr"),
-            notes = "Hakee tai luo oppijanumeron yksittäiselle henkilölle annetun syötteen pohjalta.")
+    @Operation(summary = "Oppijanumeron haku yksittäiselle henkilölle",
+            description =  "Hakee tai luo oppijanumeron yksittäiselle henkilölle annetun syötteen pohjalta.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Henkilölle löytyi oppijanumero", response = HenkiloController.ExistenceCheckResult.class),
-            @ApiResponse(code = 400, message = "Viallinen syöte"),
-            @ApiResponse(code = 404, message = "Henkilöä ei löydy annetuin tiedoin"),
-            @ApiResponse(code = 409, message = "Henkilön tiedot virheelliset"),
+            @ApiResponse(responseCode = "200", description = "Henkilölle löytyi oppijanumero", content = @Content(schema = @Schema(implementation = HenkiloController.ExistenceCheckResult.class))),
+            @ApiResponse(responseCode = "400", description = "Viallinen syöte"),
+            @ApiResponse(responseCode = "404", description = "Henkilöä ei löydy annetuin tiedoin"),
+            @ApiResponse(responseCode = "409", description = "Henkilön tiedot virheelliset"),
     })
     @PostMapping(value = "/hae")
-    public YleistunnisteDto yleistunnisteenHaku(@ApiParam("Henkilön yksilöivät tiedot.")
+    public YleistunnisteDto yleistunnisteenHaku(@Parameter(description = "Henkilön yksilöivät tiedot.")
                                                 @RequestBody @Validated HenkiloExistenceCheckDto details) {
         return yleistunnisteService.hae(details);
     }
 
     @PutMapping
-    @ApiOperation(value = "Useamman oppijan luonti",
-            authorizations = @Authorization("yleistunniste"),
-            notes = "Käynnistää oppijoiden luonnin tausta-ajona, jonka tilaa voi seurata palautettavan tuonnin id:n avulla. Lisää automaattisesti oppijat käyttäjän organisaatioihin.")
+    @Operation(summary = "Useamman oppijan luonti",
+            description =  "Käynnistää oppijoiden luonnin tausta-ajona, jonka tilaa voi seurata palautettavan tuonnin id:n avulla. Lisää automaattisesti oppijat käyttäjän organisaatioihin.")
     public OppijaTuontiPerustiedotReadDto create(@Valid @RequestBody YleistunnisteInput input) {
         return oppijaService.create(input.mapToDto(), TuontiApi.YLEISTUNNISTE);
     }
 
     @GetMapping("/tuonti={id}")
-    @ApiOperation(value = "Oppijoiden tuonnin kaikki tiedot",
-            authorizations = @Authorization("yleistunniste"),
-            notes = "Perustietojen lisäksi palauttaa tuontiin liittyvät oppijat")
-    @ApiResponses(value = {@ApiResponse(code = HttpURLConnection.HTTP_OK,
-            message = "Perustietojen lisäksi palauttaa tuontiin liittyvät oppijat",
-            response = FilteredResult.class)})
+    @Operation(summary = "Oppijoiden tuonnin kaikki tiedot",
+            description =  "Perustietojen lisäksi palauttaa tuontiin liittyvät oppijat")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200",
+            description = "Perustietojen lisäksi palauttaa tuontiin liittyvät oppijat",
+            content = @Content(schema = @Schema(implementation = FilteredResult.class)))})
     public FilteredResult getOppijatByTuontiId(@PathVariable Long id) {
         return new FilteredResult(oppijaService.getOppijatByTuontiId(id));
     }
 
     @PostMapping("/tuonti={id}")
-    @ApiOperation(value = "Käynnistää oppijoiden tuonnin käsittelyn",
-            authorizations = @Authorization("yleistunniste"),
-            notes = "Tarvitaan vain jos oppijoiden tuonnin automaattinen käsittely on keskeytynyt syystä tai toisesta.")
+    @Operation(summary = "Käynnistää oppijoiden tuonnin käsittelyn",
+            description =  "Tarvitaan vain jos oppijoiden tuonnin automaattinen käsittely on keskeytynyt syystä tai toisesta.")
     public OppijaTuontiPerustiedotReadDto create(@PathVariable Long id) {
         return oppijaService.create(id, TuontiApi.YLEISTUNNISTE);
     }
 
     @GetMapping("/tuonti={id}/perustiedot")
-    @ApiOperation(value = "Oppijoiden tuonnin perustiedot",
-            authorizations = @Authorization("yleistunniste"),
-            notes = "Tämän avulla voi seurata oppijoiden tuonnin edistymistä.")
+    @Operation(summary = "Oppijoiden tuonnin perustiedot",
+            description =  "Tämän avulla voi seurata oppijoiden tuonnin edistymistä.")
     public OppijaTuontiPerustiedotReadDto getTuontiById(@PathVariable Long id) {
         return oppijaService.getTuontiById(id);
     }
@@ -123,7 +122,7 @@ public class YleistunnisteController {
     @AllArgsConstructor
     static class YleistunnisteInput {
         @Email
-        @ApiModelProperty(value = "Sähköposti, johon lähetetään hälytyksiä, kun virkailijalta tarvitaan toimenpiteitä")
+        @Schema(description = "Sähköposti, johon lähetetään hälytyksiä, kun virkailijalta tarvitaan toimenpiteitä")
         private String sahkoposti;
 
         @NotNull
@@ -146,7 +145,7 @@ public class YleistunnisteController {
     static class YleistunnisteInputRow {
         @NotNull
         @NotBlank
-        @ApiModelProperty("Lähdejärjestelmän käyttämä tunniste henkilölle")
+        @Schema(description = "Lähdejärjestelmän käyttämä tunniste henkilölle")
         private String tunniste;
 
         @NotNull
@@ -204,11 +203,11 @@ public class YleistunnisteController {
     @Generated
     @Getter
     static class FilteredRow {
-        @ApiModelProperty("Lähdejärjestelmän käyttämä tunniste henkilölle")
+        @Schema(description = "Lähdejärjestelmän käyttämä tunniste henkilölle")
         private final String tunniste;
         private final FilteredStudent henkilo;
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        @ApiModelProperty("Indikoi jos henkilön nimivertailussa on tapahtunut virhe")
+        @Schema(description = "Indikoi jos henkilön nimivertailussa on tapahtunut virhe")
         private final Boolean conflict;
 
         public FilteredRow(OppijaTuontiRiviReadDto dto) {
@@ -221,14 +220,14 @@ public class YleistunnisteController {
     @Generated
     @Getter
     static class FilteredStudent {
-        @ApiModelProperty("Yksilöivä tunniste jäjestelmässä olevalle henkilölle")
+        @Schema(description = "Yksilöivä tunniste jäjestelmässä olevalle henkilölle")
         private final String oid;
-        @ApiModelProperty("Yksilöivä tunniste identiteetille")
+        @Schema(description = "Yksilöivä tunniste identiteetille")
         private final String oppijanumero;
-        @ApiModelProperty("Päällä mikäli henkilö on passivoitu järjestelmässä")
+        @Schema(description = "Päällä mikäli henkilö on passivoitu järjestelmässä")
         private final boolean passivoitu;
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        @ApiModelProperty("Kaikkien linkitettyjen henkilöiden oid:t (master/slave)")
+        @Schema(description = "Kaikkien linkitettyjen henkilöiden oid:t (master/slave)")
         private final Set<String> linked;
 
         public FilteredStudent(OppijaReadDto dto) {

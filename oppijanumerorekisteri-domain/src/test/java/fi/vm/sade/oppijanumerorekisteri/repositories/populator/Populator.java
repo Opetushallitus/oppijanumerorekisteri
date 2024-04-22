@@ -1,7 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.populator;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;

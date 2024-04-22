@@ -18,7 +18,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {OrikaConfiguration.class, KoodistoServiceMock.class})
+@SpringBootTest(classes = {OrikaConfiguration.class, KoodistoServiceMock.class})
 public class OppijaMappersTest {
 
     @Autowired

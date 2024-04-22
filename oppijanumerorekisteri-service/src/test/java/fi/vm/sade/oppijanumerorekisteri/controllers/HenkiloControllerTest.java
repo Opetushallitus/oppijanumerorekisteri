@@ -38,7 +38,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.BindException;
 
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 import java.util.*;
 
 import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.ROLE_OPPIJANUMEROREKISTERI_PREFIX;
@@ -530,7 +530,9 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser(username = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void removeAccessRights() throws Exception {
-        mvc.perform(delete("/henkilo/{oid}/access", "6.7.8.9.10"))
+        mvc.perform(delete("/henkilo/{oid}/access", "6.7.8.9.10")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         verify(henkiloModificationService, times(1)).removeAccessRights("6.7.8.9.10");
     }

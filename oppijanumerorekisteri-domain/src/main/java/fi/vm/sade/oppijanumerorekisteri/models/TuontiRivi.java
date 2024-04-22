@@ -2,7 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.models;
 
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * Liitos {@link Tuonti oppijoiden tuonnin} ja {@link Henkilo henkilön} välillä.

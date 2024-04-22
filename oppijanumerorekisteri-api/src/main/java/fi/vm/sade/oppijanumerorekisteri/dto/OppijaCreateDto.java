@@ -1,15 +1,16 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Setter;
 import lombok.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Getter
 @Setter
@@ -18,34 +19,34 @@ import java.util.Set;
 @AllArgsConstructor
 public class OppijaCreateDto {
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotEmpty
     private String etunimet;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotEmpty
     private String kutsumanimi;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotEmpty
     private String sukunimi;
 
     // mahdollistaa hetuttoman yksilöinnin luonnin yhteydessä
     private boolean yksiloity;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @NotNull
     private LocalDate syntymaaika;
 
-    @ApiModelProperty(value = "Koodisto: 'sukupuoli'", required = true)
+    @Schema(description = "Koodisto: 'sukupuoli'", required = true)
     @NotEmpty
     private String sukupuoli;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @Valid
     private KielisyysDto aidinkieli;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     @Valid
     @NotEmpty
     private Set<KansalaisuusDto> kansalaisuus = new HashSet<>();
