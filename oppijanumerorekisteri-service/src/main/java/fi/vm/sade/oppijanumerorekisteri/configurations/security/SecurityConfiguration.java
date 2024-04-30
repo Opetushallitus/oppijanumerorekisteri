@@ -71,7 +71,9 @@ public class SecurityConfiguration {
 
     @Bean
     TicketValidator ticketValidator() {
-        return new Cas30ProxyTicketValidator(ophProperties.url("cas.url"));
+        var validator = new Cas30ProxyTicketValidator(ophProperties.url("cas.url"));
+        validator.setAcceptAnyProxy(true);
+        return validator;
     }
 
     @Bean
