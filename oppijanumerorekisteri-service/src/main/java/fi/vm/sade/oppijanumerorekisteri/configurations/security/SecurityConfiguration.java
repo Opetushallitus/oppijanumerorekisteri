@@ -8,7 +8,7 @@ import fi.vm.sade.properties.OphProperties;
 
 import org.apereo.cas.client.session.SessionMappingStorage;
 import org.apereo.cas.client.session.SingleSignOutFilter;
-import org.apereo.cas.client.validation.Cas30ServiceTicketValidator;
+import org.apereo.cas.client.validation.Cas30ProxyTicketValidator;
 import org.apereo.cas.client.validation.TicketValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -71,7 +71,7 @@ public class SecurityConfiguration {
 
     @Bean
     TicketValidator ticketValidator() {
-        return new Cas30ServiceTicketValidator(ophProperties.url("cas.url"));
+        return new Cas30ProxyTicketValidator(ophProperties.url("cas.url"));
     }
 
     @Bean
