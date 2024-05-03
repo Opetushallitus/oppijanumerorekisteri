@@ -38,31 +38,7 @@ public class OppijanumerorekisteriClient extends CasAuthenticatedServiceClient {
         return new ApiResponse(response.statusCode(), response.body());
     }
 
-    public static class YleistunnisteHaeRequest {
-        public final String etunimet;
-        public final String hetu;
-        public final String kutsumanimi;
-        public final String sukunimi;
+    public record YleistunnisteHaeRequest(String etunimet, String hetu, String kutsumanimi, String sukunimi) {}
 
-        public YleistunnisteHaeRequest(String etunimet, String hetu, String kutsumanimi, String sukunimi) {
-            this.etunimet = etunimet;
-            this.hetu = hetu;
-            this.kutsumanimi = kutsumanimi;
-            this.sukunimi = sukunimi;
-        }
-    }
-
-    public static class ApiResponse {
-        private final Integer status;
-        private final String body;
-
-        public ApiResponse(Integer status, String body) {
-            this.status = status;
-            this.body = body;
-        }
-
-        public String toString() {
-            return "ApiResponse(status=" + status + ", body=" + body + ")";
-        }
-    }
+    public record ApiResponse(Integer status, String body) {}
 }
