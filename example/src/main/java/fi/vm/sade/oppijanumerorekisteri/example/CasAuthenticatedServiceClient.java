@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -34,17 +35,26 @@ public abstract class CasAuthenticatedServiceClient {
             // Oppijanumerorekisteri ohjaa CAS kirjautumissivulle, jos autentikaatiota
             // ei ole tehty. Luodaan uusi CAS ticket ja yritetään uudelleen.
             log.info("Was redirected to CAS login");
-            requestBuilder.header(CasClient.CAS_SECURITY_TICKET, fetchCasServiceTicket());
+            authenticateWithJSpringCasSecurityCheckEndpoint();
             return httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
         } else if (response.statusCode() == 401) {
             // Oppijanumerorekisteri vastaa HTTP 401 kun sessio on vanhentunut.
             // HUOM! Oppijanumerorekisteri vastaa HTTP 401 myös jos käyttöoikeudet eivät riitä.
             log.info("Received HTTP 401 response");
-            requestBuilder.header(CasClient.CAS_SECURITY_TICKET, fetchCasServiceTicket());
+            authenticateWithJSpringCasSecurityCheckEndpoint();
             return httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
         } else {
             return response;
         }
+    }
+
+    private void authenticateWithJSpringCasSecurityCheckEndpoint() throws IOException, InterruptedException {
+        var uri = URI.create(serviceUrl + "/j_spring_cas_security_check?ticket=" + fetchCasServiceTicket());
+        var authRequest = HttpRequest.newBuilder(uri)
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+        var authResponse = httpClient.send(authRequest, HttpResponse.BodyHandlers.ofString());
+        log.info("Auth reset response: {}", authResponse);
     }
 
     private String fetchCasServiceTicket() {

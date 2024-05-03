@@ -15,7 +15,6 @@ import java.util.Map;
 
 public class CasClient {
     private final Logger log = LogManager.getLogger(this.getClass());
-    public static final String CAS_SECURITY_TICKET = "CasSecurityTicket";
     private final HttpClient httpClient;
     private final String baseUrl;
 
@@ -56,7 +55,7 @@ public class CasClient {
     }
 
     private String getTicketGrantingTicket(String username, String password) throws IOException, InterruptedException {
-        log.info("Fetching TGT (Ticket Granting Ticket) from CAS server...", baseUrl);
+        log.info("Fetching TGT (Ticket Granting Ticket) from CAS server {}...", baseUrl);
         var request = HttpRequest.newBuilder(URI.create(baseUrl + "/v1/tickets"))
                 .POST(formBody(Map.of("username", username, "password", password)))
                 .header("Content-Type", "application/x-www-form-urlencoded")
