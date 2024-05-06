@@ -1,0 +1,6 @@
+oppijanumerorekisteri.tasks.export.enabled: true
+oppijanumerorekisteri.tasks.export.bucket-name: oph-yleiskayttoiset-export-sade
+oppijanumerorekisteri.tasks.export.copy-to-lampi: false
+oppijanumerorekisteri.tasks.export.lampi-bucket-name: oph-lampi-prod
+oppijanumerorekisteri.tasks.export.lampi-role-arn: ${ssm_lampi_role_arn}
+oppijanumerorekisteri.tasks.export.lampi-external-id: ${ssm_lampi_external_id}

@@ -28,28 +28,28 @@ public class AwsConfiguration {
         private String topicArn;
     }
 
-    @Bean
+    @Bean("opintopolkuCredentialsProvider")
     AwsCredentialsProvider getAwsCredentialsProvider() {
         return DefaultCredentialsProvider.create();
     }
 
     @Bean
     @Autowired
-    StsClient getStsClient(AwsCredentialsProvider credentialsProvider) {
+    StsClient getStsClient(AwsCredentialsProvider opintopolkuCredentialsProvider) {
         return StsClient
                 .builder()
                 .region(Region.of(region))
-                .credentialsProvider(credentialsProvider)
+                .credentialsProvider(opintopolkuCredentialsProvider)
                 .build();
     }
 
     @Bean
     @Autowired
-    SnsClient getSnsClient(AwsCredentialsProvider credentialsProvider) {
+    SnsClient getSnsClient(AwsCredentialsProvider opintopolkuCredentialsProvider) {
         return SnsClient
                 .builder()
                 .region(Region.of(region))
-                .credentialsProvider(credentialsProvider)
+                .credentialsProvider(opintopolkuCredentialsProvider)
                 .build();
     }
 }

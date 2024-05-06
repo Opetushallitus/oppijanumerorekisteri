@@ -19,6 +19,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.IOException;
 import java.time.LocalTime;
 
 /**
@@ -93,14 +94,24 @@ public class SchedulingConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "oppijanumerorekisteri.scheduling.export.enabled", matchIfMissing = false)
+    @ConditionalOnProperty(name = "oppijanumerorekisteri.tasks.export.enabled", matchIfMissing = false)
     Task<Void> exportTask() {
         log.info("Creating koodisto export task");
         return Tasks.recurring(new TaskWithoutDataDescriptor("Export"), FixedDelay.ofHours(1))
                 .execute((taskInstance, executionContext) -> {
+                    try {
                         log.info("Running oppijanumerorekisteri export task");
                         exportService.createSchema();
+                        exportService.generateCsvExports();
+                        if (properties.getTasks().getExport().getCopyToLampi()) {
+                            exportService.copyExportFilesToLampi();
+                        } else {
+                            log.info("Copying export files to Lampi is disabled");
+                        }
                         log.info("Oppijanumerorekisteri export task completed");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 });
     }
 }

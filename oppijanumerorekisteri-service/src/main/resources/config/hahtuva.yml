@@ -1,0 +1,6 @@
+oppijanumerorekisteri.tasks.export.enabled: true
+oppijanumerorekisteri.tasks.export.bucket-name: oph-yleiskayttoiset-export-hahtuva
+oppijanumerorekisteri.tasks.export.copy-to-lampi: false
+oppijanumerorekisteri.tasks.export.lampi-bucket-name: none
+oppijanumerorekisteri.tasks.export.lampi-role-arn: none
+oppijanumerorekisteri.tasks.export.lampi-external-id: none

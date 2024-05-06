@@ -21,6 +21,24 @@ public class OppijanumerorekisteriProperties {
 
     private final VtjMuutosrajapinta vtjMuutosrajapinta = new VtjMuutosrajapinta();
 
+    private final Tasks tasks = new Tasks();
+
+    @Getter
+    @Setter
+    public static class Tasks {
+        private final Export export = new Export();
+    }
+
+    @Getter
+    @Setter
+    public static class Export {
+        private String bucketName;
+        private Boolean copyToLampi = false;
+        private String lampiBucketName;
+        private String lampiRoleArn;
+        private String lampiExternalId;
+    }
+
     @Getter
     @Setter
     public static class VtjMuutosrajapinta {
