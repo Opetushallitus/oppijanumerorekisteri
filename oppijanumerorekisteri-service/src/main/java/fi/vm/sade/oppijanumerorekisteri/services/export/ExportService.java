@@ -73,7 +73,7 @@ public class ExportService {
         jdbcTemplate.execute("ALTER SCHEMA exportnew RENAME TO export");
     }
 
-    private static final String HENKILO_QUERY = "SELECT * FROM exort.henkilo";
+    private static final String HENKILO_QUERY = "SELECT * FROM export.henkilo";
     public void generateCsvExports() {
         exportQueryToS3(S3_PREFIX + "/csv/henkilo.csv", HENKILO_QUERY);
     }
