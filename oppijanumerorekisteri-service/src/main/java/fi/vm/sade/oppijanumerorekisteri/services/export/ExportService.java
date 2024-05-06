@@ -66,7 +66,7 @@ public class ExportService {
               (SELECT string_agg(slave_oid, ',')
                FROM henkiloviite
                WHERE master_oid = h.oidhenkilo
-              ) AS linkitetyt_oidit,
+              ) AS linkitetyt_oidit
             FROM henkilo h;
         """);
         jdbcTemplate.execute("DROP SCHEMA IF EXISTS export CASCADE");
