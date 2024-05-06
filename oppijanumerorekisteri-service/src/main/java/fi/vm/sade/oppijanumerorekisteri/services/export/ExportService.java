@@ -81,7 +81,7 @@ public class ExportService {
     private void exportQueryToS3(String objectKey, String query) {
         var bucketName = properties.getTasks().getExport().getBucketName();
 
-        log.info("Exporting table to S3: {}/{}", properties.getTasks().getExport(), objectKey);
+        log.info("Exporting table to S3: {}/{}", bucketName, objectKey);
         var sql = "SELECT rows_uploaded FROM aws_s3.query_export_to_s3(?, aws_commons.create_s3_uri(?, ?, ?), options := 'FORMAT CSV, HEADER TRUE')";
         var rowsUploaded = jdbcTemplate.queryForObject(sql, Long.class, query, bucketName, objectKey, Region.EU_WEST_1.id());
         log.info("Exported {} rows to S3 object {}", rowsUploaded, objectKey);
