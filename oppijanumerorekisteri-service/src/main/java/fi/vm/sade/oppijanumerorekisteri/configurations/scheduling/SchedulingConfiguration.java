@@ -96,7 +96,7 @@ public class SchedulingConfiguration {
     @Bean
     @ConditionalOnProperty(name = "oppijanumerorekisteri.tasks.export.enabled", matchIfMissing = false)
     Task<Void> exportTask() {
-        log.info("Creating koodisto export task");
+        log.info("Creating oppijanumerorekisteri export task");
         return Tasks.recurring(new TaskWithoutDataDescriptor("Export"), FixedDelay.ofHours(1))
                 .execute((taskInstance, executionContext) -> {
                     try {
