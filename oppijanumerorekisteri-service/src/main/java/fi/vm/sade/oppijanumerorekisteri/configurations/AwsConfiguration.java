@@ -5,6 +5,7 @@ import lombok.Setter;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sts.StsClient;
 
@@ -50,6 +51,14 @@ public class AwsConfiguration {
                 .builder()
                 .region(Region.of(region))
                 .credentialsProvider(opintopolkuCredentialsProvider)
+                .build();
+    }
+
+    @Bean
+    public S3AsyncClient opintopolkuS3Client(AwsCredentialsProvider opintopolkuCredentialsProvider) {
+        return S3AsyncClient.builder()
+                .credentialsProvider(opintopolkuCredentialsProvider)
+                .region(Region.of(region))
                 .build();
     }
 }
