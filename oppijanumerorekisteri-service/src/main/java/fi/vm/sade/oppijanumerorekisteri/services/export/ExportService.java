@@ -53,6 +53,9 @@ public class ExportService {
               h.turvakielto,
               h.kotikunta,
               h.yksiloityvtj,
+              y_katuosoite.yhteystieto_arvo AS vtj_katuosoite,
+              y_postinumero.yhteystieto_arvo as vtj_postinumero,
+              y_kaupunki.yhteystieto_arvo AS vtj_kaupunki,
               (SELECT string_agg(cast (kansalaisuus_id as varchar), ',')
                FROM henkilo_kansalaisuus
                WHERE henkilo_id = h.id
@@ -66,7 +69,15 @@ public class ExportService {
                FROM henkiloviite
                WHERE master_oid = h.oidhenkilo
               ) AS linkitetyt_oidit
-            FROM henkilo h;
+            FROM henkilo h
+            JOIN yhteystiedotryhma y ON h.id = y.henkilo_id
+            JOIN yhteystiedot y_katuosoite ON y.id = y_katuosoite.yhteystiedotryhma_id
+            JOIN yhteystiedot y_postinumero ON y.id = y_postinumero.yhteystiedotryhma_id
+            JOIN yhteystiedot y_kaupunki ON y.id = y_kaupunki.yhteystiedotryhma_id
+            WHERE y.ryhma_alkuperatieto = 'alkupera1'
+            AND y_katuosoite.yhteystieto_tyyppi = 'YHTEYSTIETO_KATUOSOITE'
+            AND y_postinumero.yhteystieto_tyyppi = 'YHTEYSTIETO_POSTINUMERO'
+            AND y_kaupunki.yhteystieto_tyyppi = 'YHTEYSTIETO_KAUPUNKI'
         """);
         jdbcTemplate.execute("DROP SCHEMA IF EXISTS export CASCADE");
         jdbcTemplate.execute("ALTER SCHEMA exportnew RENAME TO export");
