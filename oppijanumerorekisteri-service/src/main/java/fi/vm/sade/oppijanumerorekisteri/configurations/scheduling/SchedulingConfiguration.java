@@ -102,7 +102,7 @@ public class SchedulingConfiguration {
                     try {
                         log.info("Running oppijanumerorekisteri export task");
                         exportService.createSchema();
-                        exportService.generateCsvExports();
+                        exportService.generateExportFiles();
                         if (properties.getTasks().getExport().getCopyToLampi()) {
                             exportService.copyExportFilesToLampi();
                         } else {

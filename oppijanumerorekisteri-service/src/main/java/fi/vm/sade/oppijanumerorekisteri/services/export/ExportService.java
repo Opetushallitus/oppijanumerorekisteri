@@ -19,9 +19,13 @@ import software.amazon.awssdk.transfer.s3.model.UploadFileRequest;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -84,6 +88,85 @@ public class ExportService {
     }
 
     private static final String HENKILO_QUERY = "SELECT * FROM export.henkilo";
+
+    public void generateExportFiles() throws IOException {
+        generateCsvExports();
+        generateJsonExports();
+    }
+
+    List<File> generateJsonExports() throws IOException {
+        var henkiloFile = exportQueryToS3AsJson(HENKILO_QUERY, S3_PREFIX + "/json/henkilo.json", unchecked(rs ->
+                new ExportedHenkilo(
+                        rs.getString("oppija_oid"),
+                        rs.getString("hetu"),
+                        rs.getString("sukupuoli"),
+                        rs.getString("syntymaaika"),
+                        rs.getString("sukunimi"),
+                        rs.getString("etunimet"),
+                        rs.getString("aidinkieli"),
+                        rs.getString("turvakielto"),
+                        rs.getString("kotikunta"),
+                        rs.getString("yksiloityvtj"),
+                        rs.getString("vtj_katuosoite"),
+                        rs.getString("vtj_postinumero"),
+                        rs.getString("vtj_kaupunki"),
+                        rs.getString("kansalaisuus"),
+                        rs.getString("master_oid"),
+                        rs.getString("linkitetyt_oidit")
+                )
+        ));
+        return List.of(henkiloFile);
+    }
+
+    private <T, R, E extends Throwable> Function<T, R> unchecked(ThrowingFunction<T, R, E> f) {
+        return t -> {
+            try {
+                return f.apply(t);
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
+        };
+    }
+
+    private interface ThrowingFunction<T, R, E extends Throwable> {
+
+        R apply(T rs) throws E;
+    }
+
+    private <T> File exportQueryToS3AsJson(String query, String objectKey, Function<ResultSet, T> mapper) throws IOException {
+        @SuppressWarnings("java:S5443")
+        var tempFile = File.createTempFile("export", ".json");
+        var bucketName = properties.getTasks().getExport().getBucketName();
+        try {
+            exportToFile(query, mapper, tempFile);
+            uploadFile(opintopolkuS3Client, bucketName, objectKey, tempFile);
+        } finally {
+            Files.deleteIfExists(tempFile.toPath());
+        }
+        return tempFile;
+    }
+
+    private <T> void exportToFile(String query, Function<ResultSet, T> mapper, File file) throws IOException {
+        log.info("Writing JSON export to {}", file.getAbsolutePath());
+        try (var writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
+            writer.write("[\n");
+            var firstElement = true;
+            try (Stream<T> stream = jdbcTemplate.queryForStream(query, (rs, n) -> mapper.apply(rs))) {
+                Iterable<T> iterable = stream::iterator;
+                for (T jsonObject : iterable) {
+                    if (firstElement) {
+                        firstElement = false;
+                    } else {
+                        writer.write(",\n");
+                    }
+                    writer.write(objectMapper.writeValueAsString(jsonObject));
+                }
+            }
+            writer.write("\n");
+            writer.write("]\n");
+        }
+    }
+
     public void generateCsvExports() {
         exportQueryToS3(S3_PREFIX + "/csv/henkilo.csv", HENKILO_QUERY);
     }
@@ -101,6 +184,10 @@ public class ExportService {
         var csvManifest = new ArrayList<ExportFileDetails>();
         csvManifest.add(copyFileToLampi(S3_PREFIX + "/csv/henkilo.csv"));
         writeManifest(S3_PREFIX + "/csv/manifest.json", new ExportManifest(csvManifest));
+
+        var jsonManifest = new ArrayList<ExportFileDetails>();
+        jsonManifest.add(copyFileToLampi(S3_PREFIX + "/json/henkilo.json"));
+        writeManifest(S3_PREFIX + "/json/manifest.json", new ExportManifest(jsonManifest));
     }
 
     private ExportFileDetails copyFileToLampi(String objectKey) throws IOException {
@@ -149,4 +236,20 @@ public class ExportService {
 
     record ExportManifest(List<ExportFileDetails> exportFiles) {}
     record ExportFileDetails(String objectKey, String objectVersion) {}
+    record ExportedHenkilo(String oppijaOid,
+                           String hetu,
+                           String sukupuoli,
+                           String syntymaaika,
+                           String sukunimi,
+                           String etunimet,
+                           String aidinkieli,
+                           String turvakielto,
+                           String kotikunta,
+                           String yksiloityvtj,
+                           String vtj_katuosoite,
+                           String vtj_postinumero,
+                           String vtj_kaupunki,
+                           String kansalaisuus,
+                           String masterOid,
+                           String linkitetyt_oidit) {}
 }
