@@ -74,14 +74,10 @@ public class ExportService {
                WHERE master_oid = h.oidhenkilo
               ) AS linkitetyt_oidit
             FROM henkilo h
-            JOIN yhteystiedotryhma y ON h.id = y.henkilo_id
-            JOIN yhteystiedot y_katuosoite ON y.id = y_katuosoite.yhteystiedotryhma_id
-            JOIN yhteystiedot y_postinumero ON y.id = y_postinumero.yhteystiedotryhma_id
-            JOIN yhteystiedot y_kaupunki ON y.id = y_kaupunki.yhteystiedotryhma_id
-            WHERE y.ryhma_alkuperatieto = 'alkupera1'
-            AND y_katuosoite.yhteystieto_tyyppi = 'YHTEYSTIETO_KATUOSOITE'
-            AND y_postinumero.yhteystieto_tyyppi = 'YHTEYSTIETO_POSTINUMERO'
-            AND y_kaupunki.yhteystieto_tyyppi = 'YHTEYSTIETO_KAUPUNKI'
+            LEFT JOIN yhteystiedotryhma y ON h.id = y.henkilo_id AND y.ryhma_alkuperatieto = 'alkupera1'
+            LEFT JOIN yhteystiedot y_katuosoite ON y.id = y_katuosoite.yhteystiedotryhma_id AND y_katuosoite.yhteystieto_tyyppi = 'YHTEYSTIETO_KATUOSOITE'
+            LEFT JOIN yhteystiedot y_postinumero ON y.id = y_postinumero.yhteystiedotryhma_id AND y_postinumero.yhteystieto_tyyppi = 'YHTEYSTIETO_POSTINUMERO'
+            LEFT JOIN yhteystiedot y_kaupunki ON y.id = y_kaupunki.yhteystiedotryhma_id AND y_kaupunki.yhteystieto_tyyppi = 'YHTEYSTIETO_KAUPUNKI'
         """);
         jdbcTemplate.execute("DROP SCHEMA IF EXISTS export CASCADE");
         jdbcTemplate.execute("ALTER SCHEMA exportnew RENAME TO export");
