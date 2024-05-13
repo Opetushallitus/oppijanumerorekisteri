@@ -84,6 +84,8 @@ public class ExportService {
             LEFT JOIN henkilo h ON y.henkilo_id = h.id
             LEFT JOIN yhteystiedot yt ON y.id = yt.yhteystiedotryhma_id
         """);
+        jdbcTemplate.execute("ALTER TABLE exportnew.henkilo ADD CONSTRAINT henkilo_pk PRIMARY KEY (henkilo_oid)");
+        jdbcTemplate.execute("ALTER TABLE exportnew.yhteystieto ADD CONSTRAINT henkilo_fk FOREIGN KEY (henkilo_oid) REFERENCES exportnew.henkilo (henkilo_oid)");
         jdbcTemplate.execute("DROP SCHEMA IF EXISTS export CASCADE");
         jdbcTemplate.execute("ALTER SCHEMA exportnew RENAME TO export");
     }
