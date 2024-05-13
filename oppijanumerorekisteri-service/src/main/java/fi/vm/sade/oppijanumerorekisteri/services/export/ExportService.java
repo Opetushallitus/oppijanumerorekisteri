@@ -47,7 +47,7 @@ public class ExportService {
         jdbcTemplate.execute("""
             CREATE TABLE exportnew.henkilo AS
             SELECT
-              h.oidhenkilo AS oppija_oid,
+              h.oidhenkilo AS henkilo_oid,
               h.hetu,
               h.sukupuoli,
               h.syntymaaika,
@@ -93,7 +93,7 @@ public class ExportService {
     List<File> generateJsonExports() throws IOException {
         var henkiloFile = exportQueryToS3AsJson(HENKILO_QUERY, S3_PREFIX + "/json/henkilo.json", unchecked(rs ->
                 new ExportedHenkilo(
-                        rs.getString("oppija_oid"),
+                        rs.getString("henkilo_oid"),
                         rs.getString("hetu"),
                         rs.getString("sukupuoli"),
                         rs.getString("syntymaaika"),
@@ -232,7 +232,7 @@ public class ExportService {
 
     record ExportManifest(List<ExportFileDetails> exportFiles) {}
     record ExportFileDetails(String objectKey, String objectVersion) {}
-    record ExportedHenkilo(String oppijaOid,
+    record ExportedHenkilo(String henkilo_oid,
                            String hetu,
                            String sukupuoli,
                            String syntymaaika,
