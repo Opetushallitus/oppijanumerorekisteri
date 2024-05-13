@@ -83,6 +83,7 @@ public class ExportService {
             FROM yhteystiedotryhma y
             JOIN henkilo h ON y.henkilo_id = h.id
             JOIN yhteystiedot yt ON y.id = yt.yhteystiedotryhma_id
+            WHERE yhteystieto_arvo IS NOT NULL
         """);
         jdbcTemplate.execute("ALTER TABLE exportnew.henkilo ADD CONSTRAINT henkilo_pk PRIMARY KEY (henkilo_oid)");
         jdbcTemplate.execute("ALTER TABLE exportnew.yhteystieto ADD CONSTRAINT henkilo_fk FOREIGN KEY (henkilo_oid) REFERENCES exportnew.henkilo (henkilo_oid)");
