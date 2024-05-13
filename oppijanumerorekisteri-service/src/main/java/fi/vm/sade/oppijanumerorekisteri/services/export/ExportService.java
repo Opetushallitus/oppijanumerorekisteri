@@ -81,8 +81,8 @@ public class ExportService {
               yt.yhteystieto_tyyppi AS yhteystieto_arvo_tyyppi,
               y.ryhma_alkuperatieto AS alkupera
             FROM yhteystiedotryhma y
-            LEFT JOIN henkilo h ON y.henkilo_id = h.id
-            LEFT JOIN yhteystiedot yt ON y.id = yt.yhteystiedotryhma_id
+            JOIN henkilo h ON y.henkilo_id = h.id
+            JOIN yhteystiedot yt ON y.id = yt.yhteystiedotryhma_id
         """);
         jdbcTemplate.execute("ALTER TABLE exportnew.henkilo ADD CONSTRAINT henkilo_pk PRIMARY KEY (henkilo_oid)");
         jdbcTemplate.execute("ALTER TABLE exportnew.yhteystieto ADD CONSTRAINT henkilo_fk FOREIGN KEY (henkilo_oid) REFERENCES exportnew.henkilo (henkilo_oid)");
