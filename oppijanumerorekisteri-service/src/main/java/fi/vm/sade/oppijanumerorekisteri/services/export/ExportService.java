@@ -260,10 +260,10 @@ public class ExportService {
                            String kansalaisuus,
                            String masterOid,
                            String linkitetyt_oidit) {}
-    public record ExportedYhteystieto(String henkiloOid,
+    public record ExportedYhteystieto(String henkilo_oid,
                                       String yhteystietotyyppi,
-                                      String yhteystietoArvo,
-                                      String yhteystietoArvoTyyppi,
+                                      String yhteystieto_arvo,
+                                      String yhteystieto_arvo_tyyppi,
                                       String alkupera) {}
 
 }
