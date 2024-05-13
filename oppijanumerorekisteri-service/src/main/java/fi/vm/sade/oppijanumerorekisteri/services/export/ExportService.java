@@ -79,11 +79,24 @@ public class ExportService {
             LEFT JOIN yhteystiedot y_postinumero ON y.id = y_postinumero.yhteystiedotryhma_id AND y_postinumero.yhteystieto_tyyppi = 'YHTEYSTIETO_POSTINUMERO'
             LEFT JOIN yhteystiedot y_kaupunki ON y.id = y_kaupunki.yhteystiedotryhma_id AND y_kaupunki.yhteystieto_tyyppi = 'YHTEYSTIETO_KAUPUNKI'
         """);
+        jdbcTemplate.execute("""
+            CREATE TABLE exportnew.yhteystieto AS
+            SELECT
+              h.oidhenkilo AS henkilo_oid,
+              y.ryhmakuvaus AS yhteystietotyyppi,
+              yt.yhteystieto_arvo,
+              yt.yhteystieto_tyyppi AS yhteystieto_arvo_tyyppi,
+              y.ryhma_alkuperatieto AS alkupera
+            FROM yhteystiedotryhma y
+            LEFT JOIN henkilo h ON y.henkilo_id = h.id
+            LEFT JOIN yhteystiedot yt ON y.id = yt.yhteystiedotryhma_id
+        """);
         jdbcTemplate.execute("DROP SCHEMA IF EXISTS export CASCADE");
         jdbcTemplate.execute("ALTER SCHEMA exportnew RENAME TO export");
     }
 
     private static final String HENKILO_QUERY = "SELECT * FROM export.henkilo";
+    private static final String YHTEYSTIETO_QUERY = "SELECT * FROM export.yhteystieto";
 
     public void generateExportFiles() throws IOException {
         generateCsvExports();
@@ -111,7 +124,16 @@ public class ExportService {
                         rs.getString("linkitetyt_oidit")
                 )
         ));
-        return List.of(henkiloFile);
+        var yhteystietoFile = exportQueryToS3AsJson(YHTEYSTIETO_QUERY, S3_PREFIX + "/json/yhteystieto.json", unchecked(rs ->
+                new ExportedYhteystieto(
+                        rs.getString("henkilo_oid"),
+                        rs.getString("yhteystietotyyppi"),
+                        rs.getString("yhteystieto_arvo"),
+                        rs.getString("yhteystieto_arvo_tyyppi"),
+                        rs.getString("alkupera")
+                )
+        ));
+        return List.of(henkiloFile, yhteystietoFile);
     }
 
     private <T, R, E extends Throwable> Function<T, R> unchecked(ThrowingFunction<T, R, E> f) {
@@ -165,6 +187,7 @@ public class ExportService {
 
     public void generateCsvExports() {
         exportQueryToS3(S3_PREFIX + "/csv/henkilo.csv", HENKILO_QUERY);
+        exportQueryToS3(S3_PREFIX + "/csv/yhteystieto.csv", YHTEYSTIETO_QUERY);
     }
 
     private void exportQueryToS3(String objectKey, String query) {
@@ -179,10 +202,12 @@ public class ExportService {
     public void copyExportFilesToLampi() throws IOException {
         var csvManifest = new ArrayList<ExportFileDetails>();
         csvManifest.add(copyFileToLampi(S3_PREFIX + "/csv/henkilo.csv"));
+        csvManifest.add(copyFileToLampi(S3_PREFIX + "/csv/yhteystieto.csv"));
         writeManifest(S3_PREFIX + "/csv/manifest.json", new ExportManifest(csvManifest));
 
         var jsonManifest = new ArrayList<ExportFileDetails>();
         jsonManifest.add(copyFileToLampi(S3_PREFIX + "/json/henkilo.json"));
+        jsonManifest.add(copyFileToLampi(S3_PREFIX + "/json/yhteystieto.json"));
         writeManifest(S3_PREFIX + "/json/manifest.json", new ExportManifest(jsonManifest));
     }
 
@@ -248,4 +273,10 @@ public class ExportService {
                            String kansalaisuus,
                            String masterOid,
                            String linkitetyt_oidit) {}
+    public record ExportedYhteystieto(String henkiloOid,
+                                      String yhteystietotyyppi,
+                                      String yhteystietoArvo,
+                                      String yhteystietoArvoTyyppi,
+                                      String alkupera) {}
+
 }
