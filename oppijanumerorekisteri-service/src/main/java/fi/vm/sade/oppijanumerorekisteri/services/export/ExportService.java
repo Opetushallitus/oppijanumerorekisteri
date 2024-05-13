@@ -53,7 +53,7 @@ public class ExportService {
               h.syntymaaika,
               h.sukunimi,
               h.etunimet,
-              h.aidinkieli_id as aidinkieli,              
+              h.aidinkieli_id as aidinkieli,
               h.turvakielto,
               h.kotikunta,
               h.yksiloityvtj,
