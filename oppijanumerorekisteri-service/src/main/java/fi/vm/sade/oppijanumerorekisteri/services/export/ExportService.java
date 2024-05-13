@@ -57,9 +57,6 @@ public class ExportService {
               h.turvakielto,
               h.kotikunta,
               h.yksiloityvtj,
-              y_katuosoite.yhteystieto_arvo AS vtj_katuosoite,
-              y_postinumero.yhteystieto_arvo as vtj_postinumero,
-              y_kaupunki.yhteystieto_arvo AS vtj_kaupunki,
               (SELECT string_agg(cast (kansalaisuus_id as varchar), ',')
                FROM henkilo_kansalaisuus
                WHERE henkilo_id = h.id
@@ -74,10 +71,6 @@ public class ExportService {
                WHERE master_oid = h.oidhenkilo
               ) AS linkitetyt_oidit
             FROM henkilo h
-            LEFT JOIN yhteystiedotryhma y ON h.id = y.henkilo_id AND y.ryhma_alkuperatieto = 'alkupera1'
-            LEFT JOIN yhteystiedot y_katuosoite ON y.id = y_katuosoite.yhteystiedotryhma_id AND y_katuosoite.yhteystieto_tyyppi = 'YHTEYSTIETO_KATUOSOITE'
-            LEFT JOIN yhteystiedot y_postinumero ON y.id = y_postinumero.yhteystiedotryhma_id AND y_postinumero.yhteystieto_tyyppi = 'YHTEYSTIETO_POSTINUMERO'
-            LEFT JOIN yhteystiedot y_kaupunki ON y.id = y_kaupunki.yhteystiedotryhma_id AND y_kaupunki.yhteystieto_tyyppi = 'YHTEYSTIETO_KAUPUNKI'
         """);
         jdbcTemplate.execute("""
             CREATE TABLE exportnew.yhteystieto AS
@@ -116,9 +109,6 @@ public class ExportService {
                         rs.getString("turvakielto"),
                         rs.getString("kotikunta"),
                         rs.getString("yksiloityvtj"),
-                        rs.getString("vtj_katuosoite"),
-                        rs.getString("vtj_postinumero"),
-                        rs.getString("vtj_kaupunki"),
                         rs.getString("kansalaisuus"),
                         rs.getString("master_oid"),
                         rs.getString("linkitetyt_oidit")
@@ -267,9 +257,6 @@ public class ExportService {
                            String turvakielto,
                            String kotikunta,
                            String yksiloityvtj,
-                           String vtj_katuosoite,
-                           String vtj_postinumero,
-                           String vtj_kaupunki,
                            String kansalaisuus,
                            String masterOid,
                            String linkitetyt_oidit) {}
