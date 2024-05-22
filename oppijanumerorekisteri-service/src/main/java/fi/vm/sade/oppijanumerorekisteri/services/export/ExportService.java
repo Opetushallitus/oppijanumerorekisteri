@@ -263,7 +263,7 @@ public class ExportService {
                            String kotikunta,
                            boolean yksiloityvtj,
                            String kansalaisuus,
-                           String masterOid,
+                           String master_oid,
                            String linkitetyt_oidit) {}
     public record ExportedYhteystieto(String henkilo_oid,
                                       String yhteystietotyyppi,
