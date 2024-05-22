@@ -1,4 +1,4 @@
-oppijanumerorekisteri.tasks.export.enabled: false
+oppijanumerorekisteri.tasks.export.enabled: true
 oppijanumerorekisteri.tasks.export.bucket-name: oph-yleiskayttoiset-export-untuva
 oppijanumerorekisteri.tasks.export.copy-to-lampi: true
 oppijanumerorekisteri.tasks.export.lampi-bucket-name: oph-lampi-dev
