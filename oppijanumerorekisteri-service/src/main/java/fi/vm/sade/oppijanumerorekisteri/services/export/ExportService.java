@@ -111,9 +111,9 @@ public class ExportService {
                         rs.getString("sukunimi"),
                         rs.getString("etunimet"),
                         rs.getString("aidinkieli"),
-                        rs.getString("turvakielto"),
+                        rs.getBoolean("turvakielto"),
                         rs.getString("kotikunta"),
-                        rs.getString("yksiloityvtj"),
+                        rs.getBoolean("yksiloityvtj"),
                         rs.getString("kansalaisuus"),
                         rs.getString("master_oid"),
                         rs.getString("linkitetyt_oidit")
@@ -259,9 +259,9 @@ public class ExportService {
                            String sukunimi,
                            String etunimet,
                            String aidinkieli,
-                           String turvakielto,
+                           boolean turvakielto,
                            String kotikunta,
-                           String yksiloityvtj,
+                           boolean yksiloityvtj,
                            String kansalaisuus,
                            String masterOid,
                            String linkitetyt_oidit) {}
