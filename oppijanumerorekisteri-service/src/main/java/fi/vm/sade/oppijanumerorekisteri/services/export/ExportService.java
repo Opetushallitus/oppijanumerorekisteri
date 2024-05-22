@@ -53,7 +53,7 @@ public class ExportService {
               h.syntymaaika,
               h.sukunimi,
               h.etunimet,
-              h.aidinkieli_id as aidinkieli,
+              aidinkieli.kielikoodi as aidinkieli,
               h.turvakielto,
               h.kotikunta,
               h.yksiloityvtj,
@@ -71,6 +71,7 @@ public class ExportService {
                WHERE master_oid = h.oidhenkilo
               ) AS linkitetyt_oidit
             FROM henkilo h
+            LEFT JOIN kielisyys aidinkieli ON h.aidinkieli_id = aidinkieli.id
         """);
         jdbcTemplate.execute("""
             CREATE TABLE exportnew.yhteystieto AS
