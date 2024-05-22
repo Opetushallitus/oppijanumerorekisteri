@@ -57,8 +57,9 @@ public class ExportService {
               h.turvakielto,
               h.kotikunta,
               h.yksiloityvtj,
-              (SELECT string_agg(cast (kansalaisuus_id as varchar), ',')
+              (SELECT string_agg(cast (kansalaisuuskoodi as varchar), ',')
                FROM henkilo_kansalaisuus
+               JOIN kansalaisuus ON kansalaisuus.id = henkilo_kansalaisuus.kansalaisuus_id
                WHERE henkilo_id = h.id
               ) AS kansalaisuus,
               (SELECT master_oid
