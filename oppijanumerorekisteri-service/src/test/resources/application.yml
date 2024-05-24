@@ -37,3 +37,16 @@ aws:
     topicArn: test-topic-arn
 logback:
   access: true
+
+authentication:
+  vtjkysely:
+    address: ""
+    username: ""
+    password: ""
+    keystore:
+      file: ""
+      password: ""
+    truststore:
+      file: ""
+      password: ""
+    cert-alias: ""

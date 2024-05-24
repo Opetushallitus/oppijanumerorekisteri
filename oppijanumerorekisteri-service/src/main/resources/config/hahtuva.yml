@@ -4,3 +4,12 @@ oppijanumerorekisteri.tasks.export.copy-to-lampi: false
 oppijanumerorekisteri.tasks.export.lampi-bucket-name: none
 oppijanumerorekisteri.tasks.export.lampi-role-arn: none
 oppijanumerorekisteri.tasks.export.lampi-external-id: none
+
+authentication.vtj-kysely.address: "http://alb.hahtuvaopintopolku.fi/vtj-test-ws/ws/"
+authentication.vtj-kysely.username: ${ssm_vtj_username}
+authentication.vtj-kysely.password: ${ssm_vtj_password}
+authentication.vtj-kysely.keystore.file: ${ssm_keystore_file}
+authentication.vtj-kysely.keystore.password: ${ssm_vtj_keystore_password}
+authentication.vtj-kysely.truststore.file: ${ssm_truststore_file}
+authentication.vtj-kysely.truststore.password: ${ssm_truststore_password}
+authentication.vtj-kysely.cert-alias: "vtj-service"

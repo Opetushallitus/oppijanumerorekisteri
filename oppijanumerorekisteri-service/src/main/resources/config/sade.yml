@@ -4,3 +4,12 @@ oppijanumerorekisteri.tasks.export.copy-to-lampi: true
 oppijanumerorekisteri.tasks.export.lampi-bucket-name: oph-lampi-prod
 oppijanumerorekisteri.tasks.export.lampi-role-arn: ${ssm_lampi_role_arn}
 oppijanumerorekisteri.tasks.export.lampi-external-id: ${ssm_lampi_external_id}
+
+authentication.vtj-kysely.address: "https://vtjkysely.2016.vrk.fi/sosowebsite/soso.asmx"
+authentication.vtj-kysely.username: ${ssm_vtj_username}
+authentication.vtj-kysely.password: ${ssm_vtj_password}
+authentication.vtj-kysely.keystore.file: ${ssm_keystore_file}
+authentication.vtj-kysely.keystore.password: ${ssm_vtj_keystore_password}
+authentication.vtj-kysely.truststore.file: ${ssm_truststore_file}
+authentication.vtj-kysely.truststore.password: ${ssm_truststore_password}
+authentication.vtj-kysely.cert-alias: "opintopolku.fi"
