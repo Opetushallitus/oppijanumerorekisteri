@@ -84,6 +84,17 @@ authentication:
   vtj:
     username: ${authentication.default.username}
     password: ${authentication.default.password}
+  vtjkysely:
+    address: ""
+    username: ""
+    password: ""
+    keystore:
+      file: ""
+      password: ""
+    truststore:
+      file: ""
+      password: ""
+    cert-alias: ""
   hakuapp:
     username: ${authentication.default.username}
     password: ${authentication.default.password}
