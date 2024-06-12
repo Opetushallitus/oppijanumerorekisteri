@@ -95,7 +95,6 @@ authentication:
     password: ${authentication.default.password}
 oppijanumerorekisteri:
   uses-ssl-proxy: false
-  disable-same-site-cookie: false
   scheduling:
     yksilointi:
       enabled: false
