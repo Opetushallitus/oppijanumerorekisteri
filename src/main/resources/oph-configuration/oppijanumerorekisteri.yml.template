@@ -27,7 +27,6 @@ cas:
 host:
   host-virkailija: {{host_virkailija}}
   host-cas: {{host_cas}}
-  host-alb: {{host_alb}}
 authentication:
   kayttooikeus:
     username: {{oppijanumerorekisteri_kayttooikeus_username}}
