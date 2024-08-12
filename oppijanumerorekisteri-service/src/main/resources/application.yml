@@ -73,7 +73,6 @@ cas:
 host:
   host-virkailija: localhost:${server.port}
   host-cas: localhost:${server.port}
-  host-alb: http://localhost:${server.port}
 authentication:
   default:
     username: oppijanumerorekisteri
