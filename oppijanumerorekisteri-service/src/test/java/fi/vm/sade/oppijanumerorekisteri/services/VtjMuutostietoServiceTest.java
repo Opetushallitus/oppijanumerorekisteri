@@ -234,23 +234,31 @@ public class VtjMuutostietoServiceTest {
         }
         verify(henkiloRepository, times(1)).save(any());
 
-        assertKotikuntaHistoria(1l, tuple("091", LocalDate.of(2019, 5, 4), null));
+        assertKotikuntaHistoria(1l,
+                tuple("049", LocalDate.of(1994, 1, 1), LocalDate.of(1996, 3, 21)),
+                tuple("091", LocalDate.of(1996, 3, 22), LocalDate.of(2001, 7, 8)),
+                tuple("200", LocalDate.of(2001, 7, 9), LocalDate.of(2012, 10, 27)),
+                tuple("049", LocalDate.of(2012, 10, 28), LocalDate.of(2019, 5, 3)),
+                tuple("091", LocalDate.of(2019, 5, 4), null));
     }
 
     @Test
-    public void savePerustietoSetsOldKotikuntaHistoriaEndedAndSavesNew() throws Exception {
+    public void savePerustietoOverridesExistingKotikuntaHistoria() throws Exception {
         henkilo.get().setId(11l);
         when(henkiloRepository.findByHetu(hetus.get(0))).thenReturn(henkilo);
         kotikuntaHistoriaRepository.save(KotikuntaHistoria.builder()
                         .henkiloId(11l)
-                        .kotikunta("123")
-                        .kuntaanMuuttopv(LocalDate.of(2015, 3, 12))
+                        .kotikunta("321")
+                        .kuntaanMuuttopv(LocalDate.of(2013, 3, 12))
                         .build());
 
         muutostietoService.savePerustieto(perustieto);
 
         assertKotikuntaHistoria(11l,
-                tuple("123", LocalDate.of(2015, 3, 12), LocalDate.of(2019, 5, 3)),
+                tuple("049", LocalDate.of(1994, 1, 1), LocalDate.of(1996, 3, 21)),
+                tuple("091", LocalDate.of(1996, 3, 22), LocalDate.of(2001, 7, 8)),
+                tuple("200", LocalDate.of(2001, 7, 9), LocalDate.of(2012, 10, 27)),
+                tuple("049", LocalDate.of(2012, 10, 28), LocalDate.of(2019, 5, 3)),
                 tuple("091", LocalDate.of(2019, 5, 4), null));
     }
 

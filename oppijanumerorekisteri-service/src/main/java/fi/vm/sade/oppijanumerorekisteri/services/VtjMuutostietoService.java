@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -262,7 +263,7 @@ public class VtjMuutostietoService {
         return Optional.empty();
     }
 
-    private String saveKotikuntaHistoria(Long henkiloId, JsonNode tietoryhmat, Function<JsonNode, Boolean> tietoryhmaValidator) {
+    private String saveCurrentKotikuntaToKotikuntaHistoria(Long henkiloId, JsonNode tietoryhmat, Function<JsonNode, Boolean> tietoryhmaValidator) {
         try {
             JsonNode tietoryhma = getTietoryhma(tietoryhmat, "KOTIKUNTA");
             if (tietoryhma != null && tietoryhma.has("kuntakoodi")
@@ -281,6 +282,27 @@ public class VtjMuutostietoService {
         return null;
     }
 
+    private void saveEdellinenKotikuntaHistoria(Long henkiloId, JsonNode tietoryhmat) {
+        kotikuntaHistoriaRepository.findAllByHenkiloId(henkiloId)
+            .stream()
+            .forEach(historia -> kotikuntaHistoriaRepository.delete(historia));
+        turvakieltoKotikuntaHistoriaRepository.findAllByHenkiloId(henkiloId)
+            .stream()
+            .forEach(historia -> turvakieltoKotikuntaHistoriaRepository.delete(historia));
+        List<KotikuntaHistoria> kotikuntaHistoriaList = new ArrayList<>();
+        for (JsonNode tietoryhma : tietoryhmat) {
+            if ("EDELLINEN_KOTIKUNTA".equals(getStringValue(tietoryhma, "tietoryhma"))) {
+                kotikuntaHistoriaList.add(KotikuntaHistoria.builder()
+                    .henkiloId(henkiloId)
+                    .kotikunta(getStringValue(tietoryhma, "kuntakoodi"))
+                    .kuntaanMuuttopv(TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv")))
+                    .kunnastaPoisMuuttopv(TietoryhmaMapper.parseDate(tietoryhma.get("kunnastaPoisMuuttopv")))
+                    .build());
+            }
+        }
+        kotikuntaHistoriaRepository.saveAll(kotikuntaHistoriaList);
+    }
+
     protected Void savePerustieto(VtjPerustieto perustieto) {
         henkiloRepository.findByHetu(perustieto.henkilotunnus).ifPresent(henkilo -> {
             try {
@@ -292,6 +314,7 @@ public class VtjMuutostietoService {
                 }
                 HenkiloForceReadDto read = mapper.map(henkilo, HenkiloForceReadDto.class);
                 HenkiloForceUpdateDto update = mapToUpdateDto(read, perustieto.tietoryhmat, perustietoMapper);
+                saveEdellinenKotikuntaHistoria(henkilo.getId(), perustieto.tietoryhmat);
                 if (isTurvakieltoAdded(perustieto.tietoryhmat)) {
                     update.setKotikunta(null);
                     JsonNode tietoryhma = getTietoryhma(perustieto.tietoryhmat, "KOTIKUNTA");
@@ -301,7 +324,7 @@ public class VtjMuutostietoService {
                         insertOrUpdateTurvakieltoKotikunta(henkilo.getId(), kotikunta, muuttopv);
                     }
                 } else {
-                    saveKotikuntaHistoria(henkilo.getId(), perustieto.tietoryhmat, null);
+                    saveCurrentKotikuntaToKotikuntaHistoria(henkilo.getId(), perustieto.tietoryhmat, null);
                 }
                 henkiloModificationService.forceUpdateHenkilo(update);
                 henkilo.setVtjBucket(henkilo.getId() % 100);
@@ -344,7 +367,7 @@ public class VtjMuutostietoService {
 
         JsonNode kotikuntaTietoryhma = getTietoryhma(muutostieto.tietoryhmat, "KOTIKUNTA");
         if (kotikuntaTietoryhma != null && MuutostietoMapper.isDataUpdate(kotikuntaTietoryhma)) {
-            return saveKotikuntaHistoria(henkilo.getId(), muutostieto.tietoryhmat, MuutostietoMapper::isDataUpdate);
+            return saveCurrentKotikuntaToKotikuntaHistoria(henkilo.getId(), muutostieto.tietoryhmat, MuutostietoMapper::isDataUpdate);
         } else if (turvakieltoKotikunta.isPresent()) {
             String kotikunta = turvakieltoKotikunta.get().getKotikunta();
             LocalDate muuttopv = muutostieto.muutospv.toLocalDate();
@@ -389,7 +412,7 @@ public class VtjMuutostietoService {
             update.setKotikunta(null);
         } else {
             handleKotikuntaPoistettu(henkilo.getId(), muutostieto.tietoryhmat);
-            saveKotikuntaHistoria(henkilo.getId(), muutostieto.tietoryhmat, MuutostietoMapper::isDataUpdate);
+            saveCurrentKotikuntaToKotikuntaHistoria(henkilo.getId(), muutostieto.tietoryhmat, MuutostietoMapper::isDataUpdate);
         }
     }
 

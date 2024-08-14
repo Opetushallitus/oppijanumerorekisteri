@@ -29,6 +29,12 @@
     "kuntaanMuuttoPv": { "arvo": "2019-05-04", "tarkkuus": "PAIVA" }
   },
   {
+    "tietoryhma": "EDELLINEN_KOTIKUNTA",
+    "kuntakoodi": "123",
+    "kuntaanMuuttopv": { "arvo": "2015-03-12", "tarkkuus": "PAIVA" },
+    "kunnastaPoisMuuttopv": { "arvo": "2019-05-03", "tarkkuus": "PAIVA" }
+  },
+  {
     "tietoryhma": "VAESTOKIRJANPITOKUNTA",
     "kuntakoodi": "091",
     "kuntaanMuuttopv": { "arvo": "2019-05-04", "tarkkuus": "PAIVA" }

@@ -97,6 +97,30 @@
     "kuntaanMuuttoPv": { "arvo": "2019-05-04", "tarkkuus": "PAIVA" }
   },
   {
+    "tietoryhma": "EDELLINEN_KOTIKUNTA",
+    "kuntakoodi": "049",
+    "kuntaanMuuttopv": { "arvo": "1994-01-01", "tarkkuus": "PAIVA" },
+    "kunnastaPoisMuuttopv": { "arvo": "1996-03-21", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "EDELLINEN_KOTIKUNTA",
+    "kuntakoodi": "091",
+    "kuntaanMuuttopv": { "arvo": "1996-03-22", "tarkkuus": "PAIVA" },
+    "kunnastaPoisMuuttopv": { "arvo": "2001-07-08", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "EDELLINEN_KOTIKUNTA",
+    "kuntakoodi": "200",
+    "kuntaanMuuttopv": { "arvo": "2001-07-09", "tarkkuus": "PAIVA" },
+    "kunnastaPoisMuuttopv": { "arvo": "2012-10-27", "tarkkuus": "PAIVA" }
+  },
+  {
+    "tietoryhma": "EDELLINEN_KOTIKUNTA",
+    "kuntakoodi": "049",
+    "kuntaanMuuttopv": { "arvo": "2012-10-28", "tarkkuus": "PAIVA" },
+    "kunnastaPoisMuuttopv": { "arvo": "2019-05-03", "tarkkuus": "PAIVA" }
+  },
+  {
     "tietoryhma": "VAESTOKIRJANPITOKUNTA",
     "kuntakoodi": "091",
     "kuntaanMuuttopv": { "arvo": "2019-05-04", "tarkkuus": "PAIVA" }
