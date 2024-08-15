@@ -19,8 +19,8 @@ spring:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/oppijanumerorekisteri?ApplicationName=oppijanumerorekisteri-service
-    username: postgres
-    password: postgres
+    username: oph
+    password: oph
     hikari:
       maximum-pool-size: 2
       connection-timeout: 10000
@@ -104,6 +104,7 @@ oppijanumerorekisteri:
     perustieto-enabled: false
     muutostieto-enabled: false
     fetch-enabled: true
+    kotikuntahistoria-enabled: true
     base-url: http://localhost:8080
     username: mutpT1x
     password: pwd
