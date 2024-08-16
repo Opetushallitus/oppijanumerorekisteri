@@ -17,4 +17,7 @@ public interface VtjMuutostietoClient {
 
     List<VtjPerustieto> fetchHenkiloPerustieto(List<String> hetus)
             throws InterruptedException, ExecutionException, JsonProcessingException, IOException;
+
+    List<VtjPerustieto> fetchEdellinenKotikuntaPerustieto(List<String> hetus)
+            throws InterruptedException, ExecutionException, JsonProcessingException, IOException;
 }

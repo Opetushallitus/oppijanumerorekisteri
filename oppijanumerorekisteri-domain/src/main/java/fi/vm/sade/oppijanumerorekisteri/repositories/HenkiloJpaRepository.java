@@ -202,4 +202,6 @@ public interface HenkiloJpaRepository {
     List<String> findHetusInVtjBucket(long bucketId);
 
     List<String> findHetusWithoutVtjBucket();
+
+    List<String> findHetusWithoutKotikuntaHistoriaMassUpdate(long limit);
 }

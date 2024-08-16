@@ -85,6 +85,13 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
         public final List<String> hetulista;
     }
 
+    @RequiredArgsConstructor
+    @Getter
+    private static class PerustietoEdellinenKotikuntaRequestBody {
+        public final List<String> hetulista;
+        public final List<String> tietoryhmat = List.of("EDELLINEN_KOTIKUNTA", "KOTIKUNTA", "TURVAKIELTO");
+    }
+
     @NoArgsConstructor
     @Setter
     @Getter
@@ -216,6 +223,15 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     public List<VtjPerustieto> fetchHenkiloPerustieto(List<String> hetus)
             throws InterruptedException, ExecutionException, JsonProcessingException, IOException {
         PerustietoRequestBody body = new PerustietoRequestBody(hetus);
+        SdkHttpFullRequest request = httpRequestBuilder("/api/v1/perustiedot", SdkHttpMethod.POST, body);
+        InputStream response = executeRequestWithRetry(request);
+        return parsePerustietoResponse(response).perustiedot;
+    }
+
+    @Override
+    public List<VtjPerustieto> fetchEdellinenKotikuntaPerustieto(List<String> hetus)
+            throws InterruptedException, ExecutionException, JsonProcessingException, IOException {
+        PerustietoEdellinenKotikuntaRequestBody body = new PerustietoEdellinenKotikuntaRequestBody(hetus);
         SdkHttpFullRequest request = httpRequestBuilder("/api/v1/perustiedot", SdkHttpMethod.POST, body);
         InputStream response = executeRequestWithRetry(request);
         return parsePerustietoResponse(response).perustiedot;
