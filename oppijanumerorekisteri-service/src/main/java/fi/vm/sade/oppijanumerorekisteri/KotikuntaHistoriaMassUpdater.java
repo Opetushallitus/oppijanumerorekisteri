@@ -49,8 +49,8 @@ public class KotikuntaHistoriaMassUpdater {
         log.info("starting kotikuntahistoria task");
         List<String> hetus = henkiloRepository.findHetusWithoutKotikuntaHistoriaMassUpdate(1000);
         try {
-            List<VtjPerustieto> perustietoList = muutostietoClient.fetchEdellinenKotikuntaPerustieto(hetus);
-            if (perustietoList.size() > 0) {
+            if (hetus.size() > 0) {
+                List<VtjPerustieto> perustietoList = muutostietoClient.fetchEdellinenKotikuntaPerustieto(hetus);
                 perustietoList.stream().forEach(perustieto -> transaction.execute(status -> handlePerustieto(perustieto)));
             } else {
                 log.info("found 0 henkilos without kotikuntahistoria mass update");
