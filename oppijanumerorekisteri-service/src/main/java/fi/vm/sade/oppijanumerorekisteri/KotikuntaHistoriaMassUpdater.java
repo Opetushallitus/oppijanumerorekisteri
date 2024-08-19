@@ -89,7 +89,7 @@ public class KotikuntaHistoriaMassUpdater {
                 boolean isTurvakielto = isTurvakielto(perustieto.tietoryhmat);
                 saveKotikuntaHistoria(henkilo.getId(), perustieto.tietoryhmat, isTurvakielto);
                 updateKotikunta(henkilo, perustieto.tietoryhmat);
-                jdbcTemplate.update("delete from kotikunta_historia_mass_update where henkilo_id = ?", henkilo.getId());
+                jdbcTemplate.update("update kotikunta_historia_mass_update set updated = true where henkilo_id = ?", henkilo.getId());
                 log.info(henkilo.getOidHenkilo() + " updated with kotikuntahistoria");
             } catch (Exception e) {
                 log.error("failed to save kotikuntahistoria for henkilo " + henkilo.getOidHenkilo(), e);

@@ -747,6 +747,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                   AND h.yksiloityvtj = true
                   AND h.vtj_bucket IS NOT NULL
                   AND k.henkilo_id IS NOT NULL
+                  AND k.updated = false
                 LIMIT :limit
                 """,
                 String.class).setParameter("limit", limit);
