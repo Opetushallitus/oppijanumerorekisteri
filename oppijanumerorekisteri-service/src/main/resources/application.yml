@@ -101,10 +101,6 @@ oppijanumerorekisteri:
       enabled: false
   allow-fake-ssn: true
   vtj-muutosrajapinta:
-    perustieto-enabled: false
-    muutostieto-enabled: false
-    fetch-enabled: true
-    kotikuntahistoria-enabled: true
     base-url: http://localhost:8080
     username: mutpT1x
     password: pwd
