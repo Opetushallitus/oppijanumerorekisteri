@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
@@ -100,6 +101,15 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
         public List<VtjPerustieto> perustiedot;
     }
 
+    @NoArgsConstructor
+    @Setter
+    @Getter
+    private static class PerustietoViikkokantaResponse {
+        public boolean ajanTasalla;
+        public List<VtjPerustieto> perustiedot;
+        public String poimintapv;
+    }
+
 
     AvainResponse parseAvainResponse(InputStream content) {
         try {
@@ -122,6 +132,15 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     PerustietoResponse parsePerustietoResponse(InputStream content) {
         try {
             return objectMapper.readValue(content, new TypeReference<PerustietoResponse>() {
+            });
+        } catch (IOException ioe) {
+            throw new CompletionException(ioe);
+        }
+    }
+
+    PerustietoViikkokantaResponse parsePerustietoViikkokantaResponse(InputStream content) {
+        try {
+            return objectMapper.readValue(content, new TypeReference<PerustietoViikkokantaResponse>() {
             });
         } catch (IOException ioe) {
             throw new CompletionException(ioe);
@@ -232,8 +251,10 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     public List<VtjPerustieto> fetchEdellinenKotikuntaPerustieto(List<String> hetus)
             throws InterruptedException, ExecutionException, JsonProcessingException, IOException {
         PerustietoEdellinenKotikuntaRequestBody body = new PerustietoEdellinenKotikuntaRequestBody(hetus);
-        SdkHttpFullRequest request = httpRequestBuilder("/api/v1/perustiedot", SdkHttpMethod.POST, body);
+        SdkHttpFullRequest request = httpRequestBuilder("/api/v1/perustiedot-vko", SdkHttpMethod.POST, body);
         InputStream response = executeRequestWithRetry(request);
-        return parsePerustietoResponse(response).perustiedot;
+        var perustieto = parsePerustietoViikkokantaResponse(response);
+        log.info("perustieto-vko fetched with poimintapv " + perustieto.getPoimintapv().toString());
+        return perustieto.perustiedot;
     }
 }
