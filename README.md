@@ -46,4 +46,4 @@ Koska käsitellään henkilötietoja kaikki servicekutsut lokitetaan alla olevan
 https://github.com/Opetushallitus/auditlogger
 
 ## Apidokumentaatio
-Rest API on dokumentoitu swaggerin avulla ja löytyy osoitteesta https://virkailija.opintopolku.fi/oppijanumerorekisteri-service/swagger-ui.html
+Rest API on dokumentoitu swaggerin avulla ja löytyy osoitteesta https://virkailija.opintopolku.fi/oppijanumerorekisteri-service/swagger-ui/

@@ -38,7 +38,7 @@ public class HenkiloCreatePostValidator implements Validator {
         Henkilo henkilo = (Henkilo) o;
 
         String hetu = henkilo.getHetu();
-        if (!StringUtils.isEmpty(hetu)) {
+        if (StringUtils.hasText(hetu)) {
             Stream<Function<String, Optional<Henkilo>>> findByHetuFunctions = Stream
                     .of(henkiloRepository::findByHetu, henkiloRepository::findByKaikkiHetut);
             findByHetuFunctions.forEach(findByHetuFun -> findByHetuFun.apply(hetu).ifPresent(henkiloByHetu

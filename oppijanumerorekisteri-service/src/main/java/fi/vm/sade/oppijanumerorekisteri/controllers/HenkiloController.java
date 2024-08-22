@@ -345,16 +345,6 @@ public class HenkiloController {
         return identificationService.remove(oid, idpEntityId, identifier);
     }
 
-    @Operation(summary = "Listaa sallitut henkilötyypit henkilöiden luontiin liittyen.", description = "Listaa ne henkilötyypit joita kirjautunt käyttäjä saa luoda henkilöhallintaan.")
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_READ',"
-            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
-            + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU',"
-            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
-    @RequestMapping(value = "/henkilotypes", method = RequestMethod.GET)
-    public List<String> findPossibleHenkiloTypes() {
-        return this.henkiloService.listPossibleHenkiloTypesAccessible();
-    }
-
     @PreAuthorize("@permissionChecker.isAllowedToModifyPerson(#henkiloOid, {'OPPIJANUMEROREKISTERI': {'MANUAALINEN_YKSILOINTI'}}, #permissionService)")
     @RequestMapping(value = "/{oid}/yksiloi", method = RequestMethod.POST)
     @Operation(summary = "Käynnistää henkilön yksilöinnin.", description = "Käynnistää henkilön yksilöintiprosessin VTJ:n suuntaan manuaalisesti.")

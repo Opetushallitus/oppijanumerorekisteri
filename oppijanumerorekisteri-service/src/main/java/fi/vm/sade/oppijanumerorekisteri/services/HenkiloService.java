@@ -47,8 +47,6 @@ public interface HenkiloService {
 
     HenkiloDto getHenkiloByIDPAndIdentifier(IdpEntityId idp, String identifier);
 
-    List<String> listPossibleHenkiloTypesAccessible();
-
     HenkiloReadDto getMasterByOid(String henkiloOid);
 
     Map<String, HenkiloDto> getMastersByOids(Set<String> henkiloOids);

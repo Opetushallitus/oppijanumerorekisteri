@@ -308,26 +308,6 @@ public class HenkiloServiceTest {
     }
 
     @Test
-    public void listPossibleHenkiloTypesAccessibleSuperUser() {
-        given(this.permissionCheckerMock.isSuperUserOrCanReadAll()).willReturn(true);
-        List<String> henkiloTyypit = this.service.listPossibleHenkiloTypesAccessible()
-                .stream().sorted(String::compareToIgnoreCase).collect(Collectors.toList());
-        assertThat(henkiloTyypit.size()).isEqualTo(3);
-        assertThat(henkiloTyypit.get(0)).isEqualTo("OPPIJA");
-        assertThat(henkiloTyypit.get(1)).isEqualTo("PALVELU");
-        assertThat(henkiloTyypit.get(2)).isEqualTo("VIRKAILIJA");
-    }
-
-    @Test
-    public void listPossibleHenkiloTypesAccessibleNormalUser() {
-        given(this.permissionCheckerMock.isSuperUser()).willReturn(false);
-        List<String> henkiloTyypit = this.service.listPossibleHenkiloTypesAccessible();
-        assertThat(henkiloTyypit.size()).isEqualTo(1);
-        assertThat(henkiloTyypit.get(0)).isEqualTo("VIRKAILIJA");
-    }
-
-
-    @Test
     public void findHenkiloViitteesTest() {
         given(this.oppijanumerorekisteriProperties.getHenkiloViiteSplitSize()).willReturn(5000);
         given(this.henkiloViiteRepositoryMock.findBy(any())).willReturn(singletonList(

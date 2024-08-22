@@ -10,7 +10,6 @@ public class KayttajaReadDto {
     private String oid;
     private String kayttajaTyyppi;
 
-    @Deprecated
     public boolean isOppija() {
         return kayttajaTyyppi == null || "OPPIJA".equals(kayttajaTyyppi);
     }

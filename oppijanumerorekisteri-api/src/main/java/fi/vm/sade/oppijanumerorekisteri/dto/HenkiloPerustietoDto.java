@@ -83,9 +83,4 @@ public class HenkiloPerustietoDto implements Serializable {
     public boolean isSukunimiValidIfCreate() {
         return isFind() || hasLength(getSukunimi());
     }
-
-    @Deprecated
-    public HenkiloTyyppi getHenkiloTyyppi() {
-        return HenkiloTyyppi.OPPIJA;
-    }
 }

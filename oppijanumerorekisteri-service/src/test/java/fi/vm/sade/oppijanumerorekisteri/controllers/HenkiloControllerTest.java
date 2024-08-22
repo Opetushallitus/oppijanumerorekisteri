@@ -75,16 +75,12 @@ public class HenkiloControllerTest {
     private DuplicateService duplicateService;
     @MockBean
     private IdentificationService identificationService;
-    @Autowired
-    private PermissionChecker permissionChecker;
     @MockBean
     private KayttooikeusClient kayttooikeusClient;
     @MockBean
     private HenkiloUpdatePostValidator henkiloUpdatePostValidator;
     @MockBean
     private YksilointiService yksilointiService;
-    @Autowired
-    private DevProperties devProperties;
     @Autowired
     private ObjectMapper objectMapper;
     @MockBean
@@ -456,17 +452,6 @@ public class HenkiloControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
-        verifyReadNoAudit();
-    }
-
-    @Test
-    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
-    public void findPossibleHenkiloTypes() throws Exception {
-        String resultContent = "[\"VIRKAILIJA\", \"PALVELU\", \"OPPIJA\"]";
-        given(this.henkiloService.listPossibleHenkiloTypesAccessible())
-                .willReturn(Arrays.asList("VIRKAILIJA", "PALVELU", "OPPIJA"));
-        this.mvc.perform(get("/henkilo/henkilotypes").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andExpect(content().json(resultContent));
         verifyReadNoAudit();
     }
 

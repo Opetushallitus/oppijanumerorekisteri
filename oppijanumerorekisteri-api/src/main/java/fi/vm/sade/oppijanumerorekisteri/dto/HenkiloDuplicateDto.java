@@ -32,9 +32,4 @@ public class HenkiloDuplicateDto {
     private Set<KansalaisuusReadDto> kansalaisuus;
     private Set<String> passinumerot;
     private Collection<String> emails;
-
-    @Deprecated
-    public HenkiloTyyppi getHenkiloTyyppi() {
-        return HenkiloTyyppi.OPPIJA;
-    }
 }

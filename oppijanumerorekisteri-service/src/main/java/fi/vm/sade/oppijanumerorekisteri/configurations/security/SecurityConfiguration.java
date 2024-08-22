@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.configurations.security;
 
 import fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter;
 import fi.vm.sade.javautils.kayttooikeusclient.OphUserDetailsServiceImpl;
-import fi.vm.sade.oppijanumerorekisteri.configurations.ConfigEnums;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.CasProperties;
 import fi.vm.sade.properties.OphProperties;
 
@@ -13,7 +12,6 @@ import org.apereo.cas.client.validation.TicketValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.env.Environment;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;
 import org.springframework.security.cas.web.CasAuthenticationEntryPoint;
@@ -33,15 +31,13 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 public class SecurityConfiguration {
     private CasProperties casProperties;
     private OphProperties ophProperties;
-    private Environment environment;
     private SessionMappingStorage sessionMappingStorage;
 
     public static final String SPRING_CAS_SECURITY_CHECK_PATH = "/j_spring_cas_security_check";
 
-    public SecurityConfiguration(CasProperties casProperties, OphProperties ophProperties, Environment environment, SessionMappingStorage sessionMappingStorage) {
+    public SecurityConfiguration(CasProperties casProperties, OphProperties ophProperties, SessionMappingStorage sessionMappingStorage) {
         this.casProperties = casProperties;
         this.ophProperties = ophProperties;
-        this.environment = environment;
         this.sessionMappingStorage = sessionMappingStorage;
     }
 

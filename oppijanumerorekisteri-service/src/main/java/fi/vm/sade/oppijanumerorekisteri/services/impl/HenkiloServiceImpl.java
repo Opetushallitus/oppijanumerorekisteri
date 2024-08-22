@@ -19,7 +19,6 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
-import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.util.batchprocessing.BatchProcessor;
@@ -49,7 +48,6 @@ public class HenkiloServiceImpl implements HenkiloService {
     private final YhteystietoConverter yhteystietoConverter;
     private final OrikaConfiguration mapper;
     private final UserDetailsHelper userDetailsHelper;
-    private final PermissionChecker permissionChecker;
 
     private final OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
 
@@ -274,15 +272,6 @@ public class HenkiloServiceImpl implements HenkiloService {
         Henkilo henkilo = this.henkiloDataRepository.findByIdentification(IdentificationDto.of(idp, identifier))
                 .orElseThrow(NotFoundException::new);
         return this.mapper.map(henkilo, HenkiloDto.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<String> listPossibleHenkiloTypesAccessible() {
-        if (this.permissionChecker.isSuperUserOrCanReadAll()) {
-            return Arrays.stream(HenkiloTyyppi.values()).map(HenkiloTyyppi::toString).collect(Collectors.toList());
-        }
-        return Collections.singletonList(HenkiloTyyppi.VIRKAILIJA.toString());
     }
 
     @Override

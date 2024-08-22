@@ -90,7 +90,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     private void yksiloiAutomaattisesti(Henkilo henkilo) {
-        if (StringUtils.isEmpty(henkilo.getHetu())) {
+        if (!StringUtils.hasText(henkilo.getHetu())) {
             logger.warn("Henkilöä '{}' ei voida yksilöidä koska hetu puuttuu", henkilo.getOidHenkilo());
             return;
         }
@@ -140,7 +140,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     @Transactional
     public Henkilo yksiloiManuaalisesti(final String henkiloOid) {
         Henkilo henkilo = getHenkiloByOid(henkiloOid);
-        if (StringUtils.isEmpty(henkilo.getHetu())) {
+        if (!StringUtils.hasText(henkilo.getHetu())) {
             throw new ValidationException(String.format("Henkilöä '%s' ei voida yksilöidä koska hetu puuttuu", henkilo.getOidHenkilo()));
         }
         return yksiloiHenkilo(henkilo);
@@ -150,7 +150,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     @Transactional
     public Henkilo hetuttomanYksilointi(String henkiloOid) {
         Henkilo henkilo = getHenkiloByOid(henkiloOid);
-        if (!StringUtils.isEmpty(henkilo.getHetu())) {
+        if (StringUtils.hasText(henkilo.getHetu())) {
             throw new ValidationException("Henkilöllä on hetu, yksilöintiä ei voida tehdä");
         }
 
@@ -198,7 +198,7 @@ public class YksilointiServiceImpl implements YksilointiService {
 
     // Palauttaa tiedon ovatko henkilön nimet epävastaavia VTJ-datan kanssa.
     private boolean yhtenevyysTarkistus(@NotNull Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo) {
-        if (StringUtils.hasLength(henkilo.getHetu()) && StringUtils.isEmpty(henkilo.getSukunimi()) && StringUtils.isEmpty(henkilo.getEtunimet())) {
+        if (StringUtils.hasLength(henkilo.getHetu()) && !StringUtils.hasText(henkilo.getSukunimi()) && !StringUtils.hasText(henkilo.getEtunimet())) {
             return false;
         }
         Set<String> kaikkiSukunimet = Stream.concat(Stream.of(yksiloityHenkilo.getSukunimi()),
@@ -290,7 +290,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         yksilointitieto.clearYhteystiedotRyhma();
         Optional.of(yksiloityHenkilo)
                 .filter(yHenkilo -> (yHenkilo.getOsoitteet() != null && !yHenkilo.getOsoitteet().isEmpty()) ||
-                        !StringUtils.isEmpty(yHenkilo.getSahkoposti()))
+                        StringUtils.hasText(yHenkilo.getSahkoposti()))
                 .filter(yHenkilo -> isOppija(henkilo.getOidHenkilo()))
                 .map(yHenkilo -> addYhteystiedot(yHenkilo, henkilo.getAsiointiKieli()))
                 .ifPresent(yhteystiedotRyhmas -> yhteystiedotRyhmas.forEach(yksilointitieto::addYhteystiedotRyhma));
@@ -300,7 +300,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     private String maaritaSukupuoli(YksiloityHenkilo yksiloityHenkilo) {
-        if (StringUtils.isEmpty(yksiloityHenkilo.getSukupuoli())) {
+        if (!StringUtils.hasText(yksiloityHenkilo.getSukupuoli())) {
             if (yksiloityHenkilo.getHetu() == null) {
                 return null;
             }
@@ -328,7 +328,7 @@ public class YksilointiServiceImpl implements YksilointiService {
                             .ryhmaAlkuperaTieto(RYHMAALKUPERA_VTJ).readOnly(true).yhteystieto(yhteystietoSet).build());
                 }));
 
-        if (!StringUtils.isEmpty(yksiloityHenkilo.getSahkoposti())) {
+        if (StringUtils.hasText(yksiloityHenkilo.getSahkoposti())) {
             Yhteystieto yt = Yhteystieto.builder(YhteystietoTyyppi.YHTEYSTIETO_SAHKOPOSTI, yksiloityHenkilo.getSahkoposti()).build();
             YhteystiedotRyhma sahkYhtTieto = YhteystiedotRyhma.builder().ryhmaKuvaus(RYHMAKUVAUS_VTJ_SAHKOINEN_OSOITE)
                     .ryhmaAlkuperaTieto(RYHMAALKUPERA_VTJ).readOnly(true).yhteystieto(yt).build();
@@ -359,7 +359,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     private String getYhteystietoArvoByAsiointikieli(Kielisyys asiointiKieli, String yhteystietoR, String yhteystietoS) {
         return Optional.ofNullable(yhteystietoR)
                 .filter(yhteystieto -> asiointiKieli != null && asiointiKieli.getKieliKoodi().equals(KIELIKOODI_SV))
-                .filter(yhteystieto -> !StringUtils.isEmpty(yhteystietoR) || StringUtils.isEmpty(yhteystietoS))
+                .filter(yhteystieto -> StringUtils.hasText(yhteystietoR) || !StringUtils.hasText(yhteystietoS))
                 .orElse(yhteystietoS);
     }
 
@@ -469,7 +469,7 @@ public class YksilointiServiceImpl implements YksilointiService {
                     yhteystiedotRyhmaRepository.delete(yhteystiedotRyhmaI);
                     iterator.remove();
                 }));
-        if (isOppija(henkilo.getOidHenkilo()) && (!CollectionUtils.isEmpty(yksiloityHenkilo.getOsoitteet()) || !StringUtils.isEmpty(yksiloityHenkilo.getSahkoposti()))) {
+        if (isOppija(henkilo.getOidHenkilo()) && (!CollectionUtils.isEmpty(yksiloityHenkilo.getOsoitteet()) || StringUtils.hasText(yksiloityHenkilo.getSahkoposti()))) {
             henkilo.addAllYhteystiedotRyhmas(addYhteystiedot(yksiloityHenkilo, henkilo.getAsiointiKieli()));
         }
     }
@@ -489,7 +489,7 @@ public class YksilointiServiceImpl implements YksilointiService {
             throw new ValidationException("Yksilöintiä ei voi purkaa koska henkilöä ei ole yksilöity");
         }
 
-        if (!StringUtils.isEmpty(henkilo.getHetu()) || henkilo.isYksiloityVTJ()) {
+        if (StringUtils.hasText(henkilo.getHetu()) || henkilo.isYksiloityVTJ()) {
             throw new ValidationException("Henkilöllä on hetu tai se on VTJ yksilöity, yksilöintiä ei voida purkaa");
         }
 
@@ -554,7 +554,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         henkilo.setYksiloity(false);
         henkilo.setTurvakielto(yksilointitieto.isTurvakielto());
 
-        if (!StringUtils.isEmpty(yksilointitieto.getKutsumanimi())) {
+        if (StringUtils.hasText(yksilointitieto.getKutsumanimi())) {
             henkilo.setKutsumanimi(yksilointitieto.getKutsumanimi());
         }
 

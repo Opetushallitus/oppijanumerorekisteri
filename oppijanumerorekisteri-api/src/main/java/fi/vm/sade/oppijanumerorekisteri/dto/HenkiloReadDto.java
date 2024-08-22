@@ -42,11 +42,6 @@ public class HenkiloReadDto {
     private Set<String> passinumerot;
 
     @Deprecated
-    public HenkiloTyyppi getHenkiloTyyppi() {
-        return HenkiloTyyppi.OPPIJA;
-    }
-
-    @Deprecated
     public Set<KielisyysReadDto> getKielisyys() {
         return new HashSet<>();
     }

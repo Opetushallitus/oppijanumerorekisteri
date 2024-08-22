@@ -116,7 +116,7 @@ public class HenkiloUpdatePostValidator implements Validator {
             if (henkiloByOid.isYksiloityVTJ()) {
                 // estetään hetun muuttaminen jos yksilöinti on jo tehty
                 errors.rejectValue("hetu", "socialsecuritynr.already.set");
-            } else if (!StringUtils.isEmpty(dto.getHetu())) {
+            } else if (StringUtils.hasText(dto.getHetu())) {
                 // tarkistetaan että hetu on uniikki
                 Stream<Function<String, Optional<Henkilo>>> findByHetuFunctions = Stream
                         .of(henkiloRepository::findByHetu, henkiloRepository::findByKaikkiHetut);

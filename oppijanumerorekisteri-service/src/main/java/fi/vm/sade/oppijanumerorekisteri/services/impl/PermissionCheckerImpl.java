@@ -10,8 +10,6 @@ import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -40,8 +38,6 @@ public class PermissionCheckerImpl implements PermissionChecker {
     public static final String KAYTTOOIKEUS_TUONTIDATA_READ = "TUONTIDATA_READ";
     public static final String KAYTTOOIKEUS_HENKILON_RU = "HENKILON_RU";
     public static final String KAYTTOOIKEUS_READ = "READ";
-
-    private final static Logger logger = LoggerFactory.getLogger(PermissionChecker.class);
 
     private final KayttooikeusClient kayttooikeusClient;
 

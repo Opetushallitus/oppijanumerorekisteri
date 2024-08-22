@@ -6,7 +6,6 @@ import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.OrganisaatioClient;
-import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -15,7 +14,6 @@ import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.Sort;
-import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import software.amazon.awssdk.services.sns.SnsClient;
 
@@ -75,12 +73,6 @@ public class OppijaServiceTest {
 
     @Autowired
     private IdentificationRepository identificationRepository;
-
-    @Autowired
-    private TuontiRepository tuontiRepository;
-
-    @Autowired
-    private OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
 
     @Autowired
     private ObjectMapper objectMapper;
