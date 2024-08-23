@@ -8,4 +8,4 @@ oppijanumerorekisteri.tasks.export.lampi-external-id: ${ssm_lampi_external_id}
 oppijanumerorekisteri.vtj-muutosrajapinta.fetch-enabled: false
 oppijanumerorekisteri.vtj-muutosrajapinta.kotikuntahistoria-enabled: true
 oppijanumerorekisteri.vtj-muutosrajapinta.muutostieto-enabled: false
-oppijanumerorekisteri.vtj-muutosrajapinta.perustieto-enabled: false
+oppijanumerorekisteri.vtj-muutosrajapinta.perustieto-enabled: true
