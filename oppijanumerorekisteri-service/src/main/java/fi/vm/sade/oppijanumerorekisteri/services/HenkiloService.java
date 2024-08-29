@@ -95,4 +95,8 @@ public interface HenkiloService {
     void removeContactInfo(String oid, String... removeTypes);
 
     Set<String> setPassportNumbers(String oid, Set<String> passinumerot);
+
+    List<KotikuntaHistoria> getKotikuntaHistoria(List<String> oids);
+
+    List<KotikuntaHistoria> getTurvakieltoKotikuntaHistoria(List<String> oids);
 }

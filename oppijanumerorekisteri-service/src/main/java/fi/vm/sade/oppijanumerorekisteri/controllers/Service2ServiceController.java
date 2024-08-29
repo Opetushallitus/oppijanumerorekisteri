@@ -170,4 +170,18 @@ public class Service2ServiceController {
     public HenkiloForceReadDto getByHetuForMuutostieto(@PathVariable String hetu) {
         return henkiloService.getByHetuForMuutostieto(hetu);
     }
+
+    @PostMapping("/henkilo/kotikuntahistoria")
+    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_KOTIKUNTAHISTORIA')")
+    @Operation(summary ="Palauttaa kotikuntahistorian annetuille henkilöille")
+    public List<KotikuntaHistoria> getKotikuntaHistoria(@Validated @RequestBody List<String> oidList) {
+        return henkiloService.getKotikuntaHistoria(oidList);
+    }
+
+    @PostMapping("/henkilo/kotikuntahistoria/turvakielto")
+    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_TURVAKIELTOKOTIKUNTAHISTORIA')")
+    @Operation(summary ="Palauttaa kotikuntahistorian annetuille henkilöille")
+    public List<KotikuntaHistoria> getTurvakieltoKotikuntaHistoria(@Validated @RequestBody List<String> oidList) {
+        return henkiloService.getTurvakieltoKotikuntaHistoria(oidList);
+    }
 }

@@ -10,6 +10,7 @@ import com.querydsl.jpa.JPQLTemplates;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.dto.KotikuntaHistoria;
 import fi.vm.sade.oppijanumerorekisteri.enums.CleanupStep;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
@@ -752,5 +753,35 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                 """,
                 String.class).setParameter("limit", limit);
         return hetuQuery.getResultList();
+    }
+
+    @Override
+    public List<KotikuntaHistoria> findKotikuntaHistorias(List<String> oids) {
+        Query kotikuntaQuery = this.entityManager.createNativeQuery("""
+                SELECT h.oidhenkilo AS oid,
+                       kh.kotikunta AS kotikunta,
+                       kh.kuntaan_muuttopv AS kuntaanMuuttoPv,
+                       kh.kunnasta_pois_muuttopv AS kunnastaPoisMuuttopv
+                FROM henkilo h
+                LEFT JOIN kotikunta_historia kh ON h.id = kh.henkilo_id
+                WHERE h.oidhenkilo in :oids
+                """,
+                KotikuntaHistoria.class).setParameter("oids", oids);
+        return kotikuntaQuery.getResultList();
+    }
+
+    @Override
+    public List<KotikuntaHistoria> findTurvakieltoKotikuntaHistorias(List<String> oids) {
+        Query kotikuntaQuery = this.entityManager.createNativeQuery("""
+                SELECT h.oidhenkilo AS oid,
+                       kh.kotikunta AS kotikunta,
+                       kh.kuntaan_muuttopv AS kuntaanMuuttoPv,
+                       kh.kunnasta_pois_muuttopv AS kunnastaPoisMuuttopv
+                FROM henkilo h
+                LEFT JOIN turvakielto_kotikunta_historia kh ON h.id = kh.henkilo_id
+                WHERE h.oidhenkilo in :oids
+                """,
+                KotikuntaHistoria.class).setParameter("oids", oids);
+        return kotikuntaQuery.getResultList();
     }
 }

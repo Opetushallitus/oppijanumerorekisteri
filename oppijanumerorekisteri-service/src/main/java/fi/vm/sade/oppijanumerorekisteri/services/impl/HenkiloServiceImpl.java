@@ -430,6 +430,16 @@ public class HenkiloServiceImpl implements HenkiloService {
                 .orElseThrow(() -> new NotFoundException(hetu));
     }
 
+    @Override
+    public List<KotikuntaHistoria> getKotikuntaHistoria(List<String> oids) {
+        return henkiloDataRepository.findKotikuntaHistorias(oids);
+    }
+
+    @Override
+    public List<KotikuntaHistoria> getTurvakieltoKotikuntaHistoria(List<String> oids) {
+        return henkiloDataRepository.findTurvakieltoKotikuntaHistorias(oids);
+    }
+
     private Optional<Henkilo> findByHetu(String hetu) {
         return henkiloDataRepository.findByHetu(hetu)
                 .or(() -> henkiloDataRepository.findByKaikkiHetut(hetu));
