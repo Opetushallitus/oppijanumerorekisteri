@@ -16,6 +16,8 @@ import fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.KotikuntaHistoriaRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.TurvakieltoKotikuntaHistoriaRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +48,8 @@ public class DuplicateServiceImpl implements DuplicateService {
     private final OrikaConfiguration mapper;
     private final KayttooikeusClient kayttooikeusClient;
     private final AuditlogAspectHelper auditlogAspectHelper;
+    private final KotikuntaHistoriaRepository kotikuntaHistoriaRepository;
+    private final TurvakieltoKotikuntaHistoriaRepository turvakieltoKotikuntaHistoriaRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -128,13 +132,18 @@ public class DuplicateServiceImpl implements DuplicateService {
                 .filter((henkiloWithSameHetu) -> !henkiloWithSameHetu.getOidHenkilo().equals(henkilo.getOidHenkilo()))
                 .map(oppijaWithSameHetu -> {
                     log.info("Found hetu duplicate; clearing duplicate's hetu and yksilöinti");
-                    String[] oppijaWithSameHetuHetuhistoria = oppijaWithSameHetu.getKaikkiHetut()
-                            .toArray(new String[0]);
+                    String[] oppijaWithSameHetuHetuhistoria = oppijaWithSameHetu.getKaikkiHetut().toArray(new String[0]);
                     oppijaWithSameHetu.clearHetut();
                     oppijaWithSameHetu.setHetu(null);
                     oppijaWithSameHetu.setYksiloity(false);
                     oppijaWithSameHetu.setYksiloityVTJ(false);
-                    // Hetu is unique so we need to flush when moving it
+                    kotikuntaHistoriaRepository.findAllByHenkiloId(oppijaWithSameHetu.getId())
+                        .stream()
+                        .forEach(historia -> kotikuntaHistoriaRepository.delete(historia));
+                    turvakieltoKotikuntaHistoriaRepository.findAllByHenkiloId(oppijaWithSameHetu.getId())
+                        .stream()
+                        .forEach(historia -> turvakieltoKotikuntaHistoriaRepository.delete(historia));
+                    // Hetu is unique so we need to flush when removing it
                     this.henkiloDataRepository.saveAndFlush(oppijaWithSameHetu);
                     henkilo.addHetu(oppijaWithSameHetuHetuhistoria);
                     return this.linkHenkilos(henkilo.getOidHenkilo(),
