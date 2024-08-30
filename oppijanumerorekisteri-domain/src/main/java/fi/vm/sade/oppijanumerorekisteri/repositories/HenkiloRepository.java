@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 
 // Note: can return only Henkilo objects
-public interface HenkiloRepository extends QuerydslPredicateExecutor, JpaRepository<Henkilo, Long>, HenkiloJpaRepository {
+public interface HenkiloRepository extends QuerydslPredicateExecutor<Henkilo>, JpaRepository<Henkilo, Long>, HenkiloJpaRepository {
     @EntityGraph("henkiloDto")
     List<Henkilo> findByOidHenkiloIsIn(Collection<String> oidHenkilo);
 

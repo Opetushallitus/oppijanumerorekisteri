@@ -19,7 +19,7 @@ class YhteystietoDtoTest {
     private static final Validator jakartaValidator = Validation.buildDefaultValidatorFactory().getValidator();
     private static final SpringValidatorAdapter validator = new SpringValidatorAdapter(jakartaValidator);
 
-    private static Stream emailParamsProvider() {
+    private static Stream<Arguments> emailParamsProvider() {
         Function<String, YhteystietoDto> test = s -> YhteystietoDto.builder()
                 .yhteystietoTyyppi(YhteystietoTyyppi.YHTEYSTIETO_SAHKOPOSTI).yhteystietoArvo(s).build();
         return Stream.of(

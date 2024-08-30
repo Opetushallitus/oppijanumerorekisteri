@@ -43,7 +43,7 @@ public class HuoltajasuhdeRepositoryImpl implements HuoltajasuhdeRepository {
         QHenkiloHuoltajaSuhde qHenkiloHuoltajaSuhde = QHenkiloHuoltajaSuhde.henkiloHuoltajaSuhde;
         QHenkilo qHenkilo = QHenkilo.henkilo;
 
-        JPAQuery query = new JPAQuery<>(entityManager)
+        JPAQuery<String> query = new JPAQuery<>(entityManager)
                 .from(qHenkiloHuoltajaSuhde)
                 .join(qHenkiloHuoltajaSuhde.lapsi, qHenkilo)
                 .where(qHenkiloHuoltajaSuhde.updated.goe(modifiedSince.toDate()))

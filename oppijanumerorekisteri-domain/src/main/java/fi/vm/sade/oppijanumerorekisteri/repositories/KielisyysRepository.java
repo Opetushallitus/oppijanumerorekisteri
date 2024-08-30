@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Transactional(propagation = Propagation.MANDATORY)
 @Repository
-public interface KielisyysRepository extends QuerydslPredicateExecutor, JpaRepository<Kielisyys, Long> {
+public interface KielisyysRepository extends QuerydslPredicateExecutor<Kielisyys>, JpaRepository<Kielisyys, Long> {
     Optional<Kielisyys> findByKieliKoodi(String kielikoodi);
 
     /**

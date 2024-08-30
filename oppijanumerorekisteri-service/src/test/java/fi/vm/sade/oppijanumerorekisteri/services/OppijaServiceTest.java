@@ -262,7 +262,7 @@ public class OppijaServiceTest {
                         .collect(toList()))
                 .build();
 
-        OppijaTuontiReadDto readDto = create(createDto);
+        create(createDto);
 
         List<Henkilo> henkilot = henkiloRepository.findAll();
         assertThat(henkilot).hasSize(1);

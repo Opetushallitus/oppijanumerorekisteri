@@ -5,7 +5,6 @@ import fi.vm.sade.javautils.httpclient.OphHttpClient;
 import fi.vm.sade.javautils.httpclient.apache.ApacheOphHttpClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.ConfigEnums;
-import fi.vm.sade.oppijanumerorekisteri.configurations.properties.AuthenticationProperties;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.KoodiType;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,6 @@ import static fi.vm.sade.javautils.httpclient.OphHttpClient.JSON;
 public class KoodistoClientImpl implements KoodistoClient {
     private final ObjectMapper objectMapper;
     private OphHttpClient httpClient;
-    private final AuthenticationProperties authenticationProperties;
     private final UrlConfiguration urlConfiguration;
 
     @PostConstruct

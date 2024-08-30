@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Set;
 
-public interface HenkiloViiteRepository extends QuerydslPredicateExecutor, JpaRepository<HenkiloViite, Long>, HenkiloViiteRepositoryCustom {
+public interface HenkiloViiteRepository extends QuerydslPredicateExecutor<HenkiloViite>, JpaRepository<HenkiloViite, Long>, HenkiloViiteRepositoryCustom {
     List<HenkiloViite> findByMasterOid(String masterOid);
 
     List<HenkiloViite> findBySlaveOid(String slaveOid);

@@ -33,7 +33,7 @@ public class OrganisaatioClientImplTest {
         OphHttpClientProxyRequest httpClientProxyRequestMock = mock(OphHttpClientProxyRequest.class);
         when(httpClientProxyMock.createRequest(any())).thenReturn(httpClientProxyRequestMock);
         when(httpClientProxyRequestMock.execute(any())).thenAnswer(invocation -> {
-            OphHttpResponseHandler httpResponseHandler = invocation.getArgument(0);
+            OphHttpResponseHandler<?> httpResponseHandler = invocation.getArgument(0);
             return httpResponseHandler.handleResponse(httpResponseMock);
         });
         when(httpClientProxyRequestMock.handleManually()).thenReturn(httpResponseMock);

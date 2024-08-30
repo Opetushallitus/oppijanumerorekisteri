@@ -5,7 +5,6 @@ import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -117,7 +116,7 @@ public class HenkiloServiceImplTest {
         Henkilo entity = new Henkilo();
         when(henkiloRepository.findMasterBySlaveOid(any())).thenReturn(Optional.of(entity));
 
-        HenkiloReadDto dto = impl.getMasterByOid(oid);
+        impl.getMasterByOid(oid);
 
         verify(henkiloRepository).findMasterBySlaveOid(eq(oid));
         verify(henkiloRepository, never()).findByOidHenkilo(any());
@@ -131,7 +130,7 @@ public class HenkiloServiceImplTest {
         when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.of(entity));
         when(henkiloRepository.findMasterBySlaveOid(any())).thenReturn(Optional.empty());
 
-        HenkiloReadDto dto = impl.getMasterByOid(oid);
+        impl.getMasterByOid(oid);
 
         verify(henkiloRepository).findMasterBySlaveOid(eq(oid));
         verify(henkiloRepository).findByOidHenkilo(eq(oid));

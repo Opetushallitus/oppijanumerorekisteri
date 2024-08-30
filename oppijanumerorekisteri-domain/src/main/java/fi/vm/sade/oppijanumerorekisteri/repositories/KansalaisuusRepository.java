@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Transactional(propagation = Propagation.MANDATORY)
 @Repository
-public interface KansalaisuusRepository extends QuerydslPredicateExecutor, JpaRepository<Kansalaisuus, Long> {
+public interface KansalaisuusRepository extends QuerydslPredicateExecutor<Kansalaisuus>, JpaRepository<Kansalaisuus, Long> {
 
     Optional<Kansalaisuus> findByKansalaisuusKoodi(String kansalaisuuskoodi);
 

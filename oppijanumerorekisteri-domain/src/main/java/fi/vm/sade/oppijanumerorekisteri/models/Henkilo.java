@@ -318,7 +318,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
         private Boolean yksiloity = false;
         private Boolean yksiloityVTJ = false;
         private Boolean yksilointiYritetty = false;
-        private Boolean eiYksiloida = false;
         private Boolean duplicate = false;
         private Boolean eiSuomalaistaHetua = false;
         private Boolean turvakielto = false;
@@ -356,7 +355,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     public void setKutsumanimi(String kutsumanimi) {
         this.kutsumanimi = kutsumanimi;
-        if (StringUtils.isEmpty(this.kutsumanimi)) {
+        if (!StringUtils.hasLength(this.kutsumanimi)) {
             this.kutsumanimi = this.etunimet;
         }
     }

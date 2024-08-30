@@ -5,6 +5,8 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.Oppijanumerore
 import fi.vm.sade.oppijanumerorekisteri.enums.CleanupStep;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -35,13 +37,20 @@ class RemoveAccessRightsStepTest {
     @Mock
     HenkiloRepository henkiloRepository;
 
+    private AutoCloseable mocks;
+
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        mocks = MockitoAnnotations.openMocks(this);
         step.kayttooikeusClient = kayttooikeusClient;
         step.properties = properties;
         step.henkiloRepository = henkiloRepository;
         when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.of(subject));
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        mocks.close();
     }
 
     @Test

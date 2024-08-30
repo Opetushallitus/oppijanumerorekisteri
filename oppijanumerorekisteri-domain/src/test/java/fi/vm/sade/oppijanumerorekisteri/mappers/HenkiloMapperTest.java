@@ -86,11 +86,16 @@ public class HenkiloMapperTest {
                 "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         henkilo.setPassinumerot(Set.of("passinumero"));
         HenkiloDto henkiloDto = modelmapper.map(henkilo, HenkiloDto.class);
-        assertThat(henkiloDto).isEqualToIgnoringGivenFields(henkilo,
-                "serialVersionUID", "aidinkieli", "asiointiKieli", "kielisyys", "kansalaisuus", "yhteystiedotRyhma");
-        assertThat(henkiloDto.getAidinkieli()).isEqualToIgnoringGivenFields(henkilo.getAidinkieli(), "serialVersionUID");
-        assertThat(henkiloDto.getAsiointiKieli()).isEqualToIgnoringGivenFields(henkilo.getAsiointiKieli(), "serialVersionUID");
-        assertThat(henkiloDto.getKansalaisuus()).usingElementComparatorIgnoringFields("serialVersionUID")
+        assertThat(henkiloDto).usingRecursiveComparison()
+                .ignoringFields("serialVersionUID", "aidinkieli", "asiointiKieli", "kielisyys", "kansalaisuus", "yhteystiedotRyhma", "oppijanumero")
+                .isEqualTo(henkilo);
+        assertThat(henkiloDto.getAidinkieli()).usingRecursiveComparison()
+                .ignoringFields("serialVersionUID")
+                .isEqualTo(henkilo.getAidinkieli());
+        assertThat(henkiloDto.getAsiointiKieli()).usingRecursiveComparison()
+                .ignoringFields("serialVersionUID")
+                .isEqualTo(henkilo.getAsiointiKieli());
+        assertThat(henkiloDto.getKansalaisuus()).usingRecursiveFieldByFieldElementComparatorIgnoringFields("serialVersionUID")
                 .isEqualTo(henkilo.getKansalaisuus());
         assertThat(henkiloDto.getPassinumerot()).isEqualTo(Set.of("passinumero"));
 
@@ -103,7 +108,9 @@ public class HenkiloMapperTest {
                 .isEqualTo(henkilo.getYhteystiedotRyhma().iterator().next().getYhteystieto().size()).isEqualTo(1);
         YhteystietoDto yhteystietoDto = henkiloDto.getYhteystiedotRyhma().iterator().next().getYhteystieto().iterator().next();
         Yhteystieto yhteystieto = henkilo.getYhteystiedotRyhma().iterator().next().getYhteystieto().iterator().next();
-        assertThat(yhteystietoDto).isEqualToIgnoringGivenFields(yhteystieto, "serialVersionUID");
+        assertThat(yhteystietoDto).usingRecursiveComparison()
+                .ignoringFields("serialVersionUID")
+                .isEqualTo(yhteystieto);
     }
 
     @Test
@@ -111,10 +118,14 @@ public class HenkiloMapperTest {
         HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
         Henkilo henkilo = modelmapper.map(henkiloDto, Henkilo.class);
-        assertThat(henkilo).isEqualToIgnoringGivenFields(henkilo,
-                "serialVersionUID", "aidinkieli", "asiointiKieli", "kielisyys", "kansalaisuus", "yhteystiedotRyhma", "id", "version");
-        assertThat(henkilo.getAidinkieli()).isEqualToIgnoringGivenFields(henkiloDto.getAidinkieli(), "serialVersionUID", "henkilos", "id", "version");
-        assertThat(henkilo.getKansalaisuus()).usingElementComparatorIgnoringFields("serialVersionUID", "henkilos", "id", "version")
+        assertThat(henkilo).usingRecursiveComparison()
+                .ignoringFields("serialVersionUID", "aidinkieli", "asiointiKieli", "kielisyys", "kansalaisuus", "yhteystiedotRyhma", "id", "version")
+                .isEqualTo(henkilo);
+        assertThat(henkilo.getAidinkieli()).usingRecursiveComparison()
+                .ignoringFields("serialVersionUID", "henkilos", "id", "version")
+                .isEqualTo(henkiloDto.getAidinkieli());
+        assertThat(henkilo.getKansalaisuus()).usingRecursiveComparison()
+                .ignoringFields("serialVersionUID", "henkilos", "id", "version")
                 .isEqualTo(henkiloDto.getKansalaisuus());
 
         assertThat(henkilo.getYhteystiedotRyhma().size()).isEqualTo(henkiloDto.getYhteystiedotRyhma().size()).isEqualTo(1);
@@ -126,7 +137,9 @@ public class HenkiloMapperTest {
                 .isEqualTo(henkiloDto.getYhteystiedotRyhma().iterator().next().getYhteystieto().size()).isEqualTo(1);
         Yhteystieto yhteystieto = henkilo.getYhteystiedotRyhma().iterator().next().getYhteystieto().iterator().next();
         YhteystietoDto yhteystietoDto = henkiloDto.getYhteystiedotRyhma().iterator().next().getYhteystieto().iterator().next();
-        assertThat(yhteystietoDto).isEqualToIgnoringGivenFields(yhteystieto, "serialVersionUID");
+        assertThat(yhteystietoDto).usingRecursiveComparison()
+                .ignoringFields("serialVersionUID")
+                .isEqualTo(yhteystieto);
     }
 
     @Test

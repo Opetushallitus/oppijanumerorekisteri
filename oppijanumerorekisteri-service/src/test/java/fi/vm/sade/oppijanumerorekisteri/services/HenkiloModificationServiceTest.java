@@ -24,7 +24,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -45,8 +44,6 @@ public class HenkiloModificationServiceTest {
     private HenkiloModificationService henkiloModificationService;
     @Autowired
     private DatabaseService databaseService;
-    @Autowired
-    private EntityManager entityManager;
     @Autowired
     private HenkiloRepository henkiloRepository;
     @Autowired

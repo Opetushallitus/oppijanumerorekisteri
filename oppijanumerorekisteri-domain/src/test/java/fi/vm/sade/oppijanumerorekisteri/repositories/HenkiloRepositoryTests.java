@@ -119,14 +119,19 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         this.persistHenkilo(persistedHenkilo);
         List<Henkilo> resultHenkiloList = this.dataRepository.findByOidHenkiloIsIn(Collections.singletonList("1.2.3.4.5"));
         persistedHenkilo = resultHenkiloList.get(0);
-        assertThat(persistedHenkilo).isEqualToIgnoringGivenFields(assertHenkilo, "id", "version", "yhteystiedotRyhma", "vtjsynced");
+        assertThat(persistedHenkilo).usingRecursiveComparison()
+                .ignoringFields("id", "version", "yhteystiedotRyhma", "vtjsynced", "aidinkieli.id", "aidinkieli.version", "asiointiKieli.id", "asiointiKieli.version", "kansalaisuus")
+                .isEqualTo(assertHenkilo);
         assertThat(persistedHenkilo.getYhteystiedotRyhma().size()).isEqualTo(assertHenkilo.getYhteystiedotRyhma().size()).isEqualTo(1);
-        assertThat(persistedHenkilo.getYhteystiedotRyhma().iterator().next())
-                .isEqualToIgnoringGivenFields(assertHenkilo.getYhteystiedotRyhma().iterator().next(), "id", "version", "henkilo", "yhteystieto");
+        assertThat(persistedHenkilo.getYhteystiedotRyhma().iterator().next()).usingRecursiveComparison()
+                .ignoringFields("id", "version", "henkilo", "yhteystieto")
+                .isEqualTo(assertHenkilo.getYhteystiedotRyhma().iterator().next());
         Set<Yhteystieto> persistedYhteystieto = persistedHenkilo.getYhteystiedotRyhma().iterator().next().getYhteystieto();
         Set<Yhteystieto> yhteystieto = assertHenkilo.getYhteystiedotRyhma().iterator().next().getYhteystieto();
         assertThat(persistedYhteystieto.size()).isEqualTo(yhteystieto.size()).isEqualTo(1);
-        assertThat(persistedYhteystieto.iterator().next()).isEqualToIgnoringGivenFields(yhteystieto.iterator().next(), "id", "version", "yhteystiedotRyhma");
+        assertThat(persistedYhteystieto.iterator().next()).usingRecursiveComparison()
+                .ignoringFields("id", "version", "yhteystiedotRyhma")
+                .isEqualTo(yhteystieto.iterator().next());
     }
 
     @Test
@@ -142,7 +147,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         this.testEntityManager.persist(persistedHenkilo);
         this.testEntityManager.flush();
         List<HenkiloPerustietoDto> resultHenkiloList = this.dataRepository.findByOidIn(Collections.singletonList("1.2.3.4.5"));
-        assertThat(resultHenkiloList.get(0)).isEqualToComparingFieldByFieldRecursively(assertHenkilo);
+        assertThat(resultHenkiloList.get(0)).usingRecursiveComparison().isEqualTo(assertHenkilo);
     }
 
     @Test
@@ -154,14 +159,19 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
                 "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         this.persistHenkilo(persistedHenkilo);
         persistedHenkilo = this.dataRepository.findByHetu("123456-9999").orElse(null);
-        assertThat(persistedHenkilo).isEqualToIgnoringGivenFields(henkilo, "id", "version", "yhteystiedotRyhma", "vtjsynced");
+        assertThat(persistedHenkilo).usingRecursiveComparison()
+                .ignoringFields("id", "version", "yhteystiedotRyhma", "vtjsynced", "aidinkieli.id", "aidinkieli.version", "asiointiKieli.id", "asiointiKieli.version", "kansalaisuus")
+                .isEqualTo(henkilo);
         assertThat(persistedHenkilo.getYhteystiedotRyhma().size()).isEqualTo(henkilo.getYhteystiedotRyhma().size()).isEqualTo(1);
-        assertThat(persistedHenkilo.getYhteystiedotRyhma().iterator().next())
-                .isEqualToIgnoringGivenFields(henkilo.getYhteystiedotRyhma().iterator().next(), "id", "version", "henkilo", "yhteystieto");
+        assertThat(persistedHenkilo.getYhteystiedotRyhma().iterator().next()).usingRecursiveComparison()
+                .ignoringFields("id", "version", "henkilo", "yhteystieto")
+                .isEqualTo(henkilo.getYhteystiedotRyhma().iterator().next());
         Set<Yhteystieto> persistedYhteystieto = persistedHenkilo.getYhteystiedotRyhma().iterator().next().getYhteystieto();
         Set<Yhteystieto> yhteystieto = henkilo.getYhteystiedotRyhma().iterator().next().getYhteystieto();
         assertThat(persistedYhteystieto.size()).isEqualTo(yhteystieto.size()).isEqualTo(1);
-        assertThat(persistedYhteystieto.iterator().next()).isEqualToIgnoringGivenFields(yhteystieto.iterator().next(), "id", "version", "yhteystiedotRyhma");
+        assertThat(persistedYhteystieto.iterator().next()).usingRecursiveComparison()
+                .ignoringFields("id", "version", "yhteystiedotRyhma")
+                .isEqualTo(yhteystieto.iterator().next());
     }
 
     @Test

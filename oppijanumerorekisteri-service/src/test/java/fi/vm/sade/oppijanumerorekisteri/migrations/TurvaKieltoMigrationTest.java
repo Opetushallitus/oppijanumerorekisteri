@@ -10,10 +10,6 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-
 @DataJpaTest
 class TurvaKieltoMigrationTest {
     @Autowired

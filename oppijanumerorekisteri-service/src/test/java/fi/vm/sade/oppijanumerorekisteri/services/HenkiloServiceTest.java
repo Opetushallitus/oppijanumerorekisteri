@@ -150,7 +150,7 @@ public class HenkiloServiceTest {
         when(kayttooikeusClient.getHenkiloKayttooikeudet(any(), any()))
                 .thenReturn(KayttooikeudetDto.user(Stream.of("henkilo1", "henkilo2", "henkilo3").collect(toSet())));
 
-        Slice<HenkiloHakuDto> slice = service.list(criteria, 1, 20);
+        service.list(criteria, 1, 20);
 
         ArgumentCaptor<HenkiloCriteria> criteriaCaptor = ArgumentCaptor.forClass(HenkiloCriteria.class);
         verify(henkiloDataRepositoryMock).findBy(criteriaCaptor.capture(), eq(21L), eq(0L));
@@ -165,7 +165,7 @@ public class HenkiloServiceTest {
         when(kayttooikeusClient.getHenkiloKayttooikeudet(any(), any()))
                 .thenReturn(KayttooikeudetDto.user(Stream.of("henkilo1", "henkilo2", "henkilo3").collect(toSet())));
 
-        Slice<HenkiloHakuDto> slice = service.list(criteria, 1, 20);
+        service.list(criteria, 1, 20);
 
         ArgumentCaptor<HenkiloCriteria> criteriaCaptor = ArgumentCaptor.forClass(HenkiloCriteria.class);
         verify(henkiloDataRepositoryMock).findBy(criteriaCaptor.capture(), eq(21L), eq(0L));
@@ -298,7 +298,7 @@ public class HenkiloServiceTest {
         List<HenkiloPerustietoDto> henkiloPerustietoDtoList = this.service.getHenkiloPerustietoByOids(Collections.singletonList("1.2.3.4.5"));
         assertThat(henkiloPerustietoDtoList.size()).isEqualTo(1);
         HenkiloPerustietoDto henkiloPerustietoDto = henkiloPerustietoDtoList.get(0);
-        assertThat(henkiloPerustietoDto).isEqualToComparingFieldByFieldRecursively(henkiloPerustietoDtoMock);
+        assertThat(henkiloPerustietoDto).usingRecursiveComparison().isEqualTo(henkiloPerustietoDtoMock);
     }
 
     @Test(expected = NotFoundException.class)

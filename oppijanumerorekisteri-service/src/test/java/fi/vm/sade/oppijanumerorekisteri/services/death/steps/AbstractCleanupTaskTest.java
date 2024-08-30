@@ -8,6 +8,8 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.Oppijanumerore
 import fi.vm.sade.oppijanumerorekisteri.enums.CleanupStep;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.*;
@@ -41,15 +44,22 @@ class AbstractCleanupTaskTest {
     @Mock
     HenkiloRepository henkiloRepository;
 
+    private AutoCloseable mocks;
+
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        mocks = MockitoAnnotations.openMocks(this);
         step.properties = properties;
         step.henkiloRepository = henkiloRepository;
         when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.of(subject));
         given(step.getCleanupStep()).willReturn(CleanupStep.INITIATED);
         Logger logger = (Logger) LoggerFactory.getLogger(AbstractCleanupTask.class);
         logger.addAppender(mockAppender);
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        mocks.close();
     }
 
     @Test

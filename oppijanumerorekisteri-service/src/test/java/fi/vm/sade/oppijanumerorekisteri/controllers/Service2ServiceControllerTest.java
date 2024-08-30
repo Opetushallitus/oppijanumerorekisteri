@@ -77,7 +77,7 @@ public class Service2ServiceControllerTest  {
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void getOidByHetuTest() throws Exception{
         given(this.henkiloService.getOidByHetu("123456-9999")).willReturn("1.2.3.4.5");
-        this.mvc.perform(get("/s2s/oidByHetu/123456-9999").accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(get("/s2s/oidByHetu/123456-9999").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andExpect(content().string("1.2.3.4.5"));
     }
 
@@ -98,14 +98,14 @@ public class Service2ServiceControllerTest  {
         this.mvc.perform(post("/s2s/duplicateHenkilos")
                 .with(csrf())
                 .content("{}")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andExpect(content()
                 .json("[{\"henkiloOid\": \"CHILD\", \"masterOid\": \"MASTER\"}]"));
         this.mvc.perform(post("/s2s/duplicateHenkilos").content("{\"henkiloOids\": [\"CHILD\"]}")
                 .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andExpect(content()
                 .json("[{\"henkiloOid\": \"CHILD\", \"masterOid\": \"MASTER\"}]"));
     }
@@ -115,14 +115,14 @@ public class Service2ServiceControllerTest  {
     public void findChangedPersonsGet() throws Exception {
         given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any(), any(), any())).willReturn(singletonList("1.2.3"));
         this.mvc.perform(get("/s2s/changedSince/2015-10-12T10:10:10")
-                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andExpect(content()
                 .json("[\"1.2.3\"]"));
         verify(this.henkiloService).findHenkiloOidsModifiedSince(new HenkiloCriteria(), new DateTime(2015,10,12,10,10,10), null, null);
 
         given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any(), any(), any())).willReturn(emptyList());
         this.mvc.perform(get("/s2s/changedSince/2015-10-12")
-                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andExpect(content().json("[]"));
         verify(this.henkiloService).findHenkiloOidsModifiedSince(new HenkiloCriteria(), new DateTime(2015,10,12,0,0,0), null, null);
     }
@@ -133,7 +133,7 @@ public class Service2ServiceControllerTest  {
         given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any(), any(), any())).willReturn(emptyList());
         DateTime dt = new DateTime(2015,10,12,0,0,0);
         this.mvc.perform(get("/s2s/changedSince/" + dt.toDate().getTime())
-                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andExpect(content().json("[]"));
         verify(this.henkiloService).findHenkiloOidsModifiedSince(new HenkiloCriteria(), dt, null, null);
     }
@@ -145,8 +145,8 @@ public class Service2ServiceControllerTest  {
         given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any(), any(), any())).willReturn(singletonList("1.2.3"));
         this.mvc.perform(post("/s2s/changedSince/2015-10-12T10:10:10").content("{\"henkiloOids\": [\"1.2.3\"]}")
                 .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andExpect(content()
                 .json("[\"1.2.3\"]"));
         verify(this.henkiloService).findHenkiloOidsModifiedSince(criteria, new DateTime(2015,10,12,10,10,10), null, null);
@@ -167,8 +167,8 @@ public class Service2ServiceControllerTest  {
         this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto")
                 .with(csrf())
                 .content(inputContent)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(this.objectMapper.writeValueAsString(henkiloPerustietoDto)));
     }
@@ -184,8 +184,8 @@ public class Service2ServiceControllerTest  {
         this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto")
                 .with(csrf())
                 .content(content)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -201,8 +201,8 @@ public class Service2ServiceControllerTest  {
         this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto")
                 .with(csrf())
                 .content(content)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -221,8 +221,8 @@ public class Service2ServiceControllerTest  {
         this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto")
                 .with(csrf())
                 .content(inputContent)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(this.objectMapper.writeValueAsString(henkiloPerustietoDto)));
     }
@@ -237,8 +237,8 @@ public class Service2ServiceControllerTest  {
         this.mvc.perform(post("/s2s/henkilo/findOrCreateMultiple")
                 .with(csrf())
                 .content(inputContent)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         verify(henkiloModificationService).findOrCreateHenkiloFromPerustietoDto(anyList());
     }
@@ -253,8 +253,8 @@ public class Service2ServiceControllerTest  {
         this.mvc.perform(post("/s2s/henkilo/findOrCreateMultiple")
                 .with(csrf())
                 .content(inputContent)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
         verifyNoInteractions(henkiloModificationService);
     }
@@ -270,8 +270,8 @@ public class Service2ServiceControllerTest  {
         this.mvc.perform(post("/s2s/henkilo/findOrCreateMultiple")
                 .with(csrf())
                 .content(inputContent)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
         verifyNoInteractions(henkiloModificationService);
     }
@@ -287,8 +287,8 @@ public class Service2ServiceControllerTest  {
         this.mvc.perform(post("/s2s/henkilo/findOrCreateMultiple")
                 .with(csrf())
                 .content(inputContent)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
         verifyNoInteractions(henkiloModificationService);
     }
@@ -304,8 +304,8 @@ public class Service2ServiceControllerTest  {
         this.mvc.perform(post("/s2s/henkilo/findOrCreateMultiple")
                 .with(csrf())
                 .content(inputContent)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
         verifyNoInteractions(henkiloModificationService);
     }
@@ -322,18 +322,18 @@ public class Service2ServiceControllerTest  {
                 .put("yhteystietotyyppi7", YhteystiedotDto.builder().katuosoite("katu 134").build())
                 .put("yhteystietotyyppi2", YhteystiedotDto.builder().sahkoposti("testi@tyo.com").build())
                 .put("yhteystietotyyppi1", YhteystiedotDto.builder().sahkoposti("testi@test.com").build()));
-        this.mvc.perform(get("/s2s/yhteystiedot/1.2.3.4.5").accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(get("/s2s/yhteystiedot/1.2.3.4.5").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(content));
 
         given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.6")).willReturn(new HenkilonYhteystiedotViewDto());
-        this.mvc.perform(get("/s2s/yhteystiedot/1.2.3.4.6").accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(get("/s2s/yhteystiedot/1.2.3.4.6").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andExpect(content().json("{}"));
     }
 
     @Test
     public void findByMunicipalAndDobNoAuth() throws Exception {
-        this.mvc.perform(get("/s2s/henkilo/list/foo/2021-11-05").accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(get("/s2s/henkilo/list/foo/2021-11-05").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -342,7 +342,7 @@ public class Service2ServiceControllerTest  {
     public void findByMunicipalAndDob() throws Exception {
         given(henkiloService.findByMunicipalAndBirthdate("foo", LocalDate.of(2021, 11, 5), 1))
                 .willReturn(Slice.of(1, 0, Collections.EMPTY_LIST));
-        mvc.perform(get("/s2s/henkilo/list/foo/2021-11-05").accept(MediaType.APPLICATION_JSON_UTF8))
+        mvc.perform(get("/s2s/henkilo/list/foo/2021-11-05").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\"number\":1,\"size\":0,\"results\":[],\"last\":true,\"first\":true,\"numberOfElements\":0}"));
         verify(henkiloService).findByMunicipalAndBirthdate("foo", LocalDate.of(2021, 11, 5), 1);
@@ -351,14 +351,14 @@ public class Service2ServiceControllerTest  {
     @Test
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void findByMunicipalAndDobIncorrectPage() throws Exception {
-        mvc.perform(get("/s2s/henkilo/list/foo/2021-11-05?page=0").accept(MediaType.APPLICATION_JSON_UTF8))
+        mvc.perform(get("/s2s/henkilo/list/foo/2021-11-05?page=0").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void findByMunicipalAndDobIncorrectDate() throws Exception {
-        mvc.perform(get("/s2s/henkilo/list/foo/juhannus").accept(MediaType.APPLICATION_JSON_UTF8))
+        mvc.perform(get("/s2s/henkilo/list/foo/juhannus").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 }
