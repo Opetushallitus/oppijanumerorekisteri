@@ -14,8 +14,6 @@ import jakarta.persistence.UniqueConstraint;
         columnNames = { "externalid", "henkilo_id" }))
 @Entity
 public class ExternalId extends IdentifiableAndVersionedEntity {
-    private static final long serialVersionUID = -9077794218055694787L;
-
     @Column(nullable = false)
     private String externalid;
 

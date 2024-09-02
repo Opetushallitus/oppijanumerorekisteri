@@ -285,7 +285,7 @@ public class HenkiloController {
             @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService)
             throws IOException {
         return this.permissionChecker.filterUnpermittedHenkilo(
-                this.henkiloService.getMastersByOids(new HashSet(oids)),
+                this.henkiloService.getMastersByOids(new HashSet<>(oids)),
                 Collections.singletonMap(PALVELU_OPPIJANUMEROREKISTERI,
                         Arrays.asList(KAYTTOOIKEUS_READ, KAYTTOOIKEUS_HENKILON_RU)),
                 permissionService);

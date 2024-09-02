@@ -27,8 +27,6 @@ import jakarta.persistence.*;
 )
 public class HenkiloViite extends IdentifiableAndVersionedEntity {
 
-    private static final long serialVersionUID = 1L;
-
     @Column(nullable = false)
     private String masterOid;
 

@@ -341,7 +341,7 @@ public class Service2ServiceControllerTest  {
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void findByMunicipalAndDob() throws Exception {
         given(henkiloService.findByMunicipalAndBirthdate("foo", LocalDate.of(2021, 11, 5), 1))
-                .willReturn(Slice.of(1, 0, Collections.EMPTY_LIST));
+                .willReturn(Slice.of(1, 0, Collections.emptyList()));
         mvc.perform(get("/s2s/henkilo/list/foo/2021-11-05").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\"number\":1,\"size\":0,\"results\":[],\"last\":true,\"first\":true,\"numberOfElements\":0}"));

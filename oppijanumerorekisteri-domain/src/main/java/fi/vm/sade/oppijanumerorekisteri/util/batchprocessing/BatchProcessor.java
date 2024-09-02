@@ -7,7 +7,7 @@ public class BatchProcessor {
 
     public static final int postgreSqlMaxBindVariables = 15000;
 
-    public static <T, R> List<R> execute (List<T> list, int batchsize, BatchingProcess process) {
+    public static <T, R> List<R> execute (List<T> list, int batchsize, BatchingProcess<T, R> process) {
         List<R> results = new ArrayList<>();
 
         for (int i = 0; i < list.size(); i += batchsize) {

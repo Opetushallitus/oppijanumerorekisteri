@@ -23,8 +23,6 @@ import static java.util.Objects.requireNonNull;
 @Table(name = "yhteystiedot")
 public class Yhteystieto extends IdentifiableAndVersionedEntity {
 
-    private static final long serialVersionUID = 6759092678225935728L;
-
     @Column(name = "yhteystieto_tyyppi")
     @Enumerated(EnumType.STRING)
     private YhteystietoTyyppi yhteystietoTyyppi;

@@ -10,7 +10,7 @@ public final class QuerydslHelpers {
     private QuerydslHelpers() {
     }
 
-    public static <T extends Comparable> OrderSpecifier<T> toOrderSpecifier(Sort.OrderBy<?> orderBy, Expression<T> expression) {
+    public static <T extends Comparable<?>> OrderSpecifier<T> toOrderSpecifier(Sort.OrderBy<?> orderBy, Expression<T> expression) {
         Order order = toOrder(orderBy.getDirection());
         OrderSpecifier.NullHandling nullHandling = toNullHandling(orderBy.getNullHandling());
         return new OrderSpecifier<>(order, expression, nullHandling);

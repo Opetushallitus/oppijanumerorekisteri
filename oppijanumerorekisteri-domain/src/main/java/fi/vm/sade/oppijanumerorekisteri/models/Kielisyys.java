@@ -19,7 +19,6 @@ import jakarta.persistence.UniqueConstraint;
 @Entity
 @BatchSize(size =  1000)
 public class Kielisyys extends IdentifiableAndVersionedEntity {
-    private static final long serialVersionUID = -2129513559888443220L;
 
     @Column(name = "kielikoodi")
     private String kieliKoodi; // koodisto 'kieli'

@@ -282,7 +282,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         this.testEntityManager.persist(persistedHenkilo);
         this.testEntityManager.flush();
         List<HenkiloPerustietoDto> resultHenkiloList = this.dataRepository.findPerustiedotByHetuIn(Collections.singletonList("123456-9999"));
-        assertThat(resultHenkiloList.get(0)).isEqualToComparingFieldByFieldRecursively(assertHenkilo);
+        assertThat(resultHenkiloList.get(0)).usingRecursiveComparison().isEqualTo(assertHenkilo);
     }
 
     @Test

@@ -44,7 +44,6 @@ import static java.util.Arrays.asList;
 )
 // nullable = false => in database, @Notnull => only in model
 public class Henkilo extends IdentifiableAndVersionedEntity {
-    private static final long serialVersionUID = 1428444306553070016L;
 
     public static final String DTO_ENTITY_GRAPH = "henkiloDto";
     public static final String DUPLICATE_RESULT_MAPPING = "henkiloDuplicateMapping";

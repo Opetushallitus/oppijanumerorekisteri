@@ -17,7 +17,6 @@ import jakarta.persistence.Entity;
 @EqualsAndHashCode(callSuper = false)
 @Entity
 public class Kansalaisuus extends IdentifiableAndVersionedEntity {
-    private static final long serialVersionUID = 1807970088588578536L;
 
     public static final String SUOMI = "246";
 

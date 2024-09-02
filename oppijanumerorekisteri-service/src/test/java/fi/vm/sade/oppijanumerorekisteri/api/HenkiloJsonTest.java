@@ -46,7 +46,7 @@ public class HenkiloJsonTest {
     public void testHenkiloOidHetuNimiDtoDeserialize() throws Exception {
         HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = DtoUtils.createHenkiloOidHetuNimiDto("arpa", "arpa", "kuutio", "123456-9999",
                 "1.2.3.4.5");
-        assertThat(this.oidNimiHetuJson.read("/henkilo/testHenkiloOidHetuNimiDto.json").getObject()).isEqualToComparingFieldByFieldRecursively(henkiloOidHetuNimiDto);
+        assertThat(this.oidNimiHetuJson.read("/henkilo/testHenkiloOidHetuNimiDto.json").getObject()).usingRecursiveComparison().isEqualTo(henkiloOidHetuNimiDto);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class HenkiloJsonTest {
         LocalDate syntymaaika = LocalDate.of(2016, Month.DECEMBER, 20);
         HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
                 "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), singletonList(IdentificationDto.of(IdpEntityId.oppijaToken, "value1")), syntymaaika, new Date(29364800000L));
-        assertThat(this.perustietoJson.read("/henkilo/testHenkiloPerustietoDto.json").getObject()).isEqualToComparingFieldByFieldRecursively(henkiloPerustietoDto);
+        assertThat(this.perustietoJson.read("/henkilo/testHenkiloPerustietoDto.json").getObject()).usingRecursiveComparison().isEqualTo(henkiloPerustietoDto);
     }
 
     @Test
@@ -77,7 +77,7 @@ public class HenkiloJsonTest {
         HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
         assertThat(this.henkiloDtoJson.read("/henkilo/testHenkiloDto.json").getObject())
-                .isEqualToComparingFieldByFieldRecursively(henkiloDto);
+                .usingRecursiveComparison().isEqualTo(henkiloDto);
     }
 
     @Test

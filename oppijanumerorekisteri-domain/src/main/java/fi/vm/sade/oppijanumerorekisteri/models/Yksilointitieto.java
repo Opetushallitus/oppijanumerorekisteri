@@ -16,8 +16,6 @@ import java.util.Set;
 @Entity
 public class Yksilointitieto extends IdentifiableAndVersionedEntity {
 
-    private static final long serialVersionUID = 2077015250126507349L;
-
     @OneToOne(optional = false)
     @JoinColumn(name = "henkiloid", nullable = false, unique = true)
     private Henkilo henkilo;

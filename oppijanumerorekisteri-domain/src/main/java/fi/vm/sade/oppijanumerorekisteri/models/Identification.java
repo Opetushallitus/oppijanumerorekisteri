@@ -21,7 +21,6 @@ import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
 @Table(name = "identification")
 @Entity
 public class Identification extends IdentifiableAndVersionedEntity {
-    private static final long serialVersionUID = -2726844344901551508L;
 
     @Column(name = "idpentityid", nullable = false)
     @Enumerated(EnumType.STRING)

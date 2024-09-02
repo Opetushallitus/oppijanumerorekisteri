@@ -26,8 +26,6 @@ import static java.util.Objects.requireNonNull;
 @Table(name = "yhteystiedotryhma")
 public class YhteystiedotRyhma extends IdentifiableAndVersionedEntity {
 
-    private static final long serialVersionUID = 4229306351772426723L;
-
     /**
      * Koodisto "yhteystietotyypit".
      */
