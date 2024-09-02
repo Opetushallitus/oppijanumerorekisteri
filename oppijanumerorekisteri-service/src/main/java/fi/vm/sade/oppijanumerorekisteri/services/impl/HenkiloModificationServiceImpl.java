@@ -282,6 +282,8 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             DuplicateService.LinkResult linked = this.duplicateService.removeDuplicateHetuAndLink(henkiloSaved,
                     newHetu);
             henkiloSaved.setHetu(newHetu);
+            // re-fetch perustieto to ensure no VTJ changes were lost due to hetu change
+            henkiloSaved.setVtjBucket(null);
             henkiloUpdateDto.setHetu(null);
             return linked;
         } else {
