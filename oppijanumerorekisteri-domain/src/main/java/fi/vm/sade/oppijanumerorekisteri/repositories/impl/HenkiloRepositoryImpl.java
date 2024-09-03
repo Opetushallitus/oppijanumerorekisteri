@@ -764,7 +764,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                        kh.kunnasta_pois_muuttopv AS kunnastaPoisMuuttopv
                 FROM henkilo h
                 LEFT JOIN kotikunta_historia kh ON h.id = kh.henkilo_id
-                WHERE h.oidhenkilo in :oids
+                WHERE h.oidhenkilo in :oids AND kh.kotikunta IS NOT NULL
                 """,
                 KotikuntaHistoria.class).setParameter("oids", oids);
         return kotikuntaQuery.getResultList();
@@ -779,7 +779,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                        kh.kunnasta_pois_muuttopv AS kunnastaPoisMuuttopv
                 FROM henkilo h
                 LEFT JOIN turvakielto_kotikunta_historia kh ON h.id = kh.henkilo_id
-                WHERE h.oidhenkilo in :oids
+                WHERE h.oidhenkilo in :oids AND kh.kotikunta IS NOT NULL
                 """,
                 KotikuntaHistoria.class).setParameter("oids", oids);
         return kotikuntaQuery.getResultList();
