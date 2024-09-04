@@ -191,17 +191,25 @@ public class VtjMuutostietoService {
         }
     }
 
-    private void setKunnastaPoisMuuttopv(Long henkiloId, LocalDate muuttopv) {
+    private void setKunnastaPoisMuuttopv(Long henkiloId, LocalDate kunnastaPoisMuuttopv) {
         Optional<KotikuntaHistoria> existingKotikuntaHistoria = kotikuntaHistoriaRepository.findByHenkiloIdAndKunnastaPoisMuuttopvIsNull(henkiloId);
         existingKotikuntaHistoria.ifPresent(existing -> {
-            existing.setKunnastaPoisMuuttopv(muuttopv);
+            existing.setKunnastaPoisMuuttopv(kunnastaPoisMuuttopv);
             kotikuntaHistoriaRepository.save(existing);
         });
         Optional<TurvakieltoKotikuntaHistoria> existingTurvakieltoKotikuntaHistoria = turvakieltoKotikuntaHistoriaRepository.findByHenkiloIdAndKunnastaPoisMuuttopvIsNull(henkiloId);
         existingTurvakieltoKotikuntaHistoria.ifPresent(existing -> {
-            existing.setKunnastaPoisMuuttopv(muuttopv);
+            existing.setKunnastaPoisMuuttopv(kunnastaPoisMuuttopv);
             turvakieltoKotikuntaHistoriaRepository.save(existing);
         });
+    }
+
+    private void setKunnastaPoisMuuttopvWithMuuttopv(Long henkiloId, LocalDate muuttopv) {
+        if (muuttopv == null) {
+            log.warn("trying to set kunnasta_pois_muuttopv with missing muuttopv for henkilo id " + henkiloId);
+        } else {
+            setKunnastaPoisMuuttopv(henkiloId, muuttopv.minusDays(1));
+        }
     }
 
     private void insertOrUpdateTurvakieltoKotikunta(Long henkiloId, String kotikunta, LocalDate muuttopv) {
@@ -212,7 +220,7 @@ public class VtjMuutostietoService {
                     turvakieltoKotikunta.setKotikunta(kotikunta);
                     turvakieltoKotikuntaRepository.save(turvakieltoKotikunta);
                 });
-            setKunnastaPoisMuuttopv(henkiloId, muuttopv.minusDays(1));
+            setKunnastaPoisMuuttopvWithMuuttopv(henkiloId, muuttopv);
             saveTurvakieltoKotikuntaHistoria(henkiloId, kotikunta, muuttopv);
         } catch (Exception e) {
             log.error("failed to save turvakieltokotikunta for henkilo " + henkiloId, e);
@@ -270,7 +278,7 @@ public class VtjMuutostietoService {
                     && (tietoryhmaValidator == null || tietoryhmaValidator.apply(tietoryhma))) {
                 String kotikunta = getStringValue(tietoryhma, "kuntakoodi");
                 LocalDate muuttopv = TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv"));
-                setKunnastaPoisMuuttopv(henkiloId, muuttopv.minusDays(1));
+                setKunnastaPoisMuuttopvWithMuuttopv(henkiloId, muuttopv);
                 KotikuntaHistoria kotikuntaHistoria = KotikuntaHistoria.builder().henkiloId(henkiloId).kotikunta(kotikunta).kuntaanMuuttopv(muuttopv).build();
                 kotikuntaHistoriaRepository.save(kotikuntaHistoria);
                 return kotikunta;
@@ -350,7 +358,7 @@ public class VtjMuutostietoService {
                         .orElse(TurvakieltoKotikunta.builder().henkiloId(henkilo.getId()).build());
                     turvakieltoKotikunta.setKotikunta(kotikunta);
                     turvakieltoKotikuntaRepository.save(turvakieltoKotikunta);
-                    setKunnastaPoisMuuttopv(henkilo.getId(), muuttopv.minusDays(1));
+                    setKunnastaPoisMuuttopvWithMuuttopv(henkilo.getId(), muuttopv);
                     saveTurvakieltoKotikuntaHistoria(henkilo.getId(), kotikunta, muuttopv);
                 }
             }
@@ -371,7 +379,7 @@ public class VtjMuutostietoService {
         } else if (turvakieltoKotikunta.isPresent()) {
             String kotikunta = turvakieltoKotikunta.get().getKotikunta();
             LocalDate muuttopv = muutostieto.muutospv.toLocalDate();
-            setKunnastaPoisMuuttopv(henkilo.getId(), muuttopv.minusDays(1));
+            setKunnastaPoisMuuttopvWithMuuttopv(henkilo.getId(), muuttopv);
             KotikuntaHistoria kotikuntaHistoria = KotikuntaHistoria.builder().henkiloId(henkilo.getId()).kotikunta(kotikunta).kuntaanMuuttopv(muuttopv).build();
             kotikuntaHistoriaRepository.save(kotikuntaHistoria);
             return kotikunta;
