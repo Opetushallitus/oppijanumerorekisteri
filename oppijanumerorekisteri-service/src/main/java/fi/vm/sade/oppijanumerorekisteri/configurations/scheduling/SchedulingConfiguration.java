@@ -6,7 +6,6 @@ import com.github.kagkarlsson.scheduler.task.helper.Tasks;
 import com.github.kagkarlsson.scheduler.task.schedule.Daily;
 import com.github.kagkarlsson.scheduler.task.schedule.FixedDelay;
 
-import fi.vm.sade.oppijanumerorekisteri.KotikuntaHistoriaMassUpdater;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.configurations.security.OphSessionMappingStorage;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
@@ -35,7 +34,6 @@ public class SchedulingConfiguration {
     private final OphSessionMappingStorage sessionMappingStorage;
     private final IdentificationService identificationService;
     private final VtjMuutostietoService vtjMuutostietoService;
-    private final KotikuntaHistoriaMassUpdater kotikuntaHistoriaMassUpdater;
     private final ExportService exportService;
 
     @Bean
@@ -84,14 +82,6 @@ public class SchedulingConfiguration {
         return Tasks
                 .recurring(new TaskWithoutDataDescriptor("vtj muutostieto task"), FixedDelay.ofHours(1))
                 .execute((instance, ctx) -> vtjMuutostietoService.handleMuutostietoTask());
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = "oppijanumerorekisteri.vtj-muutosrajapinta.kotikuntahistoria-enabled", matchIfMissing = false)
-    Task<Void> kotikuntaHistoriaMassUpdateTask() {
-        return Tasks
-                .recurring(new TaskWithoutDataDescriptor("vtj kotikuntahistoria task"), FixedDelay.ofSeconds(2))
-                .execute((instance, ctx) -> kotikuntaHistoriaMassUpdater.task());
     }
 
     @Bean

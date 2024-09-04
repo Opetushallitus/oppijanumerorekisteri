@@ -245,15 +245,4 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
         InputStream response = executeRequestWithRetry(request);
         return parsePerustietoResponse(response).perustiedot;
     }
-
-    @Override
-    public List<VtjPerustieto> fetchEdellinenKotikuntaPerustieto(List<String> hetus)
-            throws InterruptedException, ExecutionException, JsonProcessingException, IOException {
-        PerustietoEdellinenKotikuntaRequestBody body = new PerustietoEdellinenKotikuntaRequestBody(hetus);
-        SdkHttpFullRequest request = httpRequestBuilder("/api/v1/perustiedot-vko", SdkHttpMethod.POST, body);
-        InputStream response = executeRequestWithRetry(request);
-        var perustieto = parsePerustietoViikkokantaResponse(response);
-        log.info("perustieto-vko fetched with poimintapv " + perustieto.getPoimintapv().toString());
-        return perustieto.perustiedot;
-    }
 }

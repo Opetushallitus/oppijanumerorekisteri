@@ -6,6 +6,5 @@ oppijanumerorekisteri.tasks.export.lampi-role-arn: none
 oppijanumerorekisteri.tasks.export.lampi-external-id: none
 
 oppijanumerorekisteri.vtj-muutosrajapinta.fetch-enabled: false
-oppijanumerorekisteri.vtj-muutosrajapinta.kotikuntahistoria-enabled: false
 oppijanumerorekisteri.vtj-muutosrajapinta.muutostieto-enabled: false
 oppijanumerorekisteri.vtj-muutosrajapinta.perustieto-enabled: false

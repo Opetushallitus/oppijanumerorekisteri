@@ -738,24 +738,6 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     }
 
     @Override
-    public List<String> findHetusWithoutKotikuntaHistoriaMassUpdate(long limit) {
-        Query hetuQuery = this.entityManager.createNativeQuery("""
-                SELECT hetu
-                FROM henkilo h
-                LEFT JOIN kotikunta_historia_mass_update k ON h.id = k.henkilo_id
-                WHERE h.passivoitu = false
-                  AND h.hetu IS NOT NULL
-                  AND h.yksiloityvtj = true
-                  AND h.vtj_bucket IS NOT NULL
-                  AND k.henkilo_id IS NOT NULL
-                  AND k.updated = false
-                LIMIT :limit
-                """,
-                String.class).setParameter("limit", limit);
-        return hetuQuery.getResultList();
-    }
-
-    @Override
     public List<KotikuntaHistoria> findKotikuntaHistorias(List<String> oids) {
         Query kotikuntaQuery = this.entityManager.createNativeQuery("""
                 SELECT h.oidhenkilo AS oid,

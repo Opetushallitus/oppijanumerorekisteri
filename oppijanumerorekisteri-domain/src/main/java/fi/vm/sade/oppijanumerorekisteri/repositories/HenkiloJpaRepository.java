@@ -203,8 +203,6 @@ public interface HenkiloJpaRepository {
 
     List<String> findHetusWithoutVtjBucket();
 
-    List<String> findHetusWithoutKotikuntaHistoriaMassUpdate(long limit);
-
     List<KotikuntaHistoria> findKotikuntaHistorias(List<String> oids);
 
     List<KotikuntaHistoria> findTurvakieltoKotikuntaHistorias(List<String> oids);
