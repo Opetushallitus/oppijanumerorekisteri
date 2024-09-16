@@ -30,7 +30,7 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
     const [organisations, setOrganisations] = useState([]);
     const allOrganisations = useMemo(() => {
         const orgs = props.organisaatiot ?? omattiedotOrganisations;
-        if (orgs?.length && omattiedotOrganisations?.length) {
+        if (orgs?.length) {
             const options = omattiedotOrganisaatiotToOrganisaatioSelectObject(orgs, organisationNames, locale);
             const sortedOrganisations = sortBy<OrganisaatioSelectObject>(compose(toLower, prop('name')))(options);
             setOrganisations([...sortedOrganisations]);
