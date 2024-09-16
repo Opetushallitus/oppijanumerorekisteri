@@ -68,8 +68,6 @@
         "webpack-manifest-plugin": "^4.0.2"
     },
     "scripts": {
-        "dev": "concurrently --kill-others 'npm start' 'npm run nginx'",
-        "nginx": "docker-compose -f ../../../nginx/docker-compose.yml up",
         "start": "NODE_ENV=development npx webpack serve",
         "build": "GENERATE_SOURCEMAP=false NODE_ENV=production npx webpack --mode production",
         "lint": "eslint --ext .ts,.tsx src",

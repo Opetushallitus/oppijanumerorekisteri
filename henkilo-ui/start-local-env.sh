@@ -9,7 +9,7 @@ tmux start-server
 tmux new-session -d -s "$session" -c "$repo"
 
 tmux select-pane -t 0
-tmux send-keys "docker-compose -f $repo/nginx/docker-compose.yml down; docker-compose -f $repo/nginx/docker-compose.yml up" C-m
+tmux send-keys "docker compose -f $repo/nginx/docker-compose.yml down --volumes; docker compose -f $repo/nginx/docker-compose.yml up --force-recreate --renew-anon-volumes" C-m
 
 tmux splitw -v
 tmux select-pane -t 1
