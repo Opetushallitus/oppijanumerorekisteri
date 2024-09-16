@@ -52,8 +52,6 @@ class KayttooikeusryhmaSelectModal extends React.Component<Props, State> {
                 validationMessages={{ key: validationMessage }}
             >
                 <KayttooikeusryhmaSelect
-                    locale={this.props.locale}
-                    L={this.props.L}
                     kayttooikeusryhmat={this.props.kayttooikeusryhmat}
                     onSelect={this.props.onSelect}
                     sallittuKayttajatyyppi={this.props.sallittuKayttajatyyppi}
