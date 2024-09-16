@@ -10,7 +10,7 @@ import HenkiloViewCreateKayttooikeus from '../common/henkilo/HenkiloViewCreateKa
 import Loader from '../common/icons/Loader';
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent';
 import StaticUtils from '../common/StaticUtils';
-import HenkiloViewCreateKayttooikeusanomus from '../common/henkilo/HenkiloViewCreateKayttooikeusanomus';
+import { HenkiloViewCreateKayttooikeusanomus } from '../common/henkilo/HenkiloViewCreateKayttooikeusanomus';
 import Mfa from './Mfa';
 import { RootState } from '../../store';
 import { useLocalisations } from '../../selectors';

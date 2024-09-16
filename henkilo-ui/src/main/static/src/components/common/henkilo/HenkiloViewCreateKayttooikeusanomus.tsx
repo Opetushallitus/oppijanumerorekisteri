@@ -1,13 +1,12 @@
-import React, { ChangeEvent } from 'react';
-import { connect } from 'react-redux';
-import type { RootState } from '../../../store';
-import './HenkiloViewCreateKayttooikeusanomus.css';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
+import type { Option } from 'react-select';
+
+import { useAppDispatch, type RootState } from '../../../store';
 import OphSelect from '../select/OphSelect';
 import Button from '../button/Button';
-import { findIndex, lensProp, map, propEq, view } from 'ramda';
 import IconButton from '../button/IconButton';
 import CrossCircleIcon from '../icons/CrossCircleIcon';
-import EmailSelect from './select/EmailSelect';
 import WideBlueNotification from '../../common/notifications/WideBlueNotification';
 import KayttooikeusryhmaSelectModal from '../select/KayttooikeusryhmaSelectModal';
 import Loader from '../icons/Loader';
@@ -15,301 +14,80 @@ import {
     createKayttooikeusanomus,
     fetchOrganisaatioKayttooikeusryhmat,
     fetchAllKayttooikeusAnomusForHenkilo,
-    KayttooikeusAnomus,
 } from '../../../actions/kayttooikeusryhma.actions';
 import { addGlobalNotification } from '../../../actions/notification.actions';
 import OrganisaatioSelectModal from '../select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import { LocalNotification } from '../Notification/LocalNotification';
-import { L10n } from '../../../types/localisation.type';
-import { Locale } from '../../../types/locale.type';
-import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
-import { OrganisaatioState } from '../../../reducers/organisaatio.reducer';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
 import { NOTIFICATIONTYPES } from '../Notification/notificationtypes';
-import { GlobalNotificationConfig } from '../../../types/notification.types';
-import { OrganisaatioKayttooikeusryhmatState } from '../../../reducers/organisaatiokayttooikeusryhmat.reducer';
-import type { Option } from 'react-select';
 import { OrganisaatioWithChildren } from '../../../types/domain/organisaatio/organisaatio.types';
 import type { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
+import { useLocalisations } from '../../../selectors';
+import { OrganisaatioState } from '../../../reducers/organisaatio.reducer';
+import { OrganisaatioKayttooikeusryhmatState } from '../../../reducers/organisaatiokayttooikeusryhmat.reducer';
+import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
+
+import './HenkiloViewCreateKayttooikeusanomus.css';
 
 type OwnProps = {
     ryhmaOptions: Array<{ label: string; value: string }>;
     kayttooikeusryhmat: Array<Kayttooikeusryhma>;
 };
 
-type StateProps = {
-    l10n: L10n;
-    locale: Locale;
-    omattiedot: OmattiedotState;
-    henkilo: HenkiloState;
-    organisaatioKayttooikeusryhmat: OrganisaatioKayttooikeusryhmatState;
-    organisaatios: OrganisaatioState;
+type KayttooikeusryhmaSelection = {
+    value: number;
+    label: string;
+    description: string;
 };
 
-type DispatchProps = {
-    fetchOrganisaatioKayttooikeusryhmat: (arg0: string) => void;
-    createKayttooikeusanomus: (arg0: KayttooikeusAnomus) => void;
-    fetchAllKayttooikeusAnomusForHenkilo: (arg0: string) => void;
-    addGlobalNotification: (arg0: GlobalNotificationConfig) => void;
+type SelectionState = {
+    selectedOid?: string;
+    ryhmaSelection?: Option<string>;
+    organisaatioSelection?: OrganisaatioSelectObject;
 };
 
-type Props = OwnProps & StateProps & DispatchProps;
-
-type State = {
-    showInstructions: boolean;
-    organisaatioSelection: string;
-    organisaatioSelectionName: string;
-    ryhmaSelection: string;
-    kayttooikeusryhmaSelections: {
-        value: number;
-        label?: string;
-        description?: string;
-    }[];
-    perustelut: string;
-    emailOptions: {
-        emailSelection?: string;
-        missingEmail: boolean;
-        showMissingEmailNotification: boolean;
-        options?: { value: string; label: string }[];
-    };
+const initialSelectionState = {
+    selectedOid: undefined,
+    ryhmaSelection: undefined,
+    organisaatioSelection: undefined,
 };
 
-class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
+export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
+    const dispatch = useAppDispatch();
+    const { L, locale } = useLocalisations();
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const organisaatio = useSelector<RootState, OrganisaatioState>((state) => state.organisaatio);
+    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const organisaatioKayttooikeusryhmat = useSelector<RootState, OrganisaatioKayttooikeusryhmatState>(
+        (state) => state.OrganisaatioKayttooikeusryhmat
+    );
 
-        this.state = {
-            showInstructions: false,
-            organisaatioSelection: '',
-            organisaatioSelectionName: '',
-            ryhmaSelection: '',
-            kayttooikeusryhmaSelections: [],
-            perustelut: '',
-            emailOptions: this.createEmailOptions(props.henkilo),
-        };
-    }
+    const [showInstructions, setShowInstructions] = useState(false);
+    const [selectionState, setSelectionState] = useState<SelectionState>(initialSelectionState);
+    const [kayttooikeusryhmaSelections, setKayttooikeusryhmaSelections] = useState<KayttooikeusryhmaSelection[]>([]);
+    const [perustelut, setPerustelut] = useState<string>();
+    const [emailOptions, setEmailOptions] = useState(createEmailOptions(henkilo));
 
-    componentWillReceiveProps(nextProps: Props) {
-        this.setState({
-            emailOptions: this.createEmailOptions(nextProps.henkilo),
-        });
-    }
+    const ryhmaOptions = useMemo(() => {
+        const options = [...props.ryhmaOptions];
+        options.sort((a, b) => a.label.localeCompare(b.label));
+        return options;
+    }, [props.ryhmaOptions]);
 
-    render() {
-        const L = this.props.l10n[this.props.locale];
-        const kayttooikeusryhmaSelections = this.state.kayttooikeusryhmaSelections.map((selection) => {
-            return { id: selection.value };
-        });
-        const kayttooikeusryhmat = this.props.kayttooikeusryhmat.filter(
-            (kayttooikeusryhma) => findIndex(propEq('id', kayttooikeusryhma.id), kayttooikeusryhmaSelections) < 0
+    const kayttooikeusryhmat = useMemo(() => {
+        return props.kayttooikeusryhmat.filter(
+            (kayttooikeusryhma) => !kayttooikeusryhmaSelections.find((k) => k.value === kayttooikeusryhma.id)
         );
+    }, [props.kayttooikeusryhmat]);
 
-        return this.props.henkilo.henkiloLoading ? (
-            <Loader />
-        ) : (
-            <div className="kayttooikeus-anomus-wrapper">
-                <div className="header">
-                    <span className="oph-h2 oph-bold">{L['OMATTIEDOT_OTSIKKO']}</span>
-                </div>
-                {this.state.emailOptions.showMissingEmailNotification ? (
-                    <WideBlueNotification
-                        message={L['OMATTIEDOT_PUUTTUVA_SAHKOPOSTI_UUSI_ANOMUS']}
-                        closeAction={() => {
-                            this.setState({
-                                ...this.state,
-                                emailOptions: {
-                                    ...this.state.emailOptions,
-                                    showMissingEmailNotification: false,
-                                },
-                            });
-                        }}
-                    />
-                ) : null}
+    useEffect(() => {
+        setEmailOptions(createEmailOptions(henkilo));
+    }, [henkilo]);
 
-                <div
-                    onClick={
-                        this.state.showInstructions
-                            ? undefined
-                            : () => this.setState(() => ({ showInstructions: true }))
-                    }
-                >
-                    <div className="oph-field oph-field-inline">
-                        <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
-                            {L['OMATTIEDOT_ORGANISAATIO_TAI_RYHMA']}*
-                        </label>
-
-                        <div className="oph-input-container flex-horizontal">
-                            <input
-                                className="oph-input flex-item-1 kutsutut-organisaatiosuodatus"
-                                type="text"
-                                value={this.state.organisaatioSelectionName}
-                                placeholder={L['OMATTIEDOT_VALITSE_ORGANISAATIO']}
-                                readOnly
-                            />
-                            <OrganisaatioSelectModal
-                                organisaatiot={this.flatten(this.props.organisaatios.organisaatioHierarkia)}
-                                disabled={this.props.organisaatios.organisaatioHierarkiaLoading}
-                                onSelect={this._changeOrganisaatioSelection.bind(this)}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="oph-field oph-field-inline">
-                        <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text" />
-                        <div className="oph-input-container">
-                            <OphSelect
-                                onChange={this._changeRyhmaSelection.bind(this)}
-                                options={this.props.ryhmaOptions.sort((a, b) => a.label.localeCompare(b.label))}
-                                value={this.state.ryhmaSelection}
-                                placeholder={L['OMATTIEDOT_ANOMINEN_RYHMA']}
-                                disabled={this.state.emailOptions.missingEmail}
-                            />
-                        </div>
-                    </div>
-
-                    {this.state.emailOptions.options && this.state.emailOptions.options.length > 1 ? (
-                        <div className="oph-field oph-field-inline">
-                            <label
-                                className="oph-label oph-bold oph-label-long"
-                                htmlFor="email"
-                                aria-describedby="field-text"
-                            >
-                                {L['OMATTIEDOT_SAHKOPOSTIOSOITE']}*
-                            </label>
-
-                            <EmailSelect
-                                changeEmailAction={this._changeEmail.bind(this)}
-                                emailSelection={this.state.emailOptions.emailSelection}
-                                emailOptions={this.state.emailOptions.options}
-                            />
-                        </div>
-                    ) : null}
-
-                    <div className="oph-field oph-field-inline">
-                        <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
-                            {L['OMATTIEDOT_ANOTTAVAT']}*
-                        </label>
-
-                        <div className="oph-input-container kayttooikeus-selection-wrapper">
-                            <KayttooikeusryhmaSelectModal
-                                locale={this.props.locale}
-                                L={L}
-                                kayttooikeusryhmat={kayttooikeusryhmat}
-                                kayttooikeusryhmaValittu={this.state.kayttooikeusryhmaSelections.length > 0}
-                                onSelect={this._addKayttooikeusryhmaSelection.bind(this)}
-                                disabled={this.state.emailOptions.missingEmail}
-                                loading={this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmatLoading}
-                                isOrganisaatioSelected={
-                                    !!this.state.organisaatioSelection || !!this.state.ryhmaSelection
-                                }
-                                sallittuKayttajatyyppi="VIRKAILIJA"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="oph-field oph-field-inline">
-                        <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text"></label>
-                        <div className="oph-input-container">
-                            <ul className="selected-permissions">
-                                {this.state.kayttooikeusryhmaSelections.map((kayttooikeusRyhmaSelection, index) => {
-                                    return (
-                                        <li key={index}>
-                                            <div className="selected-permissions-name">
-                                                {kayttooikeusRyhmaSelection.label}
-                                                <IconButton
-                                                    onClick={this._removeKayttooikeusryhmaSelection.bind(
-                                                        this,
-                                                        kayttooikeusRyhmaSelection
-                                                    )}
-                                                >
-                                                    <CrossCircleIcon />
-                                                </IconButton>
-                                            </div>
-                                            {kayttooikeusRyhmaSelection.description && (
-                                                <div className="selected-permissions-description">
-                                                    {kayttooikeusRyhmaSelection.description}
-                                                </div>
-                                            )}
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div className="oph-field oph-field-inline">
-                        <label
-                            className="oph-label oph-bold oph-label-long"
-                            htmlFor="perustelut"
-                            aria-describedby="field-text"
-                        >
-                            {L['OMATTIEDOT_PERUSTELUT']}
-                        </label>
-
-                        <div className="oph-input-container">
-                            <textarea
-                                className="oph-input"
-                                value={this.state.perustelut}
-                                onChange={this._changePerustelut.bind(this)}
-                                name="perustelut"
-                                id="perustelut"
-                                cols={30}
-                                rows={10}
-                                placeholder={L['OMATTIEDOT_PERUSTELU_VIRHE']}
-                                disabled={this.state.emailOptions.missingEmail}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="oph-field oph-field-inline">
-                        <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text" />
-                        <div className="oph-input-container">
-                            <div className="anomus-button">
-                                <Button
-                                    action={this._createKayttooikeusAnomus.bind(this)}
-                                    disabled={!this.validAnomusForm()}
-                                >
-                                    {L['OMATTIEDOT_HAE_BUTTON']}
-                                </Button>
-                            </div>
-
-                            <div className="anomus-form-errors flex-horizontal">
-                                <div className="flex-item-1">
-                                    {this.state.showInstructions && (
-                                        <LocalNotification
-                                            title={L['OMATTIEDOT_ANOMINEN_VIRHEET']}
-                                            toggle={!this.validAnomusForm()}
-                                            type={NOTIFICATIONTYPES.WARNING}
-                                        >
-                                            <ul>
-                                                {!this._validOrganisaatioOrRyhmaSelection() ? (
-                                                    <li>{L['OMATTIEDOT_VAATIMUS_ORGANISAATIO']}</li>
-                                                ) : null}
-                                                {!this._validKayttooikeusryhmaSelection() ? (
-                                                    <li>{L['OMATTIEDOT_VAATIMUS_KAYTTOOIKEUDET']}</li>
-                                                ) : null}
-                                                {!this._validEmailSelection() ? (
-                                                    <li>{L['OMATTIEDOT_VAATIMUS_EMAIL']}</li>
-                                                ) : null}
-                                                {!this.validPerustelu() ? (
-                                                    <li>{L['OMATTIEDOT_PERUSTELU_VIRHE']}</li>
-                                                ) : null}
-                                            </ul>
-                                        </LocalNotification>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    createEmailOptions(henkilo: HenkiloState) {
-        const emailOptions = this._parseEmailOptions(henkilo);
+    function createEmailOptions(henkilo: HenkiloState) {
+        const emailOptions = _parseEmailOptions(henkilo);
         if (emailOptions.length === 1) {
             return {
                 emailSelection: emailOptions[0].value,
@@ -327,85 +105,51 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         return { missingEmail: true, showMissingEmailNotification: true };
     }
 
-    _changeEmail(selection: Option<string>) {
-        this.setState({
-            emailOptions: {
-                ...this.state.emailOptions,
-                emailSelection: selection.value,
-            },
+    function _changeOrganisaatioSelection(organisaatioSelection: OrganisaatioSelectObject) {
+        setSelectionState({
+            selectedOid: organisaatioSelection.oid,
+            organisaatioSelection,
+            ryhmaSelection: undefined,
         });
+        dispatch<any>(fetchOrganisaatioKayttooikeusryhmat(organisaatioSelection.oid));
     }
 
-    _changePerustelut(event: ChangeEvent<HTMLTextAreaElement>) {
-        this.setState({ perustelut: event.target.value });
-    }
-
-    _changeOrganisaatioSelection(organisaatio: OrganisaatioSelectObject) {
-        this.setState({
-            organisaatioSelection: organisaatio.oid,
-            ryhmaSelection: '',
-            kayttooikeusryhmaSelections: [],
-            organisaatioSelectionName: organisaatio.name,
+    function _changeRyhmaSelection(ryhmaSelection: Option<string>) {
+        setSelectionState({
+            selectedOid: ryhmaSelection.value,
+            organisaatioSelection: undefined,
+            ryhmaSelection,
         });
-        this.props.fetchOrganisaatioKayttooikeusryhmat(organisaatio.oid);
+        dispatch<any>(fetchOrganisaatioKayttooikeusryhmat(ryhmaSelection.value));
     }
 
-    _changeRyhmaSelection(selection: { label: string; value: string }) {
-        this.setState({
-            ryhmaSelection: selection.value,
-            organisaatioSelection: '',
-            kayttooikeusryhmaSelections: [],
-            organisaatioSelectionName: '',
-        });
-        this.props.fetchOrganisaatioKayttooikeusryhmat(selection.value);
-    }
-
-    validAnomusForm() {
+    function validAnomusForm() {
         return (
-            this._validOrganisaatioOrRyhmaSelection() &&
-            this._validKayttooikeusryhmaSelection() &&
-            this._validEmailSelection() &&
-            this.validPerustelu()
+            !!selectionState.selectedOid && _validKayttooikeusryhmaSelection() && _validEmailSelection() && perustelut
         );
     }
 
-    _validOrganisaatioOrRyhmaSelection() {
-        return this.state.organisaatioSelection !== '' || this.state.ryhmaSelection !== '';
+    function _validKayttooikeusryhmaSelection() {
+        return kayttooikeusryhmaSelections.length > 0;
     }
 
-    _validKayttooikeusryhmaSelection() {
-        return this.state.kayttooikeusryhmaSelections.length > 0;
+    function _validEmailSelection() {
+        return emailOptions && emailOptions.emailSelection !== '' && !emailOptions.missingEmail;
     }
 
-    _validEmailSelection() {
-        return (
-            this.state.emailOptions &&
-            this.state.emailOptions.emailSelection !== '' &&
-            !this.state.emailOptions.missingEmail
-        );
+    function flatten(root: OrganisaatioWithChildren): OrganisaatioHenkilo[] {
+        return root ? [{ organisaatio: root }, ...root.children.flatMap((node) => flatten(node))] : [];
     }
 
-    validPerustelu() {
-        return this.state.perustelut === undefined || this.state.perustelut.length <= 255;
+    function _resetAnomusFormFields() {
+        setShowInstructions(false);
+        setSelectionState(initialSelectionState);
+        setKayttooikeusryhmaSelections([]);
+        setPerustelut('');
+        setEmailOptions(createEmailOptions(henkilo));
     }
 
-    flatten(root: OrganisaatioWithChildren): OrganisaatioHenkilo[] {
-        return root ? [{ organisaatio: root }, ...root.children.flatMap((node) => this.flatten(node))] : [];
-    }
-
-    _resetAnomusFormFields() {
-        this.setState({
-            showInstructions: false,
-            organisaatioSelection: '',
-            organisaatioSelectionName: '',
-            ryhmaSelection: '',
-            kayttooikeusryhmaSelections: [],
-            perustelut: '',
-            emailOptions: this.createEmailOptions(this.props.henkilo),
-        });
-    }
-
-    _parseEmailOptions(henkilo: HenkiloState): { value: string; label: string }[] {
+    function _parseEmailOptions(henkilo: HenkiloState): { value: string; label: string }[] {
         const emails = [];
         if (henkilo.henkilo.yhteystiedotRyhma) {
             henkilo.henkilo.yhteystiedotRyhma.forEach((yhteystietoRyhma) => {
@@ -416,77 +160,245 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
                 });
             });
         }
-        return emails.map((email) => ({ value: email || '', label: email || '' }));
+        return emails.map((email) => ({ value: email ?? '', label: email ?? '' }));
     }
 
-    _addKayttooikeusryhmaSelection(kayttooikeusryhma: Kayttooikeusryhma) {
-        const locale = this.props.locale.toUpperCase();
-        const kayttooikeusryhmaSelection = {
-            value: kayttooikeusryhma.id,
-            label: kayttooikeusryhma.nimi.texts?.find((t) => t.lang === locale)?.text,
-            description: kayttooikeusryhma.kuvaus?.texts?.find((t) => t.lang === locale)?.text,
-        };
-
-        const kayttooikeusryhmaSelections = this.state.kayttooikeusryhmaSelections;
-        kayttooikeusryhmaSelections.push(kayttooikeusryhmaSelection);
-        this.setState({
-            kayttooikeusryhmaSelections: kayttooikeusryhmaSelections,
-        });
+    function _addKayttooikeusryhmaSelection(kayttooikeusryhma: Kayttooikeusryhma) {
+        const l = locale.toUpperCase();
+        setKayttooikeusryhmaSelections([
+            ...kayttooikeusryhmaSelections,
+            {
+                value: kayttooikeusryhma.id,
+                label: kayttooikeusryhma.nimi.texts?.find((t) => t.lang === l)?.text,
+                description: kayttooikeusryhma.kuvaus?.texts?.find((t) => t.lang === l)?.text,
+            },
+        ]);
     }
 
-    _removeKayttooikeusryhmaSelection(kayttooikeusryhmaSelection: { value: number }) {
-        const kayttooikeusryhmaSelections = this.state.kayttooikeusryhmaSelections.filter(
-            (selection) => selection.value !== kayttooikeusryhmaSelection.value
+    function _removeKayttooikeusryhmaSelection(kayttooikeusryhmaSelection: { value: number }) {
+        setKayttooikeusryhmaSelections(
+            kayttooikeusryhmaSelections.filter((selection) => selection.value !== kayttooikeusryhmaSelection.value)
         );
-        this.setState({ kayttooikeusryhmaSelections });
     }
 
-    async _createKayttooikeusAnomus() {
-        const kayttooikeusRyhmaIds = map(
-            (selection) => view(lensProp('value'), selection),
-            this.state.kayttooikeusryhmaSelections
-        );
-        const anomusData = {
-            organisaatioOrRyhmaOid: this.state.organisaatioSelection || this.state.ryhmaSelection,
-            email: this.state.emailOptions.emailSelection,
-            perustelut: this.state.perustelut,
-            kayttooikeusRyhmaIds,
-            anojaOid: this.props.omattiedot.data.oid,
-        };
+    async function _createKayttooikeusAnomus() {
         try {
-            await this.props.createKayttooikeusanomus(anomusData);
-            this.props.addGlobalNotification({
-                key: 'OMATTIEDOT_ANOMUKSEN_TALLENNUS_OK',
-                type: NOTIFICATIONTYPES.SUCCESS,
-                title: this.props.l10n[this.props.locale]['OMATTIEDOT_ANOMUKSEN_TALLENNUS_OK'],
-                autoClose: 5000,
-            });
+            await dispatch<any>(
+                createKayttooikeusanomus({
+                    organisaatioOrRyhmaOid: selectionState.selectedOid,
+                    email: emailOptions.emailSelection,
+                    perustelut: perustelut,
+                    kayttooikeusRyhmaIds: kayttooikeusryhmaSelections.map((selection) => selection.value),
+                    anojaOid: omattiedot.data.oid,
+                })
+            );
+            dispatch(
+                addGlobalNotification({
+                    key: 'OMATTIEDOT_ANOMUKSEN_TALLENNUS_OK',
+                    type: NOTIFICATIONTYPES.SUCCESS,
+                    title: L['OMATTIEDOT_ANOMUKSEN_TALLENNUS_OK'],
+                    autoClose: 5000,
+                })
+            );
         } catch (error) {
-            this.props.addGlobalNotification({
-                key: 'OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS',
-                type: NOTIFICATIONTYPES.ERROR,
-                title: this.props.l10n[this.props.locale]['OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS'],
-                autoClose: 10000,
-            });
+            dispatch(
+                addGlobalNotification({
+                    key: 'OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS',
+                    type: NOTIFICATIONTYPES.ERROR,
+                    title: L['OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS'],
+                    autoClose: 10000,
+                })
+            );
             throw error;
         }
-        this._resetAnomusFormFields();
-        this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.omattiedot.data.oid);
+        _resetAnomusFormFields();
+        dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(omattiedot.data.oid));
     }
-}
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    l10n: state.l10n.localisations,
-    locale: state.locale,
-    henkilo: state.henkilo,
-    omattiedot: state.omattiedot,
-    organisaatioKayttooikeusryhmat: state.OrganisaatioKayttooikeusryhmat,
-    organisaatios: state.organisaatio,
-});
+    return henkilo.henkiloLoading ? (
+        <Loader />
+    ) : (
+        <div className="kayttooikeus-anomus-wrapper">
+            <div className="header">
+                <span className="oph-h2 oph-bold">{L['OMATTIEDOT_OTSIKKO']}</span>
+            </div>
+            {emailOptions.showMissingEmailNotification ? (
+                <WideBlueNotification
+                    message={L['OMATTIEDOT_PUUTTUVA_SAHKOPOSTI_UUSI_ANOMUS']}
+                    closeAction={() => {
+                        setEmailOptions({ ...emailOptions, showMissingEmailNotification: false });
+                    }}
+                />
+            ) : null}
 
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    fetchAllKayttooikeusAnomusForHenkilo,
-    fetchOrganisaatioKayttooikeusryhmat,
-    createKayttooikeusanomus,
-    addGlobalNotification,
-})(HenkiloViewCreateKayttooikeusanomus);
+            <div onClick={() => setShowInstructions(!showInstructions)}>
+                <div className="oph-field oph-field-inline">
+                    <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
+                        {L['OMATTIEDOT_ORGANISAATIO_TAI_RYHMA']}*
+                    </label>
+
+                    <div className="oph-input-container flex-horizontal">
+                        <input
+                            className="oph-input flex-item-1 kutsutut-organisaatiosuodatus"
+                            type="text"
+                            value={selectionState.organisaatioSelection?.name ?? ''}
+                            placeholder={L['OMATTIEDOT_VALITSE_ORGANISAATIO']}
+                            readOnly
+                        />
+                        <OrganisaatioSelectModal
+                            organisaatiot={flatten(organisaatio.organisaatioHierarkia)}
+                            disabled={organisaatio.organisaatioHierarkiaLoading}
+                            onSelect={_changeOrganisaatioSelection}
+                        />
+                    </div>
+                </div>
+
+                <div className="oph-field oph-field-inline">
+                    <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text" />
+                    <div className="oph-input-container">
+                        <OphSelect
+                            onChange={_changeRyhmaSelection}
+                            options={ryhmaOptions}
+                            value={selectionState.ryhmaSelection?.value}
+                            placeholder={L['OMATTIEDOT_ANOMINEN_RYHMA']}
+                            disabled={emailOptions.missingEmail}
+                        />
+                    </div>
+                </div>
+
+                {emailOptions.options && emailOptions.options.length > 1 ? (
+                    <div className="oph-field oph-field-inline">
+                        <label
+                            className="oph-label oph-bold oph-label-long"
+                            htmlFor="email"
+                            aria-describedby="field-text"
+                        >
+                            {L['OMATTIEDOT_SAHKOPOSTIOSOITE']}*
+                        </label>
+
+                        <div className="oph-input-container">
+                            <OphSelect
+                                placeholder={L['OMATTIEDOT_SAHKOPOSTI_VALINTA']}
+                                options={emailOptions.options}
+                                value={emailOptions.emailSelection}
+                                onChange={(selection) =>
+                                    setEmailOptions({ ...emailOptions, emailSelection: selection.value })
+                                }
+                                onBlurResetsInput={false}
+                                noResultsText={L['OMATTIEDOT_HAE_OLEMASSAOLEVA_SAHKOPOSTI']}
+                            />
+                        </div>
+                    </div>
+                ) : null}
+
+                <div className="oph-field oph-field-inline">
+                    <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
+                        {L['OMATTIEDOT_ANOTTAVAT']}*
+                    </label>
+
+                    <div className="oph-input-container kayttooikeus-selection-wrapper">
+                        <KayttooikeusryhmaSelectModal
+                            locale={locale}
+                            L={L}
+                            kayttooikeusryhmat={kayttooikeusryhmat}
+                            kayttooikeusryhmaValittu={kayttooikeusryhmaSelections.length > 0}
+                            onSelect={_addKayttooikeusryhmaSelection}
+                            disabled={emailOptions.missingEmail}
+                            loading={organisaatioKayttooikeusryhmat.kayttooikeusryhmatLoading}
+                            isOrganisaatioSelected={!!selectionState.selectedOid}
+                            sallittuKayttajatyyppi="VIRKAILIJA"
+                        />
+                    </div>
+                </div>
+
+                <div className="oph-field oph-field-inline">
+                    <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text"></label>
+                    <div className="oph-input-container">
+                        <ul className="selected-permissions">
+                            {kayttooikeusryhmaSelections.map((kayttooikeusRyhmaSelection, index) => {
+                                return (
+                                    <li key={index}>
+                                        <div className="selected-permissions-name">
+                                            {kayttooikeusRyhmaSelection.label}
+                                            <IconButton
+                                                onClick={() =>
+                                                    _removeKayttooikeusryhmaSelection(kayttooikeusRyhmaSelection)
+                                                }
+                                            >
+                                                <CrossCircleIcon />
+                                            </IconButton>
+                                        </div>
+                                        {kayttooikeusRyhmaSelection.description && (
+                                            <div className="selected-permissions-description">
+                                                {kayttooikeusRyhmaSelection.description}
+                                            </div>
+                                        )}
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="oph-field oph-field-inline">
+                    <label
+                        className="oph-label oph-bold oph-label-long"
+                        htmlFor="perustelut"
+                        aria-describedby="field-text"
+                    >
+                        {L['OMATTIEDOT_PERUSTELUT']}
+                    </label>
+
+                    <div className="oph-input-container">
+                        <textarea
+                            className="oph-input"
+                            value={perustelut}
+                            onChange={(event) => setPerustelut(event.target.value)}
+                            name="perustelut"
+                            id="perustelut"
+                            cols={30}
+                            rows={10}
+                            maxLength={255}
+                            placeholder={L['OMATTIEDOT_PERUSTELU_VIRHE']}
+                            disabled={emailOptions.missingEmail}
+                        />
+                    </div>
+                </div>
+
+                <div className="oph-field oph-field-inline">
+                    <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text" />
+                    <div className="oph-input-container">
+                        <div className="anomus-button">
+                            <Button action={_createKayttooikeusAnomus} disabled={!validAnomusForm()}>
+                                {L['OMATTIEDOT_HAE_BUTTON']}
+                            </Button>
+                        </div>
+
+                        <div className="anomus-form-errors flex-horizontal">
+                            <div className="flex-item-1">
+                                {showInstructions && (
+                                    <LocalNotification
+                                        title={L['OMATTIEDOT_ANOMINEN_VIRHEET']}
+                                        toggle={!validAnomusForm()}
+                                        type={NOTIFICATIONTYPES.WARNING}
+                                    >
+                                        <ul>
+                                            {!selectionState.selectedOid ? (
+                                                <li>{L['OMATTIEDOT_VAATIMUS_ORGANISAATIO']}</li>
+                                            ) : null}
+                                            {!_validKayttooikeusryhmaSelection() ? (
+                                                <li>{L['OMATTIEDOT_VAATIMUS_KAYTTOOIKEUDET']}</li>
+                                            ) : null}
+                                            {!_validEmailSelection() ? <li>{L['OMATTIEDOT_VAATIMUS_EMAIL']}</li> : null}
+                                            {!perustelut ? <li>{L['OMATTIEDOT_PERUSTELU_VIRHE']}</li> : null}
+                                        </ul>
+                                    </LocalNotification>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
