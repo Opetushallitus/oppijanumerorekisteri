@@ -6,7 +6,7 @@ import './KutsuConfirmation.css';
 import { http } from '../../http';
 import { urls } from 'oph-urls-js';
 import { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
-import { L10n, Localisations } from '../../types/localisation.type';
+import { Localisations } from '../../types/localisation.type';
 import { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
@@ -19,7 +19,7 @@ type Props = {
     basicInfo: KutsuBasicInfo;
     resetFormValues: () => void;
     locale: Locale;
-    l10n: L10n;
+    L: Localisations;
 };
 
 type State = {
@@ -39,7 +39,7 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
     }
 
     render() {
-        const L = this.props.l10n[this.props.locale];
+        const { L } = this.props;
         return (
             <Modal show={this.props.modalOpen} onClose={this.props.modalCloseFn} closeOnOuterClick={true}>
                 <div className="confirmation-modal">
@@ -104,7 +104,7 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
     }
 
     _sendInvitation(e: React.SyntheticEvent<HTMLButtonElement>) {
-        this.sendInvitation(e, this.props.l10n[this.props.locale]);
+        this.sendInvitation(e, this.props.L);
     }
 
     async sendInvitation(e: React.SyntheticEvent<HTMLButtonElement>, L: Localisations) {

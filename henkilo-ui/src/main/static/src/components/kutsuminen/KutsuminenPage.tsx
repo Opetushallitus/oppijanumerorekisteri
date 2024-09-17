@@ -1,253 +1,208 @@
-import { connect } from 'react-redux';
-import type { RootState } from '../../store';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import moment from 'moment';
+
+import { useAppDispatch, type RootState } from '../../store';
 import BasicInfoForm from './BasicinfoForm';
-import React from 'react';
-import KutsuOrganisaatios from './KutsuOrganisaatios';
 import { fetchAllRyhmas } from '../../actions/organisaatio.actions';
 import { kutsuClearOrganisaatios, kutsuAddOrganisaatio } from '../../actions/kutsuminen.actions';
 import KutsuConfirmation from './KutsuConfirmation';
 import Loader from '../common/icons/Loader';
 import { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
-import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
-import { Localisations, L10n } from '../../types/localisation.type';
 import ValidationMessageButton from '../common/button/ValidationMessageButton';
 import { ValidationMessage } from '../../types/validation.type';
 import StaticUtils from '../common/StaticUtils';
 import { fetchHenkilo } from '../../actions/henkilo.actions';
 import { LocalNotification } from '../common/Notification/LocalNotification';
-import { OrganisaatioState } from '../../reducers/organisaatio.reducer';
 import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
 import { validateEmail } from '../../validation/EmailValidator';
-import { Locale } from '../../types/locale.type';
+import { useLocalisations } from '../../selectors';
+import { OmattiedotState } from '../../reducers/omattiedot.reducer';
+import { KutsuminenOrganisaatiosState } from '../../reducers/kutsuminen.reducer';
+import { HenkiloState } from '../../reducers/henkilo.reducer';
+import { RyhmatState } from '../../reducers/ryhmat.reducer';
+import Button from '../common/button/Button';
+import PropertySingleton from '../../globals/PropertySingleton';
+import AddedOrganization from './AddedOrganization';
 
-type StateProps = {
-    L: Localisations;
-    l10n: L10n;
-    locale: Locale;
-    addedOrgs: readonly KutsuOrganisaatio[];
-    kayttajaOid: string;
-    henkilo: Henkilo;
-    organisaatioState: OrganisaatioState;
-    henkiloLoading: boolean;
-    ryhmasLoading: boolean;
+const initialBasicInfo = {
+    etunimi: '',
+    sukunimi: '',
+    email: '',
+    languageCode: '',
+    saate: '',
 };
 
-type DispatchProps = {
-    kutsuClearOrganisaatios: () => void;
-    fetchAllRyhmas: () => void;
-    kutsuAddOrganisaatio: (arg0: KutsuOrganisaatio) => void;
-    fetchHenkilo: (oid: string) => void;
+type ValidationMessages = {
+    organisaatioKayttooikeus: ValidationMessage;
+    allFilled: ValidationMessage;
+    sahkoposti: ValidationMessage;
 };
 
-type Props = StateProps & DispatchProps;
-
-type State = {
-    confirmationModalOpen: boolean;
-    basicInfo: KutsuBasicInfo;
-    validationMessages: {
-        organisaatioKayttooikeus: ValidationMessage;
-        allFilled: ValidationMessage;
-        sahkoposti: ValidationMessage;
-    };
-};
-
-class KutsuminenPage extends React.Component<Props, State> {
-    initialBasicInfo = {
-        etunimi: '',
-        sukunimi: '',
-        email: '',
-        languageCode: '',
-        saate: '',
-    };
-
-    initialValidationMessages: {
-        organisaatioKayttooikeus: ValidationMessage;
-        allFilled: ValidationMessage;
-        sahkoposti: ValidationMessage;
+const KutsuminenPage = () => {
+    const dispatch = useAppDispatch();
+    const { L, locale } = useLocalisations();
+    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const addedOrgs = useSelector<RootState, KutsuminenOrganisaatiosState>((state) => state.kutsuminenOrganisaatios);
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const ryhmas = useSelector<RootState, RyhmatState>((state) => state.ryhmatState);
+    const initialValidationMessages: ValidationMessages = {
+        organisaatioKayttooikeus: {
+            id: 'organisaatioKayttooikeus',
+            labelLocalised: L['VIRKAILIJAN_LISAYS_VALITSE_VAH_ORGANISAATIO_JA_YKSI_OIKEUS'],
+            isValid: false,
+        },
+        allFilled: {
+            id: 'allFilled',
+            labelLocalised: L['VIRKAILIJAN_LISAYS_TAYTA_KAIKKI_KENTAT'],
+            isValid: false,
+        },
+        sahkoposti: {
+            id: 'sahkoposti',
+            labelLocalised: L['VIRKAILIJAN_LISAYS_SAHKOPOSTI_VIRHEELLINEN'],
+            isValid: true,
+        },
     };
 
-    constructor(props: Props) {
-        super(props);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [basicInfo, setBasicInfo] = useState<KutsuBasicInfo>(initialBasicInfo);
+    const [validationMessages, setValidationMessages] = useState<ValidationMessages>(initialValidationMessages);
 
-        this.initialValidationMessages = {
-            organisaatioKayttooikeus: {
-                id: 'organisaatioKayttooikeus',
-                labelLocalised: this.props.L['VIRKAILIJAN_LISAYS_VALITSE_VAH_ORGANISAATIO_JA_YKSI_OIKEUS'],
-                isValid: false,
-            },
-            allFilled: {
-                id: 'allFilled',
-                labelLocalised: this.props.L['VIRKAILIJAN_LISAYS_TAYTA_KAIKKI_KENTAT'],
-                isValid: false,
-            },
-            sahkoposti: {
-                id: 'sahkoposti',
-                labelLocalised: this.props.L['VIRKAILIJAN_LISAYS_SAHKOPOSTI_VIRHEELLINEN'],
-                isValid: true,
-            },
-        };
+    useEffect(() => {
+        dispatch<any>(kutsuClearOrganisaatios());
+        dispatch<any>(fetchAllRyhmas());
+        dispatch<any>(fetchHenkilo(omattiedot.data.oid));
+    }, []);
 
-        this.state = {
-            confirmationModalOpen: false,
-            basicInfo: { ...this.initialBasicInfo },
-            validationMessages: { ...this.initialValidationMessages },
-        };
-    }
+    useEffect(() => {
+        updateOrganisaatioValidation(addedOrgs);
+    }, [omattiedot.data.oid, addedOrgs]);
 
-    componentDidMount() {
-        this.props.kutsuClearOrganisaatios();
-        this.props.fetchAllRyhmas();
-        this.props.fetchHenkilo(this.props.kayttajaOid);
-    }
-
-    componentWillReceiveProps(nextProps: Props) {
-        if (this.props.kayttajaOid !== nextProps.kayttajaOid) {
-            this.props.fetchHenkilo(nextProps.kayttajaOid);
-        }
-        this.updateOrganisaatioValidation(nextProps.addedOrgs);
-    }
-
-    render() {
-        const confirmationProps = {
-            l10n: this.props.l10n,
-            locale: this.props.locale,
-            addedOrgs: this.props.addedOrgs,
-            modalCloseFn: this.closeConfirmationModal.bind(this),
-            modalOpen: this.state.confirmationModalOpen,
-            basicInfo: this.state.basicInfo,
-            resetFormValues: this.resetFormValues.bind(this),
-        };
-        const { basicInfo } = this.state;
-
-        if (this.props.henkiloLoading || this.props.ryhmasLoading) {
-            return (
-                <div className="wrapper">
-                    <Loader />
-                </div>
-            );
-        } else {
-            const disabled = this.isDisabled(this.props.henkilo);
-            return (
-                <div>
-                    <form className="wrapper">
-                        <p className="oph-h2 oph-bold">{this.props.L['VIRKAILIJAN_LISAYS_OTSIKKO']}</p>
-                        <LocalNotification type="error" title={this.props.L['KUTSU_ESTETTY']} toggle={disabled}>
-                            {this.props.L['KUTSU_ESTETTY_SYY']}
-                        </LocalNotification>
-                        <BasicInfoForm
-                            L={this.props.L}
-                            disabled={disabled}
-                            basicInfo={basicInfo}
-                            setBasicInfo={this.setBasicInfo.bind(this)}
-                            locale={this.props.locale}
-                        ></BasicInfoForm>
-                        <KutsuOrganisaatios
-                            L={this.props.L}
-                            addedOrgs={this.props.addedOrgs}
-                            henkilo={this.props.henkilo}
-                            locale={this.props.locale}
-                            addOrganisaatio={this.props.kutsuAddOrganisaatio}
-                        />
-
-                        <div className="kutsuFormFooter row">
-                            <ValidationMessageButton
-                                buttonAction={this.openConfirmationModal.bind(this)}
-                                validationMessages={this.state.validationMessages}
-                            >
-                                {this.props.L['VIRKAILIJAN_LISAYS_TALLENNA']}
-                            </ValidationMessageButton>
-                        </div>
-                        <KutsuConfirmation {...confirmationProps} />
-                    </form>
-                </div>
-            );
-        }
-    }
-
-    isDisabled(henkilo: Henkilo) {
-        return !henkilo.hetu || !henkilo.yksiloityVTJ;
-    }
-
-    static isValid(basicInfo: KutsuBasicInfo): boolean {
+    function isValid(basicInfo: KutsuBasicInfo): boolean {
         const { email, etunimi, sukunimi, languageCode } = basicInfo;
         return !!email && !!etunimi && !!sukunimi && !!languageCode;
     }
 
-    isOrganizationsValid(newAddedOrgs: readonly KutsuOrganisaatio[]): boolean {
+    function isOrganizationsValid(newAddedOrgs: readonly KutsuOrganisaatio[]): boolean {
         return (
             newAddedOrgs.length > 0 &&
             newAddedOrgs.every((org) => StaticUtils.stringIsNotEmpty(org.oid) && org.selectedPermissions.length > 0)
         );
     }
 
-    setBasicInfo(basicInfo: KutsuBasicInfo) {
-        this.setState({
-            basicInfo,
-            validationMessages: {
-                ...this.state.validationMessages,
-                allFilled: {
-                    ...this.state.validationMessages.allFilled,
-                    isValid: KutsuminenPage.isValid(basicInfo),
-                },
-                sahkoposti: {
-                    ...this.state.validationMessages.sahkoposti,
-                    isValid: !basicInfo.email || validateEmail(basicInfo.email),
-                },
+    function setBasicAndValidateInfo(basicInfo: KutsuBasicInfo) {
+        setBasicInfo(basicInfo);
+        setValidationMessages({
+            ...validationMessages,
+            allFilled: {
+                ...validationMessages.allFilled,
+                isValid: isValid(basicInfo),
+            },
+            sahkoposti: {
+                ...validationMessages.sahkoposti,
+                isValid: !basicInfo.email || validateEmail(basicInfo.email),
             },
         });
     }
 
-    updateOrganisaatioValidation(newAddedOrgs: readonly KutsuOrganisaatio[]) {
-        this.setState({
-            validationMessages: {
-                ...this.state.validationMessages,
-                organisaatioKayttooikeus: {
-                    ...this.state.validationMessages.organisaatioKayttooikeus,
-                    isValid: this.isOrganizationsValid(newAddedOrgs),
-                },
+    function updateOrganisaatioValidation(newAddedOrgs: readonly KutsuOrganisaatio[]) {
+        setValidationMessages({
+            ...validationMessages,
+            organisaatioKayttooikeus: {
+                ...validationMessages.organisaatioKayttooikeus,
+                isValid: isOrganizationsValid(newAddedOrgs),
             },
         });
     }
 
-    clearBasicInfo() {
-        this.setBasicInfo({ ...this.initialBasicInfo });
+    function resetFormValues() {
+        setBasicInfo({ ...initialBasicInfo });
+        dispatch<any>(kutsuClearOrganisaatios());
     }
 
-    resetFormValues() {
-        this.clearBasicInfo();
-        this.props.kutsuClearOrganisaatios();
-    }
-
-    openConfirmationModal(e: Event) {
+    function openConfirmationModal(e: React.MouseEvent<HTMLElement>) {
         e.preventDefault();
-        this.setState({
-            confirmationModalOpen: true,
-        });
+        setModalOpen(true);
     }
 
-    closeConfirmationModal(e: Event) {
-        e && e.preventDefault();
-        this.setState({
-            confirmationModalOpen: false,
-        });
+    function modalCloseFn(e: React.SyntheticEvent<EventTarget>) {
+        e.preventDefault();
+        setModalOpen(false);
     }
-}
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    l10n: state.l10n.localisations,
-    L: state.l10n.localisations[state.locale],
-    kayttajaOid: state.omattiedot.data.oid,
-    henkiloLoading: state.henkilo.henkiloLoading,
-    henkilo: state.henkilo.henkilo,
-    addedOrgs: state.kutsuminenOrganisaatios,
-    locale: state.locale,
-    organisaatioState: state.organisaatio,
-    ryhmasLoading: state.ryhmatState.ryhmasLoading,
-});
+    function addEmptyOrganization(e: React.MouseEvent<HTMLElement>) {
+        e.preventDefault();
+        dispatch<any>(
+            kutsuAddOrganisaatio({
+                key: moment.now(),
+                oid: '',
+                organisation: { oid: '', name: '' },
+                voimassaLoppuPvm: moment().add(1, 'years').format(PropertySingleton.state.PVM_DBFORMAATTI),
+                selectablePermissions: [],
+                selectedPermissions: [],
+                isPermissionsLoading: false,
+            })
+        );
+    }
 
-export default connect<StateProps, DispatchProps, undefined, RootState>(mapStateToProps, {
-    kutsuClearOrganisaatios,
-    kutsuAddOrganisaatio,
-    fetchHenkilo,
-    fetchAllRyhmas,
-})(KutsuminenPage);
+    if (henkilo.henkiloLoading || ryhmas.ryhmasLoading) {
+        return (
+            <div className="wrapper">
+                <Loader />
+            </div>
+        );
+    } else {
+        const disabled = !henkilo.henkilo.hetu || !henkilo.henkilo.yksiloityVTJ;
+        return (
+            <div>
+                <form className="wrapper">
+                    <p className="oph-h2 oph-bold">{L['VIRKAILIJAN_LISAYS_OTSIKKO']}</p>
+                    <LocalNotification type="error" title={L['KUTSU_ESTETTY']} toggle={disabled}>
+                        {L['KUTSU_ESTETTY_SYY']}
+                    </LocalNotification>
+                    <BasicInfoForm
+                        L={L}
+                        disabled={disabled}
+                        basicInfo={basicInfo}
+                        setBasicInfo={setBasicAndValidateInfo}
+                        locale={locale}
+                    ></BasicInfoForm>
+
+                    <fieldset className="add-to-organisation">
+                        <span className="oph-h2 oph-strong">{L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_OTSIKKO']}</span>
+                        <div>
+                            {addedOrgs.map((organization, index) => (
+                                <AddedOrganization key={organization.key} index={index} addedOrg={organization} />
+                            ))}
+                        </div>
+                        <div className="row">
+                            <Button href="#" action={addEmptyOrganization}>
+                                {L['VIRKAILIJAN_KUTSU_LISAA_ORGANISAATIO_LINKKI']}
+                            </Button>
+                        </div>
+                    </fieldset>
+
+                    <div className="kutsuFormFooter row">
+                        <ValidationMessageButton
+                            buttonAction={openConfirmationModal}
+                            validationMessages={validationMessages}
+                        >
+                            {L['VIRKAILIJAN_LISAYS_TALLENNA']}
+                        </ValidationMessageButton>
+                    </div>
+                    <KutsuConfirmation
+                        addedOrgs={addedOrgs}
+                        modalCloseFn={modalCloseFn}
+                        modalOpen={modalOpen}
+                        basicInfo={basicInfo}
+                        resetFormValues={resetFormValues}
+                        L={L}
+                        locale={locale}
+                    />
+                </form>
+            </div>
+        );
+    }
+};
+
+export default KutsuminenPage;
