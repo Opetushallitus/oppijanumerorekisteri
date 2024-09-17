@@ -39,48 +39,20 @@ const KayttooikeusryhmaSelect = (props: Props) => {
     const [naytettavat, setNaytettavat] = useState([]);
 
     useEffect(() => {
-        const kayttoooikeusryhmat = getKielistetyt(sallitut);
-        const naytettavat = getNaytettavat(kayttoooikeusryhmat, hakutermi);
-        const newValittu = valittu?.id ? naytettavat.find((naytettava) => naytettava.id === valittu?.id) : null;
-        setNaytettavat(naytettavat);
-        setValittu(newValittu);
-    }, [sallitut, hakutermi]);
-
-    const getKielistetyt = (kayttooikeusryhmat: Array<Kayttooikeusryhma>): Array<KielistettyKayttooikeusryhma> => {
-        return kayttooikeusryhmat.map(getKielistetty).sort((a, b) => a.nimi.localeCompare(b.nimi));
-    };
-
-    const getKielistetty = (kayttooikeusryhma: Kayttooikeusryhma): KielistettyKayttooikeusryhma => {
-        return {
-            id: kayttooikeusryhma.id,
-            nimi: toLocalizedText(locale, kayttooikeusryhma.nimi, ''),
-            kuvaus: toLocalizedText(locale, kayttooikeusryhma.kuvaus, ''),
-        };
-    };
-
-    const getNaytettavat = (
-        kayttooikeusryhmat: Array<KielistettyKayttooikeusryhma>,
-        hakutermi: string
-    ): Array<KielistettyKayttooikeusryhma> => {
-        return kayttooikeusryhmat.filter(
+        const kayttooikeusryhmat = sallitut
+            .map((s) => ({
+                id: s.id,
+                nimi: toLocalizedText(locale, s.nimi, ''),
+                kuvaus: toLocalizedText(locale, s.kuvaus, ''),
+            }))
+            .sort((a, b) => a.nimi.localeCompare(b.nimi));
+        const newNaytettavat = kayttooikeusryhmat.filter(
             (kayttooikeusryhma) => kayttooikeusryhma.nimi.toLowerCase().indexOf(hakutermi.toLowerCase()) !== -1
         );
-    };
-
-    const renderKayttooikeusryhma = (kayttooikeusryhma: KielistettyKayttooikeusryhma) => {
-        return (
-            <div
-                key={kayttooikeusryhma.id}
-                className={classNames({
-                    valittu: valittu === kayttooikeusryhma,
-                    valittava: true,
-                })}
-                onClick={(event) => onSelect(event, kayttooikeusryhma)}
-            >
-                {kayttooikeusryhma.nimi}
-            </div>
-        );
-    };
+        const newValittu = valittu?.id ? newNaytettavat.find((n) => n.id === valittu?.id) : undefined;
+        setNaytettavat(newNaytettavat);
+        setValittu(newValittu);
+    }, [sallitut, hakutermi]);
 
     const onSelect = (event: React.SyntheticEvent, valittu: KielistettyKayttooikeusryhma) => {
         event.preventDefault();
@@ -110,7 +82,20 @@ const KayttooikeusryhmaSelect = (props: Props) => {
                 {naytettavat.length === 0 ? (
                     <div className="valittavat-tyhja"></div>
                 ) : (
-                    <div className="valittavat">{naytettavat.map(renderKayttooikeusryhma)}</div>
+                    <div className="valittavat">
+                        {naytettavat.map((n) => (
+                            <div
+                                key={n.id}
+                                className={classNames({
+                                    valittu: valittu === n,
+                                    valittava: true,
+                                })}
+                                onClick={(event) => onSelect(event, n)}
+                            >
+                                {n.nimi}
+                            </div>
+                        ))}
+                    </div>
                 )}
             </div>
             <div className="flex-1 flex-same-size valinta">
