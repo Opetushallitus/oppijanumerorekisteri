@@ -4,10 +4,15 @@ readonly repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 function main {
   require_command mvn
-  mvn clean install
+  mvn clean install -DskipTests=true
   wait_for_local_db_to_be_healthy
   select_java_version "21"
-  java --add-opens java.base/java.lang=ALL-UNNAMED -Dnet.bytebuddy.experimental=true -jar "$repo"/../oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-2021.01-SNAPSHOT.jar
+
+  java \
+    --add-opens java.base/java.lang=ALL-UNNAMED \
+    -Dnet.bytebuddy.experimental=true \
+    -Dspring.config.additional-location=classpath:/config/local.yml \
+    -jar "$repo"/../oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-2021.01-SNAPSHOT.jar
 }
 
 function select_java_version {

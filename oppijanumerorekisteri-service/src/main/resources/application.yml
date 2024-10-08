@@ -106,6 +106,7 @@ oppijanumerorekisteri:
     password: pwd
     palveluvayla-env: FI-TEST
     apigw-role-arn: ''
+oppijanumerorekisteri.oauth2.enabled: false
 aws:
   region: eu-west-1
   henkiloModifiedTopic:

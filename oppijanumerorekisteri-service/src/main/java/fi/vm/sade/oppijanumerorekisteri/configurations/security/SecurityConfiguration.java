@@ -5,20 +5,33 @@ import fi.vm.sade.javautils.kayttooikeusclient.OphUserDetailsServiceImpl;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.CasProperties;
 import fi.vm.sade.properties.OphProperties;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apereo.cas.client.session.SessionMappingStorage;
 import org.apereo.cas.client.session.SingleSignOutFilter;
 import org.apereo.cas.client.validation.Cas30ProxyTicketValidator;
 import org.apereo.cas.client.validation.TicketValidator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;
 import org.springframework.security.cas.web.CasAuthenticationEntryPoint;
 import org.springframework.security.cas.web.CasAuthenticationFilter;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -27,6 +40,7 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
 @Profile("!dev")
 @Configuration
+@EnableMethodSecurity(jsr250Enabled = false, prePostEnabled = true, securedEnabled = true)
 @EnableWebSecurity
 public class SecurityConfiguration {
     private CasProperties casProperties;
@@ -34,6 +48,9 @@ public class SecurityConfiguration {
     private SessionMappingStorage sessionMappingStorage;
 
     public static final String SPRING_CAS_SECURITY_CHECK_PATH = "/j_spring_cas_security_check";
+
+    @Value("${oppijanumerorekisteri.oauth2.enabled:false}")
+    private boolean oauth2Enabled;
 
     public SecurityConfiguration(CasProperties casProperties, OphProperties ophProperties, SessionMappingStorage sessionMappingStorage) {
         this.casProperties = casProperties;
@@ -116,6 +133,33 @@ public class SecurityConfiguration {
         return casAuthenticationEntryPoint;
     }
 
+    Converter<Jwt, AbstractAuthenticationToken> oauth2JwtConverter() {
+        return new Converter<Jwt, AbstractAuthenticationToken>() {
+            JwtGrantedAuthoritiesConverter delegate = new JwtGrantedAuthoritiesConverter();
+
+            @Override
+            public AbstractAuthenticationToken convert(Jwt source) {
+                List<GrantedAuthority> authorityList = extractRoles(source);
+                Collection<GrantedAuthority> authorities = delegate.convert(source);
+                if (authorities != null) {
+                    authorityList.addAll(authorities);
+                }
+                return new JwtAuthenticationToken(source, authorityList);
+            }
+
+            private List<GrantedAuthority> extractRoles(Jwt jwt) {
+                List<String> roles = (List<String>) jwt.getClaims().get("roles");
+                if (roles == null) {
+                    roles = List.of();
+                }
+                return roles.stream()
+                        .filter(role -> role.startsWith("ROLE_"))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+            }
+        };
+    }
+
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http, CasAuthenticationFilter casAuthenticationFilter,
             AuthenticationEntryPoint authenticationEntryPoint, SecurityContextRepository securityContextRepository) throws Exception {
@@ -141,6 +185,11 @@ public class SecurityConfiguration {
                 .securityContextRepository(securityContextRepository))
             .requestCache(cache -> cache.requestCache(requestCache))
             .exceptionHandling(handling -> handling.authenticationEntryPoint(authenticationEntryPoint));
+
+        if (oauth2Enabled) {
+            http.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(oauth2JwtConverter())));
+        }
+
         return http.build();
     }
 }

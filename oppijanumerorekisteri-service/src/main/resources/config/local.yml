@@ -1,0 +1,4 @@
+spring.security.oauth2.resourceserver.jwt.issuer-uri: https://virkailija.hahtuvaopintopolku.fi/kayttooikeus-service
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri: https://virkailija.hahtuvaopintopolku.fi/kayttooikeus-service/oauth2/jwks
+
+oppijanumerorekisteri.oauth2.enabled: true
