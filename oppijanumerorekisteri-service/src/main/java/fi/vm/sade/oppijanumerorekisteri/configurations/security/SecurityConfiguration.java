@@ -5,8 +5,8 @@ import fi.vm.sade.javautils.kayttooikeusclient.OphUserDetailsServiceImpl;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.CasProperties;
 import fi.vm.sade.properties.OphProperties;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apereo.cas.client.session.SessionMappingStorage;
@@ -139,23 +139,32 @@ public class SecurityConfiguration {
 
             @Override
             public AbstractAuthenticationToken convert(Jwt source) {
-                List<GrantedAuthority> authorityList = extractRoles(source);
-                Collection<GrantedAuthority> authorities = delegate.convert(source);
-                if (authorities != null) {
-                    authorityList.addAll(authorities);
+                var authorityList = extractRoles(source);
+                var delegateAuthorities = delegate.convert(source);
+                if (delegateAuthorities != null) {
+                    authorityList.addAll(delegateAuthorities);
                 }
                 return new JwtAuthenticationToken(source, authorityList);
             }
 
             private List<GrantedAuthority> extractRoles(Jwt jwt) {
-                List<String> roles = (List<String>) jwt.getClaims().get("roles");
-                if (roles == null) {
-                    roles = List.of();
-                }
-                return roles.stream()
-                        .filter(role -> role.startsWith("ROLE_"))
+                Map<String, List<String>> roleClaim = jwt.getClaims().get("roles") != null
+                    ? (Map<String, List<String>>) jwt.getClaims().get("roles")
+                    : Map.of();
+                var roles = roleClaim.keySet()
+                        .stream()
+                        .map((oid) -> {
+                            var orgRoles = roleClaim.get(oid);
+                            return orgRoles.stream().map((role) -> List.of(
+                                "ROLE_APP_" + role,
+                                "ROLE_APP_" + role + "_" + oid
+                            )).toList();
+                        })
+                        .flatMap(List::stream)
+                        .flatMap(List::stream)
                         .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+                        .collect(Collectors.<GrantedAuthority>toList());
+                return roles;
             }
         };
     }
