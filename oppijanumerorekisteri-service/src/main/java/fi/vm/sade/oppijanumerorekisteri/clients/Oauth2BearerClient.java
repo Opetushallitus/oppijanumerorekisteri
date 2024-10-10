@@ -10,6 +10,7 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -30,15 +31,19 @@ public class Oauth2BearerClient {
     private final ObjectMapper objectMapper;
     private final OppijanumerorekisteriProperties properties;
 
+    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
+    private String oauth2IssuerUri;
+
     @Cacheable(CACHE_NAME_OAUTH2_BEARER)
     public String getOauth2Bearer() throws IOException, InterruptedException {
-        log.info("refetching oauth2 bearer");
+        String tokenUrl = oauth2IssuerUri + "/oauth2/token";
+        log.info("refetching oauth2 bearer from " + tokenUrl);
         String body = "grant_type=client_credentials&client_id="
-            + properties.getOauth2().getClientId()
-            + "&client_secret="
-            + properties.getOauth2().getClientSecret();
+                + properties.getOauth2().getClientId()
+                + "&client_secret="
+                + properties.getOauth2().getClientSecret();
         var request = HttpRequest.newBuilder()
-                .uri(URI.create("https://virkailija.hahtuvaopintopolku.fi/kayttooikeus-service/oauth2/token"))
+                .uri(URI.create(tokenUrl))
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .POST(BodyPublishers.ofString(body))
                 .build();
