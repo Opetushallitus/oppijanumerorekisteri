@@ -17,6 +17,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioCriteria;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.entity.ContentType;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
@@ -27,6 +28,7 @@ import static fi.vm.sade.oppijanumerorekisteri.clients.impl.HttpClientUtil.noCon
 import static java.util.function.Function.identity;
 
 @Component
+@ConditionalOnExpression("!${oppijanumerorekisteri.oauth2.enabled}")
 @RequiredArgsConstructor
 public class KayttooikeusClientImpl implements KayttooikeusClient {
 

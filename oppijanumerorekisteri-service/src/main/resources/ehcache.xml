@@ -7,4 +7,12 @@
             <heap unit="entries">10</heap>
         </resources>
     </cache>
+    <cache alias="oauth2Bearer">
+        <expiry>
+            <ttl unit="seconds">250</ttl>
+        </expiry>
+        <resources>
+            <heap unit="entries">1</heap>
+        </resources>
+    </cache>
 </config>

@@ -23,6 +23,8 @@ public class OppijanumerorekisteriProperties {
 
     private final Tasks tasks = new Tasks();
 
+    private final Oauth2 oauth2 = new Oauth2();
+
     @Getter
     @Setter
     public static class Tasks {
@@ -75,5 +77,13 @@ public class OppijanumerorekisteriProperties {
             private int hour = 4;
             private int minute = 30;
         }
+    }
+
+    @Getter
+    @Setter
+    public static class Oauth2 {
+        private Boolean enabled;
+        private String clientId;
+        private String clientSecret;
     }
 }

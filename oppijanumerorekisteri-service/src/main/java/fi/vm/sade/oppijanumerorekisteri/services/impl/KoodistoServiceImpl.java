@@ -21,7 +21,7 @@ public class KoodistoServiceImpl implements KoodistoService {
     }
 
     @Override
-    @Cacheable
+    @Cacheable(CACHE_NAME_KOODISTOT)
     public Iterable<KoodiType> list(Koodisto koodisto) {
         return koodistoClient.getKoodisForKoodisto(koodisto.getUri(), koodisto.getVersio(), false);
     }

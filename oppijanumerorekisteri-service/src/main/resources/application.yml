@@ -107,6 +107,8 @@ oppijanumerorekisteri:
     palveluvayla-env: FI-TEST
     apigw-role-arn: ''
 oppijanumerorekisteri.oauth2.enabled: false
+oppijanumerorekisteri.oauth2.clientId: ""
+oppijanumerorekisteri.oauth2.clientSecret: ""
 aws:
   region: eu-west-1
   henkiloModifiedTopic:

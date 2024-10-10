@@ -58,6 +58,9 @@ oppijanumerorekisteri:
     password: {{oppijanumerorekisteri_vtjmuutosrajapinta_password | default('')}}
     palveluvayla-env: {{oppijanumerorekisteri_palveluvayla_env | default('FI-TEST')}}
     apigw-role-arn: {{oppijanumerorekisteri_apigw_role_arn | default('')}}
+  oauth2:
+    clientId: {{oppijanumerorekisteri_oauth2_clientid | default('')}}
+    clientSecret: {{oppijanumerorekisteri_oauth2_clientsecret | default('')}}
 aws:
   region: {{aws_region}}
   henkiloModifiedTopic:

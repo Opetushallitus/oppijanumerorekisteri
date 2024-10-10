@@ -11,5 +11,6 @@ import org.springframework.context.annotation.Configuration;
 public class CacheConfiguration {
 
     public static final String CACHE_NAME_KOODISTOT = "koodistot";
+    public static final String CACHE_NAME_OAUTH2_BEARER = "oauth2Bearer";
 
 }
