@@ -28,7 +28,7 @@ import static fi.vm.sade.oppijanumerorekisteri.clients.impl.HttpClientUtil.noCon
 import static java.util.function.Function.identity;
 
 @Component
-@ConditionalOnExpression("!${oppijanumerorekisteri.oauth2.enabled}")
+@ConditionalOnExpression("not ${oppijanumerorekisteri.oauth2.enabled:false}")
 @RequiredArgsConstructor
 public class KayttooikeusClientImpl implements KayttooikeusClient {
 

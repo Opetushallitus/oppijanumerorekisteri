@@ -21,7 +21,6 @@ import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.PermissionCheckDto;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.Oauth2Client;
-import fi.vm.sade.oppijanumerorekisteri.configurations.properties.AuthenticationProperties;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.KayttajaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioCriteria;
@@ -29,7 +28,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import lombok.RequiredArgsConstructor;
 
 @Component
-@ConditionalOnExpression("${oppijanumerorekisteri.oauth2.enabled}")
+@ConditionalOnExpression("${oppijanumerorekisteri.oauth2.enabled:false}")
 @RequiredArgsConstructor
 public class KayttooikeusOauth2ClientImpl implements KayttooikeusClient {
     private final UrlConfiguration urlConfiguration;
