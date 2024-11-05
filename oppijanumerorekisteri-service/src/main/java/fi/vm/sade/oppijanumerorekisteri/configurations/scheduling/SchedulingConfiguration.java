@@ -11,6 +11,7 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.security.OphSessionMappin
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.VtjMuutostietoService;
 import fi.vm.sade.oppijanumerorekisteri.services.death.CleanupService;
+import fi.vm.sade.oppijanumerorekisteri.services.export.ExportPseudonymizedService;
 import fi.vm.sade.oppijanumerorekisteri.services.export.ExportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,7 @@ public class SchedulingConfiguration {
     private final IdentificationService identificationService;
     private final VtjMuutostietoService vtjMuutostietoService;
     private final ExportService exportService;
+    private final ExportPseudonymizedService exportPseudonymizedService;
 
     @Bean
     Task<Void> casClientSessionCleanerTask() {
@@ -112,6 +114,19 @@ public class SchedulingConfiguration {
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
+                });
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "oppijanumerorekisteri.tasks.pseudonymized-export.enabled", matchIfMissing = false)
+    Task<Void> exportPseudonymizedTask() {
+        log.info("Creating pseudonymized export task");
+        return Tasks.recurring(new TaskWithoutDataDescriptor("ExportPseudonymized"), FixedDelay.ofHours(1))
+                .execute((taskInstance, executionContext) -> {
+                    log.info("Running pseudonymized export task");
+                    exportPseudonymizedService.createSchema();
+                    exportPseudonymizedService.generateExportFiles();
+                    log.info("Pseudonymized export task completed");
                 });
     }
 }
