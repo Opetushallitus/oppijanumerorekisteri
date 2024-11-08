@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
-import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.H2Configuration;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
@@ -51,7 +50,7 @@ public class YksilointiServiceImplTest {
     @InjectMocks
     private YksilointiServiceImpl yksilointiService;
     @Mock
-    private VtjClient vtjClient;
+    private VtjService vtjService;
     @Mock
     private HenkiloRepository henkiloRepository;
     @Mock
@@ -122,7 +121,7 @@ public class YksilointiServiceImplTest {
 
     @Test
     public void puuttuvaaKutsumanimeaEiKorvataYksiloiManuaalisesti() {
-        when(vtjClient.fetchHenkilo(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-kutsumanimi-puuttuu.json"));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-kutsumanimi-puuttuu.json"));
         when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
         Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(this.henkiloOid);
@@ -131,7 +130,7 @@ public class YksilointiServiceImplTest {
 
     @Test
     public void paivitaKutsumanimiYksiloiManuaalisesti() {
-        when(vtjClient.fetchHenkilo(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-uusi-kutsumanimi.json"));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-uusi-kutsumanimi.json"));
         when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
         Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(this.henkiloOid);
@@ -141,7 +140,7 @@ public class YksilointiServiceImplTest {
 
     @Test
     public void paivitaSyntymaikaYksiloiManuaalisesti() {
-        when(vtjClient.fetchHenkilo(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-ok.json"));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-ok.json"));
         LocalDate originalSyntymaaika = this.henkilo.getSyntymaaika();
         assertThat(originalSyntymaaika).isEqualTo("1990-03-23");
         when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
@@ -154,7 +153,7 @@ public class YksilointiServiceImplTest {
 
     @Test
     public void yksiloiPelkallaHetulla() {
-        when(vtjClient.fetchHenkilo(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-ok.json"));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-ok.json"));
         this.henkilo.setEtunimet(null);
         this.henkilo.setKutsumanimi(null);
         this.henkilo.setSukunimi(null);
@@ -169,7 +168,7 @@ public class YksilointiServiceImplTest {
     @Test(expected = SuspendableIdentificationException.class)
     public void yksiloiVtjError() {
 
-        doReturn(Optional.empty()).when(vtjClient).fetchHenkilo(any());
+        doReturn(Optional.empty()).when(vtjService).teeHenkiloKysely(any());
 
         when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
@@ -180,7 +179,7 @@ public class YksilointiServiceImplTest {
 
     @Test
     public void yksiloiManuaalisestiPelkallaHetullaJaTyhjillaNimilla() {
-        when(vtjClient.fetchHenkilo(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-ok.json"));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-ok.json"));
         this.henkilo.setEtunimet("");
         this.henkilo.setKutsumanimi("");
         this.henkilo.setSukunimi("");
@@ -194,7 +193,7 @@ public class YksilointiServiceImplTest {
 
     @Test
     public void paivitaTurvakieltoYksiloiManuaalisesti() {
-        when(vtjClient.fetchHenkilo(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-ok.json"));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-ok.json"));
         this.henkilo.setTurvakielto(true);
         when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
@@ -205,7 +204,7 @@ public class YksilointiServiceImplTest {
 
     @Test
     public void yksiloiNimetVaarissaKentissa() {
-        when(vtjClient.fetchHenkilo(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-vaarat-kentat.json"));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-vaarat-kentat.json"));
         when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
         Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
@@ -220,7 +219,7 @@ public class YksilointiServiceImplTest {
         final String henkiloOid = "yksiloimatonOppija";
         this.henkilo.setOidHenkilo(henkiloOid);
         this.henkilo.setSukunimi("Oppija");
-        when(vtjClient.fetchHenkilo(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-oppija.json"));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-oppija.json"));
         when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
         Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(henkiloOid);
@@ -239,7 +238,7 @@ public class YksilointiServiceImplTest {
         this.henkilo.setSukunimi("Virkailija");
         this.henkilo.setYksiloity(false);
         this.henkilo.setYksiloityVTJ(false);
-        when(vtjClient.fetchHenkilo(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-virkailija.json"));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-virkailija.json"));
         when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
         KayttajaReadDto dto = new KayttajaReadDto();
         dto.setOid(henkiloOid);
@@ -257,7 +256,7 @@ public class YksilointiServiceImplTest {
     @Test
     public void paivitaSukupuoli() {
         this.henkilo.setSukupuoli("2");
-        when(vtjClient.fetchHenkilo(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-ok.json"));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-ok.json"));
         when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
         Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
@@ -268,7 +267,7 @@ public class YksilointiServiceImplTest {
     @Test
     public void tallennaPuuttuvaSukupuoliHetunPerusteella() {
         this.henkilo.setSukupuoli(null);
-        when(vtjClient.fetchHenkilo(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-sukupuoli-puuttuu.json"));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-sukupuoli-puuttuu.json"));
         when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
         Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
@@ -279,7 +278,7 @@ public class YksilointiServiceImplTest {
     @Test
     public void kielisyysTallentuu() {
         this.henkilo.setAidinkieli(null);
-        when(vtjClient.fetchHenkilo(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-ok.json"));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-ok.json"));
         when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
         Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
@@ -293,7 +292,7 @@ public class YksilointiServiceImplTest {
                 .huoltaja(Henkilo.builder().oidHenkilo("vanhahuoltaja").build())
                 .lapsi(this.henkilo)
                 .build()));
-        when(vtjClient.fetchHenkilo(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-huoltajat.json"));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-huoltajat.json"));
         when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
         when(henkiloModificationService.createHenkilo(any(Henkilo.class))).thenAnswer(returnsFirstArg());
         when(henkiloModificationService.findOrCreateHuoltaja(any(HuoltajaCreateDto.class), any(Henkilo.class))).thenAnswer((input) -> {
@@ -311,7 +310,7 @@ public class YksilointiServiceImplTest {
 
     @Test
     public void lisaaYksilointiTietoKunNimetEivatTasmaa() {
-        when(vtjClient.fetchHenkilo(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-erilaiset-nimet.json"));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-erilaiset-nimet.json"));
         when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
         Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
@@ -465,7 +464,7 @@ public class YksilointiServiceImplTest {
     @Test(expected = NotFoundException.class)
     public void existsNotFound() {
         when(henkiloRepository.findByHetu(any())).thenReturn(Optional.empty());
-        when(vtjClient.fetchHenkilo(any())).thenReturn(Optional.empty());
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(Optional.empty());
 
         yksilointiService.exists(existenceCheckDto());
     }
@@ -482,7 +481,7 @@ public class YksilointiServiceImplTest {
 
         assertThat(yksilointiService.exists(existenceCheckDto())).isEqualTo(Optional.of("test"));
 
-        verifyNoInteractions(vtjClient);
+        verifyNoInteractions(vtjService);
     }
 
     @Test(expected = ConflictException.class)
@@ -505,7 +504,7 @@ public class YksilointiServiceImplTest {
         when(henkilo.getSukunimi()).thenReturn("d");
 
         when(henkiloRepository.findByHetu(any())).thenReturn(Optional.empty());
-        when(vtjClient.fetchHenkilo(any())).thenReturn(Optional.of(henkilo));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(Optional.of(henkilo));
 
         assertThat(yksilointiService.exists(existenceCheckDto())).isEmpty();
     }
@@ -522,7 +521,7 @@ public class YksilointiServiceImplTest {
         when(henkilo.getSukunimi()).thenReturn("d");
 
         when(henkiloRepository.findByHetu(any())).thenReturn(Optional.empty());
-        when(vtjClient.fetchHenkilo(any())).thenReturn(Optional.of(henkilo));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(Optional.of(henkilo));
 
         HenkiloExistenceCheckDto details = existenceCheckDto();
 
@@ -543,7 +542,7 @@ public class YksilointiServiceImplTest {
         when(henkilo.getSukunimi()).thenReturn("d");
 
         when(henkiloRepository.findByHetu(any())).thenReturn(Optional.empty());
-        when(vtjClient.fetchHenkilo(any())).thenReturn(Optional.of(henkilo));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(Optional.of(henkilo));
 
         HenkiloExistenceCheckDto details = existenceCheckDto();
 
@@ -558,7 +557,7 @@ public class YksilointiServiceImplTest {
         when(henkilo.getSukunimi()).thenReturn("d");
 
         when(henkiloRepository.findByHetu(any())).thenReturn(Optional.empty());
-        when(vtjClient.fetchHenkilo(any())).thenReturn(Optional.of(henkilo));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(Optional.of(henkilo));
 
         HenkiloExistenceCheckDto details = existenceCheckDto();
 

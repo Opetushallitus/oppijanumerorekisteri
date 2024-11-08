@@ -31,9 +31,6 @@ authentication:
   kayttooikeus:
     username: {{oppijanumerorekisteri_kayttooikeus_username}}
     password: '{{oppijanumerorekisteri_kayttooikeus_password}}'
-  vtj:
-    username: {{authentication_app_username_to_vtj}}
-    password: {{authentication_app_password_to_vtj}}
   hakuapp:
     username: {{authentication_app_username_to_haku}}
     password: {{authentication_app_password_to_haku}}
@@ -66,7 +63,6 @@ oppijanumerorekisteri:
     password: {{oppijanumerorekisteri_vtjkysely_password | default('')}}
     keystorePassword: {{oppijanumerorekisteri_vtjkysely_keystore_password | default('')}}
     truststorePassword: {{oppijanumerorekisteri_vtjkysely_truststore_password | default('')}}
-    testOids: {{oppijanumerorekisteri_vtjkysely_testoids | default('')}}
 aws:
   region: {{aws_region}}
   henkiloModifiedTopic:

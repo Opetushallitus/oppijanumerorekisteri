@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class VtjService {
-    private final VtjKyselyClient vtjClient;
+    private final VtjKyselyClient vtjKyselyClient;
 
     public Optional<YksiloityHenkilo> teeHenkiloKysely(String hetu) {
         try {
@@ -42,7 +42,7 @@ public class VtjService {
     }
 
     public Optional<VTJHenkiloVastaussanoma> getVtjHenkiloVastaussanoma(String hetu, boolean retried) {
-        TeeHenkilonTunnusKyselyResponse tunnusKyselyResult = vtjClient.teeHenkilonTunnusKysely(hetu);
+        TeeHenkilonTunnusKyselyResponse tunnusKyselyResult = vtjKyselyClient.teeHenkilonTunnusKysely(hetu);
         VTJHenkiloVastaussanoma vastaus = (VTJHenkiloVastaussanoma) tunnusKyselyResult.getTeeHenkilonTunnusKyselyResult().getContent().get(0);
         if (vastaus == null) {
             throw new RuntimeException("Invalid response from VTJ");

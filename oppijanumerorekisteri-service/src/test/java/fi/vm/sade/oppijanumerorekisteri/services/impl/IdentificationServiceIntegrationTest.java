@@ -1,12 +1,13 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+
 import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
-import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiVirheDto;
 import fi.vm.sade.oppijanumerorekisteri.enums.YksilointivirheTila;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -14,7 +15,8 @@ import fi.vm.sade.oppijanumerorekisteri.models.Yksilointivirhe;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointivirheRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
-import fi.vm.sade.oppijanumerorekisteri.services.MockVtjClient;
+import fi.vm.sade.oppijanumerorekisteri.services.VtjService;
+import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 import software.amazon.awssdk.services.sns.SnsClient;
 
 import org.assertj.core.groups.Tuple;
@@ -30,6 +32,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,9 +51,7 @@ import static org.mockito.Mockito.when;
 @Sql("/sql/yksilointi-test.sql")
 public class IdentificationServiceIntegrationTest {
     @MockBean
-    private VtjClient vtjClient;
-
-    private MockVtjClient mockVtjClient;
+    private VtjService vtjService;
 
     @MockBean
     private SnsClient snsClient;
@@ -78,11 +80,10 @@ public class IdentificationServiceIntegrationTest {
     @Autowired
     private YksilointivirheRepository yksilointivirheRepository;
 
+    private final Gson gson = new Gson();
+
     @Before
     public void setup() {
-        this.mockVtjClient = new MockVtjClient();
-        this.mockVtjClient.setUsedFixture("/vtj-testdata/vtj-response-ok.json");
-
         given(this.koodistoClient.getKoodisForKoodisto(anyString(), anyInt(), anyBoolean()))
                 .willReturn(new KoodiTypeListBuilder(Koodisto.MAAT_JA_VALTIOT_2).koodi("752").koodi("246").build());
     }
@@ -92,14 +93,18 @@ public class IdentificationServiceIntegrationTest {
         databaseService.truncate();
     }
 
+    private Optional<YksiloityHenkilo> setUsedFixture(String path) {
+        return Optional.ofNullable(gson.fromJson(new InputStreamReader(getClass().getResourceAsStream(path)), YksiloityHenkilo.class));
+    }
+
     @Test
     public void identifyHenkilos() {
         List<Henkilo> unidentifiedHenkilos = this.entityManager
                 .createQuery("SELECT h FROM Henkilo h", Henkilo.class).getResultList();
 
-        given(this.vtjClient.fetchHenkilo("111111-1235")).willReturn(Optional.empty());
-        given(this.vtjClient.fetchHenkilo("010101-123N"))
-                .willReturn(this.mockVtjClient.fetchHenkilo(""));
+        given(vtjService.teeHenkiloKysely("111111-1235")).willReturn(Optional.empty());
+        given(vtjService.teeHenkiloKysely("010101-123N"))
+                .willReturn(setUsedFixture("/vtj-testdata/vtj-response-ok.json"));
 
         this.identificationService.identifyHenkilos(unidentifiedHenkilos, 0L);
 
@@ -122,9 +127,9 @@ public class IdentificationServiceIntegrationTest {
         List<Henkilo> unidentifiedHenkilos = this.entityManager
                 .createQuery("SELECT h FROM Henkilo h", Henkilo.class).getResultList();
 
-        given(this.vtjClient.fetchHenkilo("111111-1235")).willReturn(Optional.empty());
-        given(this.vtjClient.fetchHenkilo("010101-123N"))
-                .willReturn(this.mockVtjClient.fetchHenkilo(""));
+        given(vtjService.teeHenkiloKysely("111111-1235")).willReturn(Optional.empty());
+        given(vtjService.teeHenkiloKysely("010101-123N"))
+                .willReturn(setUsedFixture("/vtj-testdata/vtj-response-ok.json"));
 
         this.identificationService.identifyHenkilos(unidentifiedHenkilos, 0L);
 
@@ -143,8 +148,8 @@ public class IdentificationServiceIntegrationTest {
         List<Henkilo> yksiloimattomat = this.entityManager
                 .createQuery("SELECT h FROM Henkilo h WHERE hetu IN ('111111-1234', '010101-123N') ORDER BY id ASC", Henkilo.class)
                 .getResultList();
-        when(vtjClient.fetchHenkilo(eq("111111-1234"))).thenReturn(mockVtjClient.fetchHenkilo("010101-123N"));
-        when(vtjClient.fetchHenkilo(not(eq("111111-1234")))).thenThrow(new IllegalArgumentException("Ei pitäisi tapahtua"));
+        when(vtjService.teeHenkiloKysely(eq("111111-1234"))).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-ok.json"));
+        when(vtjService.teeHenkiloKysely(not(eq("111111-1234")))).thenThrow(new IllegalArgumentException("Ei pitäisi tapahtua"));
 
         identificationService.identifyHenkilos(yksiloimattomat, 0L);
 

@@ -80,9 +80,6 @@ authentication:
   kayttooikeus:
     username: ${authentication.default.username}
     password: ${authentication.default.password}
-  vtj:
-    username: ${authentication.default.username}
-    password: ${authentication.default.password}
   hakuapp:
     username: ${authentication.default.username}
     password: ${authentication.default.password}

@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloExistenceCheckDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ConflictException;
@@ -29,14 +28,13 @@ class YksilointiServiceImplExistenceCheckTest {
     private static final float THRESHOLD = 0.85f;
 
     private static YksilointiServiceImpl yksilointiService;
-    private static VtjClient vtjClient;
     private static HenkiloRepository henkiloRepository;
+    private static VtjService vtjService;
 
     @BeforeAll
     static void setup() {
-        vtjClient = mock(VtjClient.class);
         henkiloRepository = mock(HenkiloRepository.class);
-        VtjService vtjService = mock(VtjService.class);
+        vtjService = mock(VtjService.class);
         OppijanumerorekisteriProperties oppijanumerorekisteriProperties = mock(OppijanumerorekisteriProperties.class);
         when(oppijanumerorekisteriProperties.getEtunimiThreshold()).thenReturn(THRESHOLD);
         yksilointiService = new YksilointiServiceImpl(
@@ -51,7 +49,6 @@ class YksilointiServiceImplExistenceCheckTest {
                 null,
                 null,
                 null,
-                vtjClient,
                 vtjService,
                 null,
                 oppijanumerorekisteriProperties);
@@ -158,7 +155,7 @@ class YksilointiServiceImplExistenceCheckTest {
     @BeforeEach
     void resetMocks() {
         reset(henkiloRepository);
-        reset(vtjClient);
+        reset(vtjService);
     }
 
     @DisplayName("ONR details match")
@@ -175,7 +172,7 @@ class YksilointiServiceImplExistenceCheckTest {
 
         assertThat(yksilointiService.exists(input)).isEqualTo(Optional.of("oid"));
 
-        verify(vtjClient, never()).fetchHenkilo(any());
+        verify(vtjService, never()).teeHenkiloKysely(any());
     }
 
     @DisplayName("ONR details conflict")
@@ -192,7 +189,7 @@ class YksilointiServiceImplExistenceCheckTest {
 
         assertThrows(ConflictException.class, () -> yksilointiService.exists(input));
 
-        verify(vtjClient, never()).fetchHenkilo(any());
+        verify(vtjService, never()).teeHenkiloKysely(any());
     }
 
     @DisplayName("VTJ details match")
@@ -205,7 +202,7 @@ class YksilointiServiceImplExistenceCheckTest {
         when(henkilo.getSukunimi()).thenReturn(vtjData.getSukunimi());
 
         when(henkiloRepository.findByHetu(any())).thenReturn(Optional.empty());
-        when(vtjClient.fetchHenkilo(any())).thenReturn(Optional.of(henkilo));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(Optional.of(henkilo));
 
         assertThat(yksilointiService.exists(input)).isEmpty();
 
@@ -222,7 +219,7 @@ class YksilointiServiceImplExistenceCheckTest {
         when(henkilo.getSukunimi()).thenReturn(vtjData.getSukunimi());
 
         when(henkiloRepository.findByHetu(any())).thenReturn(Optional.empty());
-        when(vtjClient.fetchHenkilo(any())).thenReturn(Optional.of(henkilo));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(Optional.of(henkilo));
 
         assertThrows(ConflictException.class, () -> yksilointiService.exists(input));
 

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
-import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
@@ -41,7 +40,7 @@ import static org.mockito.Mockito.*;
 public class YksilointiITest {
 
     @MockBean
-    private VtjClient vtjClientMock;
+    private VtjService vtjService;
     @MockBean
     private KayttooikeusClient kayttooikeusClientMock;
     @MockBean
@@ -82,8 +81,8 @@ public class YksilointiITest {
         yksiloityHenkilo.setKutsumanimi("Teppo");
         yksiloityHenkilo.setEtunimi("Teppo");
         yksiloityHenkilo.setSukunimi("Testaaja");
-        when(vtjClientMock.fetchHenkilo(eq(uusiHetu))).thenReturn(Optional.of(yksiloityHenkilo));
-        when(vtjClientMock.fetchHenkilo(eq(vanhaHetu))).thenReturn(Optional.of(yksiloityHenkilo));
+        when(vtjService.teeHenkiloKysely(eq(uusiHetu))).thenReturn(Optional.of(yksiloityHenkilo));
+        when(vtjService.teeHenkiloKysely(eq(vanhaHetu))).thenReturn(Optional.of(yksiloityHenkilo));
 
         HenkiloCreateDto henkiloUusiHetuCreateDto = new HenkiloCreateDto();
         henkiloUusiHetuCreateDto.setHetu(uusiHetu);
@@ -142,8 +141,8 @@ public class YksilointiITest {
         yksiloityHenkilo.setKutsumanimi("Teppo");
         yksiloityHenkilo.setEtunimi("Teppo");
         yksiloityHenkilo.setSukunimi("Testaaja");
-        when(vtjClientMock.fetchHenkilo(eq(uusiHetu))).thenReturn(Optional.of(yksiloityHenkilo));
-        when(vtjClientMock.fetchHenkilo(eq(vanhaHetu))).thenReturn(Optional.of(yksiloityHenkilo));
+        when(vtjService.teeHenkiloKysely(eq(uusiHetu))).thenReturn(Optional.of(yksiloityHenkilo));
+        when(vtjService.teeHenkiloKysely(eq(vanhaHetu))).thenReturn(Optional.of(yksiloityHenkilo));
 
         HenkiloCreateDto henkiloVanhaHetuCreateDto = new HenkiloCreateDto();
         henkiloVanhaHetuCreateDto.setHetu(vanhaHetu);
@@ -215,7 +214,7 @@ public class YksilointiITest {
             setEtunimi("Seppo Huoltaja");
             setSukunimi("Testaaja");
         }}));
-        when(vtjClientMock.fetchHenkilo(anyString())).thenReturn(Optional.of(vtjHuollettava));
+        when(vtjService.teeHenkiloKysely(anyString())).thenReturn(Optional.of(vtjHuollettava));
 
         yksilointiService.yksiloiAutomaattisesti(huollettavaOid);
 
@@ -241,7 +240,7 @@ public class YksilointiITest {
         yksiloityHenkilo.setKutsumanimi("Teppo");
         yksiloityHenkilo.setEtunimi("Teppo");
         yksiloityHenkilo.setSukunimi("Testaaja");
-        when(vtjClientMock.fetchHenkilo(any())).thenReturn(Optional.of(yksiloityHenkilo));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(Optional.of(yksiloityHenkilo));
 
         DateTime modifiedSince = DateTime.now();
         identificationService.yksilointiTask();
@@ -277,7 +276,7 @@ public class YksilointiITest {
         yksiloityHenkilo.setKutsumanimi("Esa");
         yksiloityHenkilo.setEtunimi("Esa");
         yksiloityHenkilo.setSukunimi("Testaaja");
-        when(vtjClientMock.fetchHenkilo(any())).thenReturn(Optional.of(yksiloityHenkilo));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(Optional.of(yksiloityHenkilo));
 
         DateTime modifiedSince = DateTime.now();
         identificationService.yksilointiTask();
@@ -316,7 +315,7 @@ public class YksilointiITest {
         yksiloityHenkilo.setKutsumanimi("Esa");
         yksiloityHenkilo.setEtunimi("Esa");
         yksiloityHenkilo.setSukunimi("Testaaja");
-        when(vtjClientMock.fetchHenkilo(any())).thenReturn(Optional.of(yksiloityHenkilo));
+        when(vtjService.teeHenkiloKysely(any())).thenReturn(Optional.of(yksiloityHenkilo));
 
         yksilointiService.yksiloiAutomaattisesti(henkiloReadDto.getOidHenkilo());
 
@@ -341,8 +340,8 @@ public class YksilointiITest {
         yksiloityHenkilo.setKutsumanimi("Teppo");
         yksiloityHenkilo.setEtunimi("Teppo");
         yksiloityHenkilo.setSukunimi("Testaaja");
-        when(vtjClientMock.fetchHenkilo(eq(uusiHetu))).thenReturn(Optional.of(yksiloityHenkilo));
-        when(vtjClientMock.fetchHenkilo(eq(vanhaHetu))).thenReturn(Optional.of(yksiloityHenkilo));
+        when(vtjService.teeHenkiloKysely(eq(uusiHetu))).thenReturn(Optional.of(yksiloityHenkilo));
+        when(vtjService.teeHenkiloKysely(eq(vanhaHetu))).thenReturn(Optional.of(yksiloityHenkilo));
 
         HenkiloCreateDto henkiloUusiHetuCreateDto = new HenkiloCreateDto();
         henkiloUusiHetuCreateDto.setHetu(uusiHetu);
@@ -396,7 +395,7 @@ public class YksilointiITest {
         uusiYksiloityHenkilo.setKutsumanimi("Teppo");
         uusiYksiloityHenkilo.setEtunimi("Teppo");
         uusiYksiloityHenkilo.setSukunimi("Testaaja");
-        when(vtjClientMock.fetchHenkilo(eq(uusiHetu))).thenReturn(Optional.of(uusiYksiloityHenkilo));
+        when(vtjService.teeHenkiloKysely(eq(uusiHetu))).thenReturn(Optional.of(uusiYksiloityHenkilo));
         HenkiloCreateDto henkiloUusiHetuCreateDto = new HenkiloCreateDto();
         henkiloUusiHetuCreateDto.setHetu(uusiHetu);
         henkiloUusiHetuCreateDto.setKutsumanimi("Teppo");
@@ -411,7 +410,7 @@ public class YksilointiITest {
         vanhaYksiloityHenkilo.setKutsumanimi("Teppo");
         vanhaYksiloityHenkilo.setEtunimi("Teppo");
         vanhaYksiloityHenkilo.setSukunimi("Testaaja");
-        when(vtjClientMock.fetchHenkilo(eq(vanhaHetu))).thenReturn(Optional.of(vanhaYksiloityHenkilo));
+        when(vtjService.teeHenkiloKysely(eq(vanhaHetu))).thenReturn(Optional.of(vanhaYksiloityHenkilo));
         HenkiloCreateDto henkiloVanhaHetuCreateDto = new HenkiloCreateDto();
         henkiloVanhaHetuCreateDto.setHetu(vanhaHetu);
         henkiloVanhaHetuCreateDto.setKutsumanimi("Tiina");
@@ -459,8 +458,8 @@ public class YksilointiITest {
         yksiloityHenkilo.setKutsumanimi("Teppo");
         yksiloityHenkilo.setEtunimi("Teppo");
         yksiloityHenkilo.setSukunimi("Testaaja");
-        when(vtjClientMock.fetchHenkilo(eq(uusiHetu))).thenReturn(Optional.of(yksiloityHenkilo));
-        when(vtjClientMock.fetchHenkilo(eq(vanhaHetu))).thenReturn(Optional.of(yksiloityHenkilo));
+        when(vtjService.teeHenkiloKysely(eq(uusiHetu))).thenReturn(Optional.of(yksiloityHenkilo));
+        when(vtjService.teeHenkiloKysely(eq(vanhaHetu))).thenReturn(Optional.of(yksiloityHenkilo));
 
         HenkiloCreateDto henkiloVanhaHetuCreateDto = new HenkiloCreateDto();
         henkiloVanhaHetuCreateDto.setHetu(vanhaHetu);
@@ -561,7 +560,7 @@ public class YksilointiITest {
         yksiloityHenkilo.setKutsumanimi("teppo");
         yksiloityHenkilo.setSukunimi("testaaja");
         yksiloityHenkilo.setHetu("170498-993H");
-        when(this.vtjClientMock.fetchHenkilo(eq("190259-817N"))).thenReturn(Optional.of(yksiloityHenkilo));
+        when(this.vtjService.teeHenkiloKysely(eq("190259-817N"))).thenReturn(Optional.of(yksiloityHenkilo));
         reset(snsClient);
 
         this.yksilointiService.yksiloiAutomaattisesti(yksiloitavaOid);
@@ -597,7 +596,7 @@ public class YksilointiITest {
         yksiloityHenkilo.setKutsumanimi("teppo");
         yksiloityHenkilo.setSukunimi("testaaja");
         yksiloityHenkilo.setHetu("170498-993H");
-        when(this.vtjClientMock.fetchHenkilo(eq("190259-855W"))).thenReturn(Optional.of(yksiloityHenkilo));
+        when(this.vtjService.teeHenkiloKysely(eq("190259-855W"))).thenReturn(Optional.of(yksiloityHenkilo));
         reset(snsClient);
 
         this.yksilointiService.yksiloiAutomaattisesti(yksiloitavaOid);
@@ -642,7 +641,7 @@ public class YksilointiITest {
         yksiloityHenkilo.setKutsumanimi("teppo");
         yksiloityHenkilo.setSukunimi("testaaja");
         yksiloityHenkilo.setHetu("170498-993H");
-        when(this.vtjClientMock.fetchHenkilo(eq("190259-817N"))).thenReturn(Optional.of(yksiloityHenkilo));
+        when(this.vtjService.teeHenkiloKysely(eq("190259-817N"))).thenReturn(Optional.of(yksiloityHenkilo));
         reset(snsClient);
 
         SecurityContextHolder.getContext().setAuthentication(null);

@@ -8,7 +8,6 @@ import fi.vm.sade.oppijanumerorekisteri.FilesystemHelper;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.audit.OnrOperation;
 import fi.vm.sade.oppijanumerorekisteri.audit.VirkailijaAuditLogger;
-import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.impl.AwsSnsHenkiloModifiedTopic;
 import fi.vm.sade.oppijanumerorekisteri.configurations.H2Configuration;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
@@ -17,6 +16,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloExistenceCheckDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YleistunnisteDto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
+import fi.vm.sade.oppijanumerorekisteri.services.VtjService;
 import fi.vm.sade.oppijanumerorekisteri.validators.OppijaTuontiCreatePostValidator;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 import org.junit.jupiter.api.Test;
@@ -83,7 +83,7 @@ class YleistunnisteControllerTest {
     private KoodistoService koodistoService;
 
     @MockBean
-    private VtjClient vtjClient;
+    private VtjService vtjService;
 
     @MockBean
     private AwsSnsHenkiloModifiedTopic henkiloModifiedTopic;
@@ -356,7 +356,7 @@ class YleistunnisteControllerTest {
         yksiloityHenkilo.setEtunimi("Seppo Matti");
         yksiloityHenkilo.setKutsumanimi("Seppo");
         yksiloityHenkilo.setSukunimi("Peipponen");
-        when(vtjClient.fetchHenkilo("100690-1412")).thenReturn(Optional.of(yksiloityHenkilo));
+        when(vtjService.teeHenkiloKysely("100690-1412")).thenReturn(Optional.of(yksiloityHenkilo));
 
         HenkiloExistenceCheckDto request = HenkiloExistenceCheckDto.builder()
                 .hetu("100690-1412")
@@ -386,7 +386,7 @@ class YleistunnisteControllerTest {
         yksiloityHenkilo.setEtunimi("Seppo");
         yksiloityHenkilo.setKutsumanimi("Seppo");
         yksiloityHenkilo.setSukunimi("Peipponen");
-        when(vtjClient.fetchHenkilo("100690-1412")).thenReturn(Optional.of(yksiloityHenkilo));
+        when(vtjService.teeHenkiloKysely("100690-1412")).thenReturn(Optional.of(yksiloityHenkilo));
 
         HenkiloExistenceCheckDto request = HenkiloExistenceCheckDto.builder()
                 .hetu("100690-1412")
@@ -398,7 +398,7 @@ class YleistunnisteControllerTest {
         MvcResult result1 = mvc.perform(createRequest(post("/yleistunniste/hae"), request)).andExpect(status().isOk()).andReturn();
         verify(henkiloModifiedTopic, times(1)).publish(any());
         YleistunnisteDto response = objectMapper.readValue(result1.getResponse().getContentAsString(), YleistunnisteDto.class);
-        verify(vtjClient, times(1)).fetchHenkilo(any());
+        verify(vtjService, times(1)).teeHenkiloKysely(any());
         assertNotNull(response.getOppijanumero());
         assertEquals(response.getOppijanumero(), response.getOid());
         assertThat(findAuditEventForHenkiloOid(OnrOperation.CREATE_HENKILO, response.getOid())).isPresent();
@@ -422,7 +422,7 @@ class YleistunnisteControllerTest {
         yksiloityHenkilo.setEtunimi("Seppo Matti");
         yksiloityHenkilo.setKutsumanimi("Seppo");
         yksiloityHenkilo.setSukunimi("Peipponen");
-        when(vtjClient.fetchHenkilo("100690-1412")).thenReturn(Optional.of(yksiloityHenkilo));
+        when(vtjService.teeHenkiloKysely("100690-1412")).thenReturn(Optional.of(yksiloityHenkilo));
 
         HenkiloExistenceCheckDto request = HenkiloExistenceCheckDto.builder()
                 .hetu("100690-1412")
@@ -434,14 +434,14 @@ class YleistunnisteControllerTest {
         MvcResult result1 = mvc.perform(createRequest(post("/yleistunniste/hae"), request)).andExpect(status().isOk()).andReturn();
         verify(henkiloModifiedTopic, times(1)).publish(any());
         YleistunnisteDto response = objectMapper.readValue(result1.getResponse().getContentAsString(), YleistunnisteDto.class);
-        verify(vtjClient, times(1)).fetchHenkilo(any());
+        verify(vtjService, times(1)).teeHenkiloKysely(any());
         assertNotNull(response.getOppijanumero());
         assertEquals(response.getOppijanumero(), response.getOid());
 
         // Uudelleen haku ei enää tarkista tietoja VTJ:stä
         MvcResult result2 = mvc.perform(createRequest(post("/yleistunniste/hae"), request)).andExpect(status().isOk()).andReturn();
         YleistunnisteDto secondResponse = objectMapper.readValue(result2.getResponse().getContentAsString(), YleistunnisteDto.class);
-        verifyNoMoreInteractions(vtjClient);
+        verifyNoMoreInteractions(vtjService);
         assertEquals(secondResponse.getOid(), response.getOid());
         // Oppijanumero on null tokalla haulla. Syynä ilmeisesti se, että oppijan luonti ei automaattisesti yksilöi oppijaa vaikka tiedot varmistetaan VTJ:ltä
         assertNull(secondResponse.getOppijanumero());
@@ -456,7 +456,7 @@ class YleistunnisteControllerTest {
         yksiloityHenkilo.setEtunimi("Marja Terttu Karpalo");
         yksiloityHenkilo.setKutsumanimi("Terttu");
         yksiloityHenkilo.setSukunimi("Virtanen");
-        when(vtjClient.fetchHenkilo(hetu)).thenReturn(Optional.of(yksiloityHenkilo));
+        when(vtjService.teeHenkiloKysely(hetu)).thenReturn(Optional.of(yksiloityHenkilo));
 
         HenkiloExistenceCheckDto request = HenkiloExistenceCheckDto.builder()
                 .hetu(hetu)
@@ -468,15 +468,15 @@ class YleistunnisteControllerTest {
         YleistunnisteDto response = objectMapper.readValue(result1.getResponse().getContentAsString(), YleistunnisteDto.class);
 
         verify(henkiloModifiedTopic, times(1)).publish(any());
-        verify(vtjClient, times(1)).fetchHenkilo(any());
+        verify(vtjService, times(1)).teeHenkiloKysely(any());
         assertNotNull(response.getOppijanumero());
         assertEquals(response.getOppijanumero(), response.getOid());
 
         // Uudelleen haku ei enää tarkista tietoja VTJ:stä
-        reset(vtjClient);
+        reset(vtjService);
         MvcResult result2 = mvc.perform(createRequest(post("/yleistunniste/hae"), request)).andExpect(status().isOk()).andReturn();
         YleistunnisteDto secondResponse = objectMapper.readValue(result2.getResponse().getContentAsString(), YleistunnisteDto.class);
-        verify(vtjClient, times(0)).fetchHenkilo(any());
+        verify(vtjService, times(0)).teeHenkiloKysely(any());
         assertEquals(secondResponse.getOid(), response.getOid());
         // Oppijanumero on null tokalla haulla. Syynä ilmeisesti se, että oppijan luonti ei automaattisesti yksilöi oppijaa vaikka tiedot varmistetaan VTJ:ltä
         assertNull(secondResponse.getOppijanumero());
@@ -491,7 +491,7 @@ class YleistunnisteControllerTest {
         yksiloityHenkilo.setEtunimi("Marja Terttu Karpalo");
         yksiloityHenkilo.setKutsumanimi("Terttu");
         yksiloityHenkilo.setSukunimi("Virtanen");
-        when(vtjClient.fetchHenkilo(hetu)).thenReturn(Optional.of(yksiloityHenkilo));
+        when(vtjService.teeHenkiloKysely(hetu)).thenReturn(Optional.of(yksiloityHenkilo));
 
         // Luodessa uutta oppijaa, kutsussa annettu etunimi/etunimet tallennetaan oppijanumerorekisteriin eikä VTJ:stä
         // saadut nimet. Luodaan siis ensin uusi oppija kaikilla nimillä, jotta voidaan testata, että olemassaolevan
@@ -505,12 +505,12 @@ class YleistunnisteControllerTest {
         MvcResult initialResult = mvc.perform(createRequest(post("/yleistunniste/hae"), initialRequest)).andExpect(status().isOk()).andReturn();
         YleistunnisteDto initialResponse = objectMapper.readValue(initialResult.getResponse().getContentAsString(), YleistunnisteDto.class);
         verify(henkiloModifiedTopic, times(1)).publish(any());
-        verify(vtjClient, times(1)).fetchHenkilo(any());
+        verify(vtjService, times(1)).teeHenkiloKysely(any());
         assertNotNull(initialResponse.getOppijanumero());
         assertEquals(initialResponse.getOppijanumero(), initialResponse.getOid());
 
 
-        reset(vtjClient);
+        reset(vtjService);
         HenkiloExistenceCheckDto requestWithOneEtunimi = HenkiloExistenceCheckDto.builder()
                 .hetu(hetu)
                 .etunimet(nimi)
@@ -519,7 +519,7 @@ class YleistunnisteControllerTest {
                 .build();
         MvcResult result1 = mvc.perform(createRequest(post("/yleistunniste/hae"), requestWithOneEtunimi)).andExpect(status().isOk()).andReturn();
         YleistunnisteDto response = objectMapper.readValue(result1.getResponse().getContentAsString(), YleistunnisteDto.class);
-        verify(vtjClient, times(0)).fetchHenkilo(any());
+        verify(vtjService, times(0)).teeHenkiloKysely(any());
         assertEquals(response.getOid(), initialResponse.getOid());
     }
 

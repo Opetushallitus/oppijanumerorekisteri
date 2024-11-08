@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
-import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -53,8 +52,6 @@ public class YksilointiServiceImplUnitTest {
     private YksilointivirheRepository yksilointivirheRepository;
     @Mock
     private OrikaConfiguration mapper;
-    @Mock
-    private VtjClient vtjClient;
     @Mock
     private KayttooikeusClient kayttooikeusClient;
     @Mock
