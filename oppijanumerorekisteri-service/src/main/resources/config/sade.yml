@@ -11,3 +11,9 @@ oppijanumerorekisteri.tasks.export.lampi-external-id: ${ssm_lampi_external_id}
 oppijanumerorekisteri.vtj-muutosrajapinta.fetch-enabled: true
 oppijanumerorekisteri.vtj-muutosrajapinta.muutostieto-enabled: true
 oppijanumerorekisteri.vtj-muutosrajapinta.perustieto-enabled: true
+
+oppijanumerorekisteri.vtjkysely.enabled: true
+oppijanumerorekisteri.vtjkysely.address: http://alb.untuvaopintopolku.fi/vtj-test-ws/ws/
+oppijanumerorekisteri.vtjkysely.keystoreUri: /root/oph-configuration/rajapinnat/vrkkeystore
+oppijanumerorekisteri.vtjkysely.certAlias: opintopolku.fi
+oppijanumerorekisteri.vtjkysely.truststoreUri: /root/oph-configuration/rajapinnat/vrktruststore

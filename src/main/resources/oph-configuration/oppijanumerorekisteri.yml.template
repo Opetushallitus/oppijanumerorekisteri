@@ -61,6 +61,12 @@ oppijanumerorekisteri:
   oauth2:
     clientId: {{oppijanumerorekisteri_oauth2_clientid | default('')}}
     clientSecret: {{oppijanumerorekisteri_oauth2_clientsecret | default('')}}
+  vtjkysely:
+    username: {{oppijanumerorekisteri_vtjkysely_username | default('')}}
+    password: {{oppijanumerorekisteri_vtjkysely_password | default('')}}
+    keystorePassword: {{oppijanumerorekisteri_vtjkysely_keystore_password | default('')}}
+    truststorePassword: {{oppijanumerorekisteri_vtjkysely_truststore_password | default('')}}
+    testOids: {{oppijanumerorekisteri_vtjkysely_testoids | default('')}}
 aws:
   region: {{aws_region}}
   henkiloModifiedTopic:

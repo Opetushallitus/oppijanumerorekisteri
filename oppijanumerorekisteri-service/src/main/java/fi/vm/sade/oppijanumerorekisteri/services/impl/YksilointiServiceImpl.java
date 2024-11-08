@@ -23,6 +23,7 @@ import org.apache.lucene.search.spell.JaroWinklerDistance;
 import org.apache.lucene.search.spell.StringDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,11 +69,15 @@ public class YksilointiServiceImpl implements YksilointiService {
     private final OrikaConfiguration mapper;
 
     private final VtjClient vtjClient;
+    private final VtjService vtjService;
     private final KayttooikeusClient kayttooikeusClient;
 
     private final OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
 
     private final StringDistance stringDistance = new JaroWinklerDistance();
+
+    @Value("${oppijanumerorekisteri.vtjkysely.testOids:}")
+    private String testOids;
 
     static boolean isFakeHetu(String hetu) {
         return hetu.charAt(7) == '9';
@@ -81,6 +86,16 @@ public class YksilointiServiceImpl implements YksilointiService {
     private Henkilo getHenkiloByOid(String oid) {
         return henkiloRepository.findByOidHenkilo(oid)
                 .orElseThrow(() -> new NotFoundException("Henkilo not found by oid " + oid));
+    }
+
+    private Optional<YksiloityHenkilo> doYksilointi(Henkilo henkilo) {
+        log.info("using test oids " + testOids + " for yksilointi");
+        if (testOids != null && List.of(testOids.split(",")).contains(henkilo.getOidHenkilo())) {
+            log.info("making direct request to vtjkysely for test oid " + henkilo.getOidHenkilo());
+            return vtjService.teeHenkiloKysely(henkilo.getHetu());
+        } else {
+            return vtjClient.fetchHenkilo(henkilo.getHetu());
+        }
     }
 
     @Override
@@ -164,7 +179,7 @@ public class YksilointiServiceImpl implements YksilointiService {
             throw new SuspendableIdentificationException("Henkilön hetu ei ole oikea: " + henkilo.getHetu());
         }
 
-        YksiloityHenkilo yksiloityHenkilo = vtjClient.fetchHenkilo(henkilo.getHetu())
+        YksiloityHenkilo yksiloityHenkilo = doYksilointi(henkilo)
                 .orElseThrow(() ->
                         new SuspendableIdentificationException("Henkilöä ei löytynyt VTJ-palvelusta henkilötunnuksella: " + henkilo.getHetu()));
 
@@ -510,7 +525,7 @@ public class YksilointiServiceImpl implements YksilointiService {
             throw new DataInconsistencyException("Henkilöllä " + henkiloOid + " ei ole hetua vaikka yksilöinti on suoritettu");
         }
 
-        YksiloityHenkilo yksiloityHenkilo = vtjClient.fetchHenkilo(hetu)
+        YksiloityHenkilo yksiloityHenkilo = doYksilointi(henkilo)
                 .orElseThrow(() -> new DataInconsistencyException("Henkilöä ei löydy VTJ:stä hetulla " + hetu));
 
         logger.info("Päivitetään tiedot VTJ:stä hetulle: {}", hetu);

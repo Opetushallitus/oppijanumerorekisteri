@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns="http://xml.vrk.fi/schema/vtjkysely" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vtj="http://xml.vrk.fi/schema/vtj/henkilotiedot/1" targetNamespace="http://xml.vrk.fi/schema/vtjkysely" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://xml.vrk.fi/schema/vtj/henkilotiedot/1" schemaLocation="VTJHenkilotiedotKatalogi.xsd"/>
+	<xs:element name="VTJHenkiloVastaussanoma">
+		<xs:annotation>
+			<xs:documentation>OPHREK 1532013_-_Opetushallituksen_soso_Tallennettu:_1132013_17:07:00_Muutettu_viimeksi:_1532013_13:15:00</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Asiakasinfo" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="InfoS" type="vtj:AsiakasinfoTyyppi"/>
+							<xs:element name="InfoR" type="vtj:AsiakasinfoTyyppi"/>
+							<xs:element name="InfoE" type="vtj:AsiakasinfoTyyppi"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Paluukoodi">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="vtj:PaluukoodiTekstiTyyppi">
+								<xs:attribute name="koodi" type="vtj:PaluukoodiTyyppi" use="required"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Hakuperusteet">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Henkilotunnus">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="vtj:HenkilotunnusTyyppi">
+											<xs:attribute name="hakuperustePaluukoodi" type="vtj:HakuperustePaluukoodiTyyppi" use="required"/>
+											<xs:attribute name="hakuperusteTekstiS" type="vtj:HakuperustePaluuTekstiTyyppi" use="required"/>
+											<xs:attribute name="hakuperusteTekstiR" type="vtj:HakuperustePaluuTekstiTyyppi" use="required"/>
+											<xs:attribute name="hakuperusteTekstiE" type="vtj:HakuperustePaluuTekstiTyyppi" use="required"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="SahkoinenAsiointitunnus">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="vtj:SahkoinenAsiointitunnusTyyppi">
+											<xs:attribute name="hakuperustePaluukoodi" type="vtj:HakuperustePaluukoodiTyyppi" use="required"/>
+											<xs:attribute name="hakuperusteTekstiS" type="vtj:HakuperustePaluuTekstiTyyppi" use="required"/>
+											<xs:attribute name="hakuperusteTekstiR" type="vtj:HakuperustePaluuTekstiTyyppi" use="required"/>
+											<xs:attribute name="hakuperusteTekstiE" type="vtj:HakuperustePaluuTekstiTyyppi" use="required"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Henkilo" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Henkilotunnus">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="vtj:HenkilotunnusTyyppi">
+											<xs:attribute name="voimassaolokoodi" type="vtj:VoimassaolokoodiTyyppi"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Sukupuoli">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Sukupuolikoodi" type="vtj:SukupuolikoodiTyyppi"/>
+										<xs:element name="SukupuoliS" type="vtj:SukupuoliTekstiTyyppi"/>
+										<xs:element name="SukupuoliR" type="vtj:SukupuoliTekstiTyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Aidinkieli">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Kielikoodi" type="vtj:KielikoodiTyyppi"/>
+										<xs:element name="KieliS" type="vtj:KieliNimiTyyppi"/>
+										<xs:element name="KieliR" type="vtj:KieliNimiTyyppi"/>
+										<xs:element name="KieliSelvakielinen" type="vtj:KieliNimiTyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Kuolintiedot">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Kuolinpvm" type="vtj:PaivamaaraTyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="NykyinenSukunimi">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Sukunimi" type="vtj:Nimi100Tyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="NykyisetEtunimet">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Etunimet" type="vtj:Nimi100Tyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="NykyinenKutsumanimi">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Kutsumanimi" type="vtj:Nimi100Tyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="EntinenNimi" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Nimi" type="vtj:Nimi100Tyyppi"/>
+										<xs:element name="Nimilajikoodi" type="vtj:EntinenNimiLajikoodiTyyppi"/>
+										<xs:element name="Alkupvm" type="vtj:PaivamaaraTyyppi"/>
+										<xs:element name="Loppupvm" type="vtj:PaivamaaraTyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="VakinainenKotimainenOsoite">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ParasOsoiteTieto" type="vtj:ParasOsoiteTietoTyyppi"/>
+										<xs:element name="KatuS" type="vtj:KatuNimiTyyppi"/>
+										<xs:element name="KatuR" type="vtj:KatuNimiTyyppi"/>
+										<xs:element name="Katunumero" type="vtj:KatunumeroTyyppi"/>
+										<xs:element name="Porraskirjain" type="vtj:PorraskirjainTyyppi"/>
+										<xs:element name="Huoneistonumero" type="vtj:HuoneistonumeroTyyppi"/>
+										<xs:element name="Jakokirjain" type="vtj:JakokirjainTyyppi"/>
+										<xs:element name="Postinumero" type="vtj:PostinumeroTyyppi"/>
+										<xs:element name="PostitoimipaikkaS" type="vtj:PostitoimipaikkaTyyppi"/>
+										<xs:element name="PostitoimipaikkaR" type="vtj:PostitoimipaikkaTyyppi"/>
+										<xs:element name="AsuminenAlkupvm" type="vtj:PaivamaaraTyyppi"/>
+										<xs:element name="AsuminenLoppupvm" type="vtj:PaivamaaraTyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="VakinainenUlkomainenOsoite">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ParasOsoiteTieto" type="vtj:ParasOsoiteTietoTyyppi"/>
+										<xs:element name="UlkomainenLahiosoite" type="vtj:UlkomainenLahiosoiteTyyppi"/>
+										<xs:element name="UlkomainenPaikkakunta" type="vtj:UlkomainenPaikkakuntaTyyppi"/>
+										<xs:element name="Valtiokoodi3" type="vtj:Valtiokoodi3Tyyppi"/>
+										<xs:element name="ValtioS" type="vtj:ValtioNimiTyyppi"/>
+										<xs:element name="ValtioR" type="vtj:ValtioNimiTyyppi"/>
+										<xs:element name="ValtioSelvakielinen" type="vtj:ValtioNimi30Tyyppi"/>
+										<xs:element name="AsuminenAlkupvm" type="vtj:PaivamaaraTyyppi"/>
+										<xs:element name="AsuminenLoppupvm" type="vtj:PaivamaaraTyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TilapainenKotimainenOsoite" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ParasOsoiteTieto" type="vtj:ParasOsoiteTietoTyyppi"/>
+										<xs:element name="KatuS" type="vtj:KatuNimiTyyppi"/>
+										<xs:element name="KatuR" type="vtj:KatuNimiTyyppi"/>
+										<xs:element name="Katunumero" type="vtj:KatunumeroTyyppi"/>
+										<xs:element name="Porraskirjain" type="vtj:PorraskirjainTyyppi"/>
+										<xs:element name="Huoneistonumero" type="vtj:HuoneistonumeroTyyppi"/>
+										<xs:element name="Jakokirjain" type="vtj:JakokirjainTyyppi"/>
+										<xs:element name="Postinumero" type="vtj:PostinumeroTyyppi"/>
+										<xs:element name="PostitoimipaikkaS" type="vtj:PostitoimipaikkaTyyppi"/>
+										<xs:element name="PostitoimipaikkaR" type="vtj:PostitoimipaikkaTyyppi"/>
+										<xs:element name="AsuminenAlkupvm" type="vtj:PaivamaaraTyyppi"/>
+										<xs:element name="AsuminenLoppupvm" type="vtj:PaivamaaraTyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TilapainenUlkomainenOsoite" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ParasOsoiteTieto" type="vtj:ParasOsoiteTietoTyyppi"/>
+										<xs:element name="UlkomainenLahiosoite" type="vtj:UlkomainenLahiosoiteTyyppi"/>
+										<xs:element name="UlkomainenPaikkakunta" type="vtj:UlkomainenPaikkakuntaTyyppi"/>
+										<xs:element name="Valtiokoodi3" type="vtj:Valtiokoodi3Tyyppi"/>
+										<xs:element name="ValtioS" type="vtj:ValtioNimiTyyppi"/>
+										<xs:element name="ValtioR" type="vtj:ValtioNimiTyyppi"/>
+										<xs:element name="ValtioSelvakielinen" type="vtj:ValtioNimi30Tyyppi"/>
+										<xs:element name="AsuminenAlkupvm" type="vtj:PaivamaaraTyyppi"/>
+										<xs:element name="AsuminenLoppupvm" type="vtj:PaivamaaraTyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="KotimainenPostiosoite" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ParasOsoiteTieto" type="vtj:ParasOsoiteTietoTyyppi"/>
+										<xs:element name="PostiosoiteS" type="vtj:PostiosoiteTyyppi"/>
+										<xs:element name="PostiosoiteR" type="vtj:PostiosoiteTyyppi"/>
+										<xs:element name="Postinumero" type="vtj:PostinumeroTyyppi"/>
+										<xs:element name="PostitoimipaikkaS" type="vtj:PostitoimipaikkaTyyppi"/>
+										<xs:element name="PostitoimipaikkaR" type="vtj:PostitoimipaikkaTyyppi"/>
+										<xs:element name="PostiosoiteAlkupvm" type="vtj:PaivamaaraTyyppi"/>
+										<xs:element name="PostiosoiteLoppupvm" type="vtj:PaivamaaraTyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="UlkomainenPostiosoite" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ParasOsoiteTieto" type="vtj:ParasOsoiteTietoTyyppi"/>
+										<xs:element name="UlkomainenLahiosoite" type="vtj:UlkomainenLahiosoiteTyyppi"/>
+										<xs:element name="UlkomainenPaikkakunta" type="vtj:UlkomainenPaikkakuntaTyyppi"/>
+										<xs:element name="Valtiokoodi3" type="vtj:Valtiokoodi3Tyyppi"/>
+										<xs:element name="ValtioS" type="vtj:ValtioNimiTyyppi"/>
+										<xs:element name="ValtioR" type="vtj:ValtioNimiTyyppi"/>
+										<xs:element name="ValtioSelvakielinen" type="vtj:ValtioNimi30Tyyppi"/>
+										<xs:element name="PostiosoiteAlkupvm" type="vtj:PaivamaaraTyyppi"/>
+										<xs:element name="PostiosoiteLoppupvm" type="vtj:PaivamaaraTyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Kotikunta">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Kuntanumero" type="vtj:KuntanumeroTyyppi"/>
+										<xs:element name="KuntaS" type="vtj:KuntaNimiTyyppi"/>
+										<xs:element name="KuntaR" type="vtj:KuntaNimiTyyppi"/>
+										<xs:element name="KuntasuhdeAlkupvm" type="vtj:PaivamaaraTyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Turvakielto">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="TurvakieltoTieto" type="vtj:KieltoTietoTyyppi"/>
+										<xs:element name="TurvakieltoPaattymispvm" type="vtj:PaivamaaraTyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="HuoltajaLkm" type="vtj:HuoltajaLkmTyyppi"/>
+							<xs:element name="Huoltaja" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Henkilotunnus" type="vtj:HenkilotunnusTyyppi"/>
+										<xs:element name="Syntymaaika" type="vtj:PaivamaaraTyyppi"/>
+										<xs:element name="Huoltotiedot">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Henkilosuhdelajikoodi" type="vtj:HenkilosuhdelajikoodiTyyppi"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="NykyinenSukunimi">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Sukunimi" type="vtj:Nimi100Tyyppi"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="NykyisetEtunimet">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Etunimet" type="vtj:Nimi100Tyyppi"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="VakinainenKotimainenOsoite">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="KatuS" type="vtj:KatuNimiTyyppi"/>
+													<xs:element name="KatuR" type="vtj:KatuNimiTyyppi"/>
+													<xs:element name="Katunumero" type="vtj:KatunumeroTyyppi"/>
+													<xs:element name="Porraskirjain" type="vtj:PorraskirjainTyyppi"/>
+													<xs:element name="Huoneistonumero" type="vtj:HuoneistonumeroTyyppi"/>
+													<xs:element name="Jakokirjain" type="vtj:JakokirjainTyyppi"/>
+													<xs:element name="Postinumero" type="vtj:PostinumeroTyyppi"/>
+													<xs:element name="PostitoimipaikkaS" type="vtj:PostitoimipaikkaTyyppi"/>
+													<xs:element name="PostitoimipaikkaR" type="vtj:PostitoimipaikkaTyyppi"/>
+													<xs:element name="AsuminenAlkupvm" type="vtj:PaivamaaraTyyppi"/>
+													<xs:element name="AsuminenLoppupvm" type="vtj:PaivamaaraTyyppi"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="VakinainenUlkomainenOsoite">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="UlkomainenLahiosoite" type="vtj:UlkomainenLahiosoiteTyyppi"/>
+													<xs:element name="UlkomainenPaikkakunta" type="vtj:UlkomainenPaikkakuntaTyyppi"/>
+													<xs:element name="Valtiokoodi3" type="vtj:Valtiokoodi3Tyyppi"/>
+													<xs:element name="ValtioS" type="vtj:ValtioNimiTyyppi"/>
+													<xs:element name="ValtioR" type="vtj:ValtioNimiTyyppi"/>
+													<xs:element name="ValtioSelvakielinen" type="vtj:ValtioNimi30Tyyppi"/>
+													<xs:element name="AsuminenAlkupvm" type="vtj:PaivamaaraTyyppi"/>
+													<xs:element name="AsuminenLoppupvm" type="vtj:PaivamaaraTyyppi"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Edunvalvontavaltuutus" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Alkupvm" type="vtj:PaivamaaraTyyppi"/>
+										<xs:element name="Paattymispvm" type="vtj:PaivamaaraTyyppi"/>
+										<xs:element name="Tehtavienjakokoodi" type="vtj:TehtavienjakokoodiTyyppi"/>
+										<xs:element name="HenkiloEdunvalvontavaltuutettu" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Henkilotunnus" type="vtj:HenkilotunnusTyyppi"/>
+													<xs:element name="Syntymaaika" type="vtj:PaivamaaraTyyppi"/>
+													<xs:element name="NykyinenSukunimi">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Sukunimi" type="vtj:Nimi100Tyyppi"/>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="NykyisetEtunimet">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Etunimet" type="vtj:Nimi100Tyyppi"/>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="ValtuutusAlkupvm" type="vtj:PaivamaaraTyyppi"/>
+													<xs:element name="ValtuutusLoppupvm" type="vtj:PaivamaaraTyyppi"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Edunvalvonta">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Alkupvm" type="vtj:PaivamaaraTyyppi"/>
+										<xs:element name="Paattymispvm" type="vtj:PaivamaaraTyyppi"/>
+										<xs:element name="Tehtavienjakokoodi" type="vtj:TehtavienjakokoodiTyyppi"/>
+										<xs:element name="Rajoituskoodi" type="vtj:RajoituskoodiTyyppi"/>
+										<xs:element name="HenkiloEdunvalvoja" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="TehtavaAlkupvm" type="vtj:PaivamaaraTyyppi"/>
+													<xs:element name="TehtavaLoppupvm" type="vtj:PaivamaaraTyyppi"/>
+													<xs:element name="Henkilotunnus" type="vtj:HenkilotunnusTyyppi"/>
+													<xs:element name="Syntymaaika" type="vtj:PaivamaaraTyyppi"/>
+													<xs:element name="NykyinenSukunimi">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Sukunimi" type="vtj:Nimi100Tyyppi"/>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="NykyisetEtunimet">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Etunimet" type="vtj:Nimi100Tyyppi"/>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="YritysJaYhteisoEdunvalvoja" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="TehtavaAlkupvm" type="vtj:PaivamaaraTyyppi"/>
+													<xs:element name="TehtavaLoppupvm" type="vtj:PaivamaaraTyyppi"/>
+													<xs:element name="Ytunnus" type="vtj:YtunnusTyyppi"/>
+													<xs:element name="Nimi" type="vtj:YritysNimi80Tyyppi"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="OikeusaputoimistoEdunvalvoja" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Viranomaiskoodi" type="vtj:Viranomaiskoodi6Tyyppi"/>
+													<xs:element name="ViranomainenS" type="vtj:ViranomainenNimiTyyppi"/>
+													<xs:element name="ViranomainenR" type="vtj:ViranomainenNimiTyyppi"/>
+													<xs:element name="TehtavaAlkupvm" type="vtj:PaivamaaraTyyppi"/>
+													<xs:element name="TehtavaLoppupvm" type="vtj:PaivamaaraTyyppi"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Ammatti">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="AmmattiNimi" type="vtj:AmmattiNimiTyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Sahkopostiosoite" type="vtj:SahkopostiosoiteTyyppi"/>
+							<xs:element name="UlkomainenHenkilonumero" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="UlkomainenHenkilonumero" type="vtj:UlkomainenHenkiloTunnusTyyppi"/>
+										<xs:element name="Voimassaolokoodi" type="vtj:VoimassaolokoodiTyyppi"/>
+										<xs:element name="Valtiokoodi3" type="vtj:Valtiokoodi3Tyyppi"/>
+										<xs:element name="ValtioS" type="vtj:ValtioNimiTyyppi"/>
+										<xs:element name="ValtioR" type="vtj:ValtioNimiTyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Kansalaisuus" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Kansalaisuuskoodi3" type="vtj:Valtiokoodi3Tyyppi"/>
+										<xs:element name="KansalaisuusS" type="vtj:ValtioNimiTyyppi"/>
+										<xs:element name="KansalaisuusR" type="vtj:ValtioNimiTyyppi"/>
+										<xs:element name="KansalaisuusSelvakielinen" type="vtj:ValtioNimi30Tyyppi"/>
+										<xs:element name="Saamispvm" type="vtj:PaivamaaraTyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="UlkomainenSyntymapaikka">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Syntymapaikka" type="vtj:UlkomainenSyntymapaikkaTyyppi"/>
+										<xs:element name="Valtiokoodi3" type="vtj:Valtiokoodi3Tyyppi"/>
+										<xs:element name="ValtioS" type="vtj:ValtioNimiTyyppi"/>
+										<xs:element name="ValtioR" type="vtj:ValtioNimiTyyppi"/>
+										<xs:element name="ValtioSelvakielinen" type="vtj:ValtioNimi30Tyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Huollettava" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Henkilotunnus" type="vtj:HenkilotunnusTyyppi"/>
+										<xs:element name="Sukunimi" type="vtj:Nimi100Tyyppi"/>
+										<xs:element name="Etunimet" type="vtj:Nimi100Tyyppi"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="tietojenPoimintaaika" type="vtj:TietojenPoimintaaikaTyyppi" use="required"/>
+			<xs:attribute name="sanomatunnus" type="vtj:SanomatunnusTyyppi" use="required"/>
+			<xs:attribute name="versio" type="vtj:VersioTyyppi" use="required"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

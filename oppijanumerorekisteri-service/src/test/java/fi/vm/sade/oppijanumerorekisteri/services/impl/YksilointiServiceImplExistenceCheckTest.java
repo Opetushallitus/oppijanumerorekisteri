@@ -6,6 +6,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloExistenceCheckDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ConflictException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+import fi.vm.sade.oppijanumerorekisteri.services.VtjService;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +36,7 @@ class YksilointiServiceImplExistenceCheckTest {
     static void setup() {
         vtjClient = mock(VtjClient.class);
         henkiloRepository = mock(HenkiloRepository.class);
+        VtjService vtjService = mock(VtjService.class);
         OppijanumerorekisteriProperties oppijanumerorekisteriProperties = mock(OppijanumerorekisteriProperties.class);
         when(oppijanumerorekisteriProperties.getEtunimiThreshold()).thenReturn(THRESHOLD);
         yksilointiService = new YksilointiServiceImpl(
@@ -50,6 +52,7 @@ class YksilointiServiceImplExistenceCheckTest {
                 null,
                 null,
                 vtjClient,
+                vtjService,
                 null,
                 oppijanumerorekisteriProperties);
     }

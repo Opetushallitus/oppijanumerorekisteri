@@ -2,3 +2,10 @@ spring.security.oauth2.resourceserver.jwt.issuer-uri: https://virkailija.hahtuva
 spring.security.oauth2.resourceserver.jwt.jwk-set-uri: https://virkailija.hahtuvaopintopolku.fi/kayttooikeus-service/oauth2/jwks
 
 oppijanumerorekisteri.oauth2.enabled: true
+
+oppijanumerorekisteri.vtjkysely.enabled: false
+oppijanumerorekisteri.vtjkysely.address: http://localhost
+oppijanumerorekisteri.vtjkysely.keystoreUri: classpath:/dummykeystore.jks
+oppijanumerorekisteri.vtjkysely.certAlias: dummyalias
+oppijanumerorekisteri.vtjkysely.truststoreUri: classpath:/dummytruststore.jks
+oppijanumerorekisteri.vtjkysely.testOids: 1.2.3.4.5,1.2.3.4.6
