@@ -4,7 +4,7 @@ readonly repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 function main {
   require_command mvn
-  mvn clean install -DskipTests=true
+  mvn install -DskipTests=true
   wait_for_local_db_to_be_healthy
   select_java_version "21"
 
