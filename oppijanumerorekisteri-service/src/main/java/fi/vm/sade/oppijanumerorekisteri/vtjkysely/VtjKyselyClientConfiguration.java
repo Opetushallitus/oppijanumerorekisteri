@@ -73,12 +73,12 @@ public class VtjKyselyClientConfiguration {
 
             @Override
             public String chooseServerAlias(String keyType, Principal[] issuers, Socket socket) {
-                return chooseServerAlias(keyType, issuers, socket);
+                return origKm.chooseServerAlias(keyType, issuers, socket);
             }
 
             @Override
             public PrivateKey getPrivateKey(String alias) {
-                return getPrivateKey(alias);
+                return origKm.getPrivateKey(alias);
             }
         };
 
@@ -87,7 +87,7 @@ public class VtjKyselyClientConfiguration {
 
     private TrustManager[] trustManagers() throws Exception {
         KeyStore ts = KeyStore.getInstance("JKS");
-        ts.load(new FileInputStream(trustStore), keyStorePassword.toCharArray());
+        ts.load(new FileInputStream(trustStore), trustStorePassword.toCharArray());
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         trustManagerFactory.init(ts);
 
@@ -102,7 +102,7 @@ public class VtjKyselyClientConfiguration {
     }
 
     @Bean
-    VtjKyselyClient vtjClient(Jaxb2Marshaller marshaller) throws Exception {
+    VtjKyselyClient vtjKyselyClient(Jaxb2Marshaller marshaller) throws Exception {
         VtjKyselyClient client = new VtjKyselyClient();
         client.setDefaultUri(address);
         if (vtjkyselyEnabled) {
