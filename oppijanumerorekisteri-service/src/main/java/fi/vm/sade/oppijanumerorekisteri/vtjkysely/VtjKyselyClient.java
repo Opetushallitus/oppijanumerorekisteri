@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.vtjkysely;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
+import org.springframework.ws.soap.client.core.SoapActionCallback;
 
 import fi.vm.sade.oppijanumerorekisteri.vtjkysely.jaxb.TeeHenkilonTunnusKysely;
 import fi.vm.sade.oppijanumerorekisteri.vtjkysely.jaxb.TeeHenkilonTunnusKyselyResponse;
@@ -9,7 +10,6 @@ import fi.vm.sade.oppijanumerorekisteri.vtjkysely.jaxb.TeeHenkilonTunnusKyselyRe
 public class VtjKyselyClient extends WebServiceGatewaySupport {
     @Value("${oppijanumerorekisteri.vtjkysely.username}")
     private String kayttajatunnus;
-
     @Value("${oppijanumerorekisteri.vtjkysely.password}")
     private String salasana;
 
@@ -24,7 +24,7 @@ public class VtjKyselyClient extends WebServiceGatewaySupport {
         request.setLoppukayttaja(loppukayttaja);
 
         TeeHenkilonTunnusKyselyResponse response = (TeeHenkilonTunnusKyselyResponse) getWebServiceTemplate()
-          .marshalSendAndReceive(request);
+            .marshalSendAndReceive(request, new SoapActionCallback("http://tempuri.org/TeeHenkilonTunnusKysely"));
         return response;
     }
 }
