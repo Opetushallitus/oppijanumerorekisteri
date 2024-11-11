@@ -106,7 +106,7 @@ public class IdentificationServiceIntegrationTest {
         given(vtjService.teeHenkiloKysely("010101-123N"))
                 .willReturn(setUsedFixture("/vtj-testdata/vtj-response-ok.json"));
 
-        this.identificationService.identifyHenkilos(unidentifiedHenkilos, 0L);
+        this.identificationService.identifyHenkilos(unidentifiedHenkilos.stream().map(h -> h.getOidHenkilo()).toList(), 0L);
 
         Henkilo notFoundVtjResult = this.entityManager
                 .createQuery("SELECT h FROM Henkilo h WHERE h.hetu = '111111-1235'", Henkilo.class).getSingleResult();
@@ -131,7 +131,7 @@ public class IdentificationServiceIntegrationTest {
         given(vtjService.teeHenkiloKysely("010101-123N"))
                 .willReturn(setUsedFixture("/vtj-testdata/vtj-response-ok.json"));
 
-        this.identificationService.identifyHenkilos(unidentifiedHenkilos, 0L);
+        this.identificationService.identifyHenkilos(unidentifiedHenkilos.stream().map(h -> h.getOidHenkilo()).toList(), 0L);
 
         List<Yksilointivirhe> yksilointivirhe = this.entityManager
                 .createQuery("SELECT y FROM Yksilointivirhe y", Yksilointivirhe.class).getResultList();
@@ -151,7 +151,7 @@ public class IdentificationServiceIntegrationTest {
         when(vtjService.teeHenkiloKysely(eq("111111-1234"))).thenReturn(setUsedFixture("/vtj-testdata/vtj-response-ok.json"));
         when(vtjService.teeHenkiloKysely(not(eq("111111-1234")))).thenThrow(new IllegalArgumentException("Ei pitäisi tapahtua"));
 
-        identificationService.identifyHenkilos(yksiloimattomat, 0L);
+        identificationService.identifyHenkilos(yksiloimattomat.stream().map(h -> h.getOidHenkilo()).toList(), 0L);
 
         assertThat(yksiloimattomat).allSatisfy(henkilo -> {
             Optional<Yksilointivirhe> yksilointivirhe = yksilointivirheRepository.findByHenkilo(henkilo);

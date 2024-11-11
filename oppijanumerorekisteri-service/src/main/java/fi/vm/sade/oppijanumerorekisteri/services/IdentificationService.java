@@ -3,9 +3,8 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloVahvaTunnistusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
-import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface IdentificationService {
 
@@ -32,7 +31,7 @@ public interface IdentificationService {
      * Käsittelee tunnistamattomat henkilöt liittämälle ne oikeisiin oideihin.
      *
      */
-    void identifyHenkilos(Collection<Henkilo> unidentified, Long vtjRequestDelayInMillis);
+    void identifyHenkilos(List<String> unidentifiedOids, Long vtjRequestDelayInMillis);
 
     void setStrongIdentifiedHetu(String oidHenkilo, HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto);
 

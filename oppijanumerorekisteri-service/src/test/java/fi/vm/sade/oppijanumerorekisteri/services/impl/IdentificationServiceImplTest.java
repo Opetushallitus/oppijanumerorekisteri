@@ -110,7 +110,7 @@ public class IdentificationServiceImplTest {
                 .build();
 
         given(this.yksilointivirheRepository.findByHenkilo(henkilo)).willReturn(Optional.of(yksilointivirhe));
-        this.identificationService.identifyHenkilos(Collections.singleton(henkilo), 1L);
+        this.identificationService.identifyHenkilos(List.of(henkilo.getOidHenkilo()), 1L);
 
         verify(this.yksilointiService, times(1)).yksiloiAutomaattisesti(eq("1.2.3.4.5"));
     }
@@ -122,7 +122,7 @@ public class IdentificationServiceImplTest {
                 .hetu("nonfakehetu")
                 .build();
         given(this.yksilointivirheRepository.findByHenkilo(henkilo)).willReturn(Optional.empty());
-        this.identificationService.identifyHenkilos(Collections.singleton(henkilo), 1L);
+        this.identificationService.identifyHenkilos(List.of(henkilo.getOidHenkilo()), 1L);
 
         verify(this.yksilointiService, times(1)).yksiloiAutomaattisesti(eq("1.2.3.4.5"));
     }
@@ -135,7 +135,7 @@ public class IdentificationServiceImplTest {
                 .build();
         given(this.yksilointivirheRepository.findByHenkilo(henkilo)).willReturn(Optional.empty());
         willThrow(SuspendableIdentificationException.class).given(this.yksilointiService).yksiloiAutomaattisesti(eq("1.2.3.4.5"));
-        this.identificationService.identifyHenkilos(Collections.singleton(henkilo), 1L);
+        this.identificationService.identifyHenkilos(List.of(henkilo.getOidHenkilo()), 1L);
         verify(this.yksilointiService, times(1)).yksiloiAutomaattisesti(eq("1.2.3.4.5"));
         verify(this.yksilointiService, times(1)).tallennaYksilointivirhe(eq("1.2.3.4.5"), any());
     }

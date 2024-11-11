@@ -10,10 +10,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
-import fi.vm.sade.oppijanumerorekisteri.models.Yksilointivirhe;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointivirheRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
@@ -30,8 +27,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.Collection;
-import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,8 +36,6 @@ import java.util.Optional;
 public class IdentificationServiceImpl implements IdentificationService {
 
     private final HenkiloRepository henkiloRepository;
-    private final YksilointitietoRepository yksilointitietoRepository;
-    private final YksilointivirheRepository yksilointivirheRepository;
 
     private final OrikaConfiguration mapper;
 
@@ -96,32 +90,13 @@ public class IdentificationServiceImpl implements IdentificationService {
 
     @Override
     @Transactional(propagation = Propagation.NEVER) // metodissa tehtyä selectejä ei ole tarpeen roikuttaa transaktiossa
-    public void identifyHenkilos(Collection<Henkilo> unidentified, Long vtjRequestDelayInMillis) {
-        unidentified.stream()
-                .peek(this::logFaults)
-                .filter(this::hasRetriableYksilointivirhe)
-                .filter(this::hasNoDataInconsistency)
-                .forEach(henkilo -> {
-                    this.waitBetweenRequests(vtjRequestDelayInMillis);
-                    log.info("Henkilo {} passed initial validation, {} to identify...", henkilo.getOidHenkilo(), henkilo.isYksilointiYritetty() ? "retrying" : "trying");
-                    this.identifyHenkilo(henkilo.getOidHenkilo());
+    public void identifyHenkilos(List<String> unidentifiedOids, Long vtjRequestDelayInMillis) {
+        unidentifiedOids.stream()
+                .forEach(oid -> {
+                    waitBetweenRequests(vtjRequestDelayInMillis);
+                    log.info("Henkilo {} passed initial validation, trying to identify...", oid);
+                    identifyHenkilo(oid);
                 });
-    }
-
-    private boolean hasRetriableYksilointivirhe(Henkilo henkilo) {
-        Optional<Yksilointivirhe> yksilointivirhe = yksilointivirheRepository.findByHenkilo(henkilo);
-        boolean yksilointiAikaleimaVoimasssa = yksilointivirhe.isPresent()
-                && yksilointivirhe.get().getUudelleenyritysAikaleima() != null
-                && new Date().after(yksilointivirhe.get().getUudelleenyritysAikaleima());
-        return !yksilointivirhe.isPresent() || yksilointiAikaleimaVoimasssa;
-    }
-
-    /**
-     * If an unidentified person already has reference data there must be an inconsistency in the data.
-     * Those cases must be solved by officials.
-     */
-    private boolean hasNoDataInconsistency(Henkilo henkilo) {
-        return !(!henkilo.isYksiloityVTJ() && StringUtils.hasLength(henkilo.getHetu()) && yksilointitietoRepository.findByHenkilo(henkilo).isPresent());
     }
 
     @Override
@@ -154,18 +129,6 @@ public class IdentificationServiceImpl implements IdentificationService {
         henkilo.setHetu(henkiloVahvaTunnistusDto.getHetu());
     }
 
-    private void logFaults(Henkilo henkilo) {
-        if (!log.isDebugEnabled()) {
-            return;
-        }
-        if (!hasRetriableYksilointivirhe(henkilo)) {
-            log.info("Henkilo {} has been black listed from processing.", henkilo.getOidHenkilo());
-        }
-        if (!hasNoDataInconsistency(henkilo)) {
-            log.info("Henkilo {} has inconsistent data that must be solved by officials.", henkilo.getOidHenkilo());
-        }
-    }
-
     /**
      * VTJ service can't handle high loads so we must wait between requests.
      */
@@ -179,7 +142,7 @@ public class IdentificationServiceImpl implements IdentificationService {
 
     private void identifyHenkilo(String oid) {
         try {
-            this.yksilointiService.yksiloiAutomaattisesti(oid);
+            yksilointiService.yksiloiAutomaattisesti(oid);
             log.info("Henkilo {} successfully identified.", oid);
         } catch (Exception e) {
             log.error("Henkilo {} unsuccessfully identified.", oid, e);
@@ -191,14 +154,12 @@ public class IdentificationServiceImpl implements IdentificationService {
         OppijanumerorekisteriProperties.Scheduling.Yksilointi yksilointiProperties = properties
                 .getScheduling().getYksilointi();
         Long offset = 0L;
-        Collection<Henkilo> unidentifiedHenkilos = henkiloRepository
+        List<String> unidentifiedOids = henkiloRepository
                 .findUnidentified(yksilointiProperties.getBatchSize(), offset);
-        while (!unidentifiedHenkilos.isEmpty()) {
-            this.identifyHenkilos(unidentifiedHenkilos,
-                    yksilointiProperties.getVtjRequestDelayInMillis());
+        while (!unidentifiedOids.isEmpty()) {
+            identifyHenkilos(unidentifiedOids, yksilointiProperties.getVtjRequestDelayInMillis());
             offset += yksilointiProperties.getBatchSize();
-            unidentifiedHenkilos = henkiloRepository.findUnidentified(yksilointiProperties.getBatchSize(),
-                    offset);
+            unidentifiedOids = henkiloRepository.findUnidentified(yksilointiProperties.getBatchSize(), offset);
         }
 
         // Onko oppijoiden tuonteja valmistunut ja onko tarvetta lähettää

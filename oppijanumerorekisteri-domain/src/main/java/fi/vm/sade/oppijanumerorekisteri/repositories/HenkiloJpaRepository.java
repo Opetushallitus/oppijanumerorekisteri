@@ -138,7 +138,7 @@ public interface HenkiloJpaRepository {
 
     List<Henkilo> findDuplikaatit(HenkiloDuplikaattiCriteria criteria);
 
-    Collection<Henkilo> findUnidentified(long limit, long offset);
+    List<String> findUnidentified(long limit, long offset);
 
     Iterable<String> findOidByYhteystieto(String arvo);
 

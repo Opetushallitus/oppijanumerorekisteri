@@ -496,18 +496,23 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public Collection<Henkilo> findUnidentified(long limit, long offset) {
-        QHenkilo qHenkilo = QHenkilo.henkilo;
-        return jpa()
-                .from(qHenkilo)
-                .where(
-                        qHenkilo.yksiloityVTJ.eq(false),
-                        qHenkilo.hetu.isNotNull(),
-                        qHenkilo.hetu.ne("")
-                ).offset(offset)
-                .limit(limit)
-                .select(qHenkilo)
-                .fetch();
+    public List<String> findUnidentified(long limit, long offset) {
+        Query unidentifiedQuery = entityManager.createNativeQuery("""
+                SELECT DISTINCT h.oidhenkilo
+                FROM henkilo h
+                LEFT JOIN yksilointivirhe yv ON h.id = yv.henkilo_id
+                LEFT JOIN yksilointitieto yt ON h.id = yt.henkiloid
+                WHERE h.yksiloityvtj = false
+                  AND h.hetu IS NOT NULL
+                  AND h.hetu != ''
+                  AND (yv.id IS NULL OR yv.uudelleenyritys_aikaleima < now())
+                  AND yt.id IS NULL
+                LIMIT :limit
+                OFFSET :offset
+        """, String.class)
+                .setParameter("limit", limit)
+                .setParameter("offset", offset);
+        return unidentifiedQuery.getResultList();
     }
 
     @Override
