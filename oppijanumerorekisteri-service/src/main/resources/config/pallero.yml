@@ -19,3 +19,5 @@ oppijanumerorekisteri.vtjkysely.address: http://alb.testiopintopolku.fi/vtj-test
 oppijanumerorekisteri.vtjkysely.keystoreUri: /root/oph-environment/authentication/vtj-service/keystore.p12
 oppijanumerorekisteri.vtjkysely.certAlias: vtj-service
 oppijanumerorekisteri.vtjkysely.truststoreUri: /root/oph-environment/authentication/vtj-service/truststore.p12
+
+viestinvalitys.baseurl: https://viestinvalitys.testiopintopolku.fi/lahetys

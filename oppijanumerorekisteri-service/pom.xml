@@ -63,10 +63,6 @@
             <groupId>fi.vm.sade.rajapinnat</groupId>
             <artifactId>vtj-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>fi.vm.sade.viestintapalvelu</groupId>
-            <artifactId>ryhmasahkoposti-api</artifactId>
-        </dependency>
 
         <!-- Spring-boot -->
         <dependency>
@@ -178,6 +174,10 @@
         </dependency>
 
         <!-- Other -->
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>

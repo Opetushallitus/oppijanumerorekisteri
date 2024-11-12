@@ -9,6 +9,7 @@ import com.github.kagkarlsson.scheduler.task.schedule.FixedDelay;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.configurations.security.OphSessionMappingStorage;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
+import fi.vm.sade.oppijanumerorekisteri.services.QueueingEmailService;
 import fi.vm.sade.oppijanumerorekisteri.services.VtjMuutostietoService;
 import fi.vm.sade.oppijanumerorekisteri.services.death.CleanupService;
 import fi.vm.sade.oppijanumerorekisteri.services.export.ExportPseudonymizedService;
@@ -37,6 +38,7 @@ public class SchedulingConfiguration {
     private final VtjMuutostietoService vtjMuutostietoService;
     private final ExportService exportService;
     private final ExportPseudonymizedService exportPseudonymizedService;
+    private final QueueingEmailService queueingEmailService;
 
     @Bean
     Task<Void> casClientSessionCleanerTask() {
@@ -128,5 +130,12 @@ public class SchedulingConfiguration {
                     exportPseudonymizedService.generateExportFiles();
                     log.info("Pseudonymized export task completed");
                 });
+    }
+
+    @Bean
+    Task<Void> emailRetryTask() {
+        return Tasks
+                .recurring(new TaskWithoutDataDescriptor("EmailRetryTask"), FixedDelay.ofMinutes(5))
+                .execute((instance, ctx) -> queueingEmailService.emailRetryTask());
     }
 }

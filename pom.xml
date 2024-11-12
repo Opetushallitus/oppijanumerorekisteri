@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.10</version>
+        <version>3.2.11</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -42,8 +42,6 @@
         <database.name>oppijanumerorekisteri</database.name>
         <database.user>oph</database.user>
         <database.password>oph</database.password>
-
-        <ryhmasahkoposti.version>16.0-SNAPSHOT</ryhmasahkoposti.version>
 
         <!-- library versions -->
         <aws.java.sdk.version>2.21.37</aws.java.sdk.version>
@@ -114,41 +112,6 @@
                 <groupId>fi.vm.sade.rajapinnat</groupId>
                 <artifactId>vtj-api</artifactId>
                 <version>13.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>fi.vm.sade.viestintapalvelu</groupId>
-                <artifactId>ryhmasahkoposti-api</artifactId>
-                <version>${ryhmasahkoposti.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>javax.ws.rs</groupId>
-                        <artifactId>javax.ws.rs-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>commons-io</groupId>
-                        <artifactId>commons-io</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.wordnik</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.fasterxml.jackson.core</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.fasterxml.jackson.jaxrs</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.fasterxml.jackson.module</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.fasterxml.jackson.datatype</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springdoc</groupId>

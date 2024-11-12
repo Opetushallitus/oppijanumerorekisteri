@@ -47,3 +47,7 @@ oppijanumerorekisteri.vtjkysely.username: username
 oppijanumerorekisteri.vtjkysely.password: password
 oppijanumerorekisteri.vtjkysely.keystorePassword: dummydummy
 oppijanumerorekisteri.vtjkysely.truststorePassword: dummydummy
+
+viestinvalitys.baseurl: http://localhost/lahetys
+authentication.viestintapalvelu.username: username
+authentication.viestintapalvelu.password: password
