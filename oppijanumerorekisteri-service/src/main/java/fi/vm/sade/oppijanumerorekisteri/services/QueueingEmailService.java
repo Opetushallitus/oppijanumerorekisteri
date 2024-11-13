@@ -151,7 +151,7 @@ public class QueueingEmailService {
                 SELECT queuedemail.id, lahetystunniste, queuedemailstatus_id, copy, recipients, replyto, subject, body, last_attempt, sent_at, created, modified, batch_sent, idempotency_key
                 FROM queuedemail
                 WHERE queuedemailstatus_id = 'QUEUED'
-                AND last_attempt < current_timestamp - INTERVAL '10 minutes'
+                  AND (last_attempt IS NULL OR last_attempt < current_timestamp - INTERVAL '10 minutes')
                 LIMIT 10
                 """;
         return jdbcTemplate.query(sql, queuedEmailRowMapper);
