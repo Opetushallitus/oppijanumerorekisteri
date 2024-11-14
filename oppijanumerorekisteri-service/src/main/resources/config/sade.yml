@@ -17,3 +17,5 @@ oppijanumerorekisteri.vtjkysely.address: https://vtjkysely.2016.vrk.fi/sosowebsi
 oppijanumerorekisteri.vtjkysely.keystoreUri: /root/oph-configuration/rajapinnat/vrkkeystore
 oppijanumerorekisteri.vtjkysely.certAlias: opintopolku.fi
 oppijanumerorekisteri.vtjkysely.truststoreUri: /root/oph-configuration/rajapinnat/vrktruststore
+
+viestinvalitys.baseurl: https://viestinvalitys.opintopolku.fi/lahetys

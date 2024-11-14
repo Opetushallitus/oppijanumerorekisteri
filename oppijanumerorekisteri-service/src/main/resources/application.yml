@@ -33,6 +33,7 @@ spring:
     # If DB is not empty will not run migrations until this version
     baseline-version: 20180423104403142
     out-of-order: true
+  freemarker.template-loader-path: classpath:templates/
   jpa:
     hibernate:
       naming:
@@ -115,3 +116,4 @@ aws:
   henkiloModifiedTopic:
     enabled: false
     topicArn: disabled
+viestinvalitys.baseurl: https://viestinvalitys.hahtuvaopintopolku.fi/lahetys
