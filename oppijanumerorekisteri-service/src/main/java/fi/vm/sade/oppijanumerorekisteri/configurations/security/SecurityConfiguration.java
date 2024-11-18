@@ -4,6 +4,7 @@ import fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter;
 import fi.vm.sade.javautils.kayttooikeusclient.OphUserDetailsServiceImpl;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.CasProperties;
 import fi.vm.sade.properties.OphProperties;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.cas.ServiceProperties;
@@ -27,6 +29,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -37,6 +40,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @Profile("!dev")
 @Configuration
@@ -169,23 +173,48 @@ public class SecurityConfiguration {
         };
     }
 
+    private boolean isOauth2Request(HttpServletRequest request) {
+        return request.getHeader("Authorization") != null
+            && request.getHeader("Authorization").startsWith("Bearer ");
+    }
+
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http, CasAuthenticationFilter casAuthenticationFilter,
+    @Order(1)
+    SecurityFilterChain oauth2FilterChain(HttpSecurity http) throws Exception {
+        return http
+            .headers(headers -> headers.disable())
+            .csrf(csrf -> csrf.disable())
+            .securityMatcher(new RequestMatcher() {
+                @Override
+                public boolean matches(HttpServletRequest request) {
+                    return isOauth2Request(request);
+                }
+            })
+            .authorizeHttpRequests(authz -> authz.anyRequest().authenticated())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(oauth2JwtConverter())))
+            .build();
+    }
+
+    @Bean
+    @Order(2)
+    SecurityFilterChain casFilterChain(HttpSecurity http, CasAuthenticationFilter casAuthenticationFilter,
             AuthenticationEntryPoint authenticationEntryPoint, SecurityContextRepository securityContextRepository) throws Exception {
         HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
         requestCache.setMatchingRequestParameterName(null);
         http
             .headers(headers -> headers.disable())
             .csrf(csrf -> csrf.disable())
-            .securityMatcher("/**")
+            .securityMatcher(new RequestMatcher() {
+                @Override
+                public boolean matches(HttpServletRequest request) {
+                    return !isOauth2Request(request);
+                }
+            })
             .authorizeHttpRequests(authz -> authz
                     .requestMatchers("/buildversion.txt").permitAll()
                     .requestMatchers("/actuator/**").permitAll()
-                    .requestMatchers("/swagger-ui.html").permitAll()
-                    .requestMatchers("/swagger-ui/").permitAll()
-                    .requestMatchers("/swagger-ui/**").permitAll()
-                    .requestMatchers("/swagger-resources/**").permitAll()
-                    .requestMatchers("/v3/api-docs/**").permitAll()
+                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                     .anyRequest().authenticated())
             .addFilterAt(casAuthenticationFilter, CasAuthenticationFilter.class)
             .addFilterBefore(singleSignOutFilter(), CasAuthenticationFilter.class)
@@ -194,11 +223,6 @@ public class SecurityConfiguration {
                 .securityContextRepository(securityContextRepository))
             .requestCache(cache -> cache.requestCache(requestCache))
             .exceptionHandling(handling -> handling.authenticationEntryPoint(authenticationEntryPoint));
-
-        if (oauth2Enabled) {
-            http.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(oauth2JwtConverter())));
-        }
-
         return http.build();
     }
 }
