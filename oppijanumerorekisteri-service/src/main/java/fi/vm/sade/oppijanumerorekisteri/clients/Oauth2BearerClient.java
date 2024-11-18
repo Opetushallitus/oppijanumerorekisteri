@@ -34,7 +34,7 @@ public class Oauth2BearerClient {
     @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
     private String oauth2IssuerUri;
 
-    @Cacheable(CACHE_NAME_OAUTH2_BEARER)
+    @Cacheable(value = CACHE_NAME_OAUTH2_BEARER, sync = true)
     public String getOauth2Bearer() throws IOException, InterruptedException {
         String tokenUrl = oauth2IssuerUri + "/oauth2/token";
         log.info("refetching oauth2 bearer from " + tokenUrl);
