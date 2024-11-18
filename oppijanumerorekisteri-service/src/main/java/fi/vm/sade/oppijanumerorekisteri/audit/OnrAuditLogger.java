@@ -25,6 +25,10 @@ public class OnrAuditLogger extends Audit {
         log(getUser(), operation, target, changes);
     }
 
+    private boolean isOauth2User(Authentication auth) {
+        return auth != null && auth.getName() != null && !auth.getName().startsWith("1.");
+    }
+
     private User getUser() {
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
@@ -33,15 +37,24 @@ public class OnrAuditLogger extends Audit {
             return null;
         }
 
-        String session = "";
         String userAgent = "";
         if (sra != null) {
             HttpServletRequest req = sra.getRequest();
-            session = req.getSession().getId();
             userAgent = req.getHeader("User-Agent");
         }
 
-        return new User(getCurrentPersonOid(), address, session, userAgent);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (isOauth2User(authentication)) {
+            return new Oauth2User(authentication.getName(), address, userAgent);
+        }
+
+        String session = "";
+        if (sra != null) {
+            HttpServletRequest req = sra.getRequest();
+            session = req.getSession().getId();
+        }
+
+        return new User(getCurrentPersonOid(authentication), address, session, userAgent);
     }
 
     private InetAddress getInetAddress(ServletRequestAttributes sra) {
@@ -73,8 +86,7 @@ public class OnrAuditLogger extends Audit {
         }
     }
 
-    private Oid getCurrentPersonOid() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    private Oid getCurrentPersonOid(Authentication authentication) {
         if (authentication != null) {
             try {
                 return new Oid(authentication.getName());
