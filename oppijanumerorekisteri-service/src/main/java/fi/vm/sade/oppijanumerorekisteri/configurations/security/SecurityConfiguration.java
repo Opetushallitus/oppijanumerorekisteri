@@ -14,7 +14,6 @@ import org.apereo.cas.client.session.SessionMappingStorage;
 import org.apereo.cas.client.session.SingleSignOutFilter;
 import org.apereo.cas.client.validation.Cas30ProxyTicketValidator;
 import org.apereo.cas.client.validation.TicketValidator;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -52,9 +51,6 @@ public class SecurityConfiguration {
     private SessionMappingStorage sessionMappingStorage;
 
     public static final String SPRING_CAS_SECURITY_CHECK_PATH = "/j_spring_cas_security_check";
-
-    @Value("${oppijanumerorekisteri.oauth2.enabled:false}")
-    private boolean oauth2Enabled;
 
     public SecurityConfiguration(CasProperties casProperties, OphProperties ophProperties, SessionMappingStorage sessionMappingStorage) {
         this.casProperties = casProperties;
