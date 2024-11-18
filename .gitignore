@@ -7,3 +7,4 @@ oppijanumerorekisteri-domain/target/*
 
 # macOS
 .DS_Store
+node_modules
