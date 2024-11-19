@@ -16,7 +16,10 @@ const PolicyDocument = JSON.stringify({
       Effect: "Allow",
       Action: [
           "ssm:*",
-          "ecs:*"
+          "ecs:*",
+          "secretsmanager:*",
+          "rds:*",
+          "ec2:*"
       ],
       Resource: "*",
     },
