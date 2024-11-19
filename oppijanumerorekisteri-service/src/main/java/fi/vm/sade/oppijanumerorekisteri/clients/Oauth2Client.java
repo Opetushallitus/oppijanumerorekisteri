@@ -7,10 +7,12 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.time.Duration;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
+import fi.vm.sade.oppijanumerorekisteri.configurations.ConfigEnums;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,7 +24,13 @@ public class Oauth2Client {
 
     private HttpResponse<String> execute(HttpRequest.Builder requestBuilder) {
         try {
-            var request = requestBuilder.setHeader("Authorization", "Bearer " + oauth2BearerClient.getOauth2Bearer()).build();
+            var request = requestBuilder
+                    .timeout(Duration.ofSeconds(35))
+                    .setHeader("Authorization", "Bearer " + oauth2BearerClient.getOauth2Bearer())
+                    .setHeader("Caller-Id", ConfigEnums.CALLER_ID.value())
+                    .setHeader("CSRF", "CSRF")
+                    .setHeader("Cookie", "CSRF=CSRF")
+                    .build();
             var client = HttpClient.newBuilder().build();
             var response = client.send(request, BodyHandlers.ofString());
             if (response.statusCode() != 401 && (response.statusCode() < 200 || response.statusCode() > 299)) {
