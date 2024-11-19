@@ -14,7 +14,10 @@ const PolicyDocument = JSON.stringify({
   Statement: [
     {
       Effect: "Allow",
-      Action: ["ssm:GetParameter", "ssm:GetParameters"],
+      Action: [
+          "ssm:*",
+          "ecs:*"
+      ],
       Resource: "*",
     },
   ],
