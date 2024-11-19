@@ -48,7 +48,7 @@ class DatabaseStack extends cdk.Stack {
       vpcSubnets: {subnetType: ec2.SubnetType.PRIVATE_ISOLATED},
       defaultDatabaseName: "oppijanumerorekisteri",
       engine: rds.DatabaseClusterEngine.auroraPostgres({
-        version: rds.AuroraPostgresEngineVersion.VER_12_17,
+        version: rds.AuroraPostgresEngineVersion.VER_12_19,
       }),
       credentials: rds.Credentials.fromGeneratedSecret("oppijanumerorekisteri", {
         secretName: sharedAccount.prefix("DatabaseSecret"),
@@ -57,7 +57,7 @@ class DatabaseStack extends cdk.Stack {
       writer: rds.ClusterInstance.provisioned("writer", {
         enablePerformanceInsights: true,
         instanceType: ec2.InstanceType.of(
-            ec2.InstanceClass.M6G,
+            ec2.InstanceClass.R6G,
             ec2.InstanceSize.XLARGE
         ),
       }),
