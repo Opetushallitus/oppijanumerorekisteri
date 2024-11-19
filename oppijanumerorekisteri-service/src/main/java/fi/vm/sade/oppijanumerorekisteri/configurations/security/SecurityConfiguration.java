@@ -186,7 +186,11 @@ public class SecurityConfiguration {
                     return isOauth2Request(request);
                 }
             })
-            .authorizeHttpRequests(authz -> authz.anyRequest().authenticated())
+            .authorizeHttpRequests(authz -> authz
+                    .requestMatchers("/buildversion.txt").permitAll()
+                    .requestMatchers("/actuator/**").permitAll()
+                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                    .anyRequest().authenticated())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(oauth2JwtConverter())))
             .build();
