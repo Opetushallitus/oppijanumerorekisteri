@@ -19,7 +19,9 @@ const PolicyDocument = JSON.stringify({
           "ecs:*",
           "secretsmanager:*",
           "rds:*",
-          "ec2:*"
+          "ec2:*",
+          "s3:*",
+          "iam:*",
       ],
       Resource: "*",
     },

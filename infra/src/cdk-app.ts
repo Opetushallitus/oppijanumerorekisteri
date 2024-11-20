@@ -3,6 +3,7 @@ import * as constructs from "constructs";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as rds from "aws-cdk-lib/aws-rds"
+import * as s3 from "aws-cdk-lib/aws-s3"
 import * as sharedAccount from "./shared-account";
 
 class CdkApp extends cdk.App {
@@ -43,6 +44,8 @@ class DatabaseStack extends cdk.Stack {
 
     const vpc = ec2.Vpc.fromLookup(this, "Vpc", {vpcName: sharedAccount.VPC_NAME});
 
+    const exportBucket = new s3.Bucket(this, "ExportBucket", {});
+
     new rds.DatabaseCluster(this, "Database", {
       vpc,
       vpcSubnets: {subnetType: ec2.SubnetType.PRIVATE_ISOLATED},
@@ -62,6 +65,7 @@ class DatabaseStack extends cdk.Stack {
         ),
       }),
       readers: [],
+      s3ExportBuckets: [exportBucket],
     });
   }
 }
