@@ -108,7 +108,6 @@ oppijanumerorekisteri.vtjkysely.username: username
 oppijanumerorekisteri.vtjkysely.password: password
 oppijanumerorekisteri.vtjkysely.keystorePassword: dummydummy
 oppijanumerorekisteri.vtjkysely.truststorePassword: dummy
-oppijanumerorekisteri.oauth2.enabled: false
 oppijanumerorekisteri.oauth2.clientId: ""
 oppijanumerorekisteri.oauth2.clientSecret: ""
 aws:

@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +27,6 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import lombok.RequiredArgsConstructor;
 
 @Component
-@ConditionalOnExpression("${oppijanumerorekisteri.oauth2.enabled:false}")
 @RequiredArgsConstructor
 public class KayttooikeusOauth2ClientImpl implements KayttooikeusClient {
     private final UrlConfiguration urlConfiguration;
