@@ -12,6 +12,7 @@ import * as certificatemanager from "aws-cdk-lib/aws-certificatemanager";
 import * as ecr_assets from "aws-cdk-lib/aws-ecr-assets";
 import * as logs from "aws-cdk-lib/aws-logs";
 import * as sharedAccount from "./shared-account";
+import * as config from "./config";
 import * as path from "node:path";
 
 class CdkApp extends cdk.App {
@@ -24,9 +25,14 @@ class CdkApp extends cdk.App {
       },
     };
 
-    new ECSStack(this, sharedAccount.prefix("ECSStack"), stackProps);
-    new DatabaseStack(this, sharedAccount.prefix("Database"), stackProps);
-    new OppijanumerorekisteriApplicationStack(this, sharedAccount.prefix("OppijanumerorekisteriApplication"), stackProps);
+    const ecsStack = new ECSStack(this, sharedAccount.prefix("ECSStack"), stackProps);
+    const databaseStack = new DatabaseStack(this, sharedAccount.prefix("Database"), stackProps);
+    new OppijanumerorekisteriApplicationStack(this, sharedAccount.prefix("OppijanumerorekisteriApplication"), {
+      database: databaseStack.database,
+      bastion: databaseStack.bastion,
+      ecsCluster: ecsStack.cluster,
+      ...stackProps,
+    });
   }
 }
 
@@ -45,6 +51,7 @@ class ECSStack extends cdk.Stack {
 
 class DatabaseStack extends cdk.Stack {
   readonly bastion: ec2.BastionHostLinux;
+  readonly database: rds.DatabaseCluster;
 
   constructor(
       scope: constructs.Construct,
@@ -57,7 +64,7 @@ class DatabaseStack extends cdk.Stack {
 
     const exportBucket = new s3.Bucket(this, "ExportBucket", {});
 
-    const database = new rds.DatabaseCluster(this, "Database", {
+    this.database = new rds.DatabaseCluster(this, "Database", {
       vpc,
       vpcSubnets: {subnetType: ec2.SubnetType.PRIVATE_ISOLATED},
       defaultDatabaseName: "oppijanumerorekisteri",
@@ -83,15 +90,21 @@ class DatabaseStack extends cdk.Stack {
       vpc,
       instanceName: sharedAccount.prefix("Bastion"),
     });
-    database.connections.allowDefaultPortFrom(this.bastion);
+    this.database.connections.allowDefaultPortFrom(this.bastion);
   }
+}
+
+type OppijanumerorekisteriApplicationStackProperties = cdk.StackProps & {
+  database: rds.DatabaseCluster
+  ecsCluster: ecs.Cluster
+  bastion: ec2.BastionHostLinux
 }
 
 class OppijanumerorekisteriApplicationStack extends cdk.Stack {
   constructor(
       scope: constructs.Construct,
       id: string,
-      props: cdk.StackProps
+      props: OppijanumerorekisteriApplicationStackProperties,
   ) {
     super(scope, id, props);
     const vpc = ec2.Vpc.fromLookup(this, "Vpc", {vpcName: sharedAccount.VPC_NAME});
@@ -107,6 +120,103 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       platform: ecr_assets.Platform.LINUX_ARM64,
       exclude: ['infra/cdk.out'],
     });
+
+    const taskDefinition = new ecs.FargateTaskDefinition(
+        this,
+        "TaskDefinition",
+        {
+          cpu: 1024,
+          memoryLimitMiB: 8192,
+          runtimePlatform: {
+            operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
+            cpuArchitecture: ecs.CpuArchitecture.ARM64,
+          },
+        });
+
+    const appPort = 8080;
+    taskDefinition.addContainer("AppContainer", {
+      image: ecs.ContainerImage.fromDockerImageAsset(dockerImage),
+      logging: new ecs.AwsLogDriver({ logGroup, streamPrefix: "app" }),
+      environment: {
+        ENV: config.getEnvironment(),
+        postgresql_host: props.database.clusterEndpoint.hostname,
+        postgresql_port: props.database.clusterEndpoint.port.toString(),
+        postgresql_db: "oppijanumerorekisteri",
+        aws_region: this.region,
+      },
+      secrets: {
+        postgresql_username: ecs.Secret.fromSecretsManager(
+            props.database.secret!,
+            "username"
+        ),
+        postgresql_password: ecs.Secret.fromSecretsManager(
+            props.database.secret!,
+            "password"
+        ),
+        authentication_app_password_to_haku: this.ssmSecret("AuthenticationAppPasswordToHaku"),
+        authentication_app_username_to_haku: this.ssmSecret("AuthenticationAppUsernameToHaku"),
+        authentication_app_username_to_vtj: this.ssmSecret("AuthenticationAppUsernameToVtj"),
+        kayttooikeus_password: this.ssmSecret("KayttooikeusPassword"),
+        kayttooikeus_username: this.ssmSecret("KayttooikeusUsername"),
+        lampi_external_id: this.ssmSecret("LampiExternalId"),
+        lampi_role_arn: this.ssmSecret("LampiRoleArn"),
+        palveluvayla_access_key_id: this.ssmSecret("PalveluvaylaAccessKeyId"),
+        viestinta_password: this.ssmSecret("ViestintaPassword"),
+        ataru_password: this.ssmSecret("AtaruPassword"),
+        authentication_app_password_to_henkilotietomuutos: this.ssmSecret("AuthenticationAppPasswordToHenkilotietomuutos"),
+        authentication_app_password_to_vtj: this.ssmSecret("AuthenticationAppPasswordToVtj"),
+        authentication_app_username_to_henkilotietomuutos: this.ssmSecret("AuthenticationAppUsernameToHenkilotietomuutos"),
+        oauth2_clientid: this.ssmSecret("Oauth2Clientid"),
+        oauth2_clientsecret: this.ssmSecret("Oauth2Clientsecret"),
+        palveluvayla_secret_access_key: this.ssmSecret("PalveluvaylaSecretAccessKey"),
+        viestinta_username: this.ssmSecret("ViestintaUsername"),
+        ataru_username: this.ssmSecret("AtaruUsername"),
+        host_cas: this.ssmSecret("HostCas"),
+        host_virkailija: this.ssmSecret("HostVirkailija"),
+        vtj_muutosrajapinta_username: this.ssmSecret("VtjMuutosrajapintaUsername"),
+        vtj_muutosrajapinta_password: this.ssmSecret("VtjMuutosrajapintaPassword"),
+        vtjkysely_truststore_password: this.ssmSecret("VtjkyselyTruststorePassword"),
+        vtjkysely_keystore_password: this.ssmSecret("VtjkyselyKeystorePassword"),
+        vtjkysely_username: this.ssmSecret("VtjkyselyUsername"),
+        vtjkysely_password: this.ssmSecret("VtjkyselyPassword"),
+        vtjkysely_testoids: this.ssmSecret("VtjkyselyTestoids"),
+        henkilo_modified_sns_topic_arn: this.ssmSecret("HenkiloModifiedSnsTopicArn"),
+      },
+      portMappings: [
+        {
+          name: "oppijanumerorekisteri",
+          containerPort: appPort,
+          appProtocol: ecs.AppProtocol.http,
+        },
+      ],
+    });
+
+    const conf = config.getConfig();
+    const service = new ecs.FargateService(this, "Service", {
+      cluster: props.ecsCluster,
+      taskDefinition,
+      desiredCount: conf.minCapacity,
+      minHealthyPercent: 100,
+      maxHealthyPercent: 200,
+      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
+      healthCheckGracePeriod: cdk.Duration.minutes(5),
+    });
+    const scaling = service.autoScaleTaskCount({
+      minCapacity: conf.minCapacity,
+      maxCapacity: conf.maxCapacity,
+    });
+
+    scaling.scaleOnMetric("ServiceScaling", {
+      metric: service.metricCpuUtilization(),
+      scalingSteps: [
+        { upper: 15, change: -1 },
+        { lower: 50, change: +1 },
+        { lower: 65, change: +2 },
+        { lower: 80, change: +3 },
+      ],
+    });
+
+    service.connections.allowToDefaultPort(props.database);
 
     const alb = new elasticloadbalancingv2.ApplicationLoadBalancer(
         this,
@@ -134,7 +244,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       ),
     });
 
-    new certificatemanager.Certificate(
+    const albCertificate = new certificatemanager.Certificate(
         this,
         "AlbCertificate",
         {
@@ -142,6 +252,34 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
           validation:
               certificatemanager.CertificateValidation.fromDns(sharedHostedZone),
         }
+    );
+
+    const listener = alb.addListener("Listener", {
+      protocol: elasticloadbalancingv2.ApplicationProtocol.HTTPS,
+      port: 443,
+      open: true,
+      certificates: [albCertificate],
+    });
+
+    listener.addTargets("ServiceTarget", {
+      port: appPort,
+      targets: [service],
+      healthCheck: {
+        enabled: true,
+        interval: cdk.Duration.seconds(10),
+        path: "/oppijanumerorekisteri-service/actuator/health",
+        port: appPort.toString(),
+      },
+    });
+  }
+
+  ssmSecret(name: string): ecs.Secret {
+    return ecs.Secret.fromSsmParameter(
+        ssm.StringParameter.fromSecureStringParameterAttributes(
+            this,
+            `Param${name}`,
+            { parameterName: `/oppijanumerorekisteri/${name}` }
+        )
     );
   }
 }

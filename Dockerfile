@@ -21,12 +21,14 @@ exec java \
   -XX:+UnlockDiagnosticVMOptions \
   -XX:NativeMemoryTracking=summary \
   -XX:+PrintNMTStatistics \
-  -Xms2g \
-  -Xmx2g \
+  -Xms6g \
+  -Xmx6g \
   -Dspring.config.additional-location=classpath:/config/oppijanumerorekisteri.yml,classpath:/config/$ENV.yml \
   -Denv.name=$ENV \
   -Dlogging.config=classpath:/config/logback.xml \
   -Dserver.port=8080 \
+  --add-opens java.base/java.lang=ALL-UNNAMED \
+  --add-opens java.base/java.util=ALL-UNNAMED \
   -Dnet.bytebuddy.experimental=true \
   -jar \
   oppijanumerorekisteri.jar
