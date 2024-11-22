@@ -112,6 +112,7 @@ oppijanumerorekisteri.oauth2.clientId: ""
 oppijanumerorekisteri.oauth2.clientSecret: ""
 aws:
   region: eu-west-1
+  opintopolkuRoleArn: "none"
   henkiloModifiedTopic:
     enabled: false
     topicArn: disabled

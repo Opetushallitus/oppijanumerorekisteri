@@ -19,13 +19,13 @@ import java.util.Map;
 public class AwsSnsHenkiloModifiedTopic implements HenkiloModifiedTopic {
     private static final Logger LOGGER = LoggerFactory.getLogger(AwsSnsHenkiloModifiedTopic.class);
 
-    private SnsClient client;
+    private SnsClient opintopolkuSnsClient;
     private ObjectMapper objectMapper;
     private String topicArn;
     private boolean enabled;
 
-    public AwsSnsHenkiloModifiedTopic(AwsConfiguration configuration, SnsClient client, ObjectMapper objectMapper) {
-        this.client = client;
+    public AwsSnsHenkiloModifiedTopic(AwsConfiguration configuration, SnsClient opintopolkuSnsClient, ObjectMapper objectMapper) {
+        this.opintopolkuSnsClient = opintopolkuSnsClient;
         this.objectMapper = objectMapper;
         this.topicArn = configuration.getHenkiloModifiedTopic().getTopicArn();
         this.enabled = configuration.getHenkiloModifiedTopic().isEnabled();
@@ -46,7 +46,7 @@ public class AwsSnsHenkiloModifiedTopic implements HenkiloModifiedTopic {
                     .message(objectMapper.writeValueAsString(m))
                     .topicArn(topicArn)
                     .build();
-                client.publish(request);
+                opintopolkuSnsClient.publish(request);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }

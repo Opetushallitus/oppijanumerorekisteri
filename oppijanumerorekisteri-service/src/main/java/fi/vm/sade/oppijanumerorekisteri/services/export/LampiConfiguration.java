@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.export;
 
+import fi.vm.sade.oppijanumerorekisteri.configurations.AwsConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 
 import lombok.RequiredArgsConstructor;
@@ -17,16 +18,17 @@ import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
 @Configuration
 @RequiredArgsConstructor
 public class LampiConfiguration {
+    private static final String LAMPI_CREDENTIALS_PROVIDER = "lampiCredentialsProvider";
     private static final Region REGION = Region.EU_WEST_1;
 
     private final OppijanumerorekisteriProperties properties;
 
-    @Bean
-    public StsAssumeRoleCredentialsProvider lampiCredentialsProvider(@Qualifier("opintopolkuCredentialsProvider") AwsCredentialsProvider opinpolkuCredentialsProvider) {
+    @Bean(LAMPI_CREDENTIALS_PROVIDER)
+    public StsAssumeRoleCredentialsProvider lampiCredentialsProvider(@Qualifier(AwsConfiguration.ONR_CREDENTIALS_PROVIDER) AwsCredentialsProvider onrCredentialsProvider) {
         var lampiRoleArn = properties.getTasks().getExport().getLampiRoleArn();
         var lampiExternalId = properties.getTasks().getExport().getLampiExternalId();
         var stsClient = StsClient.builder()
-                .credentialsProvider(opinpolkuCredentialsProvider)
+                .credentialsProvider(onrCredentialsProvider)
                 .region(REGION)
                 .build();
 
@@ -41,7 +43,7 @@ public class LampiConfiguration {
     }
 
     @Bean
-    public S3AsyncClient lampiS3Client(StsAssumeRoleCredentialsProvider lampiCredentialsProvider) {
+    public S3AsyncClient lampiS3Client(@Qualifier(LAMPI_CREDENTIALS_PROVIDER) StsAssumeRoleCredentialsProvider lampiCredentialsProvider) {
         return S3AsyncClient.builder()
                 .credentialsProvider(lampiCredentialsProvider)
                 .region(REGION)

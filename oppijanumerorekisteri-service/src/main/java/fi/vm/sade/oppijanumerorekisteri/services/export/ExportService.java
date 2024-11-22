@@ -34,7 +34,7 @@ public class ExportService {
     private final JdbcTemplate jdbcTemplate;
     private static final String S3_PREFIX = "fulldump/oppijanumerorekisteri/v2";
     private final OppijanumerorekisteriProperties properties;
-    private final S3AsyncClient opintopolkuS3Client;
+    private final S3AsyncClient onrS3Client;
     private final S3AsyncClient lampiS3Client;
     private final ObjectMapper objectMapper = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -152,7 +152,7 @@ public class ExportService {
         var bucketName = properties.getTasks().getExport().getBucketName();
         try {
             exportToFile(query, mapper, tempFile);
-            uploadFile(opintopolkuS3Client, bucketName, objectKey, tempFile);
+            uploadFile(onrS3Client, bucketName, objectKey, tempFile);
         } finally {
             Files.deleteIfExists(tempFile.toPath());
         }
@@ -213,7 +213,7 @@ public class ExportService {
         var lampiBucketName = properties.getTasks().getExport().getLampiBucketName();
         try {
             log.info("Downloading file from S3: {}/{}", bucketName, objectKey);
-            try (var downloader = S3TransferManager.builder().s3Client(opintopolkuS3Client).build()) {
+            try (var downloader = S3TransferManager.builder().s3Client(onrS3Client).build()) {
                 var fileDownload = downloader.downloadFile(DownloadFileRequest.builder()
                         .getObjectRequest(b -> b.bucket(bucketName).key(objectKey))
                         .destination(temporaryFile)

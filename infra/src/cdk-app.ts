@@ -2,6 +2,7 @@ import * as cdk from "aws-cdk-lib";
 import * as constructs from "constructs";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ecs from "aws-cdk-lib/aws-ecs";
+import * as iam from "aws-cdk-lib/aws-iam";
 import * as rds from "aws-cdk-lib/aws-rds"
 import * as s3 from "aws-cdk-lib/aws-s3"
 import * as elasticloadbalancingv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
@@ -213,6 +214,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         vtjkysely_password: this.ssmSecret("VtjkyselyPassword"),
         vtjkysely_testoids: this.ssmSecret("VtjkyselyTestoids"),
         henkilo_modified_sns_topic_arn: this.ssmSecret("HenkiloModifiedSnsTopicArn"),
+        opintopolku_cross_account_role: this.ssmString("OpintopolkuCrossAccountRole"),
       },
       portMappings: [
         {
@@ -222,6 +224,18 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         },
       ],
     });
+
+    taskDefinition.addToTaskRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["sts:AssumeRole"],
+        resources: [
+          ssm.StringParameter.valueFromLookup(
+            this,
+            "/oppijanumerorekisteri/OpintopolkuCrossAccountRole"
+          ),
+        ],
+      })
+    );
 
     const conf = config.getConfig();
     const service = new ecs.FargateService(this, "Service", {
@@ -305,6 +319,15 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
     });
   }
 
+  ssmString(name: string): ecs.Secret {
+    return ecs.Secret.fromSsmParameter(
+      ssm.StringParameter.fromStringParameterName(
+        this,
+        `Param${name}`,
+        `/oppijanumerorekisteri/${name}`
+      )
+    );
+  }
   ssmSecret(name: string): ecs.Secret {
     return ecs.Secret.fromSsmParameter(
         ssm.StringParameter.fromSecureStringParameterAttributes(
