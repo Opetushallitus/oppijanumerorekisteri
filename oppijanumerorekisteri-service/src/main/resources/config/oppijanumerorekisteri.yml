@@ -56,6 +56,7 @@ oppijanumerorekisteri:
     truststorePassword: ${vtjkysely_truststore_password}
 aws:
   region: ${aws_region}
+  opintopolkuRoleArn: ${opintopolku_cross_account_role}
   henkiloModifiedTopic:
     enabled: ${henkilo_modified_topic_enabled:true}
     topicArn: '${henkilo_modified_sns_topic_arn}'
