@@ -9,7 +9,10 @@ import * as route53 from "aws-cdk-lib/aws-route53";
 import * as route53_targets from "aws-cdk-lib/aws-route53-targets";
 import * as ssm from "aws-cdk-lib/aws-ssm";
 import * as certificatemanager from "aws-cdk-lib/aws-certificatemanager";
+import * as ecr_assets from "aws-cdk-lib/aws-ecr-assets";
+import * as logs from "aws-cdk-lib/aws-logs";
 import * as sharedAccount from "./shared-account";
+import * as path from "node:path";
 
 class CdkApp extends cdk.App {
   constructor(props: cdk.AppProps) {
@@ -92,6 +95,18 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
   ) {
     super(scope, id, props);
     const vpc = ec2.Vpc.fromLookup(this, "Vpc", {vpcName: sharedAccount.VPC_NAME});
+
+    const logGroup = new logs.LogGroup(this, "AppLogGroup", {
+      logGroupName: sharedAccount.prefix("/oppijanumerorekisteri"),
+      retention: logs.RetentionDays.INFINITE,
+    });
+
+    const dockerImage = new ecr_assets.DockerImageAsset(this, "AppImage", {
+      directory: path.join(__dirname, "../../"),
+      file: "Dockerfile",
+      platform: ecr_assets.Platform.LINUX_ARM64,
+      exclude: ['infra/cdk.out'],
+    });
 
     const alb = new elasticloadbalancingv2.ApplicationLoadBalancer(
         this,

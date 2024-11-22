@@ -26,6 +26,7 @@ const PolicyDocument = JSON.stringify({
           "route53:*",
           "acm:*",
           "elasticloadbalancing:*",
+          "logs:*",
       ],
       Resource: "*",
     },

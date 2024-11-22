@@ -1,0 +1,70 @@
+#
+# TÄHÄN TIEDOSTOON EI SAA TALLENTAA YMPÄRISTÖKOHTAISIA ARVOJA MUUTOIN KUIN MUUTTUJINA!!!
+#
+# Tämä tiedosto toimii pohjana oph-configuration/common.properties tiedostolle,
+# joka asettaa tomcatin ympäristökohtaiset arvot.
+#
+
+# Aseta vähintään nämä ympäristökohtaiset arvot
+
+spring:
+  jpa:
+    properties:
+      hibernate.integration.envers.enabled: ${oppijanumerorekisteri_versiointi_kaytossa:true}
+  datasource:
+    url: jdbc:postgresql://${postgresql_oppijanumerorekisteri_host}:${port_postgresql}/${postgresql_oppijanumerorekisteri_db:oppijanumerorekisteri}?ApplicationName=oppijanumerorekisteri-service
+    username: ${postgres_app_user}
+    password: ${postgresql_oppijanumerorekisteri_app_password}
+    hikari:
+      maximum-pool-size: ${postgresql_oppijanumerorekisteri_maximum_pool_size:20}
+      connection-timeout: ${postgresql_oppijanumerorekisteri_connection_timeout:10000}
+      max-lifetime: ${postgresql_oppijanumerorekisteri_max_lifetime:900000}
+server:
+  jetty:
+    connection-idle-timeout: ${oppijanumerorekisteri_connection_idle_timeout:30000}
+cas:
+  service: https://${host_virkailija}/oppijanumerorekisteri-service
+host:
+  host-virkailija: ${host_virkailija}
+  host-cas: ${host_cas}
+authentication:
+  kayttooikeus:
+    username: ${oppijanumerorekisteri_kayttooikeus_username}
+    password: '${oppijanumerorekisteri_kayttooikeus_password}'
+  hakuapp:
+    username: ${authentication_app_username_to_haku}
+    password: ${authentication_app_password_to_haku}
+  ataru:
+    username: ${oppijanumerorekisteri_ataru_username}
+    password: ${oppijanumerorekisteri_ataru_password}
+  viestintapalvelu:
+    username: ${oppijanumerorekisteri_viestinta_username}
+    password: ${oppijanumerorekisteri_viestinta_password}
+
+oppijanumerorekisteri:
+  uses-ssl-proxy: true
+  disable-strict-permission-check: ${oppijanumerorekisteri_disable_strict_permission_check:false}
+  slack-url: ${oppijanumerorekisteri_slack_webhook_url}
+  scheduling:
+    yksilointi:
+      enabled: ${oppijanumerorekisteri_yksilointi_enabled:true}
+  allow-fake-ssn: ${oppijanumerorekisteri_allow_fake_ssn:true}
+  vtj-muutosrajapinta:
+    base-url: ${oppijanumerorekisteri_vtjmuutosrajapinta_baseurl}
+    username: ${oppijanumerorekisteri_vtjmuutosrajapinta_username}
+    password: ${oppijanumerorekisteri_vtjmuutosrajapinta_password}
+    palveluvayla-env: ${oppijanumerorekisteri_palveluvayla_env:FI-TEST}
+    apigw-role-arn: ${oppijanumerorekisteri_apigw_role_arn}
+  oauth2:
+    clientId: ${oppijanumerorekisteri_oauth2_clientid}
+    clientSecret: ${oppijanumerorekisteri_oauth2_clientsecret}
+  vtjkysely:
+    username: ${oppijanumerorekisteri_vtjkysely_username}
+    password: ${oppijanumerorekisteri_vtjkysely_password}
+    keystorePassword: ${oppijanumerorekisteri_vtjkysely_keystore_password}
+    truststorePassword: ${oppijanumerorekisteri_vtjkysely_truststore_password}
+aws:
+  region: ${aws_region}
+  henkiloModifiedTopic:
+    enabled: ${oppijanumerorekisteri_henkilo_modified_topic_enabled}
+    topicArn: '${henkilo_modified_sns_topic_arn}'

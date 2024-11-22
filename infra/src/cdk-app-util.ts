@@ -126,6 +126,10 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
             type: codebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
             value: `/env/${env}/slack-notifications-channel-webhook`,
           },
+          MVN_SETTINGSXML: {
+            type: codebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
+            value: `/mvn/settingsxml`,
+          },
         },
         buildSpec: codebuild.BuildSpec.fromObject({
           version: "0.2",
@@ -137,6 +141,7 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
               commands: [
                 "sudo yum install -y perl-Digest-SHA", // for shasum command
                 `git checkout ${tag}`,
+                "echo $MVN_SETTINGSXML > ./kayttooikeus-service/settings.xml",
               ],
             },
             build: {
