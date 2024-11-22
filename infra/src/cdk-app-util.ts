@@ -141,7 +141,7 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
               commands: [
                 "sudo yum install -y perl-Digest-SHA", // for shasum command
                 `git checkout ${tag}`,
-                "echo $MVN_SETTINGSXML > ./kayttooikeus-service/settings.xml",
+                "echo $MVN_SETTINGSXML > ./settings.xml",
               ],
             },
             build: {
