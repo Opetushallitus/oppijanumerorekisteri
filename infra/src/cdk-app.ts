@@ -41,6 +41,8 @@ class ECSStack extends cdk.Stack {
 }
 
 class DatabaseStack extends cdk.Stack {
+  readonly bastion: ec2.BastionHostLinux;
+
   constructor(
       scope: constructs.Construct,
       id: string,
@@ -52,7 +54,7 @@ class DatabaseStack extends cdk.Stack {
 
     const exportBucket = new s3.Bucket(this, "ExportBucket", {});
 
-    new rds.DatabaseCluster(this, "Database", {
+    const database = new rds.DatabaseCluster(this, "Database", {
       vpc,
       vpcSubnets: {subnetType: ec2.SubnetType.PRIVATE_ISOLATED},
       defaultDatabaseName: "oppijanumerorekisteri",
@@ -73,6 +75,12 @@ class DatabaseStack extends cdk.Stack {
       readers: [],
       s3ExportBuckets: [exportBucket],
     });
+
+    this.bastion = new ec2.BastionHostLinux(this, "BastionHost", {
+      vpc,
+      instanceName: sharedAccount.prefix("Bastion"),
+    });
+    database.connections.allowDefaultPortFrom(this.bastion);
   }
 }
 
