@@ -190,6 +190,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         List<Tuonti> tuontiList = tuontiRepository.findTuontiWithIlmoitustarve();
         Set<String> sahkopostiosoitteet = tuontiList.stream()
                 .map(Tuonti::getSahkoposti)
+                .filter(email -> email != null && email.length() > 0)
                 .collect(Collectors.toSet());
         if (sahkopostiosoitteet.size() > 0) {
             emailService.sendTuontiKasiteltyWithErrorsEmail(sahkopostiosoitteet);
