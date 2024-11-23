@@ -52,6 +52,7 @@ class ECSStack extends cdk.Stack {
 class DatabaseStack extends cdk.Stack {
   readonly bastion: ec2.BastionHostLinux;
   readonly database: rds.DatabaseCluster;
+  readonly exportBucket: s3.Bucket;
 
   constructor(
       scope: constructs.Construct,
@@ -62,7 +63,7 @@ class DatabaseStack extends cdk.Stack {
 
     const vpc = ec2.Vpc.fromLookup(this, "Vpc", {vpcName: sharedAccount.VPC_NAME});
 
-    const exportBucket = new s3.Bucket(this, "ExportBucket", {});
+    this.exportBucket = new s3.Bucket(this, "ExportBucket", {});
 
     this.database = new rds.DatabaseCluster(this, "Database", {
       vpc,
@@ -83,7 +84,7 @@ class DatabaseStack extends cdk.Stack {
         ),
       }),
       readers: [],
-      s3ExportBuckets: [exportBucket],
+      s3ExportBuckets: [this.exportBucket],
     });
 
     this.bastion = new ec2.BastionHostLinux(this, "BastionHost", {
@@ -98,6 +99,7 @@ type OppijanumerorekisteriApplicationStackProperties = cdk.StackProps & {
   database: rds.DatabaseCluster
   ecsCluster: ecs.Cluster
   bastion: ec2.BastionHostLinux
+  exportBucket: s3.Bucket
 }
 
 class OppijanumerorekisteriApplicationStack extends cdk.Stack {
@@ -143,6 +145,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         postgresql_port: props.database.clusterEndpoint.port.toString(),
         postgresql_db: "oppijanumerorekisteri",
         aws_region: this.region,
+        export_bucket_name: props.exportBucket.bucketName,
       },
       secrets: {
         postgresql_username: ecs.Secret.fromSecretsManager(
