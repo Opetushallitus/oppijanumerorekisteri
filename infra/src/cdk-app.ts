@@ -69,27 +69,52 @@ class DatabaseStack extends cdk.Stack {
 
     this.exportBucket = new s3.Bucket(this, "ExportBucket", {});
 
-    this.database = new rds.DatabaseCluster(this, "Database", {
-      vpc,
-      vpcSubnets: {subnetType: ec2.SubnetType.PRIVATE_ISOLATED},
-      defaultDatabaseName: "oppijanumerorekisteri",
-      engine: rds.DatabaseClusterEngine.auroraPostgres({
-        version: rds.AuroraPostgresEngineVersion.VER_12_19,
-      }),
-      credentials: rds.Credentials.fromGeneratedSecret("oppijanumerorekisteri", {
-        secretName: sharedAccount.prefix("DatabaseSecret"),
-      }),
-      storageType: rds.DBClusterStorageType.AURORA,
-      writer: rds.ClusterInstance.provisioned("writer", {
-        enablePerformanceInsights: true,
-        instanceType: ec2.InstanceType.of(
-            ec2.InstanceClass.R6G,
-            ec2.InstanceSize.XLARGE
-        ),
-      }),
-      readers: [],
-      s3ExportBuckets: [this.exportBucket],
-    });
+    if (config.getEnvironment() == "hahtuva" || config.getEnvironment() == "dev") {
+      this.database = new rds.DatabaseCluster(this, "Database", {
+        vpc,
+        vpcSubnets: {subnetType: ec2.SubnetType.PRIVATE_ISOLATED},
+        defaultDatabaseName: "oppijanumerorekisteri",
+        engine: rds.DatabaseClusterEngine.auroraPostgres({
+          version: rds.AuroraPostgresEngineVersion.VER_12_19,
+        }),
+        credentials: rds.Credentials.fromGeneratedSecret("oppijanumerorekisteri", {
+          secretName: sharedAccount.prefix("DatabaseSecret"),
+        }),
+        storageType: rds.DBClusterStorageType.AURORA,
+        writer: rds.ClusterInstance.provisioned("writer", {
+          enablePerformanceInsights: true,
+          instanceType: ec2.InstanceType.of(
+              ec2.InstanceClass.R6G,
+              ec2.InstanceSize.XLARGE
+          ),
+        }),
+        readers: [],
+        s3ExportBuckets: [this.exportBucket],
+      });
+    } else {
+      this.database = new rds.DatabaseCluster(this, "Database", {
+        vpc,
+        vpcSubnets: {subnetType: ec2.SubnetType.PRIVATE_ISOLATED},
+        defaultDatabaseName: "oppijanumerorekisteri",
+        engine: rds.DatabaseClusterEngine.auroraPostgres({
+          version: rds.AuroraPostgresEngineVersion.VER_12_19,
+        }),
+        credentials: rds.Credentials.fromGeneratedSecret("oppijanumerorekisteri", {
+          secretName: sharedAccount.prefix("DatabaseSecret"),
+        }),
+        storageType: rds.DBClusterStorageType.AURORA,
+        writer: rds.ClusterInstance.provisioned("writer", {
+          enablePerformanceInsights: true,
+          instanceType: ec2.InstanceType.of(
+              ec2.InstanceClass.R6G,
+              ec2.InstanceSize.XLARGE
+          ),
+        }),
+        storageEncrypted: true,
+        readers: [],
+        s3ExportBuckets: [this.exportBucket],
+      });
+    }
 
     this.bastion = new ec2.BastionHostLinux(this, "BastionHost", {
       vpc,
