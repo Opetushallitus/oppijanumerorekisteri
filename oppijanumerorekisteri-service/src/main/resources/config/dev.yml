@@ -3,7 +3,7 @@ spring.security.oauth2.resourceserver.jwt.jwk-set-uri: https://${virkailija_host
 
 oppijanumerorekisteri.tasks.export.enabled: true
 oppijanumerorekisteri.tasks.export.bucket-name: ${export_bucket_name}
-oppijanumerorekisteri.tasks.export.copy-to-lampi: true
+oppijanumerorekisteri.tasks.export.copy-to-lampi: false 
 oppijanumerorekisteri.tasks.export.lampi-bucket-name: oph-lampi-dev
 oppijanumerorekisteri.tasks.export.lampi-role-arn: ${lampi_role_arn}
 oppijanumerorekisteri.tasks.export.lampi-external-id: ${lampi_external_id}
