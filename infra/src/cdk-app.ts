@@ -27,13 +27,16 @@ class CdkApp extends cdk.App {
 
     const ecsStack = new ECSStack(this, sharedAccount.prefix("ECSStack"), stackProps);
     const databaseStack = new DatabaseStack(this, sharedAccount.prefix("Database"), stackProps);
-    new OppijanumerorekisteriApplicationStack(this, sharedAccount.prefix("OppijanumerorekisteriApplication"), {
-      database: databaseStack.database,
-      bastion: databaseStack.bastion,
-      exportBucket: databaseStack.exportBucket,
-      ecsCluster: ecsStack.cluster,
-      ...stackProps,
-    });
+
+    if (config.getEnvironment() == "hahtuva" || config.getEnvironment() == "dev") {
+      new OppijanumerorekisteriApplicationStack(this, sharedAccount.prefix("OppijanumerorekisteriApplication"), {
+        database: databaseStack.database,
+        bastion: databaseStack.bastion,
+        exportBucket: databaseStack.exportBucket,
+        ecsCluster: ecsStack.cluster,
+        ...stackProps,
+      });
+    }
   }
 }
 
