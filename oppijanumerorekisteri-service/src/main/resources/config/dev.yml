@@ -1,5 +1,5 @@
-spring.security.oauth2.resourceserver.jwt.issuer-uri: https://${virkailija_host}/kayttooikeus-service
-spring.security.oauth2.resourceserver.jwt.jwk-set-uri: https://${virkailija_host}/kayttooikeus-service/oauth2/jwks
+spring.security.oauth2.resourceserver.jwt.issuer-uri: https://${host_virkailija}/kayttooikeus-service
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri: https://${host_virkailija}/kayttooikeus-service/oauth2/jwks
 
 oppijanumerorekisteri.tasks.export.enabled: true
 oppijanumerorekisteri.tasks.export.bucket-name: ${export_bucket_name}
