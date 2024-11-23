@@ -1,0 +1,21 @@
+spring.security.oauth2.resourceserver.jwt.issuer-uri: https://${host_virkailija}/kayttooikeus-service
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri: https://${host_virkailija}/kayttooikeus-service/oauth2/jwks
+
+oppijanumerorekisteri.tasks.export.enabled: true
+oppijanumerorekisteri.tasks.export.bucket-name: ${export_bucket_name}
+oppijanumerorekisteri.tasks.export.copy-to-lampi: false
+oppijanumerorekisteri.tasks.export.lampi-bucket-name: oph-lampi-qa
+oppijanumerorekisteri.tasks.export.lampi-role-arn: ${ssm_lampi_role_arn}
+oppijanumerorekisteri.tasks.export.lampi-external-id: ${ssm_lampi_external_id}
+
+oppijanumerorekisteri.vtj-muutosrajapinta.fetch-enabled: true
+oppijanumerorekisteri.vtj-muutosrajapinta.muutostieto-enabled: true
+oppijanumerorekisteri.vtj-muutosrajapinta.perustieto-enabled: true
+
+oppijanumerorekisteri.vtjkysely.enabled: false
+oppijanumerorekisteri.vtjkysely.address: http://alb.testiopintopolku.fi/vtj-test-ws/ws/
+oppijanumerorekisteri.vtjkysely.keystoreUri: /root/oph-environment/authentication/vtj-service/keystore.p12
+oppijanumerorekisteri.vtjkysely.certAlias: vtj-service
+oppijanumerorekisteri.vtjkysely.truststoreUri: /root/oph-environment/authentication/vtj-service/truststore.p12
+
+viestinvalitys.baseurl: https://viestinvalitys.testiopintopolku.fi/lahetys
