@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Configuration;
 public class AccessLogConfiguration {
 
     @Bean
-    @ConditionalOnProperty(name = "logback.access")
     WebServerFactoryCustomizer<WebServerFactory> containerCustomizer() {
         return container -> {
             if (container instanceof TomcatServletWebServerFactory) {
