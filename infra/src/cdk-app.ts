@@ -30,6 +30,7 @@ class CdkApp extends cdk.App {
     new OppijanumerorekisteriApplicationStack(this, sharedAccount.prefix("OppijanumerorekisteriApplication"), {
       database: databaseStack.database,
       bastion: databaseStack.bastion,
+      exportBucket: databaseStack.exportBucket,
       ecsCluster: ecsStack.cluster,
       ...stackProps,
     });
