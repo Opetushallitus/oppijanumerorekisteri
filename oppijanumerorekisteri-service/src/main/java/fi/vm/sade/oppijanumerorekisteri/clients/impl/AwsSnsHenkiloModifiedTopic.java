@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.model.PublishRequest;
 
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@Slf4j
 public class AwsSnsHenkiloModifiedTopic implements HenkiloModifiedTopic {
     private static final Logger LOGGER = LoggerFactory.getLogger(AwsSnsHenkiloModifiedTopic.class);
 
@@ -42,8 +44,10 @@ public class AwsSnsHenkiloModifiedTopic implements HenkiloModifiedTopic {
             Map<String, String> m = new HashMap<>();
             m.put("oidHenkilo", henkilo.getOidHenkilo());
             try {
+                var json = objectMapper.writeValueAsString(m);
+                log.info("Publishing message to SNS topic {}: {}", topicArn, json);
                 PublishRequest request = PublishRequest.builder()
-                    .message(objectMapper.writeValueAsString(m))
+                    .message(json)
                     .topicArn(topicArn)
                     .build();
                 opintopolkuSnsClient.publish(request);
