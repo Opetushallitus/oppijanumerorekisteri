@@ -29,7 +29,7 @@ class CdkApp extends cdk.App {
     const ecsStack = new ECSStack(this, sharedAccount.prefix("ECSStack"), stackProps);
     const databaseStack = new DatabaseStack(this, sharedAccount.prefix("Database"), stackProps);
 
-    if (config.getEnvironment() == "hahtuva" || config.getEnvironment() == "dev") {
+    if (config.getEnvironment() != "prod") {
       new OppijanumerorekisteriApplicationStack(this, sharedAccount.prefix("OppijanumerorekisteriApplication"), {
         database: databaseStack.database,
         bastion: databaseStack.bastion,
