@@ -1,5 +1,7 @@
 import * as cdk from "aws-cdk-lib";
 import * as constructs from "constructs";
+import * as cloudwatch from "aws-cdk-lib/aws-cloudwatch";
+import * as cloudwatch_actions from "aws-cdk-lib/aws-cloudwatch-actions";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as iam from "aws-cdk-lib/aws-iam";
@@ -8,6 +10,7 @@ import * as s3 from "aws-cdk-lib/aws-s3"
 import * as elasticloadbalancingv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as route53_targets from "aws-cdk-lib/aws-route53-targets";
+import * as sns from "aws-cdk-lib/aws-sns";
 import * as ssm from "aws-cdk-lib/aws-ssm";
 import * as certificatemanager from "aws-cdk-lib/aws-certificatemanager";
 import * as ecr_assets from "aws-cdk-lib/aws-ecr-assets";
@@ -141,10 +144,17 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
     super(scope, id, props);
     const vpc = ec2.Vpc.fromLookup(this, "Vpc", {vpcName: sharedAccount.VPC_NAME});
 
+    const alarmTopic = sns.Topic.fromTopicArn(
+      this,
+      "AlarmTopic",
+      config.getConfig().alarmTopicArn,
+    );
+
     const logGroup = new logs.LogGroup(this, "AppLogGroup", {
       logGroupName: sharedAccount.prefix("/oppijanumerorekisteri"),
       retention: logs.RetentionDays.INFINITE,
     });
+    this.exportFailureAlarm(logGroup, alarmTopic)
 
     const dockerImage = new ecr_assets.DockerImageAsset(this, "AppImage", {
       directory: path.join(__dirname, "../../"),
@@ -317,6 +327,34 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         port: appPort.toString(),
       },
     });
+  }
+
+  exportFailureAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
+    const metricFilter = logGroup.addMetricFilter(
+      "ExportTaskSuccessMetricFilter",
+      {
+        filterPattern: logs.FilterPattern.literal(
+          '"Oppijanumerorekisteri export task completed"'
+        ),
+        metricName: sharedAccount.prefix("ExportTaskSuccess"),
+        metricNamespace: "Oppijanumerorekisteri",
+        metricValue: "1",
+      }
+    );
+    const alarm = new cloudwatch.Alarm(this, "ExportFailingAlarm", {
+      alarmName: sharedAccount.prefix("ExportFailing"),
+      metric: metricFilter.metric({
+        statistic: "Sum",
+        period: cdk.Duration.hours(1),
+      }),
+      comparisonOperator:
+      cloudwatch.ComparisonOperator.LESS_THAN_OR_EQUAL_TO_THRESHOLD,
+      threshold: 0,
+      evaluationPeriods: 8,
+      treatMissingData: cloudwatch.TreatMissingData.BREACHING,
+    });
+    alarm.addOkAction(new cloudwatch_actions.SnsAction(alarmTopic));
+    alarm.addAlarmAction(new cloudwatch_actions.SnsAction(alarmTopic));
   }
 
   ssmString(name: string): ecs.Secret {

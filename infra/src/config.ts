@@ -2,6 +2,7 @@ const environments = ["hahtuva", "dev", "qa", "prod"] as const;
 type EnvironmentName = (typeof environments)[number];
 
 const defaultConfig = {
+    alarmTopicArn: "",
     minCapacity: 0,
     maxCapacity: 0,
 };
@@ -30,24 +31,28 @@ export function getConfig(): Config {
 
 export const hahtuva: Config = {
     ...defaultConfig,
+    alarmTopicArn: "arn:aws:sns:eu-west-1:471112979851:alarm",
     minCapacity: 1,
     maxCapacity: 2,
 };
 
 export const dev: Config = {
     ...defaultConfig,
+    alarmTopicArn: "arn:aws:sns:eu-west-1:058264235340:alarm",
     minCapacity: 1,
     maxCapacity: 2,
 };
 
 export const qa: Config = {
     ...defaultConfig,
+    alarmTopicArn: "arn:aws:sns:eu-west-1:730335317715:alarm",
     minCapacity: 1,
     maxCapacity: 2,
 };
 
 export const prod: Config = {
     ...defaultConfig,
+    alarmTopicArn: "arn:aws:sns:eu-west-1:767397734142:alarm",
     minCapacity: 2,
     maxCapacity: 8,
 };
