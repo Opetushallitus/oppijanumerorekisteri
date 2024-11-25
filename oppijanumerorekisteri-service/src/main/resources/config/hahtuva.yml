@@ -2,7 +2,7 @@ spring.security.oauth2.resourceserver.jwt.issuer-uri: https://virkailija.hahtuva
 spring.security.oauth2.resourceserver.jwt.jwk-set-uri: https://virkailija.hahtuvaopintopolku.fi/kayttooikeus-service/oauth2/jwks
 
 oppijanumerorekisteri.tasks.export.enabled: true
-oppijanumerorekisteri.tasks.export.bucket-name: ${export_buckt_name:oph-yleiskayttoiset-export-hahtuva}
+oppijanumerorekisteri.tasks.export.bucket-name: ${export_bucket_name}
 oppijanumerorekisteri.tasks.export.copy-to-lampi: false
 oppijanumerorekisteri.tasks.export.lampi-bucket-name: none
 oppijanumerorekisteri.tasks.export.lampi-role-arn: none
