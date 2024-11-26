@@ -205,7 +205,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         kayttooikeus_password: this.ssmSecret("KayttooikeusPassword"),
         kayttooikeus_username: this.ssmSecret("KayttooikeusUsername"),
         lampi_external_id: this.ssmSecret("LampiExternalId"),
-        lampi_role_arn: this.ssmSecret("LampiRoleArn"),
+        lampi_role_arn: this.ssmString("LampiRoleArn2"),
         palveluvayla_access_key_id: this.ssmSecret("PalveluvaylaAccessKeyId"),
         palveluvayla_secret_access_key: this.ssmSecret("PalveluvaylaSecretAccessKey"),
         viestinta_username: this.ssmSecret("ViestintaUsername"),
@@ -236,6 +236,17 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
     });
 
     props.exportBucket.grantReadWrite(taskDefinition.taskRole);
+    taskDefinition.addToTaskRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["sts:AssumeRole"],
+        resources: [
+          ssm.StringParameter.valueFromLookup(
+            this,
+            "/oppijanumerorekisteri/LampiRoleArn2"
+          ),
+        ],
+      })
+    );
     taskDefinition.addToTaskRolePolicy(
       new iam.PolicyStatement({
         actions: ["sts:AssumeRole"],
