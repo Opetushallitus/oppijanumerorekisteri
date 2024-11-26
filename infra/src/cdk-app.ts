@@ -146,12 +146,13 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       props: OppijanumerorekisteriApplicationStackProperties,
   ) {
     super(scope, id, props);
+    const stack = cdk.Stack.of(this);
     const vpc = ec2.Vpc.fromLookup(this, "Vpc", {vpcName: sharedAccount.VPC_NAME});
 
     const alarmTopic = sns.Topic.fromTopicArn(
       this,
       "AlarmTopic",
-      config.getConfig().alarmTopicArn,
+      `arn:aws:sns:${stack.region}:${stack.account}:alarm`,
     );
 
     const logGroup = new logs.LogGroup(this, "AppLogGroup", {
