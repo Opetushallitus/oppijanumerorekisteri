@@ -92,6 +92,11 @@ function bootstrap_cdk_for_env {
           --trust "${util_account_id}" \
           --trust-for-lookup "${util_account_id}" \
           --cloudformation-execution-policies "arn:aws:iam::${account_id}:policy/${policy_name}"
+      npx cdk bootstrap "aws://${account_id}/us-east-1" \
+          --qualifier ${qualifier} --toolkit-stack-name "${toolkit_stack_name}" \
+          --trust "${util_account_id}" \
+          --trust-for-lookup "${util_account_id}" \
+          --cloudformation-execution-policies "arn:aws:iam::${account_id}:policy/${policy_name}"
 
       info "Setting up CDK deployment target policy for env ${env}"
   fi

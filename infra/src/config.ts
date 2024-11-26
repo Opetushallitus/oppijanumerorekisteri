@@ -3,6 +3,7 @@ type EnvironmentName = (typeof environments)[number];
 
 const defaultConfig = {
     alarmTopicArn: "",
+    virkailijaHost: "",
     minCapacity: 0,
     maxCapacity: 0,
 };
@@ -32,6 +33,7 @@ export function getConfig(): Config {
 export const hahtuva: Config = {
     ...defaultConfig,
     alarmTopicArn: "arn:aws:sns:eu-west-1:471112979851:alarm",
+    virkailijaHost: "virkailija.hahtuvaopintopolku.fi",
     minCapacity: 1,
     maxCapacity: 2,
 };
@@ -39,6 +41,7 @@ export const hahtuva: Config = {
 export const dev: Config = {
     ...defaultConfig,
     alarmTopicArn: "arn:aws:sns:eu-west-1:058264235340:alarm",
+    virkailijaHost: "virkailija.untuvaopintopolku.fi",
     minCapacity: 1,
     maxCapacity: 2,
 };
@@ -46,6 +49,7 @@ export const dev: Config = {
 export const qa: Config = {
     ...defaultConfig,
     alarmTopicArn: "arn:aws:sns:eu-west-1:730335317715:alarm",
+    virkailijaHost: "virkailija.testiopintopolku.fi",
     minCapacity: 1,
     maxCapacity: 2,
 };
@@ -53,6 +57,7 @@ export const qa: Config = {
 export const prod: Config = {
     ...defaultConfig,
     alarmTopicArn: "arn:aws:sns:eu-west-1:767397734142:alarm",
+    virkailijaHost: "virkailija.opintopolku.fi",
     minCapacity: 2,
     maxCapacity: 8,
 };

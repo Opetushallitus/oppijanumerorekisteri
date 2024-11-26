@@ -7,6 +7,7 @@ import * as constructs from "constructs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as ssm from "aws-cdk-lib/aws-ssm";
 import * as sharedAccount from "./shared-account";
+import {ROUTE53_HEALTH_CHECK_REGION} from "./health-check";
 
 class CdkAppUtil extends cdk.App {
   constructor(props: cdk.AppProps) {
@@ -163,18 +164,19 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
       `/env/${env}/region`
     );
 
+    const targetRegions = [deploymentTargetRegion, ROUTE53_HEALTH_CHECK_REGION];
     deployProject.role?.attachInlinePolicy(
       new iam.Policy(this, `Deploy${capitalizedEnv}Policy`, {
         statements: [
           new iam.PolicyStatement({
             effect: iam.Effect.ALLOW,
             actions: ["sts:AssumeRole"],
-            resources: [
-              `arn:aws:iam::${deploymentTargetAccount}:role/cdk-${sharedAccount.CDK_QUALIFIER}-lookup-role-${deploymentTargetAccount}-${deploymentTargetRegion}`,
-              `arn:aws:iam::${deploymentTargetAccount}:role/cdk-${sharedAccount.CDK_QUALIFIER}-file-publishing-role-${deploymentTargetAccount}-${deploymentTargetRegion}`,
-              `arn:aws:iam::${deploymentTargetAccount}:role/cdk-${sharedAccount.CDK_QUALIFIER}-image-publishing-role-${deploymentTargetAccount}-${deploymentTargetRegion}`,
-              `arn:aws:iam::${deploymentTargetAccount}:role/cdk-${sharedAccount.CDK_QUALIFIER}-deploy-role-${deploymentTargetAccount}-${deploymentTargetRegion}`,
-            ],
+            resources: targetRegions.flatMap(targetRegion => [
+              `arn:aws:iam::${deploymentTargetAccount}:role/cdk-${sharedAccount.CDK_QUALIFIER}-lookup-role-${deploymentTargetAccount}-${targetRegion}`,
+              `arn:aws:iam::${deploymentTargetAccount}:role/cdk-${sharedAccount.CDK_QUALIFIER}-file-publishing-role-${deploymentTargetAccount}-${targetRegion}`,
+              `arn:aws:iam::${deploymentTargetAccount}:role/cdk-${sharedAccount.CDK_QUALIFIER}-image-publishing-role-${deploymentTargetAccount}-${targetRegion}`,
+              `arn:aws:iam::${deploymentTargetAccount}:role/cdk-${sharedAccount.CDK_QUALIFIER}-deploy-role-${deploymentTargetAccount}-${targetRegion}`,
+            ])
           }),
         ],
       })

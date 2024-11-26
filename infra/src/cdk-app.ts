@@ -18,6 +18,7 @@ import * as logs from "aws-cdk-lib/aws-logs";
 import * as sharedAccount from "./shared-account";
 import * as config from "./config";
 import * as path from "node:path";
+import {createHealthCheckStacks} from "./health-check";
 
 class CdkApp extends cdk.App {
   constructor(props: cdk.AppProps) {
@@ -32,6 +33,8 @@ class CdkApp extends cdk.App {
     const ecsStack = new ECSStack(this, sharedAccount.prefix("ECSStack"), stackProps);
     const databaseStack = new DatabaseStack(this, sharedAccount.prefix("Database"), stackProps);
 
+    createHealthCheckStacks(this)
+
     if (config.getEnvironment() != "prod") {
       new OppijanumerorekisteriApplicationStack(this, sharedAccount.prefix("OppijanumerorekisteriApplication"), {
         database: databaseStack.database,
@@ -43,6 +46,7 @@ class CdkApp extends cdk.App {
     }
   }
 }
+
 
 class ECSStack extends cdk.Stack {
   public cluster: ecs.Cluster;
