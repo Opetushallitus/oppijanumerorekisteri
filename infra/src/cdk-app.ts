@@ -35,15 +35,13 @@ class CdkApp extends cdk.App {
 
     createHealthCheckStacks(this)
 
-    if (config.getEnvironment() != "prod") {
-      new OppijanumerorekisteriApplicationStack(this, sharedAccount.prefix("OppijanumerorekisteriApplication"), {
-        database: databaseStack.database,
-        bastion: databaseStack.bastion,
-        exportBucket: databaseStack.exportBucket,
-        ecsCluster: ecsStack.cluster,
-        ...stackProps,
-      });
-    }
+    new OppijanumerorekisteriApplicationStack(this, sharedAccount.prefix("OppijanumerorekisteriApplication"), {
+      database: databaseStack.database,
+      bastion: databaseStack.bastion,
+      exportBucket: databaseStack.exportBucket,
+      ecsCluster: ecsStack.cluster,
+      ...stackProps,
+    });
   }
 }
 
