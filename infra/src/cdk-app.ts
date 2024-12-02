@@ -222,7 +222,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         host_virkailija: this.ssmSecret("HostVirkailija"),
         vtj_muutosrajapinta_username: this.ssmSecret("VtjMuutosrajapintaUsername"),
         vtj_muutosrajapinta_password: this.ssmSecret("VtjMuutosrajapintaPassword"),
-        vtjkysely_trustore_base64: ecs.Secret.fromSecretsManager(
+        vtjkysely_truststore_base64: ecs.Secret.fromSecretsManager(
             secretsmanager.Secret.fromSecretNameV2(
                 this,
                 "VtjkyselyTruststoreBase64",
