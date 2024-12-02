@@ -1,6 +1,6 @@
 import {execSync} from 'node:child_process';
 
-const REPOSITORY_NAME = "Opetushallitus/oppijanumerorekisteri"
+const REPOSITORY_NAME = "oppijanumerorekisteri"
 const SLACK_NOTIFICATIONS_CHANNEL_WEBHOOK_URL = process.env.SLACK_NOTIFICATIONS_CHANNEL_WEBHOOK_URL as string
 const ENVIRONMENT_NAME = process.env.ENVIRONMENT_NAME as string
 
@@ -81,7 +81,7 @@ function generateReleaseNotes(): ReleaseNotes {
   }
 
   const date = parseDateTimeFromTag(tags[0])
-  const header = `🎁 Changes in ${REPOSITORY_NAME} ${ENVIRONMENT_NAME} deployment on ${date}`
+  const header = `🎁 ${REPOSITORY_NAME} ${ENVIRONMENT_NAME} deployment on ${date}`
 
   const releaseNotes: string[] = [];
   let prevTag = tags[0];
@@ -94,7 +94,7 @@ function generateReleaseNotes(): ReleaseNotes {
         const space = logLine.indexOf(' ')
         const hash = logLine.substring(0, space)
         const message = linkifyMessage(logLine.substring(space + 1))
-        releaseNotes.push(`\`<https://github.com/${REPOSITORY_NAME}/commit/${hash}|${hash}>\` ${message}`)
+        releaseNotes.push(`\`<https://github.com/Opetushallitus/${REPOSITORY_NAME}/commit/${hash}|${hash}>\` ${message}`)
       }
     }
     prevTag = currentTag;
