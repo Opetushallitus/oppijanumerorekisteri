@@ -12,6 +12,9 @@ COPY --chmod=755 <<"EOF" /app/entrypoint.sh
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
 
+echo -n ${vtjkysely_truststore_base64} | base64 --decode > /app/vtjkysely-truststore
+echo -n ${vtjkysely_keystore_base64} | base64 --decode > /app/vtjkysely-keystore
+
 exec java \
   -Dlog4j2.formatMsgNoLookups=true \
   -XX:MaxDirectMemorySize=256m \

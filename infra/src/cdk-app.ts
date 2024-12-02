@@ -15,6 +15,7 @@ import * as ssm from "aws-cdk-lib/aws-ssm";
 import * as certificatemanager from "aws-cdk-lib/aws-certificatemanager";
 import * as ecr_assets from "aws-cdk-lib/aws-ecr-assets";
 import * as logs from "aws-cdk-lib/aws-logs";
+import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import * as sharedAccount from "./shared-account";
 import * as config from "./config";
 import * as path from "node:path";
@@ -221,7 +222,21 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         host_virkailija: this.ssmSecret("HostVirkailija"),
         vtj_muutosrajapinta_username: this.ssmSecret("VtjMuutosrajapintaUsername"),
         vtj_muutosrajapinta_password: this.ssmSecret("VtjMuutosrajapintaPassword"),
+        vtjkysely_trustore_base64: ecs.Secret.fromSecretsManager(
+            secretsmanager.Secret.fromSecretNameV2(
+                this,
+                "VtjkyselyTruststoreBase64",
+                "/oppijanumerorekisteri/VtjkyselyTruststoreBase64"
+            )
+        ),
         vtjkysely_truststore_password: this.ssmSecret("VtjkyselyTruststorePassword"),
+        vtjkysely_keystore_base64: ecs.Secret.fromSecretsManager(
+            secretsmanager.Secret.fromSecretNameV2(
+                this,
+                "VtjkyselyKeystoreBase64",
+                "/oppijanumerorekisteri/VtjkyselyKeystoreBase64"
+            )
+        ),
         vtjkysely_keystore_password: this.ssmSecret("VtjkyselyKeystorePassword"),
         vtjkysely_username: this.ssmSecret("VtjkyselyUsername"),
         vtjkysely_password: this.ssmSecret("VtjkyselyPassword"),

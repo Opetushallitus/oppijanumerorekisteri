@@ -12,10 +12,10 @@ oppijanumerorekisteri.vtj-muutosrajapinta.fetch-enabled: true
 oppijanumerorekisteri.vtj-muutosrajapinta.muutostieto-enabled: true
 oppijanumerorekisteri.vtj-muutosrajapinta.perustieto-enabled: true
 
-oppijanumerorekisteri.vtjkysely.enabled: false
+oppijanumerorekisteri.vtjkysely.enabled: true
 oppijanumerorekisteri.vtjkysely.address: https://vtjkysely.2016.vrk.fi/sosowebsite/soso.asmx
-oppijanumerorekisteri.vtjkysely.keystoreUri: /root/oph-configuration/rajapinnat/vrkkeystore
+oppijanumerorekisteri.vtjkysely.keystoreUri: /app/vtjkysely-keystore
 oppijanumerorekisteri.vtjkysely.certAlias: opintopolku.fi
-oppijanumerorekisteri.vtjkysely.truststoreUri: /root/oph-configuration/rajapinnat/vrktruststore
+oppijanumerorekisteri.vtjkysely.truststoreUri: /app/vtjkysely-truststore
 
 viestinvalitys.baseurl: https://viestinvalitys.opintopolku.fi/lahetys
