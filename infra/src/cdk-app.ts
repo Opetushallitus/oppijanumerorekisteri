@@ -220,6 +220,8 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         oauth2_clientsecret: this.ssmSecret("Oauth2Clientsecret"),
         host_cas: this.ssmSecret("HostCas"),
         host_virkailija: this.ssmSecret("HostVirkailija"),
+        slack_webhook_url: this.ssmSecret("SlackWebhookUrl"),
+        palveluvayla_apigw_role_arn: this.ssmSecret("PalveluvaylaApigwRoleArn"),
         vtj_muutosrajapinta_username: this.ssmSecret("VtjMuutosrajapintaUsername"),
         vtj_muutosrajapinta_password: this.ssmSecret("VtjMuutosrajapintaPassword"),
         vtjkysely_truststore_base64: ecs.Secret.fromSecretsManager(

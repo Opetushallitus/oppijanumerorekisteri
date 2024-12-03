@@ -11,6 +11,8 @@ oppijanumerorekisteri.tasks.export.lampi-external-id: ${lampi_external_id}
 oppijanumerorekisteri.vtj-muutosrajapinta.fetch-enabled: true
 oppijanumerorekisteri.vtj-muutosrajapinta.muutostieto-enabled: true
 oppijanumerorekisteri.vtj-muutosrajapinta.perustieto-enabled: true
+oppijanumerorekisteri.vtj-muutosrajapinta.base-url: https://proxy.prod.palveluvayla.opintopolku.fi
+oppijanumerorekisteri.vtj-muutosrajapinta.palveluvayla-env: FI
 
 oppijanumerorekisteri.vtjkysely.enabled: true
 oppijanumerorekisteri.vtjkysely.address: https://vtjkysely.2016.vrk.fi/sosowebsite/soso.asmx
@@ -19,3 +21,6 @@ oppijanumerorekisteri.vtjkysely.certAlias: opintopolku.fi
 oppijanumerorekisteri.vtjkysely.truststoreUri: /app/vtjkysely-truststore
 
 viestinvalitys.baseurl: https://viestinvalitys.opintopolku.fi/lahetys
+
+oppijanumerorekisteri.scheduling.yksilointi.enabled: true
+oppijanumerorekisteri.allow-fake-ssn: false

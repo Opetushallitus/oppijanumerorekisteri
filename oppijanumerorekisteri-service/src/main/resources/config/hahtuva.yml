@@ -13,9 +13,14 @@ oppijanumerorekisteri.tasks.pseudonymized-export.enabled: true
 oppijanumerorekisteri.vtj-muutosrajapinta.fetch-enabled: false
 oppijanumerorekisteri.vtj-muutosrajapinta.muutostieto-enabled: false
 oppijanumerorekisteri.vtj-muutosrajapinta.perustieto-enabled: false
+oppijanumerorekisteri.vtj-muutosrajapinta.base-url: https://proxy.dev.palveluvayla.opintopolku.fi
+oppijanumerorekisteri.vtj-muutosrajapinta.palveluvayla-env: FI-DEV
 
 oppijanumerorekisteri.vtjkysely.enabled: false
 oppijanumerorekisteri.vtjkysely.address: http://alb.hahtuvaopintopolku.fi/vtj-test-ws/ws/
 oppijanumerorekisteri.vtjkysely.keystoreUri: /root/oph-environment/authentication/vtj-service/keystore.p12
 oppijanumerorekisteri.vtjkysely.certAlias: vtj-service
 oppijanumerorekisteri.vtjkysely.truststoreUri: /root/oph-environment/authentication/vtj-service/truststore.p12
+
+oppijanumerorekisteri.scheduling.yksilointi.enabled: false
+oppijanumerorekisteri.allow-fake-ssn: true

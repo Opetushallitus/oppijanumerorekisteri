@@ -6,3 +6,6 @@ oppijanumerorekisteri.vtjkysely.address: http://localhost
 oppijanumerorekisteri.vtjkysely.keystoreUri: classpath:/dummykeystore.jks
 oppijanumerorekisteri.vtjkysely.certAlias: dummyalias
 oppijanumerorekisteri.vtjkysely.truststoreUri: classpath:/dummytruststore.jks
+
+oppijanumerorekisteri.scheduling.yksilointi.enabled: false
+oppijanumerorekisteri.allow-fake-ssn: true

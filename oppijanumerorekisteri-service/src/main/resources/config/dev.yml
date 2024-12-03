@@ -11,6 +11,8 @@ oppijanumerorekisteri.tasks.export.lampi-external-id: ${lampi_external_id}
 oppijanumerorekisteri.vtj-muutosrajapinta.fetch-enabled: false
 oppijanumerorekisteri.vtj-muutosrajapinta.muutostieto-enabled: false
 oppijanumerorekisteri.vtj-muutosrajapinta.perustieto-enabled: false
+oppijanumerorekisteri.vtj-muutosrajapinta.base-url: https://proxy.dev.palveluvayla.opintopolku.fi
+oppijanumerorekisteri.vtj-muutosrajapinta.palveluvayla-env: FI-DEV
 
 oppijanumerorekisteri.vtjkysely.enabled: false
 oppijanumerorekisteri.vtjkysely.address: http://alb.untuvaopintopolku.fi/vtj-test-ws/ws/
@@ -19,3 +21,6 @@ oppijanumerorekisteri.vtjkysely.certAlias: vtj-service
 oppijanumerorekisteri.vtjkysely.truststoreUri: /root/oph-environment/authentication/vtj-service/truststore.p12
 
 viestinvalitys.baseurl: https://viestinvalitys.untuvaopintopolku.fi/lahetys
+
+oppijanumerorekisteri.scheduling.yksilointi.enabled: false
+oppijanumerorekisteri.allow-fake-ssn: true

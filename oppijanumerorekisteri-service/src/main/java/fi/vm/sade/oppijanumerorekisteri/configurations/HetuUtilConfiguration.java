@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class HetuUtilConfiguration implements ApplicationListener<ApplicationReadyEvent> {
 
-    @Value("${oppijanumerorekisteri.allow-fake-ssn:true}")
+    @Value("${oppijanumerorekisteri.allow-fake-ssn:false}")
     private boolean allowFake = HetuUtils.ALLOW_FAKE_DEFAULT;
 
     @Override

@@ -32,16 +32,10 @@ authentication:
 oppijanumerorekisteri:
   uses-ssl-proxy: true
   slack-url: ${slack_webhook_url}
-  scheduling:
-    yksilointi:
-      enabled: ${yksilointi_enabled:true}
-  allow-fake-ssn: ${allow_fake_ssn:true}
   vtj-muutosrajapinta:
-    base-url: ${vtjmuutosrajapinta_baseurl}
-    username: ${vtjmuutosrajapinta_username}
-    password: ${vtjmuutosrajapinta_password}
-    palveluvayla-env: ${palveluvayla_env:FI-TEST}
-    apigw-role-arn: ${apigw_role_arn}
+    username: ${vtj_muutosrajapinta_username}
+    password: ${vtj_muutosrajapinta_password}
+    apigw-role-arn: ${palveluvayla_apigw_role_arn}
   oauth2:
     clientId: ${oauth2_clientid}
     clientSecret: ${oauth2_clientsecret}
