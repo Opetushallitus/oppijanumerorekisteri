@@ -21,7 +21,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
-import org.springframework.core.env.Environment;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,8 +54,6 @@ public class HenkiloController {
 
     private final PermissionChecker permissionChecker;
     private final YksilointiService yksilointiService;
-
-    private final Environment environment;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_READ',"
@@ -134,11 +131,6 @@ public class HenkiloController {
             @Parameter(description = "Format: [\"oid1\", ...]") @RequestBody List<String> henkiloOids) {
         List<HenkiloPerustietoDto> henkiloPerustietoDtos = this.henkiloService
                 .getHenkiloPerustietoByOids(henkiloOids);
-        Boolean permissionCheckDisabled = environment.getProperty(
-                "oppijanumerorekisteri.disable-strict-permission-check", Boolean.class, false);
-        if (Boolean.TRUE.equals(permissionCheckDisabled)) {
-            return henkiloPerustietoDtos;
-        }
         return this.permissionChecker.filterUnpermittedHenkiloPerustieto(henkiloPerustietoDtos,
                 Collections.singletonMap(PALVELU_OPPIJANUMEROREKISTERI,
                         Collections.singletonList(KAYTTOOIKEUS_HENKILON_RU)),

@@ -1,18 +1,15 @@
 spring:
   jpa:
     properties:
-      hibernate.integration.envers.enabled: ${versiointi_kaytossa:true}
+      hibernate.integration.envers.enabled: true
   datasource:
     url: jdbc:postgresql://${postgresql_host}:${postgresql_port}/oppijanumerorekisteri?ApplicationName=oppijanumerorekisteri-service
     username: ${postgresql_username}
     password: ${postgresql_password}
     hikari:
-      maximum-pool-size: ${postgresql_maximum_pool_size:20}
-      connection-timeout: ${postgresql_connection_timeout:10000}
-      max-lifetime: ${postgresql_max_lifetime:900000}
-server:
-  jetty:
-    connection-idle-timeout: ${connection_idle_timeout:30000}
+      maximum-pool-size: 20
+      connection-timeout: 10000
+      max-lifetime: 900000
 cas:
   service: https://${host_virkailija}/oppijanumerorekisteri-service
 host:
@@ -34,7 +31,6 @@ authentication:
 
 oppijanumerorekisteri:
   uses-ssl-proxy: true
-  disable-strict-permission-check: ${disable_strict_permission_check:false}
   slack-url: ${slack_webhook_url}
   scheduling:
     yksilointi:
@@ -58,5 +54,5 @@ aws:
   region: ${aws_region}
   opintopolkuRoleArn: ${opintopolku_cross_account_role}
   henkiloModifiedTopic:
-    enabled: ${henkilo_modified_topic_enabled:true}
+    enabled: true
     topicArn: '${henkilo_modified_sns_topic_arn}'
