@@ -278,6 +278,17 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         ],
       })
     );
+    taskDefinition.addToTaskRolePolicy(
+        new iam.PolicyStatement({
+          actions: ["sts:AssumeRole"],
+          resources: [
+            ssm.StringParameter.valueFromLookup(
+                this,
+                "/oppijanumerorekisteri/PalveluvaylaApigwRoleArn"
+            ),
+          ],
+        })
+    );
 
     const conf = config.getConfig();
     const service = new ecs.FargateService(this, "Service", {
