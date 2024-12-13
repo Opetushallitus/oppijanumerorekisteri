@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../store';
 import { Link } from 'react-router';
-import classNames from 'classnames/bind';
+import classNames from 'classnames';
 import { urls } from 'oph-urls-js';
 
 import { parsePalveluRoolit } from '../../utilities/palvelurooli.util';

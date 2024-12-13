@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../../store';
-import classNames from 'classnames/bind';
+import classNames from 'classnames';
 import './PasswordPopupContent.css';
 import { Localisations } from '../../../types/localisation.type';
 import { isValidPassword } from '../../../validation/PasswordValidator';

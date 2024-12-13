@@ -1,6 +1,6 @@
 import './Button.css';
 import React, { CSSProperties, ReactNode } from 'react';
-import classNames from 'classnames/bind';
+import classNames from 'classnames';
 import Loader from '../icons/Loader';
 
 type ButtonProps = {

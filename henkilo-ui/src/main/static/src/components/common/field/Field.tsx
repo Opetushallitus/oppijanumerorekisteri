@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames/bind';
+import classNames from 'classnames';
 import OphSelect from '../select/OphSelect';
 import moment from 'moment';
 import SimpleDatePicker from '../../henkilo/SimpleDatePicker';
