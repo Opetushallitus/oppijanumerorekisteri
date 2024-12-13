@@ -13,11 +13,11 @@ Don't bother with the Java backend. Run Webpack dev server with the script menti
 ### Prerequisites
 
 Install
-- node 18
+- node 20
 - docker
 - tmux
 
-Install npm dependencies e.g. `cd src/main/static; nvm use 18; npm install`
+Install npm dependencies e.g. `cd src/main/static; nvm use 20; npm install`
 
 ### Setup
 

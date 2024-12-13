@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "main": "app.js",
     "engines": {
-        "node": "^18"
+        "node": "^20"
     },
     "scripts": {
         "mock-api": "node ./src/app.js",
