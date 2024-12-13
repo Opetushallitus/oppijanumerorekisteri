@@ -159,12 +159,28 @@ module.exports = function () {
                         {
                             test: cssRegex,
                             exclude: cssModuleRegex,
-                            use: ['style-loader', 'css-loader'],
+                            use: [
+                                'style-loader',
+                                {
+                                    loader: 'css-loader',
+                                    options: {
+                                        esModule: false,
+                                    },
+                                },
+                            ],
                             sideEffects: true,
                         },
                         {
                             test: cssModuleRegex,
-                            use: ['style-loader', 'css-loader'],
+                            use: [
+                                'style-loader',
+                                {
+                                    loader: 'css-loader',
+                                    options: {
+                                        esModule: false,
+                                    },
+                                },
+                            ],
                         },
                         {
                             exclude: [/^$/, /\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],

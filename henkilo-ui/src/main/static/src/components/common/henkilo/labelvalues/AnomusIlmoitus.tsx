@@ -45,11 +45,13 @@ class AnomusIlmoitus extends React.Component<Props, State> {
         return (
             <LabelValue
                 updateModelFieldAction={(tilaukset: Array<{ value: number }>) => {
-                    tilaukset &&
+                    return (
+                        tilaukset &&
                         this.props.updateModelFieldAction({
                             optionsName: 'anomusilmoitus',
                             value: [...tilaukset.map((tilaus) => tilaus.value)],
-                        });
+                        })
+                    );
                 }}
                 values={{
                     label: 'HENKILO_ANOMUSILMOITUKSET',

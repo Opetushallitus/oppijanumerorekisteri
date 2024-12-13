@@ -350,7 +350,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
             this.setState({ disabled: true, loading: true });
             try {
                 await this.props.tallenna(this.getHenkilo());
-            } catch (error) {
+            } catch (_error) {
                 this.setState({ disabled: false, loading: true });
             }
         }

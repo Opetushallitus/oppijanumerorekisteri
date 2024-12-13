@@ -32,7 +32,7 @@ export const createPerson =
             } else {
                 dispatch(createPersonRequestFailure(status));
             }
-        } catch (error) {
+        } catch (_err) {
             dispatch(createPersonRequestFailure(500));
             dispatch(
                 addGlobalNotification({

@@ -196,7 +196,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                         disabled={!this._validateKayttooikeusryhmaInputs()}
                         className="oph-button oph-button-primary"
                         onClick={() => {
-                            this.props.kayttooikeusryhmaId
+                            return this.props.kayttooikeusryhmaId
                                 ? this.updateKayttooikeusryhma()
                                 : this.createNewKayttooikeusryhma();
                         }}

@@ -93,7 +93,7 @@ export const oppijanumerorekisteriApi = createApi({
                             autoClose: 10000,
                         })
                     );
-                } catch (err) {
+                } catch (_err) {
                     dispatch(
                         addGlobalNotification({
                             key: 'LINKED_DUPLICATES_FAILURE',
@@ -117,7 +117,7 @@ export const oppijanumerorekisteriApi = createApi({
                 try {
                     await queryFulfilled;
                     dispatch(fetchHenkilo(oidHenkilo));
-                } catch (err) {
+                } catch (_err) {
                     dispatch(
                         addGlobalNotification({
                             key: 'AKTIVOI_EPAONNISTUI',
@@ -169,7 +169,7 @@ export const oppijanumerorekisteriApi = createApi({
             async onQueryStarted({ L }, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
-                } catch (err) {
+                } catch (_err) {
                     dispatch(
                         addGlobalNotification({
                             key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
@@ -189,7 +189,7 @@ export const oppijanumerorekisteriApi = createApi({
             async onQueryStarted({ L }, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
-                } catch (err) {
+                } catch (_err) {
                     dispatch(
                         addGlobalNotification({
                             key: 'KAYTTOOIKEUSRAPORTTI_ERROR',

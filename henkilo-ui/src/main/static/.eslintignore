@@ -1,6 +1,0 @@
-build/
-coverage/
-node_modules/
-playwright-results/
-.eslintrc.js
-react-app-env.d.ts

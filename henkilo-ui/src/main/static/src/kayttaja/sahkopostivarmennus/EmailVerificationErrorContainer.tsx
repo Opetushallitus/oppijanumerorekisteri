@@ -26,7 +26,7 @@ const EmailVerificationErrorContainer = ({ params, router }: OwnProps) => {
             const redirectParams = await http.get(url);
             const redirectUrl = urls.url('cas.login', redirectParams);
             window.location.replace(redirectUrl);
-        } catch (error) {
+        } catch (_error) {
             router.push(`/sahkopostivarmistus/virhe/${params.locale}/${params.loginToken}/UNKNOWN`);
         }
     };

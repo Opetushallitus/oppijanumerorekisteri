@@ -50,7 +50,7 @@ export const doExistenceCheck =
             } else {
                 throw new Error();
             }
-        } catch (error) {
+        } catch (_err) {
             dispatch(requestExistenceCheckFailure(500));
             dispatch(
                 addGlobalNotification({
