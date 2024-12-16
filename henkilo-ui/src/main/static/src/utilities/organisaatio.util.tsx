@@ -1,13 +1,15 @@
 import { Options } from 'react-select';
+import createFilterOptions from 'react-select-fast-filter-options';
 import { findIndex, pathEq, sortBy, uniqBy } from 'ramda';
+
 import { toLocalizedText } from '../localizabletext';
 import type { OrganisaatioHenkilo } from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import type { OrganisaatioWithChildren } from '../types/domain/organisaatio/organisaatio.types';
 import type { Locale } from '../types/locale.type';
 import type { OrganisaatioNameLookup } from '../reducers/organisaatio.reducer';
-import createFilterOptions from 'react-select-fast-filter-options';
 import type { OrganisaatioSelectObject } from '../types/organisaatioselectobject.types';
 import { getLocalization } from './localisation.util';
+import { RyhmatState } from '../reducers/ryhmat.reducer';
 
 /*
  * Apufunktio kutsumaan organisaatioHierarkiaToOrganisaatioSelectObject:a käyttöoikeuspalvelusta haetuilla omilla organisaatioilla
@@ -206,3 +208,15 @@ export const getOrganisaatioOptionsAndFilter = (
         filterOptions: index,
     };
 };
+
+export function parseRyhmaOptions(ryhmatState: RyhmatState, locale: string): Array<{ label: string; value: string }> {
+    const ryhmat = ryhmatState?.ryhmas;
+    return ryhmat
+        ? ryhmat
+              .map((ryhma) => ({
+                  label: ryhma.nimi[locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
+                  value: ryhma.oid,
+              }))
+              .sort((a, b) => a.label.localeCompare(b.label))
+        : [];
+}

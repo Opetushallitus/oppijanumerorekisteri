@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
+import { Option } from 'react-select';
+
 import Modal from '../common/modal/Modal';
 import Button from '../common/button/Button';
 import './KutsututPage.css';
@@ -10,11 +13,15 @@ import { KutsuRead } from '../../types/domain/kayttooikeus/Kutsu.types';
 import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import CloseButton from '../common/button/CloseButton';
-import { Option } from 'react-select';
 import { useLocalisations } from '../../selectors';
 import { useDeleteKutsuMutation, useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { useDebounce } from '../../useDebounce';
 import { KutsuView } from './KutsuViews';
+import OphSelect from '../common/select/OphSelect';
+import { parseRyhmaOptions } from '../../utilities/organisaatio.util';
+import { RootState, useAppDispatch } from '../../store';
+import { RyhmatState } from '../../reducers/ryhmat.reducer';
+import { fetchAllRyhmas } from '../../actions/organisaatio.actions';
 
 export type KutsututSearchParams = {
     searchTerm: string;
@@ -30,6 +37,7 @@ const getDefaultView = (isAdmin?: boolean, isVirkailija?: boolean): KutsuView =>
 };
 
 export const KutsututPage = () => {
+    const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
     const { data } = useGetOmattiedotQuery();
     const [params, setParams] = useState<KutsututSearchParams>({
@@ -40,10 +48,16 @@ export const KutsututPage = () => {
         kayttooikeusryhmaIds: '',
         subOrganisations: 'true',
     });
+    const ryhmat = useSelector<RootState, RyhmatState>((state) => state.ryhmatState);
     const delayedParams = useDebounce(params, 500);
     const [organisaatioSelection, setOrganisaatioSelection] = useState('');
+    const [ryhmaSelection, setRyhmaSelection] = useState('');
     const [confirmDelete, setConfirmDelete] = useState<KutsuRead>();
     const [deleteKutsu] = useDeleteKutsuMutation();
+
+    useEffect(() => {
+        dispatch<any>(fetchAllRyhmas());
+    }, []);
 
     async function cancelInvitationConfirmed() {
         if (confirmDelete?.id) {
@@ -60,6 +74,14 @@ export const KutsututPage = () => {
     function onOrganisaatioChange(organisaatio: OrganisaatioSelectObject) {
         setParams({ ...params, organisaatioOids: organisaatio.oid });
         setOrganisaatioSelection(organisaatio.name);
+        setRyhmaSelection(undefined);
+    }
+
+    function onRyhmaChange(ryhma?: Option<string>) {
+        const ryhmaOid = ryhma ? ryhma.value : '';
+        setParams({ ...params, organisaatioOids: ryhmaOid });
+        setOrganisaatioSelection('');
+        setRyhmaSelection(ryhmaOid);
     }
 
     function onKayttooikeusryhmaChange(kayttooikeusOption: Option<string>) {
@@ -68,33 +90,44 @@ export const KutsututPage = () => {
 
     return (
         <div className="wrapper" id="kutsutut-page">
-            <div className="header">
-                <span className="oph-h2 oph-bold">{L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</span>
-                <span className="right">
-                    <KutsututBooleanRadioButton view={params.view} setView={(view) => setParams({ ...params, view })} />
-                </span>
-            </div>
+            <h2 className="oph-h2 oph-bold">{L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</h2>
             <div className="flex-horizontal flex-align-center kutsutut-filters">
-                <div className="flex-item-1">
-                    <input
-                        className="oph-input"
-                        defaultValue={params.searchTerm}
-                        onChange={(e) => setParams({ ...params, searchTerm: e.target.value })}
-                        placeholder={L['KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO']}
-                    />
-                </div>
+                <input
+                    className="oph-input"
+                    defaultValue={params.searchTerm}
+                    onChange={(e) => setParams({ ...params, searchTerm: e.target.value })}
+                    placeholder={L['KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO']}
+                />
+                <KutsututBooleanRadioButton view={params.view} setView={(view) => setParams({ ...params, view })} />
             </div>
             <div className="flex-horizontal kutsutut-filters">
-                <div className="flex-item-1 flex-inline">
-                    <input
-                        className="oph-input flex-item-1 kutsutut-organisaatiosuodatus"
-                        type="text"
-                        value={organisaatioSelection}
-                        placeholder={L['KUTSUTUT_ORGANISAATIOSUODATUS']}
-                        readOnly
-                    />
-                    <OrganisaatioSelectModal onSelect={onOrganisaatioChange} />
-                    <CloseButton closeAction={() => clearOrganisaatioSelection()}></CloseButton>
+                <div className="flex-item-1 flex-inline flex-column kutsutut-suodatus">
+                    <div className="flex-horizontal">
+                        <input
+                            className="oph-input flex-item-1 kutsutut-organisaatiosuodatus"
+                            type="text"
+                            value={organisaatioSelection}
+                            placeholder={L['KUTSUTUT_ORGANISAATIOSUODATUS']}
+                            readOnly
+                        />
+                        <OrganisaatioSelectModal onSelect={onOrganisaatioChange} />
+                        <CloseButton closeAction={() => clearOrganisaatioSelection()}></CloseButton>
+                    </div>
+                    <div className="flex-horizontal flex-inline flex-item-1">
+                        <span className="flex-item-1 kutsutut-ryhmasuodatus">
+                            <OphSelect
+                                id="ryhmafilter"
+                                options={parseRyhmaOptions(ryhmat, locale)}
+                                value={ryhmaSelection}
+                                placeholder={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_RYHMA']}
+                                onChange={onRyhmaChange}
+                                maxHeight={400}
+                            />
+                        </span>
+                        <span>
+                            <CloseButton closeAction={() => onRyhmaChange(undefined)} />
+                        </span>
+                    </div>
                 </div>
                 <div className="flex-item-1 flex-inline" id="radiator">
                     <div className="flex-item-1">

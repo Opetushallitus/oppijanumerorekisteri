@@ -53,6 +53,7 @@ class KutsututBooleanRadioButton extends React.Component<Props, State> {
                 onChange={this._toggleView.bind(this)}
                 trueLabel={this.trueLabel}
                 falseLabel={this.falseLabel}
+                className="kutsutut-toggle"
             />
         ) : null;
     }

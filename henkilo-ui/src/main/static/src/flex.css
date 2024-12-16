@@ -3,6 +3,11 @@
     flex-direction: row;
 }
 
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
 .flex-align-center {
     align-items: center;
 }

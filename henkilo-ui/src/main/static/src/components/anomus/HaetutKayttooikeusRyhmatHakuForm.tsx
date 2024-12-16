@@ -13,6 +13,7 @@ import { useLocalisations } from '../../selectors';
 import { RootState } from '../../store';
 import { useDebounce } from '../../useDebounce';
 import { Kayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
+import { parseRyhmaOptions } from '../../utilities/organisaatio.util';
 
 import styles from './HaetutKayttooikeusRyhmatHakuForm.module.css';
 
@@ -34,18 +35,6 @@ const HaetutKayttooikeusRyhmatHakuForm = ({ onSubmit }: OwnProps) => {
     );
     const [kayttooikeusryhmaFilter, setKayttooikeusryhmaFilter] = useState('');
     const debouncedKayttooikeusryhmaFilter = useDebounce(kayttooikeusryhmaFilter, 500);
-
-    function _parseRyhmas(ryhmatState: RyhmatState): Array<{ label: string; value: string }> {
-        const ryhmat = ryhmatState?.ryhmas;
-        return ryhmat
-            ? ryhmat
-                  .map((ryhma) => ({
-                      label: ryhma.nimi[locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
-                      value: ryhma.oid,
-                  }))
-                  .sort((a, b) => a.label.localeCompare(b.label))
-            : [];
-    }
 
     useEffect(() => {
         onSubmit({ q: debouncedSearchTerm });
@@ -134,7 +123,7 @@ const HaetutKayttooikeusRyhmatHakuForm = ({ onSubmit }: OwnProps) => {
                     <span className="flex-item-1">
                         <OphSelect
                             id="ryhmafilter"
-                            options={_parseRyhmas(ryhmat)}
+                            options={parseRyhmaOptions(ryhmat, locale)}
                             value={selectedRyhma}
                             placeholder={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_RYHMA']}
                             onChange={onRyhmaChange}

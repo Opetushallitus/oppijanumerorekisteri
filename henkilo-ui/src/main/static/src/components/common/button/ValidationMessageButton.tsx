@@ -30,17 +30,19 @@ class ValidationMessageButton extends React.Component<Props> {
                         {this.props.children}
                     </Button>
                 </div>
-                <div className="haeButtonWrapper">
-                    <ul>
-                        {Object.keys(this.props.validationMessages)
-                            .filter((key) => !this.props.validationMessages[key].isValid)
-                            .map((key, idx) => (
-                                <li key={idx} className="oph-h5">
-                                    ! {this.props.validationMessages[key].labelLocalised}
-                                </li>
-                            ))}
-                    </ul>
-                </div>
+                {Object.keys(this.props.validationMessages).length > 0 && (
+                    <div className="haeButtonWrapper">
+                        <ul>
+                            {Object.keys(this.props.validationMessages)
+                                .filter((key) => !this.props.validationMessages[key].isValid)
+                                .map((key, idx) => (
+                                    <li key={idx} className="oph-h5">
+                                        ! {this.props.validationMessages[key].labelLocalised}
+                                    </li>
+                                ))}
+                        </ul>
+                    </div>
+                )}
             </div>
         );
     }
