@@ -87,5 +87,13 @@
     ],
     "engines": {
         "node": "^20"
+    },
+    "overrides": {
+        "@types/react-virtualized": {
+            "@types/react": "@types/react"
+        },
+        "@types/react-virtualized-select": {
+            "@types/react": "@types/react"
+        }
     }
 }
