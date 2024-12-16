@@ -79,7 +79,7 @@ public class AwsConfiguration {
 
     @Bean
     public S3AsyncClient onrS3Client(@Qualifier(ONR_CREDENTIALS_PROVIDER) AwsCredentialsProvider onrCredentialsProvider) {
-        return S3AsyncClient.builder()
+        return S3AsyncClient.crtBuilder()
                 .credentialsProvider(onrCredentialsProvider)
                 .region(Region.of(region))
                 .build();

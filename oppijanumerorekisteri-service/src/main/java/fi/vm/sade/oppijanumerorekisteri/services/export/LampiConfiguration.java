@@ -44,7 +44,7 @@ public class LampiConfiguration {
 
     @Bean
     public S3AsyncClient lampiS3Client(@Qualifier(LAMPI_CREDENTIALS_PROVIDER) StsAssumeRoleCredentialsProvider lampiCredentialsProvider) {
-        return S3AsyncClient.builder()
+        return S3AsyncClient.crtBuilder()
                 .credentialsProvider(lampiCredentialsProvider)
                 .region(REGION)
                 .build();
