@@ -79,67 +79,85 @@ test.describe('Hae duplikaatit', () => {
     test('linking duplicate to main is enabled only for yksiloimaton', async ({ page }) => {
         await routeOmattiedotWithoutRoles(page);
         await page.goto('/henkilo-ui/virkailija/1.2.3.4.5/duplikaatit');
-        groupedDuplicates.yksiloity?.forEach(async (duplicate) => {
-            const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
-            await expect(locator).toBeDisabled();
-        });
-        groupedDuplicates.yksiloityVtj?.forEach(async (duplicate) => {
-            const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
-            await expect(locator).toBeDisabled();
-        });
-        groupedDuplicates.yksiloimaton?.forEach(async (duplicate) => {
-            const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
-            await expect(locator).toBeEnabled();
-        });
+        await Promise.all(
+            groupedDuplicates.yksiloity!.map(async (duplicate) => {
+                const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
+                await expect(locator).toBeDisabled();
+            })
+        );
+        await Promise.all(
+            groupedDuplicates.yksiloityVtj!.map(async (duplicate) => {
+                const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
+                await expect(locator).toBeDisabled();
+            })
+        );
+        await Promise.all(
+            groupedDuplicates.yksiloimaton!.map(async (duplicate) => {
+                const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
+                await expect(locator).toBeEnabled();
+            })
+        );
     });
 
     test('force linking duplicate to main is enabled for yksiloity', async ({ page }) => {
         await routeOmattiedotWithPurkuRole(page);
         await page.goto('/henkilo-ui/virkailija/1.2.3.4.5/duplikaatit');
-        groupedDuplicates.yksiloity?.forEach(async (duplicate) => {
-            const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
-            await expect(locator).toBeEnabled();
-        });
-        groupedDuplicates.yksiloityVtj?.forEach(async (duplicate) => {
-            const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
-            await expect(locator).toBeDisabled();
-        });
-        groupedDuplicates.yksiloimaton?.forEach(async (duplicate) => {
-            const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
-            await expect(locator).toBeEnabled();
-        });
+        await Promise.all(
+            groupedDuplicates.yksiloity!.map(async (duplicate) => {
+                const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
+                await expect(locator).toBeEnabled();
+            })
+        );
+        await Promise.all(
+            groupedDuplicates.yksiloityVtj!.map(async (duplicate) => {
+                const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
+                await expect(locator).toBeDisabled();
+            })
+        );
+        await Promise.all(
+            groupedDuplicates.yksiloimaton!.map(async (duplicate) => {
+                const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
+                await expect(locator).toBeEnabled();
+            })
+        );
     });
 
     test('linking main to duplicate is enabled for yksiloimaton', async ({ page }) => {
         await routeMainWithYksilointi(page, false, false);
         await page.goto('/henkilo-ui/virkailija/1.2.3.4.5/duplikaatit');
-        await page.waitForSelector(`[data-test-id="link-main-to-${duplicates[0].oidHenkilo}"]`);
-        duplicates.forEach(async (duplicate) => {
-            const locator = page.locator(`[data-test-id="link-main-to-${duplicate.oidHenkilo}"]`);
-            await expect(locator).toBeEnabled();
-        });
+        await Promise.all(
+            duplicates.map(async (duplicate) => {
+                await page.waitForSelector(`[data-test-id="link-main-to-${duplicate.oidHenkilo}"]`);
+                const locator = page.locator(`[data-test-id="link-main-to-${duplicate.oidHenkilo}"]`);
+                await expect(locator).toBeEnabled();
+            })
+        );
     });
 
     test('force linking main to duplicate is enabled for yksiloity with purku role', async ({ page }) => {
         await routeOmattiedotWithPurkuRole(page);
         await routeMainWithYksilointi(page, true, false);
         await page.goto('/henkilo-ui/virkailija/1.2.3.4.5/duplikaatit');
-        await page.waitForSelector(`[data-test-id="link-main-to-${duplicates[0].oidHenkilo}"]`);
-        duplicates.forEach(async (duplicate) => {
-            const locator = page.locator(`[data-test-id="link-main-to-${duplicate.oidHenkilo}"]`);
-            await expect(locator).toBeEnabled();
-        });
+        await Promise.all(
+            duplicates.map(async (duplicate) => {
+                await page.waitForSelector(`[data-test-id="link-main-to-${duplicate.oidHenkilo}"]`);
+                const locator = page.locator(`[data-test-id="link-main-to-${duplicate.oidHenkilo}"]`);
+                await expect(locator).toBeEnabled();
+            })
+        );
     });
 
     test('force linking main to duplicate is disabled for yksiloityVtj', async ({ page }) => {
         await routeOmattiedotWithPurkuRole(page);
         await routeMainWithYksilointi(page, false, true);
         await page.goto('/henkilo-ui/virkailija/1.2.3.4.5/duplikaatit');
-        await page.waitForSelector(`[data-test-id="link-main-to-${duplicates[0].oidHenkilo}"]`);
-        duplicates.forEach(async (duplicate) => {
-            const locator = page.locator(`[data-test-id="link-main-to-${duplicate.oidHenkilo}"]`);
-            await expect(locator).toBeDisabled();
-        });
+        await Promise.all(
+            duplicates.map(async (duplicate) => {
+                await page.waitForSelector(`[data-test-id="link-main-to-${duplicate.oidHenkilo}"]`);
+                const locator = page.locator(`[data-test-id="link-main-to-${duplicate.oidHenkilo}"]`);
+                await expect(locator).toBeDisabled();
+            })
+        );
     });
 
     test('force linking yksiloity duplicate to main happy path', async ({ page }) => {
