@@ -41,13 +41,14 @@ const EmailVerificationContainer = ({ params, router }: OwnProps) => {
     useEffect(() => {
         const fetchHenkilo = async () => {
             const url = urls.url('kayttooikeus-service.cas.henkilo.bylogintoken', params.loginToken);
-            const henkilo = await http.get<Henkilo>(url).catch((error) => {
+            try {
+                const henkilo = await http.get<Henkilo>(url);
+                setHenkilo(henkilo);
+                setLoading(false);
+            } catch (_error) {
                 errorNotification(L['REKISTEROIDY_TEMP_TOKEN_INVALID']);
                 setLoading(false);
-                throw error;
-            });
-            setHenkilo(henkilo);
-            setLoading(false);
+            }
         };
 
         if (params.loginToken) {

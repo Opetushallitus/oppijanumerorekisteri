@@ -106,8 +106,12 @@ export const kayttooikeusApi = createApi({
         getOmattiedot: builder.query<Omattiedot, void>({
             query: () => 'henkilo/current/omattiedot',
             async onQueryStarted(_oid, { dispatch, queryFulfilled }) {
-                const { data } = await queryFulfilled;
-                dispatch({ type: FETCH_OMATTIEDOT_SUCCESS, omattiedot: data });
+                try {
+                    const { data } = await queryFulfilled;
+                    dispatch({ type: FETCH_OMATTIEDOT_SUCCESS, omattiedot: data });
+                } catch (_err) {
+                    //
+                }
             },
             providesTags: ['omattiedot'],
         }),
