@@ -33,14 +33,18 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
         sortBy: (sorting[0]?.id ?? 'AIKALEIMA') as KutsututSortBy,
         direction: sorting[0]?.desc ? 'DESC' : 'ASC',
         offset: String(offset),
-        amount: String(20),
+        amount: String(40),
     });
     const [resultCount, setResultCount] = useState(data?.length ?? 0);
 
     useEffect(() => {
-        setAllFetched(!isFetching && data?.length && (data?.length < 20 || data?.length === resultCount));
+        setAllFetched(!isFetching && data?.length && (data?.length < 40 || data?.length === resultCount));
         setResultCount(data?.length ?? 0);
     }, [data]);
+
+    useEffect(() => {
+        setOffset(0);
+    }, [params]);
 
     const resendAction = async (id: number) => {
         renewKutsu(id)
@@ -176,7 +180,7 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
             <OphTableWithInfiniteScroll<KutsuRead>
                 table={table}
                 isLoading={isFetching}
-                fetch={() => setOffset(offset + 20)}
+                fetch={() => setOffset(offset + 40)}
                 isActive={!allFetched && !isFetching && !!data?.length}
                 renderSubComponent={({ row }) => (
                     <KutsuDetails kutsu={data?.find((kutsu) => kutsu.id === row.original.id)} />
