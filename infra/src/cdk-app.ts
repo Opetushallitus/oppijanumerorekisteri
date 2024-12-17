@@ -20,6 +20,8 @@ import * as sharedAccount from "./shared-account";
 import * as config from "./config";
 import * as path from "node:path";
 import {createHealthCheckStacks} from "./health-check";
+import {DatabaseBackupToS3} from "./DatabaseBackupToS3";
+import {lookupAlarmTopic} from "./shared-account";
 
 class CdkApp extends cdk.App {
   constructor(props: cdk.AppProps) {
@@ -32,7 +34,7 @@ class CdkApp extends cdk.App {
     };
 
     const ecsStack = new ECSStack(this, sharedAccount.prefix("ECSStack"), stackProps);
-    const databaseStack = new DatabaseStack(this, sharedAccount.prefix("Database"), stackProps);
+    const databaseStack = new DatabaseStack(this, sharedAccount.prefix("Database"), ecsStack.cluster, stackProps);
 
     createHealthCheckStacks(this)
 
@@ -68,9 +70,11 @@ class DatabaseStack extends cdk.Stack {
   constructor(
       scope: constructs.Construct,
       id: string,
+      ecsCluster: ecs.Cluster,
       props: cdk.StackProps
   ) {
     super(scope, id, props);
+    const alarmTopic = lookupAlarmTopic(this, "AlarmTopic")
 
     const vpc = ec2.Vpc.fromLookup(this, "Vpc", {vpcName: sharedAccount.VPC_NAME});
 
@@ -128,6 +132,14 @@ class DatabaseStack extends cdk.Stack {
       instanceName: sharedAccount.prefix("Bastion"),
     });
     this.database.connections.allowDefaultPortFrom(this.bastion);
+
+    const backup = new DatabaseBackupToS3(this, "DatabaseBackupToS3", {
+      ecsCluster: ecsCluster,
+      dbCluster: this.database,
+      dbName: "oppijanumerorekisteri",
+      alarmTopic,
+    });
+    this.database.connections.allowDefaultPortFrom(backup);
   }
 }
 
@@ -145,14 +157,8 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       props: OppijanumerorekisteriApplicationStackProperties,
   ) {
     super(scope, id, props);
-    const stack = cdk.Stack.of(this);
     const vpc = ec2.Vpc.fromLookup(this, "Vpc", {vpcName: sharedAccount.VPC_NAME});
-
-    const alarmTopic = sns.Topic.fromTopicArn(
-      this,
-      "AlarmTopic",
-      `arn:aws:sns:${stack.region}:${stack.account}:alarm`,
-    );
+    const alarmTopic = lookupAlarmTopic(this, "AlarmTopic");
 
     const logGroup = new logs.LogGroup(this, "AppLogGroup", {
       logGroupName: sharedAccount.prefix("/oppijanumerorekisteri"),
