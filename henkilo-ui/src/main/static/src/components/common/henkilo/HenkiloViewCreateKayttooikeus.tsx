@@ -7,16 +7,11 @@ import CKKohde from './createkayttooikeus/CKKohde';
 import CKKesto from './createkayttooikeus/CKKesto';
 import CKKayttooikeudet, { ValittuKayttooikeusryhma } from './createkayttooikeus/CKKayttooikeudet';
 import CKHaeButton from './createkayttooikeus/CKHaeButton';
-import {
-    Kayttooikeus,
-    addKayttooikeusToHenkilo,
-    fetchAllowedKayttooikeusryhmasForOrganisation,
-} from '../../../actions/kayttooikeusryhma.actions';
+import { Kayttooikeus, addKayttooikeusToHenkilo } from '../../../actions/kayttooikeusryhma.actions';
 import { Localisations } from '../../../types/localisation.type';
 import { Locale } from '../../../types/locale.type';
 import { ValidationMessage } from '../../../types/validation.type';
 import PropertySingleton from '../../../globals/PropertySingleton';
-import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 
 type OwnProps = {
     vuosia: number;
@@ -26,13 +21,11 @@ type OwnProps = {
 };
 
 type StateProps = {
-    kayttooikeus: KayttooikeusRyhmaState;
     L: Localisations;
     locale: Locale;
 };
 
 type DispatchProps = {
-    fetchAllowedKayttooikeusryhmasForOrganisation: (oidHenkilo: string, oidOrganisaatio: string) => void;
     addKayttooikeusToHenkilo: (henkiloOid: string, organisaatioOid: string, payload: Kayttooikeus[]) => void;
 };
 
@@ -53,6 +46,7 @@ type State = {
     kayttooikeusData: Array<object>;
     kayttooikeusModel: KayttooikeusModel;
     organisaatioSelection: string;
+    organisaatioSelectionOid?: string;
 };
 
 class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
@@ -90,6 +84,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
                 },
             },
             organisaatioSelection: '',
+            organisaatioSelectionOid: undefined,
             kayttooikeusData: [],
             kayttooikeusModel: this.initialKayttooikeusModel(),
         };
@@ -113,8 +108,8 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
                     kayttokohdeOrganisationOid: oid,
                 },
                 organisaatioSelection: isOrganisaatio ? value.name : ryhmaName,
+                organisaatioSelectionOid: oid,
             });
-            this.props.fetchAllowedKayttooikeusryhmasForOrganisation(this.props.oidHenkilo, oid);
         };
 
         this.kayttooikeudetAction = (value: ValittuKayttooikeusryhma) => {
@@ -236,16 +231,10 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
                                     paattyyPvmAction={this.kestoPaattyyAction}
                                 />
                                 <CKKayttooikeudet
-                                    L={this.props.L}
-                                    locale={this.props.locale}
-                                    kayttooikeusData={
-                                        this.props.kayttooikeus.allowedKayttooikeus[this.props.oidHenkilo]
-                                    }
                                     selectedList={this.state.selectedList}
                                     close={this.close}
                                     kayttooikeusAction={this.kayttooikeudetAction}
-                                    loading={this.props.kayttooikeus.allowedKayttooikeusLoading}
-                                    selectedOrganisationOid={this.state.organisaatioSelection}
+                                    selectedOrganisationOid={this.state.organisaatioSelectionOid}
                                     isPalvelukayttaja={this.props.isPalvelukayttaja}
                                 />
                                 <CKHaeButton
@@ -265,10 +254,8 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
 const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
-    kayttooikeus: state.kayttooikeus,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    fetchAllowedKayttooikeusryhmasForOrganisation,
     addKayttooikeusToHenkilo,
 })(HenkiloViewCreateKayttooikeus);

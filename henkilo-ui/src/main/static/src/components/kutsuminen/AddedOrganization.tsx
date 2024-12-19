@@ -63,9 +63,7 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
         if (!selection) {
             return;
         }
-        console.log(selection);
         const isOrganisaatio = isOrganisaatioSelection(selection);
-        console.log(isOrganisaatio);
         const selectedOrganisaatioOid = isOrganisaatio ? selection.oid : selection.value;
         const organisaatio: OrganisaatioSelectObject = isOrganisaatio
             ? selection
@@ -75,7 +73,6 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
                   organisationNames,
                   locale
               );
-        console.log(organisaatio);
         if (organisaatio) {
             const newOrg: Partial<KutsuOrganisaatio> = {
                 organisation: { ...organisaatio, type: isOrganisaatio ? 'organisaatio' : 'ryhma' },
@@ -84,7 +81,7 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
             updateOrganisation({ ...addedOrg, ...newOrg });
         }
     }
-    console.log(addedOrg);
+
     return (
         <div className="added-org">
             <div className="row">

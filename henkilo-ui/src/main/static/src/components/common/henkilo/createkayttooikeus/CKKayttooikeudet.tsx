@@ -1,10 +1,12 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
+
 import KayttooikeusryhmaSelectModal from '../../select/KayttooikeusryhmaSelectModal';
 import { toLocalizedText } from '../../../../localizabletext';
 import { myonnettyToKayttooikeusryhma } from '../../../../utils/KayttooikeusryhmaUtils';
-import { Localisations } from '../../../../types/localisation.type';
-import { Locale } from '../../../../types/locale.type';
-import { AllowedKayttooikeus } from '../../../../reducers/kayttooikeusryhma.reducer';
+import { useGetAllowedKayttooikeusryhmasForOrganisationQuery } from '../../../../api/kayttooikeus';
+import { RootState } from '../../../../store';
+import { useLocalisations } from '../../../../selectors';
 
 export type ValittuKayttooikeusryhma = {
     value: number;
@@ -12,34 +14,32 @@ export type ValittuKayttooikeusryhma = {
 };
 
 type Props = {
-    kayttooikeusData: AllowedKayttooikeus | null | undefined;
     selectedList: Array<ValittuKayttooikeusryhma>;
     kayttooikeusAction: (arg0: ValittuKayttooikeusryhma) => void;
     close: (kayttooikeusryhmaId: number) => void;
-    L: Localisations;
-    locale: Locale;
-    loading: boolean;
     selectedOrganisationOid: string;
     isPalvelukayttaja: boolean;
 };
 
 const CKKayttooikeudet = ({
-    kayttooikeusData,
     selectedList,
     kayttooikeusAction,
     close,
-    L,
-    locale,
-    loading,
     selectedOrganisationOid,
     isPalvelukayttaja,
 }: Props) => {
+    const { L, locale } = useLocalisations();
+    const oidHenkilo = useSelector<RootState, string>((state) => state.omattiedot?.data.oid);
+    const { data, isLoading } = useGetAllowedKayttooikeusryhmasForOrganisationQuery(
+        { oidHenkilo, oidOrganisaatio: selectedOrganisationOid },
+        {
+            skip: !oidHenkilo || !selectedOrganisationOid,
+        }
+    );
     const kayttooikeusryhmat =
-        (kayttooikeusData &&
-            kayttooikeusData
-                .filter((myonnetty) => selectedList.every((selected) => selected.value !== myonnetty.ryhmaId))
-                .map(myonnettyToKayttooikeusryhma)) ||
-        [];
+        data
+            ?.filter((myonnetty) => selectedList.every((selected) => selected.value !== myonnetty.ryhmaId))
+            .map(myonnettyToKayttooikeusryhma) ?? [];
     return (
         <tr key="kayttooikeusKayttooikeudetField">
             <td>
@@ -59,7 +59,7 @@ const CKKayttooikeudet = ({
                                     label: toLocalizedText(locale, kayttooikeusryhma.nimi),
                                 })
                             }
-                            loading={loading}
+                            loading={isLoading}
                             isOrganisaatioSelected={!!selectedOrganisationOid}
                             sallittuKayttajatyyppi={isPalvelukayttaja ? 'PALVELU' : 'VIRKAILIJA'}
                         />

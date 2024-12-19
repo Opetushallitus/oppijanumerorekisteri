@@ -5,7 +5,6 @@ import {
     FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_SUCCESS,
     FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST,
     FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_SUCCESS,
-    FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_SUCCESS,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_SUCCESS,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_FAILURE,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_REQUEST,
@@ -18,8 +17,6 @@ import {
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_FAILURE,
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_REQUEST,
-    FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_REQUEST,
-    FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_FAILURE,
 } from '../actions/actiontypes';
 import { Kayttooikeusryhma, MyonnettyKayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { PalveluRooli } from '../types/domain/kayttooikeus/PalveluRooli.types';
@@ -32,8 +29,6 @@ export type KayttooikeusRyhmaState = {
     readonly kayttooikeusAnomusLoading: boolean;
     readonly kayttooikeus: Array<MyonnettyKayttooikeusryhma>;
     readonly kayttooikeusLoading: boolean;
-    readonly allowedKayttooikeus: Record<string, AllowedKayttooikeus>;
-    readonly allowedKayttooikeusLoading: boolean;
     readonly kayttooikeusryhma: Kayttooikeusryhma | null | undefined;
     readonly kayttooikeusryhmaLoading: boolean;
     readonly kayttooikeusryhmaSlaves: Array<Kayttooikeusryhma>;
@@ -50,8 +45,6 @@ export const getEmptyKayttooikeusRyhmaState = (): KayttooikeusRyhmaState => {
         kayttooikeus: [],
         kayttooikeusAnomusLoading: true,
         kayttooikeusAnomus: [],
-        allowedKayttooikeus: {},
-        allowedKayttooikeusLoading: false,
         allKayttooikeusryhmas: [],
         allKayttooikeusryhmasLoading: false,
         kayttooikeusryhma: null,
@@ -78,31 +71,6 @@ export const kayttooikeus = (
             return { ...state, kayttooikeusAnomusLoading: false, kayttooikeusAnomus: action.kayttooikeusAnomus };
         case FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_FAILURE:
             return { ...state, kayttooikeusAnomusLoading: false, kayttooikeusAnomus: [] };
-        case FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_REQUEST:
-            return {
-                ...state,
-                allowedKayttooikeus: {
-                    ...state.allowedKayttooikeus,
-                },
-                allowedKayttooikeusLoading: true,
-            };
-        case FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_SUCCESS:
-            return {
-                ...state,
-                allowedKayttooikeus: {
-                    ...state.allowedKayttooikeus,
-                    [action.oidHenkilo]: [...action.allowedKayttooikeus],
-                },
-                allowedKayttooikeusLoading: false,
-            };
-        case FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_FAILURE:
-            return {
-                ...state,
-                allowedKayttooikeus: {
-                    ...state.allowedKayttooikeus,
-                },
-                allowedKayttooikeusLoading: false,
-            };
         case FETCH_ALL_KAYTTOOIKEUSRYHMA_REQUEST:
             return { ...state, allKayttooikeusryhmasLoading: true };
         case FETCH_ALL_KAYTTOOIKEUSRYHMA_SUCCESS:

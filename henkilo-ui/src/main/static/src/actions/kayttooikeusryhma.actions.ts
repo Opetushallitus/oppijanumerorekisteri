@@ -13,9 +13,6 @@ import {
     FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_FAILURE,
     UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_FAILURE,
-    FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_REQUEST,
-    FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_SUCCESS,
-    FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_FAILURE,
     ADD_KAYTTOOIKEUS_TO_HENKILO_REQUEST,
     ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS,
     ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE,
@@ -175,39 +172,6 @@ export const fetchOrganisaatioKayttooikeusryhmat = (organisaatioOid) => async (d
         throw error;
     }
 };
-
-const requestAllowedKayttooikeusryhmasForOrganisation = (oidHenkilo, oidOrganisation) => ({
-    type: FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_REQUEST,
-    oidHenkilo,
-    oidOrganisation,
-});
-const receiveAllowedKayttooikeusryhmasForOrganisation = (oidHenkilo, oidOrganisation, allowedKayttooikeus) => ({
-    type: FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_SUCCESS,
-    oidHenkilo,
-    oidOrganisation,
-    allowedKayttooikeus,
-});
-const errorAllowedKayttooikeusryhmasForOrganisation = (oidHenkilo, oidOrganisation) => ({
-    type: FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_FAILURE,
-    oidHenkilo,
-    oidOrganisation,
-});
-export const fetchAllowedKayttooikeusryhmasForOrganisation =
-    (oidHenkilo, oidOrganisation) => (dispatch: AppDispatch) => {
-        dispatch(requestAllowedKayttooikeusryhmasForOrganisation(oidHenkilo, oidOrganisation));
-        const url = urls.url(
-            'kayttooikeus-service.kayttooikeusryhma.forHenkilo.inOrganisaatio',
-            oidHenkilo,
-            oidOrganisation
-        );
-        http.get(url)
-            .then((allowedKayttooikeus) =>
-                dispatch(
-                    receiveAllowedKayttooikeusryhmasForOrganisation(oidHenkilo, oidOrganisation, allowedKayttooikeus)
-                )
-            )
-            .catch(() => dispatch(errorAllowedKayttooikeusryhmasForOrganisation(oidHenkilo, oidOrganisation)));
-    };
 
 const requestAddKayttooikeusToHenkilo = () => ({
     type: ADD_KAYTTOOIKEUS_TO_HENKILO_REQUEST,
