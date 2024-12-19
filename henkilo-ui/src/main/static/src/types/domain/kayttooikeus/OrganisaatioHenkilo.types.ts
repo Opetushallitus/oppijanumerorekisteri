@@ -6,11 +6,7 @@ export type OrganisaatioHenkilo = {
 };
 
 export type KutsuOrganisaatio = {
-    key?: number;
-    oid: string;
-    organisation: { oid: string; name: string };
+    organisation: { oid: string; name: string; type: 'organisaatio' | 'ryhma' };
     voimassaLoppuPvm: string | null | undefined;
-    selectablePermissions: AllowedKayttooikeus;
     selectedPermissions: AllowedKayttooikeus;
-    isPermissionsLoading: boolean;
 };

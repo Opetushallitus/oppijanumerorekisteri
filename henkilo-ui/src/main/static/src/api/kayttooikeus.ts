@@ -21,6 +21,7 @@ import { Henkilohaku, HenkilohakuCriteria } from '../types/domain/kayttooikeus/H
 import { HaettuKayttooikeusryhma } from '../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
 import { fetchOrganisations } from '../actions/organisaatio.actions';
 import { KutsututSearchParams } from '../components/kutsutut/KutsututPage';
+import { MyonnettyKayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
 
 type MfaSetupResponse = {
     secretKey: string;
@@ -101,6 +102,7 @@ export const kayttooikeusApi = createApi({
         'henkilohakuorganisaatiot',
         'haetutKayttooikeusryhmat',
         'kutsutut',
+        'allowedKayttooikeusryhmasForOrganisation',
     ],
     endpoints: (builder) => ({
         getOmattiedot: builder.query<Omattiedot, void>({
@@ -267,6 +269,13 @@ export const kayttooikeusApi = createApi({
             query: (oid) => `henkilo/${oid}/organisaatio?requiredRoles=HENKILOHAKU`,
             providesTags: ['henkilohakuorganisaatiot'],
         }),
+        getAllowedKayttooikeusryhmasForOrganisation: builder.query<
+            MyonnettyKayttooikeusryhma[],
+            { oidHenkilo: string; oidOrganisaatio: string }
+        >({
+            query: ({ oidHenkilo, oidOrganisaatio }) => ({ url: `kayttooikeusryhma/${oidHenkilo}/${oidOrganisaatio}` }),
+            providesTags: ['allowedKayttooikeusryhmasForOrganisation'],
+        }),
     }),
 });
 
@@ -289,4 +298,5 @@ export const {
     useDeleteKutsuMutation,
     usePutRenewKutsuMutation,
     useGetHenkiloHakuOrganisaatiotQuery,
+    useGetAllowedKayttooikeusryhmasForOrganisationQuery,
 } = kayttooikeusApi;

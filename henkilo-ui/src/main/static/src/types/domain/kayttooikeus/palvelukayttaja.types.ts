@@ -12,5 +12,5 @@ export type PalvelukayttajaCriteria = {
     subOrganisation: string;
     passivoitu: string;
     nameQuery: string;
-    selection?: string;
+    organisaatioOids?: string;
 };

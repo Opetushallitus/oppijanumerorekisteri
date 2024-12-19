@@ -5,7 +5,6 @@ import { henkilo } from './henkilo.reducer';
 import koodisto from './koodisto.reducer';
 import { prequels } from './prequels.reducer';
 import omattiedot from './omattiedot.reducer';
-import { kutsuminenOrganisaatios } from './kutsuminen.reducer';
 import { locale } from './locale.reducer';
 import { kayttooikeus } from './kayttooikeusryhma.reducer';
 import { ryhmatState } from './ryhmat.reducer';
@@ -28,7 +27,6 @@ const rootReducer = {
     koodisto,
     prequels,
     omattiedot,
-    kutsuminenOrganisaatios,
     locale,
     kayttooikeus,
     ryhmatState,

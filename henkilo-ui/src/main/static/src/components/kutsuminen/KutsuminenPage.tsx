@@ -5,20 +5,17 @@ import moment from 'moment';
 import { useAppDispatch, type RootState } from '../../store';
 import BasicInfoForm from './BasicinfoForm';
 import { fetchAllRyhmas } from '../../actions/organisaatio.actions';
-import { kutsuClearOrganisaatios, kutsuAddOrganisaatio } from '../../actions/kutsuminen.actions';
 import KutsuConfirmation from './KutsuConfirmation';
 import Loader from '../common/icons/Loader';
 import { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import ValidationMessageButton from '../common/button/ValidationMessageButton';
 import { ValidationMessage } from '../../types/validation.type';
-import StaticUtils from '../common/StaticUtils';
 import { fetchHenkilo } from '../../actions/henkilo.actions';
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
 import { validateEmail } from '../../validation/EmailValidator';
 import { useLocalisations } from '../../selectors';
 import { OmattiedotState } from '../../reducers/omattiedot.reducer';
-import { KutsuminenOrganisaatiosState } from '../../reducers/kutsuminen.reducer';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
 import { RyhmatState } from '../../reducers/ryhmat.reducer';
 import Button from '../common/button/Button';
@@ -43,7 +40,6 @@ const KutsuminenPage = () => {
     const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
     const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
-    const addedOrgs = useSelector<RootState, KutsuminenOrganisaatiosState>((state) => state.kutsuminenOrganisaatios);
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const ryhmas = useSelector<RootState, RyhmatState>((state) => state.ryhmatState);
     const initialValidationMessages: ValidationMessages = {
@@ -65,29 +61,30 @@ const KutsuminenPage = () => {
     };
 
     const [modalOpen, setModalOpen] = useState(false);
-    const [basicInfo, setBasicInfo] = useState<KutsuBasicInfo>(initialBasicInfo);
-    const [validationMessages, setValidationMessages] = useState<ValidationMessages>(initialValidationMessages);
+    const [basicInfo, setBasicInfo] = useState<KutsuBasicInfo>({ ...initialBasicInfo });
+    const [kutsuOrganisaatios, setKutsuOrganisaatios] = useState<KutsuOrganisaatio[]>([]);
+    const [validationMessages, setValidationMessages] = useState<ValidationMessages>({ ...initialValidationMessages });
 
     useEffect(() => {
-        dispatch<any>(kutsuClearOrganisaatios());
         dispatch<any>(fetchAllRyhmas());
         dispatch<any>(fetchHenkilo(omattiedot.data.oid));
     }, []);
 
     useEffect(() => {
-        updateOrganisaatioValidation(addedOrgs);
-    }, [omattiedot.data.oid, addedOrgs]);
+        setValidationMessages({
+            ...validationMessages,
+            organisaatioKayttooikeus: {
+                ...validationMessages.organisaatioKayttooikeus,
+                isValid:
+                    kutsuOrganisaatios.length > 0 &&
+                    kutsuOrganisaatios.every((org) => org.organisation.oid && org.selectedPermissions.length > 0),
+            },
+        });
+    }, [omattiedot.data.oid, kutsuOrganisaatios]);
 
     function isValid(basicInfo: KutsuBasicInfo): boolean {
         const { email, etunimi, sukunimi, languageCode } = basicInfo;
         return !!email && !!etunimi && !!sukunimi && !!languageCode;
-    }
-
-    function isOrganizationsValid(newAddedOrgs: readonly KutsuOrganisaatio[]): boolean {
-        return (
-            newAddedOrgs.length > 0 &&
-            newAddedOrgs.every((org) => StaticUtils.stringIsNotEmpty(org.oid) && org.selectedPermissions.length > 0)
-        );
     }
 
     function setBasicAndValidateInfo(basicInfo: KutsuBasicInfo) {
@@ -105,19 +102,9 @@ const KutsuminenPage = () => {
         });
     }
 
-    function updateOrganisaatioValidation(newAddedOrgs: readonly KutsuOrganisaatio[]) {
-        setValidationMessages({
-            ...validationMessages,
-            organisaatioKayttooikeus: {
-                ...validationMessages.organisaatioKayttooikeus,
-                isValid: isOrganizationsValid(newAddedOrgs),
-            },
-        });
-    }
-
     function resetFormValues() {
         setBasicInfo({ ...initialBasicInfo });
-        dispatch<any>(kutsuClearOrganisaatios());
+        setKutsuOrganisaatios([]);
     }
 
     function openConfirmationModal(e: React.MouseEvent<HTMLElement>) {
@@ -132,17 +119,26 @@ const KutsuminenPage = () => {
 
     function addEmptyOrganization(e: React.MouseEvent<HTMLElement>) {
         e.preventDefault();
-        dispatch<any>(
-            kutsuAddOrganisaatio({
-                key: moment.now(),
-                oid: '',
-                organisation: { oid: '', name: '' },
+        setKutsuOrganisaatios([
+            ...kutsuOrganisaatios,
+            {
+                organisation: { oid: '', name: '', type: 'organisaatio' },
                 voimassaLoppuPvm: moment().add(1, 'years').format(PropertySingleton.state.PVM_DBFORMAATTI),
-                selectablePermissions: [],
                 selectedPermissions: [],
-                isPermissionsLoading: false,
-            })
-        );
+            },
+        ]);
+    }
+
+    function updateOrganisation(o: KutsuOrganisaatio, index: number) {
+        const newOrgs = [...kutsuOrganisaatios];
+        newOrgs[index] = o;
+        setKutsuOrganisaatios(newOrgs);
+    }
+
+    function removeOrganisation(index: number) {
+        const newOrgs = [...kutsuOrganisaatios];
+        newOrgs.splice(index, 1);
+        setKutsuOrganisaatios(newOrgs);
     }
 
     if (henkilo.henkiloLoading || ryhmas.ryhmasLoading) {
@@ -171,8 +167,13 @@ const KutsuminenPage = () => {
                     <fieldset className="add-to-organisation">
                         <span className="oph-h2 oph-strong">{L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_OTSIKKO']}</span>
                         <div>
-                            {addedOrgs.map((organization, index) => (
-                                <AddedOrganization key={organization.key} index={index} addedOrg={organization} />
+                            {kutsuOrganisaatios.map((selection, i) => (
+                                <AddedOrganization
+                                    key={selection.organisation.oid + i}
+                                    addedOrg={kutsuOrganisaatios[i]}
+                                    updateOrganisation={(newOrg) => updateOrganisation(newOrg, i)}
+                                    removeOrganisation={() => removeOrganisation(i)}
+                                />
                             ))}
                         </div>
                         <div className="row">
@@ -191,7 +192,7 @@ const KutsuminenPage = () => {
                         </ValidationMessageButton>
                     </div>
                     <KutsuConfirmation
-                        addedOrgs={addedOrgs}
+                        addedOrgs={kutsuOrganisaatios}
                         modalCloseFn={modalCloseFn}
                         modalOpen={modalOpen}
                         basicInfo={basicInfo}

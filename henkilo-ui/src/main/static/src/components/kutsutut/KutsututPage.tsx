@@ -111,7 +111,7 @@ export const KutsututPage = () => {
                             readOnly
                         />
                         <OrganisaatioSelectModal onSelect={onOrganisaatioChange} />
-                        <CloseButton closeAction={() => clearOrganisaatioSelection()}></CloseButton>
+                        <CloseButton closeAction={() => clearOrganisaatioSelection()} />
                     </div>
                     <div className="flex-horizontal flex-inline flex-item-1">
                         <span className="flex-item-1 kutsutut-ryhmasuodatus">
@@ -136,9 +136,7 @@ export const KutsututPage = () => {
                             kayttooikeusSelectionAction={onKayttooikeusryhmaChange}
                         />
                     </div>
-                    <CloseButton
-                        closeAction={() => setParams({ ...params, kayttooikeusryhmaIds: undefined })}
-                    ></CloseButton>
+                    <CloseButton closeAction={() => setParams({ ...params, kayttooikeusryhmaIds: undefined })} />
                 </div>
             </div>
             <KutsututTable params={delayedParams} cancelInvitation={(k) => setConfirmDelete(k)} />

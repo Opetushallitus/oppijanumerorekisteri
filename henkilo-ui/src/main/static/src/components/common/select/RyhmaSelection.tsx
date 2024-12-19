@@ -1,12 +1,13 @@
 import React, { useMemo } from 'react';
-import type { OnChangeHandler, Option } from 'react-select';
+import type { OnChangeHandler } from 'react-select';
 
 import OphSelect from './OphSelect';
 import { useLocalisations, useOmatOrganisaatiot } from '../../../selectors';
 import { getOrganisaatioOptionsAndFilter } from '../../../utilities/organisaatio.util';
+import { RyhmaSelectObject } from '../../../types/organisaatioselectobject.types';
 
 type OwnProps = {
-    selectOrganisaatio: OnChangeHandler<string, Option<string>>;
+    selectOrganisaatio: OnChangeHandler<string, RyhmaSelectObject>;
     selectedOrganisaatioOid: string;
     placeholder?: string;
     clearable?: boolean;

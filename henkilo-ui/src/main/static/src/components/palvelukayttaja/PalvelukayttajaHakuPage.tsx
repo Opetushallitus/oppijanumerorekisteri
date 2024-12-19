@@ -24,12 +24,12 @@ const PalvelukayttajaHakuPage = () => {
     const [criteria, setCriteria] = useState<PalvelukayttajaCriteria>(defaultCriteria);
     const debouncedCriteria = useDebounce(criteria, 500);
     const { data, isFetching } = useGetPalvelukayttajatQuery(debouncedCriteria, {
-        skip: !debouncedCriteria.nameQuery && !debouncedCriteria.selection,
+        skip: !debouncedCriteria.nameQuery && !debouncedCriteria.organisaatioOids,
     });
 
     const setOrganisation = (selection?: OrganisaatioSelectObject) => {
         setOrganisaatio(selection);
-        setCriteria({ ...criteria, selection: selection?.oid });
+        setCriteria({ ...criteria, organisaatioOids: selection?.oid });
     };
 
     return (
