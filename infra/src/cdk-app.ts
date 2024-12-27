@@ -248,7 +248,6 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         vtjkysely_keystore_password: this.ssmSecret("VtjkyselyKeystorePassword"),
         vtjkysely_username: this.ssmSecret("VtjkyselyUsername"),
         vtjkysely_password: this.ssmSecret("VtjkyselyPassword"),
-        vtjkysely_testoids: this.ssmSecret("VtjkyselyTestoids"),
         henkilo_modified_sns_topic_arn: this.ssmSecret("HenkiloModifiedSnsTopicArn"),
         opintopolku_cross_account_role: this.ssmString("OpintopolkuCrossAccountRole"),
       },
