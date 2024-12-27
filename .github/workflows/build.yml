@@ -49,7 +49,7 @@ jobs:
     with:
       application: oppijanumerorekisteri
       base-image: baseimage-fatjar-openjdk21:master
-      configfolder: src/main/resources/oph-configuration
+      configfolder: oppijanumerorekisteri-service/src/main/resources/config
       jarfile: oppijanumerorekisteri-service-*SNAPSHOT
       jarfolder: .
       type: jar
