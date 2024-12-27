@@ -21,9 +21,6 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * Verifies that finnish ssn:s are masked in application log
- * NOTE: utilizes application.yml in test resources, it's up
- * to developer to ensure that correct conversion patterns are
- * to be found from real application.yml or logback.xml.template
  */
 @RunWith(Parameterized.class)
 @WebAppConfiguration
