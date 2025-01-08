@@ -1,10 +1,8 @@
-import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { useAppDispatch, type RootState } from '../../../../store';
+import React from 'react';
 import { Link } from 'react-router';
+
 import LabelValueGroup from './LabelValueGroup';
-import { fetchHenkiloLinkitykset } from '../../../../actions/henkiloLinkitys.actions';
-import { HenkiloLinkitysState } from '../../../../reducers/henkiloLinkitys.reducer';
+import { useGetHenkiloLinkityksetQuery } from '../../../../api/kayttooikeus';
 
 type OwnProps = {
     oidHenkilo: string;
@@ -17,16 +15,11 @@ type OwnProps = {
  */
 const HenkiloVarmentajaSuhde = (props: OwnProps) => {
     const { oidHenkilo, type } = props;
-    const dispatch = useAppDispatch();
-    const linkitetyt = useSelector<RootState, HenkiloLinkitysState>((state) => state.linkitykset);
+    const { data: linkitykset } = useGetHenkiloLinkityksetQuery(oidHenkilo);
     const typeToL10nKeyMap = {
         henkiloVarmentajas: 'HENKILO_VARMENTAJA',
         henkiloVarmennettavas: 'HENKILO_VARMENNETTAVA',
     };
-
-    useEffect(() => {
-        dispatch<any>(fetchHenkiloLinkitykset(oidHenkilo));
-    }, [oidHenkilo]);
 
     const linkitetytGroup = (varmentajas: Array<string>) => {
         return (
@@ -40,11 +33,10 @@ const HenkiloVarmentajaSuhde = (props: OwnProps) => {
         );
     };
 
-    const linkitetytByOid = linkitetyt[oidHenkilo];
     return (
         <div>
-            {linkitetytByOid && linkitetytByOid[type] && !!linkitetytByOid[type].length && (
-                <LabelValueGroup valueGroup={linkitetytGroup(linkitetytByOid[type])} label={typeToL10nKeyMap[type]} />
+            {linkitykset && linkitykset[type] && !!linkitykset[type].length && (
+                <LabelValueGroup valueGroup={linkitetytGroup(linkitykset[type])} label={typeToL10nKeyMap[type]} />
             )}
         </div>
     );

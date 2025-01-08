@@ -14,7 +14,6 @@ import { notifications } from './notifications.reducer';
 import { henkilohakuState } from './henkilohaku.reducer';
 import cas from './cas.reducer';
 import { notificationList } from './notification.reducer';
-import { linkitykset } from './henkiloLinkitys.reducer';
 import existinceCheckReducer from './existence.reducer';
 import createPersonReducer from './create.reducer';
 
@@ -34,7 +33,6 @@ const rootReducer = {
     notifications,
     henkilohakuState,
     cas,
-    linkitykset,
     existenceCheck: existinceCheckReducer,
     createPerson: createPersonReducer,
 };

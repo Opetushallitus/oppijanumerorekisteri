@@ -48,7 +48,6 @@ const urlConfig = {
         'kayttooikeus-service/cas/emailverification/loginTokenValidation/$1',
     'kayttooikeus-service.cas.logintoken.redirectToFrontpage':
         'kayttooikeus-service/cas/emailverification/redirectByLoginToken/$1',
-    'kayttooikeus-service.henkilo.linkitykset': 'kayttooikeus-service/henkilo/$1/linkitykset',
     'kayttooikeus-service.organisaatio': 'kayttooikeus-service/organisaatio',
     'kayttooikeus-service.organisaatio.root': 'kayttooikeus-service/organisaatio/root',
     'kayttooikeus-service.organisaatio.by-oid': 'kayttooikeus-service/organisaatio/$1',

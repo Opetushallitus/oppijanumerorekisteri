@@ -86,6 +86,11 @@ type KutsututRequest = {
     amount: string;
 };
 
+export type HenkiloLinkitykset = {
+    henkiloVarmentajas?: string[];
+    henkiloVarmennettavas?: string[];
+};
+
 export const kayttooikeusApi = createApi({
     reducerPath: 'kayttooikeusApi',
     baseQuery: fetchBaseQuery({
@@ -102,6 +107,7 @@ export const kayttooikeusApi = createApi({
         'henkilohaku',
         'henkilohakucount',
         'henkilohakuorganisaatiot',
+        'henkilolinkitykset',
         'haetutKayttooikeusryhmat',
         'kutsutut',
         'allowedKayttooikeusryhmasForOrganisation',
@@ -273,6 +279,10 @@ export const kayttooikeusApi = createApi({
             query: (oid) => `henkilo/${oid}/organisaatio?requiredRoles=HENKILOHAKU`,
             providesTags: ['henkilohakuorganisaatiot'],
         }),
+        getHenkiloLinkitykset: builder.query<HenkiloLinkitykset, string>({
+            query: (oid) => `henkilo/${oid}/linkitykset`,
+            providesTags: ['henkilolinkitykset'],
+        }),
         getAllowedKayttooikeusryhmasForOrganisation: builder.query<
             MyonnettyKayttooikeusryhma[],
             { oidHenkilo: string; oidOrganisaatio: string }
@@ -310,6 +320,7 @@ export const {
     useDeleteKutsuMutation,
     usePutRenewKutsuMutation,
     useGetHenkiloHakuOrganisaatiotQuery,
+    useGetHenkiloLinkityksetQuery,
     useGetAllowedKayttooikeusryhmasForOrganisationQuery,
     useGetPalvelutQuery,
     useGetPalveluKayttooikeudetQuery,
