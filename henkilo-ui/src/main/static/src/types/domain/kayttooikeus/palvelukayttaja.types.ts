@@ -10,7 +10,6 @@ export type PalvelukayttajaRead = {
 
 export type PalvelukayttajaCriteria = {
     subOrganisation: string;
-    passivoitu: string;
     nameQuery: string;
     organisaatioOid?: string;
 };

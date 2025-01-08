@@ -14,7 +14,6 @@ import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.t
 
 const defaultCriteria = {
     subOrganisation: 'true',
-    passivoitu: 'false',
     nameQuery: '',
 };
 
