@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import './KayttooikeusryhmatPalvelutJaKayttooikeudet.css';
 import OphSelect from '../../common/select/OphSelect';
 import type { Option, Options } from 'react-select';
-import { PalvelutState } from '../../../reducers/palvelut.reducer';
 import { KayttooikeusState } from '../../../reducers/kayttooikeus.reducer';
 import { PalveluJaKayttooikeusSelection } from './KayttooikeusryhmaPage';
 import PalveluJaKayttooikeusSelections from './PalveluJaKayttooikeusSelections';
 import { useLocalisations } from '../../../selectors';
 import { RootState } from '../../../store';
+import { useGetPalvelutQuery } from '../../../api/kayttooikeus';
 
 type Props = {
     palvelutSelectAction: (selection: Option<string>) => void;
@@ -22,16 +22,17 @@ type Props = {
 
 const KayttooikeusryhmatPalvelutJaKayttooikeudet = (props: Props) => {
     const { L, locale } = useLocalisations();
-    const palvelutState = useSelector<RootState, PalvelutState>((state) => state.palvelutState);
+    const { data: palvelut } = useGetPalvelutQuery();
     const kayttooikeusState = useSelector<RootState, KayttooikeusState>((state) => state.kayttooikeusState);
     const [palveluKayttooikeusOptions, setPalveluKayttooikeusOptions] = useState<Options<string>>([]);
-    const palvelutOptions: Options<string> = palvelutState.palvelut.map((palvelu) => {
-        const textObject = palvelu.description.texts?.find((t) => t.lang === locale.toUpperCase());
-        return {
-            label: textObject?.text,
-            value: palvelu.name,
-        };
-    });
+    const palvelutOptions: Options<string> = useMemo(
+        () =>
+            palvelut?.map((palvelu) => ({
+                label: palvelu.description.texts?.find((t) => t.lang === locale.toUpperCase())?.text,
+                value: palvelu.name,
+            })) ?? [],
+        [palvelut]
+    );
 
     useEffect(() => {
         setPalveluKayttooikeusOptions(

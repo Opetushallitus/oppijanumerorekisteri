@@ -10,7 +10,6 @@ import MyonnettavatKayttooikeusryhmat from './MyonnettavatKayttooikeusryhmat';
 import KayttooikeusryhmatPalvelutJaKayttooikeudet from './KayttooikeusryhmatPalvelutJaKayttooikeudet';
 import type { Option, Options } from 'react-select';
 import { Locale } from '../../../types/locale.type';
-import { PalvelutState } from '../../../reducers/palvelut.reducer';
 import { KayttooikeusState } from '../../../reducers/kayttooikeus.reducer';
 import { TextGroupModify } from '../../../types/domain/kayttooikeus/textgroup.types';
 import { PalveluRooliModify } from '../../../types/domain/kayttooikeus/PalveluRooliModify.types';
@@ -63,7 +62,6 @@ type Props = {
     koodisto: KoodistoState;
     kayttooikeus: KayttooikeusRyhmaState;
     kayttooikeusState: KayttooikeusState;
-    palvelutState: PalvelutState;
     locale: Locale;
     fetchPalveluKayttooikeus: (palveluName: string) => void;
     kayttooikeusryhmaId?: string;

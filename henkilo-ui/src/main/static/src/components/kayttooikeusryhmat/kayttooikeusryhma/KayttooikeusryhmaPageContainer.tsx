@@ -14,8 +14,6 @@ import {
 } from '../../../actions/kayttooikeusryhma.actions';
 import Loader from '../../common/icons/Loader';
 import { Locale } from '../../../types/locale.type';
-import { fetchAllPalvelut } from '../../../actions/palvelut.actions';
-import { PalvelutState } from '../../../reducers/palvelut.reducer';
 import { fetchPalveluKayttooikeus } from '../../../actions/kayttooikeus.actions';
 import { KayttooikeusState } from '../../../reducers/kayttooikeus.reducer';
 import { Localisations } from '../../../types/localisation.type';
@@ -38,7 +36,6 @@ type StateProps = {
     locale: Locale;
     kayttooikeus: KayttooikeusRyhmaState;
     kayttooikeusState: KayttooikeusState;
-    palvelutState: PalvelutState;
     kayttooikeusryhmaId?: string;
 };
 
@@ -48,7 +45,6 @@ type DispatchProps = {
     fetchOppilaitostyypit: () => void;
     fetchOrganisaatiotyypit: () => void;
     fetchAllKayttooikeusryhma: () => void;
-    fetchAllPalvelut: () => void;
     fetchAllOrganisaatios: (criteria?: OrganisaatioCriteria) => void;
     fetchKayttooikeusryhmaSlaves: (id: string) => void;
     fetchPalveluKayttooikeus: (palveluName: string) => void;
@@ -63,7 +59,6 @@ class KayttooikeusryhmaPageContainer extends React.Component<Props> {
         this.props.fetchAllKayttooikeusryhma();
         this.props.fetchOppilaitostyypit();
         this.props.fetchOrganisaatiotyypit();
-        this.props.fetchAllPalvelut();
         this.props.fetchAllOrganisaatios({
             tyyppi: 'ORGANISAATIO',
             tila: ['AKTIIVINEN', 'PASSIIVINEN'],
@@ -79,7 +74,6 @@ class KayttooikeusryhmaPageContainer extends React.Component<Props> {
         return this.props.koodisto.oppilaitostyypitLoading ||
             this.props.koodisto.organisaatiotyyppiKoodistoLoading ||
             this.props.kayttooikeus.allKayttooikeusryhmasLoading ||
-            this.props.palvelutState.palvelutLoading ||
             this.props.kayttooikeus.kayttooikeusryhmaLoading ||
             (this.props.kayttooikeus.palvelutRoolitLoading && this.props.kayttooikeusryhmaId) ||
             this.props.kayttooikeus.kayttooikeusryhmaSlavesLoading ? (
@@ -97,7 +91,6 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     koodisto: state.koodisto,
     locale: state.locale,
     kayttooikeus: state.kayttooikeus,
-    palvelutState: state.palvelutState,
     kayttooikeusState: state.kayttooikeusState,
 });
 
@@ -107,7 +100,6 @@ export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateT
     fetchOppilaitostyypit,
     fetchOrganisaatiotyypit,
     fetchAllKayttooikeusryhma,
-    fetchAllPalvelut,
     fetchPalveluKayttooikeus,
     fetchKayttooikeusryhmaSlaves,
     fetchAllOrganisaatios,

@@ -41,7 +41,6 @@ const urlConfig = {
         'kayttooikeus-service/kayttooikeusryhma/ryhmasByKayttooikeus',
     'kayttooikeus-service.virkailija-ui.basePath': 'kayttooikeus-service/virkailija',
     'kayttooikeus-service.prequel': 'kayttooikeus-service/cas/prequel',
-    'kayttooikeus-service.palvelu.listaus': 'kayttooikeus-service/palvelu',
     'kayttooikeus-service.kayttooikeus.listaus': 'kayttooikeus-service/kayttooikeus/$1',
     'kayttooikeus-service.cas.uudelleenrekisterointi': 'kayttooikeus-service/cas/uudelleenrekisterointi',
     'kayttooikeus-service.cas.henkilo.bylogintoken': 'kayttooikeus-service/cas/henkilo/loginToken/$1',
