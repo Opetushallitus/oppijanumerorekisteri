@@ -10,7 +10,6 @@ import MyonnettavatKayttooikeusryhmat from './MyonnettavatKayttooikeusryhmat';
 import KayttooikeusryhmatPalvelutJaKayttooikeudet from './KayttooikeusryhmatPalvelutJaKayttooikeudet';
 import type { Option, Options } from 'react-select';
 import { Locale } from '../../../types/locale.type';
-import { KayttooikeusState } from '../../../reducers/kayttooikeus.reducer';
 import { TextGroupModify } from '../../../types/domain/kayttooikeus/textgroup.types';
 import { PalveluRooliModify } from '../../../types/domain/kayttooikeus/PalveluRooliModify.types';
 import { http } from '../../../http';
@@ -61,9 +60,7 @@ type Props = {
     router: RouteActions;
     koodisto: KoodistoState;
     kayttooikeus: KayttooikeusRyhmaState;
-    kayttooikeusState: KayttooikeusState;
     locale: Locale;
-    fetchPalveluKayttooikeus: (palveluName: string) => void;
     kayttooikeusryhmaId?: string;
     organisaatioCache: OrganisaatioCache;
     addGlobalNotification: (payload: GlobalNotificationConfig) => void;
@@ -555,7 +552,6 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
             palvelutSelection: selection,
             palveluKayttooikeusSelection: undefined,
         });
-        this.props.fetchPalveluKayttooikeus(selection.value);
     };
 
     _onPalveluKayttooikeusSelection = (selection: Option<string>): void => {

@@ -14,8 +14,6 @@ import {
 } from '../../../actions/kayttooikeusryhma.actions';
 import Loader from '../../common/icons/Loader';
 import { Locale } from '../../../types/locale.type';
-import { fetchPalveluKayttooikeus } from '../../../actions/kayttooikeus.actions';
-import { KayttooikeusState } from '../../../reducers/kayttooikeus.reducer';
 import { Localisations } from '../../../types/localisation.type';
 import { GlobalNotificationConfig } from '../../../types/notification.types';
 import { addGlobalNotification } from '../../../actions/notification.actions';
@@ -35,7 +33,6 @@ type StateProps = {
     koodisto: KoodistoState;
     locale: Locale;
     kayttooikeus: KayttooikeusRyhmaState;
-    kayttooikeusState: KayttooikeusState;
     kayttooikeusryhmaId?: string;
 };
 
@@ -47,7 +44,6 @@ type DispatchProps = {
     fetchAllKayttooikeusryhma: () => void;
     fetchAllOrganisaatios: (criteria?: OrganisaatioCriteria) => void;
     fetchKayttooikeusryhmaSlaves: (id: string) => void;
-    fetchPalveluKayttooikeus: (palveluName: string) => void;
     addGlobalNotification: (payload: GlobalNotificationConfig) => void;
 };
 
@@ -91,7 +87,6 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     koodisto: state.koodisto,
     locale: state.locale,
     kayttooikeus: state.kayttooikeus,
-    kayttooikeusState: state.kayttooikeusState,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
@@ -100,7 +95,6 @@ export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateT
     fetchOppilaitostyypit,
     fetchOrganisaatiotyypit,
     fetchAllKayttooikeusryhma,
-    fetchPalveluKayttooikeus,
     fetchKayttooikeusryhmaSlaves,
     fetchAllOrganisaatios,
     addGlobalNotification,

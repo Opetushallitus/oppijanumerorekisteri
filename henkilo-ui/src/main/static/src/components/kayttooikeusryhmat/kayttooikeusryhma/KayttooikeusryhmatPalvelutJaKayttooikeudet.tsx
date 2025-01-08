@@ -1,14 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
 import './KayttooikeusryhmatPalvelutJaKayttooikeudet.css';
 import OphSelect from '../../common/select/OphSelect';
 import type { Option, Options } from 'react-select';
-import { KayttooikeusState } from '../../../reducers/kayttooikeus.reducer';
 import { PalveluJaKayttooikeusSelection } from './KayttooikeusryhmaPage';
 import PalveluJaKayttooikeusSelections from './PalveluJaKayttooikeusSelections';
 import { useLocalisations } from '../../../selectors';
-import { RootState } from '../../../store';
-import { useGetPalvelutQuery } from '../../../api/kayttooikeus';
+import { useGetPalveluKayttooikeudetQuery, useGetPalvelutQuery } from '../../../api/kayttooikeus';
 
 type Props = {
     palvelutSelectAction: (selection: Option<string>) => void;
@@ -23,7 +20,9 @@ type Props = {
 const KayttooikeusryhmatPalvelutJaKayttooikeudet = (props: Props) => {
     const { L, locale } = useLocalisations();
     const { data: palvelut } = useGetPalvelutQuery();
-    const kayttooikeusState = useSelector<RootState, KayttooikeusState>((state) => state.kayttooikeusState);
+    const { data: palveluKayttooikeudet } = useGetPalveluKayttooikeudetQuery(props.palvelutSelection?.value, {
+        skip: !props.palvelutSelection?.value,
+    });
     const [palveluKayttooikeusOptions, setPalveluKayttooikeusOptions] = useState<Options<string>>([]);
     const palvelutOptions: Options<string> = useMemo(
         () =>
@@ -36,15 +35,12 @@ const KayttooikeusryhmatPalvelutJaKayttooikeudet = (props: Props) => {
 
     useEffect(() => {
         setPalveluKayttooikeusOptions(
-            kayttooikeusState.palveluKayttooikeus.map((palveluKayttooikeus) => {
-                const textObject = palveluKayttooikeus.oikeusLangs.find((o) => o.lang === locale.toLocaleUpperCase());
-                return {
-                    label: textObject?.text,
-                    value: palveluKayttooikeus.rooli,
-                };
-            })
+            palveluKayttooikeudet?.map((palveluKayttooikeus) => ({
+                label: palveluKayttooikeus.oikeusLangs.find((o) => o.lang === locale.toLocaleUpperCase())?.text,
+                value: palveluKayttooikeus.rooli,
+            })) ?? []
         );
-    }, [kayttooikeusState]);
+    }, [palveluKayttooikeudet]);
 
     return (
         <div className="kayttooikeusryhmat-palvelu-ja-kayttooikeudet">

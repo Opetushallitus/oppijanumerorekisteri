@@ -13,7 +13,6 @@ import { organisaatio } from './organisaatio.reducer';
 import { notifications } from './notifications.reducer';
 import { henkilohakuState } from './henkilohaku.reducer';
 import cas from './cas.reducer';
-import { kayttooikeusState } from './kayttooikeus.reducer';
 import { notificationList } from './notification.reducer';
 import { linkitykset } from './henkiloLinkitys.reducer';
 import existinceCheckReducer from './existence.reducer';
@@ -35,7 +34,6 @@ const rootReducer = {
     notifications,
     henkilohakuState,
     cas,
-    kayttooikeusState,
     linkitykset,
     existenceCheck: existinceCheckReducer,
     createPerson: createPersonReducer,
