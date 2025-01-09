@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: "20.x"
           cache: "npm"
-          cache-dependency-path: src/main/static/package-lock.json
+          cache-dependency-path: henkilo-ui/src/main/static/package-lock.json
       - name: Cache SonarCloud packages
         uses: actions/cache@v4
         with:
@@ -39,7 +39,7 @@ jobs:
           key: ${{ runner.os }}-pw-browsers
           restore-keys: ${{ runner.os }}-pw-browsers
       - name: Build frontend
-        working-directory: src/main/static
+        working-directory: henkilo-ui/src/main/static
         run: |
           npm ci
           npm run lint
@@ -52,9 +52,10 @@ jobs:
         if: always()
         with:
           name: playwright-results
-          path: src/main/static/playwright-results
+          path: henkilo-ui/src/main/static/playwright-results
           retention-days: 10
       - name: Build backend
+        working-directory: henkilo-ui
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -63,29 +64,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: henkilo-ui-jar
-          path: target/henkiloui-*.jar
-  deploy-container:
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
-      - name: Download henkilo-ui-jar
-        uses: actions/download-artifact@v4
-        with:
-          name: henkilo-ui-jar
-      - name: Build Docker Container
-        shell: bash
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: |
-          git clone https://github.com/Opetushallitus/ci-tools.git
-          source ci-tools/common/setup-tools.sh
-          export BASE_IMAGE="baseimage-fatjar-openjdk21:master"
-          export ARTIFACT_NAME="henkilo-ui"
-          cp henkiloui-*.jar $DOCKER_BUILD_DIR/artifact/$ARTIFACT_NAME.jar
-          cp -vr src/main/resources/oph-configuration $DOCKER_BUILD_DIR/config/
-          ./ci-tools/common/pull-image.sh
-          ./ci-tools/github-build/build-fatjar.sh $ARTIFACT_NAME
-          ./ci-tools/github-build/upload-image.sh $ARTIFACT_NAME
+          path: henkilo-ui/target/henkiloui-*.jar
