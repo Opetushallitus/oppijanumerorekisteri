@@ -112,6 +112,20 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
           ),
         })
       );
+      testStage.addAction(
+        new codepipeline_actions.CodeBuildAction({
+          actionName: "TestHenkiloUi",
+          input: sourceOutput,
+          project: makeTestProject(
+            this,
+            env,
+            tag,
+            "TestHenkiloUi",
+            ["scripts/ci/run-henkilo-ui-tests.sh"],
+            "corretto21"
+          ),
+        })
+      );
     }
 
     const deployProject = new codebuild.PipelineProject(
