@@ -15,12 +15,12 @@ import { LocalNotification } from '../common/Notification/LocalNotification';
 import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
 import { validateEmail } from '../../validation/EmailValidator';
 import { useLocalisations } from '../../selectors';
-import { OmattiedotState } from '../../reducers/omattiedot.reducer';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
 import { RyhmatState } from '../../reducers/ryhmat.reducer';
 import Button from '../common/button/Button';
 import PropertySingleton from '../../globals/PropertySingleton';
 import AddedOrganization from './AddedOrganization';
+import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
 
 const initialBasicInfo = {
     etunimi: '',
@@ -39,7 +39,7 @@ type ValidationMessages = {
 const KutsuminenPage = () => {
     const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
-    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const { data: omattiedot } = useGetOmattiedotQuery();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const ryhmas = useSelector<RootState, RyhmatState>((state) => state.ryhmatState);
     const initialValidationMessages: ValidationMessages = {
@@ -67,7 +67,7 @@ const KutsuminenPage = () => {
 
     useEffect(() => {
         dispatch<any>(fetchAllRyhmas());
-        dispatch<any>(fetchHenkilo(omattiedot.data.oid));
+        dispatch<any>(fetchHenkilo(omattiedot.oidHenkilo));
     }, []);
 
     useEffect(() => {
@@ -80,7 +80,7 @@ const KutsuminenPage = () => {
                     kutsuOrganisaatios.every((org) => org.organisation.oid && org.selectedPermissions.length > 0),
             },
         });
-    }, [omattiedot.data.oid, kutsuOrganisaatios]);
+    }, [omattiedot.oidHenkilo, kutsuOrganisaatios]);
 
     function isValid(basicInfo: KutsuBasicInfo): boolean {
         const { email, etunimi, sukunimi, languageCode } = basicInfo;

@@ -27,7 +27,7 @@ import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooike
 import { useLocalisations } from '../../../selectors';
 import { OrganisaatioState } from '../../../reducers/organisaatio.reducer';
 import { OrganisaatioKayttooikeusryhmatState } from '../../../reducers/organisaatiokayttooikeusryhmat.reducer';
-import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
+import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
 
 import './HenkiloViewCreateKayttooikeusanomus.css';
 
@@ -59,7 +59,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
     const { L, locale } = useLocalisations();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const organisaatio = useSelector<RootState, OrganisaatioState>((state) => state.organisaatio);
-    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const { data: omattiedot } = useGetOmattiedotQuery();
     const organisaatioKayttooikeusryhmat = useSelector<RootState, OrganisaatioKayttooikeusryhmatState>(
         (state) => state.OrganisaatioKayttooikeusryhmat
     );
@@ -189,7 +189,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
                     email: emailOptions.emailSelection,
                     perustelut: perustelut,
                     kayttooikeusRyhmaIds: kayttooikeusryhmaSelections.map((selection) => selection.value),
-                    anojaOid: omattiedot.data.oid,
+                    anojaOid: omattiedot.oidHenkilo,
                 })
             );
             dispatch(
@@ -212,7 +212,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
             throw error;
         }
         _resetAnomusFormFields();
-        dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(omattiedot.data.oid));
+        dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(omattiedot.oidHenkilo));
     }
 
     return henkilo.henkiloLoading ? (
