@@ -102,7 +102,6 @@ public class SecurityConfiguration {
             .csrf(csrf -> csrf.disable())
             .securityMatcher("/**")
             .authorizeHttpRequests(authz -> authz
-                    .requestMatchers("/buildversion.txt").permitAll()
                     .requestMatchers("/actuator/**").permitAll()
                     .requestMatchers("/favicon.ico").permitAll()
                     .requestMatchers("/static/**").permitAll()
