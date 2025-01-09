@@ -310,10 +310,6 @@ function makeUbuntuTestProject(
           type: codebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
           value: "/docker/password",
         },
-        GITHUB_PACKAGES_GRADLE_PROPERTIES: {
-          type: codebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
-          value: "/gradle/github-packages-gradle-properties",
-        },
         TZ: {
           type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
           value: "Europe/Helsinki",
