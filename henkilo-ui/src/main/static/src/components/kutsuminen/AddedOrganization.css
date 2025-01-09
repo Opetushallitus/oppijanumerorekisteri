@@ -1,0 +1,53 @@
+.added-org {
+    padding: 0px;
+    padding-top: 16px;
+    margin-bottom: .5em;
+}
+
+.added-org .row {
+    padding: 0px;
+    margin-bottom: 16px;
+}
+.added-org .row label {
+    float: inherit;
+    display: block;
+    font-size: 1.1em;
+    padding-bottom: 0.4em;
+    font-weight: 600;
+}
+
+.permissions-row .select2-container {
+    float:left;
+}
+.kutsuminen-selected-permissions {
+    float:left;
+    margin-left: 32px;
+    min-width: 300px;
+}
+ul.kutsuminen-selected-permissions li {
+    clear:both;
+    padding: 8px;
+    border: 1px solid #A6DCEE;
+    background-color: #DEF1FF;
+    margin-bottom: 4px;
+}
+.remove-icon {
+    padding-top: 2px;
+    cursor: pointer;
+}
+.remove-icon.after {
+    margin-left: 32px;
+}
+.clear {
+    clear: both;
+}
+
+.permissionSelect {
+    width: 500px;
+    float: left;
+}
+
+.kutsuminen-organisaatiosuodatus {
+    margin-right: 10px;
+    margin-top: 0;
+}

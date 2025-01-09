@@ -1,0 +1,52 @@
+.kayttooikeus-anomus-wrapper {
+    max-width: 1000px;
+}
+
+.oph-label-long {
+    width: 400px;
+}
+
+.oph-input.datefield {
+    width: 200px;
+}
+
+.datefield-wrapper {
+    width: 200px;
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.anomus-button {
+    vertical-align:top;
+    display: inline-block;
+}
+
+.anomus-requirements {
+    display: inline-block;
+    margin-left: 20px;
+}
+
+.kayttooikeus-selection-wrapper {
+    position: relative;
+}
+
+.selected-permissions li {
+    clear:both;
+    margin: 5px 0px;
+}
+
+.selected-permissions li .selected-permissions-name {
+    padding: 8px;
+    border: 1px solid #A6DCEE;
+    background-color: #DEF1FF;
+}
+
+.selected-permissions li .selected-permissions-description {
+    padding: 8px;
+    border: 1px solid #aeaeae;
+    border-top: none;
+}
+
+.anomus-form-errors {
+    margin-top: 20px;
+}

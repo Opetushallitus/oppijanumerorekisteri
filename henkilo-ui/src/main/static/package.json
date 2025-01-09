@@ -1,0 +1,99 @@
+{
+    "name": "henkilo-ui",
+    "version": "0.1.0",
+    "homepage": "/henkilo-ui",
+    "dependencies": {
+        "@hookform/resolvers": "^2.5.2",
+        "@reduxjs/toolkit": "^1.9.7",
+        "@tanstack/react-table": "^8.20.5",
+        "classnames": "^2.5.1",
+        "history": "3.3.0",
+        "isomorphic-fetch": "^3.0.0",
+        "joi": "^17.13.3",
+        "lodash.debounce": "^4.0.8",
+        "moment": "^2.30.1",
+        "oph-urls-js": "github:Opetushallitus/oph-urls-js#master",
+        "oph-virkailija-style-guide": "github:Opetushallitus/virkailija-styles#master",
+        "papaparse": "^5.4.1",
+        "ramda": "^0.30.1",
+        "react": "16.14.0",
+        "react-columns": "^1.2.1",
+        "react-datepicker": "^4.25.0",
+        "react-dom": "16.14.0",
+        "react-hook-form": "^7.54.1",
+        "react-markdown": "6.0.1",
+        "react-pin-input": "^1.3.1",
+        "react-redux": "^8.1.3",
+        "react-router": "3.2.6",
+        "react-router-redux": "4.0.8",
+        "react-select-fast-filter-options": "0.2.3",
+        "react-virtualized": "^9.22.5",
+        "react-virtualized-select": "^3.1.3",
+        "react-visibility-sensor": "^5.1.1",
+        "universal-cookie": "4.0.2"
+    },
+    "devDependencies": {
+        "@eslint/eslintrc": "3.2.0",
+        "@eslint/js": "9.16.0",
+        "@playwright/test": "^1.49.1",
+        "@types/isomorphic-fetch": "^0.0.39",
+        "@types/lodash.debounce": "^4.0.9",
+        "@types/node": "^20",
+        "@types/ramda": "^0.30.2",
+        "@types/react": "^16.14.62",
+        "@types/react-datepicker": "^4.19.6",
+        "@types/react-dom": "^16",
+        "@types/react-router-redux": "^4",
+        "@types/react-virtualized-select": "^3.0.16",
+        "@typescript-eslint/eslint-plugin": "^8.18.0",
+        "@typescript-eslint/parser": "^8.18.0",
+        "browserslist": "^4.24.2",
+        "concurrently": "^9.1.0",
+        "copy-webpack-plugin": "^12.0.2",
+        "css-loader": "7.1.2",
+        "eslint": "^9.16.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-jsx-a11y": "^6.10.2",
+        "eslint-plugin-react": "^7.37.2",
+        "file-loader": "^6.2.0",
+        "fork-ts-checker-webpack-plugin": "^9.0.2",
+        "html-webpack-plugin": "^5.6.3",
+        "mini-css-extract-plugin": "^2.9.2",
+        "prettier": "2.8.8",
+        "source-map-loader": "^5.0.0",
+        "style-loader": "^4.0.0",
+        "ts-loader": "^9.5.1",
+        "typescript": "^5.7.2",
+        "webpack": "^5.97.1",
+        "webpack-cli": "^5.1.4",
+        "webpack-dev-server": "^5.2.0",
+        "webpack-manifest-plugin": "^5.0.0"
+    },
+    "scripts": {
+        "start": "NODE_ENV=development npx webpack serve",
+        "build": "GENERATE_SOURCEMAP=false NODE_ENV=production npx webpack --mode production",
+        "lint": "eslint -c eslint.config.mjs",
+        "prettier": "prettier --check 'src/**/*{ts,tsx}'",
+        "prettier:fix": "prettier --write 'src/**/*{ts,tsx}'",
+        "e2e:install-deps": "playwright install chromium && npm --prefix mock-api ci",
+        "e2e:mock-api": "npm --prefix mock-api run mock-api",
+        "e2e:test": "playwright test",
+        "e2e:ci": "concurrently -s first -k 'npm:e2e:mock-api' 'npm:e2e:test'"
+    },
+    "browserslist": [
+        "last 1 version",
+        "> 1%",
+        "not dead"
+    ],
+    "engines": {
+        "node": "^20"
+    },
+    "overrides": {
+        "@types/react-virtualized": {
+            "@types/react": "@types/react"
+        },
+        "@types/react-virtualized-select": {
+            "@types/react": "@types/react"
+        }
+    }
+}

@@ -1,0 +1,5 @@
+.accessRightDescription {
+    margin-top: 1em;
+    max-height: 80vh;
+    overflow-y: scroll;
+}

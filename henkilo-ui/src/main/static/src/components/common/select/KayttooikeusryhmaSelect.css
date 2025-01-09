@@ -1,0 +1,50 @@
+.KayttooikeusryhmaSelect input {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.KayttooikeusryhmaSelect .valittavat {
+    height: 400px;
+    overflow-y: scroll;
+    border: 1px solid #aeaeae;
+    border-top: none;
+    cursor: pointer;
+    user-select: none;
+}
+
+.KayttooikeusryhmaSelect .valittavat-tyhja {
+    height: 400px;
+    overflow-y: hidden;
+    border: 1px solid #aeaeae;
+    border-top: none;
+    padding: 0px 8px;
+}
+
+.KayttooikeusryhmaSelect .valittavat .valittava {
+    padding: 4px 8px;
+}
+
+.KayttooikeusryhmaSelect .valittavat .valittu {
+    background-color: #159ecb;
+    color: #ffffff;
+}
+
+.KayttooikeusryhmaSelect .valinta {
+    position: relative;
+    padding: 8px;
+}
+
+.KayttooikeusryhmaSelect .valinta .lisaa {
+    position: absolute;
+    bottom: 0;
+}
+
+.KayttooikeusryhmaSelect .valinta div {
+    margin-bottom: 2rem;
+    max-height: 75vh;
+    overflow-y: scroll;
+}
+
+.KayttooikeusryhmaSelect .valinta div div {
+    overflow: visible;
+}

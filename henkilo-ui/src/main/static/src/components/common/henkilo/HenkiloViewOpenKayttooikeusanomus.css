@@ -1,0 +1,14 @@
+.anomuslistaus-myonnabutton .oph-button {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+}
+
+button.anomuslistaus-avaabutton,
+button.anomuslistaus-detailsbutton {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.handled {
+    color: #bbb;
+}

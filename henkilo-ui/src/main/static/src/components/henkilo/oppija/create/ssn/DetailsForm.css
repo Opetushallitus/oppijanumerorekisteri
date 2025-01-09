@@ -1,0 +1,33 @@
+.check-result {
+    margin: 1em;
+    padding: 1em;
+}
+
+.create-result {
+    margin: 2em 1em;
+    padding: 1em;
+}
+
+.margin-left {
+    margin-left: 0.5em;
+}
+
+.float-right {
+    float: right;
+}
+
+.copy-to-clipboard {
+    display: flex;
+}
+
+.copy-to-clipboard input {
+    width: 16rem;
+}
+
+.copy-to-clipboard button:active {
+    filter: brightness(0.75);
+}
+
+.copy-to-clipboard i {
+    margin-right: 0.5rem;
+}

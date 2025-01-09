@@ -1,0 +1,19 @@
+
+#basicinfo {
+    width: 40%;
+}
+
+#basicinfo .flex-outer li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+#basicinfo .flex-outer > li > label {
+    flex: 1 0 50px;
+}
+
+#basicinfo .flex-outer > li > label + * {
+    flex: 1 0 300px;
+}
+

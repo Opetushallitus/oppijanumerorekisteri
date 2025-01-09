@@ -1,0 +1,78 @@
+.infoTitle {
+  display: flex;
+  justify-content: space-between;
+  max-width: 380px;
+  margin-bottom: 28px;
+}
+
+.infoBody {
+  display: flex;
+  font-size: 14px;
+}
+
+.mfaTitle {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.mfaEnabled {
+  font-size: 15px;
+  text-transform: uppercase;
+}
+
+.icon {
+  margin-right: 1rem;
+}
+
+.infoText {
+  margin-bottom: 2rem;
+  max-width: 480px;
+}
+
+.hr {
+  border: 0;
+  border-top: 2px solid #ECECEC;
+}
+
+.greyInfo {
+  font-size: 15px;
+  color: #9A9A9A;
+}
+
+.setupButton {
+  margin-right: 1rem;
+}
+
+.setupContainer {
+  display: flex;
+}
+
+.setupStep {
+  display: flex;
+  margin: 0 2rem 2rem 0;
+}
+
+.setupStepInfo {
+  padding-top: 8px;
+  margin-bottom: 2rem;
+  max-width: 220px;
+}
+
+.secretKey {
+  word-wrap: unset;
+  cursor: copy;
+}
+
+.secretKeyChunk {
+  margin-right: 4px;
+}
+
+.setupSuccessContainer {
+  margin-bottom: 28px;
+}
+
+@media (max-width: 940px) {
+  .setupContainer {
+    flex-direction: column;
+  }
+}

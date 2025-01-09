@@ -1,0 +1,13 @@
+.popup-paddings {
+    padding: 30px !important;
+}
+
+.popup-button .oph-popup-title,
+.popup-button .oph-popup-content {
+    text-align: left;
+}
+
+/* Override default value break-all */
+.oph-popup-content {
+    word-break: normal !important;
+}

@@ -1,0 +1,210 @@
+[
+    {
+        "koodiUri": "henkilontunnistetyypit_google",
+        "resourceUri": "https://virkailija.testiopintopolku.fi/koodisto-service/rest/codeelement/henkilontunnistetyypit_google",
+        "version": 0,
+        "versio": 1,
+        "koodisto": {
+            "koodistoUri": "henkilontunnistetyypit",
+            "organisaatioOid": "1.2.246.562.10.00000000001",
+            "koodistoVersios": [1]
+        },
+        "koodiArvo": "google",
+        "paivitysPvm": "2023-11-22",
+        "paivittajaOid": "1.2.246.562.24.23786440149",
+        "voimassaAlkuPvm": "2023-11-22",
+        "voimassaLoppuPvm": null,
+        "tila": "LUONNOS",
+        "metadata": [
+            {
+                "nimi": "google",
+                "kuvaus": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "FI"
+            },
+            {
+                "nimi": "google",
+                "kuvaus": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "SV"
+            },
+            {
+                "nimi": "google",
+                "kuvaus": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "EN"
+            }
+        ]
+    },
+    {
+        "koodiUri": "henkilontunnistetyypit_email",
+        "resourceUri": "https://virkailija.testiopintopolku.fi/koodisto-service/rest/codeelement/henkilontunnistetyypit_email",
+        "version": 0,
+        "versio": 1,
+        "koodisto": {
+            "koodistoUri": "henkilontunnistetyypit",
+            "organisaatioOid": "1.2.246.562.10.00000000001",
+            "koodistoVersios": [1]
+        },
+        "koodiArvo": "email",
+        "paivitysPvm": "2023-11-22",
+        "paivittajaOid": "1.2.246.562.24.23786440149",
+        "voimassaAlkuPvm": "2023-11-22",
+        "voimassaLoppuPvm": null,
+        "tila": "LUONNOS",
+        "metadata": [
+            {
+                "nimi": "email",
+                "kuvaus": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "SV"
+            },
+            {
+                "nimi": "email",
+                "kuvaus": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "EN"
+            },
+            {
+                "nimi": "email",
+                "kuvaus": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "FI"
+            }
+        ]
+    },
+    {
+        "koodiUri": "henkilontunnistetyypit_oppijatoken",
+        "resourceUri": "https://virkailija.testiopintopolku.fi/koodisto-service/rest/codeelement/henkilontunnistetyypit_oppijatoken",
+        "version": 0,
+        "versio": 1,
+        "koodisto": {
+            "koodistoUri": "henkilontunnistetyypit",
+            "organisaatioOid": "1.2.246.562.10.00000000001",
+            "koodistoVersios": [1]
+        },
+        "koodiArvo": "oppijaToken",
+        "paivitysPvm": "2023-11-22",
+        "paivittajaOid": "1.2.246.562.24.23786440149",
+        "voimassaAlkuPvm": "2023-11-22",
+        "voimassaLoppuPvm": null,
+        "tila": "LUONNOS",
+        "metadata": [
+            {
+                "nimi": "Sähköpostitunniste",
+                "kuvaus": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "FI"
+            },
+            {
+                "nimi": "Email id",
+                "kuvaus": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "EN"
+            },
+            {
+                "nimi": "E-post ID",
+                "kuvaus": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "SV"
+            }
+        ]
+    },
+    {
+        "koodiUri": "henkilontunnistetyypit_eidas",
+        "resourceUri": "https://virkailija.testiopintopolku.fi/koodisto-service/rest/codeelement/henkilontunnistetyypit_eidas",
+        "version": 0,
+        "versio": 1,
+        "koodisto": {
+            "koodistoUri": "henkilontunnistetyypit",
+            "organisaatioOid": "1.2.246.562.10.00000000001",
+            "koodistoVersios": [1]
+        },
+        "koodiArvo": "eidas",
+        "paivitysPvm": "2023-11-22",
+        "paivittajaOid": "1.2.246.562.24.23786440149",
+        "voimassaAlkuPvm": "2023-11-22",
+        "voimassaLoppuPvm": null,
+        "tila": "LUONNOS",
+        "metadata": [
+            {
+                "nimi": "eIDAS",
+                "kuvaus": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "SV"
+            },
+            {
+                "nimi": "eIDAS",
+                "kuvaus": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "EN"
+            },
+            {
+                "nimi": "eIDAS",
+                "kuvaus": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "FI"
+            }
+        ]
+    }
+]

@@ -1,0 +1,32 @@
+div.confirmation-modal {
+    max-width: 860px;
+    padding: 40px 40px 20px 120px;
+}
+.confirmation-modal h1 {
+    font-size: 2em;
+    font-weight: bold;
+    padding-bottom: 16px;
+    border-bottom: 0px;
+}
+.confirmation-modal p {
+    padding-bottom: 16px;
+}
+.confirmation-modal h2 {
+    font-size: 1.5em;
+    font-weight: bold;
+    padding-bottom: 16px;
+}
+.confirmation-modal h3 {
+    font-weight: bold;
+    padding-bottom: 8px;
+    margin-top: 16px;
+}
+.confirmation-modal h4 {
+    padding-bottom: 6px;
+}
+.confirmation-modal .row {
+    margin-top: 32px;
+}
+.confirmation-modal .right {
+    float: right;
+}

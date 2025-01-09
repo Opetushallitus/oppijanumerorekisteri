@@ -1,0 +1,188 @@
+{
+    "oidHenkilo": "1.2.246.562.24.00000000007",
+    "username": "virkailija",
+    "kayttajaTyyppi": "VIRKAILIJA",
+    "organisaatiot": [
+        {
+            "organisaatioOid": "1.2.246.562.10.00000000001",
+            "kayttooikeudet": [
+                {
+                    "palvelu": "KAYTTOOIKEUS",
+                    "oikeus": "READ"
+                },
+                {
+                    "palvelu": "RYHMASAHKOPOSTI",
+                    "oikeus": "SEND"
+                },
+                {
+                    "palvelu": "KOUTA",
+                    "oikeus": "HAKU_READ"
+                },
+                {
+                    "palvelu": "KAYTTOOIKEUS",
+                    "oikeus": "PALVELUKAYTTAJA_CRUD"
+                },
+                {
+                    "palvelu": "OPPIJANUMEROREKISTERI",
+                    "oikeus": "REKISTERINPITAJA"
+                },
+                {
+                    "palvelu": "TIEDONSIIRTO",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "YHTEYSTIETOTYYPPIENHALLINTA",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "OSOITE",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "ASIAKIRJAPALVELU",
+                    "oikeus": "CREATE_LETTER"
+                },
+                {
+                    "palvelu": "ORGANISAATIOHALLINTA",
+                    "oikeus": "RYHMA"
+                },
+                {
+                    "palvelu": "KOUTA",
+                    "oikeus": "VALINTAPERUSTE_READ"
+                },
+                {
+                    "palvelu": "ORGANISAATIOIDEN_REKISTEROITYMINEN",
+                    "oikeus": "OPH"
+                },
+                {
+                    "palvelu": "KOUTA",
+                    "oikeus": "HAKUKOHDE_READ"
+                },
+                {
+                    "palvelu": "KAYTTOOIKEUS",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "OPPIJANUMEROREKISTERI",
+                    "oikeus": "VTJ_VERTAILUNAKYMA"
+                },
+                {
+                    "palvelu": "RYHMASAHKOPOSTI",
+                    "oikeus": "VIEW"
+                },
+                {
+                    "palvelu": "OPPIJANUMEROREKISTERI",
+                    "oikeus": "YLEISTUNNISTE_LUONTI"
+                },
+                {
+                    "palvelu": "KOODISTO",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "OIKEUSTULKKIREKISTERI",
+                    "oikeus": "OIKEUSTULKKI_CRUD"
+                },
+                {
+                    "palvelu": "KAYTTOOIKEUS",
+                    "oikeus": "VASTUUKAYTTAJAT"
+                },
+                {
+                    "palvelu": "KAYTTOOIKEUS",
+                    "oikeus": "KAYTTOOIKEUSRYHMIEN_LUKU"
+                },
+                {
+                    "palvelu": "KOUTA",
+                    "oikeus": "OPPILAITOS_READ"
+                },
+                {
+                    "palvelu": "ASIAKIRJAPALVELU",
+                    "oikeus": "READ"
+                },
+                {
+                    "palvelu": "VIRKAILIJANTYOPOYTA",
+                    "oikeus": "VARDA"
+                },
+                {
+                    "palvelu": "KAYTTOOIKEUS",
+                    "oikeus": "VIRKAILIJANLUONTI"
+                },
+                {
+                    "palvelu": "ORGANISAATIOHALLINTA",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "ASIAKIRJAPALVELU",
+                    "oikeus": "SYSTEM_ATTACHMENT_DOWNLOAD"
+                },
+                {
+                    "palvelu": "OPPIJANUMEROREKISTERI",
+                    "oikeus": "YKSILOINNIN_PURKU"
+                },
+                {
+                    "palvelu": "VIRKAILIJANTYOPOYTA",
+                    "oikeus": "MUUT"
+                },
+                {
+                    "palvelu": "KOUTA",
+                    "oikeus": "KOULUTUS_READ"
+                },
+                {
+                    "palvelu": "OMATTIEDOT",
+                    "oikeus": "READ_UPDATE"
+                },
+                {
+                    "palvelu": "KAYTTOOIKEUS",
+                    "oikeus": "REKISTERINPITAJA"
+                },
+                {
+                    "palvelu": "VIRKAILIJANTYOPOYTA",
+                    "oikeus": "2ASTE"
+                },
+                {
+                    "palvelu": "KOODISTO",
+                    "oikeus": "READ_UPDATE"
+                },
+                {
+                    "palvelu": "ASIAKIRJAPALVELU",
+                    "oikeus": "SEND_LETTER_EMAIL"
+                },
+                {
+                    "palvelu": "KOUTA",
+                    "oikeus": "TOTEUTUS_READ"
+                },
+                {
+                    "palvelu": "OPPIJANUMEROREKISTERI",
+                    "oikeus": "READ"
+                },
+                {
+                    "palvelu": "LOKALISOINTI",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "VIRKAILIJANTYOPOYTA",
+                    "oikeus": "PERUS"
+                },
+                {
+                    "palvelu": "VIRKAILIJANTYOPOYTA",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "VIRKAILIJANTYOPOYTA",
+                    "oikeus": "KK"
+                },
+                {
+                    "palvelu": "ASIAKIRJAPALVELU",
+                    "oikeus": "CREATE_TEMPLATE"
+                },
+                {
+                    "palvelu": "YKSITYISTEN_REKISTEROITYMINEN",
+                    "oikeus": "CRUD"
+                }
+            ]
+        }
+    ],
+    "idpEntityId": "vetuma",
+    "isAdmin": true,
+    "isMiniAdmin": true,
+    "anomusilmoitus": []
+}

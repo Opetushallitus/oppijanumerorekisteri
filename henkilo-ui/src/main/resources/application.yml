@@ -1,0 +1,7 @@
+server:
+  servlet:
+    context-path: /henkilo-ui
+management:
+  health:
+    diskspace:
+      enabled: false

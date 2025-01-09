@@ -1,0 +1,29 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# dependencies
+/**/node_modules
+/**/flow-typed
+
+# testing
+/coverage
+
+# production
+/**/build
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+# misc
+.DS_Store
+.env
+npm-debug.log*
+
+
+out/
+src/main/static/etc/
+src/main/static/node/
+

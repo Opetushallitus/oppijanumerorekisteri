@@ -1,0 +1,33 @@
+.henkilohakufilters-wrapper {
+    padding: 5px 0;
+    margin-top: 5px;
+}
+
+.henkilohakufilters-wrapper label {
+    margin-bottom: 0;
+}
+
+.henkilohakufilters-wrapper .oph-field.oph-field-inline > label.oph-label {
+    margin-right: 10px;
+    white-space: nowrap;
+}
+
+.henkilohakufilters-wrapper .henkilohaku-select {
+    display: inline-flex;
+    width: 100%;
+}
+.henkilohakufilters-wrapper .filter-label {
+    display: block;
+}
+
+.henkilohaku-clear-select {
+    margin-left: 10px;
+}
+
+.henkilohaku-suodata {
+    margin-top: 15px;
+}
+
+.henkilohaku-organisaatiosuodatus {
+    margin-right: 10px;
+}

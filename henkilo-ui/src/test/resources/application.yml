@@ -1,0 +1,8 @@
+host:
+  host-virkailija: localhost
+  host-cas: localhost
+  host-cas-oppija: localhost
+cas:
+  service: http://localhost/kayttooikeus-service
+  send-renew: false
+  key: henkiloui-service

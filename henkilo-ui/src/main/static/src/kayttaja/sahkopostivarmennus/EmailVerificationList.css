@@ -1,0 +1,9 @@
+.email-verification-field {
+    margin-bottom: 20px;
+    margin-right: 10px;
+    width: 90% !important;
+}
+
+.email-verification-remove:hover {
+    cursor: pointer;
+}

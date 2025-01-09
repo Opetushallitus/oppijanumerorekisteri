@@ -1,0 +1,21 @@
+#
+# TÄHÄN TIEDOSTOON EI SAA TALLENTAA YMPÄRISTÖKOHTAISIA ARVOJA MUUTOIN KUIN MUUTTUJINA!!!
+#
+# Tämä tiedosto toimii pohjana tiedostolle, joka asettaa tomcatin ympäristökohtaiset arvot.
+#
+
+# Aseta vähintään nämä ympäristökohtaiset arvot
+
+spring:
+  main:
+    banner-mode: "off"
+cas:
+  service: https://{{host_virkailija}}/henkilo-ui
+  send-renew: false
+  key: oppijanumerorekisteri-service
+host:
+  host-virkailija: https://{{host_virkailija}}
+  host-cas: https://{{host_cas}}
+  host-cas-oppija: https://{{host_oppija}}
+henkiloui:
+  uses-ssl-proxy: true

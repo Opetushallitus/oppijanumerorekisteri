@@ -1,0 +1,45 @@
+/* exact same position as in login page */
+#ophlogo {
+    padding-left: 19px;
+    padding-top: 5px;
+}
+
+#okmlogo {
+    padding-left: 70px;
+}
+
+#topNavigation {
+    text-align: center;
+}
+
+.tabs li {
+    display: inline-block;
+    border-right: 1px solid #159ecb;
+}
+
+.tabs li:last-child {
+    border: none;
+}
+
+.tabs li a {
+    display: block;
+    font-size: 15px;
+    color: #ffffff;
+    padding: 10px 30px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.tabs li a:hover {
+    background-color: #159ecb;
+}
+
+.tabs li i {
+    display: block;
+    color: #ffffff;
+}
+
+.tabs .disabled-link {
+    pointer-events: none;
+    color: grey;
+}

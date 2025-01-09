@@ -1,0 +1,13 @@
+.kayttooikeusryhman-myonto-kohde {
+    margin-top: 20px;
+}
+
+.kayttooikeusryhman-myonto-kohde h4 {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.kayttooikeusryhman-myonto-kohde .oppilaitostyyppi-wrapper,
+.kayttooikeusryhman-myonto-kohde .organisaatiotyyppi-wrapper {
+    margin-left: 10px;
+}

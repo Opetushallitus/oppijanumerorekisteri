@@ -1,0 +1,178 @@
+
+/* Allow react-datepicker dimensions to be affected */
+.react-datepicker-wrapper, .react-datepicker__input-container {
+    display: block !important;
+}
+
+fieldset {
+    margin: .5em;
+    padding: .5em;
+}
+form {
+    padding: 1em;
+}
+
+fieldset {
+    margin-bottom: 16px;
+}
+
+fieldset input,
+fieldset .Select {
+    margin: 10px 0 0;
+}
+
+fieldset input, fieldset select {
+    float: left;
+    min-width: 250px;
+    border: 1px #AEAEAE solid;
+    box-shadow:inset 0 0 3px #AEAEAE;
+    -moz-box-shadow:inset 0 0 3px #AEAEAE;
+    -webkit-box-shadow:inset 0 0 3px #AEAEAE;
+}
+
+fieldset .fieldContainer {
+    float: left;
+    min-width: 250px;
+}
+
+input {
+    font-size: 14px;
+}
+
+.row label{
+    font-weight: bold;
+    padding-top: 20px;
+}
+
+label.required::after{
+    content: '*';
+}
+
+.select-row{
+    padding-top: 10px;
+}
+
+.select-row label{
+    font-weight: bold;
+    padding-top: 10px;
+}
+
+.mainContainer {
+    position: relative;
+    text-align: left;
+}
+
+.mainContent {
+    max-width: 1360px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.wrapper {
+    padding: 30px;
+    background-color: white;
+    border: #d5d5d5 solid 1px;
+    border-radius: 2px;
+    margin-top: 10px;
+    margin-bottom: 40px;
+}
+
+.borderless-wrapper {
+    padding: 30px;
+    background-color: white;
+    margin-bottom: 40px;
+}
+
+.borderless-colored-wrapper {
+    padding: 30px;
+    background-color: #f6f4f0;
+    margin-bottom: 40px;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.clear {
+    clear: both;
+}
+
+.is-error {
+    font-size: 15px;
+    color: #E44E4E;
+    letter-spacing: 0;
+    line-height: 16px;
+}
+
+.error {
+    padding: 10px;
+    border: 2px solid #E44E4E;
+    border-radius: 2px;
+    clear:both;
+    margin: 10px;
+}
+
+.success.topError {
+    clear: both;
+    position: relative;
+    top: 80px;
+    padding: 10px;
+    background: #E6FFC1;
+    border: 1px solid #99D740;
+    border-radius: 2px;
+    margin: 10px;
+    margin-bottom: 50px;
+    color: #2B2B2B;
+}
+
+.error.topError {
+    clear: both;
+    position: relative;
+    top: 80px;
+    background: #FFE9E9;
+    border: 1px solid #E09191;
+    border-radius: 2px;
+    color: #2B2B2B;
+    margin: 10px 10px 50px;
+}
+
+h1 {
+    font-size: 2.5em;
+    font-weight: bold;
+}
+
+h2 {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.mainContent {
+    margin-bottom: 50px;
+}
+
+.clear {
+    clear:both;
+    margin-bottom:10px;
+}
+
+body h2 {
+    padding-bottom: 5px
+}
+
+hr {
+    background: #AEAEAE;
+}
+
+.pincode-input-container {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.pincode-input-text:not(:last-of-type) {
+    margin-right: 12px !important;
+}

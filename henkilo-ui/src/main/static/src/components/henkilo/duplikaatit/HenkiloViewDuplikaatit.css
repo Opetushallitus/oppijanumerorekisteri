@@ -1,0 +1,22 @@
+.duplicates-view {
+    color: #4A4A4A;
+}
+
+
+.person.header > span:nth-child(1n) {
+    background: white;
+}
+
+.person.header > span:nth-child(2n) {
+    background: #fbfbfb;
+}
+
+.duplicate_confirm_p {
+    margin: 1rem 0;
+}
+
+.duplicate_confirm_buttons {
+    display: flex;
+    justify-content: space-around;
+    margin: 2rem 0 0;
+}
