@@ -116,13 +116,12 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
         new codepipeline_actions.CodeBuildAction({
           actionName: "TestHenkiloUi",
           input: sourceOutput,
-          project: makeTestProject(
+          project: makeUbuntuTestProject(
             this,
             env,
             tag,
             "TestHenkiloUi",
-            ["scripts/ci/run-henkilo-ui-tests.sh"],
-            "corretto21"
+            ["scripts/ci/run-henkilo-ui-tests.sh"]
           ),
         })
       );
@@ -275,6 +274,70 @@ function makeTestProject(
               `git checkout ${tag}`,
               "echo $MVN_SETTINGSXML > ./settings.xml",
             ],
+          },
+          build: {
+            commands: testCommands,
+          },
+        },
+      }),
+    }
+  );
+}
+
+function makeUbuntuTestProject(
+  scope: constructs.Construct,
+  env: string,
+  tag: string,
+  name: string,
+  testCommands: string[],
+): codebuild.PipelineProject {
+  return new codebuild.PipelineProject(
+    scope,
+    `${name}${capitalize(env)}Project`,
+    {
+      projectName: `${name}${capitalize(env)}`,
+      environment: {
+        buildImage: codebuild.LinuxBuildImage.STANDARD_7_0,
+        computeType: codebuild.ComputeType.MEDIUM,
+        privileged: true,
+      },
+      environmentVariables: {
+        DOCKER_USERNAME: {
+          type: codebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
+          value: "/docker/username",
+        },
+        DOCKER_PASSWORD: {
+          type: codebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
+          value: "/docker/password",
+        },
+        GITHUB_PACKAGES_GRADLE_PROPERTIES: {
+          type: codebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
+          value: "/gradle/github-packages-gradle-properties",
+        },
+        TZ: {
+          type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
+          value: "Europe/Helsinki",
+        }
+      },
+      buildSpec: codebuild.BuildSpec.fromObject({
+        version: "0.2",
+        env: {
+          "git-credential-helper": "yes",
+        },
+        phases: {
+          install: {
+            "runtime-versions": {
+              java: "corretto21",
+            },
+          },
+          pre_build: {
+            commands: [
+              "docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD",
+              "sudo apt-get update -y",
+              "sudo apt-get install -y netcat", // for nc command
+              "sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb", // For Cypress/Chromium
+              `git checkout ${tag}`,
+            ]
           },
           build: {
             commands: testCommands,
