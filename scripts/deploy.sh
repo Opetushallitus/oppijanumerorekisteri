@@ -143,40 +143,4 @@ function get_aws_account_id {
   aws sts get-caller-identity --query Account --output text
 }
 
-function npm_ci_if_needed {
-  require_command shasum
-
-  if [ ! -f "package.json" ]; then
-    fatal "package.json is missing"
-  elif [ ! -f "package-lock.json" ]; then
-    info "package-lock.json is missing"
-    npm install
-  elif [ ! -f "$( npm root )/package.json.checksum" ]; then
-    info "package.json checksum missing"
-    npm ci
-  elif [ ! -f "$( npm root )/package-lock.json.checksum" ]; then
-    info "package-lock.json checksum missing"
-    npm ci
-  elif ! shasum --check "$( npm root )/package.json.checksum"; then
-    info "package.json changed"
-    npm install
-  elif ! shasum --check "$( npm root )/package-lock.json.checksum"; then
-    info "package-lock.json changed"
-    npm ci
-  else
-    info "No changes in package.json or package-lock.json"
-  fi
-
-  shasum package-lock.json > "$( npm root )/package-lock.json.checksum"
-  shasum package.json > "$( npm root )/package.json.checksum"
-}
-
-function init_nodejs {
-  export NVM_DIR="${NVM_DIR:-$HOME/.cache/nvm}"
-  set +o errexit
-  source "$repo/scripts/lib/nvm.sh"
-  nvm use "${node_version}" || nvm install "${node_version}"
-  set -o errexit
-}
-
 main "$@"

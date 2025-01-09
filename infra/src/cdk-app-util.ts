@@ -107,7 +107,7 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
             env,
             tag,
             "TestOppijanumerorekisteri",
-            ["scripts/ci/run-tests.sh"],
+            ["scripts/ci/run-oppijanumerorekisteri-tests.sh"],
             "corretto21"
           ),
         })
