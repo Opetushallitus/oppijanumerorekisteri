@@ -85,6 +85,7 @@
     </dependencies>
 
     <build>
+        <finalName>${project.artifactId}</finalName>
         <!-- Turn on filtering by default for application properties -->
         <resources>
             <!-- From spring-boot-parent -->

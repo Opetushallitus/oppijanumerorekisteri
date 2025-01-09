@@ -45,6 +45,12 @@ class CdkApp extends cdk.App {
       ecsCluster: ecsStack.cluster,
       ...stackProps,
     });
+
+    new HenkiloUiApplicationStack(this, sharedAccount.prefix("HenkiloUiApplication"), {
+      ...stackProps,
+      bastion: databaseStack.bastion,
+      ecsCluster: ecsStack.cluster,
+    });
   }
 }
 
@@ -422,6 +428,126 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
             { parameterName: `/oppijanumerorekisteri/${name}` }
         )
     );
+  }
+}
+
+type HenkiloUiApplicationStackProps = cdk.StackProps & {
+  bastion: ec2.BastionHostLinux;
+  ecsCluster: ecs.Cluster;
+};
+
+class HenkiloUiApplicationStack extends cdk.Stack {
+  constructor(
+    scope: constructs.Construct,
+    id: string,
+    props: HenkiloUiApplicationStackProps
+  ) {
+    super(scope, id, props);
+
+    const vpc = ec2.Vpc.fromLookup(this, "Vpc", { vpcName:  sharedAccount.VPC_NAME });
+    const logGroup = new logs.LogGroup(this, "AppLogGroup", {
+      logGroupName: sharedAccount.prefix("/henkilo-ui"),
+      retention: logs.RetentionDays.INFINITE,
+    });
+
+    const dockerImage = new ecr_assets.DockerImageAsset(this, "AppImage", {
+      directory: path.join(__dirname, "../../henkilo-ui"),
+      file: "Dockerfile",
+      platform: ecr_assets.Platform.LINUX_ARM64,
+    });
+
+    const taskDefinition = new ecs.FargateTaskDefinition(
+      this,
+      "TaskDefinition",
+      {
+        cpu: 2048,
+        memoryLimitMiB: 5120,
+        runtimePlatform: {
+          operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
+          cpuArchitecture: ecs.CpuArchitecture.ARM64,
+        },
+      }
+    );
+
+    const appPort = 8080;
+    taskDefinition.addContainer("AppContainer", {
+      image: ecs.ContainerImage.fromDockerImageAsset(dockerImage),
+      logging: new ecs.AwsLogDriver({ logGroup, streamPrefix: "app" }),
+      environment: {
+        ENV: config.getEnvironment(),
+      },
+      portMappings: [
+        {
+          name: "service-provider",
+          containerPort: appPort,
+          appProtocol: ecs.AppProtocol.http,
+        },
+      ],
+    });
+
+    const service = new ecs.FargateService(this, "Service", {
+      cluster: props.ecsCluster,
+      taskDefinition,
+      desiredCount: 1,
+      minHealthyPercent: 100,
+      maxHealthyPercent: 200,
+      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
+      healthCheckGracePeriod: cdk.Duration.minutes(5),
+    });
+
+    const alb = new elasticloadbalancingv2.ApplicationLoadBalancer(
+      this,
+      "LoadBalancer",
+      {
+        vpc,
+        internetFacing: true,
+      }
+    );
+
+    const sharedHostedZone = route53.HostedZone.fromLookup(
+      this,
+      "YleiskayttoisetHostedZone",
+      {
+        domainName: ssm.StringParameter.valueFromLookup(this, "zoneName"),
+      }
+    );
+    const albHostname = `henkilo-ui.${sharedHostedZone.zoneName}`;
+
+    new route53.ARecord(this, "ALBARecord", {
+      zone: sharedHostedZone,
+      recordName: albHostname,
+      target: route53.RecordTarget.fromAlias(
+        new route53_targets.LoadBalancerTarget(alb)
+      ),
+    });
+
+    const albCertificate = new certificatemanager.Certificate(
+      this,
+      "AlbCertificate",
+      {
+        domainName: albHostname,
+        validation:
+          certificatemanager.CertificateValidation.fromDns(sharedHostedZone),
+      }
+    );
+
+    const listener = alb.addListener("Listener", {
+      protocol: elasticloadbalancingv2.ApplicationProtocol.HTTPS,
+      port: 443,
+      open: true,
+      certificates: [albCertificate],
+    });
+
+    listener.addTargets("ServiceTarget", {
+      port: appPort,
+      targets: [service],
+      healthCheck: {
+        enabled: true,
+        interval: cdk.Duration.seconds(10),
+        path: "/henkilo-ui/actuator/health",
+        port: appPort.toString(),
+      },
+    });
   }
 }
 
