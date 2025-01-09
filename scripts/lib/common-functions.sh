@@ -1,4 +1,5 @@
 export repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../.." && pwd )"
+node_version=$( cat "$repo/.nvmrc" )
 
 function require_docker {
   require_command docker

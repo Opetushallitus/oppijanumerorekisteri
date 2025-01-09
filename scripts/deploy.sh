@@ -2,7 +2,6 @@
 set -o errexit -o nounset -o pipefail
 repo="$( cd "$(dirname "$0")" && pwd )"
 source "${repo}/scripts/lib/common-functions.sh"
-node_version=$( cat "$repo/.nvmrc" )
 
 readonly qualifier="oppijanro"
 readonly capitalized_qualifier=$(echo ${qualifier} | awk '{print toupper(substr($0,1,1)) tolower(substr($0,2))}')
