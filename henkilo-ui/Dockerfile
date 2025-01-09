@@ -7,6 +7,7 @@ RUN dnf install -y nodejs20 \
   && alternatives --install /usr/bin/npx npx /usr/bin/npx-20 90
 
 COPY . .
+COPY ../settings.xml .
 
 WORKDIR /app/src/main/static
 RUN npm ci

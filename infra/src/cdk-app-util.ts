@@ -313,7 +313,11 @@ function makeUbuntuTestProject(
         TZ: {
           type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
           value: "Europe/Helsinki",
-        }
+        },
+        MVN_SETTINGSXML: {
+          type: codebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
+          value: "/mvn/settingsxml",
+        },
       },
       buildSpec: codebuild.BuildSpec.fromObject({
         version: "0.2",
@@ -333,6 +337,7 @@ function makeUbuntuTestProject(
               "sudo apt-get install -y netcat", // for nc command
               "sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb", // For Cypress/Chromium
               `git checkout ${tag}`,
+              "echo $MVN_SETTINGSXML > ./settings.xml",
             ]
           },
           build: {
