@@ -1,0 +1,8 @@
+cas:
+  service: https://virkailija.untuvaopintopolku.fi/henkilo-ui
+host:
+  host-virkailija: https://virkailija.untuvaopintopolku.fi
+  host-cas: https://virkailija.untuvaopintopolku.fi
+  host-cas-oppija: https://untuvaopintopolku.fi
+henkiloui:
+  uses-ssl-proxy: true

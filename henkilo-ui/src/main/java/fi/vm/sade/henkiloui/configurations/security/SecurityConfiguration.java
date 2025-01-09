@@ -39,7 +39,7 @@ public class SecurityConfiguration {
     ServiceProperties serviceProperties() {
         ServiceProperties serviceProperties = new ServiceProperties();
         serviceProperties.setService(casProperties.getService() + SPRING_CAS_SECURITY_CHECK_PATH);
-        serviceProperties.setSendRenew(casProperties.getSendRenew());
+        serviceProperties.setSendRenew(false);
         serviceProperties.setAuthenticateAllArtifacts(true);
         return serviceProperties;
     }
@@ -50,7 +50,7 @@ public class SecurityConfiguration {
         casAuthenticationProvider.setAuthenticationUserDetailsService(new CasUserDetailsService());
         casAuthenticationProvider.setServiceProperties(serviceProperties);
         casAuthenticationProvider.setTicketValidator(ticketValidator);
-        casAuthenticationProvider.setKey(casProperties.getKey());
+        casAuthenticationProvider.setKey("oppijanumerorekisteri-service");
         return casAuthenticationProvider;
     }
 

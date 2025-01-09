@@ -11,7 +11,4 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "cas")
 public class CasProperties {
     private String service;
-    private Boolean sendRenew;
-    private String key;
-    private String fallbackUserDetailsProviderUrl;
 }
