@@ -75,7 +75,8 @@
         "lint": "eslint -c eslint.config.mjs",
         "prettier": "prettier --check 'src/**/*{ts,tsx}'",
         "prettier:fix": "prettier --write 'src/**/*{ts,tsx}'",
-        "e2e:install-deps": "playwright install chromium && npm --prefix mock-api ci",
+        "e2e:install-deps": "playwright install-deps && npm --prefix mock-api ci",
+        "e2e:chromium": "playwright install chromium",
         "e2e:mock-api": "npm --prefix mock-api run mock-api",
         "e2e:test": "playwright test",
         "e2e:ci": "concurrently -s first -k 'npm:e2e:mock-api' 'npm:e2e:test'"

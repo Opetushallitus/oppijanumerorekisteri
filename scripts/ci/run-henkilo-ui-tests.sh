@@ -4,8 +4,6 @@ set -o errexit -o nounset -o pipefail
 repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd ../.. && pwd )"
 source "${repo}/scripts/lib/common-functions.sh"
 
-trap cleanup EXIT
-
 function main {
   init_nodejs
 
@@ -15,8 +13,8 @@ function main {
 
   npm run lint
   npm run prettier
-  npx playwright install-deps
   npm run e2e:install-deps
+  npm run e2e:chromium
   CI=true npm run e2e:ci
 }
 
