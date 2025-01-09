@@ -15,6 +15,7 @@ function main {
 
   npm run lint
   npm run prettier
+  npx playwright install-deps
   npm run e2e:install-deps
   CI=true npm run e2e:ci
 }
