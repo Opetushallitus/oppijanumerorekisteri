@@ -13,7 +13,7 @@ RUN npm ci
 RUN npm run build
 
 WORKDIR /app
-RUN mvn clean package -DskipTests
+RUN mvn clean package -s settings.xml -DskipTests
 
 FROM amazoncorretto:21
 WORKDIR /app
