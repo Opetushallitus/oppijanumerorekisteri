@@ -1,7 +1,6 @@
 package fi.vm.sade.henkiloui.configurations;
 
 import ch.qos.logback.access.tomcat.LogbackValve;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
@@ -13,7 +12,6 @@ import org.springframework.http.HttpStatus;
 public class AccessLogConfiguration {
 
     @Bean
-    @ConditionalOnProperty(name = "logback.access")
     WebServerFactoryCustomizer<TomcatServletWebServerFactory> containerCustomizer() {
         return container -> {
             container.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND, "/"));
