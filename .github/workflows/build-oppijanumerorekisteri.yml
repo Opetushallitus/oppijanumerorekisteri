@@ -14,7 +14,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  build-oppijanumerorekisteri:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
@@ -43,8 +43,8 @@ jobs:
         with:
           name: oppijanumerorekisteri-jar
           path: oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-*SNAPSHOT.jar
-  deploy-container:
-    needs: [build]
+  deploy-oppijanumerorekisteri-container:
+    needs: [build-oppijanumerorekisteri]
     uses: Opetushallitus/.github/.github/workflows/push-scan-java-ecr.yml@main
     with:
       application: oppijanumerorekisteri
@@ -57,9 +57,8 @@ jobs:
       download-artifact-name: oppijanumerorekisteri-jar
     secrets:
       AWS_UTILITY_ROLE_ARN: ${{ secrets.AWS_OPH_UTILITY_ROLE_ARN }}
-
-  deploy-artifacts:
-    needs: [ build ]
+  deploy-oppijanumerorekisteri-artifacts:
+    needs: [build-oppijanumerorekisteri]
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
@@ -81,3 +80,55 @@ jobs:
           git clone https://github.com/Opetushallitus/ci-tools.git
           source ci-tools/common/setup-tools.sh
           ./mvnw deploy -pl oppijanumerorekisteri-api -am -DskipTests --settings ci-tools/common/maven-settings.xml
+
+  build-henkilo-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "corretto"
+          cache: "maven"
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "npm"
+          cache-dependency-path: henkilo-ui/src/main/static/package-lock.json
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-pw-browsers
+          restore-keys: ${{ runner.os }}-pw-browsers
+      - name: Build frontend
+        working-directory: henkilo-ui/src/main/static
+        run: |
+          npm ci
+          npm run lint
+          npm run prettier
+          npm run e2e:install-deps
+          CI=true npm run e2e:ci
+          npm run build
+      - name: Upload e2e test artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-results
+          path: henkilo-ui/src/main/static/playwright-results
+          retention-days: 10
+      - name: Build backend
+        working-directory: henkilo-ui
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn clean install -B -Dbranch=$GITHUB_REF_NAME -Drevision=$GITHUB_SHA -DbuildNumber=$GITHUB_RUN_NUMBER/$GITHUB_RUN_ATTEMPT org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Opetushallitus_henkilo-ui
