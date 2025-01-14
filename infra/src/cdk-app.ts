@@ -22,6 +22,7 @@ import * as path from "node:path";
 import {createHealthCheckStacks} from "./health-check";
 import {DatabaseBackupToS3} from "./DatabaseBackupToS3";
 import {lookupAlarmTopic} from "./shared-account";
+import {DatantuontiStack} from "./datantuonti";
 
 class CdkApp extends cdk.App {
   constructor(props: cdk.AppProps) {
@@ -34,6 +35,7 @@ class CdkApp extends cdk.App {
     };
 
     const ecsStack = new ECSStack(this, sharedAccount.prefix("ECSStack"), stackProps);
+    const datantuontiStack = new DatantuontiStack(this, sharedAccount.prefix("Datantuonti"), stackProps);
     const databaseStack = new DatabaseStack(this, sharedAccount.prefix("Database"), ecsStack.cluster, stackProps);
 
     createHealthCheckStacks(this)
