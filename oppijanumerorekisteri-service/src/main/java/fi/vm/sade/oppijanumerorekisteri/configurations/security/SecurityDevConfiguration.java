@@ -31,7 +31,6 @@ public class SecurityDevConfiguration {
             .csrf(csrf -> csrf.disable())
             .securityMatcher("/**")
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/buildversion.txt").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/swagger-ui.html").permitAll()
                 .requestMatchers("/swagger-ui/").permitAll()

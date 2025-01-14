@@ -187,7 +187,6 @@ public class SecurityConfiguration {
                 }
             })
             .authorizeHttpRequests(authz -> authz
-                    .requestMatchers("/buildversion.txt").permitAll()
                     .requestMatchers("/actuator/**").permitAll()
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                     .anyRequest().authenticated())
@@ -212,7 +211,6 @@ public class SecurityConfiguration {
                 }
             })
             .authorizeHttpRequests(authz -> authz
-                    .requestMatchers("/buildversion.txt").permitAll()
                     .requestMatchers("/actuator/**").permitAll()
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                     .anyRequest().authenticated())
