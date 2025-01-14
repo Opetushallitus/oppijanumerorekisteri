@@ -39,21 +39,12 @@
 
         <maven.compiler.release>21</maven.compiler.release>
 
-        <database.name>oppijanumerorekisteri</database.name>
-        <database.user>oph</database.user>
-        <database.password>oph</database.password>
-
         <!-- library versions -->
         <aws.java.sdk.version>2.21.37</aws.java.sdk.version>
 
         <!-- querydsl metadata generation plugin -->
         <querydsl.version>5.1.0</querydsl.version>
         <apt-maven-plugin.version>1.1.3</apt-maven-plugin.version>
-
-        <!-- defaults for CI server -->
-        <buildNumber>Not provided</buildNumber>
-        <branch>Not provided</branch>
-        <revision>Not provided</revision>
 
         <sonar.organization>opetushallitus</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
