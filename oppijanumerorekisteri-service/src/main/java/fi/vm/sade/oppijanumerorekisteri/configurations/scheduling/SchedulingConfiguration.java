@@ -11,8 +11,8 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.security.OphSessionMappin
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.QueueingEmailService;
 import fi.vm.sade.oppijanumerorekisteri.services.VtjMuutostietoService;
+import fi.vm.sade.oppijanumerorekisteri.services.datantuonti.DatantuontiExportService;
 import fi.vm.sade.oppijanumerorekisteri.services.death.CleanupService;
-import fi.vm.sade.oppijanumerorekisteri.services.export.ExportPseudonymizedService;
 import fi.vm.sade.oppijanumerorekisteri.services.export.ExportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ public class SchedulingConfiguration {
     private final IdentificationService identificationService;
     private final VtjMuutostietoService vtjMuutostietoService;
     private final ExportService exportService;
-    private final ExportPseudonymizedService exportPseudonymizedService;
+    private final DatantuontiExportService datantuontiExportService;
     private final QueueingEmailService queueingEmailService;
 
     @Bean
@@ -120,15 +120,19 @@ public class SchedulingConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "oppijanumerorekisteri.tasks.pseudonymized-export.enabled", matchIfMissing = false)
-    Task<Void> exportPseudonymizedTask() {
-        log.info("Creating pseudonymized export task");
-        return Tasks.recurring(new TaskWithoutDataDescriptor("ExportPseudonymized"), FixedDelay.ofHours(1))
+    @ConditionalOnProperty(name = "oppijanumerorekisteri.tasks.datantuonti.export.enabled", matchIfMissing = false)
+    Task<Void> datantuontiExportTask() {
+        log.info("Creating datantuonti export task");
+        return Tasks.recurring(new TaskWithoutDataDescriptor("DatantuontiExport"), new Daily(LocalTime.of(0, 15, 0)))
                 .execute((taskInstance, executionContext) -> {
-                    log.info("Running pseudonymized export task");
-                    exportPseudonymizedService.createSchema();
-                    exportPseudonymizedService.generateExportFiles();
-                    log.info("Pseudonymized export task completed");
+                    try {
+                        log.info("Running pseudonymized export task");
+                        datantuontiExportService.createSchema();
+                        datantuontiExportService.generateExportFiles();
+                        log.info("Datantuonti export task completed");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 });
     }
 

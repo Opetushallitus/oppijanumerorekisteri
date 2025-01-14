@@ -49,6 +49,9 @@ oppijanumerorekisteri.vtjkysely.username: username
 oppijanumerorekisteri.vtjkysely.password: password
 oppijanumerorekisteri.vtjkysely.keystorePassword: dummydummy
 oppijanumerorekisteri.vtjkysely.truststorePassword: dummydummy
+oppijanumerorekisteri.tasks.datantuonti.export.enabled: false
+oppijanumerorekisteri.tasks.datantuonti.export.bucket-name: none
+oppijanumerorekisteri.tasks.datantuonti.import.enabled: false
 
 oppijanumerorekisteri.scheduling.yksilointi.enabled: false
 oppijanumerorekisteri.allow-fake-ssn: true
