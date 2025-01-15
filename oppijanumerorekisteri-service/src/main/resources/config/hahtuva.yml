@@ -9,6 +9,7 @@ oppijanumerorekisteri.tasks.export.lampi-role-arn: none
 oppijanumerorekisteri.tasks.export.lampi-external-id: none
 
 oppijanumerorekisteri.tasks.datantuonti.export.enabled: true
+oppijanumerorekisteri.tasks.datantuonti.export.bucket-name: ${export_bucket_name}
 
 oppijanumerorekisteri.vtj-muutosrajapinta.fetch-enabled: false
 oppijanumerorekisteri.vtj-muutosrajapinta.muutostieto-enabled: false

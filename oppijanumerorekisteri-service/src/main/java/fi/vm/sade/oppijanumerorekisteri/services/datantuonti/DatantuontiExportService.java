@@ -78,7 +78,7 @@ public class DatantuontiExportService {
         var timestamp = new Date().getTime();
         var henkiloObjectKey = V1_PREFIX + "/csv/henkilo-" + timestamp + ".csv";
         exportQueryToS3(henkiloObjectKey, HENKILO_QUERY);
-        writeManifest(MANIFEST_OBJECT_KEY, new DatantuontiManifest());
+        writeManifest(MANIFEST_OBJECT_KEY, new DatantuontiManifest(henkiloObjectKey));
     }
 
     private void exportQueryToS3(String objectKey, String query) {

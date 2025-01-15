@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class DatantuontiManifest {
-
+    private final String henkilo;
 }
