@@ -31,15 +31,33 @@ class ContinousDeploymentStack extends cdk.Stack {
   constructor(scope: constructs.Construct, id: string, props: cdk.StackProps) {
     super(scope, id, props);
 
-    (["hahtuva", "dev", "qa", "prod"] as const).forEach(
-      (env) =>
-        new ContinousDeploymentPipelineStack(
-          this,
-          sharedAccount.prefix(`${capitalize(env)}ContinuousDeploymentPipeline`),
-          env,
-          { owner: "Opetushallitus", name: "oppijanumerorekisteri", branch: "master" },
-          props
-        )
+    new ContinousDeploymentPipelineStack(
+      this,
+      sharedAccount.prefix(`HahtuvaContinuousDeploymentPipeline`),
+      "hahtuva",
+      { owner: "Opetushallitus", name: "oppijanumerorekisteri", branch: "master" },
+      props
+    );
+    new ContinousDeploymentPipelineStack(
+      this,
+      sharedAccount.prefix(`DevContinuousDeploymentPipeline`),
+      "dev",
+      { owner: "Opetushallitus", name: "oppijanumerorekisteri", branch: "green-hahtuva" },
+      props
+    );
+    new ContinousDeploymentPipelineStack(
+      this,
+      sharedAccount.prefix(`QaContinuousDeploymentPipeline`),
+      "qa",
+      { owner: "Opetushallitus", name: "oppijanumerorekisteri", branch: "green-dev" },
+      props
+    );
+    new ContinousDeploymentPipelineStack(
+      this,
+      sharedAccount.prefix(`ProdContinuousDeploymentPipeline`),
+      "prod",
+      { owner: "Opetushallitus", name: "oppijanumerorekisteri", branch: "green-qa" },
+      props
     );
   }
 }
@@ -71,12 +89,6 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
         pipelineType: PipelineType.V1,
       }
     );
-    const tag = {
-      hahtuva: repository.branch,
-      dev: "green-hahtuva",
-      qa: "green-dev",
-      prod: "green-qa",
-    }[env];
 
     const connectionArn = ssm.StringParameter
         .fromStringParameterName(this,  "CodeStarConnectionArn", sharedAccount.CODE_STAR_CONNECTION_ARN_PARAMETER_NAME).stringValue
@@ -105,7 +117,6 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
           project: makeTestProject(
             this,
             env,
-            tag,
             "TestOppijanumerorekisteri",
             ["scripts/ci/run-oppijanumerorekisteri-tests.sh"],
             "corretto21"
@@ -119,7 +130,6 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
           project: makeUbuntuTestProject(
             this,
             env,
-            tag,
             "TestHenkiloUi",
             ["scripts/ci/run-henkilo-ui-tests.sh"]
           ),
@@ -173,7 +183,6 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
             pre_build: {
               commands: [
                 "sudo yum install -y perl-Digest-SHA", // for shasum command
-                `git checkout ${tag}`,
                 "echo $MVN_SETTINGSXML > ./settings.xml",
                 "echo $MVN_SETTINGSXML > ./henkilo-ui/settings.xml",
               ],
@@ -227,7 +236,6 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
 function makeTestProject(
   scope: constructs.Construct,
   env: string,
-  tag: string,
   name: string,
   testCommands: string[],
   javaVersion: "corretto11" | "corretto21"
@@ -272,7 +280,6 @@ function makeTestProject(
             commands: [
               "docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD",
               "sudo yum install -y perl-Digest-SHA", // for shasum command
-              `git checkout ${tag}`,
               "echo $MVN_SETTINGSXML > ./settings.xml",
             ],
           },
@@ -288,7 +295,6 @@ function makeTestProject(
 function makeUbuntuTestProject(
   scope: constructs.Construct,
   env: string,
-  tag: string,
   name: string,
   testCommands: string[],
 ): codebuild.PipelineProject {
@@ -337,7 +343,6 @@ function makeUbuntuTestProject(
               "sudo apt-get update -y",
               "sudo apt-get install -y netcat", // for nc command
               "sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb", // For Cypress/Chromium
-              `git checkout ${tag}`,
               "echo $MVN_SETTINGSXML > ./settings.xml",
             ]
           },
