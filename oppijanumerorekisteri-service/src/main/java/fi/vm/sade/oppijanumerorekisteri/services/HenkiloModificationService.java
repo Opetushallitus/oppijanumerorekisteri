@@ -41,6 +41,8 @@ public interface HenkiloModificationService {
 
     Henkilo createHenkilo(Henkilo henkiloCreate, String kasittelijaOid, boolean validate);
 
+    Henkilo createHenkilo(Henkilo henkiloCreate, String kasittelijaOid, boolean validate, String oidHenkilo);
+
     List<String> linkHenkilos(String henkiloOid, List<String> similarHenkiloOids);
 
     void unlinkHenkilo(String oid, String slaveOid);

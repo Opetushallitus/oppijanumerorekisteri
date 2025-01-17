@@ -505,6 +505,12 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     @Override
     @Transactional
     public Henkilo createHenkilo(Henkilo henkiloCreate, String kasittelijaOid, boolean validate) {
+        return createHenkilo(henkiloCreate, kasittelijaOid, validate, null);
+    }
+
+    @Override
+    @Transactional
+    public Henkilo createHenkilo(Henkilo henkiloCreate, String kasittelijaOid, boolean validate, String oidHenkilo) {
         if (validate) {
             BindException errors = new BindException(henkiloCreate, "henkiloCreate");
             this.henkiloCreatePostValidator.validate(henkiloCreate, errors);
@@ -518,7 +524,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             henkiloCreate.setHetu(null);
         }
         setSyntymaaikaAndSukupuoliFromHetu(henkiloCreate);
-        henkiloCreate.setOidHenkilo(getFreePersonOid());
+        henkiloCreate.setOidHenkilo(oidHenkilo != null ? oidHenkilo : getFreePersonOid());
         henkiloCreate.setCreated(new Date());
         henkiloCreate.setModified(henkiloCreate.getCreated());
         henkiloCreate.setKasittelijaOid(kasittelijaOid);

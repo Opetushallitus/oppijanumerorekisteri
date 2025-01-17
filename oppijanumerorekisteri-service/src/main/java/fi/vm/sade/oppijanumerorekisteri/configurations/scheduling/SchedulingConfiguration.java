@@ -12,6 +12,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.QueueingEmailService;
 import fi.vm.sade.oppijanumerorekisteri.services.VtjMuutostietoService;
 import fi.vm.sade.oppijanumerorekisteri.services.datantuonti.DatantuontiExportService;
+import fi.vm.sade.oppijanumerorekisteri.services.datantuonti.DatantuontiImportService;
 import fi.vm.sade.oppijanumerorekisteri.services.death.CleanupService;
 import fi.vm.sade.oppijanumerorekisteri.services.export.ExportService;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class SchedulingConfiguration {
     private final VtjMuutostietoService vtjMuutostietoService;
     private final ExportService exportService;
     private final DatantuontiExportService datantuontiExportService;
+    private final DatantuontiImportService datantuontiImportService;
     private final QueueingEmailService queueingEmailService;
 
     @Bean
@@ -126,10 +128,27 @@ public class SchedulingConfiguration {
         return Tasks.recurring(new TaskWithoutDataDescriptor("DatantuontiExport"), new Daily(LocalTime.of(0, 15, 0)))
                 .execute((taskInstance, executionContext) -> {
                     try {
-                        log.info("Running pseudonymized export task");
+                        log.info("Running datantuonti export task");
                         datantuontiExportService.createSchema();
                         datantuontiExportService.generateExportFiles();
                         log.info("Datantuonti export task completed");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "oppijanumerorekisteri.tasks.datantuonti.import.enabled", matchIfMissing = false)
+    Task<Void> datantuontiImportTask() {
+        log.info("Creating datantuonti import task");
+        return Tasks.recurring(new TaskWithoutDataDescriptor("DatantuontiImport"), new Daily(LocalTime.of(2, 15, 0)))
+                .execute((taskInstance, executionContext) -> {
+                    try {
+                        log.info("Running datantuonti import task");
+                        datantuontiImportService.importTempTableFromS3();
+                        datantuontiImportService.createNewHenkilos();
+                        log.info("Datantuonti import task completed");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
