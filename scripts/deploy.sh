@@ -106,10 +106,6 @@ function setup_cdk_deployment_target_policy {
   POLICY_NAME=${policyName} npx ts-node "${repo}/infra/src/setup-cdk-deployment-target-policy.ts"
 }
 
-function is_running_on_codebuild {
-  [ -n "${CODEBUILD_BUILD_ID:-}" ]
-}
-
 function export_aws_credentials {
   local -r env=$1
   export AWS_PROFILE="oph-yleiskayttoiset-${env}"

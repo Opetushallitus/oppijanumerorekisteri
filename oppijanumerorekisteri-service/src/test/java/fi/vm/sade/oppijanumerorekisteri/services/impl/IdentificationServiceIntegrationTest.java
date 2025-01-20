@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
-import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
@@ -17,11 +16,11 @@ import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.VtjService;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
+import org.springframework.boot.test.context.SpringBootTest;
 import software.amazon.awssdk.services.sns.SnsClient;
 
 import org.assertj.core.groups.Tuple;
 import org.jresearch.orika.spring.OrikaSpringMapper;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,7 +46,8 @@ import static org.mockito.Mockito.when;
 // Non-transactional in order to emulate how the real method call works. Thus db is not rolled back after tests.
 // See IdentificationServiceIntegrationTests if you want to add more tests.
 @RunWith(SpringRunner.class)
-@IntegrationTest
+@SpringBootTest
+@Sql("/sql/truncate_data.sql")
 @Sql("/sql/yksilointi-test.sql")
 public class IdentificationServiceIntegrationTest {
     @MockBean
@@ -86,11 +86,6 @@ public class IdentificationServiceIntegrationTest {
     public void setup() {
         given(this.koodistoClient.getKoodisForKoodisto(anyString(), anyInt(), anyBoolean()))
                 .willReturn(new KoodiTypeListBuilder(Koodisto.MAAT_JA_VALTIOT_2).koodi("752").koodi("246").build());
-    }
-
-    @After
-    public void cleanup() {
-        databaseService.truncate();
     }
 
     private Optional<YksiloityHenkilo> setUsedFixture(String path) {

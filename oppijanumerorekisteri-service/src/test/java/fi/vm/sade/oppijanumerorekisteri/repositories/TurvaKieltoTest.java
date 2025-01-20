@@ -3,14 +3,17 @@ package fi.vm.sade.oppijanumerorekisteri.repositories;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Collectors;
 
-@DataJpaTest
+@RunWith(SpringRunner.class)
+@SpringBootTest
 class TurvaKieltoTest {
 
     @Autowired

@@ -16,6 +16,20 @@ permissions:
 jobs:
   build-oppijanumerorekisteri:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:12.14
+        ports:
+          - 5435:5432
+        env:
+          POSTGRES_USER: oph
+          POSTGRES_DB: oppijanumerorekisteri
+          POSTGRES_PASSWORD: oph
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout source
         uses: actions/checkout@v4

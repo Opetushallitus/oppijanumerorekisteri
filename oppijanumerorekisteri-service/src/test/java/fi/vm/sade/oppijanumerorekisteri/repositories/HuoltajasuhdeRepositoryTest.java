@@ -2,13 +2,11 @@ package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
-import fi.vm.sade.oppijanumerorekisteri.repositories.impl.HuoltajasuhdeRepositoryImpl;
+import jakarta.persistence.EntityManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,13 +18,12 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@DataJpaTest
-@Import(HuoltajasuhdeRepositoryImpl.class)
+@SpringBootTest
 @Transactional
 public class HuoltajasuhdeRepositoryTest extends AbstractRepositoryTest {
 
     @Autowired
-    private TestEntityManager testEntityManager;
+    private EntityManager testEntityManager;
 
     @Autowired
     private HuoltajasuhdeRepository huoltajasuhdeRepository;
@@ -89,7 +86,7 @@ public class HuoltajasuhdeRepositoryTest extends AbstractRepositoryTest {
                 .alkuPvm(LocalDate.now().minus(19, ChronoUnit.YEARS))
                 .loppuPvm(LocalDate.now())
                 .build();
-        testEntityManager.persistAndFlush(huoltajaSuhde);
+        testEntityManager.persist(huoltajaSuhde);
         List<HenkiloHuoltajaSuhde> results = huoltajasuhdeRepository.findCurrentHuoltajatByHenkilo(child.getOidHenkilo());
         assertThat(results).isEmpty();
     }

@@ -1,13 +1,25 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
-readonly repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd ../.. && pwd )"
+source "$( dirname "${BASH_SOURCE[0]}" )/../lib/common-functions.sh"
 
-trap "docker compose down" EXIT
+trap cleanup EXIT INT QUIT TERM
 
 function main {
+  select_java_version "21"
+
   cd "$repo"
-  docker compose up -d
-  mvn clean install -s ./settings.xml
+  if is_running_on_codebuild; then
+    docker compose up -d
+    mvn clean install -s ./settings.xml
+  else
+    mvn clean install
+  fi
+}
+
+function cleanup {
+  if is_running_on_codebuild; then
+    docker compose down
+  fi
 }
 
 main "$@"

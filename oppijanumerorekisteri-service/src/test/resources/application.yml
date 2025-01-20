@@ -9,16 +9,24 @@ spring:
     exclude: org.spring
   cache:
     type: NONE
-  flyway:
-    enabled: false
-  h2:
-    console:
-      enabled: true
-      settings:
-        web-allow-others: true
-  jpa:
-    properties:
-      hibernate.id.db_structure_naming_strategy: single
+
+spring.datasource.driver-class-name: org.postgresql.Driver
+spring.datasource.url: jdbc:postgresql://localhost:5435/oppijanumerorekisteri
+spring.datasource.username: oph
+spring.datasource.password: oph
+# Opening more connections than necessary during tests quickly uses up the available connections accepted by postgres
+spring.datasource.hikari.minimum-idle: 0
+
+spring.jpa.properties.hibernate.id.db_structure_naming_strategy: single
+spring.jpa.properties.hibernate.id.new_generator_mappings: true
+spring.jpa.properties.hibernate.integration.envers.enabled: true
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation: true
+
+spring.flyway.enabled: true
+spring.flyway.locations: classpath:db/migration
+spring.flyway.baseline-version: 20241112112233000
+spring.flyway.table: schema_table_onr
+
 spring.security.oauth2.resourceserver.jwt.issuer-uri: "http://localhost/issuer-uri"
 spring.security.oauth2.resourceserver.jwt.jwk-set-uri: "http://localhost/jwk-set-uri"
 host:

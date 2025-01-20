@@ -23,8 +23,6 @@ Below is non-exhaustive list of the key technologies & frameworks used in the pr
 Main
 ### oppijanumerorekisteri-api
 Rajapintojen palauttamat luokat kuten DTO:t ja enumeraatiot. **Tänne ei riippuvuuksia muihin API-moduuleihin**
-### oppijanumerorekisteri-domain
-Domain model
 ### oppijanumerorekisteri-service
 Palvelinpuoli
 

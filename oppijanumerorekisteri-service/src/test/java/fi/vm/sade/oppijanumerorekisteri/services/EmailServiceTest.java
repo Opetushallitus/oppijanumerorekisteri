@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
-import fi.vm.sade.oppijanumerorekisteri.configurations.H2Configuration;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
 import fi.vm.sade.oppijanumerorekisteri.services.QueueingEmailService.QueuedEmail;
 
@@ -21,7 +20,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, H2Configuration.class})
+@SpringBootTest(classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class})
 public class EmailServiceTest {
     @MockBean
     private QueueingEmailService queueingEmailService;

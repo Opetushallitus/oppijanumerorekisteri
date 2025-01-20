@@ -3,10 +3,10 @@ INSERT INTO henkilo(id, version, hetu, etunimet, kutsumanimi, sukunimi, oidhenki
 (2, 1, null, 'tuonti2', 'tuonti2', 'tuonti2', 'tuonti2', {ts '2022-11-14 11:00:00.00'}, {ts '2022-11-14 11:00:00.00'}, false, false, false, false, false, false, false);
 
 INSERT INTO tuonti_data(id, version, data) VALUES
-(1, 1, '{"sahkoposti":"foo@bar.qux","henkilot":[{"tunniste":"tunniste","henkilo":{"hetu":"240784-9105","etunimet":"Uuno","kutsumanimi":"Yksikkö","sukunimi":"Testaaja","passinumero":null,"sahkoposti":null,"syntymaaika":null,"sukupuoli":null,"aidinkieli":null,"kansalaisuus":[{"koodi":"246"}]}}]}');
+(1, 1, lo_from_bytea(0, decode('{"sahkoposti":"foo@bar.qux","henkilot":[{"tunniste":"tunniste","henkilo":{"hetu":"240784-9105","etunimet":"Uuno","kutsumanimi":"Yksikkö","sukunimi":"Testaaja","passinumero":null,"sahkoposti":null,"syntymaaika":null,"sukupuoli":null,"aidinkieli":null,"kansalaisuus":[{"koodi":"246"}]}}]}', 'escape')));
 
 INSERT INTO tuonti(id, version, kasiteltavia, kasiteltyja, kasittelija_oid, ilmoitustarve_kasitelty, data_id, aikaleima, api) VALUES
-(1, 1, 1, 1, 'tuonti1', 1, true, {ts '2022-11-14 10:00:00.00'}, 'OPPIJA'),
+(1, 1, 1, 1, 'tuonti1', true, 1, {ts '2022-11-14 10:00:00.00'}, 'OPPIJA'),
 (2, 1, 1, 1, '', true, 1, {ts '2022-11-14 11:00:00.00'}, 'YLEISTUNNISTE'), -- service user cannot be resolved
 (3, 1, 1, 0, '', true, 1, {ts '2022-11-14 10:30:00.00'}, null); -- tuonti_rivi not initialized
 

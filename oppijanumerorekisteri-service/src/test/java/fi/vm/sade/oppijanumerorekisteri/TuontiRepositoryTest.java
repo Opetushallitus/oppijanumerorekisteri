@@ -1,10 +1,12 @@
-package fi.vm.sade.oppijanumerorekisteri.repositories;
+package fi.vm.sade.oppijanumerorekisteri;
 
 import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
+import fi.vm.sade.oppijanumerorekisteri.repositories.AbstractRepositoryTest;
+import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +16,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@DataJpaTest
+@SpringBootTest
 @Transactional
 class TuontiRepositoryTest extends AbstractRepositoryTest {
 

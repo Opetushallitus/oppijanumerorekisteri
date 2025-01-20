@@ -74,13 +74,17 @@ public class DatantuontiImportService {
         DatantuontiManifest manifest = getManifest();
 
         log.info("Importing tables from S3");
-        jdbcTemplate.execute("DROP TABLE IF EXISTS datantuonti_henkilo_temp");
-        jdbcTemplate.execute(CREATE_DATANTUONTI_HENKILO);
-        jdbcTemplate.execute("CREATE INDEX IF NOT EXISTS datantuonti_henkilo_temp_oid_idx ON datantuonti_henkilo_temp(oid)");
+        createTableForDatantuontiData();
 
         String henkiloSql = "SELECT * FROM aws_s3.table_import_from_s3('datantuonti_henkilo_temp', '',  '(FORMAT CSV,HEADER true)', aws_commons.create_s3_uri(?, ?, ?))";
         String henkiloTxt = jdbcTemplate.queryForObject(henkiloSql, String.class, bucketName, manifest.getHenkilo(), Region.EU_WEST_1.id());
         log.info("Importing datantuontihenkilot from S3 returned {}", henkiloTxt);
+    }
+
+    void createTableForDatantuontiData() {
+        jdbcTemplate.execute("DROP TABLE IF EXISTS datantuonti_henkilo_temp");
+        jdbcTemplate.execute(CREATE_DATANTUONTI_HENKILO);
+        jdbcTemplate.execute("CREATE INDEX IF NOT EXISTS datantuonti_henkilo_temp_oid_idx ON datantuonti_henkilo_temp(oid)");
     }
 
     RowMapper<DatantuontiHenkilo> datantuontiHenkiloMapper = (rs, rn) -> new DatantuontiHenkilo(

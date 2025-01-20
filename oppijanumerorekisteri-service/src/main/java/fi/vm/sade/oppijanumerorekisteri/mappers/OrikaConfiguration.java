@@ -5,7 +5,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 @Component
-@ComponentScan("fi.vm.sade.oppijanumerorekisteri.mappers") // For tests.
+@ComponentScan("fi.vm.sade.oppijanumerorekisteri.mappers")
 public class OrikaConfiguration extends OrikaSpringMapper {
-
 }

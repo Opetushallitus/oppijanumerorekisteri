@@ -11,12 +11,13 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriter
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
+import jakarta.persistence.EntityManager;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -38,8 +39,9 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-@DataJpaTest
+@SpringBootTest
 @Transactional
+@Sql({"/turvakielto/truncate_data.sql"})
 public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
     private static final String TESTI_HETU = "111111-1119";
@@ -49,7 +51,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
     private HenkiloRepository dataRepository;
 
     @Autowired
-    private TestEntityManager testEntityManager;
+    private EntityManager testEntityManager;
 
     @Test
     public void findBy() {
@@ -379,11 +381,16 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
     }
 
     private void persistHenkilo(Henkilo henkilo) {
-        this.testEntityManager.persistAndFlush(henkilo.getAidinkieli());
+        this.testEntityManager.persist(henkilo.getAidinkieli());
+        this.testEntityManager.flush();
         if (!CollectionUtils.isEmpty(henkilo.getKansalaisuus())) {
-            henkilo.getKansalaisuus().forEach(kansalaisuus -> this.testEntityManager.persistAndFlush(kansalaisuus));
+            henkilo.getKansalaisuus().forEach(kansalaisuus -> {
+                this.testEntityManager.persist(kansalaisuus);
+                this.testEntityManager.flush();
+            });
         }
-        this.testEntityManager.persistAndFlush(henkilo);
+        this.testEntityManager.persist(henkilo);
+        this.testEntityManager.flush();
     }
 
     @Test

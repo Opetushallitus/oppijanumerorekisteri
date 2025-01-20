@@ -3,7 +3,6 @@
 target/*
 oppijanumerorekisteri-service/target/*
 oppijanumerorekisteri-api/target/*
-oppijanumerorekisteri-domain/target/*
 
 # macOS
 .DS_Store
