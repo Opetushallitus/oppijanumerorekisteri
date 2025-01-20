@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
-import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
@@ -14,9 +13,10 @@ import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
 import fi.vm.sade.oppijanumerorekisteri.utils.YhteystietoryhmaUtils;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 import software.amazon.awssdk.services.sns.SnsClient;
 
-import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,8 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
-@IntegrationTest
+@SpringBootTest
+@Sql("/sql/truncate_data.sql")
 public class HenkiloModificationServiceTest {
 
     @Autowired
@@ -56,11 +57,6 @@ public class HenkiloModificationServiceTest {
     private KoodistoClient koodistoClient;
     @MockBean
     private HenkiloService henkiloService;
-
-    @After
-    public void cleanup() {
-        databaseService.truncate();
-    }
 
     @Test
     @WithMockUser

@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
@@ -9,6 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
+import org.springframework.boot.test.context.SpringBootTest;
 import software.amazon.awssdk.services.sns.SnsClient;
 
 import org.junit.Test;
@@ -39,9 +39,10 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
-@IntegrationTest
-@Transactional
+@SpringBootTest
+@Sql("/sql/truncate_data.sql")
 @Sql("/sql/henkilo-modification-test.sql")
+@Transactional
 public class HenkiloModificationServiceIntegrationTest {
     @Autowired
     private HenkiloModificationService henkiloModificationService;

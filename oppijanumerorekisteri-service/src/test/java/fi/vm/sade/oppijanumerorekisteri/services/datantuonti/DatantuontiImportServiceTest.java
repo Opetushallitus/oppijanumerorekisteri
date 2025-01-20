@@ -7,17 +7,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
-import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.impl.AwsSnsHenkiloModifiedTopic;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -27,10 +26,10 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 
 @RunWith(SpringRunner.class)
-@IntegrationTest
+@Sql("/sql/truncate_data.sql")
+@Sql("/sql/test_data.sql")
+@SpringBootTest
 public class DatantuontiImportServiceTest {
-    @Autowired
-    private DatabaseService databaseService;
     @Autowired
     private DatantuontiImportService importService;
     @Autowired
@@ -44,14 +43,9 @@ public class DatantuontiImportServiceTest {
     @MockBean
     private KayttooikeusClient kayttooikeusClient;
 
-    @After
-    public void cleanup() {
-        databaseService.truncate();
-    }
-
     @Before
     public void insertDatantuonti() throws Exception {
-        jdbcTemplate.execute(DatantuontiImportService.CREATE_DATANTUONTI_HENKILO);
+        importService.createTableForDatantuontiData();
         jdbcTemplate.execute("""
             INSERT INTO datantuonti_henkilo_temp (
                 oid,
@@ -79,7 +73,13 @@ public class DatantuontiImportServiceTest {
     }
 
     private String getAidinkieli(String oid) {
-        return jdbcTemplate.queryForObject("SELECT k.kielikoodi FROM henkilo h LEFT JOIN kielisyys k ON k.id = h.aidinkieli_id AND h.oidhenkilo = '" + oid + "' ORDER BY k.version DESC limit 1", String.class);
+        var sql = """
+                SELECT k.kielikoodi
+                FROM henkilo h
+                LEFT JOIN kielisyys k ON k.id = h.aidinkieli_id
+                WHERE h.oidhenkilo = ? ORDER BY k.version DESC LIMIT 1
+                """;
+        return jdbcTemplate.queryForObject(sql, String.class, oid);
     }
 
     private List<String> getKansalaisuus(String oid) {
@@ -88,8 +88,9 @@ public class DatantuontiImportServiceTest {
             FROM henkilo h
             LEFT JOIN henkilo_kansalaisuus hk ON h.id = hk.henkilo_id
             LEFT JOIN kansalaisuus k ON hk.kansalaisuus_id = k.id
-            WHERE h.oidhenkilo = """;
-        return jdbcTemplate.queryForList(sql + "'" + oid + "'", String.class);
+            WHERE h.oidhenkilo = ?
+            """;
+        return jdbcTemplate.queryForList(sql, String.class, oid);
     }
 
     @Test

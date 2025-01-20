@@ -25,7 +25,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 @WebAppConfiguration
 @SpringBootTest
-@ContextConfiguration(classes = {TestApplication.class})
+@ContextConfiguration(classes = {})
 public class LogSanitationTest {
 
     private static final Logger logger = LoggerFactory.getLogger(LogSanitationTest.class);

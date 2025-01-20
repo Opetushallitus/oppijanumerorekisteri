@@ -12,6 +12,36 @@ function require_command {
   fi
 }
 
+function is_running_on_codebuild {
+  [ -n "${CODEBUILD_BUILD_ID:-}" ]
+}
+
+function select_java_version {
+  if ! is_running_on_codebuild; then
+    info "Switching to Java $1"
+    java_version="$1"
+    JAVA_HOME="$(/usr/libexec/java_home -v "${java_version}")"
+    export JAVA_HOME
+  else
+    info "Running on CodeBuild; Java version is managed in buildspec"
+  fi
+  java -version
+}
+
+function wait_for_local_db_to_be_healthy {
+  wait_for_container_to_be_healthy oph-oppijanumerorekisteri-db
+}
+
+function wait_for_container_to_be_healthy {
+  require_docker
+  local -r container_name="$1"
+
+  info "Waiting for docker container $container_name to be healthy"
+  until [ "$(docker inspect -f {{.State.Health.Status}} "$container_name" 2>/dev/null || echo "not-running")" == "healthy" ]; do
+    sleep 2
+  done
+}
+
 function info {
   log "INFO" "$1"
 }

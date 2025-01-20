@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
-import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -11,10 +10,11 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HetuRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.rajapinnat.vtj.api.Huoltaja;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 import software.amazon.awssdk.services.sns.SnsClient;
 
 import org.joda.time.DateTime;
-import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,8 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
-@IntegrationTest
+@SpringBootTest
+@Sql("/sql/truncate_data.sql")
 public class YksilointiITest {
 
     @MockBean
@@ -65,11 +66,6 @@ public class YksilointiITest {
     private HetuRepository hetuRepository;
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
-    @After
-    public void cleanup() {
-        databaseService.truncate();
-    }
 
     @Test
     @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")

@@ -29,7 +29,6 @@
 
     <modules>
         <module>oppijanumerorekisteri-api</module>
-        <module>oppijanumerorekisteri-domain</module>
         <module>oppijanumerorekisteri-service</module>
     </modules>
 

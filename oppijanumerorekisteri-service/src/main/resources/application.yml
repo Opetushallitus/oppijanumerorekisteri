@@ -18,7 +18,7 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/oppijanumerorekisteri?ApplicationName=oppijanumerorekisteri-service
+    url: jdbc:postgresql://localhost:5434/oppijanumerorekisteri?ApplicationName=oppijanumerorekisteri-service
     username: oph
     password: oph
     hikari:

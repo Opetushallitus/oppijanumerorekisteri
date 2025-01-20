@@ -3,7 +3,6 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 import fi.vm.sade.oppijanumerorekisteri.FilesystemHelper;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
-import fi.vm.sade.oppijanumerorekisteri.configurations.H2Configuration;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
 import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
@@ -33,14 +32,9 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Sql("/controller/oppija/integration/fixture/truncate-tables.sql")
+@Sql("/sql/truncate_data.sql")
 @Sql("/controller/oppija/integration/fixture/tuonti-test-fixture.sql")
-@Sql("/db/migration/V20221109120000000__tuontikooste_view.sql")
-@Sql("/db/migration/V20221215120000000__tuontikooste_fix.sql")
-@Sql("/db/migration/V20230105120000000__tuontikooste_add_conflicts.sql")
-@Sql("/db/migration/V20231005000000001__add_api_for_tuontikooste.sql")
-@ActiveProfiles("dev")
-@SpringBootTest(classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, H2Configuration.class})
+@SpringBootTest
 @AutoConfigureMockMvc
 class OppijaControllerIntegrationTest {
 
@@ -145,7 +139,11 @@ class OppijaControllerIntegrationTest {
                 .contains("\"numberOfElements\":1")
                 .contains("\"author\":null");
 
+        // PostgreSQL considers NULL text to be greater than text value
         assertThat(fetch(KOOSTE + "?pageSize=1&page=1&field=author&sort=ASC"))
+                .contains("\"numberOfElements\":1")
+                .contains("\"author\":\"tuonti1, tuonti1\"");
+        assertThat(fetch(KOOSTE + "?pageSize=1&page=1&field=author&sort=DESC"))
                 .contains("\"numberOfElements\":1")
                 .contains("\"author\":null");
     }

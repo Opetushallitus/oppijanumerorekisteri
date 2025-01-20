@@ -17,11 +17,6 @@
         <!-- Internal -->
         <dependency>
             <groupId>fi.vm.sade.oppijanumerorekisteri</groupId>
-            <artifactId>oppijanumerorekisteri-domain</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>fi.vm.sade.oppijanumerorekisteri</groupId>
             <artifactId>oppijanumerorekisteri-api</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -163,11 +158,6 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
 
         <!-- Other -->
         <dependency>
@@ -177,6 +167,11 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-envers</artifactId>
+            <version>6.4.4.Final</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.orm</groupId>
@@ -219,6 +214,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.12.5</version>
         </dependency>
         <dependency>
             <groupId>com.github.kagkarlsson</groupId>
@@ -283,6 +283,20 @@
             <artifactId>wiremock-jetty12</artifactId>
             <version>3.9.2</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-jpa</artifactId>
+            <classifier>jakarta</classifier>
+            <version>${querydsl.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-apt</artifactId>
+            <classifier>jakarta</classifier>
+            <version>${querydsl.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
