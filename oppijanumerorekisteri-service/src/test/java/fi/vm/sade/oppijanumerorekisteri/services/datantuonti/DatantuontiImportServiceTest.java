@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +16,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
+import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.impl.AwsSnsHenkiloModifiedTopic;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
@@ -27,6 +30,8 @@ import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 @IntegrationTest
 public class DatantuontiImportServiceTest {
     @Autowired
+    private DatabaseService databaseService;
+    @Autowired
     private DatantuontiImportService importService;
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -36,6 +41,13 @@ public class DatantuontiImportServiceTest {
     private HenkiloRepository henkiloRepository;
     @MockBean
     private AwsSnsHenkiloModifiedTopic snsTopic;
+    @MockBean
+    private KayttooikeusClient kayttooikeusClient;
+
+    @After
+    public void cleanup() {
+        databaseService.truncate();
+    }
 
     @Before
     public void insertDatantuonti() throws Exception {
@@ -50,11 +62,11 @@ public class DatantuontiImportServiceTest {
                 master_oid,
                 linkitetyt_oidit)
             VALUES
-                ('1.2.2004.1', true, 'fi', 'fi', '368', '1.2.2004.1', '1.2.2004.2,1.2.2004.3'),
+                ('1.2.2004.1', true, 'fi', 'fi', '368', null, '1.2.2004.2,1.2.2004.3'),
                 ('1.2.2004.2', false, 'fi', 'sv', '368,246', '1.2.2004.1', null),
                 ('1.2.2004.3', false, 'fi', 'sv', '368,246', '1.2.2004.1', null),
                 ('1.2.2004.4', true, 'sv', 'sv', '368,246', null, null),
-                ('1.2.2004.5', true, 'sv', 'fi', '368,246', null, null)
+                ('1.2.2004.5', false, 'sv', 'fi', '368,246', '1.2.2004.4', null)
         """);
     }
 
@@ -105,7 +117,6 @@ public class DatantuontiImportServiceTest {
             .returns(before.getKutsumanimi(), from(Henkilo::getKutsumanimi))
             .returns(before.getSukunimi(), from(Henkilo::getSukunimi))
             .returns(before.getHetu(), from(Henkilo::getHetu))
-            .returns(before.getModified().toInstant(), h -> h.getModified().toInstant())
             .returns(before.isPassivoitu(), from(Henkilo::isPassivoitu));
         assertThat(getAidinkieli(after.getOidHenkilo())).isEqualTo("fi");
         assertThat(getAsiointikieli(after.getOidHenkilo())).isEqualTo("fi");
@@ -126,10 +137,42 @@ public class DatantuontiImportServiceTest {
         assertThat(toka.getEtunimet()).matches(Pattern.compile(".* Testi"));
         assertThat(toka.getSukunimi()).matches(Pattern.compile(".*-Testi"));
         assertThat(toka.getHetu()).isNull();
-        assertThat(toka.isPassivoitu()).isFalse();
+        assertThat(toka.isPassivoitu()).isTrue();
         assertThat(toka.isYksiloityVTJ()).isFalse();
         assertThat(toka.isYksiloity()).isFalse();
         assertThat(getAidinkieli(toka.getOidHenkilo())).isEqualTo("fi");
         assertThat(getKansalaisuus(toka.getOidHenkilo())).containsExactlyInAnyOrder("368", "246");
     }
+
+    @Test
+    public void createNewHenkiloLinksHenkilos() throws Exception {
+        Henkilo before = Henkilo.builder()
+            .etunimet("Etu")
+            .kutsumanimi("Etu")
+            .sukunimi("Suku")
+            .hetu("010107A939J")
+            .oidHenkilo("1.2.2004.4")
+            .asiointiKieli(new Kielisyys("fi"))
+            .aidinkieli(new Kielisyys("fi"))
+            .kansalaisuus(Set.of(new Kansalaisuus(Kansalaisuus.SUOMI)))
+            .build();
+        henkiloModificationService.createHenkilo(before, "kasittelia", false, before.getOidHenkilo());
+
+        Long originalCount = getHenkiloCount();
+        importService.createNewHenkilos();
+        assertThat(getHenkiloCount()).isEqualTo(originalCount + 4);
+
+        List<HenkiloViite> links = jdbcTemplate.query("SELECT master_oid, slave_oid FROM henkiloviite",
+            (rs, rn) -> new HenkiloViite(rs.getString("master_oid"), rs.getString("slave_oid")));
+        assertThat(links).containsExactlyInAnyOrder(
+            new HenkiloViite("1.2.2004.1", "1.2.2004.2"),
+            new HenkiloViite("1.2.2004.1", "1.2.2004.3"),
+            new HenkiloViite("1.2.2004.4", "1.2.2004.5")
+        );
+    }
 }
+
+record HenkiloViite(
+    String masterOid,
+    String slaveOid
+) {};

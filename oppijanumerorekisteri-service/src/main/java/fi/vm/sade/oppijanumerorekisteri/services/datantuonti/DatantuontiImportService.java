@@ -78,7 +78,7 @@ public class DatantuontiImportService {
         jdbcTemplate.execute(CREATE_DATANTUONTI_HENKILO);
         jdbcTemplate.execute("CREATE INDEX IF NOT EXISTS datantuonti_henkilo_temp_oid_idx ON datantuonti_henkilo_temp(oid)");
 
-        String henkiloSql = "aws_s3.table_import_from_s3('datantuonti_henkilo_temp', '',  '(FORMAT CSV,HEADER true)', aws_commons.create_s3_uri(?, ?, ?))";
+        String henkiloSql = "SELECT * FROM aws_s3.table_import_from_s3('datantuonti_henkilo_temp', '',  '(FORMAT CSV,HEADER true)', aws_commons.create_s3_uri(?, ?, ?))";
         String henkiloTxt = jdbcTemplate.queryForObject(henkiloSql, String.class, bucketName, manifest.getHenkilo(), Region.EU_WEST_1.id());
         log.info("Importing datantuontihenkilot from S3 returned {}", henkiloTxt);
     }
@@ -105,10 +105,9 @@ public class DatantuontiImportService {
         )) {
             DatantuontiHenkiloGenerator generator = new DatantuontiHenkiloGenerator();
             var savedHenkilos = newHenkilos
-                .map(d -> mapToHenkilo(d, generator))
-                .peek(this::saveNewHenkilo)
+                .peek(d -> saveNewHenkilo(d, generator))
                 .toList();
-            savedHenkilos.stream().forEach(this::saveHenkiloViite);
+            savedHenkilos.stream().forEach(this::linkHenkilos);
         }
     }
 
@@ -122,7 +121,7 @@ public class DatantuontiImportService {
             .yksilointiYritetty(d.yksiloityvtj())
             .yksiloity(!d.yksiloityvtj() && d.masterOid() == null)
             .kansalaisuus(d.kansalaisuus().stream().map(k -> new Kansalaisuus(k)).collect(toSet()))
-            .duplicate(d.masterOid() == null || !d.oid().equals(d.masterOid()))
+            .duplicate(d.masterOid() != null)
             .etunimet(generated.etunimet())
             .kutsumanimi(generated.kutsumanimi())
             .sukunimi(generated.sukunimi())
@@ -141,20 +140,27 @@ public class DatantuontiImportService {
         }
     }
 
-    private void saveNewHenkilo(Henkilo h) {
-        log.info("Saving new henkilo oid {}", h.getOidHenkilo());
+    private void saveNewHenkilo(DatantuontiHenkilo d, DatantuontiHenkiloGenerator generator) {
+        log.info("Saving new henkilo oid {}", d.oid());
         try {
+            Henkilo h = mapToHenkilo(d, generator);
             henkiloModificationService.createHenkilo(h, "datantuonti", false, h.getOidHenkilo());
         } catch (Exception e) {
-            log.error("Failed to create new henkilo with oid " + h.getOidHenkilo(), e);
+            log.error("Failed to create new henkilo with oid " + d.oid(), e);
             throw e;
         }
     }
 
-    private void saveHenkiloViite(Henkilo d) {
+    private void linkHenkilos(DatantuontiHenkilo d) {
         try {
+            if (d.linkitetytOidit().size() > 0) {
+                henkiloModificationService.forceLinkHenkilos(d.oid(), d.linkitetytOidit());
+            }
+            if (d.masterOid() != null) {
+                henkiloModificationService.forceLinkHenkilos(d.masterOid(), List.of(d.oid()));
+            }
         } catch (Exception e) {
-            log.error("Failed to update henkiloviite for henkilo oid " + d.getOidHenkilo(), e);
+            log.error("Failed to update henkiloviite for henkilo oid " + d.oid(), e);
             throw e;
         }
     }
