@@ -35,7 +35,7 @@ class CdkApp extends cdk.App {
     };
 
     const ecsStack = new ECSStack(this, sharedAccount.prefix("ECSStack"), stackProps);
-    const datantuontiExportStack = new datantuonti.ExportStack(this, sharedAccount.prefix("DatantuontiExport"));
+    const datantuontiExportStack = new datantuonti.ExportStack(this, sharedAccount.prefix("DatantuontiExport"), stackProps);
     const databaseStack = new DatabaseStack(
         this,
         sharedAccount.prefix("Database"),

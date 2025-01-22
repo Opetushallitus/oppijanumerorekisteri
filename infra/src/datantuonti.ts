@@ -9,8 +9,8 @@ export class ExportStack extends cdk.Stack {
     readonly bucket: s3.Bucket;
     readonly encryptionKey: kms.Key;
 
-    constructor(scope: constructs.Construct, id: string) {
-        super(scope, id);
+    constructor(scope: constructs.Construct, id: string, props: cdk.StackProps) {
+        super(scope, id, props);
 
         const targetAccountPrincipal = this.createTargetAccountPrincipal();
         this.bucket = this.createExportBucket(targetAccountPrincipal);
