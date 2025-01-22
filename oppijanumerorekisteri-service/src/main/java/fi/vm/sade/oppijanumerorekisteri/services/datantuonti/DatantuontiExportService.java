@@ -26,7 +26,7 @@ public class DatantuontiExportService {
     @Value("${oppijanumerorekisteri.tasks.datantuonti.export.bucket-name}")
     private String bucketName;
 
-    private final static String V1_PREFIX = "datantuonti/oppijanumerorekisteri/v1";
+    private final static String V1_PREFIX = "oppijanumerorekisteri/v1";
     public final static String MANIFEST_OBJECT_KEY = V1_PREFIX + "/manifest.json";
     private final String CREATE_HENKILO_SQL = """
         CREATE TABLE datantuonti_export_new.henkilo_temp AS

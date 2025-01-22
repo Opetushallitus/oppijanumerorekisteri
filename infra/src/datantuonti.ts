@@ -5,26 +5,7 @@ import * as iam from "aws-cdk-lib/aws-iam";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import * as constructs from "constructs";
 
-export class DatantuontiStack extends cdk.Stack {
-    readonly exportBucket: s3.Bucket;
-    readonly encryptionKey: kms.Key;
-    readonly s3ImportRole: iam.Role;
-    readonly importPolicy: iam.Policy;
-
-    constructor(scope: constructs.Construct, id: string, props: cdk.StackProps) {
-        super(scope, id, props);
-
-        const _export = new Export(this, "Export");
-        this.exportBucket = _export.bucket;
-        this.encryptionKey = _export.encryptionKey;
-
-        const _import = new Import(this, "Import");
-        this.s3ImportRole = _import.role;
-        this.importPolicy = _import.policy;
-    }
-}
-
-class Export extends constructs.Construct {
+export class ExportStack extends cdk.Stack {
     readonly bucket: s3.Bucket;
     readonly encryptionKey: kms.Key;
 
@@ -67,55 +48,5 @@ class Export extends constructs.Construct {
         bucket.grantRead(targetAccountPrincipal);
 
         return bucket;
-    }
-}
-
-class Import extends constructs.Construct {
-    readonly role: iam.Role;
-    readonly policy: iam.Policy;
-
-    constructor(scope: constructs.Construct, id: string) {
-        super(scope, id);
-
-        this.policy = this.createPolicy();
-        this.role = this.createRole(this.policy);
-    }
-
-    private createRole(policy: iam.Policy) {
-        const role = new iam.Role(this, "Role", {
-            assumedBy: new iam.ServicePrincipal("rds.amazonaws.com"),
-        });
-        policy.attachToRole(role);
-
-        return role;
-    }
-
-    private createPolicy() {
-        const importBucketName = ssm.StringParameter.valueFromLookup(
-            this,
-            "oppijanumerorekisteri.tasks.datantuonti.import.bucket.name"
-        );
-
-        const decryptionKeyArn = ssm.StringParameter.valueFromLookup(
-            this,
-            "oppijanumerorekisteri.tasks.datantuonti.import.bucket.decryption-key-arn"
-        );
-        const policy = new iam.Policy(this, "Import");
-
-        policy.addStatements(
-            new iam.PolicyStatement({
-                actions: ["s3:GetObject", "s3:ListBucket"],
-                resources: [
-                    `arn:aws:s3:::${importBucketName}`,
-                    `arn:aws:s3:::${importBucketName}/*`,
-                ],
-            }),
-            new iam.PolicyStatement({
-                actions: ["kms:Decrypt"],
-                resources: [decryptionKeyArn],
-            })
-        );
-
-        return policy;
     }
 }

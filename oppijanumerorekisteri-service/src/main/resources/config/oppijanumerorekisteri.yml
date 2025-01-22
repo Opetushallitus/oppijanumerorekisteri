@@ -50,3 +50,6 @@ aws:
   henkiloModifiedTopic:
     enabled: true
     topicArn: '${henkilo_modified_sns_topic_arn}'
+
+oppijanumerorekisteri.tasks.datantuonti.export.enabled: false
+oppijanumerorekisteri.tasks.datantuonti.export.bucket-name: none

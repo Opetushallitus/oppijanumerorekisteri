@@ -5,6 +5,9 @@ const defaultConfig = {
     virkailijaHost: "",
     minCapacity: 0,
     maxCapacity: 0,
+    features: {
+        "oppijanumero.tasks.datantuonti.import.enabled": false,
+    },
 };
 
 export type Config = typeof defaultConfig;
@@ -34,6 +37,9 @@ export const hahtuva: Config = {
     virkailijaHost: "virkailija.hahtuvaopintopolku.fi",
     minCapacity: 1,
     maxCapacity: 2,
+    features: {
+        "oppijanumero.tasks.datantuonti.import.enabled": true,
+    },
 };
 
 export const dev: Config = {

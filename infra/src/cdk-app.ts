@@ -22,7 +22,7 @@ import * as path from "node:path";
 import {createHealthCheckStacks} from "./health-check";
 import {DatabaseBackupToS3} from "./DatabaseBackupToS3";
 import {lookupAlarmTopic} from "./shared-account";
-import {DatantuontiStack} from "./datantuonti";
+import * as datantuonti from "./datantuonti";
 
 class CdkApp extends cdk.App {
   constructor(props: cdk.AppProps) {
@@ -35,8 +35,14 @@ class CdkApp extends cdk.App {
     };
 
     const ecsStack = new ECSStack(this, sharedAccount.prefix("ECSStack"), stackProps);
-    const datantuontiStack = new DatantuontiStack(this, sharedAccount.prefix("Datantuonti"), stackProps);
-    const databaseStack = new DatabaseStack(this, sharedAccount.prefix("Database"), ecsStack.cluster, stackProps);
+    const datantuontiExportStack = new datantuonti.ExportStack(this, sharedAccount.prefix("DatantuontiExport"));
+    const databaseStack = new DatabaseStack(
+        this,
+        sharedAccount.prefix("Database"),
+        ecsStack.cluster,
+        datantuontiExportStack.bucket,
+        stackProps
+    );
 
     createHealthCheckStacks(this)
 
@@ -45,6 +51,7 @@ class CdkApp extends cdk.App {
       bastion: databaseStack.bastion,
       exportBucket: databaseStack.exportBucket,
       ecsCluster: ecsStack.cluster,
+      datantuontiExportBucket: datantuontiExportStack.bucket,
       ...stackProps,
     });
 
@@ -79,6 +86,7 @@ class DatabaseStack extends cdk.Stack {
       scope: constructs.Construct,
       id: string,
       ecsCluster: ecs.Cluster,
+      datantuontiExportBucket: s3.Bucket,
       props: cdk.StackProps
   ) {
     super(scope, id, props);
@@ -108,7 +116,7 @@ class DatabaseStack extends cdk.Stack {
           ),
         }),
         readers: [],
-        s3ExportBuckets: [this.exportBucket],
+        s3ExportBuckets: [this.exportBucket, datantuontiExportBucket],
       });
     } else {
       this.database = new rds.DatabaseCluster(this, "Database", {
@@ -131,7 +139,7 @@ class DatabaseStack extends cdk.Stack {
         }),
         storageEncrypted: true,
         readers: [],
-        s3ExportBuckets: [this.exportBucket],
+        s3ExportBuckets: [this.exportBucket, datantuontiExportBucket],
       });
     }
 
@@ -156,6 +164,7 @@ type OppijanumerorekisteriApplicationStackProperties = cdk.StackProps & {
   ecsCluster: ecs.Cluster
   bastion: ec2.BastionHostLinux
   exportBucket: s3.Bucket
+  datantuontiExportBucket: s3.Bucket
 }
 
 class OppijanumerorekisteriApplicationStack extends cdk.Stack {
@@ -193,6 +202,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
           },
         });
 
+    const conf = config.getConfig();
     const appPort = 8080;
     taskDefinition.addContainer("AppContainer", {
       image: ecs.ContainerImage.fromDockerImageAsset(dockerImage),
@@ -204,6 +214,8 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         postgresql_db: "oppijanumerorekisteri",
         aws_region: this.region,
         export_bucket_name: props.exportBucket.bucketName,
+        "organisaatio.tasks.datantuonti.export.enabled": `${conf.features["oppijanumero.tasks.datantuonti.import.enabled"]}`,
+        "organisaatio.tasks.datantuonti.export.bucket-name": props.datantuontiExportBucket.bucketName,
       },
       secrets: {
         postgresql_username: ecs.Secret.fromSecretsManager(
@@ -303,7 +315,6 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         })
     );
 
-    const conf = config.getConfig();
     const service = new ecs.FargateService(this, "Service", {
       cluster: props.ecsCluster,
       taskDefinition,
