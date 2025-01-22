@@ -1,5 +1,5 @@
-spring.security.oauth2.resourceserver.jwt.issuer-uri: https://virkailija.hahtuvaopintopolku.fi/kayttooikeus-service
-spring.security.oauth2.resourceserver.jwt.jwk-set-uri: https://virkailija.hahtuvaopintopolku.fi/kayttooikeus-service/oauth2/jwks
+spring.security.oauth2.resourceserver.jwt.issuer-uri: https://kayttooikeus.hahtuva.yleiskayttoiset.opintopolku.fi/kayttooikeus-service
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri: https://kayttooikeus.hahtuva.yleiskayttoiset.opintopolku.fi/kayttooikeus-service/oauth2/jwks
 
 oppijanumerorekisteri.vtjkysely.enabled: false
 oppijanumerorekisteri.vtjkysely.address: http://localhost
