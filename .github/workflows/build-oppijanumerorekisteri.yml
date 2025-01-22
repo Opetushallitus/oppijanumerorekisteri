@@ -41,17 +41,10 @@ jobs:
           cache: "maven"
       - name: Maven version
         run: ./mvnw --version
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
       - name: Build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./mvnw clean install -B -Dbranch=$GITHUB_REF_NAME -Drevision=$GITHUB_SHA -DbuildNumber=$GITHUB_RUN_NUMBER/$GITHUB_RUN_ATTEMPT org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Opetushallitus_oppijanumerorekisteri
+        run: ./mvnw clean install -B -Dbranch=$GITHUB_REF_NAME -Drevision=$GITHUB_SHA -DbuildNumber=$GITHUB_RUN_NUMBER/$GITHUB_RUN_ATTEMPT
       - name: Upload jar
         uses: actions/upload-artifact@v4
         with:
@@ -112,12 +105,6 @@ jobs:
           node-version: "20.x"
           cache: "npm"
           cache-dependency-path: henkilo-ui/src/main/static/package-lock.json
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
       - name: Cache playwright browsers
         uses: actions/cache@v4
         with:
@@ -144,5 +131,4 @@ jobs:
         working-directory: henkilo-ui
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn clean install -B -Dbranch=$GITHUB_REF_NAME -Drevision=$GITHUB_SHA -DbuildNumber=$GITHUB_RUN_NUMBER/$GITHUB_RUN_ATTEMPT org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Opetushallitus_henkilo-ui
+        run: mvn clean install -B -Dbranch=$GITHUB_REF_NAME -Drevision=$GITHUB_SHA -DbuildNumber=$GITHUB_RUN_NUMBER/$GITHUB_RUN_ATTEMPT
