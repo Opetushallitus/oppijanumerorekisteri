@@ -407,6 +407,16 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
     )
   }
 
+  datantuontiExportFailureAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
+    alarms.alarmIfExpectedLogLineIsMissing(
+        this,
+        "DatantuontiExportTask",
+        logGroup,
+        alarmTopic,
+        logs.FilterPattern.literal('"Datantuonti export task completed"')
+    )
+  }
+
   ssmString(name: string): ecs.Secret {
     return ecs.Secret.fromSsmParameter(
       ssm.StringParameter.fromStringParameterName(
