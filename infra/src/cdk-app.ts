@@ -23,6 +23,7 @@ import {createHealthCheckStacks} from "./health-check";
 import {DatabaseBackupToS3} from "./DatabaseBackupToS3";
 import {lookupAlarmTopic} from "./shared-account";
 import * as datantuonti from "./datantuonti";
+import * as alarms from "./alarms";
 
 class CdkApp extends cdk.App {
   constructor(props: cdk.AppProps) {
@@ -397,31 +398,13 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
   }
 
   exportFailureAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
-    const metricFilter = logGroup.addMetricFilter(
-      "ExportTaskSuccessMetricFilter",
-      {
-        filterPattern: logs.FilterPattern.literal(
-          '"Oppijanumerorekisteri export task completed"'
-        ),
-        metricName: sharedAccount.prefix("ExportTaskSuccess"),
-        metricNamespace: "Oppijanumerorekisteri",
-        metricValue: "1",
-      }
-    );
-    const alarm = new cloudwatch.Alarm(this, "ExportFailingAlarm", {
-      alarmName: sharedAccount.prefix("ExportFailing"),
-      metric: metricFilter.metric({
-        statistic: "Sum",
-        period: cdk.Duration.hours(1),
-      }),
-      comparisonOperator:
-      cloudwatch.ComparisonOperator.LESS_THAN_OR_EQUAL_TO_THRESHOLD,
-      threshold: 0,
-      evaluationPeriods: 8,
-      treatMissingData: cloudwatch.TreatMissingData.BREACHING,
-    });
-    alarm.addOkAction(new cloudwatch_actions.SnsAction(alarmTopic));
-    alarm.addAlarmAction(new cloudwatch_actions.SnsAction(alarmTopic));
+    alarms.alarmIfExpectedLogLineIsMissing(
+        this,
+        "ExportTask",
+        logGroup,
+        alarmTopic,
+        logs.FilterPattern.literal('"Oppijanumerorekisteri export task completed"')
+    )
   }
 
   ssmString(name: string): ecs.Secret {
