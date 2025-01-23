@@ -50,7 +50,7 @@ public class OppijanumerorekisteriProperties {
         @Getter
         @Setter
         public static class DatantuontiExport {
-            private String bucket;
+            private String bucketName;
             private String enccryptionKeyArn;
         }
     }
