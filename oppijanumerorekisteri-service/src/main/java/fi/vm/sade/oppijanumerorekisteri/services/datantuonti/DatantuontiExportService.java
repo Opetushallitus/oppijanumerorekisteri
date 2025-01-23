@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
+import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
+import software.amazon.awssdk.services.s3.model.ServerSideEncryption;
 
 import java.util.Date;
 
@@ -78,6 +80,7 @@ public class DatantuontiExportService {
         var timestamp = new Date().getTime();
         var henkiloObjectKey = V1_PREFIX + "/csv/henkilo-" + timestamp + ".csv";
         exportQueryToS3(henkiloObjectKey, HENKILO_QUERY);
+        reEncryptFile(henkiloObjectKey);
         writeManifest(MANIFEST_OBJECT_KEY, new DatantuontiManifest(henkiloObjectKey));
     }
 
@@ -100,5 +103,23 @@ public class DatantuontiExportService {
                 AsyncRequestBody.fromString(manifestJson)
         ).join();
         log.info("Wrote manifest to S3: {}", response);
+    }
+
+    private void reEncryptFile(String objectKey) {
+        log.info("Re-encrypting {}/{} with custom key {}", bucketName(), objectKey, encryptionKeyArn());
+        CopyObjectRequest request = CopyObjectRequest.builder()
+                .sourceBucket(bucketName())
+                .destinationBucket(bucketName())
+                .sourceKey(objectKey)
+                .destinationKey(objectKey)
+                .ssekmsKeyId(encryptionKeyArn())
+                .serverSideEncryption(ServerSideEncryption.AWS_KMS)
+                .build();
+        onrS3Client.copyObject(request).join();
+        log.info("{}/{} re-encrypted with custom key {}", bucketName(), objectKey, encryptionKeyArn());
+    }
+
+    private String encryptionKeyArn() {
+        return properties.getTasks().getDatantuonti().getExport().getEnccryptionKeyArn();
     }
 }
