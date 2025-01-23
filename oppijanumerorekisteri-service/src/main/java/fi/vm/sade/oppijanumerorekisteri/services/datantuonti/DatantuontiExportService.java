@@ -93,7 +93,7 @@ public class DatantuontiExportService {
     }
 
     private String bucketName() {
-        return properties.getTasks().getDatantuonti().getExport().getBucket();
+        return properties.getTasks().getDatantuonti().getExport().getBucketName();
     }
 
     private void writeManifest(String objectKey, DatantuontiManifest manifest) throws JsonProcessingException {
