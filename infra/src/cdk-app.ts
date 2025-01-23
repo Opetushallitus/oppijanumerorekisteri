@@ -1,7 +1,5 @@
 import * as cdk from "aws-cdk-lib";
 import * as constructs from "constructs";
-import * as cloudwatch from "aws-cdk-lib/aws-cloudwatch";
-import * as cloudwatch_actions from "aws-cdk-lib/aws-cloudwatch-actions";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as iam from "aws-cdk-lib/aws-iam";
