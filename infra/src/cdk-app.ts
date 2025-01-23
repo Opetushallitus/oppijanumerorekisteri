@@ -166,7 +166,7 @@ type OppijanumerorekisteriApplicationStackProperties = cdk.StackProps & {
   bastion: ec2.BastionHostLinux
   exportBucket: s3.Bucket
   datantuontiExportBucket: s3.Bucket
-  datantuotniExportEncryptionKey: kms.IKey
+  datantuontiExportEncryptionKey: kms.IKey
 }
 
 class OppijanumerorekisteriApplicationStack extends cdk.Stack {
@@ -218,7 +218,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         export_bucket_name: props.exportBucket.bucketName,
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": `${conf.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]}`,
         "oppijanumerorekisteri.tasks.datantuonti.export.bucket-name": props.datantuontiExportBucket.bucketName,
-        "oppijanumerorekisteri.tasks.datantuonti.export.encryption-key-arn": props.datantuotniExportEncryptionKey.keyArn
+        "oppijanumerorekisteri.tasks.datantuonti.export.encryption-key-arn": props.datantuontiExportEncryptionKey.keyArn
       },
       secrets: {
         postgresql_username: ecs.Secret.fromSecretsManager(
