@@ -128,10 +128,10 @@ public class SchedulingConfiguration {
         return Tasks.recurring(new TaskWithoutDataDescriptor("DatantuontiExport"), new Daily(LocalTime.of(0, 15, 0)))
                 .execute((taskInstance, executionContext) -> {
                     try {
-                        log.info("Running datantuonti export task");
+                        log.info("Running oppijanumerorekisteri datantuonti export task");
                         datantuontiExportService.createSchema();
                         datantuontiExportService.generateExportFiles();
-                        log.info("Datantuonti export task completed");
+                        log.info("Oppijanumerorekisteri datantuonti export task completed");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
