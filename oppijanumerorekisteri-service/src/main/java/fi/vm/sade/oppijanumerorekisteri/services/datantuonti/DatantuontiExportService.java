@@ -2,9 +2,9 @@ package fi.vm.sade.oppijanumerorekisteri.services.datantuonti;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +23,8 @@ public class DatantuontiExportService {
     private S3AsyncClient onrS3Client;
     @Autowired
     private ObjectMapper objectMapper;
-    @Value("${oppijanumerorekisteri.tasks.datantuonti.export.bucket-name}")
-    private String bucketName;
+    @Autowired
+    private OppijanumerorekisteriProperties properties;
 
     private final static String V1_PREFIX = "oppijanumerorekisteri/v1";
     public final static String MANIFEST_OBJECT_KEY = V1_PREFIX + "/manifest.json";
@@ -82,17 +82,21 @@ public class DatantuontiExportService {
     }
 
     private void exportQueryToS3(String objectKey, String query) {
-        log.info("Exporting table to S3: {}/{}", bucketName, objectKey);
+        log.info("Exporting table to S3: {}/{}", bucketName(), objectKey);
         var sql = "SELECT rows_uploaded FROM aws_s3.query_export_to_s3(?, aws_commons.create_s3_uri(?, ?, ?), options := 'FORMAT CSV, HEADER TRUE')";
-        var rowsUploaded = jdbcTemplate.queryForObject(sql, Long.class, query, bucketName, objectKey, Region.EU_WEST_1.id());
+        var rowsUploaded = jdbcTemplate.queryForObject(sql, Long.class, query, bucketName(), objectKey, Region.EU_WEST_1.id());
         log.info("Exported {} rows to S3 object {}", rowsUploaded, objectKey);
     }
 
+    private String bucketName() {
+        return properties.getTasks().getDatantuonti().getExport().getBucket();
+    }
+
     private void writeManifest(String objectKey, DatantuontiManifest manifest) throws JsonProcessingException {
-        log.info("Writing manifest file {}/{}: {}", bucketName, objectKey, manifest);
+        log.info("Writing manifest file {}/{}: {}", bucketName(), objectKey, manifest);
         var manifestJson = objectMapper.writeValueAsString(manifest);
         var response = onrS3Client.putObject(
-                b -> b.bucket(bucketName).key(objectKey),
+                b -> b.bucket(bucketName()).key(objectKey),
                 AsyncRequestBody.fromString(manifestJson)
         ).join();
         log.info("Wrote manifest to S3: {}", response);

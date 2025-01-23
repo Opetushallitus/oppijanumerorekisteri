@@ -29,6 +29,7 @@ public class OppijanumerorekisteriProperties {
     @Setter
     public static class Tasks {
         private final Export export = new Export();
+        private final Datantuonti datantuonti = new Datantuonti();
     }
 
     @Getter
@@ -39,6 +40,18 @@ public class OppijanumerorekisteriProperties {
         private String lampiBucketName;
         private String lampiRoleArn;
         private String lampiExternalId;
+    }
+
+    @Getter
+    @Setter
+    public static class Datantuonti {
+        private final DatantuontiExport export = new DatantuontiExport();
+
+        @Getter
+        @Setter
+        public static class DatantuontiExport {
+            private String bucket;
+        }
     }
 
     @Getter
