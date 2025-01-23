@@ -184,6 +184,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       retention: logs.RetentionDays.INFINITE,
     });
     this.exportFailureAlarm(logGroup, alarmTopic)
+    this.datantuontiExportFailureAlarm(logGroup, alarmTopic)
 
     const dockerImage = new ecr_assets.DockerImageAsset(this, "AppImage", {
       directory: path.join(__dirname, "../../"),
