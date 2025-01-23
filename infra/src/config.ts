@@ -38,7 +38,7 @@ export const hahtuva: Config = {
     minCapacity: 1,
     maxCapacity: 2,
     features: {
-        "oppijanumero.tasks.datantuonti.import.enabled": true,
+        "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     },
 };
 
