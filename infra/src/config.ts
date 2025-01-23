@@ -6,7 +6,7 @@ const defaultConfig = {
     minCapacity: 0,
     maxCapacity: 0,
     features: {
-        "oppijanumero.tasks.datantuonti.import.enabled": false,
+        "oppijanumerorekisteri.tasks.datantuonti.import.enabled": false,
     },
 };
 

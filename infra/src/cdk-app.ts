@@ -213,8 +213,8 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         postgresql_db: "oppijanumerorekisteri",
         aws_region: this.region,
         export_bucket_name: props.exportBucket.bucketName,
-        "organisaatio.tasks.datantuonti.export.enabled": `${conf.features["oppijanumero.tasks.datantuonti.import.enabled"]}`,
-        "organisaatio.tasks.datantuonti.export.bucket-name": props.datantuontiExportBucket.bucketName,
+        "oppijanumerorekisteri.tasks.datantuonti.export.enabled": `${conf.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]}`,
+        "oppijanumerorekisteri.tasks.datantuonti.export.bucket-name": props.datantuontiExportBucket.bucketName,
       },
       secrets: {
         postgresql_username: ecs.Secret.fromSecretsManager(
