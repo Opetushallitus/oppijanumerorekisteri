@@ -53,7 +53,8 @@ public class DatantuontiExportService {
             ) AS linkitetyt_oidit
           FROM henkilo h
           LEFT JOIN kielisyys aidinkieli ON h.aidinkieli_id = aidinkieli.id
-          LEFT JOIN kielisyys asiointikieli ON h.asiointikieli_id = asiointikieli.id;
+          LEFT JOIN kielisyys asiointikieli ON h.asiointikieli_id = asiointikieli.id
+          WHERE oidhenkilo like '1.2.246.562.24.%';
     """;
     private final String HENKILO_QUERY = """
         SELECT
