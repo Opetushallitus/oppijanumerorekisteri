@@ -121,6 +121,6 @@ public class DatantuontiExportService {
     }
 
     private String encryptionKeyArn() {
-        return properties.getTasks().getDatantuonti().getExport().getEnccryptionKeyArn();
+        return properties.getTasks().getDatantuonti().getExport().getEncryptionKeyArn();
     }
 }

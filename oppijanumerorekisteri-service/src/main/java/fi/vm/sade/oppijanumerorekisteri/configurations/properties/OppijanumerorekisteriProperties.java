@@ -51,7 +51,7 @@ public class OppijanumerorekisteriProperties {
         @Setter
         public static class DatantuontiExport {
             private String bucketName;
-            private String enccryptionKeyArn;
+            private String encryptionKeyArn;
         }
     }
 
