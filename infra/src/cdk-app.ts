@@ -286,7 +286,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
 
     props.exportBucket.grantReadWrite(taskDefinition.taskRole);
     props.datantuontiExportBucket.grantReadWrite(taskDefinition.taskRole);
-    props.datantuontiExportEncryptionKey.grantEncrypt(taskDefinition.taskRole);
+    props.datantuontiExportEncryptionKey.grantEncryptDecrypt(taskDefinition.taskRole);
     taskDefinition.addToTaskRolePolicy(
       new iam.PolicyStatement({
         actions: ["sts:AssumeRole"],
