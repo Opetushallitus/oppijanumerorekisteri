@@ -6,6 +6,7 @@ const defaultConfig = {
     minCapacity: 0,
     maxCapacity: 0,
     features: {
+        "oppijanumerorekisteri.tasks.datantuonti.export.enabled": false,
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": false,
     },
 };
@@ -38,7 +39,8 @@ export const hahtuva: Config = {
     minCapacity: 1,
     maxCapacity: 2,
     features: {
-        "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
+        ...defaultConfig.features,
+        "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
     },
 };
 
