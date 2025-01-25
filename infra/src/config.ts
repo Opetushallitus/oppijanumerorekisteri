@@ -49,6 +49,10 @@ export const dev: Config = {
     virkailijaHost: "virkailija.untuvaopintopolku.fi",
     minCapacity: 1,
     maxCapacity: 2,
+    features: {
+        ...defaultConfig.features,
+        "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
+    }
 };
 
 export const qa: Config = {
