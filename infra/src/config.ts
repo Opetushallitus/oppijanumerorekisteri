@@ -60,6 +60,10 @@ export const qa: Config = {
     virkailijaHost: "virkailija.testiopintopolku.fi",
     minCapacity: 1,
     maxCapacity: 2,
+    features: {
+        ...defaultConfig.features,
+        "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
+    }
 };
 
 export const prod: Config = {
