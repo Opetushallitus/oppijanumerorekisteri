@@ -71,4 +71,8 @@ export const prod: Config = {
     virkailijaHost: "virkailija.opintopolku.fi",
     minCapacity: 2,
     maxCapacity: 8,
+    features: {
+        ...defaultConfig.features,
+        "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
+    }
 };
