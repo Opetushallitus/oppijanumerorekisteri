@@ -60,7 +60,9 @@ public class DatantuontiImportServiceTest {
                 ('1.2.2004.2', false, 'fi', 'sv', '368,246', '1.2.2004.1', null),
                 ('1.2.2004.3', false, 'fi', 'sv', '368,246', '1.2.2004.1', null),
                 ('1.2.2004.4', true, 'sv', 'sv', '368,246', null, null),
-                ('1.2.2004.5', false, 'sv', 'fi', '368,246', '1.2.2004.4', null)
+                ('1.2.2004.5', false, 'sv', 'fi', '368,246', '1.2.2004.4', null),
+                ('1.2.2004.6', false, null, 'fi', '368', null, null),
+                ('1.2.2004.7', false, 'fi', null, '368', null, null)
         """);
     }
 
@@ -109,7 +111,7 @@ public class DatantuontiImportServiceTest {
 
         Long originalCount = getHenkiloCount();
         importService.createNewHenkilos();
-        assertThat(getHenkiloCount()).isEqualTo(originalCount + 4);
+        assertThat(getHenkiloCount()).isEqualTo(originalCount + 6);
 
         Henkilo after = henkiloRepository.findByOidHenkilo(before.getOidHenkilo()).get();
         assertThat(after)
@@ -161,7 +163,7 @@ public class DatantuontiImportServiceTest {
 
         Long originalCount = getHenkiloCount();
         importService.createNewHenkilos();
-        assertThat(getHenkiloCount()).isEqualTo(originalCount + 4);
+        assertThat(getHenkiloCount()).isEqualTo(originalCount + 6);
 
         List<HenkiloViite> links = jdbcTemplate.query("SELECT master_oid, slave_oid FROM henkiloviite",
             (rs, rn) -> new HenkiloViite(rs.getString("master_oid"), rs.getString("slave_oid")));
