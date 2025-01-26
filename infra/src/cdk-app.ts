@@ -95,6 +95,13 @@ class DatabaseStack extends cdk.Stack {
 
     const vpc = ec2.Vpc.fromLookup(this, "Vpc", {vpcName: sharedAccount.VPC_NAME});
 
+
+    const datantuontiImportRole = new iam.Role(this, "DatantuontiImport", {
+      assumedBy: new iam.ServicePrincipal("rds.amazon.com")
+    });
+    datantuonti.createS3ImporPolicyStatements(this)
+        .forEach(statement =>  datantuontiImportRole.addToPolicy(statement));
+
     this.exportBucket = new s3.Bucket(this, "ExportBucket", {});
 
     if (config.getEnvironment() == "hahtuva" || config.getEnvironment() == "dev") {
@@ -118,6 +125,7 @@ class DatabaseStack extends cdk.Stack {
         }),
         readers: [],
         s3ExportBuckets: [this.exportBucket, datantuontiExportBucket],
+        s3ImportRole: datantuontiImportRole,
       });
     } else {
       this.database = new rds.DatabaseCluster(this, "Database", {
@@ -141,6 +149,7 @@ class DatabaseStack extends cdk.Stack {
         storageEncrypted: true,
         readers: [],
         s3ExportBuckets: [this.exportBucket, datantuontiExportBucket],
+        s3ImportRole: datantuontiImportRole,
       });
     }
 
@@ -219,7 +228,8 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         export_bucket_name: props.exportBucket.bucketName,
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": `${conf.features["oppijanumerorekisteri.tasks.datantuonti.export.enabled"]}`,
         "oppijanumerorekisteri.tasks.datantuonti.export.bucket-name": props.datantuontiExportBucket.bucketName,
-        "oppijanumerorekisteri.tasks.datantuonti.export.encryption-key-arn": props.datantuontiExportEncryptionKey.keyArn
+        "oppijanumerorekisteri.tasks.datantuonti.export.encryption-key-arn": props.datantuontiExportEncryptionKey.keyArn,
+        "oppijanumerorekisteri.tasks.datantuonti.import.enabled": `${conf.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]}`,
       },
       secrets: {
         postgresql_username: ecs.Secret.fromSecretsManager(
@@ -274,6 +284,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         vtjkysely_password: this.ssmSecret("VtjkyselyPassword"),
         henkilo_modified_sns_topic_arn: this.ssmSecret("HenkiloModifiedSnsTopicArn"),
         opintopolku_cross_account_role: this.ssmString("OpintopolkuCrossAccountRole"),
+        "oppijanumerorekisteri.tasks.datantuonti.import.bucket-name": this.ssmString("oppijanumerorekisteri.tasks.datantuonti.export.bucket-name", ""),
       },
       portMappings: [
         {
@@ -287,6 +298,8 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
     props.exportBucket.grantReadWrite(taskDefinition.taskRole);
     props.datantuontiExportBucket.grantReadWrite(taskDefinition.taskRole);
     props.datantuontiExportEncryptionKey.grantEncryptDecrypt(taskDefinition.taskRole);
+    datantuonti.createS3ImporPolicyStatements(this)
+        .forEach(statement => taskDefinition.addToTaskRolePolicy(statement))
     taskDefinition.addToTaskRolePolicy(
       new iam.PolicyStatement({
         actions: ["sts:AssumeRole"],
@@ -422,12 +435,12 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
     )
   }
 
-  ssmString(name: string): ecs.Secret {
+  ssmString(name: string, prefix: string = '/oppijanumerorekisteri/'): ecs.Secret {
     return ecs.Secret.fromSsmParameter(
       ssm.StringParameter.fromStringParameterName(
         this,
         `Param${name}`,
-        `/oppijanumerorekisteri/${name}`
+        `${prefix}${name}`
       )
     );
   }

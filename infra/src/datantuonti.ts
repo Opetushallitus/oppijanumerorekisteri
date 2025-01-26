@@ -50,3 +50,29 @@ export class ExportStack extends cdk.Stack {
         return bucket;
     }
 }
+
+export function createS3ImporPolicyStatements(scope: constructs.Construct) {
+    const importBucketName = ssm.StringParameter.valueFromLookup(
+        scope,
+        "oppijanumerorekisteri.tasks.datantuonti.import.bucket-name"
+    );
+
+    const decryptionKeyArn = ssm.StringParameter.valueFromLookup(
+        scope,
+        "oppijanumerorekisteri.tasks.datantuonti.import.decryption-key-arn"
+    );
+
+    return [
+        new iam.PolicyStatement({
+            actions: ["s3:GetObject", "s3:ListBucket"],
+            resources: [
+                `arn:aws:s3:::${importBucketName}`,
+                `arn:aws:s3:::${importBucketName}/*`,
+            ],
+        }),
+        new iam.PolicyStatement({
+            actions: ["kms:Decrypt"],
+            resources: [decryptionKeyArn],
+        })
+    ];
+}

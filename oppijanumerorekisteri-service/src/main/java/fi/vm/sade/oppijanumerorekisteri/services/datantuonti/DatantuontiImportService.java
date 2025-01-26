@@ -43,7 +43,7 @@ public class DatantuontiImportService {
     private final HenkiloModificationService henkiloModificationService;
     private final HenkiloRepository henkiloRepository;
 
-    @Value("${oppijanumerorekisteri.tasks.datantuonti.export.bucket-name}")
+    @Value("${oppijanumerorekisteri.tasks.datantuonti.import.bucket-name}")
     private String bucketName;
 
     static final String CREATE_DATANTUONTI_HENKILO = """

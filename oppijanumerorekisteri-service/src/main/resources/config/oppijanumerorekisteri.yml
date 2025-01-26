@@ -53,3 +53,5 @@ aws:
 
 oppijanumerorekisteri.tasks.datantuonti.export.enabled: false
 oppijanumerorekisteri.tasks.datantuonti.export.bucket-name: none
+oppijanumerorekisteri.tasks.datantuonti.import.enabled: false
+oppijanumerorekisteri.tasks.datantuonti.import.bucket-name: none
