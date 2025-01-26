@@ -97,7 +97,7 @@ class DatabaseStack extends cdk.Stack {
 
 
     const datantuontiImportRole = new iam.Role(this, "DatantuontiImport", {
-      assumedBy: new iam.ServicePrincipal("rds.amazon.com")
+      assumedBy: new iam.ServicePrincipal("rds.amazonaws.com")
     });
     datantuonti.createS3ImporPolicyStatements(this)
         .forEach(statement =>  datantuontiImportRole.addToPolicy(statement));
