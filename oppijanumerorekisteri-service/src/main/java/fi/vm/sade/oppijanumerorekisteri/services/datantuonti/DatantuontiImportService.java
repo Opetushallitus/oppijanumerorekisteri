@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import com.google.common.base.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -119,8 +120,8 @@ public class DatantuontiImportService {
         GeneratedHenkilo generated = generateHenkiloWithUniqueHetu(d.yksiloityvtj(), generator);
         return Henkilo.builder()
             .oidHenkilo(d.oid())
-            .aidinkieli(new Kielisyys(d.aidinkieli()))
-            .asiointiKieli(new Kielisyys(d.asiointikieli()))
+            .aidinkieli(Optional.fromNullable(d.aidinkieli()).transform(k -> new Kielisyys(k)).orNull())
+            .asiointiKieli(Optional.fromNullable(d.asiointikieli()).transform(k -> new Kielisyys(k)).orNull())
             .yksiloityVTJ(d.yksiloityvtj())
             .yksilointiYritetty(d.yksiloityvtj())
             .yksiloity(!d.yksiloityvtj() && d.masterOid() == null)
