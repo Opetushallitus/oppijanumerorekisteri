@@ -284,7 +284,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         vtjkysely_password: this.ssmSecret("VtjkyselyPassword"),
         henkilo_modified_sns_topic_arn: this.ssmSecret("HenkiloModifiedSnsTopicArn"),
         opintopolku_cross_account_role: this.ssmString("OpintopolkuCrossAccountRole"),
-        "oppijanumerorekisteri.tasks.datantuonti.import.bucket-name": this.ssmString("oppijanumerorekisteri.tasks.datantuonti.export.bucket-name", ""),
+        "oppijanumerorekisteri.tasks.datantuonti.import.bucket-name": this.ssmString("oppijanumerorekisteri.tasks.datantuonti.import.bucket-name", ""),
       },
       portMappings: [
         {
