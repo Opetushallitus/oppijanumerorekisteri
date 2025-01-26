@@ -77,7 +77,7 @@ public class DatantuontiImportService {
         createTableForDatantuontiData();
 
         String henkiloSql = "SELECT * FROM aws_s3.table_import_from_s3('datantuonti_henkilo_temp', '',  '(FORMAT CSV,HEADER true)', aws_commons.create_s3_uri(?, ?, ?))";
-        String henkiloTxt = jdbcTemplate.queryForObject(henkiloSql, String.class, bucketName, manifest.getHenkilo(), Region.EU_WEST_1.id());
+        String henkiloTxt = jdbcTemplate.queryForObject(henkiloSql, String.class, bucketName, manifest.henkilo(), Region.EU_WEST_1.id());
         log.info("Importing datantuontihenkilot from S3 returned {}", henkiloTxt);
     }
 
