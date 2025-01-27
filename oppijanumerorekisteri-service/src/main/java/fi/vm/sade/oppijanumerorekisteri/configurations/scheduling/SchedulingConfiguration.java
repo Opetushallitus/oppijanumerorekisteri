@@ -145,10 +145,10 @@ public class SchedulingConfiguration {
         return Tasks.recurring(new TaskWithoutDataDescriptor("DatantuontiImport"), new Daily(LocalTime.of(2, 15, 0)))
                 .execute((taskInstance, executionContext) -> {
                     try {
-                        log.info("Running datantuonti import task");
+                        log.info("Running oppijanumerorekisteri datantuonti import task");
                         datantuontiImportService.importTempTableFromS3();
                         datantuontiImportService.createNewHenkilos();
-                        log.info("Datantuonti import task completed");
+                        log.info("Oppijanumerorekisteri datantuonti import task completed");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

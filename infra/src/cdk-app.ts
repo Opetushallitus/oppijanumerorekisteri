@@ -435,6 +435,18 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
     )
   }
 
+  datantuontiImportFailureAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
+    alarms.alarmIfExpectedLogLineIsMissing(
+        this,
+        "DatantuontiImportTask",
+        logGroup,
+        alarmTopic,
+        logs.FilterPattern.literal('"Oppijanumerorekisteri datantuonti import task completed"'),
+        cdk.Duration.hours(25),
+        1,
+    )
+  }
+
   ssmString(name: string, prefix: string = '/oppijanumerorekisteri/'): ecs.Secret {
     return ecs.Secret.fromSsmParameter(
       ssm.StringParameter.fromStringParameterName(
