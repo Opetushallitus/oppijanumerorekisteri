@@ -185,6 +185,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       props: OppijanumerorekisteriApplicationStackProperties,
   ) {
     super(scope, id, props);
+    const conf = config.getConfig();
     const vpc = ec2.Vpc.fromLookup(this, "Vpc", {vpcName: sharedAccount.VPC_NAME});
     const alarmTopic = lookupAlarmTopic(this, "AlarmTopic");
 
@@ -194,6 +195,9 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
     });
     this.exportFailureAlarm(logGroup, alarmTopic)
     this.datantuontiExportFailureAlarm(logGroup, alarmTopic)
+    if (conf.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]) {
+      this.datantuontiImportFailureAlarm(logGroup, alarmTopic);
+    }
 
     const dockerImage = new ecr_assets.DockerImageAsset(this, "AppImage", {
       directory: path.join(__dirname, "../../"),
@@ -214,7 +218,6 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
           },
         });
 
-    const conf = config.getConfig();
     const appPort = 8080;
     taskDefinition.addContainer("AppContainer", {
       image: ecs.ContainerImage.fromDockerImageAsset(dockerImage),
