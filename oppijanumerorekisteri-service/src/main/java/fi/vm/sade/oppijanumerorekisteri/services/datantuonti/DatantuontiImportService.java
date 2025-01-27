@@ -112,6 +112,7 @@ public class DatantuontiImportService {
             var savedHenkilos = newHenkilos
                 .peek(d -> saveNewHenkilo(d, generator))
                 .toList();
+            log.info("Datantuonti import saved {} new henkilos", savedHenkilos.size());
             savedHenkilos.stream().forEach(this::linkHenkilos);
         }
     }
@@ -166,7 +167,6 @@ public class DatantuontiImportService {
             }
         } catch (Exception e) {
             log.error("Failed to update henkiloviite for henkilo oid " + d.oid(), e);
-            throw e;
         }
     }
 
