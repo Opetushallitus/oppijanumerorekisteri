@@ -61,9 +61,9 @@ export const qa: Config = {
     minCapacity: 1,
     maxCapacity: 2,
     features: {
-        ...defaultConfig.features,
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
-    }
+        "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
+    },
 };
 
 export const prod: Config = {
