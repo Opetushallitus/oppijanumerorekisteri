@@ -2,8 +2,10 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
-import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
+import fi.vm.sade.oppijanumerorekisteri.clients.Oauth2Client;
+import fi.vm.sade.oppijanumerorekisteri.clients.impl.NoContentOrNotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -19,11 +21,13 @@ import software.amazon.awssdk.services.sns.SnsClient;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.net.http.HttpRequest;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -52,7 +56,7 @@ public class HenkiloModificationServiceTest {
     @MockBean
     private SnsClient snsClient;
     @MockBean
-    private KayttooikeusClient kayttooikeusClient;
+    private Oauth2Client oauth2Client;
     @MockBean
     private KoodistoClient koodistoClient;
     @MockBean
@@ -226,8 +230,10 @@ public class HenkiloModificationServiceTest {
     @WithMockUser
     public void removeAccessRights() {
         henkiloModificationService.removeAccessRights("1.2.3.4.5");
-        verify(kayttooikeusClient, times(1))
-                .passivoiHenkilo("1.2.3.4.5", "user");
+        ArgumentCaptor<HttpRequest.Builder> request = ArgumentCaptor.forClass(HttpRequest.Builder.class);
+        verify(oauth2Client, times(1)).executeRequest(request.capture());
+        assertThat(request.getValue().build().uri().toString())
+                .isEqualTo("https://localhost/kayttooikeus-service/henkilo/1.2.3.4.5/passivoi?kasittelijaOid=user");
         verify(henkiloService, times(1))
                 .removeContactInfo("1.2.3.4.5", YhteystietoryhmaUtils.TYYPPI_TYOOSOITE);
     }
@@ -278,5 +284,19 @@ public class HenkiloModificationServiceTest {
         slave = henkiloModificationService.createHenkilo(slave);
 
         henkiloModificationService.forceLinkHenkilos(master.getOidHenkilo(), asList(slave.getOidHenkilo()));
+    }
+
+    @Test
+    @WithMockUser
+    public void testForceLinkDoesNotFailIfPassivoiHenkiloNotFound() {
+        doThrow(new NoContentOrNotFoundException("404")).when(oauth2Client).executeRequest(any());
+        Henkilo master = Henkilo.builder().etunimet("master").kutsumanimi("master").sukunimi("master").sukupuoli(null).build();
+        master = henkiloModificationService.createHenkilo(master);
+        Henkilo slave = Henkilo.builder().etunimet("slave").kutsumanimi("slave").sukunimi("slave").sukupuoli(null).yksiloity(true).build();
+        slave = henkiloModificationService.createHenkilo(slave);
+
+        List<String> slaves = henkiloModificationService.forceLinkHenkilos(master.getOidHenkilo(), asList(slave.getOidHenkilo()));
+
+        assertThat(slaves).containsExactly(slave.getOidHenkilo());
     }
 }

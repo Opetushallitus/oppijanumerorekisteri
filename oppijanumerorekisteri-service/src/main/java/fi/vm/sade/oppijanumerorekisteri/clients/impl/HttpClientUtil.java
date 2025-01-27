@@ -25,7 +25,7 @@ public final class HttpClientUtil {
     }
 
     public static RuntimeException noContentOrNotFoundException(String url) {
-        return new RestClientException(String.format("Osoite %s palautti 204 tai 404", url));
+        return new NoContentOrNotFoundException(String.format("Osoite %s palautti 204 tai 404", url));
     }
 
 }

@@ -25,7 +25,9 @@ import fi.vm.sade.oppijanumerorekisteri.dto.KayttajaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioCriteria;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class KayttooikeusOauth2ClientImpl implements KayttooikeusClient {
@@ -65,7 +67,11 @@ public class KayttooikeusOauth2ClientImpl implements KayttooikeusClient {
         var request = HttpRequest.newBuilder()
             .uri(URI.create(url))
             .DELETE();
-        httpClient.executeRequest(request);
+        try {
+            httpClient.executeRequest(request);
+        } catch (NoContentOrNotFoundException e) {
+            log.info("passivoiHenkilo returned 204/404 for oid {}", oidHenkilo);
+        }
     }
 
     protected String getPassivoiHenkiloUrl(String oidHenkilo, String kasittelijaOid) {
