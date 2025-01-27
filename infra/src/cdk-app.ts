@@ -434,7 +434,9 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         "DatantuontiExportTask",
         logGroup,
         alarmTopic,
-        logs.FilterPattern.literal('"Oppijanumerorekisteri datantuonti export task completed"')
+        logs.FilterPattern.literal('"Oppijanumerorekisteri datantuonti export task completed"'),
+        cdk.Duration.hours(25),
+        1,
     )
   }
 
