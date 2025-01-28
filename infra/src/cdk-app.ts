@@ -110,7 +110,7 @@ class DatabaseStack extends cdk.Stack {
         vpcSubnets: {subnetType: ec2.SubnetType.PRIVATE_ISOLATED},
         defaultDatabaseName: "oppijanumerorekisteri",
         engine: rds.DatabaseClusterEngine.auroraPostgres({
-          version: rds.AuroraPostgresEngineVersion.VER_12_19,
+          version: rds.AuroraPostgresEngineVersion.VER_16_4,
         }),
         credentials: rds.Credentials.fromGeneratedSecret("oppijanumerorekisteri", {
           secretName: sharedAccount.prefix("DatabaseSecret"),
