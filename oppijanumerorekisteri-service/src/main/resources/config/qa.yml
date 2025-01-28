@@ -10,7 +10,7 @@ oppijanumerorekisteri.tasks.export.lampi-external-id: ${lampi_external_id}
 
 oppijanumerorekisteri.vtj-muutosrajapinta.fetch-enabled: true
 oppijanumerorekisteri.vtj-muutosrajapinta.muutostieto-enabled: true
-oppijanumerorekisteri.vtj-muutosrajapinta.perustieto-enabled: true
+oppijanumerorekisteri.vtj-muutosrajapinta.perustieto-enabled: false
 oppijanumerorekisteri.vtj-muutosrajapinta.base-url: https://proxy.qa.palveluvayla.opintopolku.fi
 oppijanumerorekisteri.vtj-muutosrajapinta.palveluvayla-env: FI-TEST
 
