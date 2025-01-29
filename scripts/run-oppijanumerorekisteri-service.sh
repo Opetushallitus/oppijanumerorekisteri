@@ -4,11 +4,10 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/lib/common-functions.s
 
 function main {
   select_java_version "21"
-  require_command mvn
   cd "$repo"
-  mvn install -DskipTests
+  ./mvnw install -DskipTests
   cd "$repo/oppijanumerorekisteri-service"
-  mvn install -DskipTests
+  ./../mvnw install -DskipTests
   wait_for_local_db_to_be_healthy
 
   java \
