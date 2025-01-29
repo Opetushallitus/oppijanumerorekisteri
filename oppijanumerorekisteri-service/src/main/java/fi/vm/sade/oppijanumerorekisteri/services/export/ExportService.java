@@ -32,7 +32,8 @@ import java.util.stream.Stream;
 @Service
 public class ExportService {
     private final JdbcTemplate jdbcTemplate;
-    private static final String S3_PREFIX = "fulldump/oppijanumerorekisteri/v2";
+    private static final String S3_PREFIX_V2 = "fulldump/oppijanumerorekisteri/v2";
+    private static final String S3_PREFIX_V3 = "fulldump/oppijanumerorekisteri/v3";
     private final OppijanumerorekisteriProperties properties;
     private final S3AsyncClient onrS3Client;
     private final S3AsyncClient lampiS3Client;
@@ -70,7 +71,8 @@ public class ExportService {
               (SELECT string_agg(slave_oid, ',')
                FROM henkiloviite
                WHERE master_oid = h.oidhenkilo
-              ) AS linkitetyt_oidit
+              ) AS linkitetyt_oidit,
+            to_char(modified, 'YYYY-MM-DD"T"HH24:MI:SSOF') AS updated
             FROM henkilo h
             LEFT JOIN kielisyys aidinkieli ON h.aidinkieli_id = aidinkieli.id
         """);
@@ -93,17 +95,52 @@ public class ExportService {
         jdbcTemplate.execute("ALTER SCHEMA exportnew RENAME TO export");
     }
 
-    private static final String HENKILO_QUERY = "SELECT * FROM export.henkilo";
-    private static final String YHTEYSTIETO_QUERY = "SELECT * FROM export.yhteystieto";
+    private static final String HENKILO_QUERY_V2 = """
+            SELECT
+                henkilo_oid,
+                hetu,
+                sukupuoli,
+                syntymaaika,
+                sukunimi,
+                etunimet,
+                aidinkieli,
+                turvakielto,
+                kotikunta,
+                yksiloityvtj,
+                kansalaisuus,
+                master_oid,
+                linkitetyt_oidit
+            FROM export.henkilo""";
+    private static final String HENKILO_QUERY_V3 = """
+            SELECT
+                henkilo_oid,
+                hetu,
+                sukupuoli,
+                syntymaaika,
+                sukunimi,
+                etunimet,
+                aidinkieli,
+                turvakielto,
+                kotikunta,
+                yksiloityvtj,
+                kansalaisuus,
+                master_oid,
+                linkitetyt_oidit,
+                updated
+            FROM export.henkilo""";
+    private static final String YHTEYSTIETO_QUERY_V2 = "SELECT * FROM export.yhteystieto";
+    private static final String YHTEYSTIETO_QUERY_V3 = YHTEYSTIETO_QUERY_V2;
 
     public void generateExportFiles() throws IOException {
-        generateCsvExports();
-        generateJsonExports();
+        generateCsvExportsV2();
+        generateCsvExportsV3();
+        generateJsonExportsV2();
+        generateJsonExportsV3();
     }
 
-    List<File> generateJsonExports() throws IOException {
-        var henkiloFile = exportQueryToS3AsJson(HENKILO_QUERY, S3_PREFIX + "/json/henkilo.json", unchecked(rs ->
-                new ExportedHenkilo(
+    List<File> generateJsonExportsV2() throws IOException {
+        var henkiloFile = exportQueryToS3AsJson(HENKILO_QUERY_V2, S3_PREFIX_V2 + "/json/henkilo.json", unchecked(rs ->
+                new ExportedHenkiloV2(
                         rs.getString("henkilo_oid"),
                         rs.getString("hetu"),
                         rs.getString("sukupuoli"),
@@ -119,8 +156,39 @@ public class ExportService {
                         rs.getString("linkitetyt_oidit")
                 )
         ));
-        var yhteystietoFile = exportQueryToS3AsJson(YHTEYSTIETO_QUERY, S3_PREFIX + "/json/yhteystieto.json", unchecked(rs ->
-                new ExportedYhteystieto(
+        var yhteystietoFile = exportQueryToS3AsJson(YHTEYSTIETO_QUERY_V2, S3_PREFIX_V2 + "/json/yhteystieto.json", unchecked(rs ->
+                new ExportedYhteystietoV2(
+                        rs.getString("henkilo_oid"),
+                        rs.getString("yhteystietotyyppi"),
+                        rs.getString("yhteystieto_arvo"),
+                        rs.getString("yhteystieto_arvo_tyyppi"),
+                        rs.getString("alkupera")
+                )
+        ));
+        return List.of(henkiloFile, yhteystietoFile);
+    }
+
+    List<File> generateJsonExportsV3() throws IOException {
+        var henkiloFile = exportQueryToS3AsJson(HENKILO_QUERY_V3, S3_PREFIX_V3 + "/json/henkilo.json", unchecked(rs ->
+                new ExportedHenkiloV3(
+                        rs.getString("henkilo_oid"),
+                        rs.getString("hetu"),
+                        rs.getString("sukupuoli"),
+                        rs.getString("syntymaaika"),
+                        rs.getString("sukunimi"),
+                        rs.getString("etunimet"),
+                        rs.getString("aidinkieli"),
+                        rs.getBoolean("turvakielto"),
+                        rs.getString("kotikunta"),
+                        rs.getBoolean("yksiloityvtj"),
+                        rs.getString("kansalaisuus"),
+                        rs.getString("master_oid"),
+                        rs.getString("linkitetyt_oidit"),
+                        rs.getString("updated")
+                )
+        ));
+        var yhteystietoFile = exportQueryToS3AsJson(YHTEYSTIETO_QUERY_V3, S3_PREFIX_V3 + "/json/yhteystieto.json", unchecked(rs ->
+                new ExportedYhteystietoV3(
                         rs.getString("henkilo_oid"),
                         rs.getString("yhteystietotyyppi"),
                         rs.getString("yhteystieto_arvo"),
@@ -180,9 +248,14 @@ public class ExportService {
         }
     }
 
-    public void generateCsvExports() {
-        exportQueryToS3(S3_PREFIX + "/csv/henkilo.csv", HENKILO_QUERY);
-        exportQueryToS3(S3_PREFIX + "/csv/yhteystieto.csv", YHTEYSTIETO_QUERY);
+    public void generateCsvExportsV2() {
+        exportQueryToS3(S3_PREFIX_V2 + "/csv/henkilo.csv", HENKILO_QUERY_V2);
+        exportQueryToS3(S3_PREFIX_V2 + "/csv/yhteystieto.csv", YHTEYSTIETO_QUERY_V2);
+    }
+
+    public void generateCsvExportsV3() {
+        exportQueryToS3(S3_PREFIX_V3 + "/csv/henkilo.csv", HENKILO_QUERY_V3);
+        exportQueryToS3(S3_PREFIX_V3 + "/csv/yhteystieto.csv", YHTEYSTIETO_QUERY_V3);
     }
 
     private void exportQueryToS3(String objectKey, String query) {
@@ -195,15 +268,32 @@ public class ExportService {
     }
 
     public void copyExportFilesToLampi() throws IOException {
+        copyExportFilesToLampiV2();
+        copyExportFilesToLampiV3();
+    }
+
+    private void copyExportFilesToLampiV2() throws IOException {
         var csvManifest = new ArrayList<ExportFileDetails>();
-        csvManifest.add(copyFileToLampi(S3_PREFIX + "/csv/henkilo.csv"));
-        csvManifest.add(copyFileToLampi(S3_PREFIX + "/csv/yhteystieto.csv"));
-        writeManifest(S3_PREFIX + "/csv/manifest.json", new ExportManifest(csvManifest));
+        csvManifest.add(copyFileToLampi(S3_PREFIX_V2 + "/csv/henkilo.csv"));
+        csvManifest.add(copyFileToLampi(S3_PREFIX_V2 + "/csv/yhteystieto.csv"));
+        writeManifest(S3_PREFIX_V2 + "/csv/manifest.json", new ExportManifest(csvManifest));
 
         var jsonManifest = new ArrayList<ExportFileDetails>();
-        jsonManifest.add(copyFileToLampi(S3_PREFIX + "/json/henkilo.json"));
-        jsonManifest.add(copyFileToLampi(S3_PREFIX + "/json/yhteystieto.json"));
-        writeManifest(S3_PREFIX + "/json/manifest.json", new ExportManifest(jsonManifest));
+        jsonManifest.add(copyFileToLampi(S3_PREFIX_V2 + "/json/henkilo.json"));
+        jsonManifest.add(copyFileToLampi(S3_PREFIX_V2 + "/json/yhteystieto.json"));
+        writeManifest(S3_PREFIX_V2 + "/json/manifest.json", new ExportManifest(jsonManifest));
+    }
+
+    private void copyExportFilesToLampiV3() throws IOException {
+        var csvManifest = new ArrayList<ExportFileDetails>();
+        csvManifest.add(copyFileToLampi(S3_PREFIX_V3 + "/csv/henkilo.csv"));
+        csvManifest.add(copyFileToLampi(S3_PREFIX_V3 + "/csv/yhteystieto.csv"));
+        writeManifest(S3_PREFIX_V3 + "/csv/manifest.json", new ExportManifest(csvManifest));
+
+        var jsonManifest = new ArrayList<ExportFileDetails>();
+        jsonManifest.add(copyFileToLampi(S3_PREFIX_V3 + "/json/henkilo.json"));
+        jsonManifest.add(copyFileToLampi(S3_PREFIX_V3 + "/json/yhteystieto.json"));
+        writeManifest(S3_PREFIX_V3 + "/json/manifest.json", new ExportManifest(jsonManifest));
     }
 
     private ExportFileDetails copyFileToLampi(String objectKey) throws IOException {
@@ -252,23 +342,42 @@ public class ExportService {
 
     record ExportManifest(List<ExportFileDetails> exportFiles) {}
     record ExportFileDetails(String objectKey, String objectVersion) {}
-    record ExportedHenkilo(String henkilo_oid,
-                           String hetu,
-                           String sukupuoli,
-                           String syntymaaika,
-                           String sukunimi,
-                           String etunimet,
-                           String aidinkieli,
-                           boolean turvakielto,
-                           String kotikunta,
-                           boolean yksiloityvtj,
-                           String kansalaisuus,
-                           String master_oid,
-                           String linkitetyt_oidit) {}
-    public record ExportedYhteystieto(String henkilo_oid,
-                                      String yhteystietotyyppi,
-                                      String yhteystieto_arvo,
-                                      String yhteystieto_arvo_tyyppi,
-                                      String alkupera) {}
+    record ExportedHenkiloV2(String henkilo_oid,
+                             String hetu,
+                             String sukupuoli,
+                             String syntymaaika,
+                             String sukunimi,
+                             String etunimet,
+                             String aidinkieli,
+                             boolean turvakielto,
+                             String kotikunta,
+                             boolean yksiloityvtj,
+                             String kansalaisuus,
+                             String master_oid,
+                             String linkitetyt_oidit) {}
+    record ExportedHenkiloV3(String henkilo_oid,
+                             String hetu,
+                             String sukupuoli,
+                             String syntymaaika,
+                             String sukunimi,
+                             String etunimet,
+                             String aidinkieli,
+                             boolean turvakielto,
+                             String kotikunta,
+                             boolean yksiloityvtj,
+                             String kansalaisuus,
+                             String master_oid,
+                             String linkitetyt_oidit,
+                             String updated) {}
+    public record ExportedYhteystietoV2(String henkilo_oid,
+                                        String yhteystietotyyppi,
+                                        String yhteystieto_arvo,
+                                        String yhteystieto_arvo_tyyppi,
+                                        String alkupera) {}
+    public record ExportedYhteystietoV3(String henkilo_oid,
+                                        String yhteystietotyyppi,
+                                        String yhteystieto_arvo,
+                                        String yhteystieto_arvo_tyyppi,
+                                        String alkupera) {}
 
 }
