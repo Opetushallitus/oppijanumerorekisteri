@@ -129,7 +129,7 @@ public class ExportService {
                 master_oid,
                 linkitetyt_oidit,
                 created,
-                updated'
+                updated
             FROM export.henkilo""";
     private static final String YHTEYSTIETO_QUERY_V2 = "SELECT * FROM export.yhteystieto";
     private static final String YHTEYSTIETO_QUERY_V3 = YHTEYSTIETO_QUERY_V2;
