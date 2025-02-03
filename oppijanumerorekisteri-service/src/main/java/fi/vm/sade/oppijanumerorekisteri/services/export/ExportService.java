@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -72,7 +73,7 @@ public class ExportService {
                FROM henkiloviite
                WHERE master_oid = h.oidhenkilo
               ) AS linkitetyt_oidit,
-            to_char(modified, 'YYYY-MM-DD"T"HH24:MI:SSOF') AS updated
+            modified at time zone 'Europe/Helsinki' AS updated
             FROM henkilo h
             LEFT JOIN kielisyys aidinkieli ON h.aidinkieli_id = aidinkieli.id
         """);
@@ -184,7 +185,7 @@ public class ExportService {
                         rs.getString("kansalaisuus"),
                         rs.getString("master_oid"),
                         rs.getString("linkitetyt_oidit"),
-                        rs.getString("updated")
+                        rs.getTimestamp("updated")
                 )
         ));
         var yhteystietoFile = exportQueryToS3AsJson(YHTEYSTIETO_QUERY_V3, S3_PREFIX_V3 + "/json/yhteystieto.json", unchecked(rs ->
@@ -368,7 +369,8 @@ public class ExportService {
                              String kansalaisuus,
                              String master_oid,
                              String linkitetyt_oidit,
-                             String updated) {}
+                             Timestamp updated) {
+    }
     public record ExportedYhteystietoV2(String henkilo_oid,
                                         String yhteystietotyyppi,
                                         String yhteystieto_arvo,
