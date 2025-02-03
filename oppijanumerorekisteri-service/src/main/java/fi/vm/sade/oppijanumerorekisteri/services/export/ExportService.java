@@ -73,6 +73,7 @@ public class ExportService {
                FROM henkiloviite
                WHERE master_oid = h.oidhenkilo
               ) AS linkitetyt_oidit,
+            created at time zone 'Europe/Helsinki' as created,
             modified at time zone 'Europe/Helsinki' AS updated
             FROM henkilo h
             LEFT JOIN kielisyys aidinkieli ON h.aidinkieli_id = aidinkieli.id
@@ -127,7 +128,8 @@ public class ExportService {
                 kansalaisuus,
                 master_oid,
                 linkitetyt_oidit,
-                updated
+                created,
+                updated'
             FROM export.henkilo""";
     private static final String YHTEYSTIETO_QUERY_V2 = "SELECT * FROM export.yhteystieto";
     private static final String YHTEYSTIETO_QUERY_V3 = YHTEYSTIETO_QUERY_V2;
@@ -185,6 +187,7 @@ public class ExportService {
                         rs.getString("kansalaisuus"),
                         rs.getString("master_oid"),
                         rs.getString("linkitetyt_oidit"),
+                        rs.getTimestamp("created"),
                         rs.getTimestamp("updated")
                 )
         ));
@@ -369,6 +372,7 @@ public class ExportService {
                              String kansalaisuus,
                              String master_oid,
                              String linkitetyt_oidit,
+                             Timestamp created,
                              Timestamp updated) {
     }
     public record ExportedYhteystietoV2(String henkilo_oid,
