@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.export;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +36,7 @@ public class ExportService {
     private final JdbcTemplate jdbcTemplate;
     private static final String S3_PREFIX_V2 = "fulldump/oppijanumerorekisteri/v2";
     private static final String S3_PREFIX_V3 = "fulldump/oppijanumerorekisteri/v3";
+    private static final String TIMESTAMP_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss.SSSZ";
     private final OppijanumerorekisteriProperties properties;
     private final S3AsyncClient onrS3Client;
     private final S3AsyncClient lampiS3Client;
@@ -372,7 +374,9 @@ public class ExportService {
                              String kansalaisuus,
                              String master_oid,
                              String linkitetyt_oidit,
+                             @JsonFormat(pattern = TIMESTAMP_FORMAT_PATTERN)
                              Timestamp created,
+                             @JsonFormat(pattern = TIMESTAMP_FORMAT_PATTERN)
                              Timestamp updated) {
     }
     public record ExportedYhteystietoV2(String henkilo_oid,
