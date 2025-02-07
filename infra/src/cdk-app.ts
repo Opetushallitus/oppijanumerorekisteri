@@ -3,12 +3,14 @@ import * as constructs from "constructs";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as iam from "aws-cdk-lib/aws-iam";
+import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as rds from "aws-cdk-lib/aws-rds"
 import * as s3 from "aws-cdk-lib/aws-s3"
 import * as elasticloadbalancingv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as route53_targets from "aws-cdk-lib/aws-route53-targets";
 import * as sns from "aws-cdk-lib/aws-sns";
+import * as sns_subscriptions from "aws-cdk-lib/aws-sns-subscriptions";
 import * as ssm from "aws-cdk-lib/aws-ssm";
 import * as certificatemanager from "aws-cdk-lib/aws-certificatemanager";
 import * as ecr_assets from "aws-cdk-lib/aws-ecr-assets";
@@ -20,7 +22,6 @@ import * as config from "./config";
 import * as path from "node:path";
 import {createHealthCheckStacks} from "./health-check";
 import {DatabaseBackupToS3} from "./DatabaseBackupToS3";
-import {lookupAlarmTopic} from "./shared-account";
 import * as datantuonti from "./datantuonti";
 import * as alarms from "./alarms";
 
@@ -34,6 +35,7 @@ class CdkApp extends cdk.App {
       },
     };
 
+    const { alarmsToSlackLambda, alarmTopic } = new AlarmStack(this, sharedAccount.prefix("AlarmStack"), stackProps);
     const ecsStack = new ECSStack(this, sharedAccount.prefix("ECSStack"), stackProps);
     const datantuontiExportStack = new datantuonti.ExportStack(this, sharedAccount.prefix("DatantuontiExport"), stackProps);
     const databaseStack = new DatabaseStack(
@@ -41,12 +43,16 @@ class CdkApp extends cdk.App {
         sharedAccount.prefix("Database"),
         ecsStack.cluster,
         datantuontiExportStack.bucket,
-        stackProps
+        { ...stackProps, alarmTopic }
     );
 
-    createHealthCheckStacks(this)
+    createHealthCheckStacks(this, alarmsToSlackLambda, [{
+      name: "Oppijanumerorekisteri",
+      url: new URL(`https://${config.getConfig().virkailijaHost}/oppijanumerorekisteri-service/actuator/health`),
+    }]);
 
     new OppijanumerorekisteriApplicationStack(this, sharedAccount.prefix("OppijanumerorekisteriApplication"), {
+      alarmTopic,
       database: databaseStack.database,
       bastion: databaseStack.bastion,
       exportBucket: databaseStack.exportBucket,
@@ -64,6 +70,52 @@ class CdkApp extends cdk.App {
   }
 }
 
+class AlarmStack extends cdk.Stack {
+  readonly alarmTopic: sns.ITopic;
+  readonly alarmsToSlackLambda: lambda.IFunction;
+  constructor(scope: constructs.Construct, id: string, props: cdk.StackProps) {
+    super(scope, id, props);
+
+    this.alarmsToSlackLambda = this.createAlarmsToSlackLambda();
+    this.alarmTopic = this.createAlarmTopic();
+
+    this.alarmTopic.addSubscription(
+      new sns_subscriptions.LambdaSubscription(this.alarmsToSlackLambda),
+    );
+    this.exportValue(this.alarmTopic.topicArn);
+  }
+
+  createAlarmTopic() {
+    return new sns.Topic(this, "AlarmTopic", {});
+  }
+
+  createAlarmsToSlackLambda() {
+    const alarmsToSlack = new lambda.Function(this, "AlarmsToSlack", {
+      code: lambda.Code.fromAsset("../alarms-to-slack"),
+      handler: "alarms-to-slack.handler",
+      runtime: lambda.Runtime.NODEJS_20_X,
+      architecture: lambda.Architecture.ARM_64,
+      timeout: cdk.Duration.seconds(30),
+    });
+
+    // https://docs.aws.amazon.com/secretsmanager/latest/userguide/retrieving-secrets_lambda.html
+    const parametersAndSecretsExtension =
+      lambda.LayerVersion.fromLayerVersionArn(
+        this,
+        "ParametersAndSecretsLambdaExtension",
+        "arn:aws:lambda:eu-west-1:015030872274:layer:AWS-Parameters-and-Secrets-Lambda-Extension-Arm64:11",
+      );
+
+    alarmsToSlack.addLayers(parametersAndSecretsExtension);
+    secretsmanager.Secret.fromSecretNameV2(
+      this,
+      "slack-webhook",
+      "slack-webhook",
+    ).grantRead(alarmsToSlack);
+
+    return alarmsToSlack;
+  }
+}
 
 class ECSStack extends cdk.Stack {
   public cluster: ecs.Cluster;
@@ -84,14 +136,15 @@ class DatabaseStack extends cdk.Stack {
   readonly exportBucket: s3.Bucket;
 
   constructor(
-      scope: constructs.Construct,
-      id: string,
-      ecsCluster: ecs.Cluster,
-      datantuontiExportBucket: s3.Bucket,
-      props: cdk.StackProps
+    scope: constructs.Construct,
+    id: string,
+    ecsCluster: ecs.Cluster,
+    datantuontiExportBucket: s3.Bucket,
+    props: cdk.StackProps & {
+      alarmTopic: sns.ITopic;
+    }
   ) {
     super(scope, id, props);
-    const alarmTopic = lookupAlarmTopic(this, "AlarmTopic")
 
     const vpc = ec2.Vpc.fromLookup(this, "Vpc", {vpcName: sharedAccount.VPC_NAME});
 
@@ -163,7 +216,7 @@ class DatabaseStack extends cdk.Stack {
       ecsCluster: ecsCluster,
       dbCluster: this.database,
       dbName: "oppijanumerorekisteri",
-      alarmTopic,
+      alarmTopic: props.alarmTopic,
     });
     this.database.connections.allowDefaultPortFrom(backup);
   }
@@ -176,6 +229,7 @@ type OppijanumerorekisteriApplicationStackProperties = cdk.StackProps & {
   exportBucket: s3.Bucket
   datantuontiExportBucket: s3.Bucket
   datantuontiExportEncryptionKey: kms.IKey
+  alarmTopic: sns.ITopic
 }
 
 class OppijanumerorekisteriApplicationStack extends cdk.Stack {
@@ -187,16 +241,15 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
     super(scope, id, props);
     const conf = config.getConfig();
     const vpc = ec2.Vpc.fromLookup(this, "Vpc", {vpcName: sharedAccount.VPC_NAME});
-    const alarmTopic = lookupAlarmTopic(this, "AlarmTopic");
 
     const logGroup = new logs.LogGroup(this, "AppLogGroup", {
       logGroupName: sharedAccount.prefix("/oppijanumerorekisteri"),
       retention: logs.RetentionDays.INFINITE,
     });
-    this.exportFailureAlarm(logGroup, alarmTopic)
-    this.datantuontiExportFailureAlarm(logGroup, alarmTopic)
+    this.exportFailureAlarm(logGroup, props.alarmTopic)
+    this.datantuontiExportFailureAlarm(logGroup, props.alarmTopic)
     if (conf.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]) {
-      this.datantuontiImportFailureAlarm(logGroup, alarmTopic);
+      this.datantuontiImportFailureAlarm(logGroup, props.alarmTopic);
     }
 
     const dockerImage = new ecr_assets.DockerImageAsset(this, "AppImage", {
