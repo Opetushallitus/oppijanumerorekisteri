@@ -246,7 +246,9 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       logGroupName: sharedAccount.prefix("/oppijanumerorekisteri"),
       retention: logs.RetentionDays.INFINITE,
     });
-    this.exportFailureAlarm(logGroup, props.alarmTopic)
+    if (conf.lampiExport) {
+      this.exportFailureAlarm(logGroup, props.alarmTopic)
+    }
     this.datantuontiExportFailureAlarm(logGroup, props.alarmTopic)
     if (conf.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]) {
       this.datantuontiImportFailureAlarm(logGroup, props.alarmTopic);
@@ -271,6 +273,20 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
           },
         });
 
+    const lampiProperties: ecs.ContainerDefinitionProps["environment"] = conf.lampiExport ? {
+      "oppijanumerorekisteri.tasks.export.enabled": conf.lampiExport.enabled.toString(),
+      "oppijanumerorekisteri.tasks.export.bucket-name": props.exportBucket.bucketName,
+      "oppijanumerorekisteri.tasks.export.copy-to-lampi": "true",
+      "oppijanumerorekisteri.tasks.export.lampi-bucket-name": conf.lampiExport.bucketName,
+    } : {
+      "oppijanumerorekisteri.tasks.export.enabled": "false",
+    };
+
+    const lampiSecrets: ecs.ContainerDefinitionProps["secrets"] = conf.lampiExport ? {
+      "oppijanumerorekisteri.tasks.export.lampi-external-id": this.ssmSecret("LampiExternalId"),
+      "oppijanumerorekisteri.tasks.export.lampi-role-arn": this.ssmString("LampiRoleArn2"),
+    } : {};
+
     const appPort = 8080;
     taskDefinition.addContainer("AppContainer", {
       image: ecs.ContainerImage.fromDockerImageAsset(dockerImage),
@@ -286,6 +302,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         "oppijanumerorekisteri.tasks.datantuonti.export.bucket-name": props.datantuontiExportBucket.bucketName,
         "oppijanumerorekisteri.tasks.datantuonti.export.encryption-key-arn": props.datantuontiExportEncryptionKey.keyArn,
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": `${conf.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]}`,
+        ...lampiProperties,
       },
       secrets: {
         postgresql_username: ecs.Secret.fromSecretsManager(
@@ -304,8 +321,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         authentication_app_username_to_henkilotietomuutos: this.ssmSecret("AuthenticationAppUsernameToHenkilotietomuutos"),
         kayttooikeus_password: this.ssmSecret("KayttooikeusPassword"),
         kayttooikeus_username: this.ssmSecret("KayttooikeusUsername"),
-        lampi_external_id: this.ssmSecret("LampiExternalId"),
-        lampi_role_arn: this.ssmString("LampiRoleArn2"),
+        ...lampiSecrets,
         palveluvayla_access_key_id: this.ssmSecret("PalveluvaylaAccessKeyId"),
         palveluvayla_secret_access_key: this.ssmSecret("PalveluvaylaSecretAccessKey"),
         viestinta_username: this.ssmSecret("ViestintaUsername"),
@@ -356,17 +372,19 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
     props.datantuontiExportEncryptionKey.grantEncryptDecrypt(taskDefinition.taskRole);
     datantuonti.createS3ImporPolicyStatements(this)
         .forEach(statement => taskDefinition.addToTaskRolePolicy(statement))
-    taskDefinition.addToTaskRolePolicy(
-      new iam.PolicyStatement({
-        actions: ["sts:AssumeRole"],
-        resources: [
-          ssm.StringParameter.valueFromLookup(
-            this,
-            "/oppijanumerorekisteri/LampiRoleArn2"
-          ),
-        ],
-      })
-    );
+    if (conf.lampiExport) {
+      taskDefinition.addToTaskRolePolicy(
+        new iam.PolicyStatement({
+          actions: ["sts:AssumeRole"],
+          resources: [
+            ssm.StringParameter.valueFromLookup(
+              this,
+              "/oppijanumerorekisteri/LampiRoleArn2"
+            ),
+          ],
+        })
+      );
+    }
     taskDefinition.addToTaskRolePolicy(
       new iam.PolicyStatement({
         actions: ["sts:AssumeRole"],

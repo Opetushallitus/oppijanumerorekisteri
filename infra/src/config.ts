@@ -1,17 +1,27 @@
 const environments = ["hahtuva", "dev", "qa", "prod"] as const;
 type EnvironmentName = (typeof environments)[number];
 
+export type Config = {
+  virkailijaHost: string;
+  minCapacity: number;
+  maxCapacity: number;
+  features: {
+    "oppijanumerorekisteri.tasks.datantuonti.export.enabled": boolean;
+    "oppijanumerorekisteri.tasks.datantuonti.import.enabled": boolean;
+  };
+  lampiExport?: {
+    enabled: boolean;
+    bucketName: string;
+  }
+}
+
 const defaultConfig = {
-    virkailijaHost: "",
-    minCapacity: 0,
-    maxCapacity: 0,
     features: {
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": false,
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": false,
     },
 };
 
-export type Config = typeof defaultConfig;
 
 export function getEnvironment(): EnvironmentName {
     const env = process.env.ENV;
@@ -53,6 +63,10 @@ export const dev: Config = {
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     },
+    lampiExport: {
+      enabled: true,
+      bucketName: "oph-lampi-dev",
+    }
 };
 
 export const qa: Config = {
@@ -64,6 +78,10 @@ export const qa: Config = {
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     },
+    lampiExport: {
+      enabled: true,
+      bucketName: "oph-lampi-qa",
+    }
 };
 
 export const prod: Config = {
@@ -74,5 +92,9 @@ export const prod: Config = {
     features: {
         ...defaultConfig.features,
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
+    },
+    lampiExport: {
+      enabled: true,
+      bucketName: "oph-lampi-prod",
     }
 };
