@@ -50,43 +50,6 @@ jobs:
         with:
           name: oppijanumerorekisteri-jar
           path: oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-*SNAPSHOT.jar
-  deploy-oppijanumerorekisteri-container:
-    needs: [build-oppijanumerorekisteri]
-    uses: Opetushallitus/.github/.github/workflows/push-scan-java-ecr.yml@main
-    with:
-      application: oppijanumerorekisteri
-      base-image: baseimage-fatjar-openjdk21:master
-      configfolder: oppijanumerorekisteri-service/src/main/resources/config
-      jarfile: oppijanumerorekisteri-service-*SNAPSHOT
-      jarfolder: .
-      type: jar
-      download-artifact: true
-      download-artifact-name: oppijanumerorekisteri-jar
-    secrets:
-      AWS_UTILITY_ROLE_ARN: ${{ secrets.AWS_OPH_UTILITY_ROLE_ARN }}
-  deploy-oppijanumerorekisteri-artifacts:
-    needs: [build-oppijanumerorekisteri]
-    if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'corretto'
-          cache: 'maven'
-      - name: Maven version
-        run: ./mvnw --version
-      - name: Deploy
-        env:
-          ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
-          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
-        run: |
-          git clone https://github.com/Opetushallitus/ci-tools.git
-          source ci-tools/common/setup-tools.sh
-          ./mvnw deploy -pl oppijanumerorekisteri-api -am -DskipTests --settings ci-tools/common/maven-settings.xml
 
   build-henkilo-ui:
     runs-on: ubuntu-latest
