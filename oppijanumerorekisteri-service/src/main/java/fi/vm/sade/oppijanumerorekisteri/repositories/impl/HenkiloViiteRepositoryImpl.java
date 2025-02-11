@@ -15,20 +15,22 @@ public class HenkiloViiteRepositoryImpl extends AbstractRepository implements He
     @Override
     public List<HenkiloViiteDto> findBy(Set<String> oids) {
         if (!CollectionUtils.isEmpty(oids)) {
-            Query q = em.createNativeQuery("select distinct hv2.master_oid as masterOid, hv2.slave_oid as henkiloOid " +
-                    "        from henkiloViite " +
-                    "                 join henkiloViite as hv2 on henkiloViite.master_oid = hv2.master_oid " +
-                    "                 join henkilo as h1 on hv2.master_oid = h1.oidhenkilo " +
-                    "                 join henkilo as h2 on hv2.slave_oid = h2.oidhenkilo " +
-                    "        where henkiloviite.master_oid in ?1 or henkiloviite.slave_oid in ?1", "map_from_native");
+            var sql = """
+                    select distinct master_oid as masterOid, slave_oid as henkiloOid from henkiloViite
+                    where (master_oid in ?1 or slave_oid in ?1)
+                    and exists (select 1 from henkilo where oidhenkilo = master_oid)
+                    and exists (select 1 from henkilo where oidhenkilo = slave_oid)
+                    """;
+            Query q = em.createNativeQuery(sql, "map_from_native");
             q.setParameter(1, oids);
             return q.getResultList();
         } else {
-            Query q = em.createNativeQuery("select distinct henkiloViite.master_oid as masterOid, henkiloViite.slave_oid as henkiloOid " +
-                            "        from henkiloViite " +
-                            "                 join henkilo as h1 on henkiloViite.master_oid = h1.oidhenkilo " +
-                            "                 join henkilo as h2 on henkiloViite.slave_oid = h2.oidhenkilo "
-                    , "map_from_native");
+            var sql = """
+                    select distinct master_oid as masterOid, slave_oid as henkiloOid from henkiloViite
+                    where exists (select 1 from henkilo where oidhenkilo = henkiloViite.master_oid)
+                    and exists (select 1 from henkilo where oidhenkilo = henkiloViite.slave_oid)
+                    """;
+            Query q = em.createNativeQuery(sql, "map_from_native");
             return q.getResultList();
         }
     }
