@@ -59,7 +59,6 @@ public class OrganisaatioClientImpl implements OrganisaatioClient {
             var requestBuilder = HttpRequest.newBuilder()
                 .uri(new URI(url))
                 .GET();
-            System.out.println(url);
             HttpResponse<String> response = httpClient.sendRequestWithRetry(requestBuilder);
             if (response.statusCode() == 200) {
                 return objectMapper.readValue(response.body(), ChildOids.class).getOids();
