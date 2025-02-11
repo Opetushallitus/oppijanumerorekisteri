@@ -1,10 +1,14 @@
 const environments = ["hahtuva", "dev", "qa", "prod"] as const;
 type EnvironmentName = (typeof environments)[number];
 
+export type AutoScalingLimits = {
+  min: number;
+  max: number;
+}
 export type Config = {
   virkailijaHost: string;
-  minCapacity: number;
-  maxCapacity: number;
+  apiCapacity: AutoScalingLimits;
+  batchCapacity: AutoScalingLimits;
   features: {
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": boolean;
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": boolean;
@@ -16,6 +20,8 @@ export type Config = {
 }
 
 const defaultConfig = {
+    apiCapacity: { min: 2, max: 8 },
+    batchCapacity: { min: 1, max: 1 },
     features: {
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": false,
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": false,
@@ -46,8 +52,7 @@ export function getConfig(): Config {
 export const hahtuva: Config = {
     ...defaultConfig,
     virkailijaHost: "virkailija.hahtuvaopintopolku.fi",
-    minCapacity: 1,
-    maxCapacity: 2,
+    apiCapacity: { min: 1, max: 2 },
     features: {
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
@@ -57,8 +62,7 @@ export const hahtuva: Config = {
 export const dev: Config = {
     ...defaultConfig,
     virkailijaHost: "virkailija.untuvaopintopolku.fi",
-    minCapacity: 1,
-    maxCapacity: 2,
+    apiCapacity: { min: 1, max: 2 },
     features: {
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
@@ -72,8 +76,7 @@ export const dev: Config = {
 export const qa: Config = {
     ...defaultConfig,
     virkailijaHost: "virkailija.testiopintopolku.fi",
-    minCapacity: 1,
-    maxCapacity: 2,
+    apiCapacity: { min: 1, max: 2 },
     features: {
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
@@ -87,8 +90,7 @@ export const qa: Config = {
 export const prod: Config = {
     ...defaultConfig,
     virkailijaHost: "virkailija.opintopolku.fi",
-    minCapacity: 2,
-    maxCapacity: 8,
+    apiCapacity: { min: 2, max: 8 },
     features: {
         ...defaultConfig.features,
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,

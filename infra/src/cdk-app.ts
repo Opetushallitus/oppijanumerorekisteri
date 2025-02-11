@@ -261,178 +261,40 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       exclude: ['infra/cdk.out'],
     });
 
-    const taskDefinition = new ecs.FargateTaskDefinition(
-        this,
-        "TaskDefinition",
-        {
-          cpu: 1024,
-          memoryLimitMiB: 8192,
-          runtimePlatform: {
-            operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
-            cpuArchitecture: ecs.CpuArchitecture.ARM64,
-          },
-        });
+    new OppijanumerorekisteriService(this, "BatchService", {
+      ecsCluster: props.ecsCluster,
+      dockerImage,
+      autoScaling: conf.batchCapacity,
+      logGroup,
+      streamPrefix: "batch",
+      database: props.database,
+      datantuontiExportBucket: props.datantuontiExportBucket,
+      datantuontiExportEncryptionKey: props.datantuontiExportEncryptionKey,
+      exportBucket: props.exportBucket,
+      awsRegion: this.region,
+    })
 
-    const lampiProperties: ecs.ContainerDefinitionProps["environment"] = conf.lampiExport ? {
-      "oppijanumerorekisteri.tasks.export.enabled": conf.lampiExport.enabled.toString(),
-      "oppijanumerorekisteri.tasks.export.bucket-name": props.exportBucket.bucketName,
-      "oppijanumerorekisteri.tasks.export.copy-to-lampi": "true",
-      "oppijanumerorekisteri.tasks.export.lampi-bucket-name": conf.lampiExport.bucketName,
-    } : {
-      "oppijanumerorekisteri.tasks.export.enabled": "false",
-    };
-
-    const lampiSecrets: ecs.ContainerDefinitionProps["secrets"] = conf.lampiExport ? {
-      "oppijanumerorekisteri.tasks.export.lampi-external-id": this.ssmSecret("LampiExternalId"),
-      "oppijanumerorekisteri.tasks.export.lampi-role-arn": this.ssmString("LampiRoleArn2"),
-    } : {};
-
-    const appPort = 8080;
-    taskDefinition.addContainer("AppContainer", {
-      image: ecs.ContainerImage.fromDockerImageAsset(dockerImage),
-      logging: new ecs.AwsLogDriver({ logGroup, streamPrefix: "app" }),
-      environment: {
-        ENV: config.getEnvironment(),
-        postgresql_host: props.database.clusterEndpoint.hostname,
-        postgresql_port: props.database.clusterEndpoint.port.toString(),
-        postgresql_db: "oppijanumerorekisteri",
-        aws_region: this.region,
-        export_bucket_name: props.exportBucket.bucketName,
-        "oppijanumerorekisteri.tasks.datantuonti.export.enabled": `${conf.features["oppijanumerorekisteri.tasks.datantuonti.export.enabled"]}`,
-        "oppijanumerorekisteri.tasks.datantuonti.export.bucket-name": props.datantuontiExportBucket.bucketName,
-        "oppijanumerorekisteri.tasks.datantuonti.export.encryption-key-arn": props.datantuontiExportEncryptionKey.keyArn,
-        "oppijanumerorekisteri.tasks.datantuonti.import.enabled": `${conf.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]}`,
-        ...lampiProperties,
+    const apiService = new OppijanumerorekisteriService(this, "ApiService", {
+      ecsCluster: props.ecsCluster,
+      dockerImage,
+      autoScaling: conf.apiCapacity,
+      logGroup,
+      streamPrefix: "api",
+      database: props.database,
+      datantuontiExportBucket: props.datantuontiExportBucket,
+      datantuontiExportEncryptionKey: props.datantuontiExportEncryptionKey,
+      exportBucket: props.exportBucket,
+      awsRegion: this.region,
+      extraEnvironment: {
+        "oppijanumerorekisteri.scheduling.yksilointi.enabled": "false",
+        "oppijanumerorekisteri.tasks.datantuonti.export.enabled": "false",
+        "oppijanumerorekisteri.tasks.datantuonti.import.enabled": "false",
+        "oppijanumerorekisteri.tasks.export.enabled": "false",
+        "oppijanumerorekisteri.vtj-muutosrajapinta.fetch-enabled": "false",
+        "oppijanumerorekisteri.vtj-muutosrajapinta.muutostieto-enabled": "false",
+        "oppijanumerorekisteri.vtj-muutosrajapinta.perustieto-enabled": "false",
       },
-      secrets: {
-        postgresql_username: ecs.Secret.fromSecretsManager(
-            props.database.secret!,
-            "username"
-        ),
-        postgresql_password: ecs.Secret.fromSecretsManager(
-            props.database.secret!,
-            "password"
-        ),
-        authentication_app_password_to_haku: this.ssmSecret("AuthenticationAppPasswordToHaku"),
-        authentication_app_username_to_haku: this.ssmSecret("AuthenticationAppUsernameToHaku"),
-        authentication_app_password_to_vtj: this.ssmSecret("AuthenticationAppPasswordToVtj"),
-        authentication_app_username_to_vtj: this.ssmSecret("AuthenticationAppUsernameToVtj"),
-        authentication_app_password_to_henkilotietomuutos: this.ssmSecret("AuthenticationAppPasswordToHenkilotietomuutos"),
-        authentication_app_username_to_henkilotietomuutos: this.ssmSecret("AuthenticationAppUsernameToHenkilotietomuutos"),
-        kayttooikeus_password: this.ssmSecret("KayttooikeusPassword"),
-        kayttooikeus_username: this.ssmSecret("KayttooikeusUsername"),
-        ...lampiSecrets,
-        palveluvayla_access_key_id: this.ssmSecret("PalveluvaylaAccessKeyId"),
-        palveluvayla_secret_access_key: this.ssmSecret("PalveluvaylaSecretAccessKey"),
-        viestinta_username: this.ssmSecret("ViestintaUsername"),
-        viestinta_password: this.ssmSecret("ViestintaPassword"),
-        ataru_username: this.ssmSecret("AtaruUsername"),
-        ataru_password: this.ssmSecret("AtaruPassword"),
-        oauth2_clientid: this.ssmSecret("Oauth2Clientid"),
-        oauth2_clientsecret: this.ssmSecret("Oauth2Clientsecret"),
-        host_cas: this.ssmSecret("HostCas"),
-        host_virkailija: this.ssmSecret("HostVirkailija"),
-        slack_webhook_url: this.ssmSecret("SlackWebhookUrl"),
-        palveluvayla_apigw_role_arn: this.ssmSecret("PalveluvaylaApigwRoleArn"),
-        vtj_muutosrajapinta_username: this.ssmSecret("VtjMuutosrajapintaUsername"),
-        vtj_muutosrajapinta_password: this.ssmSecret("VtjMuutosrajapintaPassword"),
-        vtjkysely_truststore_base64: ecs.Secret.fromSecretsManager(
-            secretsmanager.Secret.fromSecretNameV2(
-                this,
-                "VtjkyselyTruststoreBase64",
-                "/oppijanumerorekisteri/VtjkyselyTruststoreBase64"
-            )
-        ),
-        vtjkysely_truststore_password: this.ssmSecret("VtjkyselyTruststorePassword"),
-        vtjkysely_keystore_base64: ecs.Secret.fromSecretsManager(
-            secretsmanager.Secret.fromSecretNameV2(
-                this,
-                "VtjkyselyKeystoreBase64",
-                "/oppijanumerorekisteri/VtjkyselyKeystoreBase64"
-            )
-        ),
-        vtjkysely_keystore_password: this.ssmSecret("VtjkyselyKeystorePassword"),
-        vtjkysely_username: this.ssmSecret("VtjkyselyUsername"),
-        vtjkysely_password: this.ssmSecret("VtjkyselyPassword"),
-        henkilo_modified_sns_topic_arn: this.ssmSecret("HenkiloModifiedSnsTopicArn"),
-        opintopolku_cross_account_role: this.ssmString("OpintopolkuCrossAccountRole"),
-        "oppijanumerorekisteri.tasks.datantuonti.import.bucket-name": this.ssmString("oppijanumerorekisteri.tasks.datantuonti.import.bucket-name", ""),
-      },
-      portMappings: [
-        {
-          name: "oppijanumerorekisteri",
-          containerPort: appPort,
-          appProtocol: ecs.AppProtocol.http,
-        },
-      ],
-    });
-
-    props.exportBucket.grantReadWrite(taskDefinition.taskRole);
-    props.datantuontiExportBucket.grantReadWrite(taskDefinition.taskRole);
-    props.datantuontiExportEncryptionKey.grantEncryptDecrypt(taskDefinition.taskRole);
-    datantuonti.createS3ImporPolicyStatements(this)
-        .forEach(statement => taskDefinition.addToTaskRolePolicy(statement))
-    if (conf.lampiExport) {
-      taskDefinition.addToTaskRolePolicy(
-        new iam.PolicyStatement({
-          actions: ["sts:AssumeRole"],
-          resources: [
-            ssm.StringParameter.valueFromLookup(
-              this,
-              "/oppijanumerorekisteri/LampiRoleArn2"
-            ),
-          ],
-        })
-      );
-    }
-    taskDefinition.addToTaskRolePolicy(
-      new iam.PolicyStatement({
-        actions: ["sts:AssumeRole"],
-        resources: [
-          ssm.StringParameter.valueFromLookup(
-            this,
-            "/oppijanumerorekisteri/OpintopolkuCrossAccountRole"
-          ),
-        ],
-      })
-    );
-    taskDefinition.addToTaskRolePolicy(
-        new iam.PolicyStatement({
-          actions: ["sts:AssumeRole"],
-          resources: [
-            ssm.StringParameter.valueFromLookup(
-                this,
-                "/oppijanumerorekisteri/PalveluvaylaApigwRoleArn"
-            ),
-          ],
-        })
-    );
-
-    const service = new ecs.FargateService(this, "Service", {
-      cluster: props.ecsCluster,
-      taskDefinition,
-      desiredCount: conf.minCapacity,
-      minHealthyPercent: 100,
-      maxHealthyPercent: 200,
-      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
-      healthCheckGracePeriod: cdk.Duration.minutes(5),
-    });
-    const scaling = service.autoScaleTaskCount({
-      minCapacity: conf.minCapacity,
-      maxCapacity: conf.maxCapacity,
-    });
-
-    scaling.scaleOnMetric("ServiceScaling", {
-      metric: service.metricCpuUtilization(),
-      scalingSteps: [
-        { upper: 15, change: -1 },
-        { lower: 50, change: +1 },
-        { lower: 65, change: +2 },
-        { lower: 80, change: +3 },
-      ],
-    });
-
-    service.connections.allowToDefaultPort(props.database);
+    })
 
     const alb = new elasticloadbalancingv2.ApplicationLoadBalancer(
         this,
@@ -478,13 +340,13 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
     });
 
     listener.addTargets("ServiceTarget", {
-      port: appPort,
-      targets: [service],
+      port: apiService.appPort,
+      targets: [apiService.service],
       healthCheck: {
         enabled: true,
         interval: cdk.Duration.seconds(10),
-        path: "/oppijanumerorekisteri-service/actuator/health",
-        port: appPort.toString(),
+        path: apiService.healthCheckPath,
+        port: apiService.appPort.toString(),
       },
     });
   }
@@ -522,6 +384,204 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         1,
     )
   }
+}
+
+class OppijanumerorekisteriService extends constructs.Construct {
+  readonly appPort = 8080;
+  readonly service: ecs.FargateService;
+  readonly healthCheckPath: string = "/oppijanumerorekisteri-service/actuator/health";
+
+  constructor(
+    scope: constructs.Construct,
+    id: string,
+    props: {
+      ecsCluster: ecs.Cluster,
+      dockerImage: ecr_assets.DockerImageAsset,
+      autoScaling: config.AutoScalingLimits,
+      logGroup: logs.LogGroup,
+      streamPrefix: string,
+      database: rds.DatabaseCluster,
+      exportBucket: s3.Bucket,
+      datantuontiExportBucket: s3.Bucket,
+      datantuontiExportEncryptionKey: kms.IKey,
+      awsRegion: string,
+      extraEnvironment?: ecs.ContainerDefinitionProps["environment"],
+    }
+  ) {
+    super(scope, id)
+    const conf = config.getConfig();
+    const taskDefinition = new ecs.FargateTaskDefinition(
+      this,
+      "TaskDefinition",
+      {
+        cpu: 1024,
+        memoryLimitMiB: 8192,
+        runtimePlatform: {
+          operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
+          cpuArchitecture: ecs.CpuArchitecture.ARM64,
+        },
+      });
+    const lampiProperties: ecs.ContainerDefinitionProps["environment"] = conf.lampiExport ? {
+      "oppijanumerorekisteri.tasks.export.enabled": conf.lampiExport.enabled.toString(),
+      "oppijanumerorekisteri.tasks.export.bucket-name": props.exportBucket.bucketName,
+      "oppijanumerorekisteri.tasks.export.copy-to-lampi": "true",
+      "oppijanumerorekisteri.tasks.export.lampi-bucket-name": conf.lampiExport.bucketName,
+    } : {
+      "oppijanumerorekisteri.tasks.export.enabled": "false",
+    };
+
+    const lampiSecrets: ecs.ContainerDefinitionProps["secrets"] = conf.lampiExport ? {
+      "oppijanumerorekisteri.tasks.export.lampi-external-id": this.ssmSecret("LampiExternalId"),
+      "oppijanumerorekisteri.tasks.export.lampi-role-arn": this.ssmString("LampiRoleArn2"),
+    } : {};
+
+    taskDefinition.addContainer("AppContainer", {
+      image: ecs.ContainerImage.fromDockerImageAsset(props.dockerImage),
+      logging: new ecs.AwsLogDriver({ logGroup: props.logGroup, streamPrefix: props.streamPrefix }),
+      environment: {
+        ENV: config.getEnvironment(),
+        postgresql_host: props.database.clusterEndpoint.hostname,
+        postgresql_port: props.database.clusterEndpoint.port.toString(),
+        postgresql_db: "oppijanumerorekisteri",
+        aws_region: props.awsRegion,
+        export_bucket_name: props.exportBucket.bucketName,
+        "oppijanumerorekisteri.tasks.datantuonti.export.enabled": `${conf.features["oppijanumerorekisteri.tasks.datantuonti.export.enabled"]}`,
+        "oppijanumerorekisteri.tasks.datantuonti.export.bucket-name": props.datantuontiExportBucket.bucketName,
+        "oppijanumerorekisteri.tasks.datantuonti.export.encryption-key-arn": props.datantuontiExportEncryptionKey.keyArn,
+        "oppijanumerorekisteri.tasks.datantuonti.import.enabled": `${conf.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]}`,
+        ...lampiProperties,
+        ...props.extraEnvironment,
+      },
+      secrets: {
+        postgresql_username: ecs.Secret.fromSecretsManager(
+          props.database.secret!,
+          "username"
+        ),
+        postgresql_password: ecs.Secret.fromSecretsManager(
+          props.database.secret!,
+          "password"
+        ),
+        authentication_app_password_to_haku: this.ssmSecret("AuthenticationAppPasswordToHaku"),
+        authentication_app_username_to_haku: this.ssmSecret("AuthenticationAppUsernameToHaku"),
+        authentication_app_password_to_vtj: this.ssmSecret("AuthenticationAppPasswordToVtj"),
+        authentication_app_username_to_vtj: this.ssmSecret("AuthenticationAppUsernameToVtj"),
+        authentication_app_password_to_henkilotietomuutos: this.ssmSecret("AuthenticationAppPasswordToHenkilotietomuutos"),
+        authentication_app_username_to_henkilotietomuutos: this.ssmSecret("AuthenticationAppUsernameToHenkilotietomuutos"),
+        kayttooikeus_password: this.ssmSecret("KayttooikeusPassword"),
+        kayttooikeus_username: this.ssmSecret("KayttooikeusUsername"),
+        ...lampiSecrets,
+        palveluvayla_access_key_id: this.ssmSecret("PalveluvaylaAccessKeyId"),
+        palveluvayla_secret_access_key: this.ssmSecret("PalveluvaylaSecretAccessKey"),
+        viestinta_username: this.ssmSecret("ViestintaUsername"),
+        viestinta_password: this.ssmSecret("ViestintaPassword"),
+        ataru_username: this.ssmSecret("AtaruUsername"),
+        ataru_password: this.ssmSecret("AtaruPassword"),
+        oauth2_clientid: this.ssmSecret("Oauth2Clientid"),
+        oauth2_clientsecret: this.ssmSecret("Oauth2Clientsecret"),
+        host_cas: this.ssmSecret("HostCas"),
+        host_virkailija: this.ssmSecret("HostVirkailija"),
+        slack_webhook_url: this.ssmSecret("SlackWebhookUrl"),
+        palveluvayla_apigw_role_arn: this.ssmSecret("PalveluvaylaApigwRoleArn"),
+        vtj_muutosrajapinta_username: this.ssmSecret("VtjMuutosrajapintaUsername"),
+        vtj_muutosrajapinta_password: this.ssmSecret("VtjMuutosrajapintaPassword"),
+        vtjkysely_truststore_base64: ecs.Secret.fromSecretsManager(
+          secretsmanager.Secret.fromSecretNameV2(
+            this,
+            "VtjkyselyTruststoreBase64",
+            "/oppijanumerorekisteri/VtjkyselyTruststoreBase64"
+          )
+        ),
+        vtjkysely_truststore_password: this.ssmSecret("VtjkyselyTruststorePassword"),
+        vtjkysely_keystore_base64: ecs.Secret.fromSecretsManager(
+          secretsmanager.Secret.fromSecretNameV2(
+            this,
+            "VtjkyselyKeystoreBase64",
+            "/oppijanumerorekisteri/VtjkyselyKeystoreBase64"
+          )
+        ),
+        vtjkysely_keystore_password: this.ssmSecret("VtjkyselyKeystorePassword"),
+        vtjkysely_username: this.ssmSecret("VtjkyselyUsername"),
+        vtjkysely_password: this.ssmSecret("VtjkyselyPassword"),
+        henkilo_modified_sns_topic_arn: this.ssmSecret("HenkiloModifiedSnsTopicArn"),
+        opintopolku_cross_account_role: this.ssmString("OpintopolkuCrossAccountRole"),
+        "oppijanumerorekisteri.tasks.datantuonti.import.bucket-name": this.ssmString("oppijanumerorekisteri.tasks.datantuonti.import.bucket-name", ""),
+      },
+      portMappings: [
+        {
+          name: "oppijanumerorekisteri",
+          containerPort: this.appPort,
+          appProtocol: ecs.AppProtocol.http,
+        },
+      ],
+    });
+
+    props.exportBucket.grantReadWrite(taskDefinition.taskRole);
+    props.datantuontiExportBucket.grantReadWrite(taskDefinition.taskRole);
+    props.datantuontiExportEncryptionKey.grantEncryptDecrypt(taskDefinition.taskRole);
+    datantuonti.createS3ImporPolicyStatements(this)
+      .forEach(statement => taskDefinition.addToTaskRolePolicy(statement))
+    if (conf.lampiExport) {
+      taskDefinition.addToTaskRolePolicy(
+        new iam.PolicyStatement({
+          actions: ["sts:AssumeRole"],
+          resources: [
+            ssm.StringParameter.valueFromLookup(
+              this,
+              "/oppijanumerorekisteri/LampiRoleArn2"
+            ),
+          ],
+        })
+      );
+    }
+    taskDefinition.addToTaskRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["sts:AssumeRole"],
+        resources: [
+          ssm.StringParameter.valueFromLookup(
+            this,
+            "/oppijanumerorekisteri/OpintopolkuCrossAccountRole"
+          ),
+        ],
+      })
+    );
+    taskDefinition.addToTaskRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["sts:AssumeRole"],
+        resources: [
+          ssm.StringParameter.valueFromLookup(
+            this,
+            "/oppijanumerorekisteri/PalveluvaylaApigwRoleArn"
+          ),
+        ],
+      })
+    );
+
+    this.service = new ecs.FargateService(this, "Service", {
+      cluster: props.ecsCluster,
+      taskDefinition,
+      desiredCount: props.autoScaling.min,
+      minHealthyPercent: 100,
+      maxHealthyPercent: 200,
+      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
+      healthCheckGracePeriod: cdk.Duration.minutes(5),
+    });
+    const scaling = this.service.autoScaleTaskCount({
+      minCapacity: props.autoScaling.min,
+      maxCapacity: props.autoScaling.max,
+    });
+
+    scaling.scaleOnMetric("ServiceScaling", {
+      metric: this.service.metricCpuUtilization(),
+      scalingSteps: [
+        { upper: 15, change: -1 },
+        { lower: 50, change: +1 },
+        { lower: 65, change: +2 },
+        { lower: 80, change: +3 },
+      ],
+    });
+
+    this.service.connections.allowToDefaultPort(props.database);
+  }
 
   ssmString(name: string, prefix: string = '/oppijanumerorekisteri/'): ecs.Secret {
     return ecs.Secret.fromSsmParameter(
@@ -532,13 +592,14 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       )
     );
   }
+
   ssmSecret(name: string): ecs.Secret {
     return ecs.Secret.fromSsmParameter(
-        ssm.StringParameter.fromSecureStringParameterAttributes(
-            this,
-            `Param${name}`,
-            { parameterName: `/oppijanumerorekisteri/${name}` }
-        )
+      ssm.StringParameter.fromSecureStringParameterAttributes(
+        this,
+        `Param${name}`,
+        { parameterName: `/oppijanumerorekisteri/${name}` }
+      )
     );
   }
 }
