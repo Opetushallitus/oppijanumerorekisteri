@@ -24,6 +24,8 @@ import {createHealthCheckStacks} from "./health-check";
 import {DatabaseBackupToS3} from "./DatabaseBackupToS3";
 import * as datantuonti from "./datantuonti";
 import * as alarms from "./alarms";
+import * as cloudwatch from "aws-cdk-lib/aws-cloudwatch"
+import * as cloudwatch_actions from "aws-cdk-lib/aws-cloudwatch-actions"
 
 class CdkApp extends cdk.App {
   constructor(props: cdk.AppProps) {
@@ -233,12 +235,15 @@ type OppijanumerorekisteriApplicationStackProperties = cdk.StackProps & {
 }
 
 class OppijanumerorekisteriApplicationStack extends cdk.Stack {
+  private readonly alarmTopic: sns.ITopic;
+
   constructor(
       scope: constructs.Construct,
       id: string,
       props: OppijanumerorekisteriApplicationStackProperties,
   ) {
     super(scope, id, props);
+    this.alarmTopic = props.alarmTopic;
     const conf = config.getConfig();
     const vpc = ec2.Vpc.fromLookup(this, "Vpc", {vpcName: sharedAccount.VPC_NAME});
 
@@ -343,6 +348,26 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         port: apiService.appPort.toString(),
       },
     });
+
+    this.createAlarm("LoadBalancer5XXResponsesAlarm", {
+      alarmName: sharedAccount.prefix("5XXResponsesAlarm"),
+      metric: alb.metrics.httpCodeElb(elasticloadbalancingv2.HttpCodeElb.ELB_5XX_COUNT, {
+        statistic: "Sum",
+        period: cdk.Duration.minutes(5),
+      }),
+      comparisonOperator: cloudwatch.ComparisonOperator.LESS_THAN_OR_EQUAL_TO_THRESHOLD,
+      threshold: 10,
+      evaluationPeriods: 2,
+      datapointsToAlarm: 1,
+      treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+    })
+  }
+
+  createAlarm(id: string, alarmProps: cloudwatch.AlarmProps): cloudwatch.Alarm {
+    const alarm = new cloudwatch.Alarm(this, id, alarmProps);
+    alarm.addOkAction(new cloudwatch_actions.SnsAction(this.alarmTopic));
+    alarm.addAlarmAction(new cloudwatch_actions.SnsAction(this.alarmTopic));
+    return alarm
   }
 
   exportFailureAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
