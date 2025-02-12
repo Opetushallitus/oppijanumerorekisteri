@@ -355,7 +355,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         statistic: "Sum",
         period: cdk.Duration.minutes(5),
       }),
-      comparisonOperator: cloudwatch.ComparisonOperator.LESS_THAN_OR_EQUAL_TO_THRESHOLD,
+      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
       threshold: 10,
       evaluationPeriods: 2,
       datapointsToAlarm: 1,
