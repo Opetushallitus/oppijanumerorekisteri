@@ -286,13 +286,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       exportBucket: props.exportBucket,
       awsRegion: this.region,
       extraEnvironment: {
-        "oppijanumerorekisteri.scheduling.yksilointi.enabled": "false",
-        "oppijanumerorekisteri.tasks.datantuonti.export.enabled": "false",
-        "oppijanumerorekisteri.tasks.datantuonti.import.enabled": "false",
-        "oppijanumerorekisteri.tasks.export.enabled": "false",
-        "oppijanumerorekisteri.vtj-muutosrajapinta.fetch-enabled": "false",
-        "oppijanumerorekisteri.vtj-muutosrajapinta.muutostieto-enabled": "false",
-        "oppijanumerorekisteri.vtj-muutosrajapinta.perustieto-enabled": "false",
+        "db-scheduler.enabled": "false",
       },
     })
 
