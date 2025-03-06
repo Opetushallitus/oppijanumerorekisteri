@@ -43,7 +43,7 @@
         "@types/react": "^16.14.62",
         "@types/react-datepicker": "^4.19.6",
         "@types/react-dom": "^16",
-        "@types/react-router-redux": "^4",
+        "@types/react-router-redux": "^4.0.55",
         "@types/react-virtualized-select": "^3.0.16",
         "@typescript-eslint/eslint-plugin": "^8.18.0",
         "@typescript-eslint/parser": "^8.18.0",
