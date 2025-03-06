@@ -1,4 +1,4 @@
-FROM maven:3.9.8-amazoncorretto-21-al2023 AS build
+FROM maven:3.9.9-amazoncorretto-21-al2023@sha256:aa9a602dbdfa001de5c02cd572f84040042ac309c221a7b0b031b5fa433d9a71 AS build
 WORKDIR /app
 
 RUN dnf install -y nodejs20 \
