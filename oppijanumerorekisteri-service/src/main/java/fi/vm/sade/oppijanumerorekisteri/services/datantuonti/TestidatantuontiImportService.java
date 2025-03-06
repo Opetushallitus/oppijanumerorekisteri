@@ -44,7 +44,7 @@ public class TestidatantuontiImportService {
     private final HenkiloRepository henkiloRepository;
 
     @Value("oppijanumerorekisteri.henkilo.solmuluokka")
-    private Integer solmuluokka;
+    private String solmuluokka;
 
     static final String NEW_HENKILO_QUERY = """
             SELECT
@@ -102,7 +102,7 @@ public class TestidatantuontiImportService {
     }
 
     private String getFreePersonOid() {
-        final String newOid = OIDGenerator.generateOID(solmuluokka);
+        final String newOid = OIDGenerator.generateOID(Integer.parseInt(solmuluokka));
         if (this.henkiloService.getOidExists(newOid)) {
             return getFreePersonOid();
         }
