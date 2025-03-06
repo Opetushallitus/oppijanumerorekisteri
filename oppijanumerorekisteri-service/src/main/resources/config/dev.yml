@@ -1,6 +1,8 @@
 spring.security.oauth2.resourceserver.jwt.issuer-uri: https://kayttooikeus.dev.yleiskayttoiset.opintopolku.fi/kayttooikeus-service
 spring.security.oauth2.resourceserver.jwt.jwk-set-uri: https://kayttooikeus.dev.yleiskayttoiset.opintopolku.fi/kayttooikeus-service/oauth2/jwks
 
+oppijanumerorekisteri.henkilo.solmuluokka: 198
+
 oppijanumerorekisteri.vtj-muutosrajapinta.fetch-enabled: false
 oppijanumerorekisteri.vtj-muutosrajapinta.muutostieto-enabled: false
 oppijanumerorekisteri.vtj-muutosrajapinta.perustieto-enabled: false

@@ -104,6 +104,7 @@ oppijanumerorekisteri:
     password: pwd
     palveluvayla-env: FI-TEST
     apigw-role-arn: ''
+oppijanumerorekisteri.henkilo.solmuluokka: 24
 oppijanumerorekisteri.vtjkysely.username: username
 oppijanumerorekisteri.vtjkysely.password: password
 oppijanumerorekisteri.vtjkysely.keystorePassword: dummydummy

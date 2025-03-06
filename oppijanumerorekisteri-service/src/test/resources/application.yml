@@ -48,6 +48,7 @@ aws:
     topicArn: test-topic-arn
 logback:
   access: true
+oppijanumerorekisteri.henkilo.solmuluokka: 24
 oppijanumerorekisteri.vtjkysely.enabled: false
 oppijanumerorekisteri.vtjkysely.address: http://localhost
 oppijanumerorekisteri.vtjkysely.keystoreUri: classpath:/dummykeystore.jks

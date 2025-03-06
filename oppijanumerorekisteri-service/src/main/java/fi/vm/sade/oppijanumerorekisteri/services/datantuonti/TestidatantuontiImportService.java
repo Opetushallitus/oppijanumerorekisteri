@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import com.google.common.base.Optional;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,9 @@ public class TestidatantuontiImportService {
     private final HenkiloModificationService henkiloModificationService;
     private final HenkiloService henkiloService;
     private final HenkiloRepository henkiloRepository;
+
+    @Value("oppijanumerorekisteri.henkilo.solmuluokka")
+    private Integer solmuluokka;
 
     static final String NEW_HENKILO_QUERY = """
             SELECT
@@ -97,7 +102,7 @@ public class TestidatantuontiImportService {
     }
 
     private String getFreePersonOid() {
-        final String newOid = OIDGenerator.generateOID(98);
+        final String newOid = OIDGenerator.generateOID(solmuluokka);
         if (this.henkiloService.getOidExists(newOid)) {
             return getFreePersonOid();
         }
