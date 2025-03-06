@@ -13,6 +13,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.QueueingEmailService;
 import fi.vm.sade.oppijanumerorekisteri.services.VtjMuutostietoService;
 import fi.vm.sade.oppijanumerorekisteri.services.datantuonti.DatantuontiExportService;
 import fi.vm.sade.oppijanumerorekisteri.services.datantuonti.DatantuontiImportService;
+import fi.vm.sade.oppijanumerorekisteri.services.datantuonti.TestidatantuontiImportService;
 import fi.vm.sade.oppijanumerorekisteri.services.death.CleanupService;
 import fi.vm.sade.oppijanumerorekisteri.services.export.ExportService;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,7 @@ public class SchedulingConfiguration {
     private final ExportService exportService;
     private final DatantuontiExportService datantuontiExportService;
     private final DatantuontiImportService datantuontiImportService;
+    private final TestidatantuontiImportService testidatantuontiImportService;
     private final QueueingEmailService queueingEmailService;
 
     @Bean
@@ -152,6 +154,18 @@ public class SchedulingConfiguration {
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
+                });
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled", matchIfMissing = false)
+    Task<Void> testidatantuontiImportTask() {
+        log.info("Creating testidatantuonti import task");
+        return Tasks.recurring(new TaskWithoutDataDescriptor("TestidatantuontiImport"), new Daily(LocalTime.of(2, 10)))
+                .execute((taskInstance, executionContext) -> {
+                    log.info("Running testidatantuonti import task");
+                    testidatantuontiImportService.createNewHenkilos();
+                    log.info("Testidatantuonti import task completed");
                 });
     }
 

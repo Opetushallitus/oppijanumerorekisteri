@@ -60,6 +60,7 @@ oppijanumerorekisteri.vtjkysely.truststorePassword: dummydummy
 oppijanumerorekisteri.tasks.datantuonti.export.enabled: false
 oppijanumerorekisteri.tasks.datantuonti.export.bucket-name: none
 oppijanumerorekisteri.tasks.datantuonti.import.enabled: false
+oppijanumerorekisteri.tasks.datantuonti.import.bucket-name: none
 
 oppijanumerorekisteri.scheduling.yksilointi.enabled: false
 oppijanumerorekisteri.allow-fake-ssn: true
@@ -67,4 +68,3 @@ oppijanumerorekisteri.allow-fake-ssn: true
 viestinvalitys.baseurl: http://localhost/lahetys
 authentication.viestintapalvelu.username: username
 authentication.viestintapalvelu.password: password
-oppijanumerorekisteri.tasks.datantuonti.import.bucket-name: none

@@ -7,7 +7,6 @@ function main {
   cd "$repo"
   ./mvnw install -DskipTests
   cd "$repo/oppijanumerorekisteri-service"
-  ./../mvnw install -DskipTests
   wait_for_local_db_to_be_healthy
 
   java \

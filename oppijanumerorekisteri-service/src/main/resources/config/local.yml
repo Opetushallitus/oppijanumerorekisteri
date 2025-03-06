@@ -9,3 +9,5 @@ oppijanumerorekisteri.vtjkysely.truststoreUri: classpath:/dummytruststore.jks
 
 oppijanumerorekisteri.scheduling.yksilointi.enabled: false
 oppijanumerorekisteri.allow-fake-ssn: true
+
+oppijanumerorekisteri.tasks.testidatantuonti.import.enabled: true
