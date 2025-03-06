@@ -104,10 +104,26 @@ public class TestidatantuontiImportService {
         return newOid;
     }
 
+    private Set<YhteystiedotRyhma> getYhteystiedotRyhmas(TestidatantuontiHenkilo d) {
+        Set<YhteystiedotRyhma> ryhmat = new HashSet<>();
+        if (!d.turvakielto() && d.katuosoite() != null && d.postinumero() != null && d.kaupunki() != null) {
+            Set<Yhteystieto> yhteystiedot = new HashSet<>();
+            yhteystiedot.add(Yhteystieto.builder(YhteystietoTyyppi.YHTEYSTIETO_KATUOSOITE, d.katuosoite()).build());
+            yhteystiedot.add(Yhteystieto.builder(YhteystietoTyyppi.YHTEYSTIETO_POSTINUMERO, d.postinumero()).build());
+            yhteystiedot.add(Yhteystieto.builder(YhteystietoTyyppi.YHTEYSTIETO_KAUPUNKI, d.kaupunki()).build());
+            YhteystiedotRyhma yhteystiedotRyhma = new YhteystiedotRyhma(
+                VtjYhteystiedotRyhma.VAKINAINEN_KOTIMAINEN_OSOITE.getKuvaus(),
+                "alkupera1",
+                true,
+                yhteystiedot);
+            ryhmat.add(yhteystiedotRyhma);
+        }
+        return ryhmat;
+    }
+
     private Henkilo mapToHenkilo(TestidatantuontiHenkilo d) {
-        String testOid = getFreePersonOid();
-        var builder = Henkilo.builder()
-            .oidHenkilo(testOid)
+        return Henkilo.builder()
+            .oidHenkilo(getFreePersonOid())
             .aidinkieli(Optional.fromNullable(d.aidinkieli()).transform(k -> new Kielisyys(k)).orNull())
             .asiointiKieli(Optional.fromNullable(d.aidinkieli()).transform(k -> new Kielisyys(k)).orNull())
             .yksiloityVTJ(true)
@@ -123,22 +139,9 @@ public class TestidatantuontiImportService {
             .hetu(d.hetu())
             .sukupuoli(d.sukupuoli())
             .kotikunta(d.kotikunta())
-            .turvakielto(d.turvakielto());
-        Set<YhteystiedotRyhma> ryhmat = new HashSet<>();
-        if (!d.turvakielto() && d.katuosoite() != null && d.postinumero() != null && d.kaupunki() != null) {
-            Set<Yhteystieto> yhteystiedot = new HashSet<>();
-            yhteystiedot.add(Yhteystieto.builder(YhteystietoTyyppi.YHTEYSTIETO_KATUOSOITE, d.katuosoite()).build());
-            yhteystiedot.add(Yhteystieto.builder(YhteystietoTyyppi.YHTEYSTIETO_POSTINUMERO, d.postinumero()).build());
-            yhteystiedot.add(Yhteystieto.builder(YhteystietoTyyppi.YHTEYSTIETO_KAUPUNKI, d.kaupunki()).build());
-            YhteystiedotRyhma yhteystiedotRyhma = new YhteystiedotRyhma(
-                VtjYhteystiedotRyhma.VAKINAINEN_KOTIMAINEN_OSOITE.getKuvaus(),
-                "alkupera1",
-                true,
-                yhteystiedot);
-            ryhmat.add(yhteystiedotRyhma);
-        }
-        builder.yhteystiedotRyhma(ryhmat);
-        return builder.build();
+            .turvakielto(d.turvakielto())
+            .yhteystiedotRyhma(getYhteystiedotRyhmas(d))
+            .build();
     }
 
     private void saveNewHenkilo(TestidatantuontiHenkilo d) {
