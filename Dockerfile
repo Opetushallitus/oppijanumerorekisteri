@@ -1,10 +1,10 @@
-FROM maven:3.9.8-amazoncorretto-21 AS build
+FROM maven:3.9.8-amazoncorretto-21@sha256:12ced8e1a5ad060aed3f30a7b430093de5889cef7894dd49a0d67a1a0d0a5a3a AS build
 WORKDIR /app
 
 COPY . .
 RUN mvn clean package -s settings.xml -DskipTests
 
-FROM amazoncorretto:21
+FROM amazoncorretto:21@sha256:aa94fda5e3ea59687d0a68e1c491687cb9d7365245d077684f848b2a53f1430d
 WORKDIR /app
 
 COPY --from=build /app/oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-*SNAPSHOT.jar oppijanumerorekisteri.jar
