@@ -43,7 +43,7 @@ public class TestidatantuontiImportService {
     private final HenkiloService henkiloService;
     private final HenkiloRepository henkiloRepository;
 
-    @Value("oppijanumerorekisteri.henkilo.solmuluokka")
+    @Value("${oppijanumerorekisteri.henkilo.solmuluokka}")
     private String solmuluokka;
 
     static final String NEW_HENKILO_QUERY = """
