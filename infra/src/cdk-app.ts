@@ -468,6 +468,7 @@ class OppijanumerorekisteriService extends constructs.Construct {
         "oppijanumerorekisteri.tasks.datantuonti.export.bucket-name": props.datantuontiExportBucket.bucketName,
         "oppijanumerorekisteri.tasks.datantuonti.export.encryption-key-arn": props.datantuontiExportEncryptionKey.keyArn,
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": `${conf.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]}`,
+        "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": `${conf.features["oppijanumerorekisteri.tasks.testidatantuonti.import.enabled"]}`,
         ...lampiProperties,
         ...props.extraEnvironment,
       },
