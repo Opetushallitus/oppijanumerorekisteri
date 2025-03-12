@@ -58,7 +58,7 @@ export const hahtuva: Config = {
     features: {
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
-        "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": false,
+        "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
     },
 };
 
@@ -69,7 +69,7 @@ export const dev: Config = {
     features: {
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
-        "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": false,
+        "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
     },
     lampiExport: {
       enabled: true,
