@@ -19,7 +19,7 @@ export function alarmIfExpectedLogLineIsMissing(
         {
             filterPattern,
             metricName: `${id}Success`,
-            metricNamespace: "Organisaatio",
+            metricNamespace: "Oppijanumerorekisteri",
             metricValue: "1",
         }
     );
