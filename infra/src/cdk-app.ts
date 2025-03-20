@@ -373,7 +373,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
   exportFailureAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
     alarms.alarmIfExpectedLogLineIsMissing(
         this,
-        "ExportTask",
+        sharedAccount.prefix("ExportTask"),
         logGroup,
         alarmTopic,
         logs.FilterPattern.literal('"Oppijanumerorekisteri export task completed"')
@@ -383,7 +383,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
   datantuontiExportFailureAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
     alarms.alarmIfExpectedLogLineIsMissing(
         this,
-        "DatantuontiExportTask",
+        sharedAccount.prefix("DatantuontiExportTask"),
         logGroup,
         alarmTopic,
         logs.FilterPattern.literal('"Oppijanumerorekisteri datantuonti export task completed"'),
