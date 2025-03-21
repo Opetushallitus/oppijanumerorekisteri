@@ -59,6 +59,14 @@ const StepThreeIcon = () => (
     </svg>
 );
 
+const isMfaSetupEnabled = (idpEntityId: string) => {
+    return (
+        idpEntityId === 'vetuma' ||
+        window?.location.hostname.includes('hahtuvaopintopolku') ||
+        window?.location.hostname.includes('untuvaopintopolku')
+    );
+};
+
 type MfaRegisteredProps = {
     L: Localisations;
     idpEntityId: string;
@@ -90,7 +98,7 @@ const MfaRegistered = ({ L, idpEntityId, setSetupSuccess }: MfaRegisteredProps) 
                 <div>
                     <p className={styles.infoText}>{L.MFA_REKISTEROITY_INFO}</p>
                     <div>
-                        {idpEntityId === 'vetuma' ? (
+                        {isMfaSetupEnabled(idpEntityId) ? (
                             <>
                                 <button
                                     className={`oph-button oph-button-primary ${styles.setupButton}`}
@@ -137,7 +145,7 @@ const MfaUnregistered = ({ setMfaSetup, L, idpEntityId }: MfaUnregisteredProps) 
                 <div>
                     <p className={styles.infoText}>{L.MFA_OTA_KAYTTOON_INFO}</p>
                     <div>
-                        {idpEntityId === 'vetuma' ? (
+                        {isMfaSetupEnabled(idpEntityId) ? (
                             <button
                                 className={`oph-button oph-button-primary ${styles.setupButton}`}
                                 onClick={() => setMfaSetup(true)}
