@@ -142,7 +142,7 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
                     ...form.values,
                     salasana: form.values.password,
                 });
-                this.props.router.push(`/vahvatunnistusinfo/valmis/${this.props.locale}`);
+                this.props.router.push(`/kayttaja/vahvatunnistusinfo/valmis/${this.props.locale}`);
             }
         } catch (error) {
             this.onServerError(error);
@@ -160,7 +160,7 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
                 },
             ]);
         } else {
-            this.props.router.push(`/vahvatunnistusinfo/virhe/${this.props.locale}/${this.props.loginToken}`);
+            this.props.router.push(`/kayttaja/vahvatunnistusinfo/virhe/${this.props.locale}/${this.props.loginToken}`);
         }
     };
 }

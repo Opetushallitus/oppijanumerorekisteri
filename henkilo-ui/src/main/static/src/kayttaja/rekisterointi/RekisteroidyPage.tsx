@@ -186,7 +186,7 @@ class RekisteroidyPage extends React.Component<Props, State> {
         const payload = { ...this.state.henkilo };
         const url = urls.url('kayttooikeus-service.kutsu.by-token', this.props.kutsu.temporaryToken);
         http.post(url, payload).then(
-            () => this.props.router.push(`/rekisteroidy/valmis/${this.props.locale}`),
+            () => this.props.router.push(`/kayttaja/rekisteroidy/valmis/${this.props.locale}`),
             () => this.props.addNotification('registrationError')
         );
     }

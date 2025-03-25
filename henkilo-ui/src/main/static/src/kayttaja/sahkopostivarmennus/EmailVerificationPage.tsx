@@ -125,7 +125,7 @@ export class EmailVerificationPage extends React.Component<Props, State> {
                 this.props.errorNotification(this.props.L['REKISTEROIDY_ILLEGALARGUMENT_OTSIKKO']);
                 throw error;
             });
-            this.props.router.push(`/sahkopostivarmistus/valmis/${this.props.locale}`);
+            this.props.router.push(`/kayttaja/sahkopostivarmistus/valmis/${this.props.locale}`);
         }
     }
 
