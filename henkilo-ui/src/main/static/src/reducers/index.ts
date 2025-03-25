@@ -12,7 +12,6 @@ import { OrganisaatioKayttooikeusryhmat } from './organisaatiokayttooikeusryhmat
 import { organisaatio } from './organisaatio.reducer';
 import { notifications } from './notifications.reducer';
 import { henkilohakuState } from './henkilohaku.reducer';
-import cas from './cas.reducer';
 import { notificationList } from './notification.reducer';
 import existinceCheckReducer from './existence.reducer';
 import createPersonReducer from './create.reducer';
@@ -32,7 +31,6 @@ const rootReducer = {
     notificationList,
     notifications,
     henkilohakuState,
-    cas,
     existenceCheck: existinceCheckReducer,
     createPerson: createPersonReducer,
 };

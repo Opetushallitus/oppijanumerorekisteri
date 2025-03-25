@@ -32,7 +32,7 @@ test.describe('salasanan vaihto', () => {
         await expect(page.locator('#submit')).toBeEnabled();
     });
 
-    test('uudelleenohjaa kirjautumiseen', async ({ page }) => {
+    test('näyttää onnistumissivun', async ({ page }) => {
         await page.route('/kayttooikeus-service/henkilo/current/omattiedot', async (route) => {
             await route.fulfill({ status: 401 });
         });
@@ -42,6 +42,7 @@ test.describe('salasanan vaihto', () => {
         await page.fill('#newPassword', 'newPassword123!newPassword123!');
         await page.fill('#passwordConfirmation', 'newPassword123!newPassword123!');
         await page.click('#submit');
-        await page.waitForURL('http://localhost:3000/cas/login?service=service123&authToken=authToken123');
+        await expect(page.locator('#passwordChangeSuccess')).toContainText('Salasanan vaihto onnistui');
+        await expect(page.locator('#returnLink')).toHaveAttribute('href', '/');
     });
 });

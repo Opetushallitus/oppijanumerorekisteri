@@ -7,9 +7,9 @@ import {
     PASSIVOI_HENKILO_FAILURE,
     VTJ_OVERRIDE_HENKILO_FAILURE,
     YKSILOI_HENKILO_FAILURE,
-    CREATE_HENKILOBYTOKEN_FAILURE,
     YKSILOI_PUUTTUVAT_TIEDOT_FAILURE,
     RESET_BUTTON_NOTIFICATIONS,
+    NOTIFICATION_ADD,
 } from '../actions/actiontypes';
 import { NotificationType } from '../types/notification.types';
 
@@ -140,20 +140,25 @@ export const notifications = (
                     createButtonNotification('error', action.buttonNotification),
                 ],
             };
-        case CREATE_HENKILOBYTOKEN_FAILURE: {
-            const errorMessage = mapErrorTypeToErrorMessage(action.error.errorType);
-            return {
-                ...state,
-                buttonNotifications: [
-                    ...state.buttonNotifications,
-                    createButtonNotification('error', {
-                        notL10nMessage: errorMessage.notL10nMessage,
-                        notL10nText: errorMessage.notL10nText,
-                        position: 'rekisteroidyPage',
-                        errorType: action.error.errorType,
-                    }),
-                ],
-            };
+        case NOTIFICATION_ADD: {
+            switch (action.notification) {
+                case 'registrationError': {
+                    const errorMessage = mapErrorTypeToErrorMessage(action.error.errorType);
+                    return {
+                        ...state,
+                        buttonNotifications: [
+                            ...state.buttonNotifications,
+                            createButtonNotification('error', {
+                                notL10nMessage: errorMessage.notL10nMessage,
+                                notL10nText: errorMessage.notL10nText,
+                                position: 'rekisteroidyPage',
+                                errorType: action.error.errorType,
+                            }),
+                        ],
+                    };
+                }
+            }
+            return state;
         }
         case RESET_BUTTON_NOTIFICATIONS:
             return {

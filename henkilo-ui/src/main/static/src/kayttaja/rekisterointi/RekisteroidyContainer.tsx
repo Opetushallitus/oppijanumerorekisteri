@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { RouteActions } from 'react-router-redux';
 
 import RekisteroidyPage from './RekisteroidyPage';
 import { fetchKieliKoodisto } from '../../actions/koodisto.actions';
@@ -13,6 +14,7 @@ import { useTitle } from '../../useTitle';
 
 type OwnProps = {
     location: { query: Record<string, string> };
+    router: RouteActions;
 };
 
 const RekisteroidyContainer = (props: OwnProps) => {
@@ -39,6 +41,7 @@ const RekisteroidyContainer = (props: OwnProps) => {
             kutsu={{ ...kutsu, temporaryToken }}
             L={l10n.localisations[locale]}
             locale={kutsu.asiointikieli}
+            router={props.router}
         />
     );
 };

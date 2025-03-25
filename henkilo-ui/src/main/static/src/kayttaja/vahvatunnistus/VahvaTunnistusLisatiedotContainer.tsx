@@ -138,12 +138,11 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
                     loginToken: this.props.loginToken,
                 };
                 const tunnistusUrl = urls.url('kayttooikeus-service.cas.uudelleenrekisterointi', tunnistusParameters);
-                const loginParameters = await http.post(tunnistusUrl, {
+                await http.post(tunnistusUrl, {
                     ...form.values,
                     salasana: form.values.password,
                 });
-                const loginUrl = urls.url('cas.login', loginParameters);
-                window.location.replace(loginUrl);
+                this.props.router.push(`/vahvatunnistusinfo/valmis/${this.props.locale}`);
             }
         } catch (error) {
             this.onServerError(error);

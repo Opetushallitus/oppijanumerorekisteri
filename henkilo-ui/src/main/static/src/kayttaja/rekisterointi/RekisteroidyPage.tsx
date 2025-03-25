@@ -2,6 +2,7 @@ import './RekisteroidyPage.css';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { connect } from 'react-redux';
+import { urls } from 'oph-urls-js';
 
 import RekisteroidyPerustiedot from './content/RekisteroidyPerustiedot';
 import RekisteroidyOrganisaatiot from './content/RekisteroidyOrganisaatiot';
@@ -12,21 +13,23 @@ import type { KutsuByToken } from '../../types/domain/kayttooikeus/Kutsu.types';
 import NotificationButton from '../../components/common/button/NotificationButton';
 import { KoodistoState } from '../../reducers/koodisto.reducer';
 import { KayttajaRootState } from '../store';
-import { createHenkiloByToken } from '../../actions/kutsu.actions';
-import { removeNotification } from '../../actions/notifications.actions';
+import { addNotification, removeNotification } from '../../actions/notifications.actions';
 import { Locale } from '../../types/locale.type';
 import { Localisations } from '../../types/localisation.type';
+import { http } from '../../http';
+import { RouteActions } from 'react-router-redux';
 
 type OwnProps = {
     koodisto: KoodistoState;
     kutsu: KutsuByToken;
     L: Localisations;
     locale: Locale;
+    router: RouteActions;
 };
 
 type DispatchProps = {
-    createHenkiloByToken: (temporaryToken: string, payload: Henkilo) => void;
     removeNotification: (status: string, group: string, id: string) => void;
+    addNotification: (notification: string) => void;
 };
 
 type Props = DispatchProps & OwnProps;
@@ -181,7 +184,11 @@ class RekisteroidyPage extends React.Component<Props, State> {
     createHenkilo() {
         this.props.removeNotification('error', 'buttonNotifications', 'rekisteroidyPage');
         const payload = { ...this.state.henkilo };
-        this.props.createHenkiloByToken(this.props.kutsu.temporaryToken, payload);
+        const url = urls.url('kayttooikeus-service.kutsu.by-token', this.props.kutsu.temporaryToken);
+        http.post(url, payload).then(
+            () => this.props.router.push(`/rekisteroidy/valmis/${this.props.locale}`),
+            () => this.props.addNotification('registrationError')
+        );
     }
 
     etunimetContainsKutsumanimi(henkilo) {
@@ -225,6 +232,6 @@ class RekisteroidyPage extends React.Component<Props, State> {
 }
 
 export default connect<object, DispatchProps, OwnProps, KayttajaRootState>(undefined, {
-    createHenkiloByToken,
+    addNotification,
     removeNotification,
 })(RekisteroidyPage);
