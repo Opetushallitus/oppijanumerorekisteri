@@ -22,7 +22,7 @@ type OwnProps = {
 };
 
 const RekisteroidyPerustiedot = (props: OwnProps) => {
-    const hakaLoginUrl = `/cas/login?forceIdp=haka&service=https%3A%2F${window.location.hostname}%2Fkayttooikeus-service%2FhakaRegistrationTemporaryToken%2F${props.temporaryKutsuToken}`;
+    const hakaLoginUrl = `/cas/login?forceIdp=haka&service=https%3A%2F%2F${window.location.hostname}%2Fkayttooikeus-service%2FhakaRegistrationTemporaryToken%2F${props.temporaryKutsuToken}`;
     return (
         <div>
             <p className="oph-h3 oph-bold">{props.L['REKISTEROIDY_HAKA_OTSIKKO']}</p>
