@@ -440,6 +440,7 @@ public class VtjMuutostietoService {
                 HenkiloForceUpdateDto update = mapToUpdateDto(read, muutostieto.tietoryhmat, muutostietoMapper);
                 handleKotikuntaChanges(update, henkilo, muutostieto);
                 henkiloModificationService.forceUpdateHenkilo(update);
+                log.info("muutostieto processed successfully for henkilo {}", henkilo.getOidHenkilo());
             } catch (UnprocessableEntityException uee) {
                 BindException be = (BindException) uee.getErrors();
                 log.error("exception while processing muutostieto for henkilo " + henkilo.getOidHenkilo(), be);

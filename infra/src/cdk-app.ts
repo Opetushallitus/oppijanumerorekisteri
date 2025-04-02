@@ -259,6 +259,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       this.datantuontiImportFailureAlarm(logGroup, props.alarmTopic);
     }
     this.vtjKyselyCertificationAlarm(logGroup, props.alarmTopic);
+    this.muutostietorajapintaAlarms(logGroup, props.alarmTopic);
 
     const dockerImage = new ecr_assets.DockerImageAsset(this, "AppImage", {
       directory: path.join(__dirname, "../../"),
@@ -412,6 +413,27 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         logGroup,
         alarmTopic,
         logs.FilterPattern.literal('"VTJKysely certification is valid at least 30 days."'),
+        cdk.Duration.hours(25),
+        1,
+    )
+  }
+
+  muutostietorajapintaAlarms(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
+    alarms.alarmIfExpectedLogLineIsMissing(
+        this,
+        "VtjMuutostietoIntegration",
+        logGroup,
+        alarmTopic,
+        logs.FilterPattern.literal('"muutostieto processed successfully for henkilo"'),
+        cdk.Duration.hours(25),
+        1,
+    )
+    alarms.alarmIfExpectedLogLineIsMissing(
+        this,
+        "VtjPerustietoIntegration",
+        logGroup,
+        alarmTopic,
+        logs.FilterPattern.literal('"updated with perustieto"'),
         cdk.Duration.hours(25),
         1,
     )
