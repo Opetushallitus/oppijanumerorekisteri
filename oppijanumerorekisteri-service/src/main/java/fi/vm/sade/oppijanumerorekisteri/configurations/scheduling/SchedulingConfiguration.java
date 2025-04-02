@@ -16,6 +16,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.datantuonti.DatantuontiImportSe
 import fi.vm.sade.oppijanumerorekisteri.services.datantuonti.TestidatantuontiImportService;
 import fi.vm.sade.oppijanumerorekisteri.services.death.CleanupService;
 import fi.vm.sade.oppijanumerorekisteri.services.export.ExportService;
+import fi.vm.sade.oppijanumerorekisteri.vtjkysely.VtjKyselyCertificationCheck;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,6 +44,7 @@ public class SchedulingConfiguration {
     private final DatantuontiImportService datantuontiImportService;
     private final TestidatantuontiImportService testidatantuontiImportService;
     private final QueueingEmailService queueingEmailService;
+    private final VtjKyselyCertificationCheck vtjKyselyCertificationCheck;
 
     @Bean
     Task<Void> casClientSessionCleanerTask() {
@@ -174,5 +176,12 @@ public class SchedulingConfiguration {
         return Tasks
                 .recurring(new TaskWithoutDataDescriptor("EmailRetryTask"), FixedDelay.ofMinutes(5))
                 .execute((instance, ctx) -> queueingEmailService.emailRetryTask());
+    }
+
+    @Bean
+    Task<Void> vtjkyselyCertificationCheckTask() {
+        return Tasks
+                .recurring(new TaskWithoutDataDescriptor("vtjkyselyCertificationCheck"), new Daily(LocalTime.of(10, 10)))
+                .execute((instance, ctx) -> vtjKyselyCertificationCheck.checkCertificationValidity());
     }
 }

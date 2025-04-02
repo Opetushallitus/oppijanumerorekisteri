@@ -258,6 +258,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
     if (conf.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]) {
       this.datantuontiImportFailureAlarm(logGroup, props.alarmTopic);
     }
+    this.vtjKyselyCertificationAlarm(logGroup, props.alarmTopic);
 
     const dockerImage = new ecr_assets.DockerImageAsset(this, "AppImage", {
       directory: path.join(__dirname, "../../"),
@@ -399,6 +400,18 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         logGroup,
         alarmTopic,
         logs.FilterPattern.literal('"Oppijanumerorekisteri datantuonti import task completed"'),
+        cdk.Duration.hours(25),
+        1,
+    )
+  }
+
+  vtjKyselyCertificationAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
+    alarms.alarmIfExpectedLogLineIsMissing(
+        this,
+        "VtjkyselyCertificationCheckTask",
+        logGroup,
+        alarmTopic,
+        logs.FilterPattern.literal('"VTJKysely certification is valid at least 30 days."'),
         cdk.Duration.hours(25),
         1,
     )
