@@ -258,8 +258,10 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
     if (conf.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]) {
       this.datantuontiImportFailureAlarm(logGroup, props.alarmTopic);
     }
-    this.vtjKyselyCertificationAlarm(logGroup, props.alarmTopic);
-    this.muutostietorajapintaAlarms(logGroup, props.alarmTopic);
+    if (conf.features.vtj) {
+      this.vtjKyselyCertificationAlarm(logGroup, props.alarmTopic);
+      this.muutostietorajapintaAlarms(logGroup, props.alarmTopic);
+    }
 
     const dockerImage = new ecr_assets.DockerImageAsset(this, "AppImage", {
       directory: path.join(__dirname, "../../"),

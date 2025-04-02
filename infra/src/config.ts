@@ -10,6 +10,7 @@ export type Config = {
   apiCapacity: AutoScalingLimits;
   batchCapacity: AutoScalingLimits;
   features: {
+    vtj: boolean;
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": boolean;
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": boolean;
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": boolean;
@@ -24,6 +25,7 @@ const defaultConfig = {
     apiCapacity: { min: 2, max: 8 },
     batchCapacity: { min: 1, max: 1 },
     features: {
+        vtj: true,
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": false,
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": false,
         "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": false,
@@ -56,6 +58,7 @@ export const hahtuva: Config = {
     virkailijaHost: "virkailija.hahtuvaopintopolku.fi",
     apiCapacity: { min: 1, max: 2 },
     features: {
+        vtj: false,
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
         "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
@@ -67,6 +70,7 @@ export const dev: Config = {
     virkailijaHost: "virkailija.untuvaopintopolku.fi",
     apiCapacity: { min: 1, max: 2 },
     features: {
+        vtj: false,
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
         "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
@@ -82,6 +86,7 @@ export const qa: Config = {
     virkailijaHost: "virkailija.testiopintopolku.fi",
     apiCapacity: { min: 1, max: 2 },
     features: {
+        vtj: false,
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
         "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
