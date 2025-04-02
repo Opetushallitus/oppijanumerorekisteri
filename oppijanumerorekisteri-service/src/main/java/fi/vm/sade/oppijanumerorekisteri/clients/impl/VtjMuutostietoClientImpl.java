@@ -175,8 +175,8 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     private InputStream executeRequestWithRetry(SdkHttpFullRequest request) throws IOException, InterruptedException {
         for (int i = 0; i < 3; i++) {
             HttpExecuteResponse res = executeRequest(request);
-            if (res.httpResponse().statusCode() == 429) {
-                log.warn("429 (too many requests) response for " + request.getUri());
+            if (res.httpResponse().statusCode() == 429 || res.httpResponse().statusCode() == 500 || res.httpResponse().statusCode() == 502) {
+                log.warn("429 (too many requests), 500, or 502 response for {}. retrying in 15sec.", request.getUri());
                 Thread.sleep(15000);
                 continue;
             } else if (!res.httpResponse().isSuccessful()) {
