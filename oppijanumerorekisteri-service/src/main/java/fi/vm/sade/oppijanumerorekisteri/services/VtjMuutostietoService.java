@@ -41,6 +41,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.TurvakieltoKotikuntaReposit
 import fi.vm.sade.oppijanumerorekisteri.repositories.VtjMuutostietoKirjausavainRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.VtjMuutostietoRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.vtj.MuutostietoMapper;
+import fi.vm.sade.oppijanumerorekisteri.services.vtj.MuutostietoRetryException;
 import fi.vm.sade.oppijanumerorekisteri.services.vtj.PerustietoMapper;
 import fi.vm.sade.oppijanumerorekisteri.services.vtj.TietoryhmaMapper;
 import fi.vm.sade.oppijanumerorekisteri.validators.VtjMuutostietoValidator;
@@ -100,6 +101,9 @@ public class VtjMuutostietoService {
         } catch (InterruptedException ie) {
             log.error("interrupted while fetching muutostieto for bucket " + bucketId, ie);
             Thread.currentThread().interrupt();
+            return true;
+        } catch (MuutostietoRetryException mre) {
+            log.error("muutostieto fetch failed after retries", mre);
             return true;
         } catch (Exception e) {
             log.error("exception while fetching muutostieto for bucket " + bucketId, e);
@@ -484,6 +488,8 @@ public class VtjMuutostietoService {
                 BindException bindException = (BindException) uee.getErrors();
                 log.error("exception while processing perustieto", bindException);
                 slackClient.sendToSlack("Virhe VTJ-perustietojen päivityksessä", bindException.getMessage());
+            } catch (MuutostietoRetryException mre) {
+                log.error("perustieto fetch failed after retries", mre);
             } catch (Exception e) {
                 log.error("exception while fetching perustieto", e);
                 slackClient.sendToSlack("Virhe VTJ-perustietojen tallennuksessa", e.getMessage());

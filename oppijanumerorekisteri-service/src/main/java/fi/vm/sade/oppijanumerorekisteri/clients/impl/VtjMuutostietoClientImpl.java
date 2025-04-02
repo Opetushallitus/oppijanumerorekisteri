@@ -24,6 +24,7 @@ import fi.vm.sade.oppijanumerorekisteri.clients.VtjMuutostietoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.model.VtjMuutostietoResponse;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjPerustieto;
+import fi.vm.sade.oppijanumerorekisteri.services.vtj.MuutostietoRetryException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -190,7 +191,7 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
             }
             return res.responseBody().orElseThrow(() -> new RuntimeException("no response body found for request " + request.getUri()));
         }
-        throw new RuntimeException("failed to request after 2 retries " + request.getUri());
+        throw new MuutostietoRetryException("failed to request after 2 retries " + request.getUri());
     }
 
     private SdkHttpFullRequest signRequest(SdkHttpFullRequest request) {
