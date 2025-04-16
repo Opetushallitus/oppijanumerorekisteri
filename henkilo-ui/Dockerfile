@@ -15,7 +15,7 @@ RUN npm run build
 WORKDIR /app
 RUN mvn clean package -s settings.xml -DskipTests
 
-FROM amazoncorretto:21
+FROM amazoncorretto:21.0.7@sha256:ad336412c44d4f45831682b3ce91e790a3e758d30d8347ff67d66c8822c6f3d6
 WORKDIR /app
 
 COPY --from=build /app/target/henkiloui.jar henkiloui.jar
