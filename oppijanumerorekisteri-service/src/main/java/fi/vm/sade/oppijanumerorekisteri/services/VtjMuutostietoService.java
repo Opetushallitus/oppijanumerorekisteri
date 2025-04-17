@@ -244,13 +244,6 @@ public class VtjMuutostietoService {
                 var voimassaolevaMuttopv = TietoryhmaMapper.parseDate(voimassaolevatTiedot.get("kuntaanMuuttopv"));
 
                 kotikuntaHistoriaList.stream()
-                        .filter(x -> x.getKotikunta().equals(poistettuKotikunta) && x.getKuntaanMuuttopv().equals(poistettuMuuttopv))
-                        .findFirst()
-                        .ifPresent(historia -> {
-                            log.info("Deleting kotikuntahistoria entry for henkilo {} with kotikunta {} and muuttopv {}", henkiloId, historia.getKotikunta(), historia.getKuntaanMuuttopv());
-                            kotikuntaHistoriaRepository.delete(historia);
-                        });
-                kotikuntaHistoriaList.stream()
                         .filter(x -> x.getKotikunta().equals(voimassaolevaKotikunta) && x.getKuntaanMuuttopv().equals(voimassaolevaMuttopv))
                         .findFirst()
                         .ifPresent(historia -> {
@@ -258,6 +251,15 @@ public class VtjMuutostietoService {
                             historia.setKunnastaPoisMuuttopv(null);
                             kotikuntaHistoriaRepository.save(historia);
                         });
+
+                kotikuntaHistoriaList.stream()
+                        .filter(x -> x.getKotikunta().equals(poistettuKotikunta) && x.getKuntaanMuuttopv().equals(poistettuMuuttopv))
+                        .findFirst()
+                        .ifPresent(historia -> {
+                            log.info("Deleting kotikuntahistoria entry for henkilo {} with kotikunta {} and muuttopv {}", henkiloId, historia.getKotikunta(), historia.getKuntaanMuuttopv());
+                            kotikuntaHistoriaRepository.delete(historia);
+                        });
+
             });
         } catch (Exception e) {
             log.error("failed to handle KOTIKUNTA POISTETTU tietoryhma for henkilo " + henkiloId, e);
