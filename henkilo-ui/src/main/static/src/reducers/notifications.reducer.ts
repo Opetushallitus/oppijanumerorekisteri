@@ -9,7 +9,6 @@ import {
     YKSILOI_HENKILO_FAILURE,
     YKSILOI_PUUTTUVAT_TIEDOT_FAILURE,
     RESET_BUTTON_NOTIFICATIONS,
-    NOTIFICATION_ADD,
 } from '../actions/actiontypes';
 import { NotificationType } from '../types/notification.types';
 
@@ -30,36 +29,6 @@ export type NotificationsState = {
     henkilohakuNotifications: Notification[];
     duplicatesNotifications: Notification[];
 };
-
-type ErrorMessage = {
-    notL10nMessage: string;
-    notL10nText: string;
-};
-
-const rekisteroidyErrors: Record<string, ErrorMessage> = {
-    NotFoundException: {
-        notL10nMessage: '',
-        notL10nText: 'REKISTEROIDY_TEMP_TOKEN_INVALID',
-    },
-    UsernameAlreadyExistsException: {
-        notL10nMessage: 'REKISTEROIDY_USERNAMEEXISTS_OTSIKKO',
-        notL10nText: 'REKISTEROIDY_USERNAMEEXISTS_TEKSTI',
-    },
-    PasswordException: {
-        notL10nMessage: 'REKISTEROIDY_PASSWORDEXCEPTION_OTSIKKO',
-        notL10nText: 'REKISTEROIDY_PASSWORDEXCEPTION_TEKSTI',
-    },
-    IllegalArgumentException: {
-        notL10nMessage: 'REKISTEROIDY_ILLEGALARGUMENT_OTSIKKO',
-        notL10nText: 'REKISTEROIDY_ILLEGALARGUMENT_TEKSTI',
-    },
-};
-
-export const mapErrorTypeToErrorMessage = (errorType: string): ErrorMessage =>
-    rekisteroidyErrors[errorType] || {
-        notL10nMessage: '',
-        notL10nText: 'KUTSU_LUONTI_EPAONNISTUI_TUNTEMATON_VIRHE',
-    };
 
 const createButtonNotification = (type, buttonNotification) => ({
     type: type,
@@ -140,26 +109,6 @@ export const notifications = (
                     createButtonNotification('error', action.buttonNotification),
                 ],
             };
-        case NOTIFICATION_ADD: {
-            switch (action.notification) {
-                case 'registrationError': {
-                    const errorMessage = mapErrorTypeToErrorMessage(action.error.errorType);
-                    return {
-                        ...state,
-                        buttonNotifications: [
-                            ...state.buttonNotifications,
-                            createButtonNotification('error', {
-                                notL10nMessage: errorMessage.notL10nMessage,
-                                notL10nText: errorMessage.notL10nText,
-                                position: 'rekisteroidyPage',
-                                errorType: action.error.errorType,
-                            }),
-                        ],
-                    };
-                }
-            }
-            return state;
-        }
         case RESET_BUTTON_NOTIFICATIONS:
             return {
                 ...state,

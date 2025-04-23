@@ -3,11 +3,12 @@ import { connect } from 'react-redux';
 import type { RootState } from '../../../../store';
 import LabelValue from './LabelValue';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
+import { Option } from 'react-select';
 
 type OwnProps = {
     isError?: boolean;
     readOnly: boolean;
-    updateModelFieldAction: (arg0: string) => void;
+    updateModelFieldAction: (arg0: Option<string> & React.SyntheticEvent<HTMLInputElement>) => void;
     defaultValue?: string;
 };
 

@@ -3,13 +3,13 @@ import { connect } from 'react-redux';
 import type { RootState } from '../../../../store';
 import LabelValue from './LabelValue';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
-import type { Options } from 'react-select';
+import type { Option, Options } from 'react-select';
 import { Locale } from '../../../../types/locale.type';
 
 type OwnProps = {
-    henkiloUpdate: any;
+    henkiloUpdate: { asiointiKieli?: { kieliKoodi?: string } };
     readOnly?: boolean;
-    updateModelFieldAction: (arg0: string) => void;
+    updateModelFieldAction: (arg0: Option<string> & React.SyntheticEvent<HTMLInputElement>) => void;
 };
 
 type StateProps = {

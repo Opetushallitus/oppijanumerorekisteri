@@ -13,3 +13,11 @@
 .privacy-policy p {
     margin-bottom: 1em;
 }
+
+.rekisteroidy-organisaatiot-wrapper .organisaatio-kayttooikeus-wrapper {
+    margin: 10px 0;
+}
+
+.rekisteroidy-organisaatiot-wrapper ul {
+    margin-top: 5px;
+}

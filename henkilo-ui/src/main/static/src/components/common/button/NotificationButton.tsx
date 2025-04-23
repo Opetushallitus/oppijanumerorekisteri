@@ -9,11 +9,14 @@ import Button from './Button';
 
 import './NotificationButton.css';
 
+export type ButtonNotification = { notL10nMessage: string; notL10nText?: string };
+
 type OwnProps = {
     id: string;
     action?: () => void;
     disabled?: boolean;
     confirm?: boolean;
+    notification?: ButtonNotification;
 };
 
 type StateProps = {
@@ -28,8 +31,8 @@ type DispatchProps = {
 type Props = OwnProps & StateProps & DispatchProps;
 
 const NotificationButton = (props: Props) => {
-    const { id, L, notifications, removeNotification } = props;
-    const notification = notifications.filter((item) => item.id === id)[0];
+    const { id, L, notification, notifications, removeNotification } = props;
+    const n = notification ?? notifications.filter((item) => item.id === id)[0];
 
     const hide = () => {
         removeNotification('error', 'buttonNotifications', id);
@@ -38,7 +41,7 @@ const NotificationButton = (props: Props) => {
     return (
         <div className="popup-button" style={{ position: 'relative' }}>
             <Button {...props} />
-            {notification ? (
+            {n ? (
                 <div className="oph-popup oph-popup-error oph-popup-top">
                     <button
                         className="oph-button oph-button-close"
@@ -50,8 +53,8 @@ const NotificationButton = (props: Props) => {
                         <span aria-hidden="true">×</span>
                     </button>
                     <div className="oph-popup-arrow" />
-                    <div className="oph-popup-title">{L[notification.notL10nMessage]}</div>
-                    <div className="oph-popup-content">{L[notification.notL10nText]}</div>
+                    <div className="oph-popup-title">{L[n.notL10nMessage]}</div>
+                    <div className="oph-popup-content">{L[n.notL10nText]}</div>
                 </div>
             ) : null}
         </div>

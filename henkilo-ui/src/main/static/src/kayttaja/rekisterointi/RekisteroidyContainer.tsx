@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RouteActions } from 'react-router-redux';
 
-import RekisteroidyPage from './RekisteroidyPage';
+import { RekisteroidyPage } from './RekisteroidyPage';
 import { fetchKieliKoodisto } from '../../actions/koodisto.actions';
 import Loader from '../../components/common/icons/Loader';
 import VirhePage from '../../components/common/page/VirhePage';
@@ -19,12 +19,14 @@ type OwnProps = {
 
 const RekisteroidyContainer = (props: OwnProps) => {
     const dispatch = useAppDispatch();
-    const { l10n, locale } = useLocalisations();
+    const { l10n } = useLocalisations();
     const koodisto = useSelector<KayttajaRootState, KoodistoState>((state) => state.koodisto);
     const temporaryToken = props.location.query['temporaryKutsuToken'];
     const { data: kutsu, isLoading: isKutsuLoading, isError } = useGetKutsuByTokenQuery(temporaryToken);
+    const locale = kutsu?.asiointikieli ?? 'fi';
+    const L = l10n.localisations[locale];
 
-    useTitle(l10n.localisations[kutsu?.asiointikieli ?? 'fi']['TITLE_REKISTEROINTI']);
+    useTitle(L['TITLE_REKISTEROINTI']);
 
     useEffect(() => {
         dispatch<any>(fetchKieliKoodisto());
@@ -39,7 +41,7 @@ const RekisteroidyContainer = (props: OwnProps) => {
         <RekisteroidyPage
             koodisto={koodisto}
             kutsu={{ ...kutsu, temporaryToken }}
-            L={l10n.localisations[locale]}
+            L={L}
             locale={kutsu.asiointikieli}
             router={props.router}
         />

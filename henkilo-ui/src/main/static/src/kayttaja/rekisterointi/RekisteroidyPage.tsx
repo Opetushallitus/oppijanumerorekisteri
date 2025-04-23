@@ -1,38 +1,36 @@
-import './RekisteroidyPage.css';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { connect } from 'react-redux';
+import { RouteActions } from 'react-router-redux';
+import { Option } from 'react-select';
 import { urls } from 'oph-urls-js';
 
-import RekisteroidyPerustiedot from './content/RekisteroidyPerustiedot';
-import RekisteroidyOrganisaatiot from './content/RekisteroidyOrganisaatiot';
 import StaticUtils from '../../components/common/StaticUtils';
-import RekisteroidyHaka from './content/RekisteroidyHaka';
 import { isValidPassword } from '../../validation/PasswordValidator';
-import type { KutsuByToken } from '../../types/domain/kayttooikeus/Kutsu.types';
-import NotificationButton from '../../components/common/button/NotificationButton';
+import type { KutsuByToken, KutsuOrganisaatio } from '../../types/domain/kayttooikeus/Kutsu.types';
+import NotificationButton, { ButtonNotification } from '../../components/common/button/NotificationButton';
 import { KoodistoState } from '../../reducers/koodisto.reducer';
-import { KayttajaRootState } from '../store';
-import { addNotification, removeNotification } from '../../actions/notifications.actions';
 import { Locale } from '../../types/locale.type';
 import { Localisations } from '../../types/localisation.type';
 import { http } from '../../http';
-import { RouteActions } from 'react-router-redux';
+import Asiointikieli from '../../components/common/henkilo/labelvalues/Asiointikieli';
+import IconButton from '../../components/common/button/IconButton';
+import HakaIcon from '../../components/common/icons/HakaIcon';
+import Salasana from '../../components/common/henkilo/labelvalues/Salasana';
+import Kayttajanimi from '../../components/common/henkilo/labelvalues/Kayttajanimi';
+import Kutsumanimi from '../../components/common/henkilo/labelvalues/Kutsumanimi';
+import Sukunimi from '../../components/common/henkilo/labelvalues/Sukunimi';
+import Etunimet from '../../components/common/henkilo/labelvalues/Etunimet';
+import Loader from '../../components/common/icons/Loader';
+
+import './RekisteroidyPage.css';
 
 type OwnProps = {
     koodisto: KoodistoState;
-    kutsu: KutsuByToken;
     L: Localisations;
     locale: Locale;
+    kutsu: KutsuByToken;
     router: RouteActions;
 };
-
-type DispatchProps = {
-    removeNotification: (status: string, group: string, id: string) => void;
-    addNotification: (notification: string) => void;
-};
-
-type Props = DispatchProps & OwnProps;
 
 type Henkilo = {
     etunimet: string;
@@ -46,192 +44,229 @@ type Henkilo = {
     passwordAgain: string;
 };
 
-type State = {
-    henkilo: Henkilo;
-    isValid: boolean;
-    privacyPolicySeen: boolean;
+type ErrorMessage = {
+    notL10nMessage: string;
+    notL10nText: string;
 };
 
-class RekisteroidyPage extends React.Component<Props, State> {
-    errorChecks;
+const rekisteroidyErrors: Record<string, ErrorMessage> = {
+    NotFoundException: {
+        notL10nMessage: '',
+        notL10nText: 'REKISTEROIDY_TEMP_TOKEN_INVALID',
+    },
+    UsernameAlreadyExistsException: {
+        notL10nMessage: 'REKISTEROIDY_USERNAMEEXISTS_OTSIKKO',
+        notL10nText: 'REKISTEROIDY_USERNAMEEXISTS_TEKSTI',
+    },
+    PasswordException: {
+        notL10nMessage: 'REKISTEROIDY_PASSWORDEXCEPTION_OTSIKKO',
+        notL10nText: 'REKISTEROIDY_PASSWORDEXCEPTION_TEKSTI',
+    },
+    IllegalArgumentException: {
+        notL10nMessage: 'REKISTEROIDY_ILLEGALARGUMENT_OTSIKKO',
+        notL10nText: 'REKISTEROIDY_ILLEGALARGUMENT_TEKSTI',
+    },
+};
 
-    constructor(props) {
-        super(props);
+function etunimetContainsKutsumanimi(henkilo: Henkilo) {
+    return henkilo.etunimet.split(' ').filter((nimi) => nimi === henkilo.kutsumanimi).length;
+}
 
-        this.errorChecks = [
-            (henkilo) =>
-                !this.etunimetContainsKutsumanimi(henkilo) ? props.L['REKISTEROIDY_ERROR_KUTSUMANIMI'] : null,
-            (henkilo) => (!this.kayttajanimiIsNotEmpty(henkilo) ? props.L['REKISTEROIDY_ERROR_KAYTTAJANIMI'] : null),
-            (henkilo) => (!this.passwordsAreSame(henkilo) ? props.L['REKISTEROIDY_ERROR_PASSWORD_MATCH'] : null),
-            (henkilo) => (!isValidPassword(henkilo.password) ? props.L['REKISTEROIDY_ERROR_PASSWORD_INVALID'] : null),
-            (henkilo) => (!this.kielikoodiIsNotEmpty(henkilo) ? props.L['REKISTEROIDY_ERROR_KIELIKOODI'] : null),
-        ];
+function passwordsAreSame(henkilo: Henkilo) {
+    return henkilo.password === henkilo.passwordAgain;
+}
 
-        this.state = {
-            henkilo: {
-                etunimet: this.props.kutsu.etunimi,
-                sukunimi: this.props.kutsu.sukunimi,
-                kutsumanimi: this.props.kutsu.etunimi.split(' ')[0] || '',
-                asiointiKieli: {
-                    kieliKoodi: this.props.kutsu.asiointikieli,
-                },
-                kayttajanimi: '',
-                password: '',
-                passwordAgain: '',
-            },
-            isValid: false,
-            privacyPolicySeen: false,
-        };
-    }
+function kielikoodiIsNotEmpty(henkilo: Henkilo) {
+    return StaticUtils.stringIsNotEmpty(henkilo.asiointiKieli.kieliKoodi);
+}
 
-    componentDidMount() {
-        if (this.props.kutsu.hakaIdentifier) {
-            this.createHenkilo();
+function kayttajanimiIsNotEmpty(henkilo: Henkilo) {
+    return StaticUtils.stringIsNotEmpty(henkilo.kayttajanimi);
+}
+
+function isPasswordError(henkilo: Henkilo) {
+    return !henkilo.password || !isValidPassword(henkilo.password) || henkilo.password !== henkilo.passwordAgain;
+}
+
+const errorChecks = [
+    (henkilo: Henkilo) => (!etunimetContainsKutsumanimi(henkilo) ? 'REKISTEROIDY_ERROR_KUTSUMANIMI' : null),
+    (henkilo: Henkilo) => (!kayttajanimiIsNotEmpty(henkilo) ? 'REKISTEROIDY_ERROR_KAYTTAJANIMI' : null),
+    (henkilo: Henkilo) => (!passwordsAreSame(henkilo) ? 'REKISTEROIDY_ERROR_PASSWORD_MATCH' : null),
+    (henkilo: Henkilo) => (!isValidPassword(henkilo.password) ? 'REKISTEROIDY_ERROR_PASSWORD_INVALID' : null),
+    (henkilo: Henkilo) => (!kielikoodiIsNotEmpty(henkilo) ? 'REKISTEROIDY_ERROR_KIELIKOODI' : null),
+];
+
+function validate(henkilo: Henkilo) {
+    return (
+        etunimetContainsKutsumanimi(henkilo) &&
+        kayttajanimiIsNotEmpty(henkilo) &&
+        passwordsAreSame(henkilo) &&
+        isValidPassword(henkilo.password) &&
+        kielikoodiIsNotEmpty(henkilo)
+    );
+}
+
+export const RekisteroidyPage = (props: OwnProps) => {
+    const { kutsu, L, locale, router } = props;
+    const [privacyPolicySeen, setPrivacyPolicySeen] = useState(false);
+    const [notification, setNotification] = useState<ButtonNotification>();
+    const [henkilo, setHenkilo] = useState<Henkilo>({
+        etunimet: kutsu.etunimi,
+        sukunimi: kutsu.sukunimi,
+        kutsumanimi: kutsu.etunimi.split(' ')[0] || '',
+        asiointiKieli: {
+            kieliKoodi: kutsu.asiointikieli,
+        },
+        kayttajanimi: '',
+        password: '',
+        passwordAgain: '',
+    });
+
+    useEffect(() => {
+        if (kutsu.hakaIdentifier) {
+            createHenkilo();
         }
+    }, []);
+
+    function updatePayloadModelInput(event: Option<string> & React.SyntheticEvent<HTMLInputElement>) {
+        const newHenkilo = StaticUtils.updateFieldByDotAnnotation({ ...henkilo }, event) || henkilo;
+        setHenkilo(newHenkilo);
     }
 
-    showForm() {
-        return (
-            <div>
-                <div className="wrapper">
-                    <RekisteroidyOrganisaatiot
-                        organisaatiot={this.props.kutsu.organisaatiot}
-                        L={this.props.L}
-                        locale={this.props.locale}
-                    />
-                </div>
-                <div className="flex-horizontal">
-                    <div className="wrapper flex-item-1">
-                        <RekisteroidyPerustiedot
-                            henkilo={{ henkilo: this.state.henkilo }}
-                            koodisto={this.props.koodisto}
-                            updatePayloadModel={this.updatePayloadModelInput.bind(this)}
-                            isLanguageError={!this.kielikoodiIsNotEmpty(this.state.henkilo)}
-                            isPasswordError={this.isPasswordError()}
-                            isUsernameError={!this.kayttajanimiIsNotEmpty(this.state.henkilo)}
-                            isKutsumanimiError={!this.etunimetContainsKutsumanimi(this.state.henkilo)}
-                            L={this.props.L}
-                        />
-                        <NotificationButton
-                            action={this.createHenkilo.bind(this)}
-                            disabled={!this.state.isValid}
-                            id="rekisteroidyPage"
-                        >
-                            {this.props.L['REKISTEROIDY_TALLENNA_NAPPI']}
-                        </NotificationButton>
-                        <div>{this.printErrors()}</div>
-                    </div>
-                    <div className="borderless-colored-wrapper flex-horizontal flex-align-center">
-                        <span className="oph-h3 oph-bold">{this.props.L['REKISTEROIDY_VALITSE']}</span>
-                    </div>
-                    <div className="wrapper flex-item-1">
-                        <RekisteroidyHaka
-                            henkilo={{ henkilo: this.state.henkilo }}
-                            updatePayloadModel={this.updatePayloadModelInput.bind(this)}
-                            temporaryKutsuToken={this.props.kutsu.temporaryToken}
-                            L={this.props.L}
-                        />
-                    </div>
-                </div>
-            </div>
+    function createHenkilo() {
+        setNotification(undefined);
+        const url = urls.url('kayttooikeus-service.kutsu.by-token', kutsu.temporaryToken);
+        http.post(url, henkilo).then(
+            () => router.push(`/kayttaja/rekisteroidy/valmis/${locale}`),
+            (error: { errorType?: string }) =>
+                setNotification(
+                    rekisteroidyErrors[error.errorType] ?? {
+                        notL10nMessage: '',
+                        notL10nText: 'KUTSU_LUONTI_EPAONNISTUI_TUNTEMATON_VIRHE',
+                    }
+                )
         );
     }
 
-    showPrivacyPolicy() {
-        return (
-            <div className="wrapper notranslate">
-                <div className="rekisteroidy-organisaatiot-wrapper" style={{ marginBottom: '2em' }}>
-                    <ReactMarkdown linkTarget="_blank" className="privacy-policy">
-                        {this.props.L['REKISTEROIDY_PRIVACY_POLICY']}
-                    </ReactMarkdown>
-                </div>
-                <NotificationButton action={() => this.setState({ privacyPolicySeen: true })} id="rekisteroidyPage">
-                    {this.props.L['REKISTEROIDY_ACCEPT_PRIVACY_POLICY']}
-                </NotificationButton>
-            </div>
-        );
-    }
-
-    render() {
-        return (
-            <div className="borderless-colored-wrapper rekisteroidy-page" style={{ marginTop: '50px' }}>
-                <div className="header-borderless">
-                    <p className="oph-h2 oph-bold">{this.props.L['REKISTEROIDY_OTSIKKO']}</p>
-                </div>
-                {this.state.privacyPolicySeen ? this.showForm() : this.showPrivacyPolicy()}
-            </div>
-        );
-    }
-
-    updatePayloadModelInput(event) {
-        const henkilo = StaticUtils.updateFieldByDotAnnotation({ ...this.state.henkilo }, event) || this.state.henkilo;
-        this.setState({
-            henkilo: henkilo,
-            isValid: this.isValid(henkilo),
-        });
-    }
-
-    isValid(henkilo) {
-        return (
-            this.etunimetContainsKutsumanimi(henkilo) &&
-            this.kayttajanimiIsNotEmpty(henkilo) &&
-            this.passwordsAreSame(henkilo) &&
-            isValidPassword(henkilo.password) &&
-            this.kielikoodiIsNotEmpty(henkilo)
-        );
-    }
-
-    createHenkilo() {
-        this.props.removeNotification('error', 'buttonNotifications', 'rekisteroidyPage');
-        const payload = { ...this.state.henkilo };
-        const url = urls.url('kayttooikeus-service.kutsu.by-token', this.props.kutsu.temporaryToken);
-        http.post(url, payload).then(
-            () => this.props.router.push(`/kayttaja/rekisteroidy/valmis/${this.props.locale}`),
-            () => this.props.addNotification('registrationError')
-        );
-    }
-
-    etunimetContainsKutsumanimi(henkilo) {
-        return henkilo.etunimet.split(' ').filter((nimi) => nimi === henkilo.kutsumanimi).length;
-    }
-
-    passwordIsNotEmpty(henkilo) {
-        return StaticUtils.stringIsNotEmpty(henkilo.password);
-    }
-
-    passwordsAreSame(henkilo) {
-        return henkilo.password === henkilo.passwordAgain;
-    }
-
-    kielikoodiIsNotEmpty(henkilo) {
-        return StaticUtils.stringIsNotEmpty(henkilo.asiointiKieli.kieliKoodi);
-    }
-
-    kayttajanimiIsNotEmpty(henkilo) {
-        return StaticUtils.stringIsNotEmpty(henkilo.kayttajanimi);
-    }
-
-    printErrors() {
-        return this.errorChecks.map((errorCheck, idx) => {
-            const errorMessage = errorCheck(this.state.henkilo);
-            return errorMessage ? (
-                <ul key={idx} className="oph-h5 oph-red">
-                    ! {errorMessage}
-                </ul>
+    function printErrors() {
+        return errorChecks.map((errorCheck, idx) => {
+            const errorTranslation = errorCheck(henkilo);
+            return errorTranslation ? (
+                <li key={idx} className="oph-h5 oph-red">
+                    ! {L[errorTranslation]}
+                </li>
             ) : null;
         });
     }
 
-    isPasswordError() {
+    function isKayttajanimiError() {
         return (
-            !this.passwordIsNotEmpty(this.state.henkilo) ||
-            !isValidPassword(this.state.henkilo.password) ||
-            !this.passwordsAreSame(this.state.henkilo)
+            notification?.notL10nMessage === 'REKISTEROIDY_USERNAMEEXISTS_OTSIKKO' ||
+            notification?.notL10nMessage === 'REKISTEROIDY_ILLEGALARGUMENT_OTSIKKO'
         );
     }
-}
 
-export default connect<object, DispatchProps, OwnProps, KayttajaRootState>(undefined, {
-    addNotification,
-    removeNotification,
-})(RekisteroidyPage);
+    function isSalasanaError() {
+        return notification?.notL10nMessage === 'REKISTEROIDY_PASSWORDEXCEPTION_OTSIKKO';
+    }
+
+    const renderKutsuOrganisaatio = (organisaatio: KutsuOrganisaatio) => {
+        return (
+            <div key={organisaatio.organisaatioOid} className="organisaatio-kayttooikeus-wrapper">
+                <p className="oph-bold">{organisaatio.nimi[locale] || organisaatio.organisaatioOid}</p>
+                <ul>
+                    {organisaatio.kayttoOikeusRyhmat.map((kayttooikeusRyhma) => (
+                        <li key={kayttooikeusRyhma.id}>{kayttooikeusRyhma.nimi[locale] || kayttooikeusRyhma.id}</li>
+                    ))}
+                </ul>
+            </div>
+        );
+    };
+
+    if (kutsu.hakaIdentifier) {
+        return <Loader />;
+    }
+
+    return (
+        <div className="borderless-colored-wrapper rekisteroidy-page" style={{ marginTop: '50px' }}>
+            <div className="header-borderless">
+                <p className="oph-h2 oph-bold">{L['REKISTEROIDY_OTSIKKO']}</p>
+            </div>
+            {privacyPolicySeen ? (
+                <div>
+                    <div className="wrapper">
+                        <div className="rekisteroidy-organisaatiot-wrapper">
+                            <p className="oph-h3 oph-bold">{L['REKISTEROIDY_ORGANISAATIOT_OTSIKKO']}</p>
+                            {kutsu.organisaatiot.map(renderKutsuOrganisaatio)}
+                        </div>
+                    </div>
+                    <div className="flex-horizontal">
+                        <div className="wrapper flex-item-1">
+                            <div>
+                                <p className="oph-h3 oph-bold">{props.L['REKISTEROIDY_PERUSTIEDOT']}</p>
+                                <Etunimet readOnly={true} />
+                                <Sukunimi readOnly={true} />
+                                <Kutsumanimi
+                                    readOnly={false}
+                                    defaultValue={henkilo.kutsumanimi}
+                                    updateModelFieldAction={updatePayloadModelInput}
+                                    isError={!etunimetContainsKutsumanimi(henkilo)}
+                                />
+                                <Kayttajanimi
+                                    disabled={false}
+                                    defaultValue={henkilo.kayttajanimi}
+                                    updateModelFieldAction={updatePayloadModelInput}
+                                    isError={isKayttajanimiError() || !kayttajanimiIsNotEmpty(henkilo)}
+                                />
+                                <Salasana
+                                    disabled={false}
+                                    updateModelFieldAction={updatePayloadModelInput}
+                                    isError={isSalasanaError() || isPasswordError(henkilo)}
+                                />
+                                <Asiointikieli
+                                    henkiloUpdate={henkilo}
+                                    updateModelFieldAction={updatePayloadModelInput}
+                                />
+                            </div>
+                            <NotificationButton
+                                action={createHenkilo}
+                                disabled={!validate(henkilo)}
+                                id="rekisteroidyPage"
+                                notification={notification}
+                            >
+                                {L['REKISTEROIDY_TALLENNA_NAPPI']}
+                            </NotificationButton>
+                            <ul>{printErrors()}</ul>
+                        </div>
+                        <div className="borderless-colored-wrapper flex-horizontal flex-align-center">
+                            <span className="oph-h3 oph-bold">{L['REKISTEROIDY_VALITSE']}</span>
+                        </div>
+                        <div className="wrapper flex-item-1">
+                            <div>
+                                <p className="oph-h3 oph-bold">{L['REKISTEROIDY_HAKA_OTSIKKO']}</p>
+                                <Asiointikieli
+                                    henkiloUpdate={henkilo}
+                                    updateModelFieldAction={updatePayloadModelInput}
+                                />
+                                <IconButton href={urls.url('cas.haka', { temporaryToken: kutsu.temporaryToken })}>
+                                    <HakaIcon />
+                                </IconButton>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <div className="wrapper notranslate">
+                    <div className="rekisteroidy-organisaatiot-wrapper" style={{ marginBottom: '2em' }}>
+                        <ReactMarkdown linkTarget="_blank" className="privacy-policy">
+                            {L['REKISTEROIDY_PRIVACY_POLICY']}
+                        </ReactMarkdown>
+                    </div>
+                    <NotificationButton action={() => setPrivacyPolicySeen(true)} id="rekisteroidyPage">
+                        {L['REKISTEROIDY_ACCEPT_PRIVACY_POLICY']}
+                    </NotificationButton>
+                </div>
+            )}
+        </div>
+    );
+};
