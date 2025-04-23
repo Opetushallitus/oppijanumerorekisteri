@@ -232,7 +232,8 @@ export const RekisteroidyPage = (props: OwnProps) => {
                                 action={createHenkilo}
                                 disabled={!validate(henkilo)}
                                 id="rekisteroidyPage"
-                                notification={notification}
+                                localNotification={notification}
+                                removeLocalNotification={() => setNotification(undefined)}
                             >
                                 {L['REKISTEROIDY_TALLENNA_NAPPI']}
                             </NotificationButton>

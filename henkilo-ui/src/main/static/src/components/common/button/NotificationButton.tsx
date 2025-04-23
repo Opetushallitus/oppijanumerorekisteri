@@ -16,7 +16,8 @@ type OwnProps = {
     action?: () => void;
     disabled?: boolean;
     confirm?: boolean;
-    notification?: ButtonNotification;
+    localNotification?: ButtonNotification;
+    removeLocalNotification?: () => void;
 };
 
 type StateProps = {
@@ -31,17 +32,20 @@ type DispatchProps = {
 type Props = OwnProps & StateProps & DispatchProps;
 
 const NotificationButton = (props: Props) => {
-    const { id, L, notification, notifications, removeNotification } = props;
-    const n = notification ?? notifications.filter((item) => item.id === id)[0];
+    const { id, L, localNotification, notifications, removeLocalNotification, removeNotification } = props;
+    const notification = localNotification ?? notifications.filter((item) => item.id === id)[0];
 
     const hide = () => {
+        if (removeLocalNotification) {
+            removeLocalNotification();
+        }
         removeNotification('error', 'buttonNotifications', id);
     };
 
     return (
         <div className="popup-button" style={{ position: 'relative' }}>
             <Button {...props} />
-            {n ? (
+            {notification ? (
                 <div className="oph-popup oph-popup-error oph-popup-top">
                     <button
                         className="oph-button oph-button-close"
@@ -53,8 +57,8 @@ const NotificationButton = (props: Props) => {
                         <span aria-hidden="true">×</span>
                     </button>
                     <div className="oph-popup-arrow" />
-                    <div className="oph-popup-title">{L[n.notL10nMessage]}</div>
-                    <div className="oph-popup-content">{L[n.notL10nText]}</div>
+                    <div className="oph-popup-title">{L[notification.notL10nMessage]}</div>
+                    <div className="oph-popup-content">{L[notification.notL10nText]}</div>
                 </div>
             ) : null}
         </div>
