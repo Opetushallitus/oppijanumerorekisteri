@@ -9,6 +9,7 @@ public class UnprocessableEntityException extends OppijanumerorekisteriException
     private final Errors errors;
 
     public UnprocessableEntityException(Errors errors) {
+        super(String.valueOf(errors));
         this.errors = requireNonNull(errors);
     }
 
