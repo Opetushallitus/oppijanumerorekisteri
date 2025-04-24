@@ -221,7 +221,9 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         this.mapper.map(henkiloUpdateDto, henkiloSaved);
 
         linked.forEachModified(this::update);
-        return mapper.map(henkiloSaved, HenkiloForceReadDto.class);
+        var result = mapper.map(henkiloSaved, HenkiloForceReadDto.class);
+        auditlogAspectHelper.logForceUpdateHenkilo(henkiloUpdateDto, result);
+        return result;
     }
 
     private static Set<String> combineKaikkiHetut(HenkiloForceUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {

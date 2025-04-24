@@ -45,7 +45,7 @@ public class AuditlogAspectHelper {
         virkailijaLogger.log(OnrOperation.UPDATE_HENKILO, target, changes);
     }
 
-    void logForceUpdateHenkilo(HenkiloUpdateDto henkilo, Object returnHenkilo) {
+    public void logForceUpdateHenkilo(HenkiloUpdateDto henkilo, Object returnHenkilo) {
         Target target = new Target.Builder()
                 .setField(AuditMessageFields.HENKILO_OID, henkilo.getOidHenkilo())
                 .setField(AuditMessageFields.LISATIETO, "Muokattu väkisin olemassa olevaa henkilöä.")
