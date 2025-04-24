@@ -27,14 +27,6 @@ public class AuditlogAspect {
         return result;
     }
 
-    @Around(value = "execution(public * fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService.forceUpdateHenkilo(*))" +
-            "&& args(henkilo)", argNames = "proceedingJoinPoint, henkilo")
-    private Object logForceUpdateHenkilo(ProceedingJoinPoint proceedingJoinPoint, HenkiloUpdateDto henkilo) throws Throwable {
-        Object result = proceedingJoinPoint.proceed();
-        auditlogAspectHelper.logForceUpdateHenkilo(henkilo, result);
-        return result;
-    }
-
     @Around(value = "execution(public * fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService.disableHenkilo(*))" +
             "&& args(henkiloOid)", argNames = "proceedingJoinPoint, henkiloOid")
     private Object logDisableHenkilo(ProceedingJoinPoint proceedingJoinPoint, String henkiloOid) throws Throwable {
