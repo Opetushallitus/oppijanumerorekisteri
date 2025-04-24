@@ -150,11 +150,4 @@ abstract public class VtjMuutostietoTestBase {
             muutostietoService.updateHenkilo(muutostieto));
         return henkiloRepository.findByKaikkiHetut(muutostieto.getHenkilotunnus()).get();
     }
-
-    protected HenkiloForceUpdateDto getUpdateObject() {
-        ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
-        verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
-        Mockito.reset(henkiloModificationService);
-        return argument.getValue();
-    }
 }
