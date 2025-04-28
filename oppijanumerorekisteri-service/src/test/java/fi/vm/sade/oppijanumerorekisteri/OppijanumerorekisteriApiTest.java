@@ -62,7 +62,7 @@ public abstract class OppijanumerorekisteriApiTest {
             "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA",
             "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001"
     })
-    protected @interface UserRekisterinpitaja {
+    public @interface UserRekisterinpitaja {
     }
 
     @Target(ElementType.METHOD)

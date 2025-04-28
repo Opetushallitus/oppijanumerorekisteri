@@ -2,16 +2,20 @@ package fi.vm.sade.oppijanumerorekisteri.services.vtj;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
-
-import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.function.Predicate;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HuoltajaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotRyhmaDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
+import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.KotikuntaHistoria;
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.utils.VtjYhteystiedotRyhma;
 import lombok.extern.slf4j.Slf4j;
@@ -33,9 +37,28 @@ public class MuutostietoMapper extends TietoryhmaMapper {
         return false;
     }
 
+    public static boolean isLisatty(JsonNode tietoryhma) {
+        return muutosattribuuttiEquals(tietoryhma, "LISATTY");
+    }
+
     public static boolean isPoistettu(JsonNode tietoryhma) {
-        String muutosattribuutti = getStringValue(tietoryhma, "muutosattribuutti");
-        return "POISTETTU".equals(muutosattribuutti);
+        return muutosattribuuttiEquals(tietoryhma, "POISTETTU");
+    }
+
+    public static boolean isKorjattava(JsonNode tietoryhma) {
+        return muutosattribuuttiEquals(tietoryhma, "KORJATTAVA");
+    }
+
+    public static boolean isKorjattu(JsonNode tietoryhma) {
+        return muutosattribuuttiEquals(tietoryhma, "KORJATTU");
+    }
+
+    public static boolean isMuutettu(JsonNode tietoryhma) {
+        return muutosattribuuttiEquals(tietoryhma, "MUUTETTU");
+    }
+
+    private static boolean muutosattribuuttiEquals(JsonNode tietoryhma, String muutosattribuutti) {
+        return muutosattribuutti.equals(getStringValue(tietoryhma, "muutosattribuutti"));
     }
 
     @Override
@@ -84,12 +107,14 @@ public class MuutostietoMapper extends TietoryhmaMapper {
                 update.setTurvakielto(turvakielto);
                 break;
             case "KOTIKUNTA":
-                if (isPoistettu(tietoryhma)) {
+                if (isLisatty(tietoryhma)) {
+                    update.setKotikunta(getStringValue(tietoryhma, KOTIKUNTA_KUNTAKOODI));
+                } else if (isPoistettu(tietoryhma)) {
                     var voimassaolevatTiedot = tietoryhma.get("voimassaolevatTiedot").get(0);
-                    update.setKotikunta(getStringValue(voimassaolevatTiedot, "kuntakoodi"));
-                } else if (isDataUpdate(tietoryhma)) {
-                    update.setKotikunta(getStringValue(tietoryhma, "kuntakoodi"));
+                    update.setKotikunta(getStringValue(voimassaolevatTiedot, KOTIKUNTA_KUNTAKOODI));
                 }
+                break;
+            case "EDELLINEN_KOTIKUNTA":
                 break;
             case "SAHKOPOSTIOSOITE":
                 if (isTurvakiellonAlainen(tietoryhma)) {
@@ -169,5 +194,85 @@ public class MuutostietoMapper extends TietoryhmaMapper {
                 break;
         }
         return update;
+    }
+
+    public KotikuntahistoriaChanges mapToKotikuntahistoriaChanges(
+            Henkilo henkilo,
+            JsonNode tietoryhmat,
+            List<KotikuntaHistoria> kotikuntahistoria
+    ) {
+        var changes = new KotikuntahistoriaChanges();
+        for (var i = 0; i < tietoryhmat.size(); i++) {
+            var tietoryhma = tietoryhmat.get(i);
+            switch (getStringValue(tietoryhma, "tietoryhma")) {
+                case "KOTIKUNTA":
+                    if (isLisatty(tietoryhma)) {
+                        changes.updates().add(new fi.vm.sade.oppijanumerorekisteri.models.KotikuntaHistoria(
+                                henkilo.getId(),
+                                getStringValue(tietoryhma, KOTIKUNTA_KUNTAKOODI),
+                                getDateValue(tietoryhma, KOTIKUNTA_KUNTAANMUUTTOPV),
+                                getDateValue(tietoryhma, KOTIKUNTA_KUNNASTAPOISMUUTTOPV)
+                        ));
+                    } else if (isPoistettu(tietoryhma)) {
+                        kotikuntahistoria.stream()
+                                .filter(matchesTietoryhma(tietoryhma))
+                                .findFirst()
+                                .ifPresent(changes.deletes()::add);
+                    }
+                    break;
+                case "EDELLINEN_KOTIKUNTA":
+                    if (isLisatty(tietoryhma)) {
+                        log.info(
+                                "{} tietoryhmä ei pitäisi tulla muutosattribuutille {}",
+                                getStringValue(tietoryhma, "tietoryhma"),
+                                getStringValue(tietoryhma, "muutosattribuutti")
+                        );
+                        changes.updates().add(KotikuntaHistoria.builder()
+                                .henkiloId(henkilo.getId())
+                                .kotikunta(getStringValue(tietoryhma, KOTIKUNTA_KUNTAKOODI))
+                                .kuntaanMuuttopv(getDateValue(tietoryhma, KOTIKUNTA_KUNTAANMUUTTOPV))
+                                .kunnastaPoisMuuttopv(getDateValue(tietoryhma, KOTIKUNTA_KUNNASTAPOISMUUTTOPV))
+                                .build());
+                    } else if (isPoistettu(tietoryhma)) {
+                        kotikuntahistoria.stream()
+                                .filter(matchesTietoryhma(tietoryhma))
+                                .findFirst()
+                                .ifPresent(changes.deletes()::add);
+                    } else if (isKorjattava(tietoryhma)) {
+                        var korjattuTietoryhma = tietoryhmat.get(i + 1);
+                        kotikuntahistoria.stream()
+                                .filter(matchesTietoryhma(tietoryhma))
+                                .findFirst()
+                                .ifPresent(kh -> {
+                                    kh.setKotikunta(getStringValue(korjattuTietoryhma, KOTIKUNTA_KUNTAKOODI));
+                                    kh.setKuntaanMuuttopv(getDateValue(korjattuTietoryhma, KOTIKUNTA_KUNTAANMUUTTOPV));
+                                    kh.setKunnastaPoisMuuttopv(getDateValue(korjattuTietoryhma, KOTIKUNTA_KUNNASTAPOISMUUTTOPV));
+                                    changes.updates().add(kh);
+                                });
+                    } else if (isMuutettu(tietoryhma)) {
+                        // Tää on erikoinen keissi, sillä tietoryhmä ei suoranaisesti kerro, mikä on muuttunut ja miten.
+                        // Oletetaan, että kyseessä että kuntakoodi ja kuntaanMuuttopv on pysyvät ja kunnastaMuuttopv on muuttunut kuten kotikunnan vaihtuessa käy.
+                        kotikuntahistoria.stream().filter(kh -> {
+                            var kuntakoodiMatches = Objects.equals(kh.getKotikunta(), getStringValue(tietoryhma, "kuntakoodi"));
+                            var alkuMatches = Objects.equals(kh.getKuntaanMuuttopv(), getDateValue(tietoryhma, KOTIKUNTA_KUNTAANMUUTTOPV));
+                            return kuntakoodiMatches && alkuMatches;
+                        }).findFirst().ifPresent(kh -> {
+                            kh.setKunnastaPoisMuuttopv(getDateValue(tietoryhma, KOTIKUNTA_KUNNASTAPOISMUUTTOPV));
+                            changes.updates().add(kh);
+                        });
+                    }
+                    break;
+            }
+        }
+        return changes;
+    }
+
+    private Predicate<KotikuntaHistoria> matchesTietoryhma(JsonNode tietoryhma) {
+        return kh -> {
+            var kuntakoodiMatches = Objects.equals(kh.getKotikunta(), getStringValue(tietoryhma, KOTIKUNTA_KUNTAKOODI));
+            var muuttopvMatches = Objects.equals(kh.getKuntaanMuuttopv(), getDateValue(tietoryhma, KOTIKUNTA_KUNTAANMUUTTOPV));
+            var poisMuuttopvMatches=  Objects.equals(kh.getKunnastaPoisMuuttopv(), getDateValue(tietoryhma, KOTIKUNTA_KUNNASTAPOISMUUTTOPV));
+            return kuntakoodiMatches && muuttopvMatches && poisMuuttopvMatches;
+        };
     }
 }

@@ -14,13 +14,11 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.models.KotikuntaHistoria;
-import fi.vm.sade.oppijanumerorekisteri.models.TurvakieltoKotikuntaHistoria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KotikuntaHistoriaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.TurvakieltoKotikuntaHistoriaRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import org.assertj.core.groups.Tuple;
@@ -74,9 +72,6 @@ public class DuplicateServiceImplTest {
 
     @MockitoBean
     private KotikuntaHistoriaRepository kotikuntaHistoriaRepository;
-
-    @MockitoBean
-    private TurvakieltoKotikuntaHistoriaRepository turvakieltoKotikuntaHistoriaRepository;
 
     @MockitoBean
     private AuditlogAspectHelper auditlogAspectHelper;
@@ -188,10 +183,6 @@ public class DuplicateServiceImplTest {
     public void removeDuplicateHetuAndLinkShouldRemoveKotikuntaHistorias() {
         Long duplicateId = 12345l;
         List<KotikuntaHistoria> kotikuntaHistoria = List.of(new KotikuntaHistoria(duplicateId, "091", LocalDate.now(), null));
-        List<TurvakieltoKotikuntaHistoria> turvakieltoKotikuntaHistoria = List.of(
-            new TurvakieltoKotikuntaHistoria(duplicateId, "041", LocalDate.now(), null),
-            new TurvakieltoKotikuntaHistoria(duplicateId, "200", LocalDate.now(), LocalDate.now())
-        );
         Henkilo existingDuplicateHenkilo = EntityUtils.createHenkilo("Testi Henkilö", "Testi", "Sukunimi1", "hetu", "1.2.3.4.5", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo");
         existingDuplicateHenkilo.addHetu("hetu1", "hetu2");
         existingDuplicateHenkilo.setYksiloityVTJ(true);
@@ -203,13 +194,10 @@ public class DuplicateServiceImplTest {
         given(henkiloRepository.findByOidHenkilo("1.2.3.4.5")).willReturn(Optional.of(existingDuplicateHenkilo));
         given(henkiloRepository.findByOidHenkilo("2.3.4.5.6")).willReturn(Optional.of(newStronglyIdentifiedHenkilo));
         given(kotikuntaHistoriaRepository.findAllByHenkiloId(duplicateId)).willReturn(kotikuntaHistoria);
-        given(turvakieltoKotikuntaHistoriaRepository.findAllByHenkiloId(duplicateId)).willReturn(turvakieltoKotikuntaHistoria);
 
         duplicateService.removeDuplicateHetuAndLink(newStronglyIdentifiedHenkilo, "hetu");
 
         verify(kotikuntaHistoriaRepository, times(1)).delete(kotikuntaHistoria.get(0));
-        verify(turvakieltoKotikuntaHistoriaRepository, times(1)).delete(turvakieltoKotikuntaHistoria.get(0));
-        verify(turvakieltoKotikuntaHistoriaRepository, times(1)).delete(turvakieltoKotikuntaHistoria.get(1));
     }
 
     @Test

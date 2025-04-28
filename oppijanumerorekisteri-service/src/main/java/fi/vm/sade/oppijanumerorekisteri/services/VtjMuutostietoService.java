@@ -1,24 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.CompletionException;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.BindException;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
-
 import fi.vm.sade.oppijanumerorekisteri.clients.SlackClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjMuutostietoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.model.VtjMuutostietoResponse;
@@ -28,27 +11,28 @@ import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotRyhmaDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.models.KotikuntaHistoria;
-import fi.vm.sade.oppijanumerorekisteri.models.TurvakieltoKotikunta;
-import fi.vm.sade.oppijanumerorekisteri.models.TurvakieltoKotikuntaHistoria;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjMuutostieto;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjMuutostietoKirjausavain;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjPerustieto;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.KotikuntaHistoriaRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.TurvakieltoKotikuntaHistoriaRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.TurvakieltoKotikuntaRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.VtjMuutostietoKirjausavainRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.VtjMuutostietoRepository;
-import fi.vm.sade.oppijanumerorekisteri.services.vtj.MuutostietoMapper;
-import fi.vm.sade.oppijanumerorekisteri.services.vtj.MuutostietoRetryException;
-import fi.vm.sade.oppijanumerorekisteri.services.vtj.PerustietoMapper;
-import fi.vm.sade.oppijanumerorekisteri.services.vtj.TietoryhmaMapper;
+import fi.vm.sade.oppijanumerorekisteri.repositories.*;
+import fi.vm.sade.oppijanumerorekisteri.services.vtj.*;
 import fi.vm.sade.oppijanumerorekisteri.validators.VtjMuutostietoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.BindException;
 
-import static fi.vm.sade.oppijanumerorekisteri.services.vtj.TietoryhmaMapper.getStringValue;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CompletionException;
+import java.util.function.Predicate;
+
+import static fi.vm.sade.oppijanumerorekisteri.services.vtj.MuutostietoMapper.getStringValue;
 
 @Slf4j
 @Service
@@ -57,9 +41,7 @@ public class VtjMuutostietoService {
     private final VtjMuutostietoKirjausavainRepository kirjausavainRepository;
     private final VtjMuutostietoRepository muutostietoRepository;
     private final VtjMuutostietoClient muutostietoClient;
-    private final TurvakieltoKotikuntaRepository turvakieltoKotikuntaRepository;
     private final KotikuntaHistoriaRepository kotikuntaHistoriaRepository;
-    private final TurvakieltoKotikuntaHistoriaRepository turvakieltoKotikuntaHistoriaRepository;
     private final HenkiloRepository henkiloRepository;
     private final HenkiloModificationService henkiloModificationService;
     private final OrikaConfiguration mapper;
@@ -127,14 +109,14 @@ public class VtjMuutostietoService {
         return "fi";
     }
 
-    private HenkiloForceUpdateDto mapToUpdateDto(HenkiloForceReadDto read, JsonNode tietoryhmat,
-            TietoryhmaMapper mapper) {
+    private HenkiloForceUpdateDto mapToUpdateDto(HenkiloForceReadDto read, JsonNode tietoryhmat, TietoryhmaMapper mapper) {
         HenkiloForceUpdateDto update = new HenkiloForceUpdateDto();
         update.setOidHenkilo(read.getOidHenkilo());
         update.setTurvakielto(read.getTurvakielto());
         update.setYhteystiedotRyhma(read.getYhteystiedotRyhma());
         update.setHuoltajat(read.getHuoltajat());
         update.setKaikkiHetut(read.getKaikkiHetut());
+        update.setKotikunta(read.getKotikunta());
         String locale = findYhteystietoLocale(read, tietoryhmat);
         for (JsonNode tietoryhma : tietoryhmat) {
             mapper.mutateUpdateDto(update, tietoryhma, locale);
@@ -154,169 +136,6 @@ public class VtjMuutostietoService {
         return false;
     }
 
-    private boolean isTurvakieltoAdded(JsonNode tietoryhmat) {
-        for (JsonNode tietoryhma : tietoryhmat) {
-            if ("TURVAKIELTO".equals(getStringValue(tietoryhma, "tietoryhma"))) {
-                return tietoryhma.get("turvakieltoAktiivinen").asBoolean();
-            }
-        }
-        return false;
-    }
-
-    private boolean isTurvakieltoRemoved(JsonNode tietoryhmat) {
-        for (JsonNode tietoryhma : tietoryhmat) {
-            if ("TURVAKIELTO".equals(getStringValue(tietoryhma, "tietoryhma"))) {
-                return !tietoryhma.get("turvakieltoAktiivinen").asBoolean();
-            }
-        }
-        return false;
-    }
-
-    private JsonNode getTietoryhma(JsonNode tietoryhmat, String tietoryhmaNimi) {
-        for (JsonNode tietoryhma : tietoryhmat) {
-            if (tietoryhmaNimi.equals(getStringValue(tietoryhma, "tietoryhma"))) {
-                return tietoryhma;
-            }
-        }
-        return null;
-    }
-
-    private void saveTurvakieltoKotikuntaHistoria(Long henkiloId, String kotikunta, LocalDate muuttopv) {
-        try {
-            TurvakieltoKotikuntaHistoria kotikuntaHistoria = TurvakieltoKotikuntaHistoria.builder()
-                    .henkiloId(henkiloId)
-                    .kotikunta(kotikunta)
-                    .kuntaanMuuttopv(muuttopv)
-                    .build();
-            turvakieltoKotikuntaHistoriaRepository.save(kotikuntaHistoria);
-        } catch (Exception e) {
-            log.error("failed to save turvakieltokotikuntahistoria for henkilo " + henkiloId, e);
-            slackClient.sendToSlack("Virhe turvakieltokotikuntahistorian tallennuksessa henkilölle " + henkiloId, e.getMessage());
-        }
-    }
-
-    private void setKunnastaPoisMuuttopv(Long henkiloId, LocalDate kunnastaPoisMuuttopv) {
-        Optional<KotikuntaHistoria> existingKotikuntaHistoria = kotikuntaHistoriaRepository.findByHenkiloIdAndKunnastaPoisMuuttopvIsNull(henkiloId);
-        existingKotikuntaHistoria.ifPresent(existing -> {
-            existing.setKunnastaPoisMuuttopv(kunnastaPoisMuuttopv);
-            kotikuntaHistoriaRepository.save(existing);
-        });
-        Optional<TurvakieltoKotikuntaHistoria> existingTurvakieltoKotikuntaHistoria = turvakieltoKotikuntaHistoriaRepository.findByHenkiloIdAndKunnastaPoisMuuttopvIsNull(henkiloId);
-        existingTurvakieltoKotikuntaHistoria.ifPresent(existing -> {
-            existing.setKunnastaPoisMuuttopv(kunnastaPoisMuuttopv);
-            turvakieltoKotikuntaHistoriaRepository.save(existing);
-        });
-    }
-
-    private void setKunnastaPoisMuuttopvWithMuuttopv(Long henkiloId, LocalDate muuttopv) {
-        if (muuttopv == null) {
-            log.warn("trying to set kunnasta_pois_muuttopv with missing muuttopv for henkilo id " + henkiloId);
-        } else {
-            setKunnastaPoisMuuttopv(henkiloId, muuttopv.minusDays(1));
-        }
-    }
-
-    private void insertOrUpdateTurvakieltoKotikunta(Long henkiloId, String kotikunta, LocalDate muuttopv) {
-        try {
-            turvakieltoKotikuntaRepository.findByHenkiloId(henkiloId)
-                .or(() -> Optional.of(TurvakieltoKotikunta.builder().henkiloId(henkiloId).build()))
-                .ifPresent(turvakieltoKotikunta -> {
-                    turvakieltoKotikunta.setKotikunta(kotikunta);
-                    turvakieltoKotikuntaRepository.save(turvakieltoKotikunta);
-                });
-            setKunnastaPoisMuuttopvWithMuuttopv(henkiloId, muuttopv);
-            saveTurvakieltoKotikuntaHistoria(henkiloId, kotikunta, muuttopv);
-        } catch (Exception e) {
-            log.error("failed to save turvakieltokotikunta for henkilo " + henkiloId, e);
-            slackClient.sendToSlack("Virhe turvakieltokotikunnan tallennuksessa henkilölle " + henkiloId, e.getMessage());
-        }
-    }
-
-    private String handleKotikuntaPoistettu(Long henkiloId, JsonNode tietoryhmat) {
-        try {
-            var kotikuntaHistoriaList = kotikuntaHistoriaRepository.findAllByHenkiloId(henkiloId);
-            getKotikuntaPoistettuTietoryhma(tietoryhmat).ifPresent(tietoryhma -> {
-                var poistettuKotikunta = getStringValue(tietoryhma, "kuntakoodi");
-                var poistettuMuuttopv = TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv"));
-
-                var voimassaolevatTiedot = tietoryhma.get("voimassaolevatTiedot").get(0);
-                var voimassaolevaKotikunta = getStringValue(voimassaolevatTiedot, "kuntakoodi");
-                var voimassaolevaMuttopv = TietoryhmaMapper.parseDate(voimassaolevatTiedot.get("kuntaanMuuttopv"));
-
-                kotikuntaHistoriaList.stream()
-                        .filter(x -> x.getKotikunta().equals(voimassaolevaKotikunta) && x.getKuntaanMuuttopv().equals(voimassaolevaMuttopv))
-                        .findFirst()
-                        .ifPresent(historia -> {
-                            log.info("Updating kotikuntahistoria entry for henkilo {} with kotikunta {} and muuttopv {}", henkiloId, historia.getKotikunta(), historia.getKuntaanMuuttopv());
-                            historia.setKunnastaPoisMuuttopv(null);
-                            kotikuntaHistoriaRepository.save(historia);
-                        });
-
-                kotikuntaHistoriaList.stream()
-                        .filter(x -> x.getKotikunta().equals(poistettuKotikunta) && x.getKuntaanMuuttopv().equals(poistettuMuuttopv))
-                        .findFirst()
-                        .ifPresent(historia -> {
-                            log.info("Deleting kotikuntahistoria entry for henkilo {} with kotikunta {} and muuttopv {}", henkiloId, historia.getKotikunta(), historia.getKuntaanMuuttopv());
-                            kotikuntaHistoriaRepository.delete(historia);
-                        });
-
-            });
-        } catch (Exception e) {
-            log.error("failed to handle KOTIKUNTA POISTETTU tietoryhma for henkilo " + henkiloId, e);
-            slackClient.sendToSlack("Virhe kotikuntahistorian päivityksessä henkilölle " + henkiloId, e.getMessage());
-        }
-        return null;
-    }
-
-    private Optional<JsonNode> getKotikuntaPoistettuTietoryhma(JsonNode tietoryhmat) {
-        for (JsonNode tietoryhma : tietoryhmat) {
-            if ("KOTIKUNTA".equals(getStringValue(tietoryhma, "tietoryhma")) && MuutostietoMapper.isPoistettu(tietoryhma)) {
-                return Optional.of(tietoryhma);
-            }
-        }
-        return Optional.empty();
-    }
-
-    private String saveCurrentKotikuntaToKotikuntaHistoria(Long henkiloId, JsonNode tietoryhmat, Function<JsonNode, Boolean> tietoryhmaValidator) {
-        try {
-            JsonNode tietoryhma = getTietoryhma(tietoryhmat, "KOTIKUNTA");
-            if (tietoryhma != null && tietoryhma.has("kuntakoodi")
-                    && (tietoryhmaValidator == null || tietoryhmaValidator.apply(tietoryhma))) {
-                String kotikunta = getStringValue(tietoryhma, "kuntakoodi");
-                LocalDate muuttopv = TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv"));
-                setKunnastaPoisMuuttopvWithMuuttopv(henkiloId, muuttopv);
-                KotikuntaHistoria kotikuntaHistoria = KotikuntaHistoria.builder().henkiloId(henkiloId).kotikunta(kotikunta).kuntaanMuuttopv(muuttopv).build();
-                kotikuntaHistoriaRepository.save(kotikuntaHistoria);
-                return kotikunta;
-            }
-        } catch (Exception e) {
-            log.error("failed to save kotikuntahistoria for henkilo " + henkiloId, e);
-            slackClient.sendToSlack("Virhe kotikuntahistorian tallennuksessa henkilölle " + henkiloId, e.getMessage());
-        }
-        return null;
-    }
-
-    private void saveEdellinenKotikuntaHistoria(Long henkiloId, JsonNode tietoryhmat) {
-        kotikuntaHistoriaRepository.findAllByHenkiloId(henkiloId)
-            .stream()
-            .forEach(historia -> kotikuntaHistoriaRepository.delete(historia));
-        turvakieltoKotikuntaHistoriaRepository.findAllByHenkiloId(henkiloId)
-            .stream()
-            .forEach(historia -> turvakieltoKotikuntaHistoriaRepository.delete(historia));
-        List<KotikuntaHistoria> kotikuntaHistoriaList = new ArrayList<>();
-        for (JsonNode tietoryhma : tietoryhmat) {
-            if ("EDELLINEN_KOTIKUNTA".equals(getStringValue(tietoryhma, "tietoryhma"))) {
-                kotikuntaHistoriaList.add(KotikuntaHistoria.builder()
-                    .henkiloId(henkiloId)
-                    .kotikunta(getStringValue(tietoryhma, "kuntakoodi"))
-                    .kuntaanMuuttopv(TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv")))
-                    .kunnastaPoisMuuttopv(TietoryhmaMapper.parseDate(tietoryhma.get("kunnastaPoisMuuttopv")))
-                    .build());
-            }
-        }
-        kotikuntaHistoriaRepository.saveAll(kotikuntaHistoriaList);
-    }
-
     protected Void savePerustieto(VtjPerustieto perustieto) {
         henkiloRepository.findByHetu(perustieto.henkilotunnus).ifPresent(henkilo -> {
             try {
@@ -326,23 +145,20 @@ public class VtjMuutostietoService {
                             henkilo.getOidHenkilo()), null);
                     return;
                 }
+
+                log.info("Transforming VTJ perustieto into Henkilo changes");
                 HenkiloForceReadDto read = mapper.map(henkilo, HenkiloForceReadDto.class);
                 HenkiloForceUpdateDto update = mapToUpdateDto(read, perustieto.tietoryhmat, perustietoMapper);
-                saveEdellinenKotikuntaHistoria(henkilo.getId(), perustieto.tietoryhmat);
-                if (isTurvakieltoAdded(perustieto.tietoryhmat)) {
-                    update.setKotikunta(null);
-                    JsonNode tietoryhma = getTietoryhma(perustieto.tietoryhmat, "KOTIKUNTA");
-                    if (tietoryhma != null && tietoryhma.has("kuntakoodi")) {
-                        String kotikunta = getStringValue(tietoryhma, "kuntakoodi");
-                        LocalDate muuttopv = TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv"));
-                        insertOrUpdateTurvakieltoKotikunta(henkilo.getId(), kotikunta, muuttopv);
-                    }
-                } else {
-                    saveCurrentKotikuntaToKotikuntaHistoria(henkilo.getId(), perustieto.tietoryhmat, null);
-                }
                 henkiloModificationService.forceUpdateHenkilo(update);
                 henkilo.setVtjBucket(henkilo.getId() % 100);
                 henkiloRepository.save(henkilo);
+
+                log.info("Transforming VTJ perustieto into Kotikuntahistoria changes");
+                kotikuntaHistoriaRepository.deleteAllByHenkiloId(henkilo.getId());
+                var kotikuntahistoriaChanges = perustietoMapper.mapToKotikuntahistoriaChanges(henkilo, perustieto.tietoryhmat, new ArrayList<>());
+                kotikuntaHistoriaRepository.saveAll(kotikuntahistoriaChanges.updates());
+                kotikuntaHistoriaRepository.deleteAll(kotikuntahistoriaChanges.deletes());
+
                 log.info(henkilo.getOidHenkilo() + " updated with perustieto");
             } catch (Exception e) {
                 log.error("failed to save perustieto for henkilo " + henkilo.getOidHenkilo(), e);
@@ -350,84 +166,6 @@ public class VtjMuutostietoService {
             }
         });
         return null;
-    }
-
-    private void updateTurvakieltoKotikunta(Henkilo henkilo, JsonNode tietoryhmat) {
-        try {
-            for (JsonNode tietoryhma : tietoryhmat) {
-                if ("KOTIKUNTA".equals(getStringValue(tietoryhma, "tietoryhma"))
-                        && MuutostietoMapper.isDataUpdate(tietoryhma)
-                        && tietoryhma.has("kuntakoodi")) {
-                    String kotikunta = getStringValue(tietoryhma, "kuntakoodi");
-                    LocalDate muuttopv = TietoryhmaMapper.parseDate(tietoryhma.get("kuntaanMuuttopv"));
-                    TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(henkilo.getId())
-                        .orElse(TurvakieltoKotikunta.builder().henkiloId(henkilo.getId()).build());
-                    turvakieltoKotikunta.setKotikunta(kotikunta);
-                    turvakieltoKotikuntaRepository.save(turvakieltoKotikunta);
-                    setKunnastaPoisMuuttopvWithMuuttopv(henkilo.getId(), muuttopv);
-                    saveTurvakieltoKotikuntaHistoria(henkilo.getId(), kotikunta, muuttopv);
-                }
-            }
-        } catch (Exception e) {
-            log.error("failed to save turvakieltokotikunta for henkilo " + henkilo.getId(), e);
-        }
-    }
-
-    private String removeTurvakieltoKotikunta(Henkilo henkilo, VtjMuutostieto muutostieto) {
-        Optional<TurvakieltoKotikunta> turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(henkilo.getId());
-        if (turvakieltoKotikunta.isPresent()) {
-            turvakieltoKotikuntaRepository.delete(turvakieltoKotikunta.get());
-        }
-
-        JsonNode kotikuntaTietoryhma = getTietoryhma(muutostieto.tietoryhmat, "KOTIKUNTA");
-        if (kotikuntaTietoryhma != null && MuutostietoMapper.isDataUpdate(kotikuntaTietoryhma)) {
-            return saveCurrentKotikuntaToKotikuntaHistoria(henkilo.getId(), muutostieto.tietoryhmat, MuutostietoMapper::isDataUpdate);
-        } else if (turvakieltoKotikunta.isPresent()) {
-            String kotikunta = turvakieltoKotikunta.get().getKotikunta();
-            LocalDate muuttopv = muutostieto.muutospv.toLocalDate();
-            setKunnastaPoisMuuttopvWithMuuttopv(henkilo.getId(), muuttopv);
-            KotikuntaHistoria kotikuntaHistoria = KotikuntaHistoria.builder().henkiloId(henkilo.getId()).kotikunta(kotikunta).kuntaanMuuttopv(muuttopv).build();
-            kotikuntaHistoriaRepository.save(kotikuntaHistoria);
-            return kotikunta;
-        }
-
-        return null;
-    }
-
-    private void addTurvakieltoKotikunta(Henkilo henkilo, VtjMuutostieto muutostieto) {
-        JsonNode kotikuntaTietoryhma = getTietoryhma(muutostieto.tietoryhmat, "KOTIKUNTA");
-        if (kotikuntaTietoryhma != null && MuutostietoMapper.isDataUpdate(kotikuntaTietoryhma)) {
-            String kotikunta = getStringValue(kotikuntaTietoryhma, "kuntakoodi");
-            LocalDate muuttopv = TietoryhmaMapper.parseDate(kotikuntaTietoryhma.get("kuntaanMuuttopv"));
-            insertOrUpdateTurvakieltoKotikunta(henkilo.getId(), kotikunta, muuttopv);
-        } else if (henkilo.getKotikunta() != null) {
-            String kotikunta = henkilo.getKotikunta();
-            LocalDate muuttopv = muutostieto.muutospv.toLocalDate();
-            insertOrUpdateTurvakieltoKotikunta(henkilo.getId(), kotikunta, muuttopv);
-        }
-    }
-
-    private Predicate<YhteystiedotRyhmaDto> isVtjYhteystietoryhma = ytr -> "alkupera1".equals(ytr.getRyhmaAlkuperaTieto());
-
-    private void handleKotikuntaChanges(HenkiloForceUpdateDto update, Henkilo henkilo, VtjMuutostieto muutostieto) {
-        if (isTurvakieltoAdded(muutostieto.tietoryhmat)) {
-            addTurvakieltoKotikunta(henkilo, muutostieto);
-            update.getYhteystiedotRyhma().removeIf(isVtjYhteystietoryhma);
-            update.setKotikunta(null);
-        } else if (isTurvakieltoRemoved(muutostieto.tietoryhmat)) {
-            String kotikunta = removeTurvakieltoKotikunta(henkilo, muutostieto);
-            if (kotikunta == null) {
-                log.warn("could not find kotikunta when removing turvakielto for henkilo " + henkilo.getOidHenkilo());
-            }
-            update.setKotikunta(kotikunta);
-        } else if (henkilo.isTurvakielto()) {
-            updateTurvakieltoKotikunta(henkilo, muutostieto.tietoryhmat);
-            update.getYhteystiedotRyhma().removeIf(isVtjYhteystietoryhma);
-            update.setKotikunta(null);
-        } else {
-            handleKotikuntaPoistettu(henkilo.getId(), muutostieto.tietoryhmat);
-            saveCurrentKotikuntaToKotikuntaHistoria(henkilo.getId(), muutostieto.tietoryhmat, MuutostietoMapper::isDataUpdate);
-        }
     }
 
     protected Void updateHenkilo(VtjMuutostieto muutostieto) {
@@ -438,10 +176,18 @@ public class VtjMuutostietoService {
             }
 
             try {
+                log.info("Transforming VTJ muutostieto into Henkilo changes");
                 HenkiloForceReadDto read = mapper.map(henkilo, HenkiloForceReadDto.class);
                 HenkiloForceUpdateDto update = mapToUpdateDto(read, muutostieto.tietoryhmat, muutostietoMapper);
-                handleKotikuntaChanges(update, henkilo, muutostieto);
                 henkiloModificationService.forceUpdateHenkilo(update);
+                henkiloRepository.save(henkilo);
+
+                log.info("Transforming VTJ muutostieto into Kotikuntahistoria changes");
+                var kotikuntahistoria = kotikuntaHistoriaRepository.findAllByHenkiloId(henkilo.getId());
+                var kotikuntahistoriaChanges = muutostietoMapper.mapToKotikuntahistoriaChanges(henkilo, muutostieto.tietoryhmat, kotikuntahistoria);
+                kotikuntaHistoriaRepository.saveAll(kotikuntahistoriaChanges.updates());
+                kotikuntaHistoriaRepository.deleteAll(kotikuntahistoriaChanges.deletes());
+
                 log.info("muutostieto processed successfully for henkilo {}", henkilo.getOidHenkilo());
             } catch (UnprocessableEntityException uee) {
                 BindException be = (BindException) uee.getErrors();

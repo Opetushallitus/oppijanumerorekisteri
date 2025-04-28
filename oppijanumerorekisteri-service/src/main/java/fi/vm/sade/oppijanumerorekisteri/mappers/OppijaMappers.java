@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -46,6 +47,30 @@ public class OppijaMappers {
     }
 
     @Bean
+    public ClassMap<Henkilo, HenkiloReadDto> henkiloReadDtoClassMap(MapperFactory mapperFactory) {
+        return mapperFactory.classMap(Henkilo.class, HenkiloReadDto.class)
+                .byDefault()
+                .customize(customMapper((Henkilo henkilo, HenkiloReadDto dto) -> {
+                    if (henkilo.getTurvakielto()) {
+                        dto.setKotikunta(null);
+                    }
+                }))
+                .toClassMap();
+    }
+
+    @Bean
+    public ClassMap<Henkilo, HenkiloDto> henkiloDtoClassMap(MapperFactory mapperFactory) {
+        return mapperFactory.classMap(Henkilo.class, HenkiloDto.class)
+                .byDefault()
+                .customize(customMapper((Henkilo henkilo, HenkiloDto dto) -> {
+                    if (henkilo.getTurvakielto()) {
+                        dto.setKotikunta(null);
+                    }
+                }))
+                .toClassMap();
+    }
+
+    @Bean
     public ClassMap<Henkilo, OppijaReadDto> oppijaReadDtoClassMap(MapperFactory mapperFactory, KoodistoService koodistoService) {
         return mapperFactory.classMap(Henkilo.class, OppijaReadDto.class)
                 .byDefault()
@@ -55,7 +80,9 @@ public class OppijaMappers {
                 .customize(new CustomMapper<Henkilo, OppijaReadDto>() {
                     @Override
                     public void mapAtoB(Henkilo henkilo, OppijaReadDto oppijaReadDto, MappingContext context) {
-                        if (henkilo.getKotikunta() != null) {
+                        if (henkilo.getTurvakielto()) {
+                            oppijaReadDto.setKotikunta(null);
+                        } else if (henkilo.getKotikunta() != null) {
                             Iterable<KoodiType> koodit = koodistoService.list(Koodisto.KUNTA);
                             KoodiNimiReadDto kotikunta = KoodistoUtils.getKoodiNimiReadDto(koodit, henkilo.getKotikunta());
                             oppijaReadDto.setKotikunta(kotikunta);
@@ -108,4 +135,12 @@ public class OppijaMappers {
                 .toClassMap();
     }
 
+    private <A, B> CustomMapper<A, B> customMapper(BiConsumer<A, B> consumer) {
+        return new CustomMapper<A, B>() {
+            @Override
+            public void mapAtoB(A a, B b, MappingContext context) {
+                consumer.accept(a, b);
+            }
+        };
+    }
 }

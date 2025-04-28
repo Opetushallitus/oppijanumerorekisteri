@@ -217,7 +217,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     void handleTurvaKielto() {
         if (Boolean.TRUE.equals(this.turvakielto)) {
             yhteystiedotRyhma.removeIf(isFromVTJ());
-            this.kotikunta = null;
         }
     }
 

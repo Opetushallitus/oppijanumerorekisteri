@@ -13,4 +13,5 @@ import java.util.List;
 public interface KotikuntaHistoriaRepository extends CrudRepository<KotikuntaHistoria, Long> {
     public List<KotikuntaHistoria> findAllByHenkiloId(Long henkiloId);
     public Optional<KotikuntaHistoria> findByHenkiloIdAndKunnastaPoisMuuttopvIsNull(Long henkiloId);
+    public void deleteAllByHenkiloId(Long henkiloId);
 }
