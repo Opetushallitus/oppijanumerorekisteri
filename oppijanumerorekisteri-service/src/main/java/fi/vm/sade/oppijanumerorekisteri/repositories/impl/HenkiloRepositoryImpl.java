@@ -744,30 +744,24 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
 
     @Override
     public List<KotikuntaHistoria> findKotikuntaHistorias(List<String> oids) {
-        Query kotikuntaQuery = this.entityManager.createNativeQuery("""
-                SELECT h.oidhenkilo AS oid,
-                       kh.kotikunta AS kotikunta,
-                       kh.kuntaan_muuttopv AS kuntaanMuuttoPv,
-                       kh.kunnasta_pois_muuttopv AS kunnastaPoisMuuttopv
-                FROM henkilo h
-                LEFT JOIN kotikunta_historia kh ON h.id = kh.henkilo_id
-                WHERE h.oidhenkilo in :oids AND kh.kotikunta IS NOT NULL
-                """,
-                KotikuntaHistoria.class).setParameter("oids", oids);
-        return kotikuntaQuery.getResultList();
+        return findKotikuntaHistorias(oids, false);
     }
 
     @Override
     public List<KotikuntaHistoria> findTurvakieltoKotikuntaHistorias(List<String> oids) {
-        Query kotikuntaQuery = this.entityManager.createNativeQuery("""
-                SELECT h.oidhenkilo AS oid,
-                       kh.kotikunta AS kotikunta,
-                       kh.kuntaan_muuttopv AS kuntaanMuuttoPv,
-                       kh.kunnasta_pois_muuttopv AS kunnastaPoisMuuttopv
-                FROM henkilo h
-                LEFT JOIN turvakielto_kotikunta_historia kh ON h.id = kh.henkilo_id
-                WHERE h.oidhenkilo in :oids AND kh.kotikunta IS NOT NULL
-                """,
+        return findKotikuntaHistorias(oids, true);
+    }
+
+    private List<KotikuntaHistoria> findKotikuntaHistorias(List<String> oids, boolean includeTurvakiellollinen) {
+        Query kotikuntaQuery = this.entityManager.createNativeQuery(String.format("""
+                        SELECT
+                            h.oidhenkilo AS oid,
+                            kh.kotikunta AS kotikunta,
+                            kh.kunnasta_pois_muuttopv AS kunnastaPoisMuuttopv,
+                            kh.kuntaan_muuttopv AS kuntaanMuuttoPv
+                        FROM henkilo h LEFT JOIN kotikunta_historia kh ON h.id = kh.henkilo_id
+                        WHERE h.oidhenkilo IN :oids AND kh.kotikunta IS NOT NULL %1$s
+                """, includeTurvakiellollinen ? "" : "AND NOT h.turvakielto"),
                 KotikuntaHistoria.class).setParameter("oids", oids);
         return kotikuntaQuery.getResultList();
     }

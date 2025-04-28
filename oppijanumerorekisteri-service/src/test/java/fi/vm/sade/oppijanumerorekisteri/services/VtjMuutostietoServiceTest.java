@@ -25,18 +25,12 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.validation.BindException;
 
-import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.model.VtjMuutostietoResponse;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotRyhmaDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
-import fi.vm.sade.oppijanumerorekisteri.models.KotikuntaHistoria;
-import fi.vm.sade.oppijanumerorekisteri.models.TurvakieltoKotikunta;
-import fi.vm.sade.oppijanumerorekisteri.models.TurvakieltoKotikuntaHistoria;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjMuutostieto;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjMuutostietoKirjausavain;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjPerustieto;
@@ -58,6 +52,7 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
 
     @Before
     public void before() throws Exception {
+        setupKoodistoMocks();
         muutostietos = List.of(
                 new VtjMuutostieto("123456-111A", LocalDateTime.now(), objectMapper.readTree(
                         "[{\"tietoryhma\": \"TURVAKIELTO\", \"muutosattribuutti\": \"LISATTY\", \"turvakieltoAktiivinen\": true}]"),
@@ -76,53 +71,13 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
         henkilotunnusKorjaus = new VtjPerustieto(hetus.get(0),
                 objectMapper.readTree(new File("src/test/resources/vtj/perustietoHetuKorjaus.json")));
 
-        when(koodistoService.list(Koodisto.YHTEYSTIETOJEN_ALKUPERA))
-                .thenReturn(new KoodiTypeListBuilder(Koodisto.YHTEYSTIETOJEN_ALKUPERA).koodi("alkupera1").build());
-        when(koodistoService.list(Koodisto.YHTEYSTIETOTYYPIT))
-                .thenReturn(new KoodiTypeListBuilder(Koodisto.YHTEYSTIETOTYYPIT)
-                        .koodi("yhteystietotyyppi4")
-                        .koodi("yhteystietotyyppi5")
-                        .koodi("yhteystietotyyppi8")
-                        .koodi("yhteystietotyyppi9")
-                        .koodi("yhteystietotyyppi11")
-                        .build());
-        when(koodistoService.list(Koodisto.SUKUPUOLI))
-                .thenReturn(new KoodiTypeListBuilder(Koodisto.SUKUPUOLI).koodi("1").koodi("2").build());
-        when(koodistoService.list(Koodisto.KIELI))
-                .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI).koodi("FR").koodi("FI").koodi("SV")
-                        .koodi("98")
-                        .build());
-        when(koodistoService.list(Koodisto.KUNTA))
-                .thenReturn(new KoodiTypeListBuilder(Koodisto.KUNTA)
-                        .koodi("049")
-                        .koodi("091")
-                        .koodi("123")
-                        .koodi("287")
-                        .koodi("999")
-                        .build());
-        when(koodistoService.list(Koodisto.MAAT_JA_VALTIOT_2))
-                .thenReturn(new KoodiTypeListBuilder(Koodisto.MAAT_JA_VALTIOT_2)
-                        .koodi("246")
-                        .koodi("250")
-                        .koodi("123")
-                        .koodi("456")
-                        .koodi("729")
-                        .koodi("736")
-                        .koodi("998")
-                        .build());
     }
 
     @Test
     public void savePerustieto() throws Exception {
         var henkilo = henkiloRepository.save(makeHenkilo().build());
-        //Mockito.reset(henkiloRepository);
-        //muutostietoService.savePerustieto(perustieto);
-
         var actual = applyPerustieto(perustieto);
 
-        //ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
-        //verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
-        //HenkiloForceUpdateDto actual = argument.getValue();
         assertThat(actual.getEtunimet()).isEqualTo("Mathilda Helena Sophie");
         assertThat(actual.getSukunimi()).isEqualTo("Aslan Tes");
         assertThat(actual.getSyntymaaika()).isEqualTo(LocalDate.of(1958, 1, 30));
@@ -179,11 +134,7 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
     @Test
     public void savePerustietoOverridesExistingKotikuntaHistoria() throws Exception {
         var henkilo = henkiloRepository.save(makeHenkilo().build());
-        kotikuntaHistoriaRepository.save(KotikuntaHistoria.builder()
-                        .henkiloId(henkilo.getId())
-                        .kotikunta("321")
-                        .kuntaanMuuttopv(LocalDate.of(2013, 3, 12))
-                        .build());
+        addKotikuntahistoria(henkilo, "321", LocalDate.of(2013, 3, 12), null);
 
         applyPerustieto(perustieto);
 
@@ -199,16 +150,14 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
     public void savePerustietoParsesTurvakielto() throws Exception {
         var henkilo = henkiloRepository.save(makeHenkilo().build());
         Mockito.reset(henkiloRepository);
-        kotikuntaHistoriaRepository.save(KotikuntaHistoria.builder()
-                        .henkiloId(henkilo.getId())
-                        .kotikunta("123")
-                        .kuntaanMuuttopv(LocalDate.of(2015, 3, 12))
-                        .build());
+        addKotikuntahistoria(henkilo, "123", LocalDate.of(2015, 3, 12), null);
 
         var actual = applyPerustieto(turvakielto);
+        var apiResponse = henkiloService.getByHetu(henkilo.getHetu());
         assertThat(actual.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
         assertThat(actual.getTurvakielto()).isTrue();
-        assertThat(actual.getKotikunta()).isEqualTo("091"); // TODO: Tarkista ettei tule rajapinnasta
+        assertThat(actual.getKotikunta()).isEqualTo("091");
+        assertThat(apiResponse.getKotikunta()).isNull();
         assertThat(actual.getYhteystiedotRyhma()).isEmpty();
 
         assertKotikuntaHistoria(henkilo.getId(),
@@ -446,13 +395,8 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
 
     @Test
     public void saveMuutostietoSavesKunnastaToiseenMuutto() throws Exception {
-        var henkilo = henkiloRepository.save(makeHenkilo().build());
-
-        kotikuntaHistoriaRepository.save(KotikuntaHistoria.builder()
-                        .henkiloId(henkilo.getId())
-                        .kotikunta("222")
-                        .kuntaanMuuttopv(LocalDate.of(2012, 1, 5))
-                        .build());
+        var henkilo = henkiloRepository.save(makeHenkilo().kotikunta("091").build());
+        addKotikuntahistoria(henkilo, "091", LocalDate.of(2004, 5, 1), null);
 
         var actual = applyMuutostieto(getMuutostieto(henkilo.getHetu(), "/vtj/muutostietoKunnastaToiseenMuutto.json"));
         assertThat(actual.getKotikunta()).isEqualTo("287");
@@ -475,25 +419,15 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
         }
 
         assertKotikuntaHistoria(henkilo.getId(),
-                tuple("222", LocalDate.of(2012, 1, 5), LocalDate.of(2019, 6, 26)),
+                tuple("091", LocalDate.of(2004, 5, 1), LocalDate.of(2019, 6, 26)),
                 tuple("287", LocalDate.of(2019, 6, 27), null));
     }
 
     @Test
     public void handleKotikuntaPoistettuMuutostieto() throws Exception {
         var henkilo = henkiloRepository.save(makeHenkilo2().kotikunta("049").build());
-
-        kotikuntaHistoriaRepository.save(KotikuntaHistoria.builder()
-                .henkiloId(henkilo.getId())
-                .kotikunta("091")
-                .kuntaanMuuttopv(LocalDate.of(2020, 1, 1))
-                .kunnastaPoisMuuttopv(LocalDate.of(2023, 12, 31))
-                .build());
-        kotikuntaHistoriaRepository.save(KotikuntaHistoria.builder()
-                .henkiloId(henkilo.getId())
-                .kotikunta("049")
-                .kuntaanMuuttopv(LocalDate.of(2024, 1, 1))
-                .build());
+        addKotikuntahistoria(henkilo, "091", LocalDate.of(2020, 1, 1), LocalDate.of(2023, 12, 31));
+        addKotikuntahistoria(henkilo, "049", LocalDate.of(2024, 1, 1), null);
 
         assertKotikuntaHistoria(
                 henkilo.getId(),
@@ -507,112 +441,6 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
                 henkilo.getId(),
                 tuple("091", LocalDate.of(2020, 1, 1), LocalDate.of(2023, 12, 31))
         );
-    }
-
-    @Test
-    public void saveMuutostietoSavesTurvakieltoWithExistingKotikunta() throws Exception {
-        var henkilo = henkiloRepository.save(makeHenkilo2().build());
-        kotikuntaHistoriaRepository.save(KotikuntaHistoria.builder()
-                        .henkiloId(henkilo.getId())
-                        .kotikunta("123")
-                        .kuntaanMuuttopv(LocalDate.of(2015, 3, 12))
-                        .build());
-
-        var actual = applyMuutostieto(getMuutostieto(henkilo.getHetu(), "/vtj/muutostietoTurvakielto.json"));
-
-        assertThat(actual.getKotikunta()).isNull();
-        assertThat(actual.getYhteystiedotRyhma()).isEmpty();
-        TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(henkilo.getId()).get();
-        assertThat(turvakieltoKotikunta.getKotikunta()).isEqualTo("123");
-        assertKotikuntaHistoria(henkilo.getId(),
-                tuple("123", LocalDate.of(2015, 3, 12), LocalDate.now().minusDays(1)));
-        assertTurvakieltoKotikuntaHistoria(henkilo.getId(),
-                tuple("123", LocalDate.now(), null));
-    }
-
-    @Test
-    public void saveMuutostietoSavesTurvakieltoWithNewKotikunta() throws Exception {
-        var h = henkiloRepository.save(makeHenkilo2().build());
-        kotikuntaHistoriaRepository.save(KotikuntaHistoria.builder()
-                        .henkiloId(h.getId())
-                        .kotikunta("123")
-                        .kuntaanMuuttopv(LocalDate.of(2015, 3, 12))
-                        .build());
-
-        var actual = applyMuutostieto(getMuutostieto(h.getHetu(), "/vtj/muutostietoTurvakieltoKunnastaMuutto.json"));
-
-        assertThat(actual.getKotikunta()).isNull();
-        assertThat(actual.getYhteystiedotRyhma()).isEmpty();
-        TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(h.getId()).get();
-        assertThat(turvakieltoKotikunta.getKotikunta()).isEqualTo("287");
-        assertTurvakieltoKotikuntaHistoria(h.getId(),
-                tuple("287", LocalDate.of(2019, 6, 27), null));
-        assertKotikuntaHistoria(h.getId(),
-                tuple("123", LocalDate.of(2015, 3, 12), LocalDate.of(2019, 6, 26)));
-    }
-
-    @Test
-    public void saveMuutostietoUpdatesTurvakieltoKotikunta() throws Exception {
-        var henkiloWithTurvakielto = henkiloRepository.save(makeHenkilo2().turvakielto(true).kotikunta(null).build());
-        turvakieltoKotikuntaHistoriaRepository.save(TurvakieltoKotikuntaHistoria.builder()
-                        .henkiloId(henkiloWithTurvakielto.getId())
-                        .kotikunta("123")
-                        .kuntaanMuuttopv(LocalDate.of(2015, 3, 12))
-                        .build());
-        turvakieltoKotikuntaRepository.save(TurvakieltoKotikunta.builder().henkiloId(henkiloWithTurvakielto.getId()).kotikunta("091").build());
-
-        var actual = applyMuutostieto(getMuutostieto(henkiloWithTurvakielto.getHetu(), "/vtj/muutostietoKunnastaToiseenMuutto.json"));
-
-        assertThat(actual.getKotikunta()).isNull();
-        assertThat(actual.getTurvakielto()).isTrue();
-        TurvakieltoKotikunta turvakieltoKotikunta = turvakieltoKotikuntaRepository.findByHenkiloId(henkiloWithTurvakielto.getId()).get();
-        assertThat(turvakieltoKotikunta.getKotikunta()).isEqualTo("287");
-        assertKotikuntaHistoria(henkiloWithTurvakielto.getId());
-        assertTurvakieltoKotikuntaHistoria(henkiloWithTurvakielto.getId(),
-                tuple("123", LocalDate.of(2015, 3, 12), LocalDate.of(2019, 6, 26)),
-                tuple("287", LocalDate.of(2019, 6, 27), null));
-    }
-
-    @Test
-    public void saveMuutostietoRemovesTurvakieltoKotikuntaWithExistingKotikunta() throws Exception {
-        var henkiloWithTurvakielto = henkiloRepository.save(makeHenkilo2().turvakielto(true).kotikunta(null).build());
-        turvakieltoKotikuntaHistoriaRepository.save(TurvakieltoKotikuntaHistoria.builder()
-                        .henkiloId(henkiloWithTurvakielto.getId())
-                        .kotikunta("091")
-                        .kuntaanMuuttopv(LocalDate.of(2015, 3, 12))
-                        .build());
-        turvakieltoKotikuntaRepository.save(TurvakieltoKotikunta.builder().henkiloId(henkiloWithTurvakielto.getId()).kotikunta("091").build());
-
-        var actual = applyMuutostieto(getMuutostieto(henkiloWithTurvakielto.getHetu(), "/vtj/muutostietoTurvakieltoPois.json"));
-
-        assertThat(actual.getKotikunta()).isEqualTo("091");
-        assertThat(actual.getTurvakielto()).isFalse();
-        assertThat(turvakieltoKotikuntaRepository.findByHenkiloId(henkiloWithTurvakielto.getId())).isEmpty();
-        assertKotikuntaHistoria(henkiloWithTurvakielto.getId(),
-                tuple("091", LocalDate.now(), null));
-        assertTurvakieltoKotikuntaHistoria(henkiloWithTurvakielto.getId(),
-                tuple("091", LocalDate.of(2015, 3, 12), LocalDate.now().minusDays(1)));
-    }
-
-    @Test
-    public void saveMuutostietoRemovesTurvakieltoKotikuntaWithNewKotikunta() throws Exception {
-        var henkiloWithTurvakielto = henkiloRepository.save(makeHenkilo2().turvakielto(true).kotikunta(null).build());
-        turvakieltoKotikuntaHistoriaRepository.save(TurvakieltoKotikuntaHistoria.builder()
-                        .henkiloId(henkiloWithTurvakielto.getId())
-                        .kotikunta("091")
-                        .kuntaanMuuttopv(LocalDate.of(2015, 3, 12))
-                        .build());
-        turvakieltoKotikuntaRepository.save(TurvakieltoKotikunta.builder().henkiloId(henkiloWithTurvakielto.getId()).kotikunta("091").build());
-
-        var actual = applyMuutostieto(getMuutostieto(henkiloWithTurvakielto.getHetu(), "/vtj/muutostietoTurvakieltoPoisKunnastaMuutto.json"));
-
-        assertThat(actual.getKotikunta()).isEqualTo("287");
-        assertThat(actual.getTurvakielto()).isFalse();
-        assertThat(turvakieltoKotikuntaRepository.findByHenkiloId(henkiloWithTurvakielto.getId())).isEmpty();
-        assertKotikuntaHistoria(henkiloWithTurvakielto.getId(),
-                tuple("287", LocalDate.of(2019, 6, 27), null));
-        assertTurvakieltoKotikuntaHistoria(henkiloWithTurvakielto.getId(),
-                tuple("091", LocalDate.of(2015, 3, 12), LocalDate.of(2019, 6, 26)));
     }
 
     @Test
@@ -696,8 +524,8 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
         assertThat(huoltaja.getKutsumanimi()).isEqualTo("etu");//.isEqualTo("Henriikka Sandra"); // FIXME: Ei päivity HUOLTAJA tietoryhmän tiedoilla
         assertThat(huoltaja.getSukunimi()).isEqualTo("taja"); //.isEqualTo("Valkeavirta Tes"); // FIXME: Ei päivity HUOLTAJA tietoryhmän tiedoilla
         assertThat(huoltaja.getSyntymaaika()).isEqualTo(LocalDate.of(1990, 7, 28));//.isEqualTo(1984, 6, 1); // FIXME: Parsitaan hetusta, ei lueta HUOLTAJA tietoryhmästä
-        assertThat(suhde.getAlkuPvm()).isEqualTo(LocalDate.of(1900, 1, 1)); //.isEqualTo(LocalDate.of(2012, 8, 2)); // FIXME: Ei vastaa VTJ-muutostietoa
-        assertThat(suhde.getLoppuPvm()).isNull();//.isEqualTo(LocalDate.of(2030, 8, 1)); // FIXME: Ei vastaa VTJ-muutostietoa
+        assertThat(suhde.getAlkuPvm()).isEqualTo(LocalDate.of(2012, 8, 2)); // FIXME: Ei vastaa VTJ-muutostietoa
+        assertThat(suhde.getLoppuPvm()).isEqualTo(LocalDate.of(2030, 8, 1)); // FIXME: Ei vastaa VTJ-muutostietoa
     }
 
     @Test
@@ -747,13 +575,7 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
     @Test
     public void saveMuutostietoSavesFixedKansalaisuus() throws Exception {
         var henkilo = henkiloRepository.save(makeHenkilo2().build());
-        VtjMuutostieto muutostieto = getMuutostieto(henkilo.getHetu(), "/vtj/muutostietoKansalaisuusVanhaSudan.json");
-        muutostietoService.updateHenkilo(muutostieto);
-        verify(muutostietoRepository, times(1)).save(any());
-
-        ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
-        verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
-        HenkiloForceUpdateDto actual = argument.getValue();
+        var actual = applyMuutostieto(getMuutostieto(henkilo.getHetu(), "/vtj/muutostietoKansalaisuusVanhaSudan.json"));
         assertThat(actual.getKansalaisuus().stream().map(k -> k.getKansalaisuusKoodi())
                 .collect(Collectors.toSet()))
                 .isEqualTo(set("729"));

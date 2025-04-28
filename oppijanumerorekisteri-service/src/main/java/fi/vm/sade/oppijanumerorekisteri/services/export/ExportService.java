@@ -58,7 +58,7 @@ public class ExportService {
               h.etunimet,
               aidinkieli.kielikoodi as aidinkieli,
               h.turvakielto,
-              h.kotikunta,
+              CASE WHEN h.turvakielto THEN NULL ELSE h.kotikunta END AS kotikunta,
               h.yksiloityvtj,
               (SELECT string_agg(cast (kansalaisuuskoodi as varchar), ',')
                FROM henkilo_kansalaisuus

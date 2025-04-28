@@ -1,12 +1,11 @@
 package fi.vm.sade.oppijanumerorekisteri.services.vtj;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
+import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.KotikuntaHistoria;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -33,6 +32,18 @@ import static java.util.stream.Collectors.joining;
 @Slf4j
 @RequiredArgsConstructor
 public abstract class TietoryhmaMapper {
+    public record KotikuntahistoriaChanges(
+            List<KotikuntaHistoria> updates,
+            List<KotikuntaHistoria> deletes
+    ) {
+        public KotikuntahistoriaChanges() {
+            this(new ArrayList<>(), new ArrayList<>());
+        }
+    }
+
+    public static final String KOTIKUNTA_KUNTAKOODI = "kuntakoodi";
+    public static final String KOTIKUNTA_KUNTAANMUUTTOPV = "kuntaanMuuttopv";
+    public static final String KOTIKUNTA_KUNNASTAPOISMUUTTOPV = "kunnastaPoisMuuttopv";
     private final KoodistoService koodistoService;
 
     private static final Map<String, String> FIXED_KANSALAISUUSKOODIS = Map.of(
@@ -144,6 +155,10 @@ public abstract class TietoryhmaMapper {
         }
     }
 
+    public static LocalDate getDateValue(JsonNode node, String fieldName) {
+        return parseDate(node.get(fieldName));
+    }
+
     public static String getStringValue(JsonNode node, String fieldName) {
         return node == null || node.get(fieldName) == null ? null : node.get(fieldName).asText();
     }
@@ -234,6 +249,7 @@ public abstract class TietoryhmaMapper {
             huoltajaCreateDto.setKutsumanimi(getStringValue(huoltajaJson, "etunimet"));
             huoltajaCreateDto.setSukunimi(getStringValue(huoltajaJson, "sukunimi"));
             huoltajaCreateDto.setSyntymaaika(parseDate(huoltajaJson.get("syntymapv")));
+            //huoltajaCreateDto.setYksiloityVTJ(true); // FIXME: Tää aiheuttaa huoltajan tietojen päivittymisen
             if (getStringValue(huoltajaJson, "kansalaisuuskoodi") != null) {
                 huoltajaCreateDto.setKansalaisuusKoodi(
                         Set.of(getStringValue(huoltajaJson, "kansalaisuuskoodi")));
@@ -242,6 +258,10 @@ public abstract class TietoryhmaMapper {
         }
     }
 
-    public abstract HenkiloForceUpdateDto mutateUpdateDto(HenkiloForceUpdateDto update, JsonNode tietoryhma,
-            String locale);
+    public abstract HenkiloForceUpdateDto mutateUpdateDto(HenkiloForceUpdateDto update, JsonNode tietoryhma, String locale);
+    public abstract KotikuntahistoriaChanges mapToKotikuntahistoriaChanges(
+            Henkilo henkilo,
+            JsonNode tietoryhmat,
+            List<KotikuntaHistoria> kotikuntahistoria
+    );
 }

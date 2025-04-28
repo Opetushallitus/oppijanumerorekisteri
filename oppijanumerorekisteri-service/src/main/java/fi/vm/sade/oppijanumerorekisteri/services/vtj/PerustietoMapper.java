@@ -1,5 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services.vtj;
 
+import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.KotikuntaHistoria;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -10,6 +12,8 @@ import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.utils.VtjYhteystiedotRyhma;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 @Slf4j
 @Component
@@ -50,6 +54,8 @@ public class PerustietoMapper extends TietoryhmaMapper {
                 break;
             case "KOTIKUNTA":
                 update.setKotikunta(getStringValue(tietoryhma, "kuntakoodi"));
+                break;
+            case "EDELLINEN_KOTIKUNTA":
                 break;
             case "SAHKOPOSTIOSOITE":
                 if (!isTurvakiellonAlainen(tietoryhma)
@@ -101,6 +107,26 @@ public class PerustietoMapper extends TietoryhmaMapper {
                 break;
         }
         return update;
+    }
+
+    @Override
+    public KotikuntahistoriaChanges mapToKotikuntahistoriaChanges(Henkilo henkilo, JsonNode tietoryhmat, List<KotikuntaHistoria> kotikuntahistoria) {
+        var changes = new KotikuntahistoriaChanges();
+        for (var i = 0; i < tietoryhmat.size(); i++) {
+            var tietoryhma = tietoryhmat.get(i);
+            switch (getStringValue(tietoryhma, "tietoryhma")) {
+                case "KOTIKUNTA":
+                case "EDELLINEN_KOTIKUNTA":
+                    changes.updates().add(new KotikuntaHistoria(
+                            henkilo.getId(),
+                            getStringValue(tietoryhma, KOTIKUNTA_KUNTAKOODI),
+                            getDateValue(tietoryhma, KOTIKUNTA_KUNTAANMUUTTOPV),
+                            getDateValue(tietoryhma, KOTIKUNTA_KUNNASTAPOISMUUTTOPV)
+                    ));
+                    break;
+            }
+        }
+        return changes;
     }
 
 }

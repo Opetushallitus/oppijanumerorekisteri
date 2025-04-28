@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.SlackClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjMuutostietoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.impl.AwsSnsHenkiloModifiedTopic;
@@ -18,6 +19,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -34,15 +36,13 @@ abstract public class VtjMuutostietoTestBase {
     @Autowired
     protected OidGenerator oidGenerator;
     @Autowired
+    protected HenkiloService henkiloService;
+    @Autowired
     protected KielisyysRepository kielisyysRepository;
     @Autowired
     protected KansalaisuusRepository kansalaisuusRepository;
     @Autowired
-    protected TurvakieltoKotikuntaRepository turvakieltoKotikuntaRepository;
-    @Autowired
     protected KotikuntaHistoriaRepository kotikuntaHistoriaRepository;
-    @Autowired
-    protected TurvakieltoKotikuntaHistoriaRepository turvakieltoKotikuntaHistoriaRepository;
     @Autowired
     protected ObjectMapper objectMapper;
     @Autowired
@@ -67,6 +67,43 @@ abstract public class VtjMuutostietoTestBase {
 
     protected <T> Set<T> set(T... items) {
         return new HashSet<>(Arrays.asList(items));
+    }
+    protected void setupKoodistoMocks() {
+        when(koodistoService.list(Koodisto.YHTEYSTIETOJEN_ALKUPERA))
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.YHTEYSTIETOJEN_ALKUPERA).koodi("alkupera1").build());
+        when(koodistoService.list(Koodisto.YHTEYSTIETOTYYPIT))
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.YHTEYSTIETOTYYPIT)
+                        .koodi("yhteystietotyyppi4")
+                        .koodi("yhteystietotyyppi5")
+                        .koodi("yhteystietotyyppi8")
+                        .koodi("yhteystietotyyppi9")
+                        .koodi("yhteystietotyyppi11")
+                        .build());
+        when(koodistoService.list(Koodisto.SUKUPUOLI))
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.SUKUPUOLI).koodi("1").koodi("2").build());
+        when(koodistoService.list(Koodisto.KIELI))
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI).koodi("FR").koodi("FI").koodi("SV")
+                        .koodi("98")
+                        .build());
+        when(koodistoService.list(Koodisto.KUNTA))
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.KUNTA)
+                        .koodi("049")
+                        .koodi("091")
+                        .koodi("123")
+                        .koodi("182")
+                        .koodi("287")
+                        .koodi("999")
+                        .build());
+        when(koodistoService.list(Koodisto.MAAT_JA_VALTIOT_2))
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.MAAT_JA_VALTIOT_2)
+                        .koodi("246")
+                        .koodi("250")
+                        .koodi("123")
+                        .koodi("456")
+                        .koodi("729")
+                        .koodi("736")
+                        .koodi("998")
+                        .build());
     }
 
     protected Henkilo.builder makeHenkilo() {
@@ -112,7 +149,6 @@ abstract public class VtjMuutostietoTestBase {
                 .oidHenkilo("1.2.3.4.5");
     }
 
-
     protected void assertKotikuntaHistoria(Long henkiloId, Tuple... values) {
         var entries = kotikuntaHistoriaRepository.findAllByHenkiloId(henkiloId);
         assertThat(entries)
@@ -121,12 +157,13 @@ abstract public class VtjMuutostietoTestBase {
         assertThat(entries).hasSize(values.length);
     }
 
-    protected void assertTurvakieltoKotikuntaHistoria(Long henkiloId, Tuple... values) {
-        var entries = turvakieltoKotikuntaHistoriaRepository.findAllByHenkiloId(henkiloId);
-        assertThat(entries)
-                .extracting(TurvakieltoKotikuntaHistoria::getKotikunta, TurvakieltoKotikuntaHistoria::getKuntaanMuuttopv, TurvakieltoKotikuntaHistoria::getKunnastaPoisMuuttopv)
-                .containsExactlyInAnyOrder(values);
-        assertThat(entries).hasSize(values.length);
+    protected void addKotikuntahistoria(Henkilo h, String kunta, LocalDate kuntaanMuuttopv, LocalDate kunnastaPoisMuuttopv) {
+        kotikuntaHistoriaRepository.save(KotikuntaHistoria.builder()
+                .henkiloId(h.getId())
+                .kotikunta(kunta)
+                .kuntaanMuuttopv(kuntaanMuuttopv)
+                .kunnastaPoisMuuttopv(kunnastaPoisMuuttopv)
+                .build());
     }
 
     protected VtjMuutostieto getMuutostieto(String hetu, String path) throws Exception {
