@@ -2,7 +2,7 @@ FROM maven:3.9.8-amazoncorretto-21 AS build
 WORKDIR /app
 
 COPY . .
-RUN mvn clean package -s settings.xml -DskipTests
+RUN mvn --batch-mode clean package -s settings.xml -DskipTests
 
 FROM amazoncorretto:21
 WORKDIR /app
