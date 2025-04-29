@@ -20,7 +20,6 @@ import Kayttajanimi from '../../components/common/henkilo/labelvalues/Kayttajani
 import Kutsumanimi from '../../components/common/henkilo/labelvalues/Kutsumanimi';
 import Sukunimi from '../../components/common/henkilo/labelvalues/Sukunimi';
 import Etunimet from '../../components/common/henkilo/labelvalues/Etunimet';
-import Loader from '../../components/common/icons/Loader';
 
 import './RekisteroidyPage.css';
 
@@ -182,10 +181,6 @@ export const RekisteroidyPage = (props: OwnProps) => {
             </div>
         );
     };
-
-    if (kutsu.hakaIdentifier) {
-        return <Loader />;
-    }
 
     return (
         <div className="borderless-colored-wrapper rekisteroidy-page" style={{ marginTop: '50px' }}>
