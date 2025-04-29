@@ -40,7 +40,7 @@ public class TurvakiellollisenKotikuntahistoriaTest extends VtjMuutostietoTestBa
         assertKotikuntaHistoria(dbState.getId(),
                 tuple(KUNTA_JAMSA, LocalDate.of(2015, 1, 1), null));
         assertThat(henkiloService.getKotikuntaHistoria(List.of(dbState.getOidHenkilo()))).hasSize(1);
-        assertThat(henkiloService.getTurvakieltoKotikuntaHistoria(List.of(dbState.getOidHenkilo()))).hasSize(1);
+        assertThat(henkiloService.getTurvakieltoKotikuntaHistoria(List.of(dbState.getOidHenkilo()))).hasSize(0);
 
         dbState = applyMuutostieto(getMuutostieto(dbState.getHetu(), objectMapper.readTree("""
                       [
@@ -58,7 +58,7 @@ public class TurvakiellollisenKotikuntahistoriaTest extends VtjMuutostietoTestBa
                 tuple(KUNTA_JAMSA, LocalDate.of(2015, 1, 1), LocalDate.of(2015, 12, 31)),
                 tuple(KUNTA_HELSINKI, LocalDate.of(2016, 1, 1), null));
         assertThat(henkiloService.getKotikuntaHistoria(List.of(dbState.getOidHenkilo()))).hasSize(2);
-        assertThat(henkiloService.getTurvakieltoKotikuntaHistoria(List.of(dbState.getOidHenkilo()))).hasSize(2);
+        assertThat(henkiloService.getTurvakieltoKotikuntaHistoria(List.of(dbState.getOidHenkilo()))).hasSize(0);
 
         dbState = applyMuutostieto(getMuutostieto(dbState.getHetu(), objectMapper.readTree("""
                       [{"tietoryhma": "TURVAKIELTO", "turvaLoppuPv": {"arvo": "2099-12-31", "tarkkuus": "PAIVA"}, "muutosattribuutti": "LISATTY", "turvakieltoAktiivinen": true}]
