@@ -5,7 +5,6 @@ import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.Oauth2Client;
 import fi.vm.sade.oppijanumerorekisteri.clients.impl.NoContentOrNotFoundException;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -16,6 +15,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
 import fi.vm.sade.oppijanumerorekisteri.utils.YhteystietoryhmaUtils;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import software.amazon.awssdk.services.sns.SnsClient;
 
@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -53,13 +52,13 @@ public class HenkiloModificationServiceTest {
     private HenkiloRepository henkiloRepository;
     @Autowired
     private IdentificationRepository identificationRepository;
-    @MockBean
+    @MockitoBean
     private SnsClient snsClient;
-    @MockBean
+    @MockitoBean
     private Oauth2Client oauth2Client;
-    @MockBean
+    @MockitoBean
     private KoodistoClient koodistoClient;
-    @MockBean
+    @MockitoBean
     private HenkiloService henkiloService;
 
     @Test

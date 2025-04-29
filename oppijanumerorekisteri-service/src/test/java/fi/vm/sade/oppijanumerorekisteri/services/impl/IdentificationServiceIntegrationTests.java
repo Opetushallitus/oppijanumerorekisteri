@@ -15,7 +15,7 @@ import software.amazon.awssdk.services.sns.SnsClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,13 +42,13 @@ public class IdentificationServiceIntegrationTests {
     private static final Function<YhteystiedotRyhma, List<String>> YHTEYSTIETOARVOT = yhteystietoryhma
             -> yhteystietoryhma.getYhteystieto().stream().map(Yhteystieto::getYhteystietoArvo).collect(toList());
 
-    @MockBean
+    @MockitoBean
     private KayttooikeusClient kayttooikeusClient;
 
-    @MockBean
+    @MockitoBean
     private SnsClient snsClient;
 
-    @MockBean
+    @MockitoBean
     private UserDetailsHelper userDetailsHelper;
 
     @Autowired

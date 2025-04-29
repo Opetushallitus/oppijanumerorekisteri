@@ -8,8 +8,8 @@ import org.assertj.core.util.Maps;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
@@ -24,11 +24,11 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 public class PermissionCheckerTest {
-    @MockBean
+    @MockitoBean
     private KayttooikeusClient kayttooikeusClient;
-    @MockBean
+    @MockitoBean
     private OrganisaatioRepository organisaatioRepository;
-    @MockBean
+    @MockitoBean
     private OrganisaatioService organisaatioService;
 
     private PermissionChecker permissionChecker;

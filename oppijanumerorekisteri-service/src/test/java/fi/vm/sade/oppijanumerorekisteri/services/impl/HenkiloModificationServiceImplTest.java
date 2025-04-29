@@ -24,7 +24,7 @@ import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -52,7 +52,7 @@ public class HenkiloModificationServiceImplTest {
     @Autowired
     private OrikaConfiguration mapper;
 
-    @MockBean
+    @MockitoBean
     private TuontiRepository tuontiRepository;
 
     @Spy
@@ -101,7 +101,7 @@ public class HenkiloModificationServiceImplTest {
     @Mock
     private OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
 
-    @MockBean
+    @MockitoBean
     private KansalaisuusRepository kansalaisuusRepository;
 
     @Mock

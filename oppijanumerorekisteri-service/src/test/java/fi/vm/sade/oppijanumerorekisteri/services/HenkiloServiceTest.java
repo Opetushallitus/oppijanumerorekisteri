@@ -31,7 +31,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -61,7 +61,7 @@ public class HenkiloServiceTest {
     @Autowired
     private OrikaConfiguration mapper;
 
-    @MockBean
+    @MockitoBean
     private TuontiRepository tuontiRepository;
 
     @Spy
@@ -94,7 +94,7 @@ public class HenkiloServiceTest {
     private HenkiloUpdatePostValidator henkiloUpdatePostValidator;
     @Mock
     private HenkiloCreatePostValidator henkiloCreatePostValidator;
-    @MockBean
+    @MockitoBean
     private KansalaisuusRepository kansalaisuusRepository;
 
     @Before

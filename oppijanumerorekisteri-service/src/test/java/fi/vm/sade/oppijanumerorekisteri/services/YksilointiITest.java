@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -11,6 +10,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.rajapinnat.vtj.api.Huoltaja;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import software.amazon.awssdk.services.sns.SnsClient;
 
@@ -18,7 +18,6 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,15 +39,13 @@ import static org.mockito.Mockito.*;
 @Sql("/sql/truncate_data.sql")
 public class YksilointiITest {
 
-    @MockBean
+    @MockitoBean
     private VtjService vtjService;
-    @MockBean
+    @MockitoBean
     private KayttooikeusClient kayttooikeusClientMock;
-    @MockBean
+    @MockitoBean
     private SnsClient snsClient;
-    @Autowired
-    private DatabaseService databaseService;
-    @MockBean
+    @MockitoBean
     private OppijaTuontiService oppijaTuontiService;
     @Autowired
     private ObjectMapper objectMapper;

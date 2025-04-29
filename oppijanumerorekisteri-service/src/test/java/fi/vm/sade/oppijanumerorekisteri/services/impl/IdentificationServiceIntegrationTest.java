@@ -3,7 +3,6 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
-import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
@@ -25,7 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -50,23 +49,20 @@ import static org.mockito.Mockito.when;
 @Sql("/sql/truncate_data.sql")
 @Sql("/sql/yksilointi-test.sql")
 public class IdentificationServiceIntegrationTest {
-    @MockBean
+    @MockitoBean
     private VtjService vtjService;
 
-    @MockBean
+    @MockitoBean
     private SnsClient snsClient;
 
-    @MockBean
+    @MockitoBean
     private KayttooikeusClient kayttooikeusClient;
 
-    @MockBean
+    @MockitoBean
     private KoodistoClient koodistoClient;
 
     @Autowired
     private IdentificationService identificationService;
-
-    @Autowired
-    private DatabaseService databaseService;
 
     @Autowired
     private ObjectMapper objectMapper;

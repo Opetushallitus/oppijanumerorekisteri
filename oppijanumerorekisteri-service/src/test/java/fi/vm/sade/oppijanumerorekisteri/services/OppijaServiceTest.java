@@ -15,6 +15,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.Sort;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import software.amazon.awssdk.services.sns.SnsClient;
 
@@ -22,7 +23,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.*;
@@ -45,25 +45,25 @@ import static org.mockito.Mockito.*;
 @Sql("/sql/truncate_data.sql")
 public class OppijaServiceTest {
 
-    @MockBean
+    @MockitoBean
     private UserDetailsHelper userDetailsHelper;
 
-    @MockBean
+    @MockitoBean
     private KayttooikeusClient kayttooikeusClient;
 
-    @MockBean
+    @MockitoBean
     private PermissionChecker permissionChecker;
 
-    @MockBean
+    @MockitoBean
     private KoodistoService koodistoService;
 
-    @MockBean
+    @MockitoBean
     private OrganisaatioClient organisaatioClient;
 
     @Autowired
     private DatabaseService databaseService;
 
-    @MockBean
+    @MockitoBean
     private SnsClient snsClient;
 
     @Autowired

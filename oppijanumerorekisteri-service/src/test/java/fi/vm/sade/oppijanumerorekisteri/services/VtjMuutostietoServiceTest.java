@@ -25,8 +25,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.validation.BindException;
@@ -61,21 +61,21 @@ import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 @Transactional
 public class VtjMuutostietoServiceTest {
 
-    @MockBean
+    @MockitoBean
     private VtjMuutostietoKirjausavainRepository kirjausavainRepository;
     @Autowired private KielisyysRepository kielisyysRepository;
     @Autowired private KansalaisuusRepository kansalaisuusRepository;
-    @SpyBean
+    @MockitoSpyBean
     private HenkiloRepository henkiloRepository;
-    @MockBean
+    @MockitoBean
     private HenkiloModificationService henkiloModificationService;
-    @MockBean
+    @MockitoBean
     private VtjMuutostietoClient muutostietoClient;
-    @MockBean
+    @MockitoBean
     private VtjMuutostietoRepository muutostietoRepository;
-    @MockBean
+    @MockitoBean
     private KoodistoService koodistoService;
-    @MockBean
+    @MockitoBean
     private SlackClient slackClient;
     @Autowired
     private TurvakieltoKotikuntaRepository turvakieltoKotikuntaRepository;

@@ -3,7 +3,6 @@ package fi.vm.sade.oppijanumerorekisteri.configurations;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -11,7 +10,6 @@ import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sts.StsClient;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,7 +40,6 @@ public class AwsConfiguration {
     }
 
     @Bean
-    @Autowired
     StsClient getStsClient(@Qualifier(ONR_CREDENTIALS_PROVIDER) AwsCredentialsProvider onrCredentialsProvider) {
         return StsClient
                 .builder()
@@ -68,7 +65,6 @@ public class AwsConfiguration {
     }
 
     @Bean
-    @Autowired
     SnsClient opintopolkuSnsClient(@Qualifier(OPINTOPOLKU_CREDENTIALS_PROVIDER) AwsCredentialsProvider opintopolkuCredentialsProvider) {
         return SnsClient
                 .builder()

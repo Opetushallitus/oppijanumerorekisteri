@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -45,40 +45,40 @@ import static org.mockito.Mockito.verify;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {OrikaConfiguration.class, DuplicateServiceImpl.class, KoodistoServiceMock.class})
 public class DuplicateServiceImplTest {
-    @MockBean
+    @MockitoBean
     private TuontiRepository tuontiRepository;
 
     @Autowired
     private DuplicateService duplicateService;
 
-    @MockBean
+    @MockitoBean
     private AtaruClient ataruClient;
 
-    @MockBean
+    @MockitoBean
     private HakuappClient hakuappClient;
 
-    @MockBean
+    @MockitoBean
     private UserDetailsHelper userDetailsHelper;
 
-    @MockBean
+    @MockitoBean
     private HenkiloRepository henkiloRepository;
 
-    @MockBean
+    @MockitoBean
     private HenkiloViiteRepository henkiloViiteRepository;
 
-    @MockBean
+    @MockitoBean
     private KayttooikeusClient kayttooikeusClient;
 
-    @MockBean
+    @MockitoBean
     private KansalaisuusRepository kansalaisuusRepository;
 
-    @MockBean
+    @MockitoBean
     private KotikuntaHistoriaRepository kotikuntaHistoriaRepository;
 
-    @MockBean
+    @MockitoBean
     private TurvakieltoKotikuntaHistoriaRepository turvakieltoKotikuntaHistoriaRepository;
 
-    @MockBean
+    @MockitoBean
     private AuditlogAspectHelper auditlogAspectHelper;
 
     @Test

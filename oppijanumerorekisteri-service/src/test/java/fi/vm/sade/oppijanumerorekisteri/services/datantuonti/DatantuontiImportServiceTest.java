@@ -12,8 +12,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -38,9 +38,9 @@ public class DatantuontiImportServiceTest {
     private HenkiloModificationService henkiloModificationService;
     @Autowired
     private HenkiloRepository henkiloRepository;
-    @MockBean
+    @MockitoBean
     private AwsSnsHenkiloModifiedTopic snsTopic;
-    @MockBean
+    @MockitoBean
     private KayttooikeusClient kayttooikeusClient;
 
     @Before

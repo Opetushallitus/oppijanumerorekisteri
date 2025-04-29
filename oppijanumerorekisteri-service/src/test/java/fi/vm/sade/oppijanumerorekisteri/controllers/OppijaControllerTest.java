@@ -15,12 +15,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.json.JsonCompareMode;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -47,7 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, PermissionCheckerImpl.class, UserDetailsHelperImpl.class})
 public class OppijaControllerTest {
 
-    @MockBean
+    @MockitoBean
     private OppijaService oppijaServiceMock;
 
     @Autowired
@@ -56,13 +57,13 @@ public class OppijaControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private KayttooikeusClient kayttooikeusClient;
 
-    @MockBean
+    @MockitoBean
     private OrganisaatioRepository organisaatioRepository;
 
-    @MockBean
+    @MockitoBean
     private OrganisaatioService organisaatioService;
 
     private OppijaTuontiCreateDto getValidOppijatCreateDto() {
@@ -305,7 +306,7 @@ public class OppijaControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(FilesystemHelper.getFixture("/controller/oppija/tuontiOppijat.json"), true));
+                .andExpect(content().json(FilesystemHelper.getFixture("/controller/oppija/tuontiOppijat.json"), JsonCompareMode.STRICT));
 
         verify(oppijaServiceMock, times(1)).getOppijatByTuontiId(37337L);
     }

@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Setter;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -150,35 +149,24 @@ public class YleistunnisteController {
 
         @NotNull
         @Valid
-        private YleistunnisteInputPerson henkilo;
+        private HenkiloExistenceCheckDto henkilo;
 
         public OppijaTuontiRiviCreateDto mapToDto() {
             OppijaTuontiRiviCreateDto dto = new OppijaTuontiRiviCreateDto();
             dto.setTunniste(tunniste);
-            dto.setHenkilo(henkilo.mapToDto());
+            dto.setHenkilo(map(henkilo));
             return dto;
         }
     }
 
-    @Generated
-    @Getter
-    @Setter
-    @SuperBuilder
-    static class YleistunnisteInputPerson extends HenkiloExistenceCheckDto {
-
-        public YleistunnisteInputPerson() {
-            super(null, null, null, null);
-        }
-
-        public OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto mapToDto() {
-            OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto dto = new OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto();
-            dto.setHetu(getHetu());
-            dto.setEtunimet(getEtunimet());
-            dto.setKutsumanimi(getKutsumanimi());
-            dto.setSukunimi(getSukunimi());
-            dto.setKansalaisuus(Collections.singleton(new KoodiUpdateDto(NATIONALITY_CODE)));
-            return dto;
-        }
+    public static OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto map(HenkiloExistenceCheckDto input) {
+        OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto dto = new OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto();
+        dto.setHetu(input.getHetu());
+        dto.setEtunimet(input.getEtunimet());
+        dto.setKutsumanimi(input.getKutsumanimi());
+        dto.setSukunimi(input.getSukunimi());
+        dto.setKansalaisuus(Collections.singleton(new KoodiUpdateDto(NATIONALITY_CODE)));
+        return dto;
     }
 
     // Custom output format

@@ -1,9 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import fi.vm.sade.oppijanumerorekisteri.FilesystemHelper;
-import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
-import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
 import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import org.junit.jupiter.api.Test;
@@ -16,9 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -48,11 +45,11 @@ class OppijaControllerIntegrationTest {
             new Customization("results[*].muokattu", (o1, o2) -> true));
     private final JSONComparator koosteComparator = new CustomComparator(JSONCompareMode.STRICT,
             new Customization("content[*].timestamp", (o1, o2) -> true));
-    @MockBean
+    @MockitoBean
     KayttooikeusClient kayttooikeusClient;
-    @MockBean
+    @MockitoBean
     PermissionChecker permissionChecker;
-    @MockBean
+    @MockitoBean
     OrganisaatioService organisaatioService;
 
     @Autowired

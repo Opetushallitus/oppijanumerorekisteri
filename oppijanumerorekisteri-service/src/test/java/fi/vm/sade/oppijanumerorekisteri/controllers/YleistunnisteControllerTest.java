@@ -5,11 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import fi.vm.sade.auditlog.Target;
 import fi.vm.sade.oppijanumerorekisteri.FilesystemHelper;
-import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.audit.OnrOperation;
 import fi.vm.sade.oppijanumerorekisteri.audit.VirkailijaAuditLogger;
 import fi.vm.sade.oppijanumerorekisteri.clients.impl.AwsSnsHenkiloModifiedTopic;
-import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloExistenceCheckDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
@@ -29,12 +27,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.json.JsonCompareMode;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -52,6 +50,7 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -80,19 +79,19 @@ class YleistunnisteControllerTest {
     @Value("${dev.password}")
     private String password;
 
-    @MockBean
+    @MockitoBean
     private KoodistoService koodistoService;
 
-    @MockBean
+    @MockitoBean
     private VtjService vtjService;
 
-    @MockBean
+    @MockitoBean
     private AwsSnsHenkiloModifiedTopic henkiloModifiedTopic;
 
-    @MockBean
+    @MockitoBean
     private OppijaTuontiCreatePostValidator tuontiValidator;
 
-    @MockBean
+    @MockitoBean
     private VirkailijaAuditLogger auditLogger;
 
     @Captor
@@ -113,8 +112,8 @@ class YleistunnisteControllerTest {
                 .build();
     }
 
-    private YleistunnisteController.YleistunnisteInputPerson getValidYleistunnisteInputPerson() {
-        return YleistunnisteController.YleistunnisteInputPerson.builder()
+    private HenkiloExistenceCheckDto getValidYleistunnisteInputPerson() {
+        return HenkiloExistenceCheckDto.builder()
                 .hetu("170897-935L")
                 .etunimet("etu")
                 .kutsumanimi("etu")
@@ -255,7 +254,7 @@ class YleistunnisteControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpectAll(
                         status().isOk(),
-                        content().json(FilesystemHelper.getFixture("/controller/yleistunniste/tuontiPerustiedot.json"), true));
+                        content().json(FilesystemHelper.getFixture("/controller/yleistunniste/tuontiPerustiedot.json"), JsonCompareMode.STRICT));
     }
 
     @Test
@@ -273,7 +272,7 @@ class YleistunnisteControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpectAll(
                         status().isOk(),
-                        content().json(FilesystemHelper.getFixture("/controller/yleistunniste/tuontiPerustiedot.json"), true));
+                        content().json(FilesystemHelper.getFixture("/controller/yleistunniste/tuontiPerustiedot.json"), JsonCompareMode.STRICT));
     }
 
     @Test
@@ -299,7 +298,7 @@ class YleistunnisteControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpectAll(
                         status().isOk(),
-                        content().json(FilesystemHelper.getFixture("/controller/yleistunniste/tuontiOppijatMaster.json"), true));
+                        content().json(FilesystemHelper.getFixture("/controller/yleistunniste/tuontiOppijatMaster.json"), JsonCompareMode.STRICT));
     }
 
     @Test
@@ -309,7 +308,7 @@ class YleistunnisteControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpectAll(
                         status().isOk(),
-                        content().json(FilesystemHelper.getFixture("/controller/yleistunniste/tuontiOppijatDuplicate.json"), true));
+                        content().json(FilesystemHelper.getFixture("/controller/yleistunniste/tuontiOppijatDuplicate.json"), JsonCompareMode.STRICT));
     }
 
     @Test

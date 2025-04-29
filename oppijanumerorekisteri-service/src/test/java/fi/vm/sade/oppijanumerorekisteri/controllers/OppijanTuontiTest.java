@@ -10,8 +10,8 @@ import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class OppijanTuontiTest extends OppijanumerorekisteriApiTest {
-    @MockBean
+    @MockitoBean
     KoodistoService koodistoService;
 
     private static final KoodiUpdateDto MAATJAVALTIOT2_PUOLA = new KoodiUpdateDto("616");
