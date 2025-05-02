@@ -10,9 +10,9 @@ function main {
   cd "$repo"
   if is_running_on_codebuild; then
     docker compose up -d
-    mvn clean install -s ./settings.xml
+    mvn --batch-mode clean install -s ./settings.xml
   else
-    mvn clean install
+    mvn --batch-mode clean install
   fi
 }
 
