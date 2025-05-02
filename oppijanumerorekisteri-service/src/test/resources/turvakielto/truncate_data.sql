@@ -30,8 +30,6 @@ TRUNCATE TABLE
     tuonti_rivi,
     tuonti,
     tuonti_data,
-    turvakielto_kotikunta,
-    turvakielto_kotikunta_historia,
     vtj_muutostieto,
     vtj_muutostieto_kirjausavain,
     yhteystiedot,
