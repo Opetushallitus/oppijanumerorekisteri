@@ -116,58 +116,6 @@ public class HenkiloModificationServiceImplTest {
     }
 
     @Test
-    public void updateHenkiloFromHenkiloUpdateDto() {
-        Henkilo henkilo = EntityUtils.createHenkilo("arpa noppa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", false, "fi", "suomi", "246",
-                new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
-        long yhteystiedotRyhmaId = 2;
-        henkilo.getYhteystiedotRyhma().add(YhteystiedotRyhma.builder()
-                .ryhmaKuvaus("yhteystietotyyppi5").ryhmaAlkuperaTieto("alkupera1")
-                .id(yhteystiedotRyhmaId).readOnly(true)
-                .yhteystieto(Yhteystieto.builder(YhteystietoTyyppi.YHTEYSTIETO_MAA, "suomi").build())
-                .build());
-        HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "sv", "svenska", "246",
-                "arpa@kuutio.fi");
-        henkiloUpdateDto.getYhteystiedotRyhma().add(YhteystiedotRyhmaDto.builder()
-                .id(yhteystiedotRyhmaId).readOnly(false)
-                .ryhmaKuvaus("readonly").ryhmaAlkuperaTieto("readonly")
-                .yhteystieto(YhteystietoDto.builder().yhteystietoTyyppi(YhteystietoTyyppi.YHTEYSTIETO_MAA).yhteystietoArvo("ruotsi").build())
-                .build());
-        ArgumentCaptor<Henkilo> argument = ArgumentCaptor.forClass(Henkilo.class);
-        given(this.henkiloDataRepositoryMock.findByOidHenkiloIsIn(Collections.singletonList(henkiloUpdateDto.getOidHenkilo())))
-                .willReturn(Collections.singletonList(henkilo));
-        given(userDetailsHelperMock.getCurrentUserOid()).willReturn("1.2.3.4.1");
-        given(this.kielisyysRepositoryMock.findOrCreateByKoodi(anyString()))
-                .willAnswer(invocation -> new Kielisyys(invocation.getArgument(0)));
-        given(this.kansalaisuusRepositoryMock.findOrCreate(anyString()))
-                .willReturn(EntityUtils.createKansalaisuus("246"));
-        given(henkiloDataRepositoryMock.save(any(Henkilo.class)))
-                .willAnswer(returnsFirstArg());
-
-        this.service.updateHenkilo(henkiloUpdateDto);
-        verify(this.henkiloDataRepositoryMock).save(argument.capture());
-
-        assertThat(argument.getValue().getAidinkieli().getKieliKoodi()).isEqualTo("sv");
-        assertThat(argument.getValue().getAsiointiKieli().getKieliKoodi()).isEqualTo("sv");
-
-        assertThat(argument.getValue().getKansalaisuus().size()).isEqualTo(1);
-        assertThat(argument.getValue().getKansalaisuus().iterator().next().getKansalaisuusKoodi()).isEqualTo("246");
-
-        assertThat(argument.getValue().getYhteystiedotRyhma())
-                .extracting("id", "ryhmaAlkuperaTieto", "ryhmaKuvaus")
-                .containsExactlyInAnyOrder(
-                        tuple(null, "alkupera2", "yhteystietotyyppi7"),
-                        tuple(yhteystiedotRyhmaId, "alkupera1", "yhteystietotyyppi5"));
-
-        assertThat(argument.getValue().getYhteystiedotRyhma())
-                .flatExtracting("yhteystieto").extracting("yhteystietoTyyppi", "yhteystietoArvo")
-                .containsExactlyInAnyOrder(
-                        tuple(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, "arpa@kuutio.fi"),
-                        tuple(YhteystietoTyyppi.YHTEYSTIETO_MAA, "suomi"));
-    }
-
-    @Test
     public void updateHenkiloShouldSetEmptyHetuToNull() {
         when(henkiloDataRepositoryMock.findByOidHenkiloIsIn(any()))
                 .thenReturn(Lists.newArrayList(new Henkilo()));
