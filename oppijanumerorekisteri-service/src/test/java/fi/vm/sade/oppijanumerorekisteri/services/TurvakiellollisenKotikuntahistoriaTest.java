@@ -22,7 +22,7 @@ public class TurvakiellollisenKotikuntahistoriaTest extends VtjMuutostietoTestBa
 
     @Before
     public void before() {
-        setupKoodistoMocks();
+        defaultKoodistoMocks(koodistoService);
     }
 
     @Test

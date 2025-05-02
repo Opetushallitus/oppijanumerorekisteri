@@ -2,13 +2,13 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.SlackClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjMuutostietoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.impl.AwsSnsHenkiloModifiedTopic;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
+import fi.vm.sade.oppijanumerorekisteri.services.impl.KoodistoMock;
 import org.assertj.core.groups.Tuple;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +24,12 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Sql("/sql/truncate_data.sql")
 @Sql("/sql/test_data.sql")
-abstract public class VtjMuutostietoTestBase {
+abstract public class VtjMuutostietoTestBase implements KoodistoMock {
     @Autowired
     TransactionTemplate transactionTemplate;
     @Autowired
@@ -67,43 +66,6 @@ abstract public class VtjMuutostietoTestBase {
 
     protected <T> Set<T> set(T... items) {
         return new HashSet<>(Arrays.asList(items));
-    }
-    protected void setupKoodistoMocks() {
-        when(koodistoService.list(Koodisto.YHTEYSTIETOJEN_ALKUPERA))
-                .thenReturn(new KoodiTypeListBuilder(Koodisto.YHTEYSTIETOJEN_ALKUPERA).koodi("alkupera1").build());
-        when(koodistoService.list(Koodisto.YHTEYSTIETOTYYPIT))
-                .thenReturn(new KoodiTypeListBuilder(Koodisto.YHTEYSTIETOTYYPIT)
-                        .koodi("yhteystietotyyppi4")
-                        .koodi("yhteystietotyyppi5")
-                        .koodi("yhteystietotyyppi8")
-                        .koodi("yhteystietotyyppi9")
-                        .koodi("yhteystietotyyppi11")
-                        .build());
-        when(koodistoService.list(Koodisto.SUKUPUOLI))
-                .thenReturn(new KoodiTypeListBuilder(Koodisto.SUKUPUOLI).koodi("1").koodi("2").build());
-        when(koodistoService.list(Koodisto.KIELI))
-                .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI).koodi("FR").koodi("FI").koodi("SV")
-                        .koodi("98")
-                        .build());
-        when(koodistoService.list(Koodisto.KUNTA))
-                .thenReturn(new KoodiTypeListBuilder(Koodisto.KUNTA)
-                        .koodi("049")
-                        .koodi("091")
-                        .koodi("123")
-                        .koodi("182")
-                        .koodi("287")
-                        .koodi("999")
-                        .build());
-        when(koodistoService.list(Koodisto.MAAT_JA_VALTIOT_2))
-                .thenReturn(new KoodiTypeListBuilder(Koodisto.MAAT_JA_VALTIOT_2)
-                        .koodi("246")
-                        .koodi("250")
-                        .koodi("123")
-                        .koodi("456")
-                        .koodi("729")
-                        .koodi("736")
-                        .koodi("998")
-                        .build());
     }
 
     protected Henkilo.builder makeHenkilo() {

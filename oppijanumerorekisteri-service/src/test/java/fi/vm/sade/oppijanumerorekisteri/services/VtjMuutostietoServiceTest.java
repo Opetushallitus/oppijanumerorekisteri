@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fi.vm.sade.oppijanumerorekisteri.services.impl.KoodistoMock;
 import jakarta.transaction.Transactional;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,8 +20,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.validation.BindException;
@@ -52,7 +51,7 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
 
     @Before
     public void before() throws Exception {
-        setupKoodistoMocks();
+        defaultKoodistoMocks(koodistoService);
         muutostietos = List.of(
                 new VtjMuutostieto("123456-111A", LocalDateTime.now(), objectMapper.readTree(
                         "[{\"tietoryhma\": \"TURVAKIELTO\", \"muutosattribuutti\": \"LISATTY\", \"turvakieltoAktiivinen\": true}]"),
@@ -91,7 +90,7 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
         assertThat(actual.getYhteystiedotRyhma()).extracting(YhteystiedotRyhma::getRyhmaKuvaus)
                 .containsExactlyInAnyOrder("yhteystietotyyppi4", "yhteystietotyyppi8", "yhteystietotyyppi11");
         assertThat(actual.getYhteystiedotRyhma()).extracting(YhteystiedotRyhma::getRyhmaAlkuperaTieto)
-                .allMatch(alkupera -> alkupera.equals("alkupera1"));
+                .allMatch(alkupera -> alkupera.equals(KoodistoMock.ALKUPERA_VTJ));
         for (var ryhma : actual.getYhteystiedotRyhma()) {
             switch (ryhma.getRyhmaKuvaus()) {
                 case "yhteystietotyyppi4":
@@ -176,7 +175,7 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
         assertThat(actual.getYhteystiedotRyhma()).extracting(YhteystiedotRyhma::getRyhmaKuvaus)
                 .containsExactlyInAnyOrder("yhteystietotyyppi5", "yhteystietotyyppi9");
         assertThat(actual.getYhteystiedotRyhma()).extracting(YhteystiedotRyhma::getRyhmaAlkuperaTieto)
-                .allMatch(alkupera -> alkupera.equals("alkupera1"));
+                .allMatch(alkupera -> alkupera.equals(KoodistoMock.ALKUPERA_VTJ));
         for (var ryhma : actual.getYhteystiedotRyhma()) {
             switch (ryhma.getRyhmaKuvaus()) {
                 case "yhteystietotyyppi9":
@@ -403,7 +402,7 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
         assertThat(actual.getYhteystiedotRyhma()).extracting(YhteystiedotRyhma::getRyhmaKuvaus)
                 .containsExactlyInAnyOrder("yhteystietotyyppi4");
         assertThat(actual.getYhteystiedotRyhma()).extracting(YhteystiedotRyhma::getRyhmaAlkuperaTieto)
-                .allMatch(alkupera -> alkupera.equals("alkupera1"));
+                .allMatch(alkupera -> alkupera.equals(KoodistoMock.ALKUPERA_VTJ));
         for (YhteystiedotRyhma ryhma : actual.getYhteystiedotRyhma()) {
             switch (ryhma.getRyhmaKuvaus()) {
                 case "yhteystietotyyppi4":
@@ -459,7 +458,7 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
         assertThat(actual.getYhteystiedotRyhma()).extracting(YhteystiedotRyhma::getRyhmaKuvaus)
                 .containsExactlyInAnyOrder("yhteystietotyyppi11");
         assertThat(actual.getYhteystiedotRyhma()).extracting(YhteystiedotRyhma::getRyhmaAlkuperaTieto)
-                .allMatch(alkupera -> alkupera.equals("alkupera1"));
+                .allMatch(alkupera -> alkupera.equals(KoodistoMock.ALKUPERA_VTJ));
         for (YhteystiedotRyhma ryhma : actual.getYhteystiedotRyhma()) {
             switch (ryhma.getRyhmaKuvaus()) {
                 case "yhteystietotyyppi11":
