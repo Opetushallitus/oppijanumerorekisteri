@@ -37,10 +37,9 @@ public class TurvakiellollisenKotikuntahistoriaTest extends VtjMuutostietoTestBa
         assertThat(dbState.getTurvakielto()).isEqualTo(false);
         assertThat(dbState.getKotikunta()).isEqualTo(KUNTA_JAMSA);
         assertThat(apiResponse.getKotikunta()).isEqualTo(KUNTA_JAMSA);
-        assertKotikuntaHistoria(dbState.getId(),
+        assertKotikuntaHistoria(dbState,
                 tuple(KUNTA_JAMSA, LocalDate.of(2015, 1, 1), null));
-        assertThat(henkiloService.getKotikuntaHistoria(List.of(dbState.getOidHenkilo()))).hasSize(1);
-        assertThat(henkiloService.getTurvakieltoKotikuntaHistoria(List.of(dbState.getOidHenkilo()))).hasSize(0);
+        assertTurvakieltoKotikuntaHistoria(dbState);
 
         dbState = applyMuutostieto(getMuutostieto(dbState.getHetu(), objectMapper.readTree("""
                       [
@@ -54,11 +53,10 @@ public class TurvakiellollisenKotikuntahistoriaTest extends VtjMuutostietoTestBa
         assertThat(apiResponse.getTurvakielto()).isFalse();
         assertThat(dbState.getKotikunta()).isEqualTo(KUNTA_HELSINKI);
         assertThat(apiResponse.getKotikunta()).isEqualTo(KUNTA_HELSINKI);
-        assertKotikuntaHistoria(dbState.getId(),
+        assertKotikuntaHistoria(dbState,
                 tuple(KUNTA_JAMSA, LocalDate.of(2015, 1, 1), LocalDate.of(2015, 12, 31)),
                 tuple(KUNTA_HELSINKI, LocalDate.of(2016, 1, 1), null));
-        assertThat(henkiloService.getKotikuntaHistoria(List.of(dbState.getOidHenkilo()))).hasSize(2);
-        assertThat(henkiloService.getTurvakieltoKotikuntaHistoria(List.of(dbState.getOidHenkilo()))).hasSize(0);
+        assertTurvakieltoKotikuntaHistoria(dbState);
 
         dbState = applyMuutostieto(getMuutostieto(dbState.getHetu(), objectMapper.readTree("""
                       [{"tietoryhma": "TURVAKIELTO", "turvaLoppuPv": {"arvo": "2099-12-31", "tarkkuus": "PAIVA"}, "muutosattribuutti": "LISATTY", "turvakieltoAktiivinen": true}]
@@ -68,11 +66,10 @@ public class TurvakiellollisenKotikuntahistoriaTest extends VtjMuutostietoTestBa
         assertThat(apiResponse.getTurvakielto()).isTrue();
         assertThat(dbState.getKotikunta()).isEqualTo(KUNTA_HELSINKI);
         assertThat(apiResponse.getKotikunta()).isNull();
-        assertKotikuntaHistoria(dbState.getId(),
+        assertKotikuntaHistoria(dbState);
+        assertTurvakieltoKotikuntaHistoria(dbState,
                 tuple(KUNTA_JAMSA, LocalDate.of(2015, 1, 1), LocalDate.of(2015, 12, 31)),
                 tuple(KUNTA_HELSINKI, LocalDate.of(2016, 1, 1), null));
-        assertThat(henkiloService.getKotikuntaHistoria(List.of(dbState.getOidHenkilo()))).hasSize(0);
-        assertThat(henkiloService.getTurvakieltoKotikuntaHistoria(List.of(dbState.getOidHenkilo()))).hasSize(2);
 
         dbState = applyMuutostieto(getMuutostieto(dbState.getHetu(), objectMapper.readTree("""
                       [
@@ -85,12 +82,11 @@ public class TurvakiellollisenKotikuntahistoriaTest extends VtjMuutostietoTestBa
         assertThat(apiResponse.getTurvakielto()).isTrue();
         assertThat(dbState.getKotikunta()).isEqualTo(KUNTA_JAMSA);
         assertThat(apiResponse.getKotikunta()).isNull();
-        assertKotikuntaHistoria(dbState.getId(),
+        assertKotikuntaHistoria(dbState);
+        assertTurvakieltoKotikuntaHistoria(dbState,
                 tuple(KUNTA_JAMSA, LocalDate.of(2015, 1, 1), LocalDate.of(2015, 12, 31)),
                 tuple(KUNTA_HELSINKI, LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)),
                 tuple(KUNTA_JAMSA, LocalDate.of(2017, 1, 1), null));
-        assertThat(henkiloService.getKotikuntaHistoria(List.of(dbState.getOidHenkilo()))).hasSize(0);
-        assertThat(henkiloService.getTurvakieltoKotikuntaHistoria(List.of(dbState.getOidHenkilo()))).hasSize(3);
 
         // Muuton kunnasta Helsinki (091) kuntaan Jämsä (182) peruutus
         dbState = applyMuutostieto(getMuutostieto(dbState.getHetu(), objectMapper.readTree("""
@@ -106,10 +102,9 @@ public class TurvakiellollisenKotikuntahistoriaTest extends VtjMuutostietoTestBa
         assertThat(apiResponse.getTurvakielto()).isTrue();
         assertThat(dbState.getKotikunta()).isEqualTo(KUNTA_HELSINKI);
         assertThat(apiResponse.getKotikunta()).isNull();
-        assertKotikuntaHistoria(dbState.getId(),
+        assertKotikuntaHistoria(dbState);
+        assertTurvakieltoKotikuntaHistoria(dbState,
                 tuple(KUNTA_JAMSA, LocalDate.of(2015, 1, 1), LocalDate.of(2015, 12, 31)),
                 tuple(KUNTA_HELSINKI, LocalDate.of(2016, 1, 1), null));
-        assertThat(henkiloService.getKotikuntaHistoria(List.of(dbState.getOidHenkilo()))).hasSize(0);
-        assertThat(henkiloService.getTurvakieltoKotikuntaHistoria(List.of(dbState.getOidHenkilo()))).hasSize(2);
     }
 }

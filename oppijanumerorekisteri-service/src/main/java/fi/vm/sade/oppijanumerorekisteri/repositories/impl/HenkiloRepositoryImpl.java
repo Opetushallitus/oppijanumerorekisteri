@@ -754,13 +754,10 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
 
     private List<KotikuntaHistoria> findKotikuntaHistorias(List<String> oids, boolean turvakielto) {
         Query kotikuntaQuery = this.entityManager.createNativeQuery("""
-                        SELECT
-                            h.oidhenkilo AS oid,
-                            kh.kotikunta AS kotikunta,
-                            kh.kunnasta_pois_muuttopv AS kunnastaPoisMuuttopv,
-                            kh.kuntaan_muuttopv AS kuntaanMuuttoPv
+                        SELECT h.oidhenkilo, kh.kotikunta, kh.kuntaan_muuttopv, kh.kunnasta_pois_muuttopv
                         FROM henkilo h LEFT JOIN kotikunta_historia kh ON h.id = kh.henkilo_id
                         WHERE h.oidhenkilo IN :oids AND kh.kotikunta IS NOT NULL AND h.turvakielto = :turvakielto
+                        ORDER BY kh.kuntaan_muuttopv, kh.id
                 """, KotikuntaHistoria.class)
                 .setParameter("oids", oids)
                 .setParameter("turvakielto", turvakielto);

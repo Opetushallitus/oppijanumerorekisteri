@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.clients.SlackClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjMuutostietoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.impl.AwsSnsHenkiloModifiedTopic;
+import fi.vm.sade.oppijanumerorekisteri.dto.KotikuntaHistoria;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
@@ -111,16 +112,24 @@ abstract public class VtjMuutostietoTestBase implements KoodistoMock {
                 .oidHenkilo("1.2.3.4.5");
     }
 
-    protected void assertKotikuntaHistoria(Long henkiloId, Tuple... values) {
-        var entries = kotikuntaHistoriaRepository.findAllByHenkiloId(henkiloId);
+    protected void assertKotikuntaHistoria(Henkilo henkilo, Tuple... values) {
+        var entries = henkiloService.getKotikuntaHistoria(List.of(henkilo.getOidHenkilo()));
+        assertThat(entries).hasSize(values.length);
         assertThat(entries)
                 .extracting(KotikuntaHistoria::getKotikunta, KotikuntaHistoria::getKuntaanMuuttopv, KotikuntaHistoria::getKunnastaPoisMuuttopv)
                 .containsExactlyInAnyOrder(values);
+    }
+
+    protected void assertTurvakieltoKotikuntaHistoria(Henkilo henkilo, Tuple... values) {
+        var entries = henkiloService.getTurvakieltoKotikuntaHistoria(List.of(henkilo.getOidHenkilo()));
         assertThat(entries).hasSize(values.length);
+        assertThat(entries)
+                .extracting(KotikuntaHistoria::getKotikunta, KotikuntaHistoria::getKuntaanMuuttopv, KotikuntaHistoria::getKunnastaPoisMuuttopv)
+                .containsExactlyInAnyOrder(values);
     }
 
     protected void addKotikuntahistoria(Henkilo h, String kunta, LocalDate kuntaanMuuttopv, LocalDate kunnastaPoisMuuttopv) {
-        kotikuntaHistoriaRepository.save(KotikuntaHistoria.builder()
+        kotikuntaHistoriaRepository.save(fi.vm.sade.oppijanumerorekisteri.models.KotikuntaHistoria.builder()
                 .henkiloId(h.getId())
                 .kotikunta(kunta)
                 .kuntaanMuuttopv(kuntaanMuuttopv)

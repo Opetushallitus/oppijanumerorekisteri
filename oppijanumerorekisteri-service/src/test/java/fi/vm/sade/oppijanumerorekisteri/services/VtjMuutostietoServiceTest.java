@@ -122,12 +122,13 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
             }
         }
 
-        assertKotikuntaHistoria(henkilo.getId(),
+        assertKotikuntaHistoria(henkilo,
                 tuple("049", LocalDate.of(1994, 1, 1), LocalDate.of(1996, 3, 21)),
                 tuple("091", LocalDate.of(1996, 3, 22), LocalDate.of(2001, 7, 8)),
                 tuple("200", LocalDate.of(2001, 7, 9), LocalDate.of(2012, 10, 27)),
                 tuple("049", LocalDate.of(2012, 10, 28), LocalDate.of(2019, 5, 3)),
                 tuple("091", LocalDate.of(2019, 5, 4), null));
+        assertTurvakieltoKotikuntaHistoria(henkilo);
     }
 
     @Test
@@ -137,12 +138,13 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
 
         applyPerustieto(perustieto);
 
-        assertKotikuntaHistoria(henkilo.getId(),
+        assertKotikuntaHistoria(henkilo,
                 tuple("049", LocalDate.of(1994, 1, 1), LocalDate.of(1996, 3, 21)),
                 tuple("091", LocalDate.of(1996, 3, 22), LocalDate.of(2001, 7, 8)),
                 tuple("200", LocalDate.of(2001, 7, 9), LocalDate.of(2012, 10, 27)),
                 tuple("049", LocalDate.of(2012, 10, 28), LocalDate.of(2019, 5, 3)),
                 tuple("091", LocalDate.of(2019, 5, 4), null));
+        assertTurvakieltoKotikuntaHistoria(henkilo);
     }
 
     @Test
@@ -159,7 +161,8 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
         assertThat(apiResponse.getKotikunta()).isNull();
         assertThat(actual.getYhteystiedotRyhma()).isEmpty();
 
-        assertKotikuntaHistoria(henkilo.getId(),
+        assertKotikuntaHistoria(henkilo);
+        assertTurvakieltoKotikuntaHistoria(henkilo,
                 tuple("123", LocalDate.of(2015, 3, 12), LocalDate.of(2019, 5, 3)),
                 tuple("091", LocalDate.of(2019, 5, 4), null));
     }
@@ -417,9 +420,10 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
             }
         }
 
-        assertKotikuntaHistoria(henkilo.getId(),
+        assertKotikuntaHistoria(henkilo,
                 tuple("091", LocalDate.of(2004, 5, 1), LocalDate.of(2019, 6, 26)),
                 tuple("287", LocalDate.of(2019, 6, 27), null));
+        assertTurvakieltoKotikuntaHistoria(henkilo);
     }
 
     @Test
@@ -429,17 +433,19 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
         addKotikuntahistoria(henkilo, "049", LocalDate.of(2024, 1, 1), null);
 
         assertKotikuntaHistoria(
-                henkilo.getId(),
+                henkilo,
                 tuple("091", LocalDate.of(2020, 1, 1), LocalDate.of(2023, 12, 31)),
                 tuple("049", LocalDate.of(2024, 1, 1), null)
         );
+        assertTurvakieltoKotikuntaHistoria(henkilo);
 
         var actual = applyMuutostieto(getMuutostieto(henkilo.getHetu(), "/vtj/muutostietoKotikunnanPoisto.json"));
         assertThat(actual.getKotikunta()).isEqualTo("091");
         assertKotikuntaHistoria(
-                henkilo.getId(),
+                henkilo,
                 tuple("091", LocalDate.of(2020, 1, 1), LocalDate.of(2023, 12, 31))
         );
+        assertTurvakieltoKotikuntaHistoria(henkilo);
     }
 
     @Test
