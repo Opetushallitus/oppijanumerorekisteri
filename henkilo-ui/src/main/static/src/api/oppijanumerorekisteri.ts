@@ -210,7 +210,7 @@ export const oppijanumerorekisteriApi = createApi({
         }),
         getOppijoidenTuontiListaus: builder.query<Page<OppijaList>, OppijoidenTuontiCriteria>({
             query: (criteria) => ({
-                url: `oppija?${new URLSearchParams(criteria).toString()}`,
+                url: `internal/oppijoidentuonti/virheet?${new URLSearchParams(criteria).toString()}`,
             }),
             providesTags: ['oppijoidentuontilistaus'],
         }),
