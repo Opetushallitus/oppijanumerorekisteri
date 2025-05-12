@@ -1,7 +1,6 @@
 const urlConfig = {
     'cas.baseUrl': '/',
     'cas.login': 'cas/login',
-    'cas.haka': 'service-provider-app/saml/login/alias/hakasp',
 
     'lokalisointi.baseUrl': '/',
     'lokalisointi.localisation': 'lokalisointi/cxf/rest/v1/localisation',
