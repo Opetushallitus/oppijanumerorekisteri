@@ -105,8 +105,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
         JPAQuery<Henkilo> query = criteria.getQuery(this.entityManager, qHenkilo)
                 .limit(limit)
                 .offset(offset)
-                .select(qHenkilo)
-                .distinct();
+                .select(qHenkilo);
         if (sort != null) {
             sort.apply(query, qHenkilo);
         }
@@ -138,14 +137,12 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
         if (criteria.hasConditions()) {
             return criteria.getQuery(this.entityManager, qHenkilo)
                     .select(qTuontiRivi.henkilo.id)
-                    .distinct()
                     .fetchCount();
         }
         // Joining two large tables is expensive (tuonti_rivi and henkilo) without proper conditions
         return new JPAQuery<>(this.entityManager)
                 .from(qTuontiRivi)
                 .select(qTuontiRivi.henkilo.id)
-                .distinct()
                 .fetchCount();
     }
 
