@@ -31,7 +31,6 @@ public class UiController {
             @RequestParam(required = false, defaultValue = "20") @Min(1) int count,
             @RequestParam(required = false, defaultValue = "CREATED") OppijaTuontiSortKey sortKey,
             @RequestParam(required = false, defaultValue = "ASC") Sort.Direction sortDirection) {
-        criteria.setVainVirheet(true);
-        return oppijaService.list(criteria, page, count, sortKey, sortDirection);
+        return oppijaService.oppijoidenTuontienVirheet(criteria, page, count, sortKey, sortDirection);
     }
 }

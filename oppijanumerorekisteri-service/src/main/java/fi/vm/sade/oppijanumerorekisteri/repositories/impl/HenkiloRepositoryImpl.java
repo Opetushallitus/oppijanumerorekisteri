@@ -100,7 +100,39 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     }
 
     @Override
+    public List<Henkilo> findOppijoidenTuontiVirheetBy(OppijaTuontiCriteria criteria, int limit, int offset, OppijaTuontiSort sort) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        JPAQuery<Henkilo> query = criteria.getQuery(this.entityManager, qHenkilo)
+                .limit(limit)
+                .offset(offset)
+                .select(qHenkilo)
+                .distinct();
+        if (sort != null) {
+            sort.apply(query, qHenkilo);
+        }
+        return query.fetch();
+    }
+
+    @Override
     public long countBy(OppijaTuontiCriteria criteria) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
+        if (criteria.hasConditions()) {
+            return criteria.getQuery(this.entityManager, qHenkilo)
+                    .select(qTuontiRivi.henkilo.id)
+                    .distinct()
+                    .fetchCount();
+        }
+        // Joining two large tables is expensive (tuonti_rivi and henkilo) without proper conditions
+        return new JPAQuery<>(this.entityManager)
+                .from(qTuontiRivi)
+                .select(qTuontiRivi.henkilo.id)
+                .distinct()
+                .fetchCount();
+    }
+
+    @Override
+    public long countOppijoidenTuontiVirheetBy(OppijaTuontiCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
         QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
         if (criteria.hasConditions()) {
