@@ -57,7 +57,7 @@ abstract public class VtjMuutostietoTestBase implements KoodistoMock {
     protected AwsSnsHenkiloModifiedTopic henkiloModifiedTopic;
     @MockitoBean
     protected VtjMuutostietoClient muutostietoClient;
-    @MockitoBean
+    @Autowired
     protected VtjMuutostietoRepository muutostietoRepository;
     @MockitoBean
     protected KoodistoService koodistoService;
@@ -153,9 +153,8 @@ abstract public class VtjMuutostietoTestBase implements KoodistoMock {
     }
 
     protected Henkilo applyMuutostieto(VtjMuutostieto muutostieto) {
-        // TODO: Actually use muutostietoService.handleMuutostietoTask();
-        transactionTemplate.executeWithoutResult(status ->
-            muutostietoService.updateHenkilo(muutostieto));
+        muutostietoRepository.save(muutostieto);
+        muutostietoService.handleMuutostietoTask();
         return henkiloRepository.findByKaikkiHetut(muutostieto.getHenkilotunnus()).get();
     }
 }

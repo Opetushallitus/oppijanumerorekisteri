@@ -263,7 +263,7 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
         assertThat(ajanTasalla).isTrue();
 
         verify(kirjausavainRepository, times(1)).save(any());
-        verify(muutostietoRepository).saveAll(muutostietos);
+        assertThat(muutostietoRepository.findAll()).containsExactlyInAnyOrderElementsOf(muutostietos);
     }
 
     @Test
@@ -279,16 +279,15 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
         assertThat(ajanTasalla).isFalse();
 
         verify(kirjausavainRepository, times(2)).save(any());
-        verify(muutostietoRepository).saveAll(muutostietos);
+        assertThat(muutostietoRepository.findAll()).containsExactlyInAnyOrderElementsOf(muutostietos);
     }
 
     @Test
     public void saveMuutostietoDoesNotSaveIfHenkiloIsPassivoitu() throws Exception {
         var henkilo = henkiloRepository.save(makeHenkilo().passivoitu(true).build());
         VtjMuutostieto muutostieto = getMuutostieto(henkilo.getHetu(), "/vtj/muutostietoEtunimenmuutos.json");
-        muutostietoService.updateHenkilo(muutostieto);
+        applyMuutostieto(muutostieto);
 
-        verify(muutostietoRepository, times(1)).save(any());
         verify(henkiloModificationService, times(0)).forceUpdateHenkilo(any());
     }
 
@@ -299,18 +298,16 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
                 .when(henkiloModificationService).forceUpdateHenkilo(any());
         applyMuutostieto(getMuutostieto(henkilo.getHetu(), "/vtj/muutostietoEtunimenmuutos.json"));
 
-        ArgumentCaptor<VtjMuutostieto> argument = ArgumentCaptor.forClass(VtjMuutostieto.class);
-        verify(muutostietoRepository, times(1)).save(argument.capture());
-        VtjMuutostieto savedMuutostieto = argument.getValue();
-        assertThat(savedMuutostieto.getError()).isTrue();
+        var actual = muutostietoRepository.findAll();
+        assertThat(actual).hasSize(1);
+        assertThat(actual).allMatch(m -> Boolean.TRUE == m.getError());
     }
 
     @Test
     public void saveMuutostietoSavesEtunimenmuutos() throws Exception {
         var henkilo = henkiloRepository.save(makeHenkilo().build());
         VtjMuutostieto muutostieto = getMuutostieto(henkilo.getHetu(), "/vtj/muutostietoEtunimenmuutos.json");
-        muutostietoService.updateHenkilo(muutostieto);
-        verify(muutostietoRepository, times(1)).save(any());
+        applyMuutostieto(muutostieto);
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
         verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
@@ -343,8 +340,7 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
     public void saveMuutostietoSavesSukunimenmuutos() throws Exception {
         var henkilo = henkiloRepository.save(makeHenkilo().build());
         VtjMuutostieto muutostieto = getMuutostieto(henkilo.getHetu(), "/vtj/muutostietoSukunimenmuutos.json");
-        muutostietoService.updateHenkilo(muutostieto);
-        verify(muutostietoRepository, times(1)).save(any());
+        applyMuutostieto(muutostieto);
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
         verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
@@ -360,8 +356,7 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
                 .sukunimi("Aslan Tes")
                 .build());
         VtjMuutostieto muutostieto = getMuutostieto(henkilo.getHetu(), "/vtj/muutostietoKutsumanimenmuutos.json");
-        muutostietoService.updateHenkilo(muutostieto);
-        verify(muutostietoRepository, times(1)).save(any());
+        applyMuutostieto(muutostieto);
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
         verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
@@ -373,8 +368,7 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
     public void saveMuutostietoSavesKuolema() throws Exception {
         var henkilo = henkiloRepository.save(makeHenkilo().build());
         VtjMuutostieto muutostieto = getMuutostieto(henkilo.getHetu(), "/vtj/muutostietoKuolema.json");
-        muutostietoService.updateHenkilo(muutostieto);
-        verify(muutostietoRepository, times(1)).save(any());
+        applyMuutostieto(muutostieto);
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
         verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
@@ -386,8 +380,7 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
     public void saveMuutostietoSavesKuolinpaivanPoisto() throws Exception {
         var henkilo = henkiloRepository.save(makeHenkilo().build());
         VtjMuutostieto muutostieto = getMuutostieto(henkilo.getHetu(), "/vtj/muutostietoKuolinpaivanPoisto.json");
-        muutostietoService.updateHenkilo(muutostieto);
-        verify(muutostietoRepository, times(1)).save(any());
+        applyMuutostieto(muutostieto);
 
         ArgumentCaptor<HenkiloForceUpdateDto> argument = ArgumentCaptor.forClass(HenkiloForceUpdateDto.class);
         verify(henkiloModificationService, times(1)).forceUpdateHenkilo(argument.capture());
