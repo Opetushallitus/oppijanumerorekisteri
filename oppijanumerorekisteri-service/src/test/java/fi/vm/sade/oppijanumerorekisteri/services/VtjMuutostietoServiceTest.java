@@ -10,7 +10,9 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import fi.vm.sade.oppijanumerorekisteri.services.impl.KoodistoMock;
 import jakarta.transaction.Transactional;
@@ -301,6 +303,56 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
         var actual = muutostietoRepository.findAll();
         assertThat(actual).hasSize(1);
         assertThat(actual).allMatch(m -> Boolean.TRUE == m.getError());
+    }
+
+    @Test
+    public void skipsUnprocessedForHenkiloIfPriorMuutostietoCanNotBeProcessed() throws Exception {
+        var henkilo = henkiloRepository.save(makeHenkilo().build());
+        var failingMuutostietoIndex = 5;
+        IntStream.range(0, 10).forEach(i -> createAndSaveMuutostietoFor(henkilo));
+
+        failToProcessMuutostietoNumber(failingMuutostietoIndex);
+        muutostietoService.handleMuutostietoTask();
+
+        var actual = muutostietoRepository.findAllByHenkilotunnusOrderByMuutospvAsc(henkilo.getHetu());
+        var index = 0;
+
+        for (; index < failingMuutostietoIndex - 1; index++) {
+            assertThat(actual.get(index).getProcessed()).isNotNull();
+            assertThat(actual.get(index).getError()).isEqualTo(Boolean.FALSE);
+        }
+
+        assertThat(actual.get(index).getProcessed()).isNotNull();
+        assertThat(actual.get(index).getError()).isEqualTo(Boolean.TRUE);
+
+        for (index++; index < 10; index++) {
+            assertThat(actual.get(index).getProcessed()).isNull();
+            assertThat(actual.get(index).getError()).isEqualTo(Boolean.FALSE);
+        }
+    }
+
+    private void failToProcessMuutostietoNumber(int n) {
+        var counter = new AtomicInteger(0);
+        doAnswer(invocation -> {
+            int callNumber = counter.incrementAndGet();
+
+            if (callNumber == n) {
+                throw new UnprocessableEntityException(new BindException(new HenkiloForceUpdateDto(), "henkiloForceUpdateDto"));
+            } else {
+                return invocation.callRealMethod();
+            }
+        }).when(henkiloModificationService).forceUpdateHenkilo(any());
+    }
+
+    private VtjMuutostieto createAndSaveMuutostietoFor(Henkilo henkilo) {
+        try {
+            var muutostieto = getMuutostieto(henkilo.getHetu(), "/vtj/muutostietoEtunimenmuutos.json");
+            muutostietoRepository.save(muutostieto);
+
+            return muutostieto;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test

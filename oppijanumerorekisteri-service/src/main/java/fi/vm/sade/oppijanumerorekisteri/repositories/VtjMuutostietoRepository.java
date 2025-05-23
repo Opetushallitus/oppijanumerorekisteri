@@ -7,5 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjMuutostieto;
 
 public interface VtjMuutostietoRepository extends CrudRepository<VtjMuutostieto, Long> {
-    public List<VtjMuutostieto> findByProcessedIsNullOrderByMuutospvAsc();
+    List<VtjMuutostieto> findByProcessedIsNullOrderByMuutospvAsc();
+
+    List<VtjMuutostieto> findAllByHenkilotunnusOrderByMuutospvAsc(String henkilotunnus);
 }
