@@ -303,7 +303,7 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
 
         var actual = muutostietoRepository.findAll();
         assertThat(actual).hasSize(1);
-        assertThat(actual).allMatch(m -> Boolean.TRUE == m.getError());
+        assertThat(actual).allMatch(wasProcessedWithError());
     }
 
     @Test
@@ -316,20 +316,10 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
         muutostietoService.handleMuutostietoTask();
 
         var actual = muutostietoRepository.findAllByHenkilotunnusOrderByMuutospvAsc(henkilo.getHetu());
-        var index = 0;
-
-        for (; index < failingMuutostietoIndex - 1; index++) {
-            assertThat(actual.get(index).getProcessed()).isNotNull();
-            assertThat(actual.get(index).getError()).isEqualTo(Boolean.FALSE);
-        }
-
-        assertThat(actual.get(index).getProcessed()).isNotNull();
-        assertThat(actual.get(index).getError()).isEqualTo(Boolean.TRUE);
-
-        for (index++; index < 10; index++) {
-            assertThat(actual.get(index).getProcessed()).isNull();
-            assertThat(actual.get(index).getError()).isEqualTo(Boolean.FALSE);
-        }
+        assertThat(actual).hasSize(10);
+        assertThat(actual.stream().limit(failingMuutostietoIndex - 1)).allMatch(wasProcessedWithoutError());
+        assertThat(actual.stream().skip(failingMuutostietoIndex - 1).findFirst().get()).matches(wasProcessedWithError());
+        assertThat(actual.stream().skip(failingMuutostietoIndex)).allMatch(wasNotProcessed());
     }
 
     @Test
@@ -347,6 +337,14 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
 
     private Predicate<VtjMuutostieto> wasProcessedWithoutError() {
         return m -> Boolean.FALSE == m.getError() && m.getProcessed() != null;
+    }
+
+    private Predicate<VtjMuutostieto> wasProcessedWithError() {
+        return m -> Boolean.TRUE == m.getError() && m.getProcessed() != null;
+    }
+
+    private Predicate<VtjMuutostieto> wasNotProcessed() {
+        return m -> Boolean.FALSE == m.getError() && m.getProcessed() == null;
     }
 
     private void failToProcessMuutostietoNumber(int n) {
