@@ -269,7 +269,7 @@ public class VtjMuutostietoService {
 
     public void handleMuutostietoTask() {
         log.info("starting muutostieto task");
-        List<VtjMuutostieto> muutostietos = muutostietoRepository.findByProcessedIsNullOrderByMuutospvAsc();
+        List<VtjMuutostieto> muutostietos = muutostietoRepository.findByProcessedIsNullOrErrorIsTrueOrderByMuutospvAsc();
         log.info("found " + muutostietos.size() + " unprocessed muutostietos");
         var skipSet = new HashSet<String>();
         muutostietos.stream().forEach(muutostieto -> {
@@ -277,7 +277,14 @@ public class VtjMuutostietoService {
                 if (skipSet.contains(muutostieto.henkilotunnus)) {
                     log.info("skipping muutostieto " + muutostieto.getId() + " because of a prior error");
                 } else {
+                    if (Boolean.TRUE == muutostieto.getError()) {
+                        log.info("retrying muutostieto " + muutostieto.getId() + " because of a prior error");
+                        muutostieto.setProcessed(null);
+                        muutostieto.setError(false);
+                    }
+
                     transaction.execute(status -> updateHenkilo(muutostieto));
+
                     if (Boolean.TRUE == muutostieto.getError()) {
                         skipSet.add(muutostieto.henkilotunnus);
                     }

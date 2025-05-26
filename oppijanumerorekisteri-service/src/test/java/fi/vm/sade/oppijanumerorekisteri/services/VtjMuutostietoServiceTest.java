@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -331,6 +332,23 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
         }
     }
 
+    @Test
+    public void retriesMuutostietoThatCouldNotBeProcessedInAPriorBatch() throws Exception {
+        var henkilo = henkiloRepository.save(makeHenkilo().build());
+        createAndSaveMuutostietoThatFailedToProcessFor(henkilo);
+        IntStream.range(0, 10).forEach(i -> createAndSaveMuutostietoFor(henkilo));
+
+        muutostietoService.handleMuutostietoTask();
+
+        var actual = muutostietoRepository.findAllByHenkilotunnusOrderByMuutospvAsc(henkilo.getHetu());
+        assertThat(actual).hasSize(11);
+        assertThat(actual).allMatch(wasProcessedWithoutError());
+    }
+
+    private Predicate<VtjMuutostieto> wasProcessedWithoutError() {
+        return m -> Boolean.FALSE == m.getError() && m.getProcessed() != null;
+    }
+
     private void failToProcessMuutostietoNumber(int n) {
         var counter = new AtomicInteger(0);
         doAnswer(invocation -> {
@@ -342,6 +360,13 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
                 return invocation.callRealMethod();
             }
         }).when(henkiloModificationService).forceUpdateHenkilo(any());
+    }
+
+    private void createAndSaveMuutostietoThatFailedToProcessFor(Henkilo henkilo) {
+        var muutostieto = createAndSaveMuutostietoFor(henkilo);
+        muutostieto.setError(true);
+        muutostieto.setProcessed(LocalDateTime.now());
+        muutostietoRepository.save(muutostieto);
     }
 
     private VtjMuutostieto createAndSaveMuutostietoFor(Henkilo henkilo) {
