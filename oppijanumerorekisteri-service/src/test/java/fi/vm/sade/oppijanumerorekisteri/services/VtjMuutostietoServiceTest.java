@@ -335,6 +335,29 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
         assertThat(actual).allMatch(wasProcessedWithoutError());
     }
 
+    @Test
+    public void doesNotSkipMuutostietoForHenkiloUnaffectedByPriorProcessingError() {
+        var henkiloAffectedByProcessingError = henkiloRepository.save(makeHenkilo().build());
+        var henkiloNotAffectedByProcessingError = henkiloRepository.save(makeHenkilo()
+                .oidHenkilo("1.2.3.4.6")
+                .hetu("123456-111B")
+                .kaikkiHetut(set(("123456-111B")))
+                .build());
+        IntStream.range(0, 20).forEach(i -> createAndSaveMuutostietoFor(i % 2 == 0 ? henkiloAffectedByProcessingError : henkiloNotAffectedByProcessingError));
+        failToProcessMuutostietoNumber(1);
+
+        muutostietoService.handleMuutostietoTask();
+
+        var actual1 = muutostietoRepository.findAllByHenkilotunnusOrderByMuutospvAsc(henkiloNotAffectedByProcessingError.getHetu());
+        assertThat(actual1).hasSize(10);
+        assertThat(actual1).allMatch(wasProcessedWithoutError());
+
+        var actual2 = muutostietoRepository.findAllByHenkilotunnusOrderByMuutospvAsc(henkiloAffectedByProcessingError.getHetu());
+        assertThat(actual2).hasSize(10);
+        assertThat(actual2.stream().findFirst().get()).matches(wasProcessedWithError());
+        assertThat(actual2.stream().skip(1)).allMatch(wasNotProcessed());
+    }
+
     private Predicate<VtjMuutostieto> wasProcessedWithoutError() {
         return m -> Boolean.FALSE == m.getError() && m.getProcessed() != null;
     }
