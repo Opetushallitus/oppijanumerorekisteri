@@ -17,6 +17,7 @@ import {
 import { Yhteystieto } from '../../types/domain/oppijanumerorekisteri/yhteystieto.types';
 import PropertySingleton from '../../globals/PropertySingleton';
 import { WORK_ADDRESS, EMAIL } from '../../types/constants';
+import { toSupportedLocale } from '../../reducers/locale.reducer';
 
 type Props = {
     locale: Locale;
@@ -110,6 +111,7 @@ export class EmailVerificationPage extends React.Component<Props, State> {
     }
 
     async verifyEmailAddresses() {
+        const locale = toSupportedLocale(this.props.locale);
         const loginTokenValidationCodeUrl = urls.url(
             'kayttooikeus-service.cas.emailverification.loginToken.validation',
             this.props.loginToken
@@ -117,7 +119,7 @@ export class EmailVerificationPage extends React.Component<Props, State> {
         const loginTokenValidationCode = await http.get(loginTokenValidationCodeUrl);
         if (loginTokenValidationCode !== 'TOKEN_OK') {
             this.props.router.push(
-                `/sahkopostivarmistus/virhe/${this.props.locale}/${this.props.loginToken}/${loginTokenValidationCode}`
+                `/sahkopostivarmistus/virhe/${locale}/${this.props.loginToken}/${loginTokenValidationCode}`
             );
         } else {
             const emailVerificationUrl = urls.url('kayttooikeus-service.cas.emailverification', this.props.loginToken);
@@ -125,7 +127,7 @@ export class EmailVerificationPage extends React.Component<Props, State> {
                 this.props.errorNotification(this.props.L['REKISTEROIDY_ILLEGALARGUMENT_OTSIKKO']);
                 throw error;
             });
-            this.props.router.push(`/kayttaja/sahkopostivarmistus/valmis/${this.props.locale}`);
+            this.props.router.push(`/kayttaja/sahkopostivarmistus/valmis/${locale}`);
         }
     }
 

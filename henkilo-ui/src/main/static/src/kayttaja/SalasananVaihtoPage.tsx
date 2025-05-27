@@ -9,6 +9,7 @@ import { useAppDispatch } from '../store';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import Loader from '../components/common/icons/Loader';
 import { useTitle } from '../useTitle';
+import { toSupportedLocale } from '../reducers/locale.reducer';
 
 type Props = {
     params: {
@@ -17,8 +18,9 @@ type Props = {
     };
 };
 
-export const SalasananVaihtoPage = ({ params: { loginToken, locale } }: Props) => {
+export const SalasananVaihtoPage = ({ params: { loginToken, locale: anyLocale } }: Props) => {
     const { l10n } = useLocalisations();
+    const locale = toSupportedLocale(anyLocale);
     const L = l10n.localisations[locale];
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');

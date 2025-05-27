@@ -12,6 +12,7 @@ import Loader from '../../components/common/icons/Loader';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
+import { toSupportedLocale } from '../../reducers/locale.reducer';
 
 type OwnProps = {
     params: { loginToken?: string; locale?: Locale };
@@ -23,7 +24,8 @@ const EmailVerificationContainer = ({ params, router }: OwnProps) => {
     const { l10n } = useLocalisations();
     const [loading, setLoading] = useState(true);
     const [henkilo, setHenkilo] = useState<Partial<Henkilo>>({ yhteystiedotRyhma: [] });
-    const L = l10n.localisations[params.locale ?? 'fi'];
+    const locale = toSupportedLocale(params.locale);
+    const L = l10n.localisations[locale];
 
     useTitle(L['TITLE_SAHKOPOSTI_VARMISTAMINEN']);
 
@@ -61,7 +63,7 @@ const EmailVerificationContainer = ({ params, router }: OwnProps) => {
     ) : (
         <EmailVerificationPage
             henkilo={henkilo}
-            locale={params.locale}
+            locale={locale}
             L={L}
             loginToken={params.loginToken}
             router={router}

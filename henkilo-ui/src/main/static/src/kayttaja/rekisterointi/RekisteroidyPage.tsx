@@ -20,6 +20,7 @@ import Kayttajanimi from '../../components/common/henkilo/labelvalues/Kayttajani
 import Kutsumanimi from '../../components/common/henkilo/labelvalues/Kutsumanimi';
 import Sukunimi from '../../components/common/henkilo/labelvalues/Sukunimi';
 import Etunimet from '../../components/common/henkilo/labelvalues/Etunimet';
+import { toSupportedLocale } from '../../reducers/locale.reducer';
 
 import './RekisteroidyPage.css';
 
@@ -106,7 +107,8 @@ function validate(henkilo: Henkilo) {
 }
 
 export const RekisteroidyPage = (props: OwnProps) => {
-    const { kutsu, L, locale, router } = props;
+    const { kutsu, L, locale: anyLocale, router } = props;
+    const locale = toSupportedLocale(anyLocale);
     const [privacyPolicySeen, setPrivacyPolicySeen] = useState(false);
     const [notification, setNotification] = useState<ButtonNotification>();
     const [henkilo, setHenkilo] = useState<Henkilo>({

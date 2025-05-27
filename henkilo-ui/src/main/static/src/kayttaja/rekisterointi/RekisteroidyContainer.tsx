@@ -11,6 +11,7 @@ import type { KoodistoState } from '../../reducers/koodisto.reducer';
 import { useLocalisations } from '../../selectors';
 import { useGetKutsuByTokenQuery } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
+import { toSupportedLocale } from '../../reducers/locale.reducer';
 
 type OwnProps = {
     location: { query: Record<string, string> };
@@ -23,7 +24,7 @@ const RekisteroidyContainer = (props: OwnProps) => {
     const koodisto = useSelector<KayttajaRootState, KoodistoState>((state) => state.koodisto);
     const temporaryToken = props.location.query['temporaryKutsuToken'];
     const { data: kutsu, isLoading: isKutsuLoading, isError } = useGetKutsuByTokenQuery(temporaryToken);
-    const locale = kutsu?.asiointikieli ?? 'fi';
+    const locale = toSupportedLocale(kutsu?.asiointikieli);
     const L = l10n.localisations[locale];
 
     useTitle(L['TITLE_REKISTEROINTI']);
@@ -42,7 +43,7 @@ const RekisteroidyContainer = (props: OwnProps) => {
             koodisto={koodisto}
             kutsu={{ ...kutsu, temporaryToken }}
             L={L}
-            locale={kutsu.asiointikieli}
+            locale={locale}
             router={props.router}
         />
     );

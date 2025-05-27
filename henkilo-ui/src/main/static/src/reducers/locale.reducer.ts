@@ -2,8 +2,9 @@ import type { AnyAction } from '@reduxjs/toolkit';
 import { FETCH_HENKILO_ASIOINTIKIELI_SUCCESS } from '../actions/actiontypes';
 import { Locale } from '../types/locale.type';
 
-export function toSupportedLocale(locale: string): Locale {
-    if (locale == 'fi' || locale == 'sv') {
+export function toSupportedLocale(anyLocale: string): Locale {
+    const locale = anyLocale?.toLocaleLowerCase();
+    if (locale === 'fi' || locale === 'sv') {
         return locale;
     } else {
         return 'fi';

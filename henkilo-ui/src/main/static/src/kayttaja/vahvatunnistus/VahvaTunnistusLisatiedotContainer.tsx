@@ -10,6 +10,7 @@ import { Localisations } from '../../types/localisation.type';
 import { urls } from 'oph-urls-js';
 import { http } from '../../http';
 import { isValidPassword } from '../../validation/PasswordValidator';
+import { toSupportedLocale } from '../../reducers/locale.reducer';
 
 type OwnProps = {
     params: { locale?: Locale; loginToken?: string; salasana?: string; tyosahkopostiosoite?: string };
@@ -128,13 +129,14 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
 
     onSubmit = async () => {
         this.refreshForm({ ...this.state.form.values });
+        const locale = toSupportedLocale(this.props.locale);
 
         try {
             const form = { ...this.state.form, submitted: true };
             this.setState({ ...this.state, form: form });
             if (this.state.form.errors.length === 0) {
                 const tunnistusParameters = {
-                    kielisyys: this.props.locale,
+                    kielisyys: locale,
                     loginToken: this.props.loginToken,
                 };
                 const tunnistusUrl = urls.url('kayttooikeus-service.cas.uudelleenrekisterointi', tunnistusParameters);
@@ -142,7 +144,7 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
                     ...form.values,
                     salasana: form.values.password,
                 });
-                this.props.router.push(`/kayttaja/vahvatunnistusinfo/valmis/${this.props.locale}`);
+                this.props.router.push(`/kayttaja/vahvatunnistusinfo/valmis/${locale}`);
             }
         } catch (error) {
             this.onServerError(error);
@@ -160,7 +162,9 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
                 },
             ]);
         } else {
-            this.props.router.push(`/kayttaja/vahvatunnistusinfo/virhe/${this.props.locale}/${this.props.loginToken}`);
+            this.props.router.push(
+                `/kayttaja/vahvatunnistusinfo/virhe/${toSupportedLocale(this.props.locale)}/${this.props.loginToken}`
+            );
         }
     };
 }

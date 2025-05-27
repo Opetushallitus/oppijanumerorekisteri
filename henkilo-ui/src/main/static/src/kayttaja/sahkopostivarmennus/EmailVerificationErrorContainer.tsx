@@ -4,18 +4,18 @@ import { Locale } from '../../types/locale.type';
 import VirhePage from '../../components/common/page/VirhePage';
 import { useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
+import { toSupportedLocale } from '../../reducers/locale.reducer';
 
 type OwnProps = {
     params: { locale?: Locale; loginToken?: string; virhekoodi?: string };
 };
 
-const EmailVerificationErrorContainer = ({ params }: OwnProps) => {
+const EmailVerificationErrorContainer = ({ params: { virhekoodi, locale: anyLocale } }: OwnProps) => {
     const { l10n } = useLocalisations();
-    const L = l10n.localisations[params.locale ?? 'fi'];
+    const locale = toSupportedLocale(anyLocale);
+    const L = l10n.localisations[locale];
 
     useTitle(L['TITLE_VIRHESIVU']);
-
-    const virhekoodi = params.virhekoodi;
     if (virhekoodi === 'TOKEN_KAYTETTY') {
         return (
             <VirhePage
