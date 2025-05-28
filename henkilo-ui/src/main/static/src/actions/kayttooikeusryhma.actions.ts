@@ -22,9 +22,6 @@ import {
     REMOVE_KAYTTOOIKEUS_REQUEST,
     REMOVE_KAYTTOOIKEUS_SUCCESS,
     REMOVE_KAYTTOOIKEUS_FAILURE,
-    FETCH_ALL_KAYTTOOIKEUSRYHMA_REQUEST,
-    FETCH_ALL_KAYTTOOIKEUSRYHMA_SUCCESS,
-    FETCH_ALL_KAYTTOOIKEUSRYHMA_FAILURE,
     FETCH_KAYTTOOIKEUSRYHMA_BY_ID_REQUEST,
     FETCH_KAYTTOOIKEUSRYHMA_BY_ID_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_BY_ID_FAILURE,
@@ -37,7 +34,7 @@ import {
 } from './actiontypes';
 import { fetchOrganisations } from './organisaatio.actions';
 import { fetchHenkiloOrgs } from './henkilo.actions';
-import { AppDispatch, RootState } from '../store';
+import { AppDispatch } from '../store';
 
 export type Kayttooikeus = {
     id: number;
@@ -266,43 +263,6 @@ export const removePrivilege =
                 dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo));
             })
             .catch((error) => dispatch(removePrivilegeFailure(error, data)));
-    };
-
-// All kayttooikeusryhmas
-const fetchAllKayttooikeusryhmaRequest = () => ({
-    type: FETCH_ALL_KAYTTOOIKEUSRYHMA_REQUEST,
-});
-const fetchAllKayttooikeusryhmaSuccess = (data) => ({
-    type: FETCH_ALL_KAYTTOOIKEUSRYHMA_SUCCESS,
-    data,
-});
-const fetchAllKayttooikeusryhmaFailure = (error) => ({
-    type: FETCH_ALL_KAYTTOOIKEUSRYHMA_FAILURE,
-    error,
-});
-
-export const fetchAllKayttooikeusryhma =
-    (forceFetch = false) =>
-    async (dispatch: AppDispatch, getState: () => RootState) => {
-        // Fetch data only once
-
-        if (
-            forceFetch ||
-            (!getState().kayttooikeus.allKayttooikeusryhmas.length &&
-                !getState().kayttooikeus.allKayttooikeusryhmasLoading)
-        ) {
-            dispatch(fetchAllKayttooikeusryhmaRequest());
-            const url = urls.url('kayttooikeus-service.kayttooikeusryhma.all', {
-                passiiviset: true,
-            });
-            try {
-                const data = await http.get(url);
-                dispatch(fetchAllKayttooikeusryhmaSuccess(data));
-            } catch (error) {
-                dispatch(fetchAllKayttooikeusryhmaFailure(error));
-                throw error;
-            }
-        }
     };
 
 // Fetch kayttooikeusryhma by id

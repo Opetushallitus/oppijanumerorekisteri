@@ -27,7 +27,6 @@ const urlConfig = {
     'kayttooikeus-service.virkailija': 'kayttooikeus-service/virkailija',
     'kayttooikeus-service.omattiedot.anomus.muokkaus': 'kayttooikeus-service/kayttooikeusanomus/peruminen/currentuser',
     'kayttooikeus-service.kayttooikeusryhma': 'kayttooikeus-service/kayttooikeusryhma',
-    'kayttooikeus-service.kayttooikeusryhma.all': 'kayttooikeus-service/kayttooikeusryhma',
     'kayttooikeus-service.kayttooikeusryhma.id': 'kayttooikeus-service/kayttooikeusryhma/$1',
     'kayttooikeus-service.kayttooikeusryhma.id.passivoi': 'kayttooikeus-service/kayttooikeusryhma/$1/passivoi',
     'kayttooikeus-service.kayttooikeusryhma.id.aktivoi': 'kayttooikeus-service/kayttooikeusryhma/$1/aktivoi',

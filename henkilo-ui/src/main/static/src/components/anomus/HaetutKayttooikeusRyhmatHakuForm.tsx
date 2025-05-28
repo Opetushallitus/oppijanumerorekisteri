@@ -8,11 +8,14 @@ import OphSelect from '../common/select/OphSelect';
 import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import { RyhmatState } from '../../reducers/ryhmat.reducer';
-import { GetHaetutKayttooikeusryhmatRequest, useGetOmattiedotQuery } from '../../api/kayttooikeus';
+import {
+    GetHaetutKayttooikeusryhmatRequest,
+    useGetKayttooikeusryhmasQuery,
+    useGetOmattiedotQuery,
+} from '../../api/kayttooikeus';
 import { useLocalisations } from '../../selectors';
 import { RootState } from '../../store';
 import { useDebounce } from '../../useDebounce';
-import { Kayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { parseRyhmaOptions } from '../../utilities/organisaatio.util';
 
 import styles from './HaetutKayttooikeusRyhmatHakuForm.module.css';
@@ -30,9 +33,7 @@ const HaetutKayttooikeusRyhmatHakuForm = ({ onSubmit }: OwnProps) => {
     const [selectedRyhma, setSelectedRyhma] = useState<string>();
     const ryhmat = useSelector<RootState, RyhmatState>((state) => state.ryhmatState);
     const { data: omattiedot } = useGetOmattiedotQuery();
-    const kayttooikeusryhmat = useSelector<RootState, Kayttooikeusryhma[]>(
-        (state) => state.kayttooikeus.allKayttooikeusryhmas
-    );
+    const { data: kayttooikeusryhmat } = useGetKayttooikeusryhmasQuery({ passiiviset: false });
     const [kayttooikeusryhmaFilter, setKayttooikeusryhmaFilter] = useState('');
     const debouncedKayttooikeusryhmaFilter = useDebounce(kayttooikeusryhmaFilter, 500);
 
@@ -44,14 +45,12 @@ const HaetutKayttooikeusRyhmatHakuForm = ({ onSubmit }: OwnProps) => {
         const kayttooikeusRyhmaIds =
             debouncedKayttooikeusryhmaFilter.length < 4
                 ? undefined
-                : kayttooikeusryhmat
-                      .filter(
-                          (k) =>
-                              k.passivoitu === false &&
-                              k.nimi.texts
-                                  ?.filter((text) => text.lang === locale.toUpperCase())[0]
-                                  ?.text.toLowerCase()
-                                  .includes(debouncedKayttooikeusryhmaFilter.toLowerCase())
+                : (kayttooikeusryhmat ?? [])
+                      .filter((k) =>
+                          k.nimi.texts
+                              ?.filter((text) => text.lang === locale.toUpperCase())[0]
+                              ?.text.toLowerCase()
+                              .includes(debouncedKayttooikeusryhmaFilter.toLowerCase())
                       )
                       .map((k) => k.id);
         onSubmit({ kayttooikeusRyhmaIds });

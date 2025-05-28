@@ -3,10 +3,8 @@ import './MyonnettavatKayttooikeusryhmat.css';
 import OphSelect from '../../common/select/OphSelect';
 import type { Option, Options } from 'react-select';
 import ItemList from './ItemList';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../store';
-import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { useLocalisations } from '../../../selectors';
+import { useGetKayttooikeusryhmasQuery } from '../../../api/kayttooikeus';
 
 type Props = {
     kayttooikeusryhmaSelectAction: (selection: Option<string>) => void;
@@ -16,18 +14,14 @@ type Props = {
 
 const MyonnettavatKayttooikeusryhmat = (props: Props) => {
     const { L, locale } = useLocalisations();
-    const allKayttooikeusryhmas = useSelector<RootState, Kayttooikeusryhma[]>(
-        (state) => state.kayttooikeus.allKayttooikeusryhmas
-    );
-    const kayttooikeusryhmaOptions: Options<string> = allKayttooikeusryhmas
-        .filter((kayttooikeusryhma) => !kayttooikeusryhma.passivoitu)
-        .map((kayttooikeusryhma) => {
-            const textObject = kayttooikeusryhma?.description?.texts?.find((t) => t.lang === locale.toUpperCase());
-            return {
-                label: textObject?.text,
-                value: kayttooikeusryhma.id?.toString(),
-            };
-        });
+    const { data: allKayttooikeusryhmas } = useGetKayttooikeusryhmasQuery({ passiiviset: false });
+    const kayttooikeusryhmaOptions: Options<string> = (allKayttooikeusryhmas ?? []).map((kayttooikeusryhma) => {
+        const textObject = kayttooikeusryhma?.description?.texts?.find((t) => t.lang === locale.toUpperCase());
+        return {
+            label: textObject?.text,
+            value: kayttooikeusryhma.id?.toString(),
+        };
+    });
 
     return (
         <div className="myonnettavat-kayttooikeusryhmat">

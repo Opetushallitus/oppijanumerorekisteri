@@ -1,25 +1,25 @@
 import './HenkilohakuFilters.css';
-import React, { useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useMemo, useState } from 'react';
 import type { OnChangeHandler, Options, Option } from 'react-select';
 
-import { useAppDispatch, type RootState } from '../../store';
 import OphCheckboxInline from '../common/forms/OphCheckboxInline';
 import SubOrganisationCheckbox from './criterias/SubOrganisationCheckbox';
 import NoOrganisationCheckbox from './criterias/NoOrganisationCheckbox';
 import PassiivisetOrganisationCheckbox from './criterias/PassiivisetOrganisationCheckbox';
 import DuplikaatitOrganisationCheckbox from './criterias/DuplikaatitOrganisationCheckbox';
 import OphSelect from '../common/select/OphSelect';
-import { fetchAllKayttooikeusryhma } from '../../actions/kayttooikeusryhma.actions';
 import StaticUtils from '../common/StaticUtils';
 import CloseButton from '../common/button/CloseButton';
 import { HenkilohakuCriteria } from '../../types/domain/kayttooikeus/HenkilohakuCriteria.types';
 import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
-import { Kayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { useLocalisations } from '../../selectors';
-import { useGetHenkiloHakuOrganisaatiotQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
+import {
+    useGetHenkiloHakuOrganisaatiotQuery,
+    useGetKayttooikeusryhmasQuery,
+    useGetOmattiedotQuery,
+} from '../../api/kayttooikeus';
 import { OrganisaatioWithChildren } from '../../types/domain/organisaatio/organisaatio.types';
 
 type OwnProps = {
@@ -40,10 +40,7 @@ type OwnProps = {
 const HenkilohakuFilters = (props: OwnProps) => {
     const [organisaatioSelection, setOrganisaatioSelection] = useState('');
     const { L, locale } = useLocalisations();
-    const dispatch = useAppDispatch();
-    const allKayttooikeusryhmas = useSelector<RootState, Kayttooikeusryhma[]>(
-        (state) => state.kayttooikeus.allKayttooikeusryhmas
-    );
+    const { data: allKayttooikeusryhmas } = useGetKayttooikeusryhmasQuery({ passiiviset: false });
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: henkilohakuOrganisaatiot, isLoading } = useGetHenkiloHakuOrganisaatiotQuery(omattiedot?.oidHenkilo, {
         skip: !omattiedot,
@@ -54,18 +51,13 @@ const HenkilohakuFilters = (props: OwnProps) => {
     }, [henkilohakuOrganisaatiot]);
 
     const kayttooikeusryhmas = useMemo(() => {
-        return allKayttooikeusryhmas
-            .filter((kayttooikeusryhma) => !kayttooikeusryhma.passivoitu)
+        return (allKayttooikeusryhmas ?? [])
             .map((kayttooikeusryhma) => ({
                 value: `${kayttooikeusryhma.id}`,
                 label: StaticUtils.getLocalisedText(kayttooikeusryhma.description, locale),
             }))
             .sort((a, b) => a.label.localeCompare(b.label));
     }, [allKayttooikeusryhmas]);
-
-    useEffect(() => {
-        dispatch<any>(fetchAllKayttooikeusryhma());
-    }, []);
 
     const clearOrganisaatioSelection = () => {
         setOrganisaatioSelection('');

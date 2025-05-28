@@ -8,7 +8,7 @@ import Button from '../common/button/Button';
 import './KutsututPage.css';
 import KutsututTable from './KutsututTable';
 import KutsututBooleanRadioButton from './KutsututBooleanRadioButton';
-import KayttooikeusryhmaSingleSelect from '../common/select/KayttooikeusryhmaSingleSelect';
+import { KayttooikeusryhmaSingleSelect } from '../common/select/KayttooikeusryhmaSingleSelect';
 import { KutsuRead } from '../../types/domain/kayttooikeus/Kutsu.types';
 import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';

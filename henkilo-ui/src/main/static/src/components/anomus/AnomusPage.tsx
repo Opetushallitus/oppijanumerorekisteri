@@ -18,7 +18,6 @@ import {
     usePutHaettuKayttooikeusryhmaMutation,
 } from '../../api/kayttooikeus';
 import { addGlobalNotification } from '../../actions/notification.actions';
-import { fetchAllKayttooikeusryhma } from '../../actions/kayttooikeusryhma.actions';
 
 const AnomusPage = () => {
     const dispatch = useAppDispatch();
@@ -40,7 +39,6 @@ const AnomusPage = () => {
     useEffect(() => {
         dispatch<any>(fetchAllRyhmas());
         dispatch<any>(fetchAllOrganisaatios());
-        dispatch<any>(fetchAllKayttooikeusryhma());
     }, []);
 
     function onSubmit(criteria: Partial<GetHaetutKayttooikeusryhmatRequest>) {

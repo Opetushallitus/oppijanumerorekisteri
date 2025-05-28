@@ -7,7 +7,6 @@ import KayttooikeusryhmaPage from './KayttooikeusryhmaPage';
 import { fetchOppilaitostyypit, fetchOrganisaatiotyypit } from '../../../actions/koodisto.actions';
 import { fetchAllOrganisaatios } from '../../../actions/organisaatio.actions';
 import {
-    fetchAllKayttooikeusryhma,
     fetchKayttooikeusryhmaById,
     fetchPalveluRooliByKayttooikeusryhmaId,
     fetchKayttooikeusryhmaSlaves,
@@ -41,7 +40,6 @@ type DispatchProps = {
     fetchPalveluRooliByKayttooikeusryhmaId: (id: string) => void;
     fetchOppilaitostyypit: () => void;
     fetchOrganisaatiotyypit: () => void;
-    fetchAllKayttooikeusryhma: () => void;
     fetchAllOrganisaatios: (criteria?: OrganisaatioCriteria) => void;
     fetchKayttooikeusryhmaSlaves: (id: string) => void;
     addGlobalNotification: (payload: GlobalNotificationConfig) => void;
@@ -52,7 +50,6 @@ type Props = OwnProps & StateProps & DispatchProps;
 class KayttooikeusryhmaPageContainer extends React.Component<Props> {
     componentDidMount() {
         const kayttooikeusryhmaId: string | null | undefined = this.props.kayttooikeusryhmaId;
-        this.props.fetchAllKayttooikeusryhma();
         this.props.fetchOppilaitostyypit();
         this.props.fetchOrganisaatiotyypit();
         this.props.fetchAllOrganisaatios({
@@ -69,7 +66,6 @@ class KayttooikeusryhmaPageContainer extends React.Component<Props> {
     render() {
         return this.props.koodisto.oppilaitostyypitLoading ||
             this.props.koodisto.organisaatiotyyppiKoodistoLoading ||
-            this.props.kayttooikeus.allKayttooikeusryhmasLoading ||
             this.props.kayttooikeus.kayttooikeusryhmaLoading ||
             (this.props.kayttooikeus.palvelutRoolitLoading && this.props.kayttooikeusryhmaId) ||
             this.props.kayttooikeus.kayttooikeusryhmaSlavesLoading ? (
@@ -94,7 +90,6 @@ export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateT
     fetchPalveluRooliByKayttooikeusryhmaId,
     fetchOppilaitostyypit,
     fetchOrganisaatiotyypit,
-    fetchAllKayttooikeusryhma,
     fetchKayttooikeusryhmaSlaves,
     fetchAllOrganisaatios,
     addGlobalNotification,
