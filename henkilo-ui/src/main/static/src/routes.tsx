@@ -11,7 +11,7 @@ import HenkilohakuContainer from './components/henkilohaku/HenkilohakuContainer'
 import OppijoidenTuontiContainer from './components/oppijoidentuonti/OppijoidenTuontiContainer';
 import VtjVertailuPage from './components/henkilo/vtjvertailu/VtjVertailuPage';
 import KayttooikeusryhmaPageContainer from './components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPageContainer';
-import KayttooikeusryhmatHallintaContainer from './components/kayttooikeusryhmat/listaus/KayttooikeusryhmatHallintaContainer';
+import { KayttooikeusryhmatPage } from './components/kayttooikeusryhmat/listaus/KayttooikeusryhmatPage';
 import FormSwitch from './components/henkilo/oppija/create/form/FormSwitch';
 import VirkailijaCreateContainer from './components/henkilo/VirkailijaCreateContainer';
 import { PalvelukayttajaCreatePage } from './components/palvelukayttaja/PalvelukayttajaCreatePage';
@@ -128,11 +128,7 @@ export default (
             title="TITLE_OPPIJOIDENTUONTI"
             getNaviTabs={updateDefaultNavigation}
         />
-        <Route
-            path="/kayttooikeusryhmat"
-            component={KayttooikeusryhmatHallintaContainer}
-            title="TITLE_KAYTTO_OIKEUSRYHMA"
-        />
+        <Route path="/kayttooikeusryhmat" component={KayttooikeusryhmatPage} title="TITLE_KAYTTO_OIKEUSRYHMA" />
         <Route
             path="/kayttooikeusryhmat/lisaa"
             component={KayttooikeusryhmaPageContainer}

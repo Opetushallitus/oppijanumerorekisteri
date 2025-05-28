@@ -21,7 +21,7 @@ import { Henkilohaku, HenkilohakuCriteria } from '../types/domain/kayttooikeus/H
 import { HaettuKayttooikeusryhma } from '../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
 import { fetchOrganisations } from '../actions/organisaatio.actions';
 import { KutsututSearchParams } from '../components/kutsutut/KutsututPage';
-import { MyonnettyKayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
+import { Kayttooikeusryhma, MyonnettyKayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { Palvelu } from '../types/domain/kayttooikeus/palvelu.types';
 import { PalveluKayttooikeus } from '../types/domain/kayttooikeus/palvelukayttooikeus.types';
 
@@ -113,6 +113,7 @@ export const kayttooikeusApi = createApi({
         'allowedKayttooikeusryhmasForOrganisation',
         'palvelut',
         'palvelukayttoooikeudet',
+        'kayttooikeusryhmat',
     ],
     endpoints: (builder) => ({
         getOmattiedot: builder.query<Omattiedot, void>({
@@ -298,6 +299,12 @@ export const kayttooikeusApi = createApi({
             query: (palvelu) => `kayttooikeus/${palvelu}`,
             providesTags: ['palvelukayttoooikeudet'],
         }),
+        getKayttooikeusryhmas: builder.query<Kayttooikeusryhma[], { passiiviset: boolean }>({
+            query: ({ passiiviset }) => ({
+                url: `kayttooikeusryhma?${new URLSearchParams({ passiiviset: String(passiiviset) }).toString()}`,
+            }),
+            providesTags: ['kayttooikeusryhmat'],
+        }),
     }),
 });
 
@@ -324,4 +331,5 @@ export const {
     useGetAllowedKayttooikeusryhmasForOrganisationQuery,
     useGetPalvelutQuery,
     useGetPalveluKayttooikeudetQuery,
+    useGetKayttooikeusryhmasQuery,
 } = kayttooikeusApi;
