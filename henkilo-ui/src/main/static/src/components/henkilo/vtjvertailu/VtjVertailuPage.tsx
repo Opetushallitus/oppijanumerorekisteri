@@ -56,7 +56,7 @@ class VtjVertailuPage extends React.Component<Props> {
         return this.props.henkilo.yksilointitiedotLoading || this.props.henkilo.henkiloLoading ? (
             <Loader />
         ) : (
-            <div className="wrapper">
+            <div className="mainContent wrapper">
                 <p className="oph-h2 oph-bold">{this.props.L['HENKILO_VTJ_VERTAILU']}</p>
                 <VtjVertailuListaus henkilo={this.props.henkilo} />
                 <Button action={this.overrideHenkiloInformation.bind(this)} disabled={this.isDisabled()}>

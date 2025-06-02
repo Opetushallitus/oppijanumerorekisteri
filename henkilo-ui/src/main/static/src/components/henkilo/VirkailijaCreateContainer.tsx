@@ -52,7 +52,7 @@ class VirkailijaCreateContainer extends React.Component<StateProps, State> {
             !this.state.virkailija.salasana ||
             !this.state.virkailija.salasanaUudestaan;
         return (
-            <div className="wrapper">
+            <div className="mainContent wrapper">
                 <span className="oph-h2 oph-bold">{this.props.L['VIRKAILIJAN_LUONTI_OTSIKKO']}</span>
                 <VirkailijaCreateForm
                     virkailija={this.state.virkailija}

@@ -32,7 +32,7 @@ const PalvelukayttajaHakuPage = () => {
     };
 
     return (
-        <div className="wrapper">
+        <div className="mainContent wrapper">
             <span className="oph-h2 oph-bold">{L['PALVELUKAYTTAJAN_HAKU_OTSIKKO']}</span>
             <div className="PalvelukayttajaHakuPage-criteria">
                 <input

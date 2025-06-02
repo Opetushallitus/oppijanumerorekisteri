@@ -86,7 +86,7 @@ const App = ({ children, location, params, routes }: OwnProps) => {
         <div className="oph-typography mainContainer">
             <GlobalNotifications />
             <TopNavigation pathName={location.pathname} route={route} params={params} />
-            <div className="mainContent">{children}</div>
+            {children}
         </div>
     ) : (
         <Loader />

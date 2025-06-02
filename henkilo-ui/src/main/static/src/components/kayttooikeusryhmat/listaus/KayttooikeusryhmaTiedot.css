@@ -1,6 +1,6 @@
 .kayttooikeusryhma-tiedot {
-    margin-top: 15px;
-    margin-bottom: 10px;
+    padding: 16px;
+    border-bottom: 1px solid var(--Table-cell-Background-Even-row, #F6F6F6);
 }
 
 .kayttooikeusryhma-tiedot-palvelutroolit-header {

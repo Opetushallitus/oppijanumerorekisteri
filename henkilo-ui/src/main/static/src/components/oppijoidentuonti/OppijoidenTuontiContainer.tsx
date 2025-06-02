@@ -44,7 +44,7 @@ const OppijoidenTuontiContainer = () => {
     };
 
     return (
-        <div className="wrapper">
+        <div className="mainContent wrapper">
             <h1 style={{ marginBottom: '20px' }}>{L['OPPIJOIDEN_TUONTI_YHTEENVETO_OTSIKKO']}</h1>
             <OppijoidenTuontiYhteenveto />
 

@@ -100,7 +100,7 @@ const AnomusPage = () => {
     }
 
     return (
-        <div className="wrapper">
+        <div className="mainContent wrapper">
             <h2 className="oph-h2 oph-bold">{L['HENKILO_AVOIMET_KAYTTOOIKEUDET_OTSIKKO']}</h2>
             <div className="oph-table">
                 <HaetutKayttooikeusRyhmatHakuForm onSubmit={onSubmit} />

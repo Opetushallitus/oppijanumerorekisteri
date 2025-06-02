@@ -1,0 +1,278 @@
+:root {
+    --blue: #0033CC;
+    --gray-border: #dfdfdf;
+}
+
+.oph-ds-page-layout {
+    all: initial;
+    color: var(--OPH-Input-Text, #1D1D1D);
+    font-family: "Open Sans";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+}
+
+.oph-ds-page-layout h1 {
+    font-weight: 700;
+    font-size: 34px;
+    line-height: 42px;
+    letter-spacing: 0px;
+}
+
+.oph-ds-page-header-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    height: 65px;
+    padding: 0 32px;
+    max-width: 1920px;
+    margin: 0 auto;
+    background-color: white;
+    border-bottom: 1px var(--gray-border);
+}
+
+.oph-ds-page-header {
+    width: 100%;
+}
+
+.oph-ds-page-content-container {
+    background-color: white;
+    max-width: 1854px;
+    border-top: 1px var(--gray-border);
+    border-bottom: 1px var(--gray-border);
+    margin: 32px 0;
+    padding: 32px;
+}
+
+@media (width > 1200px) {
+  .oph-ds-page-content-container {
+    margin: 32px;
+    border-left: 1px var(--gray-border);
+    border-right: 1px var(--gray-border);
+  }
+}
+
+.oph-ds-input-wrapper {
+    padding: 4px;
+}
+
+.oph-ds-input-wrapper:has(input:hover) {
+    padding: 3px;
+}
+
+.oph-ds-input-wrapper:has(input:focus) {
+    padding: 1px;
+    border-radius: 4px;
+    border-collapse: separate;
+    border: 2px solid #000;
+}
+
+.oph-ds-input {
+    display: flex;
+    width: 300px;
+    padding: 12px;
+    border-radius: 2px;
+    border: var(--OPH-Input-Stroke-width, 1px) solid var(--OPH-Input-Stroke, #454545);
+    background: var(--Neutral-White, #FFF);
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+}
+
+.oph-ds-input:focus {
+    border: 2px solid var(--OPH-Input-Stroke, #0041DC);
+}
+
+.oph-ds-input:hover {
+    border: 2px solid var(--OPH-Input-Stroke, #0041DC);
+}
+
+.oph-ds-label {
+    line-height: 1.1;
+    cursor: pointer;
+}
+
+.oph-ds-checkbox-wrapper {
+    padding: 4px;
+    line-height: 16px;
+}
+
+.oph-ds-checkbox-wrapper:focus-within {
+    padding: 2px;
+    border-radius: 2px;
+    border: 2px solid #000;
+}
+
+.oph-ds-chechbox:active, .oph-ds-chechbox:focus, .oph-ds-radio:focus {
+    outline: none;
+    border: none;
+}
+
+.oph-ds-chechbox {
+    position: absolute;
+    opacity: 0;
+    z-index: -1;
+}
+
+.oph-ds-chechbox + span {
+    margin-right: 6px;
+}
+
+.oph-ds-chechbox + span:before {
+    content: '';
+    border: 2px solid var(--OPH-Input-Stroke, #454545);
+    border-radius: 2px;
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    margin-right: 6px;
+    vertical-align: -2px;
+    box-sizing: border-box;
+}
+
+.oph-ds-chechbox:checked + span:before {
+    background-image: url('data:image/svg+xml;base64,CiAgICA8c3ZnIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogICAgICAgIDxwYXRoCiAgICAgICAgICAgIGQ9Ik0xOSAzSDVDMy45IDMgMyAzLjkgMyA1VjE5QzMgMjAuMSAzLjkgMjEgNSAyMUgxOUMyMC4xIDIxIDIxIDIwLjEgMjEgMTlWNUMyMSAzLjkgMjAuMSAzIDE5IDNaTTE5IDE5SDVWNUgxOVYxOVpNMTcuOTkgOUwxNi41OCA3LjU4TDkuOTkgMTQuMTdMNy40MSAxMS42TDUuOTkgMTMuMDFMOS45OSAxN0wxNy45OSA5WiIKICAgICAgICAgICAgZmlsbD0iIzAwMzNDQyIKICAgICAgICAvPgogICAgPC9zdmc+');
+    background-repeat: no-repeat;
+    background-position: center;
+    border: 2px solid var(--OPH-Input-Stroke, #0041DC);
+}
+
+.oph-ds-chechbox:hover + span:before {
+    border: 2px solid var(--OPH-Input-Stroke, #0041DC);
+}
+
+.oph-ds-radio-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+    gap: 27px;
+}
+
+.oph-ds-radio {
+    appearance: none;
+    background-color: #fff;
+    margin: 0;
+    font: inherit;
+    color: currentColor;
+    width: 1.15em;
+    height: 1.15em;
+    border: 0.15em solid var(--OPH-Input-Stroke, #454545);
+    border-radius: 50%;
+    display: grid;
+    place-content: center;
+}
+
+.oph-ds-radio-wrapper > label {
+    padding: 4px;
+    display: grid;
+    grid-template-columns: 1em auto;
+    gap: 0.5em;
+}
+
+.oph-ds-radio-wrapper > label:focus-within {
+    padding: 2px;
+    border-radius: 2px;
+    border: 2px solid #000;
+}
+
+.oph-ds-radio::before {
+    content: "";
+    width: 0.55em;
+    height: 0.55em;
+    border-radius: 50%;
+    transform: scale(0);
+    box-shadow: inset 2em 2em var(--blue);
+    box-sizing: border-box;
+}
+.oph-ds-radio:checked {
+    border: 0.15em solid var(--OPH-Input-Stroke, #0041DC);
+}
+
+.oph-ds-radio:checked::before {
+    border: 0.15em solid var(--OPH-Input-Stroke, #0041DC);
+    transform: scale(1);
+}
+
+.oph-ds-link {
+    color: var(--OPH-Link-Text, #03C);
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+}
+
+.oph-ds-link:focus {
+    margin: -4px;
+    padding: 2px;
+    border-radius: 2px;
+    border: 2px solid #000;
+}
+
+.oph-ds-link:focus, .oph-ds-link:hover, .oph-ds-link:active {
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-skip-ink: none;
+    text-decoration-thickness: auto;
+    text-underline-offset: auto;
+    text-underline-position: from-font;
+}
+
+.oph-ds-button-transparent {
+    color: var(--OPH-Input-Stroke, #0041DC);
+    background: none;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    margin: 0;
+    padding: 8px 16px;
+    position: relative;
+    text-align: left;
+    width: 100%;
+    outline: none;
+    cursor: pointer;
+    border: 0;
+}
+
+.oph-ds-accordion-header {
+    cursor: pointer;
+    box-sizing: border-box;
+    height: 56px;
+    padding: 0px 2px;
+}
+
+.oph-ds-accordion-header > button {
+    width: 100%;
+    height: 100%;
+}
+
+.oph-ds-accordion-header:focus-within {
+    box-sizing: border-box;
+    border-radius: 2px;
+    border: 2px solid #000;
+    padding: 0px;
+}
+
+.oph-ds-accordion-icon {
+    border: solid currentcolor;
+    border-width: 0 2px 2px 0;
+    height: 0.5rem;
+    pointer-events: none;
+    position: absolute;
+    right: 2em;
+    top: 50%;
+    transform: translateY(-60%) rotate(45deg);
+    width: 0.5rem;
+}
+
+.oph-ds-button-transparent[aria-expanded="true"] .oph-ds-accordion-icon {
+  transform: translateY(-50%) rotate(-135deg);
+}
+
+.oph-ds-accordion-header:nth-child(3), .oph-ds-accordion-header:nth-child(4n + 3) {
+    background: var(--Table-cell-Background-Even-row, #F6F6F6);
+}
+
+.oph-ds-accordion-header:hover {
+    background: var(--Table-cell-Background-Hover-or-selected, #C1EAFF);
+}

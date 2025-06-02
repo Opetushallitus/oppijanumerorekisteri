@@ -15,7 +15,7 @@ export const FormPicker = ({ setFormType }: Props) => {
     const { L } = useLocalisations();
     const { data } = useGetOmattiedotQuery();
     return (
-        <div className="wrapper">
+        <div className="mainContent wrapper">
             <div className="form-picker">
                 <span className="oph-h2 oph-bold">{L['OPPIJAN_LUONTI_OTSIKKO']}</span>
                 {(data.isAdmin ||

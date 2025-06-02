@@ -151,7 +151,7 @@ const KutsuminenPage = () => {
         const disabled = !henkilo.henkilo.hetu || !henkilo.henkilo.yksiloityVTJ;
         return (
             <div>
-                <form className="wrapper">
+                <form className="mainContent wrapper">
                     <p className="oph-h2 oph-bold">{L['VIRKAILIJAN_LISAYS_OTSIKKO']}</p>
                     <LocalNotification type="error" title={L['KUTSU_ESTETTY']} toggle={disabled}>
                         {L['KUTSU_ESTETTY_SYY']}

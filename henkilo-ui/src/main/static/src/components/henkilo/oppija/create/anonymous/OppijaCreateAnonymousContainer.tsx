@@ -74,7 +74,7 @@ class OppijaCreateAnonymousContainer extends React.Component<Props, State> {
 
     render() {
         return (
-            <div className="wrapper">
+            <div className="mainContent wrapper">
                 <span className="oph-h2 oph-bold">{this.props.L['OPPIJAN_LUONTI_OTSIKKO']}</span>
                 <span style={{ float: 'right' }}>
                     <CloseButton closeAction={this.props.goBack} />

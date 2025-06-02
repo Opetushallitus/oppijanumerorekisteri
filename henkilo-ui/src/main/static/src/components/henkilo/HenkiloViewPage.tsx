@@ -55,7 +55,7 @@ export const HenkiloViewPage = (props: Props) => {
     const kayttooikeusryhmat = OrganisaatioKayttooikeusryhmat?.kayttooikeusryhmat ?? [];
 
     return (
-        <div>
+        <div className="mainContent">
             <div className="wrapper">
                 <UserContentContainer oidHenkilo={oidHenkilo} view={view} />
             </div>

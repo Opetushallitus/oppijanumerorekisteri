@@ -22,7 +22,7 @@ export const AccessRightsReport = () => {
     const report = useMemo(() => data?.filter((row) => !filter || row.accessRightName === filter), [data, filter]);
 
     return (
-        <div className="wrapper">
+        <div className="mainContent wrapper">
             <div className="flex-horizontal">
                 <span className="oph-h2 oph-bold henkilohaku-main-header">{L['KAYTTOOIKEUSRAPORTTI_TITLE']}</span>
             </div>

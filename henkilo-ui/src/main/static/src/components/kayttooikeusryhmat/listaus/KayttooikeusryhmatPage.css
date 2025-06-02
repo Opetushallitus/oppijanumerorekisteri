@@ -1,11 +1,24 @@
-.kayttoikeusryhma-lista-suodatin {
-    margin-bottom: 20px;
+.kayttoikeusryhmat-form {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 32px;
+    gap: 8px;
 }
 
-.kayttoikeusryhma-lista-suodatin .lisaa-kayttooikeusryhma-button {
-    margin-left: 20px;
+.kayttoikeusryhmat-form > div {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
-.kayttoikeusryhma-lista-suodatin .oph-fieldset {
-    margin-left: 20px;
+.kayttoikeusryhmat-form-cell {
+    display: flex;
+    align-items: flex-end;
+}
+
+.kayttoikeusryhmat-form-cell > div {
+    display: flex;
+    align-items: center;
+    height: 48px;
 }

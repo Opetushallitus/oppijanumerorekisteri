@@ -4,12 +4,16 @@ import { Link } from 'react-router';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { useLocalisations } from '../../../selectors';
 import { useGetKayttooikeusryhmasQuery, useGetOmattiedotQuery } from '../../../api/kayttooikeus';
-import { KayttooikeusryhmaLista } from './KayttooikeusryhmaLista';
-import BooleanRadioButtonGroup from '../../common/radiobuttongroup/BooleanRadioButtonGroup';
-
-import './KayttooikeusryhmatPage.css';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { localizeTextGroup } from '../../../utilities/localisation.util';
+import { OphDsPage } from '../../design-system/OphDsPage';
+
+import './KayttooikeusryhmatPage.css';
+import { OphDsInput } from '../../design-system/OphDsInput';
+import { OphDsChechbox } from '../../design-system/OphDsCheckbox';
+import { OphDsRadioGroup } from '../../design-system/OphDsRadio';
+import { OphDsAccordion } from '../../design-system/OphDsAccordion';
+import KayttooikeusryhmaTiedot from './KayttooikeusryhmaTiedot';
 
 const nimiFilter = (filter: string, locale: string) => (item: Kayttooikeusryhma) => {
     if (filter.length === 0) {
@@ -41,69 +45,75 @@ export const KayttooikeusryhmatPage = () => {
         'KAYTTOOIKEUS_REKISTERINPITAJA',
     ]);
     const [showPassives, setShowPassives] = useState(false);
-    const [showPalvelu, setShowPalvelu] = useState(false);
+    const [showType, setShowType] = useState<'virkailija' | 'palvelu'>('virkailija');
     const [filter, setFilter] = useState('');
     const { data: kayttooikeusryhmat } = useGetKayttooikeusryhmasQuery({ passiiviset: showPassives });
 
-    const visibleKayttooikeusryhmas = useMemo(() => {
+    const accordionItems = useMemo(() => {
         if (!kayttooikeusryhmat) {
             return [];
         }
-        return kayttooikeusryhmat
+        const visibleKayttooikeusryhmas = kayttooikeusryhmat
             .filter((k) =>
-                showPalvelu
+                showType === 'palvelu'
                     ? k.sallittuKayttajatyyppi === 'PALVELU'
                     : k.sallittuKayttajatyyppi === null || k.sallittuKayttajatyyppi === 'VIRKAILIJA'
             )
             .filter(nimiFilter(filter, locale))
             .sort(nimiSort(locale));
-    }, [kayttooikeusryhmat, showPalvelu, filter]);
+
+        return visibleKayttooikeusryhmas.map((item) => {
+            const statusString = item.passivoitu ? ` (${L['KAYTTOOIKEUSRYHMAT_PASSIVOITU']})` : '';
+            return {
+                header: `${localizeTextGroup(item?.nimi?.texts, locale)} ${statusString}`,
+                children: (show: boolean) => (
+                    <KayttooikeusryhmaTiedot
+                        muokkausoikeus={muokkausoikeus}
+                        show={show}
+                        item={item}
+                        L={L}
+                        locale={locale}
+                    />
+                ),
+            };
+        });
+    }, [kayttooikeusryhmat, showType, filter]);
 
     return (
-        <div className="wrapper kayttooikeusryhmat-hallinta">
-            <h2 className="oph-h2 oph-bold">{L['KAYTTOOIKEUSRYHMAT_OTSIKKO_LISTA']}</h2>
-            <div className="kayttoikeusryhma-lista-suodatin">
-                <div className="oph-field">
-                    <div className="oph-input-container flex-horizontal">
-                        <input
-                            type="text"
-                            onChange={(e) => setFilter(e.target.value)}
-                            placeholder={L['KAYTTOOIKEUSRYHMAT_HALLINTA_SUODATA']}
-                            className="oph-input flex-item-1"
+        <OphDsPage header={L['KAYTTOOIKEUSRYHMAT_OTSIKKO_LISTA']}>
+            <section className="kayttoikeusryhmat-form">
+                <div>
+                    <OphDsInput id="filter" label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_SUODATA']} onChange={setFilter} />
+                    <div className="kayttoikeusryhmat-form-cell">
+                        <OphDsRadioGroup
+                            groupName="show-palvelu"
+                            checked={showType}
+                            onChange={(id) => setShowType(id)}
+                            radios={[
+                                { id: 'virkailija', label: L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_VIRKAILIJA'] },
+                                { id: 'palvelu', label: L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PALVELU'] },
+                            ]}
                         />
-                        <BooleanRadioButtonGroup
-                            value={showPalvelu}
-                            onChange={() => setShowPalvelu(!showPalvelu)}
-                            trueLabel={L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PALVELU']}
-                            falseLabel={L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_VIRKAILIJA']}
-                        />
-                        <Link
-                            className="oph-button oph-button-primary lisaa-kayttooikeusryhma-button"
-                            to={'/kayttooikeusryhmat/lisaa'}
-                            disabled={!muokkausoikeus}
-                        >
-                            {L['KAYTTOOIKEUSRYHMAT_LISAA']}
-                        </Link>
                     </div>
-                    <div className="oph-input-container flex-horizontal">
-                        <div className="flex-inline">
-                            <label className="oph-checkable" htmlFor="kayttooikeusryhmaNaytaPassivoidut">
-                                <input
-                                    id="kayttooikeusryhmaNaytaPassivoidut"
-                                    type="checkbox"
-                                    className="oph-checkable-input"
-                                    onChange={() => setShowPassives(!showPassives)}
-                                    checked={showPassives}
-                                />
-                                <span className="oph-checkable-text">
-                                    {L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PASSIVOIDUT']}
-                                </span>
-                            </label>
+                    {muokkausoikeus && (
+                        <div className="kayttoikeusryhmat-form-cell">
+                            <div>
+                                <Link className="oph-ds-link" to="/kayttooikeusryhmat/lisaa">
+                                    {L['KAYTTOOIKEUSRYHMAT_LISAA']}
+                                </Link>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
-            </div>
-            <KayttooikeusryhmaLista muokkausoikeus={muokkausoikeus} items={visibleKayttooikeusryhmas} />
-        </div>
+                <div>
+                    <OphDsChechbox
+                        id="kayttooikeusryhmaNaytaPassivoidut"
+                        label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PASSIVOIDUT']}
+                        onChange={() => setShowPassives(!showPassives)}
+                    />
+                </div>
+            </section>
+            <OphDsAccordion items={accordionItems} />
+        </OphDsPage>
     );
 };

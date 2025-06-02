@@ -40,7 +40,7 @@ export const OppijaCreateSsnContainer = ({
     const [data, setData] = React.useState<ExistenceCheckRequest>();
 
     return (
-        <div className="wrapper">
+        <div className="mainContent wrapper">
             <span className="oph-h2 oph-bold">{translate('OPPIJAN_LUONTI_OTSIKKO')}</span>
             <span className="float-right">
                 <CloseButton closeAction={goBack} />

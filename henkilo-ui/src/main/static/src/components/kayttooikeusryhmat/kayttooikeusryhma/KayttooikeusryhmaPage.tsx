@@ -137,7 +137,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
 
     render() {
         return (
-            <div className="wrapper">
+            <div className="mainContent wrapper">
                 <span className="oph-h2 oph-bold kayttooikeusryhma-header">
                     {this.props.L['KAYTTOOIKEUSRYHMAT_OTSIKKO'] + this.getStatusString()}
                 </span>

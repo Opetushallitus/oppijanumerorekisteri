@@ -29,7 +29,7 @@ export const PalvelukayttajaCreatePage = ({ router }: Props) => {
     };
 
     return (
-        <div className="wrapper">
+        <div className="mainContent wrapper">
             {error && <WideRedNotification message={error} closeAction={() => setError('')} />}
             <span className="oph-h2 oph-bold">{L['PALVELUKAYTTAJAN_LUONTI_OTSIKKO']}</span>
             <form onSubmit={onSubmit}>

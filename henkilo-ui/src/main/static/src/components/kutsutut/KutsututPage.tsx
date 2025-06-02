@@ -89,7 +89,7 @@ export const KutsututPage = () => {
     }
 
     return (
-        <div className="wrapper" id="kutsutut-page">
+        <div className="mainContent wrapper" id="kutsutut-page">
             <h2 className="oph-h2 oph-bold">{L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</h2>
             <div className="flex-horizontal flex-align-center kutsutut-filters">
                 <input

@@ -110,7 +110,7 @@ const HenkilohakuPage = () => {
     });
 
     return (
-        <div className="wrapper">
+        <div className="mainContent wrapper">
             <div className="oph-h2 oph-bold henkilohaku-main-header">{L['HENKILOHAKU_OTSIKKO']}</div>
             <input
                 className="oph-input"

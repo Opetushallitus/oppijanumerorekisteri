@@ -14,7 +14,7 @@ type Props = {
 const DuplikaatitPage = (props: Props) => {
     const { L, henkiloType, henkilo } = props;
     return (
-        <div className="wrapper">
+        <div className="mainContent wrapper">
             <span className="oph-h2 oph-bold">
                 {L['DUPLIKAATIT_HEADER']}, {henkilo.henkilo.kutsumanimi} {henkilo.henkilo.sukunimi}
             </span>
