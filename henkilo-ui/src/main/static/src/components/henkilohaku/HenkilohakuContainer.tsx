@@ -1,10 +1,8 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import HenkilohakuPage from './HenkilohakuPage';
 import { RouteActions } from 'react-router-redux';
 
-import { useAppDispatch } from '../../store';
 import Loader from '../common/icons/Loader';
-import { fetchAllRyhmas } from '../../actions/organisaatio.actions';
 import { parsePalveluRoolit, hasAnyPalveluRooli } from '../../utilities/palvelurooli.util';
 import { useGetKayttooikeusryhmasQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
 
@@ -13,7 +11,6 @@ type OwnProps = {
 };
 
 const HenkilohakuContainer = ({ router }: OwnProps) => {
-    const dispatch = useAppDispatch();
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { isLoading } = useGetKayttooikeusryhmasQuery({ passiiviset: true });
     const vainOppijoidenTuonti = useMemo(() => {
@@ -31,10 +28,6 @@ const HenkilohakuContainer = ({ router }: OwnProps) => {
     if (vainOppijoidenTuonti) {
         router.replace('/oppijoidentuonti');
     }
-
-    useEffect(() => {
-        dispatch<any>(fetchAllRyhmas());
-    }, []);
 
     return !isLoading ? <HenkilohakuPage /> : <Loader />;
 };

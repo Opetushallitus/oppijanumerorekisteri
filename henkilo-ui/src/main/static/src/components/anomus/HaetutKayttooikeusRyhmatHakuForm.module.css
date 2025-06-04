@@ -6,7 +6,11 @@
 
 .selectRow {
     composes: row;
-    max-width: 700px;
+    min-width: 700px;
+}
+
+.selectRow :global(#ryhmafilter) {
+    width: 700px;
 }
 
 .row :global(button) {

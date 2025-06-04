@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import moment from 'moment';
-import { useSelector } from 'react-redux';
 import Select, { createFilter } from 'react-select';
 
 import Modal from '../common/modal/Modal';
@@ -12,13 +11,14 @@ import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import CloseButton from '../common/button/CloseButton';
 import { useLocalisations } from '../../selectors';
-import { useDeleteKutsuMutation, useGetKayttooikeusryhmasQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
+import {
+    useDeleteKutsuMutation,
+    useGetKayttooikeusryhmasQuery,
+    useGetOmattiedotQuery,
+    useGetOrganisaatioRyhmatQuery,
+} from '../../api/kayttooikeus';
 import { useDebounce } from '../../useDebounce';
 import { KutsuView } from './KutsuViews';
-import { parseRyhmaOptions } from '../../utilities/organisaatio.util';
-import { RootState, useAppDispatch } from '../../store';
-import { RyhmatState } from '../../reducers/ryhmat.reducer';
-import { fetchAllRyhmas } from '../../actions/organisaatio.actions';
 import StaticUtils from '../common/StaticUtils';
 import { FastMenuList, SelectOption } from '../../utilities/select';
 
@@ -38,9 +38,9 @@ const getDefaultView = (isAdmin?: boolean, isVirkailija?: boolean): KutsuView =>
 };
 
 export const KutsututPage = () => {
-    const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
     const { data } = useGetOmattiedotQuery();
+    const { data: ryhmat } = useGetOrganisaatioRyhmatQuery();
     const [params, setParams] = useState<KutsututSearchParams>({
         searchTerm: '',
         organisaatioOids: '',
@@ -49,7 +49,6 @@ export const KutsututPage = () => {
         kayttooikeusryhmaIds: '',
         subOrganisations: 'true',
     });
-    const ryhmat = useSelector<RootState, RyhmatState>((state) => state.ryhmatState);
     const delayedParams = useDebounce(params, 500);
     const [organisaatioSelection, setOrganisaatioSelection] = useState('');
     const [ryhmaSelection, setRyhmaSelection] = useState('');
@@ -67,10 +66,6 @@ export const KutsututPage = () => {
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? []
         );
     }, [kayttooikeusryhmat]);
-
-    useEffect(() => {
-        dispatch<any>(fetchAllRyhmas());
-    }, []);
 
     async function cancelInvitationConfirmed() {
         if (confirmDelete?.id) {
@@ -102,7 +97,12 @@ export const KutsututPage = () => {
     }
 
     const ryhmaOptions = useMemo(() => {
-        return parseRyhmaOptions(ryhmat, locale);
+        return (ryhmat ?? [])
+            .map((ryhma) => ({
+                label: ryhma.nimi[locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
+                value: ryhma.oid,
+            }))
+            .sort((a, b) => a.label.localeCompare(b.label));
     }, [ryhmat, locale]);
 
     return (

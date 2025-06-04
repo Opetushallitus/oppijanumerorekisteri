@@ -12,7 +12,6 @@ import { GlobalNotifications } from '../components/common/Notification/GlobalNot
 import { ophLightGray } from '../components/navigation/navigation.utils';
 import { RouteType } from '../routes';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
-import { fetchOrganisationNames } from '../actions/organisaatio.actions';
 import { useLocalisations } from '../selectors';
 import { useGetOmatOrganisaatiotQuery, useGetOmattiedotQuery } from '../api/kayttooikeus';
 import { useGetLocaleQuery } from '../api/oppijanumerorekisteri';
@@ -48,7 +47,6 @@ const App = ({ children, location, params, routes }: OwnProps) => {
 
     useEffect(() => {
         dispatch<any>(fetchPrequels());
-        dispatch<any>(fetchOrganisationNames());
         const prequel = setInterval(() => dispatch<any>(fetchPrequels()), fetchPrequelsIntervalInMillis);
         return () => clearTimeout(prequel);
     }, []);

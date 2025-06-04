@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 import UserContentContainer from '../common/henkilo/usercontent/UserContentContainer';
@@ -17,10 +17,9 @@ import { useLocalisations } from '../../selectors';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
 import { KoodistoState } from '../../reducers/koodisto.reducer';
 import { OrganisaatioKayttooikeusryhmatState } from '../../reducers/organisaatiokayttooikeusryhmat.reducer';
-import { RyhmatState } from '../../reducers/ryhmat.reducer';
 import { KayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma.reducer';
 import { isOnrRekisterinpitaja } from '../../utilities/palvelurooli.util';
-import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
+import { useGetOmattiedotQuery, useGetOrganisaatioRyhmatQuery } from '../../api/kayttooikeus';
 import { Identifications } from './Identifications';
 
 export type View = 'omattiedot' | 'virkailija' | 'admin' | 'oppija';
@@ -37,20 +36,20 @@ export const HenkiloViewPage = (props: Props) => {
     const OrganisaatioKayttooikeusryhmat = useSelector<RootState, OrganisaatioKayttooikeusryhmatState>(
         (state) => state.OrganisaatioKayttooikeusryhmat
     );
-    const ryhmatState = useSelector<RootState, RyhmatState>((state) => state.ryhmatState);
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
     const { view, oidHenkilo } = props;
     const { data: omattiedot } = useGetOmattiedotQuery();
+    const { data: ryhmat } = useGetOrganisaatioRyhmatQuery();
     const isRekisterinpitaja = omattiedot ? isOnrRekisterinpitaja(omattiedot.organisaatiot) : false;
 
-    const _parseRyhmaOptions = (): Array<{ label: string; value: string }> => {
-        return (
-            ryhmatState?.ryhmas?.map((ryhma) => ({
+    const _parseRyhmaOptions = useMemo(
+        () =>
+            (ryhmat ?? []).map((ryhma) => ({
                 label: ryhma.nimi[locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
                 value: ryhma.oid,
-            })) ?? []
-        );
-    };
+            })),
+        [ryhmat, locale]
+    );
 
     const kayttooikeusryhmat = OrganisaatioKayttooikeusryhmat?.kayttooikeusryhmat ?? [];
 
@@ -139,7 +138,7 @@ export const HenkiloViewPage = (props: Props) => {
             {view === 'omattiedot' && (
                 <div className="wrapper">
                     <HenkiloViewCreateKayttooikeusanomus
-                        ryhmaOptions={_parseRyhmaOptions.call(this)}
+                        ryhmaOptions={_parseRyhmaOptions}
                         kayttooikeusryhmat={kayttooikeusryhmat}
                     />
                 </div>
