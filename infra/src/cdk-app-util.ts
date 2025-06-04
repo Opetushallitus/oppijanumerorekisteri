@@ -49,14 +49,14 @@ class ContinousDeploymentStack extends cdk.Stack {
       this,
       sharedAccount.prefix(`QaContinuousDeploymentPipeline`),
       "qa",
-      { owner: "Opetushallitus", name: "oppijanumerorekisteri", branch: "green-dev" },
+      { owner: "Opetushallitus", name: "oppijanumerorekisteri", branch: "upgrade-react-select" },
       props
     );
     new ContinousDeploymentPipelineStack(
       this,
       sharedAccount.prefix(`ProdContinuousDeploymentPipeline`),
       "prod",
-      { owner: "Opetushallitus", name: "oppijanumerorekisteri", branch: "green-qa" },
+      { owner: "Opetushallitus", name: "oppijanumerorekisteri", branch: "green-dev" },
       props
     );
   }
@@ -102,12 +102,12 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
         repo: repository.name,
         branch: repository.branch,
         output: sourceOutput,
-        triggerOnPush: ["hahtuva", "dev"].includes(env),
+        triggerOnPush: ["hahtuva", "dev", "qa"].includes(env),
       });
     const sourceStage = pipeline.addStage({ stageName: "Source" });
     sourceStage.addAction(sourceAction);
 
-    const runTests = env === "hahtuva";
+    const runTests = env === "hahtuva" || env === "qa";
     if (runTests) {
       const testStage = pipeline.addStage({ stageName: "Test" });
       testStage.addAction(
