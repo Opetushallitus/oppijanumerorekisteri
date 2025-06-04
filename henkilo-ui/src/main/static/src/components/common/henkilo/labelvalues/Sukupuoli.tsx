@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
+import Select from 'react-select';
+
 import type { RootState } from '../../../../store';
-import LabelValue from './LabelValue';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
-import type { Options } from 'react-select';
 import { Locale } from '../../../../types/locale.type';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { fetchSukupuoliKoodisto } from '../../../../actions/koodisto.actions';
+import { FieldlessLabelValue } from './FieldlessLabelValue';
+import { KoodistoState } from '../../../../reducers/koodisto.reducer';
 
 type OwnProps = {
     henkiloUpdate: Henkilo;
@@ -16,9 +18,7 @@ type OwnProps = {
 
 type StateProps = {
     henkilo: HenkiloState;
-    koodisto: {
-        sukupuoli: Options<string>;
-    };
+    koodisto: KoodistoState;
     locale: Locale;
 };
 
@@ -28,30 +28,34 @@ type DispatchProps = {
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-class Sukupuoli extends React.Component<Props> {
-    componentDidMount(): void {
-        this.props.fetchSukupuoliKoodisto();
-    }
+const Sukupuoli = (props: Props) => {
+    const options = useMemo(() => {
+        return props.koodisto.sukupuoli.map((koodi) => ({
+            value: koodi.value,
+            label: koodi[props.locale],
+            optionsName: 'sukupuoli',
+        }));
+    }, [props.koodisto]);
 
-    render() {
-        return (
-            <LabelValue
-                readOnly={this.props.readOnly}
-                updateModelFieldAction={this.props.updateModelFieldAction}
-                values={{
-                    label: 'HENKILO_SUKUPUOLI',
-                    data: this.props.koodisto.sukupuoli.map((koodi) => ({
-                        value: koodi.value,
-                        label: koodi[this.props.locale],
-                        optionsName: 'sukupuoli',
-                    })),
-                    selectValue: this.props.henkiloUpdate.sukupuoli,
-                    disabled: !!this.props.henkiloUpdate.hetu,
-                }}
-            />
-        );
-    }
-}
+    useEffect(() => {
+        props.fetchSukupuoliKoodisto();
+    }, []);
+
+    return (
+        <FieldlessLabelValue readOnly={props.readOnly} label="HENKILO_SUKUPUOLI">
+            {props.readOnly ? (
+                options.find((o) => o.value === props.henkiloUpdate.sukupuoli)?.label
+            ) : (
+                <Select
+                    options={options}
+                    value={options.find((o) => o.value === props.henkiloUpdate.sukupuoli)}
+                    onChange={props.updateModelFieldAction}
+                    isDisabled={!!props.henkiloUpdate.hetu}
+                />
+            )}
+        </FieldlessLabelValue>
+    );
+};
 
 const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,

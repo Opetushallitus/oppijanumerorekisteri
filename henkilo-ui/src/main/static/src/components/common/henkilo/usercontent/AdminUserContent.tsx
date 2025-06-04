@@ -33,12 +33,14 @@ import Sukupuoli from '../labelvalues/Sukupuoli';
 import PassinumeroButton from '../buttons/PassinumeroButton';
 import PoistaKayttajatunnusButton from '../buttons/PoistaKayttajatunnusButton';
 import { KoodistoState } from '../../../../reducers/koodisto.reducer';
+import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
 
 type OwnProps = {
     readOnly: boolean;
     discardAction: () => void;
     updateAction: () => void;
     updateModelAction: () => void;
+    updateModelSelectAction: (o: NamedSelectOption | NamedMultiSelectOption) => void;
     updateDateAction: () => void;
     edit: () => void;
     henkiloUpdate: Henkilo;
@@ -82,6 +84,7 @@ class AdminUserContent extends React.Component<Props> {
         const props = {
             readOnly: this.props.readOnly,
             updateModelFieldAction: this.props.updateModelAction,
+            updateModelSelectAction: this.props.updateModelSelectAction,
             updateDateFieldAction: this.props.updateDateAction,
             henkiloUpdate: this.props.henkiloUpdate,
         };

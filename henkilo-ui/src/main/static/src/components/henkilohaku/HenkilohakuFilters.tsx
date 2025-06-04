@@ -1,13 +1,12 @@
 import './HenkilohakuFilters.css';
 import React, { useMemo, useState } from 'react';
-import type { OnChangeHandler, Options, Option } from 'react-select';
+import Select, { createFilter } from 'react-select';
 
 import OphCheckboxInline from '../common/forms/OphCheckboxInline';
 import SubOrganisationCheckbox from './criterias/SubOrganisationCheckbox';
 import NoOrganisationCheckbox from './criterias/NoOrganisationCheckbox';
 import PassiivisetOrganisationCheckbox from './criterias/PassiivisetOrganisationCheckbox';
 import DuplikaatitOrganisationCheckbox from './criterias/DuplikaatitOrganisationCheckbox';
-import OphSelect from '../common/select/OphSelect';
 import StaticUtils from '../common/StaticUtils';
 import CloseButton from '../common/button/CloseButton';
 import { HenkilohakuCriteria } from '../../types/domain/kayttooikeus/HenkilohakuCriteria.types';
@@ -21,9 +20,10 @@ import {
     useGetOmattiedotQuery,
 } from '../../api/kayttooikeus';
 import { OrganisaatioWithChildren } from '../../types/domain/organisaatio/organisaatio.types';
+import { FastMenuList, SelectOption } from '../../utilities/select';
 
 type OwnProps = {
-    ryhmaSelectionAction: OnChangeHandler<string, Option<string> | Options<string>>;
+    ryhmaSelectionAction: (o: SelectOption) => void;
     selectedRyhma: string | undefined;
     selectedOrganisation?: Array<string> | string;
     selectedKayttooikeus: string | undefined;
@@ -33,7 +33,7 @@ type OwnProps = {
     noOrganisationAction: () => void;
     organisaatioSelectAction: (arg0: OrganisaatioSelectObject) => void;
     clearOrganisaatioSelection: () => void;
-    kayttooikeusSelectionAction: OnChangeHandler<string, Options<string> | Option<string>>;
+    kayttooikeusSelectionAction: (o: SelectOption) => void;
     initialValues: HenkilohakuCriteria;
 };
 
@@ -69,7 +69,7 @@ const HenkilohakuFilters = (props: OwnProps) => {
         props.organisaatioSelectAction(organisaatio);
     };
 
-    function _parseRyhmaOptions(organisaatiot: Array<OrganisaatioHenkilo>): Options<string> {
+    function _parseRyhmaOptions(organisaatiot: Array<OrganisaatioHenkilo>) {
         return organisaatiot
             .reduce<OrganisaatioWithChildren[]>(
                 (acc, organisaatio) => acc.concat([organisaatio.organisaatio], organisaatio.organisaatio.children),
@@ -143,16 +143,14 @@ const HenkilohakuFilters = (props: OwnProps) => {
                 <div className="flex-item-1">
                     <div className="henkilohaku-select">
                         <span className="flex-item-1">
-                            <OphSelect
+                            <Select
                                 id="kayttooikeusryhmaFilter"
                                 options={kayttooikeusryhmas}
-                                value={props.selectedKayttooikeus}
+                                value={kayttooikeusryhmas.find((o) => o.value === props.selectedKayttooikeus)}
                                 placeholder={L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
                                 onChange={props.kayttooikeusSelectionAction}
+                                isClearable
                             />
-                        </span>
-                        <span className="henkilohaku-clear-select">
-                            <CloseButton closeAction={() => props.kayttooikeusSelectionAction({ value: undefined })} />
                         </span>
                     </div>
                 </div>
@@ -162,16 +160,16 @@ const HenkilohakuFilters = (props: OwnProps) => {
                     <div className="flex-item-1">
                         <div className="henkilohaku-select">
                             <span className="flex-item-1">
-                                <OphSelect
+                                <Select
                                     id="ryhmaFilter"
                                     options={ryhmaOptions}
-                                    value={props.selectedRyhma}
+                                    components={{ MenuList: FastMenuList }}
+                                    filterOption={createFilter({ ignoreAccents: false })}
+                                    value={ryhmaOptions.find((o) => o.value === props.selectedRyhma)}
                                     placeholder={L['HENKILOHAKU_FILTERS_RYHMA_PLACEHOLDER']}
                                     onChange={props.ryhmaSelectionAction}
+                                    isClearable
                                 />
-                            </span>
-                            <span className="henkilohaku-clear-select">
-                                <CloseButton closeAction={() => props.ryhmaSelectionAction({ value: undefined })} />
                             </span>
                         </div>
                     </div>

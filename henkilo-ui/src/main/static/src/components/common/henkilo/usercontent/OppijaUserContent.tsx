@@ -25,12 +25,14 @@ import LinkitetytHenkilot from '../labelvalues/LinkitetytHenkilot';
 import MasterHenkilo from '../labelvalues/MasterHenkilo';
 import Sukupuoli from '../labelvalues/Sukupuoli';
 import { KoodistoState } from '../../../../reducers/koodisto.reducer';
+import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
 
 type OwnProps = {
     readOnly: boolean;
     discardAction: () => void;
     updateAction: () => void;
     updateModelAction: () => void;
+    updateModelSelectAction: (o: NamedSelectOption | NamedMultiSelectOption) => void;
     updateDateAction: () => void;
     edit: () => void;
     henkiloUpdate: Henkilo;
@@ -72,6 +74,7 @@ class OppijaUserContent extends React.Component<Props> {
         const basicInfoProps = {
             readOnly: this.props.readOnly,
             updateModelFieldAction: this.props.updateModelAction,
+            updateModelSelectAction: this.props.updateModelSelectAction,
             updateDateFieldAction: this.props.updateDateAction,
             henkiloUpdate: this.props.henkiloUpdate,
         };

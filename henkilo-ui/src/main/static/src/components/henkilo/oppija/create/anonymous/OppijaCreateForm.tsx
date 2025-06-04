@@ -1,17 +1,20 @@
 import React from 'react';
-import SimpleDatePicker from '../../../SimpleDatePicker';
+import Select from 'react-select';
 import classNames from 'classnames';
+
+import SimpleDatePicker from '../../../SimpleDatePicker';
 import { HenkiloCreate } from '../../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { Locale } from '../../../../../types/locale.type';
 import { Koodisto } from '../../../../../types/domain/koodisto/koodisto.types';
 import PropertySingleton from '../../../../../globals/PropertySingleton';
-import KoodistoSelect from '../../../../common/select/KoodistoSelect';
+import { KoodistoSelect } from '../../../../common/select/KoodistoSelect';
 import KielisyysSelect from '../../../../common/select/KielisyysSelect';
-import KansalaisuusMultiSelect from '../../../../common/select/KansalaisuusMultiSelect';
 import { isValidKutsumanimi } from '../../../../../validation/KutsumanimiValidator';
 import { Localisations } from '../../../../../types/localisation.type';
 import LoaderWithText from '../../../../common/loadingbar/LoaderWithText';
 import { EMAIL } from '../../../../../types/constants';
+import { toLocalizedText } from '../../../../../localizabletext';
+import { Kielisyys } from '../../../../../types/domain/oppijanumerorekisteri/kielisyys.types';
 
 type Error = {
     name: string;
@@ -165,19 +168,32 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
                 </div>
                 <div className="oph-field oph-field-is-required">
                     <label className="oph-label">{this.props.L['HENKILO_KANSALAISUUS']}</label>
-                    <KansalaisuusMultiSelect
+                    <Select
+                        options={this.props.kansalaisuusKoodisto
+                            ?.map((k) => ({
+                                value: k.koodiArvo,
+                                label: toLocalizedText(this.props.locale, k.metadata, k.koodiArvo),
+                            }))
+                            .sort((a, b) => a.label.localeCompare(b.label))}
+                        onChange={(values) =>
+                            this.onHenkiloChange({
+                                name: 'kansalaisuus',
+                                value: values.map((v) => ({ kansalaisuusKoodi: v.value })),
+                            })
+                        }
+                        value={this.props.kansalaisuusKoodisto
+                            ?.map((k) => ({
+                                value: k.koodiArvo,
+                                label: toLocalizedText(this.props.locale, k.metadata, k.koodiArvo),
+                            }))
+                            .filter((k) =>
+                                this.state.henkilo.kansalaisuus?.find((kans) => kans.kansalaisuusKoodi === k.value)
+                            )}
+                        isMulti={true}
                         className={classNames({
                             'oph-input-has-error': this.isSubmittedAndHasError('kansalaisuus'),
                         })}
                         placeholder={this.props.L['HENKILO_KANSALAISUUS']}
-                        koodisto={this.props.kansalaisuusKoodisto}
-                        value={this.state.henkilo.kansalaisuus}
-                        onChange={(value) =>
-                            this.onHenkiloChange({
-                                name: 'kansalaisuus',
-                                value: value,
-                            })
-                        }
                     />
                     {this.renderErrors('kansalaisuus')}
                 </div>
@@ -232,7 +248,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
         });
     };
 
-    onHenkiloChange = (event: { name: string; value: any }) => {
+    onHenkiloChange = (event: { name: string; value: string | Kielisyys | { kansalaisuusKoodi: string }[] }) => {
         const henkilo = { ...this.state.henkilo, [event.name]: event.value };
         const state: State = {
             ...this.state,

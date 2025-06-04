@@ -1,13 +1,14 @@
 import React from 'react';
-import type { Option, Options } from 'react-select';
+import Select from 'react-select';
+
 import OrganisaatioSelectModal from '../../common/select/OrganisaatioSelectModal';
 import ItemList from '../../kayttooikeusryhmat/kayttooikeusryhma/ItemList';
-import OphSelect from '../../common/select/OphSelect';
 import Button from '../../common/button/Button';
 import DownloadIcon from '../../common/icons/DownloadIcon';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
-import './AccessRightsReportControls.css';
 import { useLocalisations } from '../../../selectors';
+
+import './AccessRightsReportControls.css';
 
 type Props = {
     disabled: boolean;
@@ -34,7 +35,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
         setOid(selectedOrganisation[0] && selectedOrganisation[0].oid);
     }, [setOid, selectedOrganisation]);
 
-    const filterOptions: Options<string> = filterValues.map((name) => ({ label: name, value: name }));
+    const filterOptions = filterValues.map((name) => ({ label: name, value: name }));
 
     return (
         <div>
@@ -51,12 +52,12 @@ const AccessRightsReportControls: React.FC<Props> = ({
             {filterOptions.length > 1 && (
                 <div className="flex-horizontal access-right-report-controls-row">
                     <div className="flex-item-1 ">
-                        <OphSelect
+                        <Select
                             options={filterOptions}
                             placeholder={L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
-                            value={filter}
-                            clearable
-                            onChange={(option: Option<string>) => setFilter(option && option.value)}
+                            value={filterOptions.find((o) => o.value === filter)}
+                            onChange={(option) => setFilter(option.value)}
+                            isClearable
                         />
                     </div>
                 </div>

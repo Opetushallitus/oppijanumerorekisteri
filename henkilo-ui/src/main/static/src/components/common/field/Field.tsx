@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
-import OphSelect from '../select/OphSelect';
 import moment from 'moment';
+
 import SimpleDatePicker from '../../henkilo/SimpleDatePicker';
 import { validateEmail } from '../../../validation/EmailValidator';
 
@@ -9,7 +9,6 @@ type Props = {
     readOnly: boolean;
     changeAction: (arg0: any) => void;
     inputValue?: string;
-    selectValue?: string | string[];
     password?: boolean;
     isEmail?: boolean;
     className?: string;
@@ -17,11 +16,8 @@ type Props = {
     autofocus?: boolean;
     placeholder?: string;
     isError?: boolean;
-    data?: any;
     date?: string | boolean;
     children: string;
-    clearable?: boolean;
-    multiselect?: boolean;
 };
 
 type State = {
@@ -43,7 +39,7 @@ class Field extends React.Component<Props, State> {
         const classNamesCreator = {
             field: true,
             readOnly: this.props.readOnly,
-            'oph-input': !this.props.readOnly && !this.props.data,
+            'oph-input': !this.props.readOnly,
             'oph-input-has-error': this.props.isError || this.state.inputError,
         };
         if (this.props.className) {
@@ -66,22 +62,7 @@ class Field extends React.Component<Props, State> {
         if (this.props.readOnly) {
             return <span className={className}>{this.getReadOnlyValue()}</span>;
         }
-        if (this.props.data) {
-            return (
-                <OphSelect
-                    className={className}
-                    options={this.props.data}
-                    name={this.props.inputValue}
-                    onChange={this.props.changeAction}
-                    value={this.props.selectValue}
-                    placeholder=""
-                    disabled={this.props.disabled}
-                    clearable={this.props.clearable}
-                    multiselect={this.props.multiselect}
-                />
-            );
-        }
-        if (this.props.date) {
+        if (this.props.date && this.props.children) {
             return (
                 <SimpleDatePicker
                     className="oph-input"
@@ -123,28 +104,6 @@ class Field extends React.Component<Props, State> {
     }
 
     getReadOnlyValue() {
-        if (this.props.data) {
-            const selected =
-                this.props.multiselect && Array.isArray(this.props.selectValue)
-                    ? this.props.data.filter(
-                          (item) =>
-                              Array.isArray(this.props.selectValue) &&
-                              this.props.selectValue.some((selectValue) => selectValue === item.value)
-                      )
-                    : this.props.data.find((item) => item.value === this.props.selectValue);
-            return (
-                selected &&
-                (this.props.multiselect ? (
-                    <ul>
-                        {selected.map((selectValue, idx) => (
-                            <li key={idx}>{selectValue.label}</li>
-                        ))}
-                    </ul>
-                ) : (
-                    selected.label
-                ))
-            );
-        }
         return this.props.date && this.props.children ? moment(this.props.children).format() : this.props.children;
     }
 }

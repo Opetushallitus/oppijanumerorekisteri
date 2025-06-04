@@ -1,4 +1,4 @@
-import type { Option } from 'react-select';
+import { SelectOption } from '../utilities/select';
 
 export type OrganisaatioSelectObject = {
     oid: string;
@@ -9,7 +9,7 @@ export type OrganisaatioSelectObject = {
     status: string;
 };
 
-export type RyhmaSelectObject = Option<string>;
+export type RyhmaSelectObject = SelectOption;
 
 export function isOrganisaatioSelection(
     selection: OrganisaatioSelectObject | RyhmaSelectObject

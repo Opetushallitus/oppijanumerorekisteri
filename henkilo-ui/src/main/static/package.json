@@ -26,10 +26,9 @@
         "react-redux": "^8.1.3",
         "react-router": "3.2.6",
         "react-router-redux": "4.0.8",
-        "react-select-fast-filter-options": "0.2.3",
-        "react-virtualized": "^9.22.5",
-        "react-virtualized-select": "^3.1.3",
+        "react-select": "5.10.1",
         "react-visibility-sensor": "^5.1.1",
+        "react-window": "1.8.11",
         "universal-cookie": "7.2.2"
     },
     "devDependencies": {
@@ -44,7 +43,7 @@
         "@types/react-datepicker": "^4.19.6",
         "@types/react-dom": "^16",
         "@types/react-router-redux": "^4.0.55",
-        "@types/react-virtualized-select": "^3.0.16",
+        "@types/react-window": "1.8.8",
         "@typescript-eslint/eslint-plugin": "^8.18.0",
         "@typescript-eslint/parser": "^8.18.0",
         "browserslist": "^4.24.2",
@@ -88,13 +87,5 @@
     ],
     "engines": {
         "node": "^20"
-    },
-    "overrides": {
-        "@types/react-virtualized": {
-            "@types/react": "@types/react"
-        },
-        "@types/react-virtualized-select": {
-            "@types/react": "@types/react"
-        }
     }
 }

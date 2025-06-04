@@ -1,9 +1,11 @@
 import React from 'react';
-import './BasicinfoForm.css';
-import OphSelect from '../common/select/OphSelect';
-import type { Option } from 'react-select';
+import Select from 'react-select';
+
 import { Localisations } from '../../types/localisation.type';
 import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
+
+import './BasicinfoForm.css';
+import { SelectOption } from '../../utilities/select';
 
 type Props = {
     disabled: boolean;
@@ -62,10 +64,10 @@ export default class BasicinfoForm extends React.Component<Props> {
                     </li>
                     <li>
                         <label>{this.props.L['VIRKAILIJAN_TIEDOT_ASIOINTIKIELI']}</label>
-                        <OphSelect
+                        <Select
                             name="languageSelection"
-                            disabled={this.props.disabled}
-                            value={basicInfo.languageCode}
+                            isDisabled={this.props.disabled}
+                            value={languageOptions.find((l) => l.value === basicInfo.languageCode)}
                             options={languageOptions}
                             onChange={this.selectLanguage.bind(this)}
                         />
@@ -109,7 +111,7 @@ export default class BasicinfoForm extends React.Component<Props> {
         this.props.setBasicInfo(basicInfo);
     }
 
-    selectLanguage(selection: Option<string>) {
+    selectLanguage(selection: SelectOption) {
         const { basicInfo } = this.props;
         basicInfo.languageCode = selection.value;
         this.props.setBasicInfo(basicInfo);
