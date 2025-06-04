@@ -148,7 +148,7 @@ export const Identifications = ({ oid }: Props) => {
                         <div style={{ marginTop: '1rem' }}>
                             <label htmlFor="newIdentifier">{L['TUNNISTEET_IDPENTITYID']}</label>
                             <Select
-                                id="newIdpEntityId"
+                                inputId="newIdpEntityId"
                                 options={idpEntityIdOptions}
                                 onChange={(option) => setNewIdpEntityId(option.value)}
                                 value={idpEntityIdOptions.find((o) => o.value === newIdpEntityId)}
