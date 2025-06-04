@@ -14,13 +14,15 @@ import { Kayttooikeusryhma, MyonnettyKayttooikeusryhma } from '../../types/domai
 import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
 import SimpleDatePicker from '../henkilo/SimpleDatePicker';
 import CrossCircleIcon from '../common/icons/CrossCircleIcon';
-import type { OrganisaatioNameLookup } from '../../reducers/organisaatio.reducer';
 import { useLocalisations } from '../../selectors';
 import { isOrganisaatioSelection, OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
-import { useGetAllowedKayttooikeusryhmasForOrganisationQuery } from '../../api/kayttooikeus';
+import {
+    useGetAllowedKayttooikeusryhmasForOrganisationQuery,
+    useGetOrganisationNamesQuery,
+} from '../../api/kayttooikeus';
+import { SelectOption } from '../../utilities/select';
 
 import './AddedOrganization.css';
-import { SelectOption } from '../../utilities/select';
 
 type OwnProps = {
     addedOrg: KutsuOrganisaatio;
@@ -32,7 +34,7 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
     const { L, locale } = useLocalisations();
     const oidHenkilo = useSelector<RootState, string>((state) => state.omattiedot?.data.oid);
     const omatOrganisaatios = useSelector<RootState, OrganisaatioHenkilo[]>((state) => state.omattiedot.organisaatios);
-    const organisationNames = useSelector<RootState, OrganisaatioNameLookup>((state) => state.organisaatio.names);
+    const { data: organisationNames } = useGetOrganisationNamesQuery();
     const selectedOrganisaatioOid = addedOrg.organisation?.oid;
     const { data: allPermissions, isLoading } = useGetAllowedKayttooikeusryhmasForOrganisationQuery(
         { oidHenkilo, oidOrganisaatio: selectedOrganisaatioOid },

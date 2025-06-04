@@ -24,9 +24,8 @@ import { OrganisaatioWithChildren } from '../../../types/domain/organisaatio/org
 import type { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { useLocalisations } from '../../../selectors';
-import { OrganisaatioState } from '../../../reducers/organisaatio.reducer';
 import { OrganisaatioKayttooikeusryhmatState } from '../../../reducers/organisaatiokayttooikeusryhmat.reducer';
-import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
+import { useGetOmattiedotQuery, useGetRootOrganisationQuery } from '../../../api/kayttooikeus';
 import { FastMenuList, SelectOption } from '../../../utilities/select';
 
 import './HenkiloViewCreateKayttooikeusanomus.css';
@@ -58,7 +57,6 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
     const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
-    const organisaatio = useSelector<RootState, OrganisaatioState>((state) => state.organisaatio);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const organisaatioKayttooikeusryhmat = useSelector<RootState, OrganisaatioKayttooikeusryhmatState>(
         (state) => state.OrganisaatioKayttooikeusryhmat
@@ -69,6 +67,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
     const [kayttooikeusryhmaSelections, setKayttooikeusryhmaSelections] = useState<KayttooikeusryhmaSelection[]>([]);
     const [perustelut, setPerustelut] = useState<string>();
     const [emailOptions, setEmailOptions] = useState(createEmailOptions(henkilo));
+    const { data: rootOrganisation, isLoading: isRootOrganisationLoading } = useGetRootOrganisationQuery();
 
     const ryhmaOptions = useMemo(() => {
         const options = [...props.ryhmaOptions];
@@ -246,8 +245,8 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
                             readOnly
                         />
                         <OrganisaatioSelectModal
-                            organisaatiot={flatten(organisaatio.organisaatioHierarkia)}
-                            disabled={organisaatio.organisaatioHierarkiaLoading}
+                            organisaatiot={flatten(rootOrganisation)}
+                            disabled={isRootOrganisationLoading}
                             onSelect={_changeOrganisaatioSelection}
                         />
                     </div>

@@ -24,6 +24,8 @@ import { KutsututSearchParams } from '../components/kutsutut/KutsututPage';
 import { Kayttooikeusryhma, MyonnettyKayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { Palvelu } from '../types/domain/kayttooikeus/palvelu.types';
 import { PalveluKayttooikeus } from '../types/domain/kayttooikeus/palvelukayttooikeus.types';
+import { OrganisaatioWithChildren } from '../types/domain/organisaatio/organisaatio.types';
+import { OrganisaatioNameLookup } from '../reducers/organisaatio.reducer';
 
 type MfaSetupResponse = {
     secretKey: string;
@@ -100,7 +102,7 @@ export const kayttooikeusApi = createApi({
     }),
     tagTypes: [
         'omattiedot',
-        'organisaatiot',
+        'omatorganisaatiot',
         'kutsuByToken',
         'accessRightReport',
         'palvelukayttajat',
@@ -114,6 +116,9 @@ export const kayttooikeusApi = createApi({
         'palvelut',
         'palvelukayttoooikeudet',
         'kayttooikeusryhmat',
+        'organisaatioryhmat',
+        'rootorganisation',
+        'organisationnames',
     ],
     endpoints: (builder) => ({
         getOmattiedot: builder.query<Omattiedot, void>({
@@ -134,7 +139,7 @@ export const kayttooikeusApi = createApi({
                 const { data } = await queryFulfilled;
                 dispatch({ type: FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS, organisaatios: data, locale });
             },
-            providesTags: ['organisaatiot'],
+            providesTags: ['omatorganisaatiot'],
         }),
         getMfaSetup: builder.query<MfaSetupResponse, void>({
             query: () => 'mfasetup/gauth/setup',
@@ -305,6 +310,22 @@ export const kayttooikeusApi = createApi({
             }),
             providesTags: ['kayttooikeusryhmat'],
         }),
+        getOrganisaatioRyhmat: builder.query<OrganisaatioWithChildren[], void>({
+            query: () => `organisaatio?${new URLSearchParams({ tyyppi: 'RYHMA' }).toString()}`,
+            providesTags: ['organisaatioryhmat'],
+        }),
+        getRootOrganisation: builder.query<OrganisaatioWithChildren, void>({
+            query: () => {
+                const params = new URLSearchParams({ tyyppi: 'ORGANISAATIO', tila: 'AKTIIVINEN' });
+                params.append('tila', 'SUUNNITELTU');
+                return `organisaatio/root?${params.toString()}`;
+            },
+            providesTags: ['rootorganisation'],
+        }),
+        getOrganisationNames: builder.query<OrganisaatioNameLookup, void>({
+            query: () => 'organisaatio/names',
+            providesTags: ['organisationnames'],
+        }),
     }),
 });
 
@@ -332,4 +353,7 @@ export const {
     useGetPalvelutQuery,
     useGetPalveluKayttooikeudetQuery,
     useGetKayttooikeusryhmasQuery,
+    useGetOrganisaatioRyhmatQuery,
+    useGetRootOrganisationQuery,
+    useGetOrganisationNamesQuery,
 } = kayttooikeusApi;

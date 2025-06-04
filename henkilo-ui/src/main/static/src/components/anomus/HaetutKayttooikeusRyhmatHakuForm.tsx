@@ -1,21 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
 import Select, { createFilter } from 'react-select';
 
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup';
 import CloseButton from '../common/button/CloseButton';
 import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
-import { RyhmatState } from '../../reducers/ryhmat.reducer';
 import {
     GetHaetutKayttooikeusryhmatRequest,
     useGetKayttooikeusryhmasQuery,
     useGetOmattiedotQuery,
+    useGetOrganisaatioRyhmatQuery,
 } from '../../api/kayttooikeus';
 import { useLocalisations } from '../../selectors';
-import { RootState } from '../../store';
 import { useDebounce } from '../../useDebounce';
-import { parseRyhmaOptions } from '../../utilities/organisaatio.util';
 import { FastMenuList, SelectOption } from '../../utilities/select';
 
 import styles from './HaetutKayttooikeusRyhmatHakuForm.module.css';
@@ -31,9 +28,9 @@ const HaetutKayttooikeusRyhmatHakuForm = ({ onSubmit }: OwnProps) => {
     const [naytaKaikki, setNaytaKaikki] = useState(false);
     const [selectedOrganisaatio, setSelectedOrganisaatio] = useState<OrganisaatioSelectObject>();
     const [selectedRyhma, setSelectedRyhma] = useState<string>();
-    const ryhmat = useSelector<RootState, RyhmatState>((state) => state.ryhmatState);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: kayttooikeusryhmat } = useGetKayttooikeusryhmasQuery({ passiiviset: false });
+    const { data: ryhmat } = useGetOrganisaatioRyhmatQuery();
     const [kayttooikeusryhmaFilter, setKayttooikeusryhmaFilter] = useState('');
     const debouncedKayttooikeusryhmaFilter = useDebounce(kayttooikeusryhmaFilter, 500);
 
@@ -81,7 +78,12 @@ const HaetutKayttooikeusRyhmatHakuForm = ({ onSubmit }: OwnProps) => {
     };
 
     const ryhmaOptions = useMemo(() => {
-        return parseRyhmaOptions(ryhmat, locale);
+        return (ryhmat ?? [])
+            .map((ryhma) => ({
+                label: ryhma.nimi[locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
+                value: ryhma.oid,
+            }))
+            .sort((a, b) => a.label.localeCompare(b.label));
     }, [ryhmat, locale]);
 
     return (
