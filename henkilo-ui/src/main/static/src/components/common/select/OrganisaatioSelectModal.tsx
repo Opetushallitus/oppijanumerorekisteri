@@ -1,19 +1,19 @@
 import React, { useMemo, useState } from 'react';
 import { compose, last, partition, prop, sortBy, toLower } from 'ramda';
+import { useSelector } from 'react-redux';
+import { FixedSizeList, ListChildComponentProps } from 'react-window';
 
 import type { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import type { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import type { RootState } from '../../../store';
-import { List, ListRowProps } from 'react-virtualized';
 import { useLocalisations, useOmatOrganisaatiot } from '../../../selectors';
-import { useSelector } from 'react-redux';
 import { OrganisaatioNameLookup } from '../../../reducers/organisaatio.reducer';
 import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../../utilities/organisaatio.util';
-
-import './OrganisaatioSelect.css';
 import ValidationMessageButton from '../button/ValidationMessageButton';
 import { SpinnerInButton } from '../icons/SpinnerInButton';
 import OphModal from '../modal/OphModal';
+
+import './OrganisaatioSelect.css';
 
 type OwnProps = {
     organisaatiot?: OrganisaatioHenkilo[];
@@ -41,7 +41,7 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
     }, [props.organisaatiot, omattiedotOrganisations, organisationNames, locale]);
     const isDisabled = props.disabled || !(props.organisaatiot ?? omattiedotOrganisations)?.length;
 
-    const _renderRow = (renderParams: ListRowProps) => {
+    const _renderRow = (renderParams: ListChildComponentProps) => {
         const organisaatio: OrganisaatioSelectObject = organisations[renderParams.index];
         return (
             <div
@@ -142,20 +142,22 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
                     <div className="organisaatio-select">
                         <p className="oph-h3">{L['OMATTIEDOT_ORGANISAATIO_VALINTA']}</p>
                         <input
+                            name="org"
                             className="oph-input"
                             placeholder={L['OMATTIEDOT_RAJAA_LISTAUSTA']}
                             type="text"
                             value={searchWord}
                             onChange={onFilter}
                         />
-                        <List
-                            className={'organisaatio-select-list'}
-                            rowCount={organisations.length}
-                            rowRenderer={_renderRow}
+                        <FixedSizeList
+                            className="organisaatio-select-list"
+                            itemCount={organisations.length}
                             width={656}
                             height={700}
-                            rowHeight={70}
-                        />
+                            itemSize={70}
+                        >
+                            {_renderRow}
+                        </FixedSizeList>
                     </div>
                 </OphModal>
             )}

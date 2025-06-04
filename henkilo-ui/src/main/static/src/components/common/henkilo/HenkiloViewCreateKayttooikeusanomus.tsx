@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import type { Option } from 'react-select';
+import Select, { createFilter } from 'react-select';
 
 import { useAppDispatch, type RootState } from '../../../store';
-import OphSelect from '../select/OphSelect';
 import Button from '../button/Button';
 import IconButton from '../button/IconButton';
 import CrossCircleIcon from '../icons/CrossCircleIcon';
@@ -28,6 +27,7 @@ import { useLocalisations } from '../../../selectors';
 import { OrganisaatioState } from '../../../reducers/organisaatio.reducer';
 import { OrganisaatioKayttooikeusryhmatState } from '../../../reducers/organisaatiokayttooikeusryhmat.reducer';
 import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
+import { FastMenuList, SelectOption } from '../../../utilities/select';
 
 import './HenkiloViewCreateKayttooikeusanomus.css';
 
@@ -44,7 +44,7 @@ type KayttooikeusryhmaSelection = {
 
 type SelectionState = {
     selectedOid?: string;
-    ryhmaSelection?: Option<string>;
+    ryhmaSelection?: SelectOption;
     organisaatioSelection?: OrganisaatioSelectObject;
 };
 
@@ -114,7 +114,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
         dispatch<any>(fetchOrganisaatioKayttooikeusryhmat(organisaatioSelection.oid));
     }
 
-    function _changeRyhmaSelection(ryhmaSelection: Option<string>) {
+    function _changeRyhmaSelection(ryhmaSelection: SelectOption) {
         setSelectionState({
             selectedOid: ryhmaSelection.value,
             organisaatioSelection: undefined,
@@ -256,12 +256,14 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
                 <div className="oph-field oph-field-inline">
                     <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text" />
                     <div className="oph-input-container">
-                        <OphSelect
+                        <Select
                             onChange={_changeRyhmaSelection}
                             options={ryhmaOptions}
-                            value={selectionState.ryhmaSelection?.value}
+                            components={{ MenuList: FastMenuList }}
+                            filterOption={createFilter({ ignoreAccents: false })}
+                            value={selectionState.ryhmaSelection}
                             placeholder={L['OMATTIEDOT_ANOMINEN_RYHMA']}
-                            disabled={emailOptions.missingEmail}
+                            isDisabled={emailOptions.missingEmail}
                         />
                     </div>
                 </div>
@@ -277,15 +279,13 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
                         </label>
 
                         <div className="oph-input-container">
-                            <OphSelect
+                            <Select
                                 placeholder={L['OMATTIEDOT_SAHKOPOSTI_VALINTA']}
                                 options={emailOptions.options}
-                                value={emailOptions.emailSelection}
+                                value={emailOptions.options.find((o) => o.value === emailOptions.emailSelection)}
                                 onChange={(selection) =>
                                     setEmailOptions({ ...emailOptions, emailSelection: selection.value })
                                 }
-                                onBlurResetsInput={false}
-                                noResultsText={L['OMATTIEDOT_HAE_OLEMASSAOLEVA_SAHKOPOSTI']}
                             />
                         </div>
                     </div>

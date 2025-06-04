@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import type { Options } from 'react-select';
 
 import ItemList from './ItemList';
 import './KayttooikeusryhmanOrganisaatiorajoite.css';
@@ -27,16 +26,14 @@ type Props = {
 const KayttooikeusryhmanOrganisaatiorajoite = (props: Props) => {
     const { L, locale } = useLocalisations();
     const koodisto = useSelector<RootState, KoodistoState>((state) => state.koodisto);
-    const oppilaitostyypitOptions: Options<string> = koodisto.oppilaitostyypit.map((oppilaitostyyppi) => ({
+    const oppilaitostyypitOptions = koodisto.oppilaitostyypit.map((oppilaitostyyppi) => ({
         label: oppilaitostyyppi[locale],
         value: oppilaitostyyppi.koodiUri,
     }));
-    const organisaatiotyypitOptions: Options<string> = koodisto.organisaatiotyyppiKoodisto.map(
-        (organisaatiotyyppi) => ({
-            label: toLocalizedText(locale, organisaatiotyyppi.metadata) || organisaatiotyyppi.koodiUri,
-            value: organisaatiotyyppi.koodiUri,
-        })
-    );
+    const organisaatiotyypitOptions = koodisto.organisaatiotyyppiKoodisto.map((organisaatiotyyppi) => ({
+        label: toLocalizedText(locale, organisaatiotyyppi.metadata) || organisaatiotyyppi.koodiUri,
+        value: organisaatiotyyppi.koodiUri,
+    }));
 
     return (
         <div className="kayttooikeusryhman-myonto-kohde">

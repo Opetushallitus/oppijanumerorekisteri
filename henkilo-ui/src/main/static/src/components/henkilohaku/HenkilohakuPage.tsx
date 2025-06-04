@@ -2,7 +2,6 @@ import './HenkilohakuPage.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, Row, SortingState } from '@tanstack/react-table';
 import { Link } from 'react-router';
-import { Option } from 'react-select';
 
 import HenkilohakuFilters from './HenkilohakuFilters';
 import StaticUtils from '../common/StaticUtils';
@@ -21,6 +20,7 @@ import { RootState, useAppDispatch } from '../../store';
 import { updateFilters } from '../../actions/henkilohaku.actions';
 import { useGetHenkiloHakuCountQuery, useGetHenkiloHakuQuery } from '../../api/kayttooikeus';
 import { useDebounce } from '../../useDebounce';
+import { SelectOption } from '../../utilities/select';
 
 const HenkilohakuPage = () => {
     const dispatch = useAppDispatch();
@@ -54,9 +54,9 @@ const HenkilohakuPage = () => {
         });
     }, [sorting]);
 
-    const selectRyhmaOid = (option: Option<string>) => {
-        setRyhmaOid(option.value);
-        setCriteria({ ...criteria, organisaatioOids: option.value ? [option.value] : undefined });
+    const selectRyhmaOid = (option?: SelectOption) => {
+        setRyhmaOid(option?.value);
+        setCriteria({ ...criteria, organisaatioOids: option?.value ? [option.value] : undefined });
     };
 
     const columns = useMemo<ColumnDef<HenkilohakuResult, HenkilohakuResult>[]>(
@@ -129,8 +129,8 @@ const HenkilohakuPage = () => {
                 selectedRyhma={ryhmaOid}
                 ryhmaSelectionAction={selectRyhmaOid}
                 selectedKayttooikeus={criteria.kayttooikeusryhmaId}
-                kayttooikeusSelectionAction={(option: Option<string>) =>
-                    setCriteria({ ...criteria, kayttooikeusryhmaId: option.value })
+                kayttooikeusSelectionAction={(option: SelectOption) =>
+                    setCriteria({ ...criteria, kayttooikeusryhmaId: option?.value })
                 }
             />
             <div className="oph-h3 oph-bold henkilohaku-result-header">

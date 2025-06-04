@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import type { Option } from 'react-select';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import Select, { createFilter } from 'react-select';
 
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup';
 import CloseButton from '../common/button/CloseButton';
-import OphSelect from '../common/select/OphSelect';
 import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import { RyhmatState } from '../../reducers/ryhmat.reducer';
@@ -17,6 +16,7 @@ import { useLocalisations } from '../../selectors';
 import { RootState } from '../../store';
 import { useDebounce } from '../../useDebounce';
 import { parseRyhmaOptions } from '../../utilities/organisaatio.util';
+import { FastMenuList, SelectOption } from '../../utilities/select';
 
 import styles from './HaetutKayttooikeusRyhmatHakuForm.module.css';
 
@@ -67,7 +67,7 @@ const HaetutKayttooikeusRyhmatHakuForm = ({ onSubmit }: OwnProps) => {
         onSubmit({ organisaatioOids: organisaatio.oid });
     };
 
-    const onRyhmaChange = (ryhma?: Option<string>) => {
+    const onRyhmaChange = (ryhma?: SelectOption) => {
         const ryhmaOid = ryhma ? ryhma.value : undefined;
         setSelectedOrganisaatio(undefined);
         setSelectedRyhma(ryhmaOid);
@@ -79,6 +79,10 @@ const HaetutKayttooikeusRyhmatHakuForm = ({ onSubmit }: OwnProps) => {
         setNaytaKaikki(naytaKaikki);
         onSubmit({ adminView: String(!naytaKaikki) });
     };
+
+    const ryhmaOptions = useMemo(() => {
+        return parseRyhmaOptions(ryhmat, locale);
+    }, [ryhmat, locale]);
 
     return (
         <form>
@@ -119,19 +123,16 @@ const HaetutKayttooikeusRyhmatHakuForm = ({ onSubmit }: OwnProps) => {
 
             {(omattiedot?.isAdmin || omattiedot?.isMiniAdmin) && (
                 <div className={styles.selectRow}>
-                    <span className="flex-item-1">
-                        <OphSelect
-                            id="ryhmafilter"
-                            options={parseRyhmaOptions(ryhmat, locale)}
-                            value={selectedRyhma}
-                            placeholder={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_RYHMA']}
-                            onChange={onRyhmaChange}
-                            maxHeight={400}
-                        />
-                    </span>
-                    <span className="haetut-kayttooikeusryhmat-close-button">
-                        <CloseButton closeAction={() => onRyhmaChange(undefined)} />
-                    </span>
+                    <Select
+                        id="ryhmafilter"
+                        options={ryhmaOptions}
+                        components={{ MenuList: FastMenuList }}
+                        filterOption={createFilter({ ignoreAccents: false })}
+                        value={ryhmaOptions.find((o) => o.value === selectedRyhma)}
+                        placeholder={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_RYHMA']}
+                        onChange={onRyhmaChange}
+                        isClearable
+                    />
                 </div>
             )}
         </form>

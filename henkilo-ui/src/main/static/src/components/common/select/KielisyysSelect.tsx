@@ -1,7 +1,7 @@
 import React from 'react';
 import { Koodisto } from '../../../types/domain/koodisto/koodisto.types';
 import { Kielisyys } from '../../../types/domain/oppijanumerorekisteri/kielisyys.types';
-import KoodistoSelect from './KoodistoSelect';
+import { KoodistoSelect } from './KoodistoSelect';
 
 type KielisyysSelectProps = {
     className?: string;

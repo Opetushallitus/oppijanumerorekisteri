@@ -1,14 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../../../store';
 import { Link } from 'react-router';
+
+import type { RootState } from '../../../../store';
 import { fetchHenkilo, fetchHenkiloMaster, unlinkHenkilo } from '../../../../actions/henkilo.actions';
-import LabelValue from './LabelValue';
 import TextButton from '../../button/TextButton';
 import { Localisations } from '../../../../types/localisation.type';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { KayttooikeusOrganisaatiot } from '../../../../types/domain/kayttooikeus/KayttooikeusPerustiedot.types';
 import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
+import { FieldlessLabelValue } from './FieldlessLabelValue';
 
 type OwnProps = {
     oidHenkilo: string;
@@ -39,43 +40,34 @@ class MasterHenkilo extends React.Component<Props> {
             'HENKILONHALLINTA_OPHREKISTERI',
             'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
         ]);
-        return (
-            <div>
-                {!this.props.isLoading &&
-                this.props.henkilo.master.oidHenkilo &&
-                this.props.oidHenkilo !== this.props.henkilo.master.oidHenkilo ? (
-                    <LabelValue
-                        values={{
-                            value: (
-                                <div className="nowrap">
-                                    <Link to={this.getLinkHref(this.props.henkilo.master.oidHenkilo)}>
-                                        {this.props.henkilo.master.kutsumanimi +
-                                            ' ' +
-                                            this.props.henkilo.master.sukunimi}
-                                    </Link>
-                                    {hasPermission && (
-                                        <span>
-                                            <span> | </span>
-                                            <TextButton
-                                                action={this.removeLink.bind(
-                                                    this,
-                                                    this.props.henkilo.master.oidHenkilo,
-                                                    this.props.oidHenkilo
-                                                )}
-                                            >
-                                                {this.props.L['HENKILO_POISTA_LINKITYS']}
-                                            </TextButton>
-                                        </span>
-                                    )}
-                                </div>
-                            ),
-                            label: 'HENKILO_LINKITETYT_MASTER',
-                        }}
-                        readOnly
-                    />
-                ) : null}
-            </div>
-        );
+        const renderLinkitetyt =
+            !this.props.isLoading &&
+            this.props.henkilo.master.oidHenkilo &&
+            this.props.oidHenkilo !== this.props.henkilo.master.oidHenkilo;
+
+        return renderLinkitetyt ? (
+            <FieldlessLabelValue label="HENKILO_LINKITETYT_MASTER" readOnly>
+                <div className="nowrap">
+                    <Link to={this.getLinkHref(this.props.henkilo.master.oidHenkilo)}>
+                        {this.props.henkilo.master.kutsumanimi + ' ' + this.props.henkilo.master.sukunimi}
+                    </Link>
+                    {hasPermission && (
+                        <span>
+                            <span> | </span>
+                            <TextButton
+                                action={this.removeLink.bind(
+                                    this,
+                                    this.props.henkilo.master.oidHenkilo,
+                                    this.props.oidHenkilo
+                                )}
+                            >
+                                {this.props.L['HENKILO_POISTA_LINKITYS']}
+                            </TextButton>
+                        </span>
+                    )}
+                </div>
+            </FieldlessLabelValue>
+        ) : null;
     }
 
     getLinkHref(oid: string) {

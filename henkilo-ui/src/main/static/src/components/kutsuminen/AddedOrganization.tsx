@@ -2,7 +2,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { difference } from 'ramda';
 import moment from 'moment';
-import type { Option } from 'react-select';
 
 import type { RootState } from '../../store';
 import { toLocalizedText } from '../../localizabletext';
@@ -21,6 +20,7 @@ import { isOrganisaatioSelection, OrganisaatioSelectObject } from '../../types/o
 import { useGetAllowedKayttooikeusryhmasForOrganisationQuery } from '../../api/kayttooikeus';
 
 import './AddedOrganization.css';
+import { SelectOption } from '../../utilities/select';
 
 type OwnProps = {
     addedOrg: KutsuOrganisaatio;
@@ -59,7 +59,7 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
         updateOrganisation({ ...addedOrg, selectedPermissions });
     }
 
-    function selectOrganisaatio(selection: OrganisaatioSelectObject | Option<string>) {
+    function selectOrganisaatio(selection: OrganisaatioSelectObject | SelectOption) {
         if (!selection) {
             return;
         }

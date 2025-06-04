@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import Select from 'react-select';
 
 import OphTable from '../OphTable';
 import {
@@ -14,7 +15,6 @@ import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
 import { useAppDispatch } from '../../store';
 import { addGlobalNotification } from '../../actions/notification.actions';
 import OphModal from '../common/modal/OphModal';
-import OphSelect from '../common/select/OphSelect';
 import { useGetHenkilontunnistetyypitQuery } from '../../api/koodisto';
 import StaticUtils from '../common/StaticUtils';
 import Loader from '../common/icons/Loader';
@@ -147,11 +147,11 @@ export const Identifications = ({ oid }: Props) => {
                         </div>
                         <div style={{ marginTop: '1rem' }}>
                             <label htmlFor="newIdentifier">{L['TUNNISTEET_IDPENTITYID']}</label>
-                            <OphSelect
+                            <Select
                                 id="newIdpEntityId"
                                 options={idpEntityIdOptions}
                                 onChange={(option) => setNewIdpEntityId(option.value)}
-                                value={newIdpEntityId}
+                                value={idpEntityIdOptions.find((o) => o.value === newIdpEntityId)}
                             />
                         </div>
                         <Button

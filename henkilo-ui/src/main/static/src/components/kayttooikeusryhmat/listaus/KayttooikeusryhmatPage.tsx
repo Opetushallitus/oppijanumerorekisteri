@@ -7,13 +7,13 @@ import { useGetKayttooikeusryhmasQuery, useGetOmattiedotQuery } from '../../../a
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { localizeTextGroup } from '../../../utilities/localisation.util';
 import { OphDsPage } from '../../design-system/OphDsPage';
-
-import './KayttooikeusryhmatPage.css';
 import { OphDsInput } from '../../design-system/OphDsInput';
 import { OphDsChechbox } from '../../design-system/OphDsCheckbox';
 import { OphDsRadioGroup } from '../../design-system/OphDsRadio';
 import { OphDsAccordion } from '../../design-system/OphDsAccordion';
 import KayttooikeusryhmaTiedot from './KayttooikeusryhmaTiedot';
+
+import './KayttooikeusryhmatPage.css';
 
 const nimiFilter = (filter: string, locale: string) => (item: Kayttooikeusryhma) => {
     if (filter.length === 0) {
@@ -112,6 +112,7 @@ export const KayttooikeusryhmatPage = () => {
                         onChange={() => setShowPassives(!showPassives)}
                     />
                 </div>
+                <div></div>
             </section>
             <OphDsAccordion items={accordionItems} />
         </OphDsPage>

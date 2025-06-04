@@ -21,12 +21,14 @@ import PasswordButton from '../buttons/PasswordButton';
 import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
 import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
 import { KoodistoState } from '../../../../reducers/koodisto.reducer';
+import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
 
 type OwnProps = {
     readOnly: boolean;
     discardAction: () => void;
     updateAction: () => void;
     updateModelAction: () => void;
+    updateModelSelectAction: (o: NamedSelectOption | NamedMultiSelectOption) => void;
     updateDateAction: () => void;
     edit: () => void;
     henkiloUpdate: Henkilo;
@@ -68,6 +70,7 @@ class VirkailijaUserContent extends React.Component<Props> {
         const props = {
             readOnly: this.props.readOnly,
             updateModelFieldAction: this.props.updateModelAction,
+            updateModelSelectAction: this.props.updateModelSelectAction,
             updateDateFieldAction: this.props.updateDateAction,
             henkiloUpdate: this.props.henkiloUpdate,
         };
