@@ -7,7 +7,7 @@ import type { Localisations } from '../../../../types/localisation.type';
 type OwnProps = {
     disabled: boolean;
     isError: boolean;
-    updateModelFieldAction: (arg0: any) => void;
+    updateModelFieldAction: (arg0: React.SyntheticEvent<HTMLInputElement>) => void;
 };
 
 type StateProps = {

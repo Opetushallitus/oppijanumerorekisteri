@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { SortingState } from '@tanstack/react-table';
 
 import '../../oph-table.css';
@@ -9,7 +9,6 @@ import { KAYTTOOIKEUDENTILA, KayttooikeudenTila } from '../../globals/Kayttooike
 import { getEmptyKayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma.reducer';
 import { HenkilonNimi } from '../../types/domain/kayttooikeus/HenkilonNimi';
 import { useLocalisations } from '../../selectors';
-import { fetchAllOrganisaatios, fetchAllRyhmas } from '../../actions/organisaatio.actions';
 import { useAppDispatch } from '../../store';
 import {
     GetHaetutKayttooikeusryhmatRequest,
@@ -35,11 +34,6 @@ const AnomusPage = () => {
     });
     const { data, isLoading } = useGetHaetutKayttooikeusryhmatQuery(parameters);
     const [putHaettuKayttooikeusryhma] = usePutHaettuKayttooikeusryhmaMutation();
-
-    useEffect(() => {
-        dispatch<any>(fetchAllRyhmas());
-        dispatch<any>(fetchAllOrganisaatios());
-    }, []);
 
     function onSubmit(criteria: Partial<GetHaetutKayttooikeusryhmatRequest>) {
         const newParameters = { ...parameters, ...criteria };

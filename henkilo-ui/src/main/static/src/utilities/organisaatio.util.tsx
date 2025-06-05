@@ -1,5 +1,3 @@
-import { Options } from 'react-select';
-import createFilterOptions from 'react-select-fast-filter-options';
 import { findIndex, pathEq, sortBy, uniqBy } from 'ramda';
 
 import { toLocalizedText } from '../localizabletext';
@@ -9,7 +7,6 @@ import type { Locale } from '../types/locale.type';
 import type { OrganisaatioNameLookup } from '../reducers/organisaatio.reducer';
 import type { OrganisaatioSelectObject } from '../types/organisaatioselectobject.types';
 import { getLocalization } from './localisation.util';
-import { RyhmatState } from '../reducers/ryhmat.reducer';
 
 /*
  * Apufunktio kutsumaan organisaatioHierarkiaToOrganisaatioSelectObject:a käyttöoikeuspalvelusta haetuilla omilla organisaatioilla
@@ -193,30 +190,13 @@ const getOrganisationsOrRyhmas = (
         : organisaatios.filter((organisaatio) => organisaatio.tyypit.indexOf('Ryhma') === -1);
 };
 
-export const getOrganisaatioOptionsAndFilter = (
+export const getOrganisaatioOptions = (
     newOrganisaatios: OrganisaatioHenkilo[],
     locale: Locale,
     isRyhma: boolean
-): { options: Options<string>; filterOptions: ReturnType<createFilterOptions> } => {
+): { value: string; label: string }[] => {
     const newOptions = getOrganisationsOrRyhmas(getOrganisaatios(newOrganisaatios, locale), isRyhma).map(
         (organisaatio) => mapOrganisaatio(organisaatio, locale, !isRyhma)
     );
-    // update index (raskas operaatio)
-    const index = createFilterOptions({ options: newOptions });
-    return {
-        options: newOptions.sort((a, b) => a.label.localeCompare(b.label)),
-        filterOptions: index,
-    };
+    return newOptions.sort((a, b) => a.label.localeCompare(b.label));
 };
-
-export function parseRyhmaOptions(ryhmatState: RyhmatState, locale: string): Array<{ label: string; value: string }> {
-    const ryhmat = ryhmatState?.ryhmas;
-    return ryhmat
-        ? ryhmat
-              .map((ryhma) => ({
-                  label: ryhma.nimi[locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
-                  value: ryhma.oid,
-              }))
-              .sort((a, b) => a.label.localeCompare(b.label))
-        : [];
-}

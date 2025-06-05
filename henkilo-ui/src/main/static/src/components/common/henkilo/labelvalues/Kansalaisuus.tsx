@@ -1,24 +1,25 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
+import Select from 'react-select';
+
 import type { RootState } from '../../../../store';
-import LabelValue from './LabelValue';
 import StaticUtils from '../../StaticUtils';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { Locale } from '../../../../types/locale.type';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
-import type { Options } from 'react-select';
+import { KoodistoState } from '../../../../reducers/koodisto.reducer';
+import { NamedMultiSelectOption } from '../../../../utilities/select';
+import { FieldlessLabelValue } from './FieldlessLabelValue';
 
 type OwnProps = {
     henkiloUpdate: Henkilo;
     readOnly: boolean;
-    updateModelFieldAction: (arg0: any) => void;
+    updateModelSelectAction: (arg0: NamedMultiSelectOption) => void;
 };
 
 type StateProps = {
     henkilo: HenkiloState;
-    koodisto: {
-        kansalaisuus: Options<string>;
-    };
+    koodisto: KoodistoState;
     locale: Locale;
 };
 
@@ -27,38 +28,48 @@ type Props = OwnProps & StateProps;
 const Kansalaisuus = (props: Props) => {
     const kansalaisuus = props.henkiloUpdate.kansalaisuus || [];
     const disabled = StaticUtils.hasHetuAndIsYksiloity(props.henkilo);
+
+    const options = useMemo(() => {
+        return (
+            props.koodisto.kansalaisuus?.map((koodi) => ({
+                value: koodi.value,
+                label: koodi[props.locale],
+                optionsName: 'kansalaisuus',
+            })) ?? []
+        );
+    }, [kansalaisuus]);
     return (
         <div>
-            <LabelValue
-                readOnly={props.readOnly}
-                updateModelFieldAction={(newOption) => {
-                    if (newOption === null) {
-                        props.updateModelFieldAction({
-                            optionsName: 'kansalaisuus',
-                            value: [kansalaisuus],
-                        });
-                    } else {
-                        props.updateModelFieldAction({
-                            optionsName: 'kansalaisuus',
-                            value: newOption.map((kansalaisuusOption) => ({
-                                kansalaisuusKoodi: kansalaisuusOption.value,
-                            })),
-                        });
-                    }
-                }}
-                values={{
-                    label: 'HENKILO_KANSALAISUUS',
-                    data: props.koodisto.kansalaisuus.map((koodi) => ({
-                        value: koodi.value,
-                        label: koodi[props.locale],
-                        optionsName: 'kansalaisuus',
-                    })),
-                    selectValue: kansalaisuus.map((item) => item.kansalaisuusKoodi),
-                    disabled: disabled,
-                    clearable: false,
-                    multiselect: true,
-                }}
-            />
+            <FieldlessLabelValue readOnly={props.readOnly} label="HENKILO_KANSALAISUUS">
+                {props.readOnly ? (
+                    options
+                        .filter((o) => !!kansalaisuus.find((k) => k.kansalaisuusKoodi === o.value))
+                        .map((k) => k.label)
+                        .join(', ')
+                ) : (
+                    <Select
+                        options={options}
+                        isMulti={true}
+                        isDisabled={disabled}
+                        value={options.filter((o) => !!kansalaisuus.find((k) => k.kansalaisuusKoodi === o.value))}
+                        onChange={(newOption) => {
+                            if (newOption === null) {
+                                props.updateModelSelectAction({
+                                    optionsName: 'kansalaisuus',
+                                    value: kansalaisuus,
+                                });
+                            } else {
+                                props.updateModelSelectAction({
+                                    optionsName: 'kansalaisuus',
+                                    value: newOption.map((kansalaisuusOption) => ({
+                                        kansalaisuusKoodi: kansalaisuusOption.value,
+                                    })),
+                                });
+                            }
+                        }}
+                    />
+                )}
+            </FieldlessLabelValue>
         </div>
     );
 };

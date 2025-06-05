@@ -4,7 +4,6 @@ import moment from 'moment';
 
 import { useAppDispatch, type RootState } from '../../store';
 import BasicInfoForm from './BasicinfoForm';
-import { fetchAllRyhmas } from '../../actions/organisaatio.actions';
 import KutsuConfirmation from './KutsuConfirmation';
 import Loader from '../common/icons/Loader';
 import { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
@@ -16,11 +15,10 @@ import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
 import { validateEmail } from '../../validation/EmailValidator';
 import { useLocalisations } from '../../selectors';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
-import { RyhmatState } from '../../reducers/ryhmat.reducer';
 import Button from '../common/button/Button';
 import PropertySingleton from '../../globals/PropertySingleton';
 import AddedOrganization from './AddedOrganization';
-import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
+import { useGetOmattiedotQuery, useGetOrganisaatioRyhmatQuery } from '../../api/kayttooikeus';
 
 const initialBasicInfo = {
     etunimi: '',
@@ -40,8 +38,8 @@ const KutsuminenPage = () => {
     const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
     const { data: omattiedot } = useGetOmattiedotQuery();
+    const { isLoading: ryhmatLoading } = useGetOrganisaatioRyhmatQuery();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
-    const ryhmas = useSelector<RootState, RyhmatState>((state) => state.ryhmatState);
     const initialValidationMessages: ValidationMessages = {
         organisaatioKayttooikeus: {
             id: 'organisaatioKayttooikeus',
@@ -66,7 +64,6 @@ const KutsuminenPage = () => {
     const [validationMessages, setValidationMessages] = useState<ValidationMessages>({ ...initialValidationMessages });
 
     useEffect(() => {
-        dispatch<any>(fetchAllRyhmas());
         dispatch<any>(fetchHenkilo(omattiedot.oidHenkilo));
     }, []);
 
@@ -141,7 +138,7 @@ const KutsuminenPage = () => {
         setKutsuOrganisaatios(newOrgs);
     }
 
-    if (henkilo.henkiloLoading || ryhmas.ryhmasLoading) {
+    if (henkilo.henkiloLoading || ryhmatLoading) {
         return (
             <div className="wrapper">
                 <Loader />

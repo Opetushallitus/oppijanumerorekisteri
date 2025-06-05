@@ -11,7 +11,7 @@ export type OmattiedotState = {
     readonly data?: { oid: string };
     readonly organisaatios: Array<OrganisaatioHenkilo>;
     readonly isAdmin: boolean;
-    readonly anomusilmoitus: boolean;
+    readonly anomusilmoitus: number[];
     readonly isOphVirkailija: boolean;
     readonly mfaProvider?: string;
     readonly idpEntityId?: string;
@@ -23,7 +23,7 @@ const initialState: OmattiedotState = {
     isAdmin: false,
     isOphVirkailija: false,
     mfaProvider: undefined,
-    anomusilmoitus: false,
+    anomusilmoitus: [],
     organisaatios: [],
     organisaatiot: [],
 };

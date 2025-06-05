@@ -1,21 +1,23 @@
 import React from 'react';
-import './MyonnettavatKayttooikeusryhmat.css';
-import OphSelect from '../../common/select/OphSelect';
-import type { Option, Options } from 'react-select';
+import Select from 'react-select';
+
 import ItemList from './ItemList';
 import { useLocalisations } from '../../../selectors';
 import { useGetKayttooikeusryhmasQuery } from '../../../api/kayttooikeus';
+import { SelectOption } from '../../../utilities/select';
+
+import './MyonnettavatKayttooikeusryhmat.css';
 
 type Props = {
-    kayttooikeusryhmaSelectAction: (selection: Option<string>) => void;
-    kayttooikeusryhmaSelections: Options<string>;
-    removeKayttooikeusryhmaSelectAction: (selection: Option<string>) => void;
+    kayttooikeusryhmaSelectAction: (selection: SelectOption) => void;
+    kayttooikeusryhmaSelections: SelectOption[];
+    removeKayttooikeusryhmaSelectAction: (selection: SelectOption) => void;
 };
 
 const MyonnettavatKayttooikeusryhmat = (props: Props) => {
     const { L, locale } = useLocalisations();
     const { data: allKayttooikeusryhmas } = useGetKayttooikeusryhmasQuery({ passiiviset: false });
-    const kayttooikeusryhmaOptions: Options<string> = (allKayttooikeusryhmas ?? []).map((kayttooikeusryhma) => {
+    const kayttooikeusryhmaOptions = (allKayttooikeusryhmas ?? []).map((kayttooikeusryhma) => {
         const textObject = kayttooikeusryhma?.description?.texts?.find((t) => t.lang === locale.toUpperCase());
         return {
             label: textObject?.text,
@@ -28,7 +30,7 @@ const MyonnettavatKayttooikeusryhmat = (props: Props) => {
             <h4>{L['KAYTTOOIKEUSRYHMAT_LISAA_MITA_SAA_MYONTAA']}</h4>
             <div className="flex-horizontal">
                 <div className="flex-item-1">
-                    <OphSelect
+                    <Select
                         id="kayttooikeusryhma-myontooikeudet"
                         options={kayttooikeusryhmaOptions}
                         placeholder={L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUSRYHMA']}

@@ -1,27 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import moment from 'moment';
-import { useSelector } from 'react-redux';
-import { Option } from 'react-select';
+import Select, { createFilter } from 'react-select';
 
 import Modal from '../common/modal/Modal';
 import Button from '../common/button/Button';
-import './KutsututPage.css';
 import KutsututTable from './KutsututTable';
 import KutsututBooleanRadioButton from './KutsututBooleanRadioButton';
-import { KayttooikeusryhmaSingleSelect } from '../common/select/KayttooikeusryhmaSingleSelect';
 import { KutsuRead } from '../../types/domain/kayttooikeus/Kutsu.types';
 import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import CloseButton from '../common/button/CloseButton';
 import { useLocalisations } from '../../selectors';
-import { useDeleteKutsuMutation, useGetOmattiedotQuery } from '../../api/kayttooikeus';
+import {
+    useDeleteKutsuMutation,
+    useGetKayttooikeusryhmasQuery,
+    useGetOmattiedotQuery,
+    useGetOrganisaatioRyhmatQuery,
+} from '../../api/kayttooikeus';
 import { useDebounce } from '../../useDebounce';
 import { KutsuView } from './KutsuViews';
-import OphSelect from '../common/select/OphSelect';
-import { parseRyhmaOptions } from '../../utilities/organisaatio.util';
-import { RootState, useAppDispatch } from '../../store';
-import { RyhmatState } from '../../reducers/ryhmat.reducer';
-import { fetchAllRyhmas } from '../../actions/organisaatio.actions';
+import StaticUtils from '../common/StaticUtils';
+import { FastMenuList, SelectOption } from '../../utilities/select';
+
+import './KutsututPage.css';
 
 export type KutsututSearchParams = {
     searchTerm: string;
@@ -37,9 +38,9 @@ const getDefaultView = (isAdmin?: boolean, isVirkailija?: boolean): KutsuView =>
 };
 
 export const KutsututPage = () => {
-    const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
     const { data } = useGetOmattiedotQuery();
+    const { data: ryhmat } = useGetOrganisaatioRyhmatQuery();
     const [params, setParams] = useState<KutsututSearchParams>({
         searchTerm: '',
         organisaatioOids: '',
@@ -48,16 +49,23 @@ export const KutsututPage = () => {
         kayttooikeusryhmaIds: '',
         subOrganisations: 'true',
     });
-    const ryhmat = useSelector<RootState, RyhmatState>((state) => state.ryhmatState);
     const delayedParams = useDebounce(params, 500);
     const [organisaatioSelection, setOrganisaatioSelection] = useState('');
     const [ryhmaSelection, setRyhmaSelection] = useState('');
     const [confirmDelete, setConfirmDelete] = useState<KutsuRead>();
     const [deleteKutsu] = useDeleteKutsuMutation();
+    const { data: kayttooikeusryhmat } = useGetKayttooikeusryhmasQuery({ passiiviset: false });
 
-    useEffect(() => {
-        dispatch<any>(fetchAllRyhmas());
-    }, []);
+    const kayttooikeusryhmaOptions = useMemo(() => {
+        return (
+            kayttooikeusryhmat
+                ?.map((kayttooikeusryhma) => ({
+                    value: '' + kayttooikeusryhma.id,
+                    label: StaticUtils.getLocalisedText(kayttooikeusryhma.description, locale),
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)) ?? []
+        );
+    }, [kayttooikeusryhmat]);
 
     async function cancelInvitationConfirmed() {
         if (confirmDelete?.id) {
@@ -77,16 +85,25 @@ export const KutsututPage = () => {
         setRyhmaSelection(undefined);
     }
 
-    function onRyhmaChange(ryhma?: Option<string>) {
+    function onRyhmaChange(ryhma?: SelectOption) {
         const ryhmaOid = ryhma ? ryhma.value : '';
         setParams({ ...params, organisaatioOids: ryhmaOid });
         setOrganisaatioSelection('');
         setRyhmaSelection(ryhmaOid);
     }
 
-    function onKayttooikeusryhmaChange(kayttooikeusOption: Option<string>) {
-        setParams({ ...params, kayttooikeusryhmaIds: kayttooikeusOption.value });
+    function onKayttooikeusryhmaChange(kayttooikeusOption: SelectOption) {
+        setParams({ ...params, kayttooikeusryhmaIds: kayttooikeusOption?.value });
     }
+
+    const ryhmaOptions = useMemo(() => {
+        return (ryhmat ?? [])
+            .map((ryhma) => ({
+                label: ryhma.nimi[locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
+                value: ryhma.oid,
+            }))
+            .sort((a, b) => a.label.localeCompare(b.label));
+    }, [ryhmat, locale]);
 
     return (
         <div className="mainContent wrapper" id="kutsutut-page">
@@ -114,29 +131,27 @@ export const KutsututPage = () => {
                         <CloseButton closeAction={() => clearOrganisaatioSelection()} />
                     </div>
                     <div className="flex-horizontal flex-inline flex-item-1">
-                        <span className="flex-item-1 kutsutut-ryhmasuodatus">
-                            <OphSelect
-                                id="ryhmafilter"
-                                options={parseRyhmaOptions(ryhmat, locale)}
-                                value={ryhmaSelection}
-                                placeholder={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_RYHMA']}
-                                onChange={onRyhmaChange}
-                                maxHeight={400}
-                            />
-                        </span>
-                        <span>
-                            <CloseButton closeAction={() => onRyhmaChange(undefined)} />
-                        </span>
+                        <Select
+                            id="kutsutut-ryhmafilter"
+                            options={ryhmaOptions}
+                            components={{ MenuList: FastMenuList }}
+                            filterOption={createFilter({ ignoreAccents: false })}
+                            value={ryhmaOptions.find((o) => o.value === ryhmaSelection)}
+                            placeholder={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_RYHMA']}
+                            onChange={onRyhmaChange}
+                            isClearable
+                        />
                     </div>
                 </div>
                 <div className="flex-item-1 flex-inline" id="radiator">
-                    <div className="flex-item-1">
-                        <KayttooikeusryhmaSingleSelect
-                            kayttooikeusSelection={params.kayttooikeusryhmaIds}
-                            kayttooikeusSelectionAction={onKayttooikeusryhmaChange}
-                        />
-                    </div>
-                    <CloseButton closeAction={() => setParams({ ...params, kayttooikeusryhmaIds: undefined })} />
+                    <Select
+                        id="kayttooikeusryhmaFilter"
+                        options={kayttooikeusryhmaOptions}
+                        value={kayttooikeusryhmaOptions.find((o) => o.value === params.kayttooikeusryhmaIds)}
+                        placeholder={L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
+                        onChange={onKayttooikeusryhmaChange}
+                        isClearable
+                    />
                 </div>
             </div>
             <KutsututTable params={delayedParams} cancelInvitation={(k) => setConfirmDelete(k)} />

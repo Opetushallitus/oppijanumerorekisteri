@@ -1,12 +1,12 @@
-import React from 'react';
-import Select from 'react-virtualized-select';
-import { connect } from 'react-redux';
-import type { RootState } from '../../../store';
-import type { Options, Option } from 'react-select';
-import { Locale } from '../../../types/locale.type';
+import React, { useMemo, useState } from 'react';
+import Select from 'react-select';
+
 import { Koodisto, Koodi } from '../../../types/domain/koodisto/koodisto.types';
 import { toLocalizedText } from '../../../localizabletext';
+import { useLocalisations } from '../../../selectors';
+
 import './KoodistoSelect.css';
+import { Locale } from '../../../types/locale.type';
 
 type OwnProps = {
     className?: string;
@@ -16,50 +16,41 @@ type OwnProps = {
     onChange: (arg0: string) => void;
 };
 
-type StateProps = {
-    locale: Locale;
+const getInitialValue = (koodisto: Koodisto, value: string, locale: Locale) => {
+    const koodi = koodisto?.find((k) => k.koodiArvo === value);
+    return {
+        value: koodi.koodiArvo,
+        label: toLocalizedText(locale, koodi.metadata, koodi.koodiArvo),
+    };
 };
-
-type Props = OwnProps & StateProps;
 
 /**
  * Komponentti koodiston koodin valitsemiseen.
  */
-class KoodistoSelect extends React.Component<Props> {
-    render() {
-        return (
-            <Select
-                className={this.props.className}
-                placeholder={this.props.placeholder}
-                noResultsText=""
-                options={this.getOptions(this.props.koodisto)}
-                value={this.props.value}
-                onChange={this.onChange}
-            />
-        );
-    }
+export const KoodistoSelect = ({ className, placeholder, koodisto, value, onChange }: OwnProps) => {
+    const { locale } = useLocalisations();
+    const options = useMemo(() => {
+        return koodisto
+            .map((koodi: Koodi) => {
+                return {
+                    value: koodi.koodiArvo,
+                    label: toLocalizedText(locale, koodi.metadata, koodi.koodiArvo) as string,
+                };
+            })
+            .sort((a, b) => a.label.localeCompare(b.label));
+    }, [koodisto]);
+    const [selectedOption, setSelectedOption] = useState(value ? getInitialValue(koodisto, value, locale) : null);
 
-    getOptions = (koodisto: Koodisto): Options<string> => {
-        return koodisto.map(this.getOption).sort((a, b) => a.label.localeCompare(b.label));
-    };
-
-    getOption = (koodi: Koodi) => {
-        return {
-            value: koodi.koodiArvo,
-            label: toLocalizedText(this.props.locale, koodi.metadata, koodi.koodiArvo),
-        };
-    };
-
-    onChange = (selected: Option<string>) => {
-        const value = selected ? selected.value : null;
-        this.props.onChange(value);
-    };
-}
-
-const mapStateToProps = (state: RootState): StateProps => {
-    return {
-        locale: state.locale,
-    };
+    return (
+        <Select
+            className={className}
+            placeholder={placeholder}
+            options={options}
+            value={selectedOption}
+            onChange={(o) => {
+                setSelectedOption(o);
+                onChange(o.value);
+            }}
+        />
+    );
 };
-
-export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(KoodistoSelect);

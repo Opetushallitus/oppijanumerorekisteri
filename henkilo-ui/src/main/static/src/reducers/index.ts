@@ -7,7 +7,6 @@ import { prequels } from './prequels.reducer';
 import omattiedot from './omattiedot.reducer';
 import { locale } from './locale.reducer';
 import { kayttooikeus } from './kayttooikeusryhma.reducer';
-import { ryhmatState } from './ryhmat.reducer';
 import { OrganisaatioKayttooikeusryhmat } from './organisaatiokayttooikeusryhmat.reducer';
 import { organisaatio } from './organisaatio.reducer';
 import { notifications } from './notifications.reducer';
@@ -25,7 +24,6 @@ const rootReducer = {
     omattiedot,
     locale,
     kayttooikeus,
-    ryhmatState,
     OrganisaatioKayttooikeusryhmat,
     organisaatio,
     notificationList,

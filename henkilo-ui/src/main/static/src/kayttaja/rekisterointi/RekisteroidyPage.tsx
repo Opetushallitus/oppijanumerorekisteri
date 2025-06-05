@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { RouteActions } from 'react-router-redux';
-import { Option } from 'react-select';
 import { urls } from 'oph-urls-js';
 
 import StaticUtils from '../../components/common/StaticUtils';
@@ -21,6 +20,7 @@ import Kutsumanimi from '../../components/common/henkilo/labelvalues/Kutsumanimi
 import Sukunimi from '../../components/common/henkilo/labelvalues/Sukunimi';
 import Etunimet from '../../components/common/henkilo/labelvalues/Etunimet';
 import { toSupportedLocale } from '../../reducers/locale.reducer';
+import { NamedSelectOption } from '../../utilities/select';
 
 import './RekisteroidyPage.css';
 
@@ -129,8 +129,13 @@ export const RekisteroidyPage = (props: OwnProps) => {
         }
     }, []);
 
-    function updatePayloadModelInput(event: Option<string> & React.SyntheticEvent<HTMLInputElement>) {
+    function updatePayloadModelInput(event: React.SyntheticEvent<HTMLInputElement>) {
         const newHenkilo = StaticUtils.updateFieldByDotAnnotation({ ...henkilo }, event) || henkilo;
+        setHenkilo(newHenkilo);
+    }
+
+    function updatePayloadModelSelect(event: NamedSelectOption) {
+        const newHenkilo = StaticUtils.updateSelectValueByDotAnnotation({ ...henkilo }, event) || henkilo;
         setHenkilo(newHenkilo);
     }
 
@@ -222,7 +227,7 @@ export const RekisteroidyPage = (props: OwnProps) => {
                                 />
                                 <Asiointikieli
                                     henkiloUpdate={henkilo}
-                                    updateModelFieldAction={updatePayloadModelInput}
+                                    updateModelSelectAction={updatePayloadModelSelect}
                                 />
                             </div>
                             <NotificationButton
@@ -244,7 +249,7 @@ export const RekisteroidyPage = (props: OwnProps) => {
                                 <p className="oph-h3 oph-bold">{L['REKISTEROIDY_HAKA_OTSIKKO']}</p>
                                 <Asiointikieli
                                     henkiloUpdate={henkilo}
-                                    updateModelFieldAction={updatePayloadModelInput}
+                                    updateModelSelectAction={updatePayloadModelSelect}
                                 />
                                 <IconButton
                                     href={`/cas/login?forceIdp=haka&service=https%3A%2F%2F${window.location.hostname}%2Fkayttooikeus-service%2FhakaRegistrationTemporaryToken%2F${kutsu.temporaryToken}`}

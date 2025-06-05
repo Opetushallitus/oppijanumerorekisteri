@@ -26,6 +26,7 @@ import PropertySingleton from '../../../../globals/PropertySingleton';
 import { resetButtonNotifications } from '../../../../actions/notifications.actions';
 import { View } from '../../../henkilo/HenkiloViewPage';
 import { copy } from '../../../../utilities/copy';
+import { NamedSelectOption } from '../../../../utilities/select';
 
 type OwnProps = {
     oidHenkilo: string;
@@ -35,7 +36,7 @@ type OwnProps = {
 type DispatchProps = {
     updateHenkiloAndRefetch: (arg0: Henkilo, arg1: boolean) => void;
     updateAndRefetchKayttajatieto: (henkiloOid: string, kayttajatunnus: string) => void;
-    updateAnomusilmoitus: (arg0: boolean) => void;
+    updateAnomusilmoitus: (arg0: number[]) => void;
     resetButtonNotifications: () => void;
 };
 
@@ -164,6 +165,12 @@ class UserContentContainer extends React.Component<Props, State> {
         });
     }
 
+    _updateModelSelectValue(event: NamedSelectOption) {
+        this.setState({
+            henkiloUpdate: StaticUtils.updateSelectValueByDotAnnotation(this.state.henkiloUpdate, event),
+        });
+    }
+
     _validForm = (): boolean => {
         return this._validKutsumanimi() && this._validKayttajatunnus();
     };
@@ -209,6 +216,7 @@ class UserContentContainer extends React.Component<Props, State> {
             discardAction: this._discard.bind(this),
             updateAction: this._update.bind(this),
             updateModelAction: this._updateModelField.bind(this),
+            updateModelSelectAction: this._updateModelSelectValue.bind(this),
             updateDateAction: this._updateModelField.bind(this),
             henkiloUpdate: this.state.henkiloUpdate,
             edit: this._edit.bind(this),

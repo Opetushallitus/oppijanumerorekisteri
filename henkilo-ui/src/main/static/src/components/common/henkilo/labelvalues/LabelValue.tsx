@@ -7,7 +7,7 @@ import { Localisations } from '../../../../types/localisation.type';
 
 type OwnProps = {
     values: {
-        value?: any;
+        value?: string;
         label?: string;
         inputValue?: string;
         disabled?: boolean;
@@ -16,18 +16,10 @@ type OwnProps = {
         date?: string | boolean;
         showOnlyOnWrite?: boolean;
         readOnly?: boolean;
-        selectValue?: string | string[];
-        multiselect?: boolean;
-        data?: {
-            value: string | number;
-            label: any;
-            optionsName: string;
-        }[];
-        clearable?: boolean;
         className?: string;
     };
     readOnly?: boolean;
-    updateModelFieldAction?: (arg0: any) => void;
+    updateModelFieldAction?: (arg0: React.SyntheticEvent<HTMLInputElement>) => void;
     updateDateFieldAction?: (arg0: React.SyntheticEvent<HTMLInputElement>) => void;
     autofocus?: boolean;
     required?: boolean;

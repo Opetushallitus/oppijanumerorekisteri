@@ -12,11 +12,6 @@ import {
     fetchKansalaisuusKoodisto,
     fetchYhteystietotyypitKoodisto,
 } from '../../actions/koodisto.actions';
-import {
-    fetchAllHierarchialOrganisaatios,
-    fetchAllOrganisaatios,
-    fetchAllRyhmas,
-} from '../../actions/organisaatio.actions';
 import { HenkiloViewPage } from '../henkilo/HenkiloViewPage';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
 import Loader from '../common/icons/Loader';
@@ -31,9 +26,6 @@ const OmattiedotPageContainer = () => {
         dispatch<any>(fetchYhteystietotyypitKoodisto());
         dispatch<any>(fetchKieliKoodisto());
         dispatch<any>(fetchKansalaisuusKoodisto());
-        dispatch<any>(fetchAllOrganisaatios());
-        dispatch<any>(fetchAllRyhmas());
-        dispatch<any>(fetchAllHierarchialOrganisaatios());
 
         if (omattiedot.oidHenkilo) {
             const userOid = omattiedot.oidHenkilo;

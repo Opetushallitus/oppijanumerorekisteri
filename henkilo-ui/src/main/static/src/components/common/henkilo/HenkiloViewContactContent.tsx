@@ -21,7 +21,6 @@ import type { KoodistoState, KoodistoStateKoodi } from '../../../reducers/koodis
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import type { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { validateEmail } from '../../../validation/EmailValidator';
-import type { Option } from 'react-select';
 import { WORK_ADDRESS, EMAIL } from '../../../types/constants';
 import { RootState } from '../../../store';
 import { View } from '../../henkilo/HenkiloViewPage';
@@ -306,7 +305,7 @@ export class HenkiloViewContactContentComponent extends React.Component<Props, S
             value: string;
             inputValue: string;
         },
-        event: Option<string> & React.SyntheticEvent<HTMLInputElement>
+        event: React.SyntheticEvent<HTMLInputElement>
     ) {
         const isContactInfoValid = this.validateContactInfo(contactInfo.label, event.currentTarget.value);
         StaticUtils.updateFieldByDotAnnotation(this.henkiloUpdate, event);

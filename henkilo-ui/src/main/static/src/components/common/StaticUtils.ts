@@ -2,12 +2,13 @@ import { HenkiloState } from '../../reducers/henkilo.reducer';
 import { Localisations, L10n } from '../../types/localisation.type';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { Locale } from '../../types/locale.type';
-import type { Option } from 'react-select';
+
 import { Kayttaja } from '../../types/domain/kayttooikeus/kayttaja.types';
 import { TextGroup } from '../../types/domain/kayttooikeus/textgroup.types';
 import { Organisaatio } from '../../types/domain/organisaatio/organisaatio.types';
 import { toLocalizedText } from '../../localizabletext';
 import { Koodisto } from '../../types/domain/koodisto/koodisto.types';
+import { NamedMultiSelectOption, NamedSelectOption } from '../../utilities/select';
 
 class StaticUtils {
     static ddmmyyyyToDate(date: string) {
@@ -16,20 +17,25 @@ class StaticUtils {
     }
 
     // Example fieldpath: organisaatio.nimet.0.nimiValue
-    static updateFieldByDotAnnotation<T>(obj: T, event: Option<string> & React.SyntheticEvent<HTMLInputElement>): T {
-        let value;
-        let fieldpath;
+    static updateFieldByDotAnnotation<T>(obj: T, event: React.SyntheticEvent<HTMLInputElement>): T {
         if (event === null) {
             return null;
         }
-        if (event.optionsName) {
-            value = event.value;
-            fieldpath = event.optionsName;
-        } else {
-            value = (event.currentTarget || (event.target as HTMLInputElement)).value;
-            fieldpath = (event.currentTarget || (event.target as HTMLInputElement)).name;
-        }
+        const value = (event.currentTarget || (event.target as HTMLInputElement)).value;
+        const fieldpath = (event.currentTarget || (event.target as HTMLInputElement)).name;
+        return this.updateByDotAnnotation(obj, value, fieldpath);
+    }
 
+    static updateSelectValueByDotAnnotation<T>(obj: T, event: NamedSelectOption | NamedMultiSelectOption): T {
+        if (event === null) {
+            return null;
+        }
+        const value = event.value;
+        const fieldpath = event.optionsName;
+        return this.updateByDotAnnotation(obj, value, fieldpath);
+    }
+
+    static updateByDotAnnotation<T>(obj: T, value: string | unknown[], fieldpath: string): T {
         let schema = obj; // a moving reference to internal objects within obj
         const pList = fieldpath.split('.');
         const len = pList.length;
