@@ -9,7 +9,7 @@ import { localizeTextGroup } from '../../../utilities/localisation.util';
 import { OphDsPage } from '../../design-system/OphDsPage';
 import { OphDsInput } from '../../design-system/OphDsInput';
 import { OphDsChechbox } from '../../design-system/OphDsCheckbox';
-import { OphDsRadioGroup } from '../../design-system/OphDsRadio';
+import { OphDsRadioGroup } from '../../design-system/OphDsRadioGroup';
 import { OphDsAccordion } from '../../design-system/OphDsAccordion';
 import KayttooikeusryhmaTiedot from './KayttooikeusryhmaTiedot';
 
@@ -86,9 +86,10 @@ export const KayttooikeusryhmatPage = () => {
                     <OphDsInput id="filter" label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_SUODATA']} onChange={setFilter} />
                     <div className="kayttoikeusryhmat-form-cell">
                         <OphDsRadioGroup
-                            groupName="show-palvelu"
                             checked={showType}
-                            onChange={(id) => setShowType(id)}
+                            groupName="show-palvelu"
+                            legend="Suodata käyttäjätyypillä"
+                            onChange={setShowType}
                             radios={[
                                 { id: 'virkailija', label: L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_VIRKAILIJA'] },
                                 { id: 'palvelu', label: L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PALVELU'] },
@@ -106,13 +107,16 @@ export const KayttooikeusryhmatPage = () => {
                     )}
                 </div>
                 <div>
-                    <OphDsChechbox
-                        id="kayttooikeusryhmaNaytaPassivoidut"
-                        label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PASSIVOIDUT']}
-                        onChange={() => setShowPassives(!showPassives)}
-                    />
+                    <div className="kayttoikeusryhmat-form-cell">
+                        <div>
+                            <OphDsChechbox
+                                id="kayttooikeusryhmaNaytaPassivoidut"
+                                label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PASSIVOIDUT']}
+                                onChange={() => setShowPassives(!showPassives)}
+                            />
+                        </div>
+                    </div>
                 </div>
-                <div></div>
             </section>
             <OphDsAccordion items={accordionItems} />
         </OphDsPage>

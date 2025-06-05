@@ -35,10 +35,6 @@ fieldset .fieldContainer {
     min-width: 250px;
 }
 
-input {
-    font-size: 14px;
-}
-
 .row label{
     font-weight: bold;
     padding-top: 20px;
