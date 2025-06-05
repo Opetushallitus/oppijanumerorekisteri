@@ -6,15 +6,17 @@ type Radio<T> = {
 };
 
 type PageProps<T> = {
-    groupName: string;
     checked: string;
+    legend?: string;
+    groupName: string;
     onChange: (id: T) => void;
     radios: Radio<T>[];
 };
 
-export const OphDsRadioGroup = <T extends string>({ groupName, checked, onChange, radios }: PageProps<T>) => {
+export const OphDsRadioGroup = <T extends string>({ groupName, checked, onChange, legend, radios }: PageProps<T>) => {
     return (
-        <div className="oph-ds-radio-wrapper">
+        <fieldset role="radiogroup" className="oph-ds-radio-wrapper">
+            <legend>{legend}</legend>
             {radios.map(({ id, label }) => (
                 <label htmlFor={id} key={`radio-${id}`} className="oph-ds-label">
                     <input
@@ -28,6 +30,6 @@ export const OphDsRadioGroup = <T extends string>({ groupName, checked, onChange
                     <span aria-label={label}>{label}</span>
                 </label>
             ))}
-        </div>
+        </fieldset>
     );
 };
