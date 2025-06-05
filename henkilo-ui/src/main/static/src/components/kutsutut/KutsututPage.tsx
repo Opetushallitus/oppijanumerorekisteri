@@ -132,7 +132,7 @@ export const KutsututPage = () => {
                     </div>
                     <div className="flex-horizontal flex-inline flex-item-1">
                         <Select
-                            id="ryhmafilter"
+                            id="kutsutut-ryhmafilter"
                             options={ryhmaOptions}
                             components={{ MenuList: FastMenuList }}
                             filterOption={createFilter({ ignoreAccents: false })}
