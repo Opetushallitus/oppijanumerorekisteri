@@ -48,3 +48,7 @@
 .kutsutut-ryhmasuodatus {
     padding-right: 20px;
 }
+
+#kutsutut-ryhmafilter {
+    width: 500px;
+}
