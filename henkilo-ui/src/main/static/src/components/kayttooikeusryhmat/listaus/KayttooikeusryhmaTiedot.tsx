@@ -31,18 +31,20 @@ const KayttooikeusryhmaTiedot = ({ item, L, locale, muokkausoikeus, show }: Prop
                 <div className="kayttooikeusryhma-tiedot-otsikko">{L['KAYTTOOIKEUSRYHMAT_LISAA_KAYTTOOIKEUS']}</div>
                 {(palveluRoolit ?? []).map((item, index) => (
                     <React.Fragment key={index + item.palveluTexts[0].text}>
-                        <div>
-                            <LocalizedTextGroup locale={locale} texts={item.palveluTexts}></LocalizedTextGroup>
+                        <div className="kayttooikeusryhma-tiedot-palvelu">
+                            <LocalizedTextGroup locale={locale} texts={item.palveluTexts} />
                         </div>
-                        <div>
-                            <LocalizedTextGroup locale={locale} texts={item.rooliTexts}></LocalizedTextGroup>
+                        <div className="kayttooikeusryhma-tiedot-rooli">
+                            <LocalizedTextGroup locale={locale} texts={item.rooliTexts} />
                         </div>
                     </React.Fragment>
                 ))}
             </div>
-            <Link to={`/kayttooikeusryhmat/${item.id}`} className="oph-ds-link" disabled={!muokkausoikeus}>
-                {L['MUOKKAA']}
-            </Link>
+            {muokkausoikeus && (
+                <Link to={`/kayttooikeusryhmat/${item.id}`} className="oph-ds-link">
+                    {L['MUOKKAA']}
+                </Link>
+            )}
         </div>
     ) : null;
 };

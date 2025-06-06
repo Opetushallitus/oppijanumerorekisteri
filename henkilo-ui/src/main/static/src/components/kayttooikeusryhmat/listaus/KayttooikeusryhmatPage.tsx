@@ -1,9 +1,15 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router';
+import Select, { SelectInstance } from 'react-select';
 
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { useLocalisations } from '../../../selectors';
-import { useGetKayttooikeusryhmasQuery, useGetOmattiedotQuery } from '../../../api/kayttooikeus';
+import {
+    useGetKayttooikeusryhmasQuery,
+    useGetOmattiedotQuery,
+    useGetPalveluKayttooikeudetQuery,
+    useGetPalvelutQuery,
+} from '../../../api/kayttooikeus';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { localizeTextGroup } from '../../../utilities/localisation.util';
 import { OphDsPage } from '../../design-system/OphDsPage';
@@ -12,8 +18,11 @@ import { OphDsChechbox } from '../../design-system/OphDsCheckbox';
 import { OphDsRadioGroup } from '../../design-system/OphDsRadioGroup';
 import { OphDsAccordion } from '../../design-system/OphDsAccordion';
 import KayttooikeusryhmaTiedot from './KayttooikeusryhmaTiedot';
+import { SelectOption, selectStyles } from '../../../utilities/select';
 
 import './KayttooikeusryhmatPage.css';
+
+type Kayttajatyyppi = 'virkailija' | 'palvelu';
 
 const nimiFilter = (filter: string, locale: string) => (item: Kayttooikeusryhma) => {
     if (filter.length === 0) {
@@ -44,10 +53,46 @@ export const KayttooikeusryhmatPage = () => {
         'HENKILONHALLINTA_OPHREKISTERI',
         'KAYTTOOIKEUS_REKISTERINPITAJA',
     ]);
-    const [showPassives, setShowPassives] = useState(false);
-    const [showType, setShowType] = useState<'virkailija' | 'palvelu'>('virkailija');
+    const [passiiviset, setPassiiviset] = useState(false);
+    const [showType, setShowType] = useState<Kayttajatyyppi>('virkailija');
     const [filter, setFilter] = useState('');
-    const { data: kayttooikeusryhmat } = useGetKayttooikeusryhmasQuery({ passiiviset: showPassives });
+    const [palvelu, setPalvelu] = useState<SelectOption>();
+    const [kayttooikeus, setKayttooikeus] = useState<SelectOption>();
+    const { data: kayttooikeusryhmat } = useGetKayttooikeusryhmasQuery({
+        passiiviset,
+        palvelu: palvelu?.value,
+        kayttooikeus: kayttooikeus?.value,
+    });
+    const { data: palvelut } = useGetPalvelutQuery();
+    const { data: kayttooikeudet } = useGetPalveluKayttooikeudetQuery(palvelu?.value, {
+        skip: !palvelu,
+    });
+    const kayttooikeusSelectRef = useRef<SelectInstance<SelectOption>>(null);
+
+    const setPalveluAndKayttooikeus = (p: SelectOption) => {
+        if (!p) {
+            kayttooikeusSelectRef.current.clearValue();
+            setKayttooikeus(undefined);
+        }
+        setPalvelu(p);
+    };
+
+    const palveluOptions = useMemo(
+        () =>
+            (palvelut ?? []).map((p) => ({
+                value: p.name,
+                label: p.description.texts?.find((t) => t.lang === locale.toUpperCase())?.text,
+            })),
+        [palvelut]
+    );
+    const kayttooikeusOptions = useMemo(
+        () =>
+            (kayttooikeudet ?? []).map((k) => ({
+                value: k.rooli,
+                label: k.oikeusLangs.find((o) => o.lang === locale.toUpperCase())?.text,
+            })),
+        [kayttooikeudet]
+    );
 
     const accordionItems = useMemo(() => {
         if (!kayttooikeusryhmat) {
@@ -82,13 +127,13 @@ export const KayttooikeusryhmatPage = () => {
     return (
         <OphDsPage header={L['KAYTTOOIKEUSRYHMAT_OTSIKKO_LISTA']}>
             <section className="kayttoikeusryhmat-form">
-                <div>
+                <div className="kayttoikeusryhmat-row">
                     <OphDsInput id="filter" label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_SUODATA']} onChange={setFilter} />
                     <div className="kayttoikeusryhmat-form-cell">
                         <OphDsRadioGroup
                             checked={showType}
                             groupName="show-palvelu"
-                            legend="Suodata käyttäjätyypillä"
+                            legend={L['KAYTTOOIKEUSRYHMAT_SUODATA_TYYPILLA']}
                             onChange={setShowType}
                             radios={[
                                 { id: 'virkailija', label: L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_VIRKAILIJA'] },
@@ -96,6 +141,40 @@ export const KayttooikeusryhmatPage = () => {
                             ]}
                         />
                     </div>
+                    <div className="kayttoikeusryhmat-form-cell">
+                        <div>
+                            <OphDsChechbox
+                                id="kayttooikeusryhmaNaytaPassivoidut"
+                                label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PASSIVOIDUT']}
+                                onChange={() => setPassiiviset(!passiiviset)}
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div className="kayttooikeusryhmat-row-kayttooikeus">
+                    <div>{L['KAYTTOOIKEUSRYHMAT_SUODATA_KAYTTOOIKEUDELLA']}</div>
+                    <div>
+                        <Select
+                            {...selectStyles}
+                            options={palveluOptions}
+                            value={palvelu}
+                            placeholder={L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_PALVELU']}
+                            onChange={setPalveluAndKayttooikeus}
+                            isClearable
+                        />
+                        <Select
+                            {...selectStyles}
+                            ref={kayttooikeusSelectRef}
+                            options={kayttooikeusOptions}
+                            isDisabled={!palvelu}
+                            value={kayttooikeus}
+                            placeholder={L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUS']}
+                            onChange={setKayttooikeus}
+                            isClearable
+                        />
+                    </div>
+                </div>
+                <div>
                     {muokkausoikeus && (
                         <div className="kayttoikeusryhmat-form-cell">
                             <div>
@@ -105,17 +184,6 @@ export const KayttooikeusryhmatPage = () => {
                             </div>
                         </div>
                     )}
-                </div>
-                <div>
-                    <div className="kayttoikeusryhmat-form-cell">
-                        <div>
-                            <OphDsChechbox
-                                id="kayttooikeusryhmaNaytaPassivoidut"
-                                label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PASSIVOIDUT']}
-                                onChange={() => setShowPassives(!showPassives)}
-                            />
-                        </div>
-                    </div>
                 </div>
             </section>
             <OphDsAccordion items={accordionItems} />
