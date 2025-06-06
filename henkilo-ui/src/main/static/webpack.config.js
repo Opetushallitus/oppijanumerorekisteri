@@ -32,7 +32,7 @@ module.exports = function () {
         bail: isEnvProduction,
         devtool: isEnvProduction ? (shouldUseSourceMap ? 'source-map' : false) : 'cheap-module-source-map',
         devServer: {
-            allowedHosts: 'auto',
+            allowedHosts: 'all',
             headers: {
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': '*',
