@@ -1,0 +1,36 @@
+[
+    {
+        "rooli": "CRUD",
+        "oikeusLangs": [
+            {
+                "text": "Something",
+                "lang": "EN"
+            },
+            {
+                "text": "Jotain",
+                "lang": "FI"
+            },
+            {
+                "text": "Någonting",
+                "lang": "SV"
+            }
+        ]
+    },
+    {
+        "rooli": "GUGU",
+        "oikeusLangs": [
+            {
+                "text": "Guguting",
+                "lang": "EN"
+            },
+            {
+                "text": "Gugutus",
+                "lang": "FI"
+            },
+            {
+                "text": "Guguning",
+                "lang": "SV"
+            }
+        ]
+    }
+]

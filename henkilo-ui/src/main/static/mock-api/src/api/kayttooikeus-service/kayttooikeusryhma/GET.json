@@ -1,0 +1,189 @@
+[
+    {
+        "id": 123,
+        "tunniste": "tunniste",
+        "rooliRajoite": null,
+        "organisaatioViite": [
+            {
+                "id": 6886000,
+                "organisaatioTyyppi": "1.2.246.562.10.00000000001"
+            }
+        ],
+        "nimi": {
+            "id": 6885996,
+            "texts": [
+                {
+                    "text": "text1",
+                    "lang": "EN"
+                },
+                {
+                    "text": "teksti1",
+                    "lang": "FI"
+                },
+                {
+                    "text": "tekst1",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "kuvaus": {
+            "id": 64655902,
+            "texts": [
+                {
+                    "text": "description1",
+                    "lang": "EN"
+                },
+                {
+                    "text": "kuvaus1",
+                    "lang": "FI"
+                },
+                {
+                    "text": "deskripsuun1",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "passivoitu": false,
+        "ryhmaRestriction": false,
+        "sallittuKayttajatyyppi": null,
+        "muokattu": null,
+        "muokkaaja": null,
+        "name": "nimi",
+        "description": {
+            "id": 6885996,
+            "texts": [
+                {
+                    "text": "description",
+                    "lang": "EN"
+                },
+                {
+                    "text": "kuvaus",
+                    "lang": "FI"
+                },
+                {
+                    "text": "deskripsuun",
+                    "lang": "SV"
+                }
+            ]
+        }
+    },
+    {
+        "id": 321,
+        "tunniste": "tunniste2",
+        "rooliRajoite": null,
+        "organisaatioViite": [
+            {
+                "id": 64655906,
+                "organisaatioTyyppi": "oppilaitostyyppi_19"
+            },
+            {
+                "id": 64655907,
+                "organisaatioTyyppi": "oppilaitostyyppi_15"
+            }
+        ],
+        "nimi": {
+            "id": 155147,
+            "texts": [
+                {
+                    "text": "name2",
+                    "lang": "EN"
+                },
+                {
+                    "text": "nimi2",
+                    "lang": "FI"
+                },
+                {
+                    "text": "namn2",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "kuvaus": {
+            "id": 64655902,
+            "texts": [
+                {
+                    "text": "description2",
+                    "lang": "EN"
+                },
+                {
+                    "text": "kuvauds2",
+                    "lang": "FI"
+                },
+                {
+                    "text": "deskripsuun2",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "passivoitu": false,
+        "ryhmaRestriction": false,
+        "sallittuKayttajatyyppi": null,
+        "muokattu": null,
+        "muokkaaja": null,
+        "name": "name2",
+        "description": {
+            "id": 155147,
+            "texts": [
+                {
+                    "text": "another description2",
+                    "lang": "EN"
+                },
+                {
+                    "text": "toinen kuvaus2",
+                    "lang": "FI"
+                },
+                {
+                    "text": "den annan deskripsuun2",
+                    "lang": "SV"
+                }
+            ]
+        }
+    },
+    {
+        "id": 4056628,
+        "tunniste": "tunniste3",
+        "rooliRajoite": null,
+        "organisaatioViite": [],
+        "nimi": {
+            "id": 4056628,
+            "texts": [
+                {
+                    "text": "name3",
+                    "lang": "EN"
+                },
+                {
+                    "text": "nimi3",
+                    "lang": "FI"
+                },
+                {
+                    "text": "namn3",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "kuvaus": null,
+        "passivoitu": false,
+        "ryhmaRestriction": false,
+        "sallittuKayttajatyyppi": null,
+        "muokattu": null,
+        "muokkaaja": null,
+        "name": "name3",
+        "description": {
+            "id": 4056628,
+            "texts": [
+                {
+                    "text": "description3",
+                    "lang": "EN"
+                },
+                {
+                    "text": "kuvaus3",
+                    "lang": "FI"
+                },
+                {
+                    "text": "deskripsuun3",
+                    "lang": "SV"
+                }
+            ]
+        }
+    }
+]

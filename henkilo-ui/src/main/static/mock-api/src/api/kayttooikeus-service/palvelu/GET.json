@@ -1,0 +1,48 @@
+[
+    {
+        "id": 377868,
+        "name": "GAGA",
+        "palveluTyyppi": "YKSITTAINEN",
+        "description": {
+            "id": 377867,
+            "texts": [
+                {
+                    "text": "service1",
+                    "lang": "EN"
+                },
+                {
+                    "text": "palvelu1",
+                    "lang": "FI"
+                },
+                {
+                    "text": "servis1",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "kokoelma": null
+    },
+    {
+        "id": 27466,
+        "name": "GEGE",
+        "palveluTyyppi": "YKSITTAINEN",
+        "description": {
+            "id": 27465,
+            "texts": [
+                {
+                    "text": "service2",
+                    "lang": "EN"
+                },
+                {
+                    "text": "palvelu2",
+                    "lang": "FI"
+                },
+                {
+                    "text": "servis2",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "kokoelma": null
+    }
+]
