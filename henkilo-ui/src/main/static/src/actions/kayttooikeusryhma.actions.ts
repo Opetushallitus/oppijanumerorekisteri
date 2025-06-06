@@ -25,9 +25,6 @@ import {
     FETCH_KAYTTOOIKEUSRYHMA_BY_ID_REQUEST,
     FETCH_KAYTTOOIKEUSRYHMA_BY_ID_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_BY_ID_FAILURE,
-    FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_REQUEST,
-    FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_SUCCESS,
-    FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_FAILURE,
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_REQUEST,
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_FAILURE,
@@ -288,31 +285,6 @@ export const fetchKayttooikeusryhmaById = (id) => async (dispatch: AppDispatch) 
         dispatch(fetchKayttooikeusryhmaByIdSuccess(data));
     } catch (error) {
         dispatch(fetchKayttooikeusryhmaByIdFailure(error));
-        throw error;
-    }
-};
-
-// Fetch palvelurooli by kayttooikeusryhmaId
-const fetchPalveluRooliByKayttooikeusryhmaIdRequest = () => ({
-    type: FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_REQUEST,
-});
-const fetchPalveluRooliByKayttooikeusryhmaIdSuccess = (payload) => ({
-    type: FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_SUCCESS,
-    payload,
-});
-const fetchPalveluRooliByKayttooikeusryhmaIdFailure = (error) => ({
-    type: FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_FAILURE,
-    error,
-});
-
-export const fetchPalveluRooliByKayttooikeusryhmaId = (id) => async (dispatch: AppDispatch) => {
-    dispatch(fetchPalveluRooliByKayttooikeusryhmaIdRequest());
-    const url = urls.url('kayttooikeus-service.kayttooikeusryhma.palvelurooli', id);
-    try {
-        const data = await http.get(url);
-        dispatch(fetchPalveluRooliByKayttooikeusryhmaIdSuccess(data));
-    } catch (error) {
-        dispatch(fetchPalveluRooliByKayttooikeusryhmaIdFailure(error));
         throw error;
     }
 };

@@ -1,4 +1,5 @@
 import { AnyAction } from '@reduxjs/toolkit';
+
 import {
     FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_FAILURE,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_REQUEST,
@@ -8,15 +9,11 @@ import {
     FETCH_KAYTTOOIKEUSRYHMA_BY_ID_REQUEST,
     FETCH_KAYTTOOIKEUSRYHMA_BY_ID_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_BY_ID_FAILURE,
-    FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_REQUEST,
-    FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_SUCCESS,
-    FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_FAILURE,
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_FAILURE,
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_REQUEST,
 } from '../actions/actiontypes';
 import { Kayttooikeusryhma, MyonnettyKayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import { PalveluRooli } from '../types/domain/kayttooikeus/PalveluRooli.types';
 import { HaettuKayttooikeusryhma } from '../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
 
 export type AllowedKayttooikeus = Array<MyonnettyKayttooikeusryhma>;
@@ -30,8 +27,6 @@ export type KayttooikeusRyhmaState = {
     readonly kayttooikeusryhmaLoading: boolean;
     readonly kayttooikeusryhmaSlaves: Array<Kayttooikeusryhma>;
     readonly kayttooikeusryhmaSlavesLoading: boolean;
-    readonly palvelutRoolit: Array<PalveluRooli>;
-    readonly palvelutRoolitLoading: boolean;
 };
 
 export const getEmptyKayttooikeusRyhmaState = (): KayttooikeusRyhmaState => {
@@ -42,8 +37,6 @@ export const getEmptyKayttooikeusRyhmaState = (): KayttooikeusRyhmaState => {
         kayttooikeusAnomus: [],
         kayttooikeusryhma: null,
         kayttooikeusryhmaLoading: false,
-        palvelutRoolit: [],
-        palvelutRoolitLoading: true,
         kayttooikeusryhmaSlaves: [],
         kayttooikeusryhmaSlavesLoading: false,
     };
@@ -74,16 +67,6 @@ export const kayttooikeus = (
             };
         case FETCH_KAYTTOOIKEUSRYHMA_BY_ID_FAILURE:
             return { ...state, kayttooikeusryhmaLoading: false };
-        case FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_REQUEST:
-            return { ...state, palvelutRoolitLoading: true };
-        case FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_SUCCESS:
-            return {
-                ...state,
-                palvelutRoolitLoading: false,
-                palvelutRoolit: action.payload,
-            };
-        case FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_FAILURE:
-            return { ...state, palvelutRoolitLoading: false };
         case FETCH_KAYTTOOIKEUSRYHMA_SLAVES_REQUEST:
             return { ...state, kayttooikeusryhmaSlavesLoading: true };
         case FETCH_KAYTTOOIKEUSRYHMA_SLAVES_SUCCESS:

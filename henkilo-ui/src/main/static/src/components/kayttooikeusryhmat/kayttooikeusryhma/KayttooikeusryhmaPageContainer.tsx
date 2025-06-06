@@ -3,16 +3,10 @@ import { connect } from 'react-redux';
 import { RouteActions } from 'react-router-redux';
 
 import type { RootState } from '../../../store';
-import KayttooikeusryhmaPage from './KayttooikeusryhmaPage';
+import { KayttooikeusryhmaPage } from './KayttooikeusryhmaPage';
 import { fetchOppilaitostyypit, fetchOrganisaatiotyypit } from '../../../actions/koodisto.actions';
-import {
-    fetchKayttooikeusryhmaById,
-    fetchPalveluRooliByKayttooikeusryhmaId,
-    fetchKayttooikeusryhmaSlaves,
-} from '../../../actions/kayttooikeusryhma.actions';
+import { fetchKayttooikeusryhmaById, fetchKayttooikeusryhmaSlaves } from '../../../actions/kayttooikeusryhma.actions';
 import Loader from '../../common/icons/Loader';
-import { Locale } from '../../../types/locale.type';
-import { Localisations } from '../../../types/localisation.type';
 import { GlobalNotificationConfig } from '../../../types/notification.types';
 import { addGlobalNotification } from '../../../actions/notification.actions';
 import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
@@ -25,17 +19,14 @@ type OwnProps = {
 };
 
 type StateProps = {
-    L: Localisations;
     organisaatioCache: OrganisaatioCache;
     koodisto: KoodistoState;
-    locale: Locale;
     kayttooikeus: KayttooikeusRyhmaState;
     kayttooikeusryhmaId?: string;
 };
 
 type DispatchProps = {
     fetchKayttooikeusryhmaById: (id: string) => void;
-    fetchPalveluRooliByKayttooikeusryhmaId: (id: string) => void;
     fetchOppilaitostyypit: () => void;
     fetchOrganisaatiotyypit: () => void;
     fetchKayttooikeusryhmaSlaves: (id: string) => void;
@@ -51,7 +42,6 @@ class KayttooikeusryhmaPageContainer extends React.Component<Props> {
         this.props.fetchOrganisaatiotyypit();
         if (kayttooikeusryhmaId) {
             this.props.fetchKayttooikeusryhmaById(kayttooikeusryhmaId);
-            this.props.fetchPalveluRooliByKayttooikeusryhmaId(kayttooikeusryhmaId);
             this.props.fetchKayttooikeusryhmaSlaves(kayttooikeusryhmaId);
         }
     }
@@ -60,7 +50,6 @@ class KayttooikeusryhmaPageContainer extends React.Component<Props> {
         return this.props.koodisto.oppilaitostyypitLoading ||
             this.props.koodisto.organisaatiotyyppiKoodistoLoading ||
             this.props.kayttooikeus.kayttooikeusryhmaLoading ||
-            (this.props.kayttooikeus.palvelutRoolitLoading && this.props.kayttooikeusryhmaId) ||
             this.props.kayttooikeus.kayttooikeusryhmaSlavesLoading ? (
             <Loader />
         ) : (
@@ -71,16 +60,13 @@ class KayttooikeusryhmaPageContainer extends React.Component<Props> {
 
 const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     kayttooikeusryhmaId: ownProps.routeParams['id'],
-    L: state.l10n.localisations[state.locale],
     organisaatioCache: state.organisaatio.cached,
     koodisto: state.koodisto,
-    locale: state.locale,
     kayttooikeus: state.kayttooikeus,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchKayttooikeusryhmaById,
-    fetchPalveluRooliByKayttooikeusryhmaId,
     fetchOppilaitostyypit,
     fetchOrganisaatiotyypit,
     fetchKayttooikeusryhmaSlaves,
