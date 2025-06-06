@@ -5,11 +5,12 @@
     gap: 8px;
 }
 
-.kayttoikeusryhmat-form > div {
+.kayttoikeusryhmat-row {
     display: flex;
     justify-content: space-between;
     flex-direction: row;
     flex-wrap: wrap;
+    gap: 8px;
 }
 
 .kayttoikeusryhmat-form-cell {
@@ -20,5 +21,20 @@
 .kayttoikeusryhmat-form-cell > div {
     display: flex;
     align-items: center;
-    height: 48px;
+    height: 40px;
+}
+
+.kayttooikeusryhmat-row-kayttooikeus > div {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.kayttooikeusryhmat-row-kayttooikeus .oph-ds-select-control {
+    max-width: 300px;
+}
+
+.kayttooikeusryhmat-row-kayttooikeus .oph-ds-select-control-focused {
+    max-width: 300px;
 }

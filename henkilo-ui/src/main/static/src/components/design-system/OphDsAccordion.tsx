@@ -38,7 +38,7 @@ export const OphDsAccordion = ({ items }: PageProps) => {
                                 aria-controls={`section-${index}`}
                                 className="oph-ds-button-transparent"
                             >
-                                <span>{item.header}</span>
+                                <span className="oph-ds-accordion-header-text">{item.header}</span>
                                 <span className="oph-ds-accordion-icon"></span>
                             </button>
                         </div>

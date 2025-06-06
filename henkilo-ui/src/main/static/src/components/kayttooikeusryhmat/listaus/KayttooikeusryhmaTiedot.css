@@ -1,4 +1,7 @@
 .kayttooikeusryhma-tiedot {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     padding: 16px;
     border-bottom: 1px solid var(--Table-cell-Background-Even-row, #F6F6F6);
 }
@@ -8,6 +11,21 @@
     font-weight: bold;
 }
 
-.kayttooikeusryhma-tiedot-palvelutroolit {
-    margin-bottom: 10px;
+.kayttooikeusryhma-tiedot-roolit {
+    display: grid;
+    grid-template-columns: auto auto;
+    line-height: 24px;
+}
+
+.kayttooikeusryhma-tiedot-otsikko {
+    font-weight: 600;
+}
+
+.kayttooikeusryhma-tiedot-roolit > div:nth-child(4n),
+.kayttooikeusryhma-tiedot-roolit > div:nth-child(4n - 1) {
+    background: #F6F6F6;
+}
+
+.kayttooikeusryhma-tiedot-roolit > div:nth-child(3n) {
+    padding-right: 6px;
 }

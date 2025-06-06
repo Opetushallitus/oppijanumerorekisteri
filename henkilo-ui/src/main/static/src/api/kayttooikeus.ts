@@ -26,6 +26,10 @@ import { Palvelu } from '../types/domain/kayttooikeus/palvelu.types';
 import { PalveluKayttooikeus } from '../types/domain/kayttooikeus/palvelukayttooikeus.types';
 import { OrganisaatioWithChildren } from '../types/domain/organisaatio/organisaatio.types';
 import { OrganisaatioNameLookup } from '../reducers/organisaatio.reducer';
+import { PalveluRooli } from '../types/domain/kayttooikeus/PalveluRooli.types';
+import { TextGroupModify } from '../types/domain/kayttooikeus/textgroup.types';
+import { PalveluRooliModify } from '../types/domain/kayttooikeus/PalveluRooliModify.types';
+import { SallitutKayttajatyypit } from '../components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage';
 
 type MfaSetupResponse = {
     secretKey: string;
@@ -77,6 +81,17 @@ type PostSalasananVaihtoRequest = {
     currentPassword: string;
 };
 
+type KayttooikeusryhmaRequest = {
+    nimi: TextGroupModify;
+    kuvaus: TextGroupModify;
+    palvelutRoolit: PalveluRooliModify[];
+    rooliRajoite: null;
+    ryhmaRestriction: boolean;
+    organisaatioTyypit: string[];
+    slaveIds: number[];
+    sallittuKayttajatyyppi: SallitutKayttajatyypit;
+};
+
 type CasLoginRedirectParams = Record<string, string>;
 
 export type KutsututSortBy = 'AIKALEIMA' | 'NIMI' | 'SAHKOPOSTI';
@@ -119,6 +134,7 @@ export const kayttooikeusApi = createApi({
         'organisaatioryhmat',
         'rootorganisation',
         'organisationnames',
+        'kayttooikeusryhmaroolit',
     ],
     endpoints: (builder) => ({
         getOmattiedot: builder.query<Omattiedot, void>({
@@ -304,11 +320,28 @@ export const kayttooikeusApi = createApi({
             query: (palvelu) => `kayttooikeus/${palvelu}`,
             providesTags: ['palvelukayttoooikeudet'],
         }),
-        getKayttooikeusryhmas: builder.query<Kayttooikeusryhma[], { passiiviset: boolean }>({
-            query: ({ passiiviset }) => ({
-                url: `kayttooikeusryhma?${new URLSearchParams({ passiiviset: String(passiiviset) }).toString()}`,
-            }),
+        getKayttooikeusryhmas: builder.query<
+            Kayttooikeusryhma[],
+            { passiiviset: boolean; palvelu?: string; kayttooikeus?: string }
+        >({
+            query: ({ passiiviset, palvelu, kayttooikeus }) =>
+                `kayttooikeusryhma?${new URLSearchParams({
+                    passiiviset: String(passiiviset),
+                    ...(palvelu && kayttooikeus ? { palvelu, kayttooikeus } : {}),
+                }).toString()}`,
             providesTags: ['kayttooikeusryhmat'],
+        }),
+        getKayttooikeusryhmaRoolis: builder.query<PalveluRooli[], string>({
+            query: (ryhmaId) => `kayttooikeusryhma/${ryhmaId}/kayttooikeus`,
+            providesTags: ['kayttooikeusryhmaroolit'],
+        }),
+        postKayttooikeusryhma: builder.mutation<void, KayttooikeusryhmaRequest>({
+            query: (body) => ({ url: 'kayttooikeusryhma', method: 'POST', body }),
+            invalidatesTags: ['kayttooikeusryhmat', 'kayttooikeusryhmaroolit'],
+        }),
+        putKayttooikeusryhma: builder.mutation<void, { id: string; body: KayttooikeusryhmaRequest }>({
+            query: ({ id, body }) => ({ url: `kayttooikeusryhma/${id}`, method: 'PUT', body }),
+            invalidatesTags: ['kayttooikeusryhmat', 'kayttooikeusryhmaroolit'],
         }),
         getOrganisaatioRyhmat: builder.query<OrganisaatioWithChildren[], void>({
             query: () => `organisaatio?${new URLSearchParams({ tyyppi: 'RYHMA' }).toString()}`,
@@ -353,6 +386,9 @@ export const {
     useGetPalvelutQuery,
     useGetPalveluKayttooikeudetQuery,
     useGetKayttooikeusryhmasQuery,
+    usePutKayttooikeusryhmaMutation,
+    usePostKayttooikeusryhmaMutation,
+    useGetKayttooikeusryhmaRoolisQuery,
     useGetOrganisaatioRyhmatQuery,
     useGetRootOrganisationQuery,
     useGetOrganisationNamesQuery,
