@@ -20,7 +20,7 @@ listenerMiddleware.startListening({
         });
 
         await forkDelay.result;
-        listenerApi.dispatch(remove('action.payload.id'));
+        listenerApi.dispatch(remove(action.payload.id));
     },
 });
 
