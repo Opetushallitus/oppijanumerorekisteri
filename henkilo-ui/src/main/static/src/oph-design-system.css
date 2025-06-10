@@ -210,6 +210,42 @@
     text-underline-position: from-font;
 }
 
+.oph-ds-button {
+    display: inline-flex;
+    padding: 8px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    color: var(--OPH-Button-Primary-variant-Text, #FFF);
+    border-radius: 2px;
+    background: var(--OPH-Button-Primary-variant-Background, #03C);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    margin: 0;
+    outline: none;
+    cursor: pointer;
+    border: 0;
+}
+
+.oph-ds-button:hover {
+    background: #0041DC;
+}
+
+.oph-ds-button:focus {
+    background: #0041DC;
+    outline-offset: 2px;
+    outline: 2px solid #000;
+}
+
+.oph-ds-button:active {
+    background: #006;
+}
+
+.oph-ds-button:disabled {
+    background: #B2B2B2;
+}
+
 .oph-ds-button-transparent {
     color: var(--OPH-Input-Stroke, #0041DC);
     background: none;
@@ -382,10 +418,67 @@
     white-space: nowrap;
     background-color: white;
     height: 100%;
+    width: 100%;
     padding: 8px;
     line-height: 24px;
 }
 
+.oph-ds-select-nooptionsmessage {
+    width: 100%;
+    text-align: center;
+}
+
 .oph-ds-select-option:hover {
     background-color: #F6F6F6;
+}
+
+.oph-ds-select-org {
+    min-width: 700px;
+}
+
+.oph-ds-select-org-option {
+    display: flex;
+    justify-content: space-between;
+}
+
+.oph-ds-select-org-parent {
+    font-size: 13px;
+    line-height: 19px;
+    color: #666666;
+}
+
+.oph-ds-table-results {
+    height: 40px;
+}
+
+.oph-ds-table {
+    width: 100%;
+}
+
+.oph-ds-table thead {
+    border-bottom: 1px solid var(--Table-cell-Stroke-Header-stroke-color, #DFDFDF);
+}
+
+.oph-ds-table th,
+.oph-ds-table td {
+    text-align: left;
+    padding: 0px 10px;
+    vertical-align: middle;
+}
+
+.oph-ds-table th {
+    height: 40px;
+    font-weight: 600;
+}
+
+.oph-ds-table td {
+    height: 56px;
+}
+
+.oph-ds-table tbody tr:nth-child(even) {
+    background: var(--Table-cell-Background-Even-row, #F6F6F6);
+}
+
+.oph-ds-table tbody tr:hover {
+    background: var(--Table-cell-Background-Hover-or-selected, #C1EAFF);
 }

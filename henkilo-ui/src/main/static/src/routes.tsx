@@ -21,11 +21,14 @@ import {
     updateDefaultNavigation,
     updateHenkiloNavigation,
     updatePalvelukayttajaNavigation,
+    updateJarjestelmatunnusNavigation,
 } from './components/navigation/navigation.utils';
 import { HenkiloState } from './reducers/henkilo.reducer';
 import { NaviTab } from './types/navigation.type';
 import PalvelukayttajaHakuPage from './components/palvelukayttaja/PalvelukayttajaHakuPage';
 import { PalvelukayttajaInfo } from './containers/PalvelukayttajaInfo';
+import { JarjestelmatunnusCreatePage } from './components/jarjestelmatunnus/JarjestelmatunnusCreatePage';
+import { JarjestelmatunnusListPage } from './components/jarjestelmatunnus/JarjestelmatunnusListPage';
 
 export type RouteType = {
     path: string;
@@ -151,6 +154,18 @@ export default (
             component={PalvelukayttajaHakuPage}
             title=""
             getNaviTabs={updatePalvelukayttajaNavigation}
+        />
+        <Route
+            path="/jarjestelmatunnus/luonti"
+            component={JarjestelmatunnusCreatePage}
+            title="JARJESTELMATUNNUSTEN_LUONTI"
+            getNaviTabs={updateJarjestelmatunnusNavigation}
+        />
+        <Route
+            path="/palvelukayttaja"
+            component={JarjestelmatunnusListPage}
+            title="JARJESTELMATUNNUSTEN_HAKU"
+            getNaviTabs={updateJarjestelmatunnusNavigation}
         />
     </Route>
 );

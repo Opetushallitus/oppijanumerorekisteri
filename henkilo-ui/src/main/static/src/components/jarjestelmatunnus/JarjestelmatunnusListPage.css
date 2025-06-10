@@ -1,0 +1,8 @@
+.jarjestelmatunnus-haku-form {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    min-height: 64px;
+}

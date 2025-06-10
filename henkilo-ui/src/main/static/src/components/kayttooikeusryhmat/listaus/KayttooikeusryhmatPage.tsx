@@ -146,6 +146,7 @@ export const KayttooikeusryhmatPage = () => {
                             <OphDsChechbox
                                 id="kayttooikeusryhmaNaytaPassivoidut"
                                 label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PASSIVOIDUT']}
+                                checked={passiiviset}
                                 onChange={() => setPassiiviset(!passiiviset)}
                             />
                         </div>
