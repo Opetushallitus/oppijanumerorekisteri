@@ -18,7 +18,9 @@ import * as logs from "aws-cdk-lib/aws-logs";
 import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import * as kms from "aws-cdk-lib/aws-kms";
 import * as sharedAccount from "./shared-account";
+import { prefix } from "./shared-account";
 import * as config from "./config";
+import { getConfig } from "./config";
 import * as path from "node:path";
 import {createHealthCheckStacks} from "./health-check";
 import {DatabaseBackupToS3} from "./DatabaseBackupToS3";
@@ -37,6 +39,7 @@ class CdkApp extends cdk.App {
       },
     };
 
+    new DnsStack(this, prefix("DnsStack"), stackProps);
     const { alarmsToSlackLambda, alarmTopic } = new AlarmStack(this, sharedAccount.prefix("AlarmStack"), stackProps);
     const ecsStack = new ECSStack(this, sharedAccount.prefix("ECSStack"), stackProps);
     const datantuontiExportStack = new datantuonti.ExportStack(this, sharedAccount.prefix("DatantuontiExport"), stackProps);
@@ -68,6 +71,17 @@ class CdkApp extends cdk.App {
       ...stackProps,
       bastion: databaseStack.bastion,
       ecsCluster: ecsStack.cluster,
+    });
+  }
+}
+
+class DnsStack extends cdk.Stack {
+  private readonly config = getConfig();
+  constructor(scope: constructs.Construct, id: string, props: cdk.StackProps) {
+    super(scope, id, props);
+
+    new route53.HostedZone(this, "HostedZone", {
+      zoneName: this.config.oauthDomainName,
     });
   }
 }
