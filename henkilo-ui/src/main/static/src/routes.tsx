@@ -162,7 +162,7 @@ export default (
             getNaviTabs={updateJarjestelmatunnusNavigation}
         />
         <Route
-            path="/palvelukayttaja"
+            path="/jarjestelmatunnus"
             component={JarjestelmatunnusListPage}
             title="JARJESTELMATUNNUSTEN_HAKU"
             getNaviTabs={updateJarjestelmatunnusNavigation}

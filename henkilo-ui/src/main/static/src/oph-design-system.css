@@ -24,12 +24,13 @@
     display: flex;
     flex-wrap: wrap;
     align-content: center;
-    height: 65px;
+    min-height: 65px;
     padding: 0 32px;
     max-width: 1920px;
     margin: 0 auto;
     background-color: white;
     border-bottom: 1px var(--gray-border);
+    word-wrap: break-word;
 }
 
 .oph-ds-page-header {
@@ -433,7 +434,8 @@
 }
 
 .oph-ds-select-org {
-    min-width: 700px;
+    max-width: 85vw;
+    width: 700px;
 }
 
 .oph-ds-select-org-option {
@@ -504,6 +506,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    padding: 24px 0;
 }
 
 .oph-ds-toast-ok {
@@ -523,10 +526,15 @@
     font-size: 16px;
 }
 
+.oph-ds-toast-header svg {
+    flex-shrink: 0;
+}
+
 .oph-ds-toast-body {
     padding-left: 50px;
     padding-right: 32px;
-    font-size: 16px;
+    font-size: 13px;
+    line-height: 19px;
 }
 
 .oph-ds-toast-close-button {
