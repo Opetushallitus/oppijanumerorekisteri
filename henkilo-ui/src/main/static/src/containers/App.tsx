@@ -16,6 +16,7 @@ import { useLocalisations } from '../selectors';
 import { useGetOmatOrganisaatiotQuery, useGetOmattiedotQuery } from '../api/kayttooikeus';
 import { useGetLocaleQuery } from '../api/oppijanumerorekisteri';
 import { useGetLocalisationsQuery } from '../api/lokalisointi';
+import { OphDsToasts } from '../components/design-system/OphDsToast';
 
 import 'moment/locale/fi';
 import 'moment/locale/sv';
@@ -83,6 +84,7 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     return isInitialized ? (
         <div className="oph-typography mainContainer">
             <GlobalNotifications />
+            <OphDsToasts />
             <TopNavigation pathName={location.pathname} route={route} params={params} />
             {children}
         </div>

@@ -482,3 +482,61 @@
 .oph-ds-table tbody tr:hover {
     background: var(--Table-cell-Background-Hover-or-selected, #C1EAFF);
 }
+
+.oph-ds-toasts {
+    position: fixed;
+    top: 4px;
+    right: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 666;
+}
+
+.oph-ds-toast {
+    position: relative;
+    border-radius: 3px;
+    color: #fff;
+    width: calc(100vw - 8px);
+    max-width: 633px;
+    min-height: 84px;
+    margin: 0 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.oph-ds-toast-ok {
+    background: #378703;
+}
+
+.oph-ds-toast-error {
+    background: #CC3300;
+}
+
+.oph-ds-toast-header {
+    display: flex;
+    gap: 9px;
+    padding-left: 17px;
+    padding-right: 40px;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.oph-ds-toast-body {
+    padding-left: 50px;
+    padding-right: 32px;
+    font-size: 16px;
+}
+
+.oph-ds-toast-close-button {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: none;
+    padding: 0;
+    margin: 0;
+    outline: none;
+    cursor: pointer;
+    border: 0;
+}

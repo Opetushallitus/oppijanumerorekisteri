@@ -6,6 +6,8 @@ import { kayttooikeusApi } from './api/kayttooikeus';
 import { oppijanumerorekisteriApi } from './api/oppijanumerorekisteri';
 import { lokalisointiApi } from './api/lokalisointi';
 import { koodistoApi } from './api/koodisto';
+import toastReducer from './slices/toastSlice';
+import toastMiddleware from './middleware/toastMiddleware';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const isClient = typeof window !== 'undefined';
@@ -13,6 +15,7 @@ const isClient = typeof window !== 'undefined';
 export const store = configureStore({
     reducer: {
         ...rootReducer,
+        toasts: toastReducer,
         [kayttooikeusApi.reducerPath]: kayttooikeusApi.reducer,
         [oppijanumerorekisteriApi.reducerPath]: oppijanumerorekisteriApi.reducer,
         [lokalisointiApi.reducerPath]: lokalisointiApi.reducer,
@@ -24,6 +27,7 @@ export const store = configureStore({
             immutableCheck: false,
             serializableCheck: false,
         })
+            .concat(toastMiddleware)
             .concat(kayttooikeusApi.middleware)
             .concat(oppijanumerorekisteriApi.middleware)
             .concat(lokalisointiApi.middleware)
