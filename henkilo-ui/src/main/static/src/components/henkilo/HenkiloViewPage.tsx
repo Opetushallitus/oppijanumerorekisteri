@@ -2,7 +2,7 @@ import React, { useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 import UserContentContainer from '../common/henkilo/usercontent/UserContentContainer';
-import HenkiloViewOrganisationContent from '../common/henkilo/HenkiloViewOrganisationContent';
+import { HenkiloViewOrganisationContent } from '../common/henkilo/HenkiloViewOrganisationContent';
 import HenkiloViewExistingKayttooikeus from '../common/henkilo/HenkiloViewExistingKayttooikeus';
 import HenkiloViewExpiredKayttooikeus from '../common/henkilo/HenkiloViewExpiredKayttooikeus';
 import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
@@ -85,7 +85,7 @@ export const HenkiloViewPage = (props: Props) => {
             )}
             {view !== 'omattiedot' && view !== 'oppija' && (
                 <div className="wrapper">
-                    {henkilo.henkiloOrgsLoading ? <Loader /> : <HenkiloViewOrganisationContent readOnly={true} />}
+                    {henkilo.henkiloOrgsLoading ? <Loader /> : <HenkiloViewOrganisationContent />}
                 </div>
             )}
             {view !== 'oppija' && (

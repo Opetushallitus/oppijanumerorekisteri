@@ -1,3 +1,5 @@
 .organisationContentWrapper {
     margin-top: 20px;
+    display: grid;
+    grid-template-columns: auto auto auto;
 }
