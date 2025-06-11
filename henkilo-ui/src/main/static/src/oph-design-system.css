@@ -13,11 +13,30 @@
     line-height: 24px;
 }
 
+.oph-ds-page-layout hr {
+    opacity: 0.7973;
+    margin: 28px 0;
+    border: 1px solid #C8C8C8;
+    border-bottom-width: 0px;
+}
+
 .oph-ds-page-layout h1 {
     font-weight: 700;
     font-size: 34px;
     line-height: 42px;
     letter-spacing: 0px;
+}
+
+.oph-ds-page-layout h2 {
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 30px;
+}
+
+.oph-ds-page-layout h3 {
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 26px;
 }
 
 .oph-ds-page-header-container {
@@ -279,7 +298,7 @@
 
 .oph-ds-accordion-header-text {
     display: inline-block;
-    max-width: 250px;
+    margin-right: 40px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -547,4 +566,28 @@
     outline: none;
     cursor: pointer;
     border: 0;
+}
+
+.oph-ds-banner {
+    border-radius: 2px;
+    padding: 24px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.oph-ds-banner-content {
+    display: flex;
+    gap: 9px;
+}
+
+.oph-ds-banner-warning {
+    background: rgba(255, 204, 51, 0.1);
+}
+
+.oph-ds-banner-info {
+    background: rgba(0, 51, 204, 0.1);
+}
+
+.oph-ds-banner svg {
+    flex-shrink: 0;
 }
