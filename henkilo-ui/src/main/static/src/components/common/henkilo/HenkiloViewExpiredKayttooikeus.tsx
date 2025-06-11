@@ -205,9 +205,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
         <div className="henkiloViewUserContentWrapper">
             {accessRight && <AccessRightDetails {...accessRight} />}
             <div>
-                <div className="header">
-                    <p className="oph-h2 oph-bold">{L['HENKILO_VANHAT_KAYTTOOIKEUDET_OTSIKKO']}</p>
-                </div>
+                <h2>{L['HENKILO_VANHAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
                 <OphTable table={table} isLoading={false} />
             </div>
         </div>

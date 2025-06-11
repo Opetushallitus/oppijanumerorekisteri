@@ -30,6 +30,7 @@ import { useLocalisations } from '../../../selectors';
 import OphTable from '../../OphTable';
 import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
 import ConfirmButton from '../button/ConfirmButton';
+import Loader from '../icons/Loader';
 
 type OwnProps = {
     oidHenkilo: string;
@@ -159,7 +160,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                     <DatePicker
                         className="oph-input"
                         onChange={(date) => loppupvmAction(moment(date), kayttooikeus.ryhmaId)}
-                        selected={dates[kayttooikeus.ryhmaId].loppupvm.toDate()}
+                        selected={dates[kayttooikeus.ryhmaId]?.loppupvm.toDate()}
                         showYearDropdown
                         showWeekNumbers
                         filterDate={(date) =>
@@ -286,12 +287,12 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
         getSortedRowModel: getSortedRowModel(),
     });
 
-    return (
+    return kayttooikeus.kayttooikeusLoading ? (
+        <Loader />
+    ) : (
         <div className="henkiloViewUserContentWrapper">
             {accessRight && <AccessRightDetails {...accessRight} />}
-            <div className="header">
-                <p className="oph-h2 oph-bold">{L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</p>
-            </div>
+            <h2>{L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
             <Notifications
                 notifications={notifications.existingKayttooikeus}
                 L={L}

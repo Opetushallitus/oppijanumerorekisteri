@@ -8,7 +8,7 @@ export const updateDefaultNavigation = () => mainNavigation;
 
 export const updatePalvelukayttajaNavigation = () => palvelukayttajaNavigation;
 
-export const updateJarjestelmatunnusNavigation = () => jarjestelmatunnusNavigation;
+export const updateJarjestelmatunnusNavigation = (oid?: string) => jarjestelmatunnusNavigation(oid);
 
 export const updateHenkiloNavigation = (oidHenkilo: string, henkiloState: HenkiloState, henkiloType: string) =>
     henkiloViewTabs(oidHenkilo, henkiloState, henkiloType);

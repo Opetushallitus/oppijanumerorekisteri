@@ -56,10 +56,17 @@ export const palvelukayttajaNavigation: Array<NaviTab> = [
     { path: '/palvelukayttaja/luonti', label: 'NAVI_PALVELUKAYTTAJA_LUONTI' },
 ];
 
-export const jarjestelmatunnusNavigation: Array<NaviTab> = [
-    { path: '/jarjestelmatunnus', label: 'JARJESTELMATUNNUSTEN_HAKU' },
-    { path: '/jarjestelmatunnus/luonti', label: 'JARJESTELMATUNNUSTEN_LUONTI' },
-];
+export const jarjestelmatunnusNavigation = (oid?: string) =>
+    oid
+        ? [
+              { path: '/jarjestelmatunnus', label: 'JARJESTELMATUNNUSTEN_HAKU' },
+              { path: '/jarjestelmatunnus/luonti', label: 'JARJESTELMATUNNUSTEN_LUONTI' },
+              { path: `/jarjestelmatunnus/${oid}`, label: 'JARJESTELMATUNNUKSEN_HALLINTA' },
+          ]
+        : [
+              { path: '/jarjestelmatunnus', label: 'JARJESTELMATUNNUSTEN_HAKU' },
+              { path: '/jarjestelmatunnus/luonti', label: 'JARJESTELMATUNNUSTEN_LUONTI' },
+          ];
 
 export const oppijaNavi = (oid: string): Array<NaviTab> => [
     { path: '/oppija/' + oid, label: 'NAVI_HENKILON_TIEDOT' },

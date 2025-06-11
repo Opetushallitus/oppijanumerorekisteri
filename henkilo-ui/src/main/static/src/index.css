@@ -138,8 +138,8 @@ h1 {
 }
 
 h2 {
-    font-size: 2em;
-    font-weight: bold;
+    font-size: 24px;
+    font-weight: 600;
 }
 
 h3 {
@@ -171,4 +171,8 @@ hr {
 
 .pincode-input-text:not(:last-of-type) {
     margin-right: 12px !important;
+}
+
+.henkiloViewUserContentWrapper h2 {
+    margin-bottom: 24px;
 }

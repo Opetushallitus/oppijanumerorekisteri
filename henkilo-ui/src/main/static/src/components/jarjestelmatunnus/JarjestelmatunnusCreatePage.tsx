@@ -23,7 +23,7 @@ export const JarjestelmatunnusCreatePage = ({ router }: Props) => {
         await postPalvelukayttaja({ nimi })
             .unwrap()
             .then((data) => {
-                router.push(`/virkailija/${data.oid}`);
+                router.push(`/jarjestelmatunnus/${data.oid}`);
             })
             .catch((error) => {
                 dispatch(

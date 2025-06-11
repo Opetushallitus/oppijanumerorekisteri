@@ -1,0 +1,26 @@
+.jarjestelmatunnus-edit-header {
+    margin-bottom: 24px;
+}
+
+.jarjestelmatunnus-edit-info {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+}
+
+.jarjestelmatunnus-edit-info > div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+.jarjestelmatunnus-edit-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.jarjestelmatunnus-edit-info-grid > div:nth-child(odd) {
+    font-weight: bold;
+}

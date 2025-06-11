@@ -204,9 +204,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
         return (
             <div className="henkiloViewUserContentWrapper">
                 <div className="add-kayttooikeus-container">
-                    <div className="header">
-                        <p className="oph-h2 oph-bold">{this.props.L['HENKILO_LISAA_KAYTTOOIKEUDET_OTSIKKO']}</p>
-                    </div>
+                    <h2>{this.props.L['HENKILO_LISAA_KAYTTOOIKEUDET_OTSIKKO']}</h2>
                     <div>
                         <table>
                             <colgroup>

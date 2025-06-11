@@ -29,6 +29,7 @@ import PalvelukayttajaHakuPage from './components/palvelukayttaja/Palvelukayttaj
 import { PalvelukayttajaInfo } from './containers/PalvelukayttajaInfo';
 import { JarjestelmatunnusCreatePage } from './components/jarjestelmatunnus/JarjestelmatunnusCreatePage';
 import { JarjestelmatunnusListPage } from './components/jarjestelmatunnus/JarjestelmatunnusListPage';
+import { JarjestelmatunnusEditPage } from './components/jarjestelmatunnus/JarjestelmatunnusEditPage';
 
 export type RouteType = {
     path: string;
@@ -156,15 +157,21 @@ export default (
             getNaviTabs={updatePalvelukayttajaNavigation}
         />
         <Route
-            path="/jarjestelmatunnus/luonti"
-            component={JarjestelmatunnusCreatePage}
-            title="JARJESTELMATUNNUSTEN_LUONTI"
-            getNaviTabs={updateJarjestelmatunnusNavigation}
-        />
-        <Route
             path="/jarjestelmatunnus"
             component={JarjestelmatunnusListPage}
             title="JARJESTELMATUNNUSTEN_HAKU"
+            getNaviTabs={updateJarjestelmatunnusNavigation}
+        />
+        <Route
+            path="/jarjestelmatunnus/luonti"
+            component={JarjestelmatunnusCreatePage}
+            title="JARJESTELMATUNNUSTEN_LUONTI"
+            getNaviTabs={() => updateJarjestelmatunnusNavigation()}
+        />
+        <Route
+            path="/jarjestelmatunnus/:oid"
+            component={JarjestelmatunnusEditPage}
+            title="JARJESTELMATUNNUKSEN_HALLINTA"
             getNaviTabs={updateJarjestelmatunnusNavigation}
         />
     </Route>

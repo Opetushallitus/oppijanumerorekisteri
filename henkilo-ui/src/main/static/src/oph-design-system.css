@@ -216,6 +216,13 @@
     line-height: 24px;
 }
 
+.oph-ds-link-new-window {
+    padding-right: 22px;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE1LjgzMzMgMTUuODMzM0g0LjE2NjY3VjQuMTY2NjdIMTBWMi41SDQuMTY2NjdDMy4yNDE2NyAyLjUgMi41IDMuMjUgMi41IDQuMTY2NjdWMTUuODMzM0MyLjUgMTYuNzUgMy4yNDE2NyAxNy41IDQuMTY2NjcgMTcuNUgxNS44MzMzQzE2Ljc1IDE3LjUgMTcuNSAxNi43NSAxNy41IDE1LjgzMzNWMTBIMTUuODMzM1YxNS44MzMzWk0xMS42NjY3IDIuNVY0LjE2NjY3SDE0LjY1ODNMNi40NjY2NyAxMi4zNTgzTDcuNjQxNjcgMTMuNTMzM0wxNS44MzMzIDUuMzQxNjdWOC4zMzMzM0gxNy41VjIuNUgxMS42NjY3WiIgZmlsbD0iIzAwMzNDQyIvPgo8L3N2Zz4K');
+    background-repeat: no-repeat;
+    background-position: right;
+}
+
 .oph-ds-link:focus {
     outline: 2px solid #000;
     border-radius: 2px;
