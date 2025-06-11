@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../../../store';
-import Columns from 'react-columns';
 import Field from '../../field/Field';
 import { Localisations } from '../../../../types/localisation.type';
 
@@ -44,15 +43,15 @@ const LabelValue = ({
 }: Props) =>
     !values.showOnlyOnWrite || !readOnly ? (
         <div id={values.label}>
-            <Columns
-                columns={readOnly ? 2 : 1}
+            <div
                 className="labelValue"
-                rootStyles={{ marginRight: '25%', marginBottom: '2%' }}
+                style={{
+                    display: 'grid',
+                    gridTemplateColumns: readOnly ? '1fr 1fr' : '1fr',
+                }}
             >
                 {!hideLabel && values.label ? (
-                    <span style={{ marginRight: 40 }} className="oph-bold">
-                        {L[values.label] + (required ? ' *' : '')}
-                    </span>
+                    <span className="oph-bold">{L[values.label] + (required ? ' *' : '')}</span>
                 ) : (
                     <span>&nbsp;</span>
                 )}
@@ -65,7 +64,7 @@ const LabelValue = ({
                 >
                     {values.value}
                 </Field>
-            </Columns>
+            </div>
         </div>
     ) : null;
 

@@ -1,5 +1,4 @@
 import React, { ReactNode } from 'react';
-import Columns from 'react-columns';
 
 import { useLocalisations } from '../../../../selectors';
 
@@ -17,20 +16,20 @@ export const FieldlessLabelValue = ({ showOnlyOnWrite, label, readOnly, children
 
     return !showOnlyOnWrite || !readOnly ? (
         <div id={label}>
-            <Columns
-                columns={readOnly ? 2 : 1}
+            <div
                 className="labelValue"
-                rootStyles={{ marginRight: '25%', marginBottom: '2%' }}
+                style={{
+                    display: 'grid',
+                    gridTemplateColumns: readOnly ? '1fr 1fr' : '1fr',
+                }}
             >
                 {!hideLabel && label ? (
-                    <span style={{ marginRight: 40 }} className="oph-bold">
-                        {L[label] + (required ? ' *' : '')}
-                    </span>
+                    <span className="oph-bold">{L[label] + (required ? ' *' : '')}</span>
                 ) : (
                     <span>&nbsp;</span>
                 )}
                 {children}
-            </Columns>
+            </div>
         </div>
     ) : null;
 };

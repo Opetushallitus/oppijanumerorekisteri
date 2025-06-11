@@ -90,11 +90,15 @@ export const HenkiloViewPage = (props: Props) => {
             )}
             {view !== 'oppija' && (
                 <div className="wrapper" ref={existingKayttooikeusRef}>
-                    <HenkiloViewExistingKayttooikeus
-                        vuosia={StaticUtils.getKayttooikeusKestoVuosissa(henkilo.kayttaja)}
-                        oidHenkilo={oidHenkilo}
-                        isOmattiedot={view === 'omattiedot'}
-                    />
+                    {kayttooikeus.kayttooikeusLoading ? (
+                        <Loader />
+                    ) : (
+                        <HenkiloViewExistingKayttooikeus
+                            vuosia={StaticUtils.getKayttooikeusKestoVuosissa(henkilo.kayttaja)}
+                            oidHenkilo={oidHenkilo}
+                            isOmattiedot={view === 'omattiedot'}
+                        />
+                    )}
                 </div>
             )}
             {henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && view !== 'oppija' && (

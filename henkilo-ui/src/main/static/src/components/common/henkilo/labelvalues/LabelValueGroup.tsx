@@ -1,7 +1,6 @@
 import React, { ReactNode } from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../../../store';
-import Columns from 'react-columns';
 import { Localisations } from '../../../../types/localisation.type';
 
 type OwnProps = {
@@ -17,10 +16,10 @@ type Props = OwnProps & StateProps;
 
 const LabelValueGroup = ({ label, L, valueGroup }: Props) => (
     <div id={label}>
-        <Columns columns={2} className="labelValue" rootStyles={{ marginRight: '25%' }}>
+        <div className="labelValue" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
             <span className="oph-bold">{L[label]}</span>
             {valueGroup}
-        </Columns>
+        </div>
     </div>
 );
 

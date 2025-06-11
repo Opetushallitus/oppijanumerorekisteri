@@ -1,7 +1,6 @@
 import './AbstractUserContent.css';
 import React, { ReactNode } from 'react';
 import EditButtons from '../buttons/EditButtons';
-import Columns from 'react-columns';
 
 type Props = {
     basicInfo: Array<Array<ReactNode>>;
@@ -21,8 +20,7 @@ const AbstractUserContent = ({
     isValidForm,
 }: Props) => (
     <div className="user-content">
-        {/* By default rootStyles is { overflowX: 'hidden' }. This causes scroll bars to appear when inner content expands. */}
-        <Columns columns={3} gap="10px" rootStyles={{}}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
             {basicInfo.map((info, idx) => (
                 <div key={idx} className="henkiloViewContent">
                     {info.map((values, idx2) => (
@@ -30,7 +28,7 @@ const AbstractUserContent = ({
                     ))}
                 </div>
             ))}
-        </Columns>
+        </div>
         {readOnly ? (
             <div className="henkiloViewButtons">
                 {readOnlyButtons.map((button, idx) => (

@@ -1,7 +1,6 @@
 import './HenkiloViewContactContent.css';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import Columns from 'react-columns';
 import Field from '../field/Field';
 import Button from '../button/Button';
 import StaticUtils from '../StaticUtils';
@@ -180,7 +179,10 @@ export class HenkiloViewContactContentComponent extends React.Component<Props, S
                     {yhteystiedotRyhmaFlat.value.map((yhteystietoFlat, idx2) => (
                         <div key={idx2} id={yhteystietoFlat.label}>
                             {(!this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly) || yhteystietoFlat.value ? (
-                                <Columns columns={2} className="labelValue">
+                                <div
+                                    style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}
+                                    className="labelValue"
+                                >
                                     <span className="oph-bold">{this.props.L[yhteystietoFlat.label]}</span>
                                     <Field
                                         inputValue={yhteystietoFlat.inputValue}
@@ -190,7 +192,7 @@ export class HenkiloViewContactContentComponent extends React.Component<Props, S
                                     >
                                         {yhteystietoFlat.value}
                                     </Field>
-                                </Columns>
+                                </div>
                             ) : null}
                         </div>
                     ))}
@@ -240,9 +242,9 @@ export class HenkiloViewContactContentComponent extends React.Component<Props, S
                     ) : null}
 
                     <div className="henkiloViewContent">
-                        <Columns columns={2} gap="25px">
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
                             {this.createContent()}
-                        </Columns>
+                        </div>
                     </div>
                 </div>
                 {this.state.readOnly ? (
