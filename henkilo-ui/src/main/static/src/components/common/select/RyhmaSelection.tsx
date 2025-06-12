@@ -1,14 +1,15 @@
 import React, { useMemo } from 'react';
-import Select, { createFilter } from 'react-select';
+import Select from 'react-select';
 
 import { useLocalisations, useOmatOrganisaatiot } from '../../../selectors';
 import { getOrganisaatioOptions } from '../../../utilities/organisaatio.util';
-import { FastMenuList, SelectOption } from '../../../utilities/select';
+import { SelectOption, selectProps } from '../../../utilities/select';
 
 type OwnProps = {
     selectOrganisaatio: (o: SelectOption) => void;
     selectedOrganisaatioOid: string;
     placeholder?: string;
+    disabled?: boolean;
 };
 
 const RyhmaSelection = (props: OwnProps) => {
@@ -23,13 +24,14 @@ const RyhmaSelection = (props: OwnProps) => {
     return (
         !!options && (
             <Select
+                {...selectProps}
                 className="organisaatioSelection"
                 options={options}
-                components={{ MenuList: FastMenuList }}
-                filterOption={createFilter({ ignoreAccents: false })}
                 placeholder={placeholder}
                 onChange={props.selectOrganisaatio}
                 value={options.find((o) => o.value === props.selectedOrganisaatioOid)}
+                isDisabled={props.disabled}
+                isClearable
             />
         )
     );

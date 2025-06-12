@@ -15,16 +15,16 @@ export type ValittuKayttooikeusryhma = {
 
 type Props = {
     selectedList: Array<ValittuKayttooikeusryhma>;
-    kayttooikeusAction: (arg0: ValittuKayttooikeusryhma) => void;
-    close: (kayttooikeusryhmaId: number) => void;
+    addKayttooikeus: (arg0: ValittuKayttooikeusryhma) => void;
+    removeKayttooikeus: (kayttooikeusryhmaId: number) => void;
     selectedOrganisationOid: string;
     isPalvelukayttaja: boolean;
 };
 
 const CKKayttooikeudet = ({
     selectedList,
-    kayttooikeusAction,
-    close,
+    addKayttooikeus,
+    removeKayttooikeus,
     selectedOrganisationOid,
     isPalvelukayttaja,
 }: Props) => {
@@ -41,49 +41,43 @@ const CKKayttooikeudet = ({
             ?.filter((myonnetty) => selectedList.every((selected) => selected.value !== myonnetty.ryhmaId))
             .map(myonnettyToKayttooikeusryhma) ?? [];
     return (
-        <tr key="kayttooikeusKayttooikeudetField">
-            <td>
-                <span className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT']}</span>:
-            </td>
-            <td>
-                <div>
-                    <div>
-                        <KayttooikeusryhmaSelectModal
-                            kayttooikeusryhmat={kayttooikeusryhmat}
-                            kayttooikeusryhmaValittu={selectedList.length > 0}
-                            onSelect={(kayttooikeusryhma) =>
-                                kayttooikeusAction({
-                                    value: kayttooikeusryhma.id,
-                                    label: toLocalizedText(locale, kayttooikeusryhma.nimi),
-                                })
-                            }
-                            loading={isLoading}
-                            isOrganisaatioSelected={!!selectedOrganisationOid}
-                            sallittuKayttajatyyppi={isPalvelukayttaja ? 'PALVELU' : 'VIRKAILIJA'}
-                        />
-                    </div>
-                </div>
-                <div>
-                    {selectedList.map((selected, idx) => (
-                        <div key={idx} className="oph-alert oph-alert-info">
-                            <div className="oph-alert-container">
-                                <div className="oph-alert-title">{selected.label}</div>
-                                <button
-                                    className="oph-button oph-button-close"
-                                    type="button"
-                                    title={L['POISTA']}
-                                    aria-label="Close"
-                                    onClick={() => close(selected.value)}
-                                >
-                                    <span aria-hidden="true">×</span>
-                                </button>
-                            </div>
+        <div>
+            <div>
+                <KayttooikeusryhmaSelectModal
+                    kayttooikeusryhmat={kayttooikeusryhmat}
+                    kayttooikeusryhmaValittu={selectedList.length > 0}
+                    onSelect={(kayttooikeusryhma) =>
+                        addKayttooikeus({
+                            value: kayttooikeusryhma.id,
+                            label: toLocalizedText(locale, kayttooikeusryhma.nimi),
+                        })
+                    }
+                    loading={isLoading}
+                    isOrganisaatioSelected={!!selectedOrganisationOid}
+                    sallittuKayttajatyyppi={isPalvelukayttaja ? 'PALVELU' : 'VIRKAILIJA'}
+                    disabled={!selectedOrganisationOid}
+                />
+            </div>
+            <div>
+                {selectedList.map((selected, idx) => (
+                    <div key={idx} className="oph-alert oph-alert-info">
+                        <div className="oph-alert-container">
+                            <div className="oph-alert-title">{selected.label}</div>
+                            <button
+                                className="oph-button oph-button-close"
+                                type="button"
+                                title={L['POISTA']}
+                                aria-label="Close"
+                                disabled={!selectedOrganisationOid}
+                                onClick={() => removeKayttooikeus(selected.value)}
+                            >
+                                <span aria-hidden="true">×</span>
+                            </button>
                         </div>
-                    ))}
-                </div>
-            </td>
-            <td />
-        </tr>
+                    </div>
+                ))}
+            </div>
+        </div>
     );
 };
 

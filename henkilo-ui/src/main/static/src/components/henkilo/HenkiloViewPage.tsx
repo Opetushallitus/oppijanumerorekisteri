@@ -97,6 +97,7 @@ export const HenkiloViewPage = (props: Props) => {
                             vuosia={StaticUtils.getKayttooikeusKestoVuosissa(henkilo.kayttaja)}
                             oidHenkilo={oidHenkilo}
                             isOmattiedot={view === 'omattiedot'}
+                            existingKayttooikeusRef={existingKayttooikeusRef}
                         />
                     )}
                 </div>

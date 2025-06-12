@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { MutableRefObject, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import moment, { Moment } from 'moment';
 import DatePicker from 'react-datepicker';
@@ -36,6 +36,7 @@ type OwnProps = {
     oidHenkilo: string;
     isOmattiedot: boolean;
     vuosia: number;
+    existingKayttooikeusRef: MutableRefObject<HTMLDivElement>;
 };
 
 const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
@@ -290,7 +291,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     return kayttooikeus.kayttooikeusLoading ? (
         <Loader />
     ) : (
-        <div className="henkiloViewUserContentWrapper">
+        <div ref={props.existingKayttooikeusRef} className="henkiloViewUserContentWrapper">
             {accessRight && <AccessRightDetails {...accessRight} />}
             <h2>{L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
             <Notifications

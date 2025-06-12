@@ -82,7 +82,12 @@ export const JarjestelmatunnusEditPage = ({ params }: Props) => {
             <hr />
             <HenkiloViewOrganisationContent />
             <hr />
-            <HenkiloViewExistingKayttooikeus vuosia={null} oidHenkilo={params.oid} isOmattiedot={false} />
+            <HenkiloViewExistingKayttooikeus
+                existingKayttooikeusRef={existingKayttooikeusRef}
+                vuosia={null}
+                oidHenkilo={params.oid}
+                isOmattiedot={false}
+            />
             <hr />
             <HenkiloViewExpiredKayttooikeus oidHenkilo={params.oid} isOmattiedot={false} />
             <hr />
