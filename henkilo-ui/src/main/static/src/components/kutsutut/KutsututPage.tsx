@@ -2,7 +2,6 @@ import React, { useMemo, useState } from 'react';
 import moment from 'moment';
 import Select, { createFilter } from 'react-select';
 
-import Modal from '../common/modal/Modal';
 import Button from '../common/button/Button';
 import KutsututTable from './KutsututTable';
 import KutsututBooleanRadioButton from './KutsututBooleanRadioButton';
@@ -21,6 +20,7 @@ import { useDebounce } from '../../useDebounce';
 import { KutsuView } from './KutsuViews';
 import StaticUtils from '../common/StaticUtils';
 import { FastMenuList, SelectOption } from '../../utilities/select';
+import OphModal from '../common/modal/OphModal';
 
 import './KutsututPage.css';
 
@@ -156,48 +156,31 @@ export const KutsututPage = () => {
             </div>
             <KutsututTable params={delayedParams} cancelInvitation={(k) => setConfirmDelete(k)} />
             {confirmDelete && (
-                <Modal show={!!confirmDelete} onClose={() => setConfirmDelete(undefined)} closeOnOuterClick={true}>
-                    <div className="confirmation-modal">
-                        <span className="oph-h2 oph-strong">{L['PERUUTA_KUTSU_VAHVISTUS']}</span>
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <th>{L['KUTSUT_NIMI_OTSIKKO']}</th>
-                                    <td>
-                                        {confirmDelete.etunimi} {confirmDelete.sukunimi}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>{L['KUTSUT_SAHKOPOSTI_OTSIKKO']}</th>
-                                    <td>{confirmDelete.sahkoposti}</td>
-                                </tr>
-                                <tr>
-                                    <th>{L['KUTSUTUT_ORGANISAATIO_OTSIKKO']}</th>
-                                    <td>
-                                        {confirmDelete.organisaatiot.map((org) => (
-                                            <div className="kutsuOrganisaatio" key={org.organisaatioOid}>
-                                                {org.nimi[locale]}
-                                            </div>
-                                        ))}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>{L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO']}</th>
-                                    <td>{moment(confirmDelete.aikaleima).format()}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div className="row">
-                            <Button className="left action" action={cancelInvitationConfirmed}>
-                                {L['PERUUTA_KUTSU']}
-                            </Button>
-                            <Button className="right cancel" action={() => setConfirmDelete(undefined)}>
-                                {L['PERUUTA_KUTSUN_PERUUTTAMINEN']}
-                            </Button>
+                <OphModal
+                    onClose={() => setConfirmDelete(undefined)}
+                    onOverlayClick={() => setConfirmDelete(undefined)}
+                >
+                    <span className="oph-h2 oph-strong">{L['PERUUTA_KUTSU_VAHVISTUS']}</span>
+                    <div className="kutsu-confirmation-table">
+                        <div>{L['KUTSUT_NIMI_OTSIKKO']}</div>
+                        <div>
+                            {confirmDelete.etunimi} {confirmDelete.sukunimi}
                         </div>
-                        <div className="clear" />
+                        <div>{L['KUTSUT_SAHKOPOSTI_OTSIKKO']}</div>
+                        <div>{confirmDelete.sahkoposti}</div>
+                        <div>{L['KUTSUTUT_ORGANISAATIO_OTSIKKO']}</div>
+                        <div>
+                            {confirmDelete.organisaatiot.map((org) => (
+                                <div className="kutsuOrganisaatio" key={org.organisaatioOid}>
+                                    {org.nimi[locale]}
+                                </div>
+                            ))}
+                        </div>
+                        <div>{L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO']}</div>
+                        <div>{moment(confirmDelete.aikaleima).format()}</div>
                     </div>
-                </Modal>
+                    <Button action={cancelInvitationConfirmed}>{L['PERUUTA_KUTSU']}</Button>
+                </OphModal>
             )}
         </div>
     );

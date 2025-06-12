@@ -12,44 +12,42 @@ type OphModalProps = {
 /**
  * Tyylioppaan mukainen modal.
  */
-class OphModal extends React.Component<OphModalProps> {
-    render() {
-        return (
+const OphModal = ({ big, children, onClose, onOverlayClick, title }: OphModalProps) => {
+    return (
+        <div
+            className="oph-overlay oph-overlay-bg oph-overlay-is-visible"
+            role="dialog"
+            tabIndex={-1}
+            onClick={(e) => (onOverlayClick ? onOverlayClick(e) : onClose(e))}
+        >
             <div
-                className="oph-overlay oph-overlay-bg oph-overlay-is-visible"
-                role="dialog"
-                tabIndex={-1}
-                onClick={(e) => (this.props.onOverlayClick ? this.props.onOverlayClick(e) : this.props.onClose(e))}
+                className={classNames('oph-modal', { 'oph-modal-big': big })}
+                role="document"
+                onClick={(e) => {
+                    e.stopPropagation();
+                }}
             >
-                <div
-                    className={classNames('oph-modal', { 'oph-modal-big': this.props.big })}
-                    role="document"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                    }}
+                <button
+                    className="oph-button oph-button-close"
+                    type="button"
+                    title="Close"
+                    aria-label="Close"
+                    onClick={onClose}
                 >
-                    <button
-                        className="oph-button oph-button-close"
-                        type="button"
-                        title="Close"
-                        aria-label="Close"
-                        onClick={this.props.onClose}
-                    >
-                        <span aria-hidden="true">×</span>
-                    </button>
+                    <span aria-hidden="true">×</span>
+                </button>
 
-                    <div className="oph-modal-content">
-                        {this.props.title && <h1 className="oph-modal-title">{this.props.title}</h1>}
-                        {this.props.children}
-                    </div>
-
-                    <a className="oph-link oph-modal-back-to-top-link" href="#modal">
-                        Back to modal top
-                    </a>
+                <div className="oph-modal-content">
+                    {title && <h1 className="oph-modal-title">{title}</h1>}
+                    {children}
                 </div>
+
+                <a className="oph-link oph-modal-back-to-top-link" href="#modal">
+                    Back to modal top
+                </a>
             </div>
-        );
-    }
-}
+        </div>
+    );
+};
 
 export default OphModal;

@@ -58,7 +58,7 @@ const KutsuminenPage = () => {
         },
     };
 
-    const [modalOpen, setModalOpen] = useState(false);
+    const [modalOpen, setModalOpen] = useState(true);
     const [basicInfo, setBasicInfo] = useState<KutsuBasicInfo>({ ...initialBasicInfo });
     const [kutsuOrganisaatios, setKutsuOrganisaatios] = useState<KutsuOrganisaatio[]>([]);
     const [validationMessages, setValidationMessages] = useState<ValidationMessages>({ ...initialValidationMessages });
@@ -188,15 +188,17 @@ const KutsuminenPage = () => {
                             {L['VIRKAILIJAN_LISAYS_TALLENNA']}
                         </ValidationMessageButton>
                     </div>
-                    <KutsuConfirmation
-                        addedOrgs={kutsuOrganisaatios}
-                        modalCloseFn={modalCloseFn}
-                        modalOpen={modalOpen}
-                        basicInfo={basicInfo}
-                        resetFormValues={resetFormValues}
-                        L={L}
-                        locale={locale}
-                    />
+                    {modalOpen && (
+                        <KutsuConfirmation
+                            addedOrgs={kutsuOrganisaatios}
+                            modalCloseFn={modalCloseFn}
+                            modalOpen={modalOpen}
+                            basicInfo={basicInfo}
+                            resetFormValues={resetFormValues}
+                            L={L}
+                            locale={locale}
+                        />
+                    )}
                 </form>
             </div>
         );

@@ -1,8 +1,7 @@
 import React from 'react';
-import Modal from '../common/modal/Modal';
+
 import Button from '../common/button/Button';
 import { toLocalizedText } from '../../localizabletext';
-import './KutsuConfirmation.css';
 import { http } from '../../http';
 import { urls } from 'oph-urls-js';
 import { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
@@ -11,6 +10,7 @@ import { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayt
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
 import { Locale } from '../../types/locale.type';
+import OphModal from '../common/modal/OphModal';
 
 type Props = {
     addedOrgs: readonly KutsuOrganisaatio[];
@@ -41,42 +41,35 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
     render() {
         const { L } = this.props;
         return (
-            <Modal show={this.props.modalOpen} onClose={this.props.modalCloseFn} closeOnOuterClick={true}>
-                <div className="confirmation-modal">
-                    <i
-                        className="fa fa-times-circle fa-2 clickable right"
-                        onClick={this.props.modalCloseFn}
-                        aria-hidden="true"
-                    />
-                    <span className="oph-h1 oph-strong">{L['VIRKAILIJAN_LISAYS_ESIKATSELU_OTSIKKO']}</span>
-                    <p>
-                        {L['VIRKAILIJAN_LISAYS_ESIKATSELU_TEKSTI']} {this.props.basicInfo.email}
-                    </p>
-                    <span className="oph-h2 oph-strong">{L['VIRKAILIJAN_LISAYS_ESIKATSELU_ALAOTSIKKO']}</span>
-                    {this.props.addedOrgs.map(this.renderAddedOrg.bind(this))}
-                    <div className="row">
-                        {this.state.sent ? (
-                            <Button action={this.onClose.bind(this)}>{L['VIRKAILIJAN_LISAYS_LAHETETTY']}</Button>
-                        ) : (
-                            <Button action={this._sendInvitation.bind(this)} loading={this.state.loading}>
-                                {L['VIRKAILIJAN_LISAYS_TALLENNA']}
-                            </Button>
-                        )}
-                    </div>
-
-                    <LocalNotification
-                        type="error"
-                        title={L['KUTSU_LUONTI_EPAONNISTUI']}
-                        toggle={this.state.notifications.length > 0}
-                    >
-                        <ul>
-                            {this.state.notifications.map((notification, index) => (
-                                <li key={index}>{notification}</li>
-                            ))}
-                        </ul>
-                    </LocalNotification>
+            <OphModal onClose={this.props.modalCloseFn} onOverlayClick={this.props.modalCloseFn}>
+                <h2>{L['VIRKAILIJAN_LISAYS_ESIKATSELU_OTSIKKO']}</h2>
+                <p>
+                    {L['VIRKAILIJAN_LISAYS_ESIKATSELU_TEKSTI']} {this.props.basicInfo.email}
+                </p>
+                <h3>{L['VIRKAILIJAN_LISAYS_ESIKATSELU_ALAOTSIKKO']}</h3>
+                {this.props.addedOrgs.map(this.renderAddedOrg.bind(this))}
+                <div className="row">
+                    {this.state.sent ? (
+                        <Button action={this.onClose.bind(this)}>{L['VIRKAILIJAN_LISAYS_LAHETETTY']}</Button>
+                    ) : (
+                        <Button action={this._sendInvitation.bind(this)} loading={this.state.loading}>
+                            {L['VIRKAILIJAN_LISAYS_TALLENNA']}
+                        </Button>
+                    )}
                 </div>
-            </Modal>
+
+                <LocalNotification
+                    type="error"
+                    title={L['KUTSU_LUONTI_EPAONNISTUI']}
+                    toggle={this.state.notifications.length > 0}
+                >
+                    <ul>
+                        {this.state.notifications.map((notification, index) => (
+                            <li key={index}>{notification}</li>
+                        ))}
+                    </ul>
+                </LocalNotification>
+            </OphModal>
         );
     }
 
