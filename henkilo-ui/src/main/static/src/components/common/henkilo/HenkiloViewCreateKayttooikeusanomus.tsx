@@ -297,8 +297,6 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
 
                     <div className="oph-input-container kayttooikeus-selection-wrapper">
                         <KayttooikeusryhmaSelectModal
-                            locale={locale}
-                            L={L}
                             kayttooikeusryhmat={kayttooikeusryhmat}
                             kayttooikeusryhmaValittu={kayttooikeusryhmaSelections.length > 0}
                             onSelect={_addKayttooikeusryhmaSelection}

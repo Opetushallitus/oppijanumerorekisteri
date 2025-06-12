@@ -49,8 +49,6 @@ const CKKayttooikeudet = ({
                 <div>
                     <div>
                         <KayttooikeusryhmaSelectModal
-                            locale={locale}
-                            L={L}
                             kayttooikeusryhmat={kayttooikeusryhmat}
                             kayttooikeusryhmaValittu={selectedList.length > 0}
                             onSelect={(kayttooikeusryhma) =>

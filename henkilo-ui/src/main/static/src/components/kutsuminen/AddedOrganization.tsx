@@ -116,8 +116,6 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
 
                 <div className="permissionSelect">
                     <KayttooikeusryhmaSelectModal
-                        locale={locale}
-                        L={L}
                         kayttooikeusryhmat={kayttooikeusryhmat}
                         kayttooikeusryhmaValittu={addedOrg.selectedPermissions.length > 0}
                         onSelect={addPermission}
