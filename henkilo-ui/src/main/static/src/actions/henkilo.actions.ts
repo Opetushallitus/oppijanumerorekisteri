@@ -17,7 +17,6 @@ import {
     FETCH_KAYTTAJATIETO_SUCCESS,
     UPDATE_HENKILO_FAILURE,
     UPDATE_HENKILO_REQUEST,
-    UPDATE_HENKILO_SUCCESS,
     UPDATE_KAYTTAJATIETO_REQUEST,
     UPDATE_KAYTTAJATIETO_SUCCESS,
     UPDATE_KAYTTAJATIETO_FAILURE,
@@ -79,11 +78,6 @@ export const fetchHenkilo = (oid: string) => async (dispatch: AppDispatch) => {
 };
 
 const requestHenkiloUpdate = (oid) => ({ type: UPDATE_HENKILO_REQUEST, oid });
-const receiveHenkiloUpdate = (oid) => ({
-    type: UPDATE_HENKILO_SUCCESS,
-    oid,
-    receivedAt: Date.now(),
-});
 const errorHenkiloUpdate = (error) => ({ type: UPDATE_HENKILO_FAILURE, error });
 export const updateHenkiloAndRefetch =
     (payload: Henkilo, errorNotificationConfig) => async (dispatch: AppDispatch, getState: () => RootState) => {
@@ -91,7 +85,6 @@ export const updateHenkiloAndRefetch =
         const url = urls.url('oppijanumerorekisteri-service.henkilo');
         try {
             const oid = await http.put<string>(url, payload);
-            dispatch(receiveHenkiloUpdate(oid));
             dispatch<any>(fetchHenkilo(oid));
         } catch (error) {
             const L = getState().l10n.localisations[getState().locale];

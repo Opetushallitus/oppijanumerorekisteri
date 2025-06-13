@@ -273,6 +273,41 @@
     background: #B2B2B2;
 }
 
+.oph-ds-button-bordered {
+    color: var(--OPH-Button-Primary-variant-Background, #03C);
+    box-sizing: border-box;
+    padding: 6px 14px;
+    border-radius: 2px;
+    border: var(--OPH-Button-Secondary-variant-Stroke-width, 2px) solid var(--OPH-Button-Secondary-variant-Stroke, #03C);
+    background: var(--OPH-Button-Secondary-variant-Background, #FFF);
+}
+
+.oph-ds-button-bordered:hover {
+    background: #FFF;
+    border: var(--OPH-Button-Secondary-variant-Stroke-width, 2px) solid #0041DC;
+    color: #0041DC;
+}
+
+.oph-ds-button-bordered:focus {
+    background: #FFF;
+    border: var(--OPH-Button-Secondary-variant-Stroke-width, 2px) solid #0041DC;
+    color: #0041DC;
+    outline-offset: 2px;
+    outline: 2px solid #000;
+}
+
+.oph-ds-button-bordered:active {
+    background: #FFF;
+    border: var(--OPH-Button-Secondary-variant-Stroke-width, 2px) solid #006;
+    color: #006;
+}
+
+.oph-ds-button-bordered:disabled {
+    background: #FFF;
+    border: var(--OPH-Button-Secondary-variant-Stroke-width, 2px) solid #B2B2B2;
+    color: #B2B2B2;
+}
+
 .oph-ds-button-transparent {
     color: var(--OPH-Input-Stroke, #0041DC);
     background: none;
@@ -532,7 +567,6 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 24px 0;
 }
 
 .oph-ds-toast-ok {
@@ -546,8 +580,7 @@
 .oph-ds-toast-header {
     display: flex;
     gap: 9px;
-    padding-left: 17px;
-    padding-right: 40px;
+    padding: 24px 40px 0 17px;
     font-weight: 600;
     font-size: 16px;
 }
@@ -557,8 +590,7 @@
 }
 
 .oph-ds-toast-body {
-    padding-left: 50px;
-    padding-right: 32px;
+    padding: 0 32px 24px 50px;
     font-size: 13px;
     line-height: 19px;
 }

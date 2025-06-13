@@ -14,6 +14,7 @@ import { Page } from '../types/Page.types';
 import { OppijaList } from '../types/domain/oppijanumerorekisteri/oppijalist.types';
 import { Identification } from '../types/domain/oppijanumerorekisteri/Identification.types';
 import { add } from '../slices/toastSlice';
+import { Henkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
 
 type Passinumerot = string[];
 
@@ -47,6 +48,7 @@ export const oppijanumerorekisteriApi = createApi({
         'tuontidata',
         'oppijoidentuontiyhteenveto',
         'oppijoidentuontilistaus',
+        'henkilo',
     ],
     endpoints: (builder) => ({
         getLocale: builder.query<Locale, void>({
@@ -102,6 +104,15 @@ export const oppijanumerorekisteriApi = createApi({
                 }
             },
         }),
+        updateHenkilo: builder.mutation<void, Partial<Henkilo>>({
+            query: (henkilo) => ({
+                url: 'henkilo',
+                method: 'PUT',
+                body: henkilo,
+                responseHandler: 'text',
+            }),
+            invalidatesTags: ['henkilo'],
+        }),
         aktivoiHenkilo: builder.mutation<void, { oidHenkilo: string; L: Localisations }>({
             query: ({ oidHenkilo }) => ({
                 url: 'henkilo',
@@ -110,6 +121,7 @@ export const oppijanumerorekisteriApi = createApi({
                 responseHandler: 'text',
             }),
             extraOptions: { maxRetries: 0 },
+            invalidatesTags: ['henkilo'],
             async onQueryStarted({ oidHenkilo, L }, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
@@ -235,6 +247,7 @@ export const {
     useGetPassinumerotQuery,
     useSetPassinumerotMutation,
     usePostLinkHenkilosMutation,
+    useUpdateHenkiloMutation,
     useAktivoiHenkiloMutation,
     useYksiloiHetutonMutation,
     usePuraYksilointiMutation,
