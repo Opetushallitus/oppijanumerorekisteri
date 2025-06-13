@@ -58,7 +58,7 @@ const KutsuminenPage = () => {
         },
     };
 
-    const [modalOpen, setModalOpen] = useState(true);
+    const [modalOpen, setModalOpen] = useState(false);
     const [basicInfo, setBasicInfo] = useState<KutsuBasicInfo>({ ...initialBasicInfo });
     const [kutsuOrganisaatios, setKutsuOrganisaatios] = useState<KutsuOrganisaatio[]>([]);
     const [validationMessages, setValidationMessages] = useState<ValidationMessages>({ ...initialValidationMessages });
