@@ -2,8 +2,6 @@ import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 import { LOCATION_CHANGE } from 'react-router-redux';
 
 import { getCommonOptions } from '../http';
-import { addGlobalNotification } from '../actions/notification.actions';
-import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { Localisations } from '../types/localisation.type';
 import { fetchHenkilo } from '../actions/henkilo.actions';
 import { FETCH_HENKILO_ASIOINTIKIELI_SUCCESS } from '../actions/actiontypes';
@@ -15,6 +13,7 @@ import { OppijoidenTuontiCriteria } from '../components/oppijoidentuonti/Oppijoi
 import { Page } from '../types/Page.types';
 import { OppijaList } from '../types/domain/oppijanumerorekisteri/oppijalist.types';
 import { Identification } from '../types/domain/oppijanumerorekisteri/Identification.types';
+import { add } from '../slices/toastSlice';
 
 type Passinumerot = string[];
 
@@ -82,24 +81,22 @@ export const oppijanumerorekisteriApi = createApi({
                 body: duplicateOids,
             }),
             extraOptions: { maxRetries: 0 },
-            async onQueryStarted({ L }, { dispatch, queryFulfilled }) {
+            async onQueryStarted({ masterOid, L }, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
                     dispatch(
-                        addGlobalNotification({
-                            key: 'LINKED_DUPLICATES_SUCCESS',
-                            type: NOTIFICATIONTYPES.SUCCESS,
-                            title: L['DUPLIKAATIT_NOTIFICATION_ONNISTUI'],
-                            autoClose: 10000,
+                        add({
+                            id: `link-${masterOid}-${Math.random()}`,
+                            header: L['DUPLIKAATIT_NOTIFICATION_ONNISTUI'],
+                            type: 'ok',
                         })
                     );
                 } catch (_err) {
                     dispatch(
-                        addGlobalNotification({
-                            key: 'LINKED_DUPLICATES_FAILURE',
-                            type: NOTIFICATIONTYPES.ERROR,
-                            title: L['DUPLIKAATIT_NOTIFICATION_EPAONNISTUI'],
-                            autoClose: 10000,
+                        add({
+                            id: `link-${masterOid}-${Math.random()}`,
+                            header: L['DUPLIKAATIT_NOTIFICATION_EPAONNISTUI'],
+                            type: 'error',
                         })
                     );
                 }
@@ -119,11 +116,10 @@ export const oppijanumerorekisteriApi = createApi({
                     dispatch(fetchHenkilo(oidHenkilo));
                 } catch (_err) {
                     dispatch(
-                        addGlobalNotification({
-                            key: 'AKTIVOI_EPAONNISTUI',
-                            type: NOTIFICATIONTYPES.ERROR,
-                            title: L['AKTIVOI_EPAONNISTUI'],
-                            autoClose: 10000,
+                        add({
+                            id: `aktivoi-${oidHenkilo}-${Math.random()}`,
+                            header: L['AKTIVOI_EPAONNISTUI'],
+                            type: 'error',
                         })
                     );
                 }
@@ -171,11 +167,10 @@ export const oppijanumerorekisteriApi = createApi({
                     await queryFulfilled;
                 } catch (_err) {
                     dispatch(
-                        addGlobalNotification({
-                            key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
-                            title: L['KAYTTOOIKEUSRAPORTTI_ERROR'],
-                            type: NOTIFICATIONTYPES.ERROR,
-                            autoClose: 10000,
+                        add({
+                            id: `tuontikooste-${Math.random()}`,
+                            header: L['KAYTTOOIKEUSRAPORTTI_ERROR'],
+                            type: 'error',
                         })
                     );
                 }
@@ -191,11 +186,10 @@ export const oppijanumerorekisteriApi = createApi({
                     await queryFulfilled;
                 } catch (_err) {
                     dispatch(
-                        addGlobalNotification({
-                            key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
-                            title: L['KAYTTOOIKEUSRAPORTTI_ERROR'],
-                            type: NOTIFICATIONTYPES.ERROR,
-                            autoClose: 10000,
+                        add({
+                            id: `tuontidata-${Math.random()}`,
+                            header: L['KAYTTOOIKEUSRAPORTTI_ERROR'],
+                            type: 'error',
                         })
                     );
                 }
