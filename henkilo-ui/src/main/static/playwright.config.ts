@@ -42,7 +42,7 @@ const config: PlaywrightTestConfig = {
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
         actionTimeout: 0,
-        baseURL: 'http://localhost:3000',
+        baseURL: 'http://localhost:8686',
         headless: !!process.env.CI,
         trace: process.env.CI ? 'on-first-retry' : 'on',
     },
@@ -61,8 +61,8 @@ const config: PlaywrightTestConfig = {
     outputDir: 'playwright-results/',
 
     webServer: {
-        command: 'NODE_ENV=development npx webpack serve',
-        port: 3000,
+        command: 'PLAYWRIGHT=true NODE_ENV=development npx webpack serve',
+        port: 8686,
         timeout: 120 * 1000,
         reuseExistingServer: false,
     },

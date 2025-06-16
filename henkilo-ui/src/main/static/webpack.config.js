@@ -13,6 +13,7 @@ const imageInlineSizeLimit = parseInt(process.env.IMAGE_INLINE_SIZE_LIMIT || '10
 
 const isEnvDevelopment = process.env.NODE_ENV === 'development';
 const isEnvProduction = process.env.NODE_ENV === 'production';
+const isPlaywright = process.env.PLAYWRIGHT === 'true';
 const isEnvProductionProfile = isEnvProduction && process.argv.includes('--profile');
 
 const cssRegex = /\.css$/;
@@ -65,10 +66,10 @@ module.exports = function () {
                     { to: '/henkilo-ui/main.html' },
                 ],
             },
-            port: 3000,
+            port: isPlaywright ? 8686 : 3000,
             proxy: [
                 {
-                    target: 'http://localhost:8080',
+                    target: `http://localhost:${isPlaywright ? '8585' : '8080'}`,
                     context: (pathname) => !/^\/henkilo-ui/.test(pathname),
                 },
             ],
