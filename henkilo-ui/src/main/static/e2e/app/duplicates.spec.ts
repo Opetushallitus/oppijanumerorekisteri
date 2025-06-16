@@ -61,9 +61,7 @@ test.describe('Hae duplikaatit', () => {
         await page.goto('/henkilo-ui/virkailija/1.2.3.4.5/duplikaatit');
         await page.click(`[data-test-id="link-duplicate-from-${groupedDuplicates.yksiloimaton?.[1].oidHenkilo}"]`);
         await page.click(`[data-test-id="confirm-force-link"]`);
-        await expect(page.locator('[data-test-id="LINKED_DUPLICATES_SUCCESS"] .oph-alert-title')).toHaveText(
-            'Henkilöiden linkittäminen onnistui'
-        );
+        await expect(page.locator('.oph-ds-toasts')).toHaveText('Henkilöiden linkittäminen onnistui');
     });
 
     test('linking non-yksiloity main to duplicate happy path', async ({ page }) => {
@@ -71,9 +69,7 @@ test.describe('Hae duplikaatit', () => {
         await page.goto('/henkilo-ui/virkailija/1.2.3.4.5/duplikaatit');
         await page.click(`[data-test-id="link-main-to-${groupedDuplicates.yksiloityVtj?.[1].oidHenkilo}"]`);
         await page.click(`[data-test-id="confirm-force-link"]`);
-        await expect(page.locator('[data-test-id="LINKED_DUPLICATES_SUCCESS"] .oph-alert-title')).toHaveText(
-            'Henkilöiden linkittäminen onnistui'
-        );
+        await expect(page.locator('.oph-ds-toasts')).toHaveText('Henkilöiden linkittäminen onnistui');
     });
 
     test('linking duplicate to main is enabled only for yksiloimaton', async ({ page }) => {
@@ -164,9 +160,7 @@ test.describe('Hae duplikaatit', () => {
         await page.goto('/henkilo-ui/virkailija/1.2.3.4.5/duplikaatit');
         await page.click(`[data-test-id="link-duplicate-from-${groupedDuplicates.yksiloimaton?.[1].oidHenkilo}"]`);
         await page.click(`[data-test-id="confirm-force-link"]`);
-        await expect(page.locator('[data-test-id="LINKED_DUPLICATES_SUCCESS"] .oph-alert-title')).toHaveText(
-            'Henkilöiden linkittäminen onnistui'
-        );
+        await expect(page.locator('.oph-ds-toasts')).toHaveText('Henkilöiden linkittäminen onnistui');
     });
 
     test('force linking yksiloity main to duplicate happy path', async ({ page }) => {
@@ -174,9 +168,7 @@ test.describe('Hae duplikaatit', () => {
         await page.goto('/henkilo-ui/virkailija/1.2.3.4.5/duplikaatit');
         await page.click(`[data-test-id="link-main-to-${groupedDuplicates.yksiloityVtj?.[1].oidHenkilo}"]`);
         await page.click(`[data-test-id="confirm-force-link"]`);
-        await expect(page.locator('[data-test-id="LINKED_DUPLICATES_SUCCESS"] .oph-alert-title')).toHaveText(
-            'Henkilöiden linkittäminen onnistui'
-        );
+        await expect(page.locator('.oph-ds-toasts')).toHaveText('Henkilöiden linkittäminen onnistui');
     });
 
     test('sends permission service header', async ({ page }) => {
@@ -189,8 +181,6 @@ test.describe('Hae duplikaatit', () => {
         await page.goto('/henkilo-ui/virkailija/1.2.3.4.5/duplikaatit?permissionCheckService=ATARU');
         await page.click(`[data-test-id="link-duplicate-from-${groupedDuplicates.yksiloimaton?.[1].oidHenkilo}"]`);
         await page.click(`[data-test-id="confirm-force-link"]`);
-        await expect(page.locator('[data-test-id="LINKED_DUPLICATES_SUCCESS"] .oph-alert-title')).toHaveText(
-            'Henkilöiden linkittäminen onnistui'
-        );
+        await expect(page.locator('.oph-ds-toasts')).toHaveText('Henkilöiden linkittäminen onnistui');
     });
 });
