@@ -33,7 +33,12 @@ export const JarjestelmatunnusOauth2Modal = ({ closeModal, oid }: Props) => {
                 <button className="oph-ds-button oph-ds-button-bordered" onClick={closeModal}>
                     {L['PERUUTA']}
                 </button>
-                <button className="oph-ds-button" onClick={createPassword} disabled={isLoading}>
+                <button
+                    className="oph-ds-button"
+                    onClick={createPassword}
+                    disabled={isLoading}
+                    data-test-id="vahvista-oauth2"
+                >
                     {L['LUO_JARJESTELMATUNNUS']}
                 </button>
             </div>
@@ -48,6 +53,7 @@ export const JarjestelmatunnusOauth2Modal = ({ closeModal, oid }: Props) => {
                 <button
                     className="oph-ds-button oph-ds-button-icon oph-ds-button-icon-copy"
                     onClick={() => navigator?.clipboard?.writeText(data.kayttajatunnus)}
+                    data-test-id="kopioiid"
                 >
                     {L['KOPIOI_NAPPI']}
                 </button>
@@ -56,12 +62,13 @@ export const JarjestelmatunnusOauth2Modal = ({ closeModal, oid }: Props) => {
                 <button
                     className="oph-ds-button oph-ds-button-icon oph-ds-button-icon-copy"
                     onClick={() => navigator?.clipboard?.writeText(newSecret)}
+                    data-test-id="kopioisecret"
                 >
                     {L['KOPIOI_NAPPI']}
                 </button>
             </div>
             <div className="modal-button-row">
-                <button className="oph-ds-button" onClick={closeModal}>
+                <button className="oph-ds-button" onClick={closeModal} data-test-id="suljemodaali">
                     {L['SALASANA_TALTEEN']}
                 </button>
             </div>

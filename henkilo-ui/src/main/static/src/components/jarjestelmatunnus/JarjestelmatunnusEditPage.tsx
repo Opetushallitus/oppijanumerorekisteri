@@ -77,7 +77,7 @@ export const JarjestelmatunnusEditPage = ({ params }: Props) => {
         <OphDsPage header={L['JARJESTELMATUNNUKSEN_HALLINTA']}>
             <h2 className="jarjestelmatunnus-edit-header">{L['PALVELUN_PERUSTIEDOT']}</h2>
             <div className="jarjestelmatunnus-edit-info">
-                <div>
+                <div className="jarjestelmatunnus-perustiedot">
                     {muokkaa ? (
                         <form onSubmit={updatePerustiedot}>
                             <OphDsInput
@@ -91,6 +91,7 @@ export const JarjestelmatunnusEditPage = ({ params }: Props) => {
                                     className="oph-ds-button"
                                     onClick={updatePerustiedot}
                                     disabled={isUpdatingHenkilo || !palvelunNimi}
+                                    data-test-id="tallenna"
                                 >
                                     {L['TALLENNA']}
                                 </button>
@@ -107,7 +108,7 @@ export const JarjestelmatunnusEditPage = ({ params }: Props) => {
                         <>
                             <div className="jarjestelmatunnus-edit-info-grid">
                                 <div>{L['HENKILO_PALVELUN_NIMI']}</div>
-                                <div>{henkilo.henkilo.sukunimi}</div>
+                                <div data-test-id="palvelunnimi">{henkilo.henkilo.sukunimi}</div>
                             </div>
                             <button className="oph-ds-button" onClick={() => setMuokkaa(true)}>
                                 {L['MUOKKAA_PALVELUN_NIMEA']}
@@ -137,11 +138,11 @@ export const JarjestelmatunnusEditPage = ({ params }: Props) => {
                             <div>{L['KASITTELIJA']}</div>
                             {jarjestelmatunnus.oauth2Credentials.map((o) => (
                                 <React.Fragment key={o.created}>
-                                    <div>{o.clientId}</div>
+                                    <div data-test-id="oauth2clientid">{o.clientId}</div>
                                     <div>
                                         {moment(o.created).format(PropertySingleton.state.PVM_DATE_TIME_FORMAATTI)}
                                     </div>
-                                    <div>
+                                    <div data-test-id="kasittelija">
                                         <Link to={`/virkailija/${o.kasittelija.oid}`} className="oph-ds-link">
                                             {o.kasittelija.kutsumanimi + ' ' + o.kasittelija.sukunimi}
                                         </Link>
@@ -150,7 +151,7 @@ export const JarjestelmatunnusEditPage = ({ params }: Props) => {
                             ))}
                         </div>
                     )}
-                    <button className="oph-ds-button" onClick={() => setOauth2Modal(true)}>
+                    <button className="oph-ds-button" onClick={() => setOauth2Modal(true)} data-test-id="oauth2">
                         {L['OAUTH2_TUNNUS_UUSI']}
                     </button>
                 </div>
@@ -159,11 +160,11 @@ export const JarjestelmatunnusEditPage = ({ params }: Props) => {
                     <OphDsBanner type="warning">{L['CAS_TUNNUS_HUOM']}</OphDsBanner>
                     <div className="jarjestelmatunnus-edit-info-grid">
                         <div>{L['CAS_TUNNUS']}</div>
-                        <div>{jarjestelmatunnus?.kayttajatunnus}</div>
+                        <div data-test-id="castunnus">{jarjestelmatunnus?.kayttajatunnus}</div>
                         <div>{L['DUPLIKAATIT_OIDHENKILO']}</div>
-                        <div>{params.oid}</div>
+                        <div data-test-id="oid">{params.oid}</div>
                     </div>
-                    <button className="oph-ds-button" onClick={() => setCasModal(true)}>
+                    <button className="oph-ds-button" onClick={() => setCasModal(true)} data-test-id="cas">
                         {L['CAS_TUNNUS_UUSI']}
                     </button>
                 </div>
