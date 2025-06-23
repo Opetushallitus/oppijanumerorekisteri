@@ -12,6 +12,7 @@ import {
 import { Locale } from '../types/locale.type';
 import { KutsuRead } from '../types/domain/kayttooikeus/Kutsu.types';
 import {
+    Jarjestelmatunnus,
     PalvelukayttajaCreate,
     PalvelukayttajaCriteria,
     PalvelukayttajaRead,
@@ -30,6 +31,7 @@ import { PalveluRooli } from '../types/domain/kayttooikeus/PalveluRooli.types';
 import { TextGroupModify } from '../types/domain/kayttooikeus/textgroup.types';
 import { PalveluRooliModify } from '../types/domain/kayttooikeus/PalveluRooliModify.types';
 import { SallitutKayttajatyypit } from '../components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage';
+import { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
 
 type MfaSetupResponse = {
     secretKey: string;
@@ -120,6 +122,8 @@ export const kayttooikeusApi = createApi({
         'omatorganisaatiot',
         'kutsuByToken',
         'accessRightReport',
+        'kayttajatiedot',
+        'palvelukayttaja',
         'palvelukayttajat',
         'henkilohaku',
         'henkilohakucount',
@@ -200,9 +204,25 @@ export const kayttooikeusApi = createApi({
             query: (oid) => `reports/accessrights/${oid}`,
             providesTags: ['accessRightReport'],
         }),
+        getKayttajatiedot: builder.query<KayttajatiedotRead, string>({
+            query: (oid) => `henkilo/${oid}/kayttajatiedot`,
+            providesTags: ['kayttajatiedot'],
+        }),
+        putKayttajatiedot: builder.mutation<KayttajatiedotRead, { oid: string; username: string }>({
+            query: ({ oid, username }) => ({
+                url: `henkilo/${oid}/kayttajatiedot`,
+                method: 'PUT',
+                body: { username },
+            }),
+            invalidatesTags: ['kayttajatiedot'],
+        }),
         getPalvelukayttajat: builder.query<PalvelukayttajaRead[], PalvelukayttajaCriteria>({
             query: (criteria) => `palvelukayttaja?${new URLSearchParams(criteria).toString()}`,
             providesTags: ['palvelukayttajat'],
+        }),
+        getPalvelukayttaja: builder.query<Jarjestelmatunnus, string>({
+            query: (oid) => `palvelukayttaja/${oid}`,
+            providesTags: ['palvelukayttaja'],
         }),
         postPalvelukayttaja: builder.mutation<PalvelukayttajaRead, PalvelukayttajaCreate>({
             query: (body) => ({
@@ -210,7 +230,21 @@ export const kayttooikeusApi = createApi({
                 method: 'POST',
                 body,
             }),
-            invalidatesTags: ['palvelukayttajat'],
+            invalidatesTags: ['palvelukayttaja', 'palvelukayttajat'],
+        }),
+        putPalvelukayttajaCasPassword: builder.mutation<string, string>({
+            query: (oid) => ({
+                url: `palvelukayttaja/${oid}/cas`,
+                method: 'PUT',
+            }),
+            invalidatesTags: ['palvelukayttaja', 'palvelukayttajat'],
+        }),
+        putPalvelukayttajaOauth2Secret: builder.mutation<string, string>({
+            query: (oid) => ({
+                url: `palvelukayttaja/${oid}/oauth2`,
+                method: 'PUT',
+            }),
+            invalidatesTags: ['palvelukayttaja', 'palvelukayttajat'],
         }),
         getHenkiloHaku: builder.query<HenkilohakuResult[], Henkilohaku>({
             query: ({ criteria, parameters }) => ({
@@ -370,8 +404,13 @@ export const {
     usePostMfaDisableMutation,
     useGetKutsuByTokenQuery,
     useGetAccessRightReportQuery,
+    useGetKayttajatiedotQuery,
+    usePutKayttajatiedotMutation,
     useGetPalvelukayttajatQuery,
+    useGetPalvelukayttajaQuery,
     usePostPalvelukayttajaMutation,
+    usePutPalvelukayttajaCasPasswordMutation,
+    usePutPalvelukayttajaOauth2SecretMutation,
     useGetHenkiloHakuQuery,
     useGetHenkiloHakuCountQuery,
     useGetHaetutKayttooikeusryhmatQuery,

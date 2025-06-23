@@ -1,4 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router';
+import moment from 'moment';
 
 import { useLocalisations } from '../../selectors';
 import { OphDsPage } from '../design-system/OphDsPage';
@@ -7,20 +10,18 @@ import HenkiloViewExistingKayttooikeus from '../common/henkilo/HenkiloViewExisti
 import { HenkiloViewOrganisationContent } from '../common/henkilo/HenkiloViewOrganisationContent';
 import { OphDsBanner } from '../design-system/OphDsBanner';
 import { RootState, useAppDispatch } from '../../store';
-import {
-    clearHenkilo,
-    fetchHenkilo,
-    fetchHenkiloOrgs,
-    fetchKayttaja,
-    fetchKayttajatieto,
-} from '../../actions/henkilo.actions';
+import { clearHenkilo, fetchHenkilo, fetchHenkiloOrgs } from '../../actions/henkilo.actions';
 import HenkiloViewExpiredKayttooikeus from '../common/henkilo/HenkiloViewExpiredKayttooikeus';
 import { fetchAllKayttooikeusryhmasForHenkilo } from '../../actions/kayttooikeusryhma.actions';
-import { useSelector } from 'react-redux';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
 import { OphDsInput } from '../design-system/OphDsInput';
 import { useUpdateHenkiloMutation } from '../../api/oppijanumerorekisteri';
 import { add } from '../../slices/toastSlice';
+import OphModal from '../common/modal/OphModal';
+import { useGetPalvelukayttajaQuery } from '../../api/kayttooikeus';
+import { JarjestelmatunnusCasModal } from './JarjestelmatunnusCasModal';
+import PropertySingleton from '../../globals/PropertySingleton';
+import { JarjestelmatunnusOauth2Modal } from './JarjestelmatunnusOauth2Modal';
 
 import './JarjestelmatunnusEditPage.css';
 
@@ -34,15 +35,16 @@ export const JarjestelmatunnusEditPage = ({ params }: Props) => {
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const [updateHenkilo, { isLoading: isUpdatingHenkilo }] = useUpdateHenkiloMutation();
+    const { data: jarjestelmatunnus } = useGetPalvelukayttajaQuery(params.oid);
     const [palvelunNimi, setPalvelunNimi] = useState(henkilo.henkilo.sukunimi);
     const [muokkaa, setMuokkaa] = useState(false);
+    const [oauth2Modal, setOauth2Modal] = useState(false);
+    const [casModal, setCasModal] = useState(false);
 
     useEffect(() => {
         dispatch<any>(clearHenkilo());
         dispatch<any>(fetchHenkilo(params.oid));
         dispatch<any>(fetchHenkiloOrgs(params.oid));
-        dispatch<any>(fetchKayttaja(params.oid));
-        dispatch<any>(fetchKayttajatieto(params.oid));
         dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(params.oid));
     }, [params.oid]);
 
@@ -115,6 +117,7 @@ export const JarjestelmatunnusEditPage = ({ params }: Props) => {
                 </div>
                 <div>
                     <h3>{L['OAUTH2_TUNNUS_HALLINTA']}</h3>
+
                     <p>{L['OAUTH2_TUNNUS_SELITE']}</p>
                     <p>
                         <span>{L['OAUTH2_TUNNUS_OHJE']}</span>
@@ -127,18 +130,42 @@ export const JarjestelmatunnusEditPage = ({ params }: Props) => {
                             https://wiki.eduuni.fi/x/Md8hHw
                         </a>
                     </p>
-                    <button className="oph-ds-button">{L['OAUTH2_TUNNUS_UUSI']}</button>
+                    {!!jarjestelmatunnus?.oauth2Credentials?.length && (
+                        <div className="jarjestelmatunnus-edit-oauth2-grid">
+                            <div>client_id</div>
+                            <div>{L['LUOTU']}</div>
+                            <div>{L['KASITTELIJA']}</div>
+                            {jarjestelmatunnus.oauth2Credentials.map((o) => (
+                                <React.Fragment key={o.created}>
+                                    <div>{o.clientId}</div>
+                                    <div>
+                                        {moment(o.created).format(PropertySingleton.state.PVM_DATE_TIME_FORMAATTI)}
+                                    </div>
+                                    <div>
+                                        <Link to={`/virkailija/${o.kasittelija.oid}`} className="oph-ds-link">
+                                            {o.kasittelija.kutsumanimi + ' ' + o.kasittelija.sukunimi}
+                                        </Link>
+                                    </div>
+                                </React.Fragment>
+                            ))}
+                        </div>
+                    )}
+                    <button className="oph-ds-button" onClick={() => setOauth2Modal(true)}>
+                        {L['OAUTH2_TUNNUS_UUSI']}
+                    </button>
                 </div>
                 <div>
                     <h3>{L['CAS_TUNNUS_HALLINTA']}</h3>
                     <OphDsBanner type="warning">{L['CAS_TUNNUS_HUOM']}</OphDsBanner>
                     <div className="jarjestelmatunnus-edit-info-grid">
                         <div>{L['CAS_TUNNUS']}</div>
-                        <div>{henkilo.kayttajatieto?.username}</div>
+                        <div>{jarjestelmatunnus?.kayttajatunnus}</div>
                         <div>{L['DUPLIKAATIT_OIDHENKILO']}</div>
                         <div>{params.oid}</div>
                     </div>
-                    <button className="oph-ds-button">{L['CAS_TUNNUS_UUSI']}</button>
+                    <button className="oph-ds-button" onClick={() => setCasModal(true)}>
+                        {L['CAS_TUNNUS_UUSI']}
+                    </button>
                 </div>
             </div>
             <hr />
@@ -159,6 +186,16 @@ export const JarjestelmatunnusEditPage = ({ params }: Props) => {
                 existingKayttooikeusRef={existingKayttooikeusRef}
                 isPalvelukayttaja={true}
             />
+            {oauth2Modal && (
+                <OphModal onClose={() => setOauth2Modal(false)}>
+                    <JarjestelmatunnusOauth2Modal oid={params.oid} closeModal={() => setOauth2Modal(false)} />
+                </OphModal>
+            )}
+            {casModal && (
+                <OphModal onClose={() => setCasModal(false)}>
+                    <JarjestelmatunnusCasModal oid={params.oid} closeModal={() => setCasModal(false)} />
+                </OphModal>
+            )}
         </OphDsPage>
     );
 };

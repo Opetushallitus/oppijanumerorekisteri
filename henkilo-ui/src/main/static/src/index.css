@@ -176,3 +176,10 @@ hr {
 .henkiloViewUserContentWrapper h2 {
     margin-bottom: 24px;
 }
+
+.modal-button-row {
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 24px;
+}

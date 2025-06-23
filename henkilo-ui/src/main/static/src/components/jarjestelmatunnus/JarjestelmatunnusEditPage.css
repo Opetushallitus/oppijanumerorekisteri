@@ -22,7 +22,7 @@
 .jarjestelmatunnus-edit-info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 18px;
+    gap: 16px;
 }
 
 .jarjestelmatunnus-edit-info-grid > div:nth-child(odd) {
@@ -33,4 +33,15 @@
     display: flex;
     gap: 16px;
     margin-top: 24px;
+}
+
+.jarjestelmatunnus-edit-oauth2-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+}
+
+.jarjestelmatunnus-edit-oauth2-grid > div:nth-child(-n+3) {
+    font-weight: bold;
 }

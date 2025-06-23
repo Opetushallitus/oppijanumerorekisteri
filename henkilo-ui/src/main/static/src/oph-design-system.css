@@ -245,7 +245,7 @@
     gap: 8px;
     color: var(--OPH-Button-Primary-variant-Text, #FFF);
     border-radius: 2px;
-    background: var(--OPH-Button-Primary-variant-Background, #03C);
+    background-color: var(--OPH-Button-Primary-variant-Background, #03C);
     font-size: 16px;
     font-weight: 600;
     line-height: 24px;
@@ -256,21 +256,21 @@
 }
 
 .oph-ds-button:hover {
-    background: #0041DC;
+    background-color: #0041DC;
 }
 
 .oph-ds-button:focus {
-    background: #0041DC;
+    background-color: #0041DC;
     outline-offset: 2px;
     outline: 2px solid #000;
 }
 
 .oph-ds-button:active {
-    background: #006;
+    background-color: #006;
 }
 
 .oph-ds-button:disabled {
-    background: #B2B2B2;
+    background-color: #B2B2B2;
 }
 
 .oph-ds-button-bordered {
@@ -279,17 +279,17 @@
     padding: 6px 14px;
     border-radius: 2px;
     border: var(--OPH-Button-Secondary-variant-Stroke-width, 2px) solid var(--OPH-Button-Secondary-variant-Stroke, #03C);
-    background: var(--OPH-Button-Secondary-variant-Background, #FFF);
+    background-color: var(--OPH-Button-Secondary-variant-Background, #FFF);
 }
 
 .oph-ds-button-bordered:hover {
-    background: #FFF;
+    background-color: #FFF;
     border: var(--OPH-Button-Secondary-variant-Stroke-width, 2px) solid #0041DC;
     color: #0041DC;
 }
 
 .oph-ds-button-bordered:focus {
-    background: #FFF;
+    background-color: #FFF;
     border: var(--OPH-Button-Secondary-variant-Stroke-width, 2px) solid #0041DC;
     color: #0041DC;
     outline-offset: 2px;
@@ -297,20 +297,20 @@
 }
 
 .oph-ds-button-bordered:active {
-    background: #FFF;
+    background-color: #FFF;
     border: var(--OPH-Button-Secondary-variant-Stroke-width, 2px) solid #006;
     color: #006;
 }
 
 .oph-ds-button-bordered:disabled {
-    background: #FFF;
+    background-color: #FFF;
     border: var(--OPH-Button-Secondary-variant-Stroke-width, 2px) solid #B2B2B2;
     color: #B2B2B2;
 }
 
 .oph-ds-button-transparent {
     color: var(--OPH-Input-Stroke, #0041DC);
-    background: none;
+    background-color: none;
     font-size: 16px;
     font-weight: 600;
     line-height: 24px;
@@ -322,6 +322,18 @@
     outline: none;
     cursor: pointer;
     border: 0;
+}
+
+.oph-ds-button-icon {
+    padding-left: 40px;
+    background-repeat: no-repeat;
+    background-size: 20px;
+    background-position-x: 16px;
+    background-position-y: center;
+}
+
+.oph-ds-button-icon-copy {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjUiIGhlaWdodD0iMjUiIHZpZXdCb3g9IjAgMCAyNSAyNSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNi43NTYgMS4wMTU3NUg0Ljc1NTk4QzMuNjU1OTggMS4wMTU3NSAyLjc1NTk4IDEuOTE1NzUgMi43NTU5OCAzLjAxNTc1VjE3LjAxNTdINC43NTU5OFYzLjAxNTc1SDE2Ljc1NlYxLjAxNTc1Wk0xNS43NTYgNS4wMTU3NUg4Ljc1NTk4QzcuNjU1OTggNS4wMTU3NSA2Ljc2NTk4IDUuOTE1NzUgNi43NjU5OCA3LjAxNTc1TDYuNzU1OTggMjEuMDE1N0M2Ljc1NTk4IDIyLjExNTcgNy42NDU5OCAyMy4wMTU3IDguNzQ1OTggMjMuMDE1N0gxOS43NTZDMjAuODU2IDIzLjAxNTcgMjEuNzU2IDIyLjExNTcgMjEuNzU2IDIxLjAxNTdWMTEuMDE1N0wxNS43NTYgNS4wMTU3NVpNOC43NTU5OCAyMS4wMTU3VjcuMDE1NzVIMTQuNzU2VjEyLjAxNTdIMTkuNzU2VjIxLjAxNTdIOC43NTU5OFoiIGZpbGw9IiNmZmZmZmYiLz4KPC9zdmc+Cg==');
 }
 
 .oph-ds-accordion-header {

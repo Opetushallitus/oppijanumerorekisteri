@@ -62,7 +62,7 @@ export const JarjestelmatunnusListPage = () => {
             <OphDsTable
                 headers={[L['HENKILO_PALVELUN_NIMI'], L['HENKILO_KAYTTAJANIMI']]}
                 rows={(data ?? []).map((d) => [
-                    <Link key={`link-${d.kayttajatunnus}`} to={`/virkailija/${d.oid}`} className="oph-ds-link">
+                    <Link key={`link-${d.kayttajatunnus}`} to={`/jarjestelmatunnus/${d.oid}`} className="oph-ds-link">
                         {d.nimi}
                     </Link>,
                     <span key={`nimi-${d.kayttajatunnus}`}>{d.kayttajatunnus}</span>,
