@@ -9,11 +9,12 @@ import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.
 import { fetchSukupuoliKoodisto } from '../../../../actions/koodisto.actions';
 import { FieldlessLabelValue } from './FieldlessLabelValue';
 import { KoodistoState } from '../../../../reducers/koodisto.reducer';
+import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
 
 type OwnProps = {
     henkiloUpdate: Henkilo;
     readOnly: boolean;
-    updateModelFieldAction: () => void;
+    updateModelSelectAction: (o: NamedSelectOption | NamedMultiSelectOption) => void;
 };
 
 type StateProps = {
@@ -41,15 +42,19 @@ const Sukupuoli = (props: Props) => {
         props.fetchSukupuoliKoodisto();
     }, []);
 
+    const label = 'HENKILO_SUKUPUOLI';
+
     return (
-        <FieldlessLabelValue readOnly={props.readOnly} label="HENKILO_SUKUPUOLI">
+        <FieldlessLabelValue readOnly={props.readOnly} label={label}>
             {props.readOnly ? (
-                options.find((o) => o.value === props.henkiloUpdate.sukupuoli)?.label
+                <span data-testid={`${label}_value`}>
+                    {options.find((o) => o.value === props.henkiloUpdate.sukupuoli)?.label}
+                </span>
             ) : (
                 <Select
                     options={options}
                     value={options.find((o) => o.value === props.henkiloUpdate.sukupuoli)}
-                    onChange={props.updateModelFieldAction}
+                    onChange={props.updateModelSelectAction}
                     isDisabled={!!props.henkiloUpdate.hetu}
                 />
             )}
