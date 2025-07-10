@@ -310,7 +310,7 @@
 
 .oph-ds-button-transparent {
     color: var(--OPH-Input-Stroke, #0041DC);
-    background-color: none;
+    background-color: inherit;
     font-size: 16px;
     font-weight: 600;
     line-height: 24px;
@@ -382,11 +382,11 @@
 }
 
 .oph-ds-accordion-header:nth-child(4n + 1) {
-    background: var(--Table-cell-Background-Even-row, #F6F6F6);
+    background-color: var(--Table-cell-Background-Even-row, #F6F6F6);
 }
 
 .oph-ds-accordion-header:hover {
-    background: var(--Table-cell-Background-Hover-or-selected, #C1EAFF);
+    background-color: var(--Table-cell-Background-Hover-or-selected, #C1EAFF);
 }
 
 .oph-ds-select-container {
