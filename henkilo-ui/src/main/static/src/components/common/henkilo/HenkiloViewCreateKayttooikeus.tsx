@@ -22,13 +22,10 @@ type OwnProps = {
     isPalvelukayttaja: boolean;
 };
 
-type State = {
-    selectedList: Array<ValittuKayttooikeusryhma>;
-    organisationSelection?: OrganisaatioSelectObject;
-    ryhmaSelection?: SelectOption;
-    alkupvm: moment.Moment;
-    loppupvm: moment.Moment;
-};
+const filterDate = (date: Date, vuosia: number) =>
+    vuosia !== null
+        ? moment(date).isBefore(moment().add(vuosia, 'years')) && moment(date).isAfter(moment().add(-1, 'days'))
+        : true;
 
 const HenkiloViewCreateKayttooikeus = ({
     existingKayttooikeusRef,
@@ -38,97 +35,46 @@ const HenkiloViewCreateKayttooikeus = ({
 }: OwnProps) => {
     const { L } = useLocalisations();
     const dispatch = useAppDispatch();
-    const initialForm: State = {
-        selectedList: [],
-        organisationSelection: undefined,
-        ryhmaSelection: undefined,
-        alkupvm: moment(),
-        loppupvm: isPalvelukayttaja ? moment('2099-12-31', 'YYYY-MM-DD') : moment().add(vuosia, 'years'),
-    };
-    const [form, setForm] = useState(initialForm);
-    const [validationMessages, setValidationMessages] = useState({
-        organisation: {
-            id: 'organisation',
-            labelLocalised: L['HENKILO_LISAA_KAYTTOOIKEUDET_ORGANISAATIO_VALID'],
-            isValid: false,
-        },
-        kayttooikeus: {
-            id: 'kayttooikeus',
-            labelLocalised: L['HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID'],
-            isValid: false,
-        },
-    });
+    const [selectedList, setSelectedList] = useState<ValittuKayttooikeusryhma[]>([]);
+    const [organisationSelection, setOrganisationSelection] = useState<OrganisaatioSelectObject>();
+    const [ryhmaSelection, setRyhmaSelection] = useState<SelectOption>();
+    const [alkupvm, setAlkupvm] = useState<moment.Moment>(moment());
+    const [loppupvm, setLoppupvm] = useState<moment.Moment>(
+        isPalvelukayttaja ? moment('2099-12-31', 'YYYY-MM-DD') : moment().add(vuosia, 'years')
+    );
 
-    const selectRyhma = (ryhmaSelection: SelectOption) => {
-        setValidationMessages({
-            ...validationMessages,
-            organisation: {
-                ...validationMessages.organisation,
-                isValid: !!ryhmaSelection,
-            },
-        });
-        setForm({
-            ...form,
-            organisationSelection: undefined,
-            ryhmaSelection,
-        });
+    const selectRyhma = (selection: SelectOption) => {
+        setOrganisationSelection(undefined);
+        setRyhmaSelection(selection);
     };
 
-    const selectOrganisation = (organisationSelection: OrganisaatioSelectObject) => {
-        setValidationMessages({
-            ...validationMessages,
-            organisation: {
-                ...validationMessages.organisation,
-                isValid: !!organisationSelection,
-            },
-        });
-        setForm({
-            ...form,
-            organisationSelection,
-            ryhmaSelection: undefined,
-        });
+    const selectOrganisation = (selection: OrganisaatioSelectObject) => {
+        setOrganisationSelection(selection);
+        setRyhmaSelection(undefined);
     };
 
-    const addKayttooikeus = (value: ValittuKayttooikeusryhma) => {
-        if (value.value) {
-            setForm({ ...form, selectedList: [...form.selectedList, value] });
-        }
-        setValidationMessages({
-            ...validationMessages,
-            kayttooikeus: {
-                ...validationMessages.kayttooikeus,
-                isValid: true,
-            },
-        });
-    };
-
-    const removeKayttooikeus = (kayttooikeusId: number) => {
-        const selectedList = form.selectedList.filter((selected) => selected.value !== kayttooikeusId);
-        const id = 'kayttooikeus';
-        const labelLocalised = L['HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID'];
-        if (validationMessages[id] === undefined || !selectedList.length) {
-            setValidationMessages({
-                ...validationMessages,
-                kayttooikeus: { id, labelLocalised, isValid: false },
-            });
-        }
-        setForm({ ...form, selectedList });
+    const resetValues = () => {
+        setSelectedList([]);
+        setOrganisationSelection(undefined);
+        setRyhmaSelection(undefined);
+        setAlkupvm(moment());
+        setLoppupvm(isPalvelukayttaja ? moment('2099-12-31', 'YYYY-MM-DD') : moment().add(vuosia, 'years'));
     };
 
     const createKayttooikeusAction = () => {
         dispatch<any>(
             addKayttooikeusToHenkilo(
                 oidHenkilo,
-                form.organisationSelection?.oid ?? form.ryhmaSelection?.value,
-                form.selectedList.map((selected) => ({
+                organisationSelection?.oid ?? ryhmaSelection?.value,
+                selectedList.map((selected) => ({
                     id: selected.value,
                     kayttoOikeudenTila: 'MYONNA',
-                    alkupvm: moment(form.alkupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
-                    loppupvm: moment(form.loppupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
+                    alkupvm: moment(alkupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
+                    loppupvm: moment(loppupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
                 }))
             )
         );
-        setForm(initialForm);
+        resetValues();
         existingKayttooikeusRef.current?.scrollIntoView(true);
     };
 
@@ -139,13 +85,13 @@ const HenkiloViewCreateKayttooikeus = ({
                 <div className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE']}</div>
                 <div className="kayttooikeus-form-organisation-selection">
                     <OphDsOrganisaatioSelect
-                        disabled={!!form.ryhmaSelection || !!form.selectedList?.length}
+                        disabled={!!ryhmaSelection || !!selectedList?.length}
                         onChange={selectOrganisation}
                     />
                     <RyhmaSelection
                         selectOrganisaatio={selectRyhma}
-                        selectedOrganisaatioOid={form.ryhmaSelection?.value}
-                        disabled={!!form.organisationSelection || !!form.selectedList?.length}
+                        selectedOrganisaatioOid={ryhmaSelection?.value}
+                        disabled={!!organisationSelection || !!selectedList?.length}
                     />
                 </div>
                 <div className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_KESTO']}</div>
@@ -154,13 +100,11 @@ const HenkiloViewCreateKayttooikeus = ({
                         <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_ALKAA']}</span>
                         <ReactDatePicker
                             className="oph-input"
-                            onChange={(date) => setForm({ ...form, alkupvm: moment(date) })}
-                            selected={form.alkupvm.toDate()}
+                            onChange={(date) => setAlkupvm(moment(date))}
+                            selected={alkupvm.toDate()}
                             showYearDropdown
                             showWeekNumbers
-                            filterDate={(date) =>
-                                vuosia !== null ? moment(date).isBefore(moment().add(vuosia, 'years')) : true
-                            }
+                            filterDate={(date) => filterDate(date, vuosia)}
                             dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
                         />
                     </div>
@@ -168,13 +112,11 @@ const HenkiloViewCreateKayttooikeus = ({
                         <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY']}</span>
                         <ReactDatePicker
                             className="oph-input"
-                            onChange={(date) => setForm({ ...form, alkupvm: moment(date) })}
-                            selected={form.loppupvm.toDate()}
+                            onChange={(date) => setLoppupvm(moment(date))}
+                            selected={loppupvm.toDate()}
                             showYearDropdown
                             showWeekNumbers
-                            filterDate={(date) =>
-                                vuosia !== null ? moment(date).isBefore(moment().add(vuosia, 'years')) : true
-                            }
+                            filterDate={(date) => filterDate(date, vuosia)}
                             dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
                         />
                     </div>
@@ -182,17 +124,30 @@ const HenkiloViewCreateKayttooikeus = ({
                 <div className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT']}</div>
                 <div>
                     <CKKayttooikeudet
-                        selectedList={form.selectedList}
-                        removeKayttooikeus={removeKayttooikeus}
-                        addKayttooikeus={addKayttooikeus}
-                        selectedOrganisationOid={form.organisationSelection?.oid ?? form.ryhmaSelection?.value}
+                        selectedList={selectedList}
+                        removeKayttooikeus={(id) =>
+                            setSelectedList(selectedList.filter((selected) => selected.value !== id))
+                        }
+                        addKayttooikeus={(value) => setSelectedList([...selectedList, value])}
+                        selectedOrganisationOid={organisationSelection?.oid ?? ryhmaSelection?.value}
                         isPalvelukayttaja={isPalvelukayttaja}
                     />
                 </div>
                 <div></div>
                 <div>
                     <ValidationMessageButton
-                        validationMessages={validationMessages}
+                        validationMessages={{
+                            organisation: {
+                                id: 'organisation',
+                                labelLocalised: L['HENKILO_LISAA_KAYTTOOIKEUDET_ORGANISAATIO_VALID'],
+                                isValid: !!organisationSelection || !!ryhmaSelection,
+                            },
+                            kayttooikeus: {
+                                id: 'kayttooikeus',
+                                labelLocalised: L['HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID'],
+                                isValid: !!selectedList?.length,
+                            },
+                        }}
                         buttonAction={createKayttooikeusAction}
                     >
                         {L['HENKILO_LISAA_KAYTTOOIKEUDET_HAE_BUTTON']}
