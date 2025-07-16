@@ -1,4 +1,5 @@
 .idea
+.metals
 *.iml
 target/*
 oppijanumerorekisteri-service/target/*
