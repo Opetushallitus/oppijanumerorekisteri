@@ -23,6 +23,7 @@ import { FastMenuList, SelectOption } from '../../utilities/select';
 import OphModal from '../common/modal/OphModal';
 
 import './KutsututPage.css';
+import { useTitle } from '../../useTitle';
 
 export type KutsututSearchParams = {
     searchTerm: string;
@@ -39,6 +40,7 @@ const getDefaultView = (isAdmin?: boolean, isVirkailija?: boolean): KutsuView =>
 
 export const KutsututPage = () => {
     const { L, locale } = useLocalisations();
+    useTitle(L['TITLE_KUTSUTUT']);
     const { data } = useGetOmattiedotQuery();
     const { data: ryhmat } = useGetOrganisaatioRyhmatQuery();
     const [params, setParams] = useState<KutsututSearchParams>({

@@ -1,9 +1,11 @@
 import { GlobalNotifications } from '../components/common/Notification/GlobalNotifications';
 import React from 'react';
 import { useLocalisations } from '../selectors';
+import { useTitle } from '../useTitle';
 
 export function PalvelukayttajaInfo() {
     const { L } = useLocalisations();
+    useTitle('Palvelukäyttäjä');
     return (
         <div className="oph-typography mainContainer">
             <GlobalNotifications />

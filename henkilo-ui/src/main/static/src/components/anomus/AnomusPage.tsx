@@ -17,10 +17,12 @@ import {
     usePutHaettuKayttooikeusryhmaMutation,
 } from '../../api/kayttooikeus';
 import { addGlobalNotification } from '../../actions/notification.actions';
+import { useTitle } from '../../useTitle';
 
 const AnomusPage = () => {
     const dispatch = useAppDispatch();
     const { L } = useLocalisations();
+    useTitle(L['TITLE_ANOMUKSET']);
     const [sorted, setSorted] = useState<SortingState>([{ id: 'ANOTTU_PVM', desc: true }]);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const [parameters, setParameters] = useState<GetHaetutKayttooikeusryhmatRequest>({

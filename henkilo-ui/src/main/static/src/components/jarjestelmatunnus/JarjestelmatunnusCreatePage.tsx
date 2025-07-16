@@ -7,6 +7,7 @@ import { OphDsPage } from '../design-system/OphDsPage';
 import { OphDsInput } from '../design-system/OphDsInput';
 import { useAppDispatch } from '../../store';
 import { add } from '../../slices/toastSlice';
+import { useTitle } from '../../useTitle';
 
 type Props = {
     router: RouteActions;
@@ -14,6 +15,7 @@ type Props = {
 
 export const JarjestelmatunnusCreatePage = ({ router }: Props) => {
     const { L } = useLocalisations();
+    useTitle(L['JARJESTELMATUNNUSTEN_LUONTI']);
     const [nimi, setNimi] = useState('');
     const [postPalvelukayttaja, { isLoading }] = usePostPalvelukayttajaMutation();
     const dispatch = useAppDispatch();

@@ -19,6 +19,7 @@ import Button from '../common/button/Button';
 import PropertySingleton from '../../globals/PropertySingleton';
 import AddedOrganization from './AddedOrganization';
 import { useGetOmattiedotQuery, useGetOrganisaatioRyhmatQuery } from '../../api/kayttooikeus';
+import { useTitle } from '../../useTitle';
 
 const initialBasicInfo = {
     etunimi: '',
@@ -37,6 +38,7 @@ type ValidationMessages = {
 const KutsuminenPage = () => {
     const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
+    useTitle(L['TITLE_KUTSULOMAKE']);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { isLoading: ryhmatLoading } = useGetOrganisaatioRyhmatQuery();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);

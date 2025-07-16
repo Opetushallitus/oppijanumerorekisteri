@@ -1,18 +1,20 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 import HenkiloViewDuplikaatit from './HenkiloViewDuplikaatit';
 import Loader from '../../common/icons/Loader';
 import type { HenkiloState } from '../../../reducers/henkilo.reducer';
-import type { Localisations } from '../../../types/localisation.type';
+import { useLocalisations } from '../../../selectors';
+import { RootState } from '../../../store';
 
 type Props = {
-    L: Localisations;
     henkiloType: string;
-    henkilo: HenkiloState;
 };
 
-const DuplikaatitPage = (props: Props) => {
-    const { L, henkiloType, henkilo } = props;
+const DuplikaatitPage = ({ henkiloType }: Props) => {
+    const { L } = useLocalisations();
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+
     return (
         <div className="mainContent wrapper">
             <span className="oph-h2 oph-bold">

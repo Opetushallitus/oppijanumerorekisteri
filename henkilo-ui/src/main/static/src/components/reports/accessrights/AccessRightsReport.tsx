@@ -6,12 +6,14 @@ import Report from './AccessRightsReportData';
 import exportReport from './exportUtil';
 import { useLocalisations } from '../../../selectors';
 import { useGetAccessRightReportQuery } from '../../../api/kayttooikeus';
+import { useTitle } from '../../../useTitle';
 
 export const AccessRightsReport = () => {
     const [oid, setOid] = useState<string>(undefined);
     const [filter, setFilter] = useState<string>(undefined);
     const [filterValues, setFilterValues] = useState<string[]>([]);
     const { L } = useLocalisations();
+    useTitle(L['KAYTTOOIKEUSRAPORTTI_TITLE']);
     const { data, isFetching } = useGetAccessRightReportQuery(oid, { skip: !oid });
 
     useEffect(() => {

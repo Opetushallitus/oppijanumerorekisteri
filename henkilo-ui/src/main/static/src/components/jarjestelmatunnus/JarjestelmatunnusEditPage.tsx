@@ -22,6 +22,7 @@ import { useGetPalvelukayttajaQuery } from '../../api/kayttooikeus';
 import { JarjestelmatunnusCasModal } from './JarjestelmatunnusCasModal';
 import PropertySingleton from '../../globals/PropertySingleton';
 import { JarjestelmatunnusOauth2Modal } from './JarjestelmatunnusOauth2Modal';
+import { useTitle } from '../../useTitle';
 
 import './JarjestelmatunnusEditPage.css';
 
@@ -32,6 +33,7 @@ type Props = {
 export const JarjestelmatunnusEditPage = ({ params }: Props) => {
     const dispatch = useAppDispatch();
     const { L } = useLocalisations();
+    useTitle(L['JARJESTELMATUNNUKSEN_HALLINTA']);
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const [updateHenkilo, { isLoading: isUpdatingHenkilo }] = useUpdateHenkiloMutation();

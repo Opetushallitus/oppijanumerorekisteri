@@ -11,9 +11,10 @@ import { OphDsPage } from '../design-system/OphDsPage';
 import { OphDsChechbox } from '../design-system/OphDsCheckbox';
 import { OphDsInput } from '../design-system/OphDsInput';
 import { OphDsOrganisaatioSelect } from '../design-system/OphDsOrganisaatioSelect';
+import { OphDsTable } from '../design-system/OphDsTable';
+import { useTitle } from '../../useTitle';
 
 import './JarjestelmatunnusListPage.css';
-import { OphDsTable } from '../design-system/OphDsTable';
 
 const defaultCriteria = {
     subOrganisation: 'true',
@@ -22,6 +23,7 @@ const defaultCriteria = {
 
 export const JarjestelmatunnusListPage = () => {
     const { L } = useLocalisations();
+    useTitle(L['JARJESTELMATUNNUSTEN_HAKU']);
     const [criteria, setCriteria] = useState<PalvelukayttajaCriteria>(defaultCriteria);
     const debouncedCriteria = useDebounce(criteria, 500);
     const { data, isFetching } = useGetPalvelukayttajatQuery(debouncedCriteria, {

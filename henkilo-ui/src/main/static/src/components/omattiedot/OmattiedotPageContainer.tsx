@@ -16,11 +16,15 @@ import { HenkiloViewPage } from '../henkilo/HenkiloViewPage';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
 import Loader from '../common/icons/Loader';
 import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
+import { useLocalisations } from '../../selectors';
+import { useTitle } from '../../useTitle';
 
 const OmattiedotPageContainer = () => {
     const { data: omattiedot } = useGetOmattiedotQuery();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const dispatch = useAppDispatch();
+    const { L } = useLocalisations();
+    useTitle(L['TITLE_OMAT_TIEDOT']);
 
     useEffect(() => {
         dispatch<any>(fetchYhteystietotyypitKoodisto());

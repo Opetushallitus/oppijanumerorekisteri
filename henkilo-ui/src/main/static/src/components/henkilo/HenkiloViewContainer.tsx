@@ -30,11 +30,12 @@ import { useLocalisations } from '../../selectors';
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
 import { Omattiedot } from '../../types/domain/kayttooikeus/Omattiedot.types';
 import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
+import { useTitle } from '../../useTitle';
 
 type OwnProps = {
     router: RouteActions;
     location: { pathname: string };
-    params: { oid?: string; henkiloType?: string };
+    params: { oid?: string };
 };
 
 const getView = (henkiloType: string, omattiedot: Omattiedot): View => {
@@ -44,6 +45,12 @@ const getView = (henkiloType: string, omattiedot: Omattiedot): View => {
         return henkiloType;
     }
     return null;
+};
+
+const titles = {
+    oppija: 'TITLE_OPPIJA',
+    virkailija: 'TITLE_VIRKAILIJA',
+    admin: 'TITLE_ADMIN',
 };
 
 /*
@@ -58,6 +65,7 @@ const HenkiloViewContainer = ({ router, location, params }: OwnProps) => {
 
     const henkiloType = location.pathname.split('/')[1];
     const view = getView(henkiloType, omattiedot);
+    useTitle(L[titles[henkiloType ?? 'oppija']]);
 
     useEffect(() => {
         if (oid && omattiedot.oidHenkilo === oid) {

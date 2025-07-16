@@ -68,7 +68,6 @@ const App = ({ children, location, params, routes }: OwnProps) => {
             setRoute(route);
         }
         if (isInitialized) {
-            window.document.title = L[route.title] || L['TITLE_DEFAULT'];
             if (locale.toLowerCase() !== 'fi' && locale.toLowerCase() !== 'sv') {
                 dispatch(
                     addGlobalNotification({

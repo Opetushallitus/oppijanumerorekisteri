@@ -21,6 +21,7 @@ import KayttooikeusryhmaTiedot from './KayttooikeusryhmaTiedot';
 import { SelectOption, selectStyles } from '../../../utilities/select';
 
 import './KayttooikeusryhmatPage.css';
+import { useTitle } from '../../../useTitle';
 
 type Kayttajatyyppi = 'virkailija' | 'palvelu';
 
@@ -47,6 +48,7 @@ const nimiSort = (locale: string) => (a: Kayttooikeusryhma, b: Kayttooikeusryhma
 
 export const KayttooikeusryhmatPage = () => {
     const { L, locale } = useLocalisations();
+    useTitle(L['TITLE_KAYTTO_OIKEUSRYHMA']);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const muokkausoikeus = hasAnyPalveluRooli(omattiedot.organisaatiot, [
         'KOOSTEROOLIENHALLINTA_CRUD',

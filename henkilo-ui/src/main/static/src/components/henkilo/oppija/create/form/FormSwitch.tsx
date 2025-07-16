@@ -5,12 +5,16 @@ import type { FormType } from './types';
 import OppijaCreateSsnContainer from '../ssn/OppijaCreateSsnContainer';
 import OppijaCreateAnonymousContainer from '../anonymous/OppijaCreateAnonymousContainer';
 import FormPicker from './FormPicker';
+import { useLocalisations } from '../../../../../selectors';
+import { useTitle } from '../../../../../useTitle';
 
 type Props = {
     router: RouteActions;
 };
 
 const FormSwitch: React.FC<Props> = ({ router }) => {
+    const { L } = useLocalisations();
+    useTitle(L['TITLE_OPPIJA_LUONTI']);
     const [formType, setFormType] = React.useState<FormType>();
     const goBack = () => setFormType(undefined);
     switch (formType) {
