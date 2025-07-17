@@ -5,6 +5,8 @@ import WideRedNotification from '../common/notifications/WideRedNotification';
 import { useLocalisations } from '../../selectors';
 import { usePostPalvelukayttajaMutation } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
+import { useNavigation } from '../../useNavigation';
+import { palvelukayttajaNavigation } from '../navigation/navigationconfigurations';
 
 type Props = {
     router: RouteActions;
@@ -13,6 +15,7 @@ type Props = {
 export const PalvelukayttajaCreatePage = ({ router }: Props) => {
     const { L } = useLocalisations();
     useTitle(L['TITLE_PALVELUKAYTTAJIEN_LUONTI']);
+    useNavigation(palvelukayttajaNavigation, false);
     const [error, setError] = useState('');
     const [nimi, setNimi] = useState('');
     const [postPalvelukayttaja] = usePostPalvelukayttajaMutation();

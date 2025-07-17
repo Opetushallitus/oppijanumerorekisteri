@@ -3,14 +3,12 @@ import { useSelector } from 'react-redux';
 import moment from 'moment';
 
 import { useAppDispatch, type RootState } from '../store';
-import TopNavigation from '../components/navigation/TopNavigation';
+import { TopNavigation } from '../components/navigation/TopNavigation';
 import Loader from '../components/common/icons/Loader';
 import { fetchPrequels } from '../actions/prequel.actions';
 import PropertySingleton from '../globals/PropertySingleton';
 import { addGlobalNotification } from '../actions/notification.actions';
 import { GlobalNotifications } from '../components/common/Notification/GlobalNotifications';
-import { ophLightGray } from '../components/navigation/navigation.utils';
-import { RouteType } from '../routes';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { useLocalisations } from '../selectors';
 import { useGetOmatOrganisaatiotQuery, useGetOmattiedotQuery } from '../api/kayttooikeus';
@@ -24,15 +22,11 @@ import 'moment/locale/sv';
 type OwnProps = {
     children: React.ReactNode;
     location: { pathname?: string };
-    routes: Array<RouteType>;
-    params: Record<string, string>;
 };
 
 const fetchPrequelsIntervalInMillis = 30 * 1000;
 
-const App = ({ children, location, params, routes }: OwnProps) => {
-    const [lastPath, setLastPath] = useState<string>(null);
-    const [route, setRoute] = useState<RouteType>(routes[routes.length - 1]);
+const App = ({ children, location }: OwnProps) => {
     const [isInitialized, setIsInitialized] = useState(false);
     const prequelsNotLoadedCount = useSelector<RootState, number>((state) => state.prequels.notLoadedCount);
     const { isSuccess: isLocaleSuccess } = useGetLocaleQuery(undefined, {
@@ -61,12 +55,6 @@ const App = ({ children, location, params, routes }: OwnProps) => {
     }, [isOmattiedotLoading, isLocaleSuccess, prequelsNotLoadedCount, isLocalisationsSuccess]);
 
     useEffect(() => {
-        const route = routes[routes.length - 1];
-        if (!lastPath || lastPath !== route.path) {
-            window.document.body.style.backgroundColor = ophLightGray;
-            setLastPath(location.pathname);
-            setRoute(route);
-        }
         if (isInitialized) {
             if (locale.toLowerCase() !== 'fi' && locale.toLowerCase() !== 'sv') {
                 dispatch(
@@ -78,13 +66,13 @@ const App = ({ children, location, params, routes }: OwnProps) => {
                 );
             }
         }
-    }, [routes, isInitialized]);
+    }, [isInitialized]);
 
     return isInitialized ? (
         <div className="oph-typography mainContainer">
             <GlobalNotifications />
             <OphDsToasts />
-            <TopNavigation pathName={location.pathname} route={route} params={params} />
+            <TopNavigation pathName={location.pathname} />
             {children}
         </div>
     ) : (

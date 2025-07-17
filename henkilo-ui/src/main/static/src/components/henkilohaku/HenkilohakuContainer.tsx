@@ -7,6 +7,8 @@ import { parsePalveluRoolit, hasAnyPalveluRooli } from '../../utilities/palvelur
 import { useGetKayttooikeusryhmasQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
+import { useNavigation } from '../../useNavigation';
+import { mainNavigation } from '../navigation/navigationconfigurations';
 
 type OwnProps = {
     router: RouteActions;
@@ -15,6 +17,7 @@ type OwnProps = {
 const HenkilohakuContainer = ({ router }: OwnProps) => {
     const { L } = useLocalisations();
     useTitle(L['TITLE_HENKILOHAKU']);
+    useNavigation(mainNavigation, false);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { isLoading } = useGetKayttooikeusryhmasQuery({ passiiviset: true });
     const vainOppijoidenTuonti = useMemo(() => {

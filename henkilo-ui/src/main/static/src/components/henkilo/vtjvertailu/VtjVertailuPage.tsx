@@ -11,7 +11,7 @@ import {
 import VtjVertailuListaus from './VtjVertailuListaus';
 import Loader from '../../common/icons/Loader';
 import Button from '../../common/button/Button';
-import { enabledVtjVertailuView } from '../../navigation/NavigationTabs';
+import { enabledVtjVertailuView, henkiloViewTabs } from '../../navigation/NavigationTabs';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
 import { NOTIFICATIONTYPES } from '../../common/Notification/notificationtypes';
@@ -19,6 +19,7 @@ import { addGlobalNotification } from '../../../actions/notification.actions';
 import { useLocalisations } from '../../../selectors';
 import { useTitle } from '../../../useTitle';
 import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
+import { useNavigation } from '../../../useNavigation';
 
 type OwnProps = {
     params: { oid?: string; henkiloType?: string };
@@ -31,6 +32,7 @@ export const VtjVertailuPage = (props: OwnProps) => {
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { L } = useLocalisations();
     useTitle(L['TITLE_VTJ_VERTAILU']);
+    useNavigation(henkiloViewTabs(oidHenkilo, henkilo, props.params.henkiloType), true);
 
     useEffect(() => {
         dispatch<any>(fetchHenkilo(oidHenkilo));
