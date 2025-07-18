@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Link, useLocation } from 'react-router';
+import { NavLink } from 'react-router';
 import classNames from 'classnames';
 import { urls } from 'oph-urls-js';
 import { useSelector } from 'react-redux';
@@ -15,7 +15,6 @@ import './TopNavigation.css';
 
 export const TopNavigation = () => {
     const { L } = useLocalisations();
-    const location = useLocation();
     const { data: omattiedot } = useGetOmattiedotQuery();
     const navigation = useSelector((state: RootState) => state.navigation);
 
@@ -50,28 +49,33 @@ export const TopNavigation = () => {
                         </a>
                     </li>
                 ) : null}
-                {navigation.tabs.length > 0 &&
-                    navigation.tabs
-                        .filter(
-                            (tab) =>
-                                omattiedot.isAdmin ||
-                                !tab.sallitutRoolit ||
-                                tab.sallitutRoolit.some((r) => !!r && roolit.includes(r))
-                        )
-                        .map((tab, index) => {
-                            const className = classNames({
-                                active: tab.path === location.pathname,
-                                'disabled-link': tab.disabled,
-                            });
-                            return (
-                                <li key={index}>
-                                    <Link className={className} to={tab.path}>
+                {navigation.tabs
+                    .filter(
+                        (tab) =>
+                            omattiedot.isAdmin ||
+                            !tab.sallitutRoolit ||
+                            tab.sallitutRoolit.some((r) => !!r && roolit.includes(r))
+                    )
+                    .map((tab, index) => (
+                        <li key={index}>
+                            <NavLink
+                                className={({ isActive }) =>
+                                    classNames({
+                                        active: isActive,
+                                        'disabled-link': tab.disabled,
+                                    })
+                                }
+                                to={tab.path}
+                            >
+                                {({ isActive }) => (
+                                    <span>
                                         {L[tab.label] ?? tab.label}
-                                        {tab.path === location.pathname ? <AngleDownIcon /> : <PlaceholderIcon />}
-                                    </Link>
-                                </li>
-                            );
-                        })}
+                                        {isActive ? <AngleDownIcon /> : <PlaceholderIcon />}
+                                    </span>
+                                )}
+                            </NavLink>
+                        </li>
+                    ))}
             </ul>
         </div>
     );
