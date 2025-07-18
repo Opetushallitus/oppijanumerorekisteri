@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { RouteActions } from 'react-router-redux';
 import { urls } from 'oph-urls-js';
+import { useParams } from 'react-router';
 
 import { useAppDispatch } from '../store';
-import { Locale } from '../../types/locale.type';
 import { EmailVerificationPage } from './EmailVerificationPage';
 import { http } from '../../http';
 import { addGlobalNotification } from '../../actions/notification.actions';
@@ -14,13 +13,9 @@ import { useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
 import { toSupportedLocale } from '../../reducers/locale.reducer';
 
-type OwnProps = {
-    params: { loginToken?: string; locale?: Locale };
-    router: RouteActions;
-};
-
-const EmailVerificationContainer = ({ params, router }: OwnProps) => {
+const EmailVerificationContainer = () => {
     const dispatch = useAppDispatch();
+    const params = useParams();
     const { l10n } = useLocalisations();
     const [loading, setLoading] = useState(true);
     const [henkilo, setHenkilo] = useState<Partial<Henkilo>>({ yhteystiedotRyhma: [] });
@@ -63,11 +58,10 @@ const EmailVerificationContainer = ({ params, router }: OwnProps) => {
     ) : (
         <EmailVerificationPage
             henkilo={henkilo}
-            locale={locale}
-            L={L}
             loginToken={params.loginToken}
-            router={router}
             errorNotification={errorNotification}
+            L={L}
+            locale={params.locale}
         />
     );
 };

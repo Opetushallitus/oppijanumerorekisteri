@@ -1,6 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
-import { routerReducer as routing } from 'react-router-redux';
 
 import { kayttooikeusApi } from '../api/kayttooikeus';
 import { oppijanumerorekisteriApi } from '../api/oppijanumerorekisteri';
@@ -16,7 +15,6 @@ const isDev = process.env.NODE_ENV !== 'production';
 const isClient = typeof window !== 'undefined';
 
 const rootReducer = {
-    routing,
     l10n,
     locale,
     koodisto,

@@ -1,7 +1,7 @@
 import React, { useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
-import UserContentContainer from '../common/henkilo/usercontent/UserContentContainer';
+import { UserContentContainer } from '../common/henkilo/usercontent/UserContentContainer';
 import { HenkiloViewOrganisationContent } from '../common/henkilo/HenkiloViewOrganisationContent';
 import HenkiloViewExistingKayttooikeus from '../common/henkilo/HenkiloViewExistingKayttooikeus';
 import HenkiloViewExpiredKayttooikeus from '../common/henkilo/HenkiloViewExpiredKayttooikeus';

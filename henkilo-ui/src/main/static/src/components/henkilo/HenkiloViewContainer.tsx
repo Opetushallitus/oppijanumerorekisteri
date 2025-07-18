@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { RouteActions } from 'react-router-redux';
+import { useLocation, useNavigate, useParams } from 'react-router';
 
 import { useAppDispatch, type RootState } from '../../store';
 import Loader from '../common/icons/Loader';
@@ -34,12 +34,6 @@ import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { henkiloViewTabs } from '../navigation/NavigationTabs';
 
-type OwnProps = {
-    router: RouteActions;
-    location: { pathname: string };
-    params: { oid?: string };
-};
-
 const getView = (henkiloType: string, omattiedot: Omattiedot): View => {
     if (omattiedot.isAdmin) {
         return 'admin';
@@ -58,21 +52,23 @@ const titles = {
 /*
  * Henkilo-näkymä. Päätellään näytetäänkö admin/virkailija/oppija -versio henkilöstä, vai siirrytäänkö omattiedot-sivulle
  */
-const HenkiloViewContainer = ({ router, location, params }: OwnProps) => {
+const HenkiloViewContainer = () => {
     const { data: omattiedot } = useGetOmattiedotQuery();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const { L } = useLocalisations();
-    const { oid } = params;
+    const { oid } = useParams();
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const henkiloType = location.pathname.split('/')[1];
     const view = getView(henkiloType, omattiedot);
     useTitle(L[titles[henkiloType ?? 'oppija']]);
-    useNavigation(henkiloViewTabs(params.oid, henkilo, henkiloType), true);
+    useNavigation(henkiloViewTabs(oid, henkilo, henkiloType), true);
 
     useEffect(() => {
         if (oid && omattiedot.oidHenkilo === oid) {
-            router.replace('/omattiedot');
+            navigate('/omattiedot', { replace: true });
         }
 
         dispatch<any>(clearHenkilo());

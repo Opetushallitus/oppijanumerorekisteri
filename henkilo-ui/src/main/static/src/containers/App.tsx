@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
+import { Outlet } from 'react-router';
 
 import { useAppDispatch, type RootState } from '../store';
 import { TopNavigation } from '../components/navigation/TopNavigation';
@@ -19,14 +20,9 @@ import { OphDsToasts } from '../components/design-system/OphDsToast';
 import 'moment/locale/fi';
 import 'moment/locale/sv';
 
-type OwnProps = {
-    children: React.ReactNode;
-    location: { pathname?: string };
-};
-
 const fetchPrequelsIntervalInMillis = 30 * 1000;
 
-const App = ({ children, location }: OwnProps) => {
+const App = () => {
     const [isInitialized, setIsInitialized] = useState(false);
     const prequelsNotLoadedCount = useSelector<RootState, number>((state) => state.prequels.notLoadedCount);
     const { isSuccess: isLocaleSuccess } = useGetLocaleQuery(undefined, {
@@ -72,8 +68,8 @@ const App = ({ children, location }: OwnProps) => {
         <div className="oph-typography mainContainer">
             <GlobalNotifications />
             <OphDsToasts />
-            <TopNavigation pathName={location.pathname} />
-            {children}
+            <TopNavigation />
+            <Outlet />
         </div>
     ) : (
         <Loader />
