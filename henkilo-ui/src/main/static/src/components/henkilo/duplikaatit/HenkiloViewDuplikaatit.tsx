@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { RouteActions } from 'react-router-redux';
+import { useNavigate } from 'react-router';
 
 import Button from '../../common/button/Button';
 import DuplikaatitPerson from './DuplikaatitPerson';
@@ -27,14 +27,13 @@ export type LinkRelation = {
 };
 
 type Props = {
-    router?: RouteActions;
     oidHenkilo?: string;
     henkilo: HenkiloDuplicateLenient & { hakemukset?: Hakemus[] };
     henkiloType: string;
     vainLuku: boolean;
 };
 
-const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, router, oidHenkilo }: Props) => {
+const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, oidHenkilo }: Props) => {
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { L } = useLocalisations();
     const [linkObj, setLink] = useState<LinkRelation>();
@@ -48,6 +47,7 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, router, oidHen
     const linkingEnabled =
         enabledDuplikaattiView(oidHenkilo, henkilo.kayttaja, henkilo.masterLoading, henkilo.master?.oidHenkilo) ||
         oidHenkilo !== omattiedot.oidHenkilo;
+    const navigate = useNavigate();
 
     const link = async () =>
         await postLinkHenkilos({
@@ -59,7 +59,7 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, router, oidHen
             .unwrap()
             .then(() => {
                 setLink(undefined);
-                router.push(`/${henkiloType}/${oidHenkilo}`);
+                navigate(`/${henkiloType}/${oidHenkilo}`);
             })
             .catch(() => {
                 setLink(undefined);

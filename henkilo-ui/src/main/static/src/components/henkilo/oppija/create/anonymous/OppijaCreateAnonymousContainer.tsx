@@ -1,141 +1,81 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { RouteActions } from 'react-router-redux';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
+import { urls } from 'oph-urls-js';
 
 import { http } from '../../../../../http';
-import { urls } from 'oph-urls-js';
 import {
     fetchKieliKoodisto,
     fetchSukupuoliKoodisto,
     fetchKansalaisuusKoodisto,
 } from '../../../../../actions/koodisto.actions';
-import { Locale } from '../../../../../types/locale.type';
-import { Koodisto } from '../../../../../types/domain/koodisto/koodisto.types';
 import OppijaCreateForm from './OppijaCreateForm';
 import { HenkiloCreate } from '../../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { HenkiloDuplicate } from '../../../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
-import { Localisations } from '../../../../../types/localisation.type';
 import OppijaCreateDuplikaatit from './OppijaCreateDuplikaatit';
 import { addGlobalNotification } from '../../../../../actions/notification.actions';
 import { NOTIFICATIONTYPES } from '../../../../common/Notification/notificationtypes';
-import { GlobalNotificationConfig } from '../../../../../types/notification.types';
 import CloseButton from '../../../../common/button/CloseButton';
-import { RootState } from '../../../../../store';
+import { RootState, useAppDispatch } from '../../../../../store';
+import { useLocalisations } from '../../../../../selectors';
+import { KoodistoState } from '../../../../../reducers/koodisto.reducer';
 
 type OwnProps = {
-    router: RouteActions;
     goBack: () => void;
-};
-
-type StateProps = {
-    locale: Locale;
-    L: Localisations;
-    sukupuoliKoodisto: Koodisto;
-    kieliKoodisto: Koodisto;
-    kansalaisuusKoodisto: Koodisto;
-};
-
-type DispatchProps = {
-    fetchSukupuoliKoodisto: () => void;
-    fetchKieliKoodisto: () => void;
-    fetchKansalaisuusKoodisto: () => void;
-    addGlobalNotification: (payload: GlobalNotificationConfig) => void;
-};
-
-type Props = OwnProps & StateProps & DispatchProps;
-
-type State = {
-    oppija: HenkiloCreate;
-    naytaDuplikaatit: boolean;
-    duplikaatit: Array<HenkiloDuplicate>;
-    loading: boolean;
 };
 
 /**
  * Oppijan luonti -näkymä.
  */
-class OppijaCreateAnonymousContainer extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
+export const OppijaCreateAnonymousContainer = ({ goBack }: OwnProps) => {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+    const { L, locale } = useLocalisations();
+    const [oppija, setOppija] = useState({});
+    const koodisto = useSelector<RootState, KoodistoState>((state) => state.koodisto);
+    const [naytaDuplikaatit, setNaytaDuplikaatit] = useState(false);
+    const [duplikaatit, setDuplikaatit] = useState([]);
 
-        this.state = {
-            oppija: {},
-            naytaDuplikaatit: false,
-            duplikaatit: [],
-            loading: false,
-        };
-    }
+    useEffect(() => {
+        dispatch<any>(fetchSukupuoliKoodisto());
+        dispatch<any>(fetchKieliKoodisto());
+        dispatch<any>(fetchKansalaisuusKoodisto());
+    }, []);
 
-    componentDidMount() {
-        this.props.fetchSukupuoliKoodisto();
-        this.props.fetchKieliKoodisto();
-        this.props.fetchKansalaisuusKoodisto();
-    }
-
-    render() {
-        return (
-            <div className="mainContent wrapper">
-                <span className="oph-h2 oph-bold">{this.props.L['OPPIJAN_LUONTI_OTSIKKO']}</span>
-                <span style={{ float: 'right' }}>
-                    <CloseButton closeAction={this.props.goBack} />
-                </span>
-                {this.state.naytaDuplikaatit === false ? (
-                    <OppijaCreateForm
-                        tallenna={this.tallenna}
-                        locale={this.props.locale}
-                        L={this.props.L}
-                        sukupuoliKoodisto={this.props.sukupuoliKoodisto}
-                        kieliKoodisto={this.props.kieliKoodisto}
-                        kansalaisuusKoodisto={this.props.kansalaisuusKoodisto}
-                    />
-                ) : (
-                    <OppijaCreateDuplikaatit
-                        locale={this.props.locale}
-                        L={this.props.L}
-                        tallenna={this.luoOppijaJaNavigoi}
-                        peruuta={this.peruuta}
-                        oppija={this.state.oppija}
-                        duplikaatit={this.state.duplikaatit}
-                    />
-                )}
-            </div>
-        );
-    }
-
-    tallenna = async (oppija: HenkiloCreate) => {
+    const tallenna = async (oppija: HenkiloCreate) => {
         try {
             // tarkistetaan ennen luontia duplikaatit
-            const duplikaatit = await this.haeDuplikaatit(oppija);
+            const duplikaatit = await haeDuplikaatit(oppija);
             if (duplikaatit.length > 0) {
-                this.setState({
-                    oppija: oppija,
-                    naytaDuplikaatit: true,
-                    duplikaatit: duplikaatit,
-                });
+                setOppija(oppija);
+                setNaytaDuplikaatit(true);
+                setDuplikaatit(duplikaatit);
             } else {
                 // luodaan oppija
-                this.luoOppijaJaNavigoi({ ...oppija, yksiloity: true });
+                luoOppijaJaNavigoi({ ...oppija, yksiloity: true });
             }
         } catch (error) {
-            this.props.addGlobalNotification({
-                key: 'HENKILON_LUONTI_VIRHE',
-                type: NOTIFICATIONTYPES.ERROR,
-                title: this.props.L['HENKILON_LUONTI_EPAONNISTUI'],
-            });
+            dispatch(
+                addGlobalNotification({
+                    key: 'HENKILON_LUONTI_VIRHE',
+                    type: NOTIFICATIONTYPES.ERROR,
+                    title: L['HENKILON_LUONTI_EPAONNISTUI'],
+                })
+            );
             throw error;
         }
     };
 
-    luoOppijaJaNavigoi = async (oppija: HenkiloCreate): Promise<void> => {
-        const oid = await this.luoOppija(oppija);
-        this.props.router.push(`/oppija/${oid}`);
+    const luoOppijaJaNavigoi = async (oppija: HenkiloCreate): Promise<void> => {
+        const oid = await luoOppija(oppija);
+        navigate(`/oppija/${oid}`);
     };
 
-    peruuta = () => {
+    const peruuta = () => {
         window.location.reload();
     };
 
-    haeDuplikaatit = (oppija: HenkiloCreate): Promise<Array<HenkiloDuplicate>> => {
+    const haeDuplikaatit = (oppija: HenkiloCreate): Promise<Array<HenkiloDuplicate>> => {
         const url = urls.url(
             'oppijanumerorekisteri-service.henkilo.duplikaatit',
             oppija.etunimet,
@@ -146,23 +86,36 @@ class OppijaCreateAnonymousContainer extends React.Component<Props, State> {
         return http.get(url);
     };
 
-    luoOppija = (oppija: HenkiloCreate): Promise<string> => {
+    const luoOppija = (oppija: HenkiloCreate): Promise<string> => {
         const url = urls.url('oppijanumerorekisteri-service.oppija');
         return http.post(url, oppija); // palauttaa oid
     };
-}
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    locale: state.locale,
-    L: state.l10n.localisations[state.locale],
-    sukupuoliKoodisto: state.koodisto.sukupuoliKoodisto,
-    kieliKoodisto: state.koodisto.kieliKoodisto,
-    kansalaisuusKoodisto: state.koodisto.kansalaisuusKoodisto,
-});
-
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    fetchKieliKoodisto,
-    fetchSukupuoliKoodisto,
-    fetchKansalaisuusKoodisto,
-    addGlobalNotification,
-})(OppijaCreateAnonymousContainer) as React.FC<OwnProps>;
+    return (
+        <div className="mainContent wrapper">
+            <span className="oph-h2 oph-bold">{L['OPPIJAN_LUONTI_OTSIKKO']}</span>
+            <span style={{ float: 'right' }}>
+                <CloseButton closeAction={goBack} />
+            </span>
+            {naytaDuplikaatit === false ? (
+                <OppijaCreateForm
+                    tallenna={tallenna}
+                    locale={locale}
+                    L={L}
+                    sukupuoliKoodisto={koodisto.sukupuoliKoodisto}
+                    kieliKoodisto={koodisto.kieliKoodisto}
+                    kansalaisuusKoodisto={koodisto.kansalaisuusKoodisto}
+                />
+            ) : (
+                <OppijaCreateDuplikaatit
+                    locale={locale}
+                    L={L}
+                    tallenna={luoOppijaJaNavigoi}
+                    peruuta={peruuta}
+                    oppija={oppija}
+                    duplikaatit={duplikaatit}
+                />
+            )}
+        </div>
+    );
+};

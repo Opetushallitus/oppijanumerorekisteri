@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { SyntheticEvent } from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../../../store';
 import type { HenkiloState } from '../../../../reducers/henkilo.reducer';
@@ -8,7 +8,7 @@ import LabelValue from './LabelValue';
 type OwnProps = {
     readOnly: boolean;
     henkiloUpdate: Henkilo;
-    updateDateFieldAction: () => void;
+    updateDateFieldAction: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
 };
 
 type StateProps = {

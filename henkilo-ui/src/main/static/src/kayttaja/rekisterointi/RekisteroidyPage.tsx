@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { RouteActions } from 'react-router-redux';
 import { urls } from 'oph-urls-js';
+import { useNavigate } from 'react-router';
 
 import StaticUtils from '../../components/common/StaticUtils';
 import { isValidPassword } from '../../validation/PasswordValidator';
@@ -29,7 +29,6 @@ type OwnProps = {
     L: Localisations;
     locale: Locale;
     kutsu: KutsuByToken;
-    router: RouteActions;
 };
 
 type Henkilo = {
@@ -107,7 +106,8 @@ function validate(henkilo: Henkilo) {
 }
 
 export const RekisteroidyPage = (props: OwnProps) => {
-    const { kutsu, L, locale: anyLocale, router } = props;
+    const navigate = useNavigate();
+    const { kutsu, L, locale: anyLocale } = props;
     const locale = toSupportedLocale(anyLocale);
     const [privacyPolicySeen, setPrivacyPolicySeen] = useState(false);
     const [notification, setNotification] = useState<ButtonNotification>();
@@ -143,7 +143,7 @@ export const RekisteroidyPage = (props: OwnProps) => {
         setNotification(undefined);
         const url = urls.url('kayttooikeus-service.kutsu.by-token', kutsu.temporaryToken);
         http.post(url, henkilo).then(
-            () => router.push(`/kayttaja/rekisteroidy/valmis/${locale}`),
+            () => navigate(`/kayttaja/rekisteroidy/valmis/${locale}`),
             (error: { errorType?: string }) =>
                 setNotification(
                     rekisteroidyErrors[error.errorType] ?? {

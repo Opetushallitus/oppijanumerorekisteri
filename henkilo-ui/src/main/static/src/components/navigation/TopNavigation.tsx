@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import classNames from 'classnames';
 import { urls } from 'oph-urls-js';
 import { useSelector } from 'react-redux';
@@ -13,12 +13,9 @@ import { RootState } from '../../store';
 
 import './TopNavigation.css';
 
-type OwnProps = {
-    pathName: string | null | undefined;
-};
-
-export const TopNavigation = ({ pathName }: OwnProps) => {
+export const TopNavigation = () => {
     const { L } = useLocalisations();
+    const location = useLocation();
     const { data: omattiedot } = useGetOmattiedotQuery();
     const navigation = useSelector((state: RootState) => state.navigation);
 
@@ -46,8 +43,7 @@ export const TopNavigation = ({ pathName }: OwnProps) => {
                             href="?"
                             onClick={(e) => {
                                 e.preventDefault();
-                                window.history.go(-1);
-                                return false;
+                                window.history.back();
                             }}
                         >
                             &#8701; {L['TAKAISIN_LINKKI']} <PlaceholderIcon />
@@ -64,14 +60,14 @@ export const TopNavigation = ({ pathName }: OwnProps) => {
                         )
                         .map((tab, index) => {
                             const className = classNames({
-                                active: tab.path === pathName,
+                                active: tab.path === location.pathname,
                                 'disabled-link': tab.disabled,
                             });
                             return (
                                 <li key={index}>
                                     <Link className={className} to={tab.path}>
                                         {L[tab.label] ?? tab.label}
-                                        {tab.path === pathName ? <AngleDownIcon /> : <PlaceholderIcon />}
+                                        {tab.path === location.pathname ? <AngleDownIcon /> : <PlaceholderIcon />}
                                     </Link>
                                 </li>
                             );

@@ -35,7 +35,6 @@ const Aidinkieli = (props: Props) => {
             })) ?? []
         );
     }, [props.koodisto]);
-
     return (
         <FieldlessLabelValue readOnly={props.readOnly} label="HENKILO_AIDINKIELI">
             {props.readOnly ? (
