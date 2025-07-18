@@ -25,15 +25,14 @@ import type { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/Org
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { useLocalisations } from '../../../selectors';
 import { OrganisaatioKayttooikeusryhmatState } from '../../../reducers/organisaatiokayttooikeusryhmat.reducer';
-import { useGetOmattiedotQuery, useGetRootOrganisationQuery } from '../../../api/kayttooikeus';
+import {
+    useGetOmattiedotQuery,
+    useGetOrganisaatioRyhmatQuery,
+    useGetRootOrganisationQuery,
+} from '../../../api/kayttooikeus';
 import { FastMenuList, SelectOption } from '../../../utilities/select';
 
 import './HenkiloViewCreateKayttooikeusanomus.css';
-
-type OwnProps = {
-    ryhmaOptions: Array<{ label: string; value: string }>;
-    kayttooikeusryhmat: Array<Kayttooikeusryhma>;
-};
 
 type KayttooikeusryhmaSelection = {
     value: number;
@@ -41,19 +40,7 @@ type KayttooikeusryhmaSelection = {
     description: string;
 };
 
-type SelectionState = {
-    selectedOid?: string;
-    ryhmaSelection?: SelectOption;
-    organisaatioSelection?: OrganisaatioSelectObject;
-};
-
-const initialSelectionState = {
-    selectedOid: undefined,
-    ryhmaSelection: undefined,
-    organisaatioSelection: undefined,
-};
-
-export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
+export const HenkiloViewCreateKayttooikeusanomus = () => {
     const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
@@ -61,25 +48,30 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
     const organisaatioKayttooikeusryhmat = useSelector<RootState, OrganisaatioKayttooikeusryhmatState>(
         (state) => state.OrganisaatioKayttooikeusryhmat
     );
-
     const [showInstructions, setShowInstructions] = useState(false);
-    const [selectionState, setSelectionState] = useState<SelectionState>(initialSelectionState);
+    const [organisationSelection, setOrganisationSelection] = useState<OrganisaatioSelectObject>();
+    const [ryhmaSelection, setRyhmaSelection] = useState<SelectOption>();
+    const selectedOrganisationOid = organisationSelection?.oid ?? ryhmaSelection?.value;
     const [kayttooikeusryhmaSelections, setKayttooikeusryhmaSelections] = useState<KayttooikeusryhmaSelection[]>([]);
     const [perustelut, setPerustelut] = useState<string>();
     const [emailOptions, setEmailOptions] = useState(createEmailOptions(henkilo));
     const { data: rootOrganisation, isLoading: isRootOrganisationLoading } = useGetRootOrganisationQuery();
+    const { data: ryhmat } = useGetOrganisaatioRyhmatQuery();
 
     const ryhmaOptions = useMemo(() => {
-        const options = [...props.ryhmaOptions];
-        options.sort((a, b) => a.label.localeCompare(b.label));
-        return options;
-    }, [props.ryhmaOptions]);
+        return (ryhmat ?? [])
+            .map((r) => ({
+                label: r.nimi[locale] || r.nimi['fi'] || r.nimi['sv'] || r.nimi['en'] || '',
+                value: r.oid,
+            }))
+            .sort((a, b) => a.label.localeCompare(b.label));
+    }, [ryhmat]);
 
     const kayttooikeusryhmat = useMemo(() => {
-        return props.kayttooikeusryhmat.filter(
+        return (organisaatioKayttooikeusryhmat.kayttooikeusryhmat ?? []).filter(
             (kayttooikeusryhma) => !kayttooikeusryhmaSelections.find((k) => k.value === kayttooikeusryhma.id)
         );
-    }, [props.kayttooikeusryhmat]);
+    }, [organisaatioKayttooikeusryhmat]);
 
     useEffect(() => {
         setEmailOptions(createEmailOptions(henkilo));
@@ -105,27 +97,19 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
     }
 
     function _changeOrganisaatioSelection(organisaatioSelection: OrganisaatioSelectObject) {
-        setSelectionState({
-            selectedOid: organisaatioSelection.oid,
-            organisaatioSelection,
-            ryhmaSelection: undefined,
-        });
+        setOrganisationSelection(organisaatioSelection);
+        setRyhmaSelection(undefined);
         dispatch<any>(fetchOrganisaatioKayttooikeusryhmat(organisaatioSelection.oid));
     }
 
     function _changeRyhmaSelection(ryhmaSelection: SelectOption) {
-        setSelectionState({
-            selectedOid: ryhmaSelection.value,
-            organisaatioSelection: undefined,
-            ryhmaSelection,
-        });
+        setOrganisationSelection(undefined);
+        setRyhmaSelection(ryhmaSelection);
         dispatch<any>(fetchOrganisaatioKayttooikeusryhmat(ryhmaSelection.value));
     }
 
     function validAnomusForm() {
-        return (
-            !!selectionState.selectedOid && _validKayttooikeusryhmaSelection() && _validEmailSelection() && perustelut
-        );
+        return !!selectedOrganisationOid && _validKayttooikeusryhmaSelection() && _validEmailSelection() && perustelut;
     }
 
     function _validKayttooikeusryhmaSelection() {
@@ -142,7 +126,8 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
 
     function _resetAnomusFormFields() {
         setShowInstructions(false);
-        setSelectionState(initialSelectionState);
+        setOrganisationSelection(undefined);
+        setRyhmaSelection(undefined);
         setKayttooikeusryhmaSelections([]);
         setPerustelut('');
         setEmailOptions(createEmailOptions(henkilo));
@@ -184,7 +169,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
         try {
             await dispatch<any>(
                 createKayttooikeusanomus({
-                    organisaatioOrRyhmaOid: selectionState.selectedOid,
+                    organisaatioOrRyhmaOid: selectedOrganisationOid,
                     email: emailOptions.emailSelection,
                     perustelut: perustelut,
                     kayttooikeusRyhmaIds: kayttooikeusryhmaSelections.map((selection) => selection.value),
@@ -218,9 +203,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
         <Loader />
     ) : (
         <div className="kayttooikeus-anomus-wrapper">
-            <div className="header">
-                <span className="oph-h2 oph-bold">{L['OMATTIEDOT_OTSIKKO']}</span>
-            </div>
+            <h2>{L['OMATTIEDOT_OTSIKKO']}</h2>
             {emailOptions.showMissingEmailNotification ? (
                 <WideBlueNotification
                     message={L['OMATTIEDOT_PUUTTUVA_SAHKOPOSTI_UUSI_ANOMUS']}
@@ -240,7 +223,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
                         <input
                             className="oph-input flex-item-1 kutsutut-organisaatiosuodatus"
                             type="text"
-                            value={selectionState.organisaatioSelection?.name ?? ''}
+                            value={organisationSelection?.name ?? ''}
                             placeholder={L['OMATTIEDOT_VALITSE_ORGANISAATIO']}
                             readOnly
                         />
@@ -260,7 +243,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
                             options={ryhmaOptions}
                             components={{ MenuList: FastMenuList }}
                             filterOption={createFilter({ ignoreAccents: false })}
-                            value={selectionState.ryhmaSelection}
+                            value={ryhmaSelection}
                             placeholder={L['OMATTIEDOT_ANOMINEN_RYHMA']}
                             isDisabled={emailOptions.missingEmail}
                         />
@@ -302,7 +285,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
                             onSelect={_addKayttooikeusryhmaSelection}
                             disabled={emailOptions.missingEmail}
                             loading={organisaatioKayttooikeusryhmat.kayttooikeusryhmatLoading}
-                            isOrganisaatioSelected={!!selectionState.selectedOid}
+                            isOrganisaatioSelected={!!selectedOrganisationOid}
                             sallittuKayttajatyyppi="VIRKAILIJA"
                         />
                     </div>
@@ -380,7 +363,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: OwnProps) => {
                                         type={NOTIFICATIONTYPES.WARNING}
                                     >
                                         <ul>
-                                            {!selectionState.selectedOid ? (
+                                            {!selectedOrganisationOid ? (
                                                 <li>{L['OMATTIEDOT_VAATIMUS_ORGANISAATIO']}</li>
                                             ) : null}
                                             {!_validKayttooikeusryhmaSelection() ? (
