@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { RouteActions } from 'react-router-redux';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
 
 import './KayttooikeusryhmaPage.css';
 import KayttooikeusryhmanOrganisaatiorajoite from './KayttooikeusryhmanOrganisaatiorajoite';
@@ -60,7 +60,6 @@ export type KayttooikeusryhmaForm = {
 };
 
 type Props = {
-    router: RouteActions;
     kayttooikeusryhmaId?: string;
 };
 
@@ -78,6 +77,7 @@ const initialKayttooikeusryhmaForm: KayttooikeusryhmaForm = {
 
 export const KayttooikeusryhmaPage = (props: Props) => {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const { L, locale } = useLocalisations();
     const koodisto = useSelector<RootState, KoodistoState>((state) => state.koodisto);
     const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
@@ -503,7 +503,7 @@ export const KayttooikeusryhmaPage = (props: Props) => {
         await postKayttooikeusryhma(parsePayload())
             .unwrap()
             .then(() => {
-                props.router.push('/kayttooikeusryhmat');
+                navigate('/kayttooikeusryhmat');
             })
             .catch((error) => {
                 dispatch(
@@ -523,7 +523,7 @@ export const KayttooikeusryhmaPage = (props: Props) => {
         await putKayttooikeusryhma({ id: props.kayttooikeusryhmaId, body: parsePayload() })
             .unwrap()
             .then(() => {
-                props.router.push('/kayttooikeusryhmat');
+                navigate('/kayttooikeusryhmat');
             })
             .catch((error) => {
                 dispatch(
@@ -617,15 +617,12 @@ export const KayttooikeusryhmaPage = (props: Props) => {
                 <button
                     className="oph-button oph-button-cancel"
                     onClick={() => {
-                        props.router.push('/kayttooikeusryhmat');
+                        navigate('/kayttooikeusryhmat');
                     }}
                 >
                     {L['PERUUTA']}
                 </button>
-                <ToggleKayttooikeusryhmaStateModal
-                    router={props.router}
-                    kayttooikeusryhmaId={props.kayttooikeusryhmaId}
-                />
+                <ToggleKayttooikeusryhmaStateModal kayttooikeusryhmaId={props.kayttooikeusryhmaId} />
                 <span>
                     {L['MUOKATTU']}: {renderKayttooikeusryhmaMuokattu()}
                 </span>

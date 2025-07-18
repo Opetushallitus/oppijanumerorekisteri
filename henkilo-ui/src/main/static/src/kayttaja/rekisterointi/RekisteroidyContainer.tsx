@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { RouteActions } from 'react-router-redux';
+import { useLocation } from 'react-router';
 
 import { RekisteroidyPage } from './RekisteroidyPage';
 import { fetchKieliKoodisto } from '../../actions/koodisto.actions';
@@ -13,16 +13,13 @@ import { useGetKutsuByTokenQuery } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
 import { toSupportedLocale } from '../../reducers/locale.reducer';
 
-type OwnProps = {
-    location: { query: Record<string, string> };
-    router: RouteActions;
-};
-
-const RekisteroidyContainer = (props: OwnProps) => {
+const RekisteroidyContainer = () => {
     const dispatch = useAppDispatch();
+    const location = useLocation();
     const { l10n } = useLocalisations();
     const koodisto = useSelector<KayttajaRootState, KoodistoState>((state) => state.koodisto);
-    const temporaryToken = props.location.query['temporaryKutsuToken'];
+    const search = new URLSearchParams(location.search);
+    const temporaryToken = search.get('temporaryKutsuToken');
     const { data: kutsu, isLoading: isKutsuLoading, isError } = useGetKutsuByTokenQuery(temporaryToken);
     const locale = toSupportedLocale(kutsu?.asiointikieli);
     const L = l10n.localisations[locale];
@@ -38,15 +35,7 @@ const RekisteroidyContainer = (props: OwnProps) => {
     } else if (isError) {
         return <VirhePage text={'REKISTEROIDY_TEMP_TOKEN_INVALID'} />;
     }
-    return (
-        <RekisteroidyPage
-            koodisto={koodisto}
-            kutsu={{ ...kutsu, temporaryToken }}
-            L={L}
-            locale={locale}
-            router={props.router}
-        />
-    );
+    return <RekisteroidyPage koodisto={koodisto} kutsu={{ ...kutsu, temporaryToken }} L={L} locale={locale} />;
 };
 
 export default RekisteroidyContainer;

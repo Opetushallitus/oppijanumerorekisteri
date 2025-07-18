@@ -1,5 +1,4 @@
 import React, { FormEvent, useState } from 'react';
-import { RouteActions } from 'react-router-redux';
 
 import WideRedNotification from '../common/notifications/WideRedNotification';
 import { useLocalisations } from '../../selectors';
@@ -7,13 +6,11 @@ import { usePostPalvelukayttajaMutation } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { palvelukayttajaNavigation } from '../navigation/navigationconfigurations';
+import { useNavigate } from 'react-router';
 
-type Props = {
-    router: RouteActions;
-};
-
-export const PalvelukayttajaCreatePage = ({ router }: Props) => {
+export const PalvelukayttajaCreatePage = () => {
     const { L } = useLocalisations();
+    const navigate = useNavigate();
     useTitle(L['TITLE_PALVELUKAYTTAJIEN_LUONTI']);
     useNavigation(palvelukayttajaNavigation, false);
     const [error, setError] = useState('');
@@ -25,7 +22,7 @@ export const PalvelukayttajaCreatePage = ({ router }: Props) => {
         await postPalvelukayttaja({ nimi })
             .unwrap()
             .then((data) => {
-                router.push(`/virkailija/${data.oid}`);
+                navigate(`/virkailija/${data.oid}`);
             })
             .catch(() => {
                 setError(L['HENKILON_LUONTI_EPAONNISTUI']);

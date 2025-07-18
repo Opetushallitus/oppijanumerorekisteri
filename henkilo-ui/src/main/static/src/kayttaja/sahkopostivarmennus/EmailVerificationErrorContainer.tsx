@@ -1,22 +1,19 @@
 import React from 'react';
 
-import { Locale } from '../../types/locale.type';
 import VirhePage from '../../components/common/page/VirhePage';
 import { useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
 import { toSupportedLocale } from '../../reducers/locale.reducer';
+import { useParams } from 'react-router';
 
-type OwnProps = {
-    params: { locale?: Locale; loginToken?: string; virhekoodi?: string };
-};
-
-const EmailVerificationErrorContainer = ({ params: { virhekoodi, locale: anyLocale } }: OwnProps) => {
+const EmailVerificationErrorContainer = () => {
     const { l10n } = useLocalisations();
-    const locale = toSupportedLocale(anyLocale);
+    const params = useParams();
+    const locale = toSupportedLocale(params.locale);
     const L = l10n.localisations[locale];
 
     useTitle(L['TITLE_VIRHESIVU']);
-    if (virhekoodi === 'TOKEN_KAYTETTY') {
+    if (params.virhekoodi === 'TOKEN_KAYTETTY') {
         return (
             <VirhePage
                 theme="virhe"
@@ -25,7 +22,7 @@ const EmailVerificationErrorContainer = ({ params: { virhekoodi, locale: anyLoca
                 buttonText="SAHKOPOSTI_VARMENNUS_KIRJAUTUMISSIVULLE"
             />
         );
-    } else if (virhekoodi === 'TOKEN_VANHENTUNUT') {
+    } else if (params.virhekoodi === 'TOKEN_VANHENTUNUT') {
         return (
             <VirhePage
                 theme="virhe"
@@ -34,7 +31,7 @@ const EmailVerificationErrorContainer = ({ params: { virhekoodi, locale: anyLoca
                 buttonText="SAHKOPOSTI_VARMENNUS_KIRJAUTUMISSIVULLE"
             />
         );
-    } else if (virhekoodi === 'TOKEN_EI_LOYDY') {
+    } else if (params.virhekoodi === 'TOKEN_EI_LOYDY') {
         return (
             <VirhePage
                 theme="virhe"
@@ -43,7 +40,7 @@ const EmailVerificationErrorContainer = ({ params: { virhekoodi, locale: anyLoca
                 buttonText="SAHKOPOSTI_VARMENNUS_KIRJAUTUMISSIVULLE"
             />
         );
-    } else if (virhekoodi === 'UNKNOWN') {
+    } else if (params.virhekoodi === 'UNKNOWN') {
         return (
             <VirhePage
                 theme="virhe"

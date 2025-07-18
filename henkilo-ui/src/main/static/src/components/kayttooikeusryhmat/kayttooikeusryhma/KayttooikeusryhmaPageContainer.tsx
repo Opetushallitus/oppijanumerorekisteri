@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { RouteActions } from 'react-router-redux';
+import { useParams } from 'react-router';
 
 import { useAppDispatch, type RootState } from '../../../store';
 import { KayttooikeusryhmaPage } from './KayttooikeusryhmaPage';
@@ -13,13 +13,9 @@ import { useLocalisations } from '../../../selectors';
 import { useTitle } from '../../../useTitle';
 import { useNavigation } from '../../../useNavigation';
 
-type OwnProps = {
-    router: RouteActions;
-    routeParams: { id?: string };
-};
-
-export const KayttooikeusryhmaPageContainer = (props: OwnProps) => {
+export const KayttooikeusryhmaPageContainer = () => {
     const dispatch = useAppDispatch();
+    const params = useParams();
     const { L } = useLocalisations();
     useTitle(L['TITLE_KAYTTO_OIKEUSRYHMA']);
     useNavigation([], true);
@@ -27,7 +23,7 @@ export const KayttooikeusryhmaPageContainer = (props: OwnProps) => {
     const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
 
     useEffect(() => {
-        const kayttooikeusryhmaId = props.routeParams.id;
+        const kayttooikeusryhmaId = params.id;
         dispatch<any>(fetchOppilaitostyypit());
         dispatch<any>(fetchOrganisaatiotyypit());
         if (kayttooikeusryhmaId) {
@@ -42,6 +38,6 @@ export const KayttooikeusryhmaPageContainer = (props: OwnProps) => {
         kayttooikeus.kayttooikeusryhmaSlavesLoading ? (
         <Loader />
     ) : (
-        <KayttooikeusryhmaPage router={props.router} kayttooikeusryhmaId={props.routeParams.id} />
+        <KayttooikeusryhmaPage kayttooikeusryhmaId={params.id} />
     );
 };

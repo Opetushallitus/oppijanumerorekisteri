@@ -1,18 +1,14 @@
 import React from 'react';
+import { useParams } from 'react-router';
 
 import { useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
 import { toSupportedLocale } from '../../reducers/locale.reducer';
 
-type Props = {
-    params: {
-        locale: string;
-    };
-};
-
-export const VahvaTunnistusValmisPage = ({ params: { locale: anyLocale } }: Props) => {
+export const VahvaTunnistusValmisPage = () => {
     const { l10n } = useLocalisations();
-    const locale = toSupportedLocale(anyLocale);
+    const params = useParams();
+    const locale = toSupportedLocale(params.locale);
     const L = l10n.localisations[locale];
 
     useTitle(L['TITLE_VIRKAILIJA_UUDELLEENTUNNISTAUTUMINEN']);

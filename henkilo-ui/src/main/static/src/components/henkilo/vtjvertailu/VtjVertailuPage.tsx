@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useParams } from 'react-router';
+
 import { useAppDispatch, type RootState } from '../../../store';
 import {
     fetchHenkilo,
@@ -22,17 +24,18 @@ import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
 import { useNavigation } from '../../../useNavigation';
 
 type OwnProps = {
-    params: { oid?: string; henkiloType?: string };
+    henkiloType: string;
 };
 
 export const VtjVertailuPage = (props: OwnProps) => {
-    const oidHenkilo = props.params.oid;
+    const params = useParams();
+    const oidHenkilo = params.oid;
     const dispatch = useAppDispatch();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { L } = useLocalisations();
     useTitle(L['TITLE_VTJ_VERTAILU']);
-    useNavigation(henkiloViewTabs(oidHenkilo, henkilo, props.params.henkiloType), true);
+    useNavigation(henkiloViewTabs(oidHenkilo, henkilo, props.henkiloType), true);
 
     useEffect(() => {
         dispatch<any>(fetchHenkilo(oidHenkilo));

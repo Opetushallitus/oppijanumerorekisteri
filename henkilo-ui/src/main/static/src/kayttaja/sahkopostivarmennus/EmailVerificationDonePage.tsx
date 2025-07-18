@@ -3,16 +3,12 @@ import React from 'react';
 import { useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
 import { toSupportedLocale } from '../../reducers/locale.reducer';
+import { useParams } from 'react-router';
 
-type Props = {
-    params: {
-        locale: string;
-    };
-};
-
-export const EmailVerificationDonePage = ({ params: { locale: anyLocale } }: Props) => {
+export const EmailVerificationDonePage = () => {
     const { l10n } = useLocalisations();
-    const locale = toSupportedLocale(anyLocale);
+    const params = useParams();
+    const locale = toSupportedLocale(params.locale);
     const L = l10n.localisations[locale];
 
     useTitle(L['TITLE_SAHKOPOSTI_VARMISTAMINEN']);

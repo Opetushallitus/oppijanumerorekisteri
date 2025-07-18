@@ -1,5 +1,5 @@
 import React, { FormEvent, useState } from 'react';
-import { RouteActions } from 'react-router-redux';
+import { useNavigate } from 'react-router';
 
 import { useLocalisations } from '../../selectors';
 import { usePostPalvelukayttajaMutation } from '../../api/kayttooikeus';
@@ -11,24 +11,21 @@ import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { jarjestelmatunnusNavigation } from '../navigation/navigationconfigurations';
 
-type Props = {
-    router: RouteActions;
-};
-
-export const JarjestelmatunnusCreatePage = ({ router }: Props) => {
+export const JarjestelmatunnusCreatePage = () => {
     const { L } = useLocalisations();
     useTitle(L['JARJESTELMATUNNUSTEN_LUONTI']);
     useNavigation(jarjestelmatunnusNavigation(), false);
     const [nimi, setNimi] = useState('');
     const [postPalvelukayttaja, { isLoading }] = usePostPalvelukayttajaMutation();
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
     const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         await postPalvelukayttaja({ nimi })
             .unwrap()
             .then((data) => {
-                router.push(`/jarjestelmatunnus/${data.oid}`);
+                navigate(`/jarjestelmatunnus/${data.oid}`);
             })
             .catch((error) => {
                 dispatch(

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
-import HenkilohakuPage from './HenkilohakuPage';
-import { RouteActions } from 'react-router-redux';
+import { useNavigate } from 'react-router';
 
+import HenkilohakuPage from './HenkilohakuPage';
 import Loader from '../common/icons/Loader';
 import { parsePalveluRoolit, hasAnyPalveluRooli } from '../../utilities/palvelurooli.util';
 import { useGetKayttooikeusryhmasQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
@@ -10,16 +10,13 @@ import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { mainNavigation } from '../navigation/navigationconfigurations';
 
-type OwnProps = {
-    router: RouteActions;
-};
-
-const HenkilohakuContainer = ({ router }: OwnProps) => {
+const HenkilohakuContainer = () => {
     const { L } = useLocalisations();
     useTitle(L['TITLE_HENKILOHAKU']);
     useNavigation(mainNavigation, false);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { isLoading } = useGetKayttooikeusryhmasQuery({ passiiviset: true });
+    const navigate = useNavigate();
     const vainOppijoidenTuonti = useMemo(() => {
         const kayttooikeudet = parsePalveluRoolit(omattiedot.organisaatiot);
         return (
@@ -33,7 +30,7 @@ const HenkilohakuContainer = ({ router }: OwnProps) => {
         );
     }, [omattiedot]);
     if (vainOppijoidenTuonti) {
-        router.replace('/oppijoidentuonti');
+        navigate('/oppijoidentuonti');
     }
 
     return !isLoading ? <HenkilohakuPage /> : <Loader />;

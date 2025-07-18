@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Route } from 'react-router';
+import { Route, Routes } from 'react-router';
 import App from './containers/App';
 import AccessRightReport from './components/reports/accessrights/AccessRightsReport';
 import { KutsututPage } from './components/kutsutut/KutsututPage';
@@ -13,7 +13,7 @@ import { VtjVertailuPage } from './components/henkilo/vtjvertailu/VtjVertailuPag
 import { KayttooikeusryhmaPageContainer } from './components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPageContainer';
 import { KayttooikeusryhmatPage } from './components/kayttooikeusryhmat/listaus/KayttooikeusryhmatPage';
 import FormSwitch from './components/henkilo/oppija/create/form/FormSwitch';
-import VirkailijaCreateContainer from './components/henkilo/VirkailijaCreateContainer';
+import { VirkailijaCreateContainer } from './components/henkilo/VirkailijaCreateContainer';
 import { PalvelukayttajaCreatePage } from './components/palvelukayttaja/PalvelukayttajaCreatePage';
 import HenkiloViewContainer from './components/henkilo/HenkiloViewContainer';
 import AdminRedirect from './components/henkilo/AdminRedirect';
@@ -23,38 +23,34 @@ import { JarjestelmatunnusCreatePage } from './components/jarjestelmatunnus/Jarj
 import { JarjestelmatunnusListPage } from './components/jarjestelmatunnus/JarjestelmatunnusListPage';
 import { JarjestelmatunnusEditPage } from './components/jarjestelmatunnus/JarjestelmatunnusEditPage';
 
-export type RouteType = {
-    path: string;
-    component: React.ReactNode;
-    henkiloType?: string;
-};
-
-export default (
-    <Route path="/" component={App}>
-        <Route path="/palvelukayttajainfo" component={PalvelukayttajaInfo} />
-        <Route path="/raportit/kayttooikeudet" component={AccessRightReport} />
-        <Route path="/anomukset" component={AnomusPage} />
-        <Route path="/kutsutut" component={KutsututPage} />
-        <Route path="/kutsulomake" component={KutsuminenPage} />
-        <Route path="/henkilohaku" component={HenkilohakuContainer} />
-        <Route path="/virkailija/luonti" component={VirkailijaCreateContainer} />
-        <Route path="/oppija/luonti" component={FormSwitch} />
-        <Route path="/oppija/:oid" component={HenkiloViewContainer} henkiloType="oppija" />
-        <Route path="/virkailija/:oid" component={HenkiloViewContainer} henkiloType="virkailija" />
-        <Route path="/admin/:oid" component={AdminRedirect} />
-        <Route path="/oppija/:oid/vtjvertailu" component={VtjVertailuPage} henkiloType="oppija" />
-        <Route path="/virkailija/:oid/vtjvertailu" component={VtjVertailuPage} henkiloType="virkailija" />
-        <Route path="/oppija/:oid/duplikaatit" component={DuplikaatitContainer} henkiloType="oppija" />
-        <Route path="/virkailija/:oid/duplikaatit" component={DuplikaatitContainer} henkiloType="virkailija" />
-        <Route path="/omattiedot" component={OmattiedotContainer} />
-        <Route path="/oppijoidentuonti" component={OppijoidenTuontiContainer} />
-        <Route path="/kayttooikeusryhmat" component={KayttooikeusryhmatPage} />
-        <Route path="/kayttooikeusryhmat/lisaa" component={KayttooikeusryhmaPageContainer} />
-        <Route path="/kayttooikeusryhmat/:id" component={KayttooikeusryhmaPageContainer} />
-        <Route path="/palvelukayttaja/luonti" component={PalvelukayttajaCreatePage} />
-        <Route path="/palvelukayttaja" component={PalvelukayttajaHakuPage} />
-        <Route path="/jarjestelmatunnus" component={JarjestelmatunnusListPage} />
-        <Route path="/jarjestelmatunnus/luonti" component={JarjestelmatunnusCreatePage} />
-        <Route path="/jarjestelmatunnus/:oid" component={JarjestelmatunnusEditPage} />
-    </Route>
+export const AppRoutes = () => (
+    <Routes>
+        <Route element={<App />}>
+            <Route path="/palvelukayttajainfo" element={<PalvelukayttajaInfo />} />
+            <Route path="/raportit/kayttooikeudet" element={<AccessRightReport />} />
+            <Route path="/anomukset" element={<AnomusPage />} />
+            <Route path="/kutsutut" element={<KutsututPage />} />
+            <Route path="/kutsulomake" element={<KutsuminenPage />} />
+            <Route path="/henkilohaku" element={<HenkilohakuContainer />} />
+            <Route path="/virkailija/luonti" element={<VirkailijaCreateContainer />} />
+            <Route path="/oppija/luonti" element={<FormSwitch />} />
+            <Route path="/oppija/:oid" element={<HenkiloViewContainer />} />
+            <Route path="/virkailija/:oid" element={<HenkiloViewContainer />} />
+            <Route path="/admin/:oid" element={<AdminRedirect />} />
+            <Route path="/oppija/:oid/vtjvertailu" element={<VtjVertailuPage henkiloType="oppija" />} />
+            <Route path="/virkailija/:oid/vtjvertailu" element={<VtjVertailuPage henkiloType="virkailija" />} />
+            <Route path="/oppija/:oid/duplikaatit" element={<DuplikaatitContainer henkiloType="oppija" />} />
+            <Route path="/virkailija/:oid/duplikaatit" element={<DuplikaatitContainer henkiloType="virkailija" />} />
+            <Route path="/omattiedot" element={<OmattiedotContainer />} />
+            <Route path="/oppijoidentuonti" element={<OppijoidenTuontiContainer />} />
+            <Route path="/kayttooikeusryhmat" element={<KayttooikeusryhmatPage />} />
+            <Route path="/kayttooikeusryhmat/lisaa" element={<KayttooikeusryhmaPageContainer />} />
+            <Route path="/kayttooikeusryhmat/:id" element={<KayttooikeusryhmaPageContainer />} />
+            <Route path="/palvelukayttaja/luonti" element={<PalvelukayttajaCreatePage />} />
+            <Route path="/palvelukayttaja" element={<PalvelukayttajaHakuPage />} />
+            <Route path="/jarjestelmatunnus" element={<JarjestelmatunnusListPage />} />
+            <Route path="/jarjestelmatunnus/luonti" element={<JarjestelmatunnusCreatePage />} />
+            <Route path="/jarjestelmatunnus/:oid" element={<JarjestelmatunnusEditPage />} />
+        </Route>
+    </Routes>
 );
