@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { connect } from 'react-redux';
 
 import type { RootState } from '../../../store';
@@ -18,6 +18,7 @@ type OwnProps = {
     confirm?: boolean;
     localNotification?: ButtonNotification;
     removeLocalNotification?: () => void;
+    children?: ReactNode;
 };
 
 type StateProps = {

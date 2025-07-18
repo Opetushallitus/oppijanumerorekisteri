@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
-import { LOCATION_CHANGE } from 'react-router-redux';
 
 import { getCommonOptions } from '../http';
 import { Localisations } from '../types/localisation.type';
@@ -59,7 +58,6 @@ export const oppijanumerorekisteriApi = createApi({
             async onQueryStarted(_, { dispatch, queryFulfilled }) {
                 const { data } = await queryFulfilled;
                 dispatch({ type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, lang: data });
-                dispatch({ type: LOCATION_CHANGE });
             },
             providesTags: ['locale'],
         }),

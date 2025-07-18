@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router';
+import { Link, useParams } from 'react-router';
 import moment from 'moment';
 
 import { useLocalisations } from '../../selectors';
@@ -28,12 +28,9 @@ import './JarjestelmatunnusEditPage.css';
 import { useNavigation } from '../../useNavigation';
 import { jarjestelmatunnusNavigation } from '../navigation/navigationconfigurations';
 
-type Props = {
-    params: { oid: string };
-};
-
-export const JarjestelmatunnusEditPage = ({ params }: Props) => {
+export const JarjestelmatunnusEditPage = () => {
     const dispatch = useAppDispatch();
+    const params = useParams();
     const { L } = useLocalisations();
     useTitle(L['JARJESTELMATUNNUKSEN_HALLINTA']);
     useNavigation(jarjestelmatunnusNavigation(params.oid), false);

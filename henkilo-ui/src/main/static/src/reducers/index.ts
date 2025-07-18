@@ -1,5 +1,3 @@
-import { routerReducer as routing } from 'react-router-redux';
-
 import l10n from './l10n.reducer';
 import { henkilo } from './henkilo.reducer';
 import koodisto from './koodisto.reducer';
@@ -16,7 +14,6 @@ import existinceCheckReducer from './existence.reducer';
 import createPersonReducer from './create.reducer';
 
 const rootReducer = {
-    routing,
     l10n,
     henkilo,
     koodisto,
