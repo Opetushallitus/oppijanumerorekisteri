@@ -18,7 +18,7 @@ import { useSelector } from 'react-redux';
 import { HenkilohakuState } from '../../reducers/henkilohaku.reducer';
 import { RootState, useAppDispatch } from '../../store';
 import { updateFilters } from '../../actions/henkilohaku.actions';
-import { useGetHenkiloHakuCountQuery, useGetHenkiloHakuQuery } from '../../api/kayttooikeus';
+import { useGetHenkiloHakuCountQuery, useGetHenkiloHakuInfiniteQuery } from '../../api/kayttooikeus';
 import { useDebounce } from '../../useDebounce';
 import { SelectOption } from '../../utilities/select';
 
@@ -33,21 +33,23 @@ const HenkilohakuPage = () => {
     const [criteria, setCriteria] = useState<HenkilohakuCriteria>(filters);
     const debounced = useDebounce(criteria, 500);
     const [parameters, setParameters] = useState<HenkilohakuQueryparameters>({
-        offset: '0',
         orderBy: 'HENKILO_NIMI_ASC',
     });
     const skip = !debounced.nameQuery && !debounced.organisaatioOids?.length && !debounced.kayttooikeusryhmaId;
-    const { data: result, isFetching } = useGetHenkiloHakuQuery({ criteria: debounced, parameters }, { skip });
+    const {
+        data: result,
+        isFetching,
+        fetchNextPage,
+    } = useGetHenkiloHakuInfiniteQuery({ criteria: debounced, parameters }, { skip });
     const { data: resultCount } = useGetHenkiloHakuCountQuery(debounced, { skip });
 
     useEffect(() => {
         dispatch(updateFilters({ ...criteria, ryhmaOid }));
-        setParameters({ ...parameters, offset: '0' });
+        setParameters({ ...parameters });
     }, [criteria, ryhmaOid]);
 
     useEffect(() => {
         setParameters({
-            offset: String(0),
             orderBy: sorting.length
                 ? sorting[0].desc
                     ? sorting[0].id + '_DESC'
@@ -100,7 +102,7 @@ const HenkilohakuPage = () => {
     );
 
     const memoizedData = useMemo(() => {
-        const renderedData = result;
+        const renderedData = result?.pages.flat();
         if (!renderedData || !renderedData.length) {
             return undefined;
         }
@@ -152,19 +154,22 @@ const HenkilohakuPage = () => {
                     : `${resultCount} ${L['HENKILOHAKU_OSUMA']}`}
                 )
             </div>
-            {!!result?.length && (
+            {!!memoizedData?.length && (
                 <div className="henkilohakuTableWrapper">
                     <OphTableWithInfiniteScroll
                         table={table}
                         isLoading={isFetching}
-                        fetch={() => setParameters({ ...parameters, offset: String(Number(result.length) + 100) })}
+                        fetch={() => fetchNextPage()}
                         isActive={
-                            !!result.length && !!resultCount && String(result.length) !== resultCount && !isFetching
+                            !!memoizedData.length &&
+                            !!resultCount &&
+                            String(memoizedData.length) !== resultCount &&
+                            !isFetching
                         }
                     />
                 </div>
             )}
-            {!result?.length && isFetching && <Loader />}
+            {!memoizedData?.length && isFetching && <Loader />}
         </div>
     );
 };
