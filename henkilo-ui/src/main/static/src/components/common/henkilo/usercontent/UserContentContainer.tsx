@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { urls } from 'oph-urls-js';
 
-import type { RootState } from '../../../../store';
+import { useAppDispatch, type RootState } from '../../../../store';
 import StaticUtils from '../../StaticUtils';
 import { updateHenkiloAndRefetch, updateAndRefetchKayttajatieto } from '../../../../actions/henkilo.actions';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
@@ -34,6 +34,7 @@ type OwnProps = {
 
 export const UserContentContainer = ({ oidHenkilo, view }: OwnProps) => {
     const { L } = useLocalisations();
+    const dispatch = useAppDispatch();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
     const [readOnly, setReadOnly] = useState(true);
@@ -52,7 +53,7 @@ export const UserContentContainer = ({ oidHenkilo, view }: OwnProps) => {
     }, [henkilo, omattiedot]);
 
     function _edit() {
-        resetButtonNotifications();
+        dispatch(resetButtonNotifications());
         setReadOnly(false);
     }
 
@@ -89,10 +90,10 @@ export const UserContentContainer = ({ oidHenkilo, view }: OwnProps) => {
 
     function _update() {
         const newHenkiloUpdate = Object.assign({}, henkiloUpdate);
-        updateHenkiloAndRefetch(newHenkiloUpdate, true);
+        dispatch<any>(updateHenkiloAndRefetch(newHenkiloUpdate, true));
         anomus(newHenkiloUpdate);
         if (newHenkiloUpdate.kayttajanimi !== undefined) {
-            updateAndRefetchKayttajatieto(newHenkiloUpdate.oidHenkilo, newHenkiloUpdate.kayttajanimi);
+            dispatch<any>(updateAndRefetchKayttajatieto(newHenkiloUpdate.oidHenkilo, newHenkiloUpdate.kayttajanimi));
         }
 
         setReadOnly(true);
@@ -104,11 +105,11 @@ export const UserContentContainer = ({ oidHenkilo, view }: OwnProps) => {
             const url = urls.url('kayttooikeus-service.henkilo.anomusilmoitus', henkiloUpdate.oidHenkilo);
             try {
                 // päivitetään anomusilmoitus optimistisesti, jotta vältyttäisiin näytön vilkkumiselta
-                updateAnomusilmoitus(henkiloUpdate.anomusilmoitus);
+                dispatch(updateAnomusilmoitus(henkiloUpdate.anomusilmoitus));
                 await http.put(url, henkiloUpdate.anomusilmoitus);
             } catch (error) {
                 // perutaan anomusilmoituksen optimistinen päivitys
-                updateAnomusilmoitus(initialAnomusilmoitusValue);
+                dispatch(updateAnomusilmoitus(initialAnomusilmoitusValue));
                 setHenkiloUpdate({
                     ...henkiloUpdate,
                     anomusilmoitus: initialAnomusilmoitusValue,
