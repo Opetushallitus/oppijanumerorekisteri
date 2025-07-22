@@ -1,14 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { urls } from 'oph-urls-js';
 
 import { http } from '../../../../../http';
-import {
-    fetchKieliKoodisto,
-    fetchSukupuoliKoodisto,
-    fetchKansalaisuusKoodisto,
-} from '../../../../../actions/koodisto.actions';
 import OppijaCreateForm from './OppijaCreateForm';
 import { HenkiloCreate } from '../../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { HenkiloDuplicate } from '../../../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
@@ -16,9 +10,9 @@ import OppijaCreateDuplikaatit from './OppijaCreateDuplikaatit';
 import { addGlobalNotification } from '../../../../../actions/notification.actions';
 import { NOTIFICATIONTYPES } from '../../../../common/Notification/notificationtypes';
 import CloseButton from '../../../../common/button/CloseButton';
-import { RootState, useAppDispatch } from '../../../../../store';
+import { useAppDispatch } from '../../../../../store';
 import { useLocalisations } from '../../../../../selectors';
-import { KoodistoState } from '../../../../../reducers/koodisto.reducer';
+import { useGetKansalaisuudetQuery, useGetKieletQuery, useGetSukupuoletQuery } from '../../../../../api/koodisto';
 
 type OwnProps = {
     goBack: () => void;
@@ -32,15 +26,11 @@ export const OppijaCreateAnonymousContainer = ({ goBack }: OwnProps) => {
     const navigate = useNavigate();
     const { L, locale } = useLocalisations();
     const [oppija, setOppija] = useState({});
-    const koodisto = useSelector<RootState, KoodistoState>((state) => state.koodisto);
     const [naytaDuplikaatit, setNaytaDuplikaatit] = useState(false);
     const [duplikaatit, setDuplikaatit] = useState([]);
-
-    useEffect(() => {
-        dispatch<any>(fetchSukupuoliKoodisto());
-        dispatch<any>(fetchKieliKoodisto());
-        dispatch<any>(fetchKansalaisuusKoodisto());
-    }, []);
+    const { data: kielet } = useGetKieletQuery();
+    const { data: kansalaisuudet } = useGetKansalaisuudetQuery();
+    const { data: sukupuolet } = useGetSukupuoletQuery();
 
     const tallenna = async (oppija: HenkiloCreate) => {
         try {
@@ -102,9 +92,9 @@ export const OppijaCreateAnonymousContainer = ({ goBack }: OwnProps) => {
                     tallenna={tallenna}
                     locale={locale}
                     L={L}
-                    sukupuoliKoodisto={koodisto.sukupuoliKoodisto}
-                    kieliKoodisto={koodisto.kieliKoodisto}
-                    kansalaisuusKoodisto={koodisto.kansalaisuusKoodisto}
+                    sukupuoliKoodisto={sukupuolet}
+                    kieliKoodisto={kielet}
+                    kansalaisuusKoodisto={kansalaisuudet}
                 />
             ) : (
                 <OppijaCreateDuplikaatit

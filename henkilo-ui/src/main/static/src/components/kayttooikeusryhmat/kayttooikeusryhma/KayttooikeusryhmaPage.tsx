@@ -19,7 +19,6 @@ import { LocalNotification } from '../../common/Notification/LocalNotification';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import { getLocalization } from '../../../utilities/localisation.util';
 import { NOTIFICATIONTYPES } from '../../common/Notification/notificationtypes';
-import { KoodistoState } from '../../../reducers/koodisto.reducer';
 import KayttooikeusryhmatSallittuKayttajatyyppi from './KayttooikeusryhmatSallittuKayttajatyyppi';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import ToggleKayttooikeusryhmaStateModal from './ToggleKayttooikeusryhmaStateModal';
@@ -35,6 +34,7 @@ import {
 } from '../../../api/kayttooikeus';
 import { RootState, useAppDispatch } from '../../../store';
 import { addGlobalNotification } from '../../../actions/notification.actions';
+import { useGetOppilaitostyypitQuery, useGetOrganisaatiotyypitQuery } from '../../../api/koodisto';
 
 type Locales = 'FI' | 'SV' | 'EN';
 
@@ -79,7 +79,8 @@ export const KayttooikeusryhmaPage = (props: Props) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { L, locale } = useLocalisations();
-    const koodisto = useSelector<RootState, KoodistoState>((state) => state.koodisto);
+    const { data: oppilaitostyyppiKoodisto } = useGetOppilaitostyypitQuery();
+    const { data: organisaatiotyyppiKoodisto } = useGetOrganisaatiotyypitQuery();
     const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
     const organisaatioCache = useSelector<RootState, OrganisaatioCache>((state) => state.organisaatio.cached);
     const { data: palvelutRoolit } = useGetKayttooikeusryhmaRoolisQuery(props.kayttooikeusryhmaId, {
@@ -217,7 +218,7 @@ export const KayttooikeusryhmaPage = (props: Props) => {
     };
 
     const _parseExistingOppilaitostyyppiData = (organisaatioViitteet: OrganisaatioViite[]): Array<string> => {
-        const oppilaitostyypit = koodisto.oppilaitostyypit.map(
+        const oppilaitostyypit = oppilaitostyyppiKoodisto.map(
             (oppilaitostyyppiKoodi) => oppilaitostyyppiKoodi.koodiUri
         );
         const oppilaitosOrganisaatioViiteet = organisaatioViitteet.filter((organisaatioViite) =>
@@ -228,7 +229,7 @@ export const KayttooikeusryhmaPage = (props: Props) => {
     };
 
     const _parseExistingOrganisaatiotyyppiData = (organisaatioViitteet: OrganisaatioViite[]): Array<string> => {
-        const organisaatiotyypit = koodisto.organisaatiotyyppiKoodisto.map(
+        const organisaatiotyypit = organisaatiotyyppiKoodisto.map(
             (organisaatiotyyppiKoodi) => organisaatiotyyppiKoodi.koodiUri
         );
         const organisaatiotyyppiOrganisaatioViiteet = organisaatioViitteet.filter((organisaatioViite) =>

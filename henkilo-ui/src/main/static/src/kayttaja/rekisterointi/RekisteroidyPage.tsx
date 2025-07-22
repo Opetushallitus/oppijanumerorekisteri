@@ -7,7 +7,6 @@ import StaticUtils from '../../components/common/StaticUtils';
 import { isValidPassword } from '../../validation/PasswordValidator';
 import type { KutsuByToken, KutsuOrganisaatio } from '../../types/domain/kayttooikeus/Kutsu.types';
 import NotificationButton, { ButtonNotification } from '../../components/common/button/NotificationButton';
-import { KoodistoState } from '../../reducers/koodisto.reducer';
 import { Locale } from '../../types/locale.type';
 import { Localisations } from '../../types/localisation.type';
 import { http } from '../../http';
@@ -25,7 +24,6 @@ import { NamedSelectOption } from '../../utilities/select';
 import './RekisteroidyPage.css';
 
 type OwnProps = {
-    koodisto: KoodistoState;
     L: Localisations;
     locale: Locale;
     kutsu: KutsuByToken;

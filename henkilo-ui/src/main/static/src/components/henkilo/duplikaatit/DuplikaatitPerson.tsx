@@ -1,18 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router';
 import classNames from 'classnames';
-import { useSelector } from 'react-redux';
 
 import DuplikaatitApplicationsPopup from './DuplikaatitApplicationsPopup';
 import type { Locale } from '../../../types/locale.type';
-import type { KoodistoState, KoodistoStateKoodi } from '../../../reducers/koodisto.reducer';
 import type { DuplikaatitHakemus } from '../../../types/duplikaatithakemus.types';
 import type { AtaruHakemus, Hakemus, HakuAppHakemus } from '../../../types/domain/oppijanumerorekisteri/Hakemus.type';
 import type { HenkiloDuplicate } from '../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 import Button from '../../common/button/Button';
 import { LinkRelation } from './HenkiloViewDuplikaatit';
-import { RootState } from '../../../store';
 import { useLocalisations } from '../../../selectors';
+import { useGetKansalaisuudetQuery, useGetKieletQuery } from '../../../api/koodisto';
+import { Koodi } from '../../../types/domain/koodisto/koodisto.types';
 
 import './DuplikaatitPerson.css';
 
@@ -70,9 +69,10 @@ const renderHakemusData = (hakemus: DuplikaatitHakemus, henkiloType: string) => 
 
 const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
     const { henkilo, master, henkiloType, vainLuku, isMaster, canForceLink, setLink } = props;
-    const koodisto = useSelector<RootState, KoodistoState>((state) => state.koodisto);
+    const { data: kielet } = useGetKieletQuery();
+    const { data: kansalaisuudet } = useGetKansalaisuudetQuery();
     const { L, locale } = useLocalisations();
-    const hakemukset = henkilo.hakemukset ? henkilo.hakemukset.map(_parseHakemus(koodisto, locale)) : [];
+    const hakemukset = henkilo.hakemukset ? henkilo.hakemukset.map(_parseHakemus(kansalaisuudet, kielet, locale)) : [];
     const hakemus = hakemukset.shift();
     const canLinkDuplicateToMaster =
         !master.passivoitu && !henkilo.yksiloityVTJ && (!henkilo.yksiloity || canForceLink);
@@ -103,11 +103,11 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
             <DataCell>{henkilo.passinumerot?.join(', ')}</DataCell>
             <DataCell>
                 {henkilo.kansalaisuus
-                    ?.map((x) => _koodistoLabel(x.kansalaisuusKoodi, koodisto.kansalaisuus, locale))
+                    ?.map((x) => _koodistoLabel(x.kansalaisuusKoodi, kansalaisuudet, locale))
                     .filter(Boolean)
                     .join(', ')}
             </DataCell>
-            <DataCell>{_koodistoLabel(henkilo.aidinkieli?.kieliKoodi, koodisto.kieli, locale)}</DataCell>
+            <DataCell>{_koodistoLabel(henkilo.aidinkieli?.kieliKoodi, kielet, locale)}</DataCell>
             <DataCell className="type">{L['DUPLIKAATIT_HAKEMUS']}</DataCell>
             {renderHakemusData(hakemus, henkiloType)}
             <DataCell hakemus>
@@ -149,22 +149,27 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
 const isAtaruHakemus = (h: AtaruHakemus | HakuAppHakemus): h is AtaruHakemus => h.service === 'ataru';
 
 const _parseHakemus =
-    (koodisto: KoodistoState, locale: Locale) =>
+    (kansalaisuudet: Koodi[], kielet: Koodi[], locale: Locale) =>
     (hakemus: Hakemus): DuplikaatitHakemus => {
         const hakemusData = hakemus.hakemusData;
         return isAtaruHakemus(hakemusData)
-            ? _parseAtaruHakemus(hakemusData, koodisto, locale)
-            : _parseHakuappHakemus(hakemusData, koodisto, locale);
+            ? _parseAtaruHakemus(hakemusData, kansalaisuudet, kielet, locale)
+            : _parseHakuappHakemus(hakemusData, kansalaisuudet, kielet, locale);
     };
 
-function _parseAtaruHakemus(hakemus: AtaruHakemus, koodisto: KoodistoState, locale: Locale): DuplikaatitHakemus {
+function _parseAtaruHakemus(
+    hakemus: AtaruHakemus,
+    kansalaisuudet: Koodi[],
+    kielet: Koodi[],
+    locale: Locale
+): DuplikaatitHakemus {
     const href = hakemus.haku
         ? `/lomake-editori/applications/search?term=${hakemus.oid}`
         : `/lomake-editori/applications/${hakemus.form}?application-key=${hakemus.oid}`;
     const aidinkieliKoodi = (hakemus.aidinkieli || '').toLocaleLowerCase();
-    const aidinkieli = _koodistoLabel(aidinkieliKoodi, koodisto.kieli, locale);
+    const aidinkieli = _koodistoLabel(aidinkieliKoodi, kielet, locale);
     const kansalaisuus = hakemus.kansalaisuus
-        .map((k) => _koodistoLabel(k.toLocaleLowerCase(), koodisto.kansalaisuus, locale))
+        .map((k) => _koodistoLabel(k.toLocaleLowerCase(), kansalaisuudet, locale))
         .join(', ');
 
     return {
@@ -183,12 +188,17 @@ function _parseAtaruHakemus(hakemus: AtaruHakemus, koodisto: KoodistoState, loca
     };
 }
 
-function _parseHakuappHakemus(hakemus: HakuAppHakemus, koodisto: KoodistoState, locale: Locale): DuplikaatitHakemus {
+function _parseHakuappHakemus(
+    hakemus: HakuAppHakemus,
+    kansalaisuudet: Koodi[],
+    kielet: Koodi[],
+    locale: Locale
+): DuplikaatitHakemus {
     const henkilotiedot = hakemus.answers?.henkilotiedot;
     const aidinkieliKoodi = (henkilotiedot?.aidinkieli ?? '').toLocaleLowerCase();
-    const aidinkieli = _koodistoLabel(aidinkieliKoodi, koodisto.kieli, locale);
+    const aidinkieli = _koodistoLabel(aidinkieliKoodi, kielet, locale);
     const kansalaisuusKoodi = (henkilotiedot?.kansalaisuus ?? '').toLocaleLowerCase();
-    const kansalaisuus = _koodistoLabel(kansalaisuusKoodi, koodisto.maatjavaltiot1, locale);
+    const kansalaisuus = _koodistoLabel(kansalaisuusKoodi, kansalaisuudet, locale);
     return {
         oid: hakemus.oid,
         hakijaOid: hakemus.personOid,
@@ -205,7 +215,7 @@ function _parseHakuappHakemus(hakemus: HakuAppHakemus, koodisto: KoodistoState, 
     };
 }
 
-const _koodistoLabel = (koodi: string, koodisto: KoodistoStateKoodi[], locale: Locale): string | null =>
-    koodisto.find((koodistoItem) => koodistoItem.value === koodi)?.[locale] ?? null;
+const _koodistoLabel = (koodi: string, koodisto: Koodi[], locale: Locale): string | null =>
+    koodisto.find((koodistoItem) => koodistoItem.koodiArvo === koodi)?.metadata?.[locale] ?? null;
 
 export default DuplikaatitPerson;

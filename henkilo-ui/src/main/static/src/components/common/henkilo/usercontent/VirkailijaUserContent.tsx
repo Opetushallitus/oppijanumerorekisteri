@@ -49,8 +49,6 @@ type Props = OwnProps & StateProps;
 class VirkailijaUserContent extends React.Component<Props> {
     render() {
         return this.props.henkilo.henkiloLoading ||
-            this.props.koodisto.kieliKoodistoLoading ||
-            this.props.koodisto.kansalaisuusKoodistoLoading ||
             this.props.henkilo.kayttajatietoLoading ||
             this.props.koodisto.yhteystietotyypitKoodistoLoading ? (
             <Loader />

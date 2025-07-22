@@ -4,11 +4,7 @@ import { useLocation, useNavigate, useParams } from 'react-router';
 
 import { useAppDispatch, type RootState } from '../../store';
 import Loader from '../common/icons/Loader';
-import {
-    fetchKansalaisuusKoodisto,
-    fetchKieliKoodisto,
-    fetchYhteystietotyypitKoodisto,
-} from '../../actions/koodisto.actions';
+import { fetchYhteystietotyypitKoodisto } from '../../actions/koodisto.actions';
 import {
     clearHenkilo,
     fetchHenkilo,
@@ -76,8 +72,6 @@ const HenkiloViewContainer = () => {
         dispatch<any>(fetchHenkiloYksilointitieto(oid));
         dispatch<any>(fetchHenkiloSlaves(oid));
         dispatch<any>(fetchYhteystietotyypitKoodisto());
-        dispatch<any>(fetchKieliKoodisto());
-        dispatch<any>(fetchKansalaisuusKoodisto());
 
         if (view === 'admin' || view === 'virkailija') {
             dispatch<any>(fetchHenkiloOrgs(oid));

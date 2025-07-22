@@ -10,11 +10,6 @@ import {
     fetchHenkiloMaster,
     fetchHenkiloHakemukset,
 } from '../../../actions/henkilo.actions';
-import {
-    fetchKansalaisuusKoodisto,
-    fetchMaatJaValtiotKoodisto,
-    fetchKieliKoodisto,
-} from '../../../actions/koodisto.actions';
 import { useLocalisations } from '../../../selectors';
 import { useTitle } from '../../../useTitle';
 import { useNavigation } from '../../../useNavigation';
@@ -38,9 +33,6 @@ export const DuplikaatitContainer = (props: OwnProps) => {
         const oidHenkilo = params.oid;
         dispatch<any>(fetchHenkilo(oidHenkilo));
         dispatch<any>(fetchKayttaja(oidHenkilo));
-        dispatch<any>(fetchKansalaisuusKoodisto());
-        dispatch<any>(fetchMaatJaValtiotKoodisto());
-        dispatch<any>(fetchKieliKoodisto());
         dispatch<any>(fetchHenkiloMaster(oidHenkilo));
         dispatch<any>(fetchHenkiloDuplicates(oidHenkilo));
         dispatch<any>(fetchHenkiloHakemukset(oidHenkilo));
