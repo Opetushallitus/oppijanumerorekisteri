@@ -1,15 +1,15 @@
 import React, { useMemo } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Select from 'react-select';
 
 import type { RootState } from '../../../../store';
 import StaticUtils from '../../StaticUtils';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
-import { Locale } from '../../../../types/locale.type';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { FieldlessLabelValue } from './FieldlessLabelValue';
-import { KoodistoState } from '../../../../reducers/koodisto.reducer';
 import { NamedSelectOption } from '../../../../utilities/select';
+import { useLocalisations } from '../../../../selectors';
+import { useGetKieletQuery } from '../../../../api/koodisto';
 
 type OwnProps = {
     henkiloUpdate: Henkilo;
@@ -17,24 +17,19 @@ type OwnProps = {
     updateModelSelectAction: (o: NamedSelectOption) => void;
 };
 
-type StateProps = {
-    henkilo: HenkiloState;
-    koodisto: KoodistoState;
-    locale: Locale;
-};
-
-type Props = OwnProps & StateProps;
-
-const Aidinkieli = (props: Props) => {
+const Aidinkieli = (props: OwnProps) => {
+    const { locale } = useLocalisations();
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data } = useGetKieletQuery();
     const options = useMemo(() => {
         return (
-            props.koodisto.kieli?.map((koodi) => ({
-                value: koodi.value,
-                label: koodi[props.locale],
+            data?.map((koodi) => ({
+                value: koodi.koodiArvo.toLowerCase(),
+                label: StaticUtils.localizeKoodiNimi(koodi, locale),
                 optionsName: 'aidinkieli.kieliKoodi',
             })) ?? []
         );
-    }, [props.koodisto]);
+    }, [data]);
     return (
         <FieldlessLabelValue readOnly={props.readOnly} label="HENKILO_AIDINKIELI">
             {props.readOnly ? (
@@ -44,17 +39,11 @@ const Aidinkieli = (props: Props) => {
                     options={options}
                     value={options.find((o) => o.value === props.henkiloUpdate.aidinkieli?.kieliKoodi)}
                     onChange={props.updateModelSelectAction}
-                    isDisabled={StaticUtils.hasHetuAndIsYksiloity(props.henkilo)}
+                    isDisabled={StaticUtils.hasHetuAndIsYksiloity(henkilo)}
                 />
             )}
         </FieldlessLabelValue>
     );
 };
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    henkilo: state.henkilo,
-    koodisto: state.koodisto,
-    locale: state.locale,
-});
-
-export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(Aidinkieli);
+export default Aidinkieli;
