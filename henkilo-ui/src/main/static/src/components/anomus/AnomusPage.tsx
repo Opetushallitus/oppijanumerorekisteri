@@ -12,7 +12,7 @@ import { useLocalisations } from '../../selectors';
 import { useAppDispatch } from '../../store';
 import {
     GetHaetutKayttooikeusryhmatRequest,
-    useGetHaetutKayttooikeusryhmatQuery,
+    useGetHaetutKayttooikeusryhmatInfiniteQuery,
     useGetOmattiedotQuery,
     usePutHaettuKayttooikeusryhmaMutation,
 } from '../../api/kayttooikeus';
@@ -35,10 +35,10 @@ const AnomusPage = () => {
         adminView: omattiedot?.isAdmin ? String(omattiedot?.isAdmin) : 'false',
         anomuksenTilat: 'ANOTTU',
         kayttoOikeudenTilas: KAYTTOOIKEUDENTILA.ANOTTU,
-        offset: '0',
     });
-    const { data, isLoading } = useGetHaetutKayttooikeusryhmatQuery(parameters);
+    const { data, isLoading, fetchNextPage, hasNextPage } = useGetHaetutKayttooikeusryhmatInfiniteQuery(parameters);
     const [putHaettuKayttooikeusryhma] = usePutHaettuKayttooikeusryhmaMutation();
+    const result = data?.pages.flat();
 
     function onSubmit(criteria: Partial<GetHaetutKayttooikeusryhmatRequest>) {
         const newParameters = { ...parameters, ...criteria };
@@ -47,7 +47,6 @@ const AnomusPage = () => {
                 ? sorted[0].id + '_DESC'
                 : sorted[0].id + '_ASC'
             : newParameters.orderBy;
-        newParameters.offset = '0';
         setParameters(newParameters);
     }
 
@@ -107,13 +106,12 @@ const AnomusPage = () => {
                     isOmattiedot={false}
                     kayttooikeus={{
                         ...getEmptyKayttooikeusRyhmaState(),
-                        kayttooikeusAnomus: data,
+                        kayttooikeusAnomus: result,
                     }}
                     updateHaettuKayttooikeusryhmaAlt={updateHaettuKayttooikeusryhma}
                     fetchMoreSettings={{
-                        isActive: !isLoading && data?.length === Number(parameters.offset) + 20,
-                        fetchMoreAction: () =>
-                            setParameters({ ...parameters, offset: String(Number(parameters.offset) + 20) }),
+                        isActive: !isLoading && hasNextPage,
+                        fetchMoreAction: () => fetchNextPage(),
                     }}
                     onSortingChange={(s) => s.length && setSorted([s[0]])}
                     tableLoading={isLoading}
