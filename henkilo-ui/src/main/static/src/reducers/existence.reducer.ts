@@ -1,3 +1,4 @@
+import { AnyAction } from '@reduxjs/toolkit';
 import {
     CLEAR_EXISTENCE_CHECK,
     FETCH_EXISTENCE_CHECK_REQUEST,
@@ -59,7 +60,7 @@ export const statusToMessage = {
 
 export const existenceCheckReducer = (
     state: Readonly<ExistenceCheckState> = initialState,
-    action: ClearAction | RequestAction | SuccessAction | FailureAction
+    action: AnyAction
 ): ExistenceCheckState => {
     switch (action.type) {
         case FETCH_EXISTENCE_CHECK_REQUEST:
