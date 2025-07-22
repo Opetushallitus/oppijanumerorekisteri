@@ -5,7 +5,7 @@
     "dependencies": {
         "@hookform/resolvers": "^2.5.2",
         "@reduxjs/toolkit": "^1.9.7",
-        "@tanstack/react-table": "^8.20.5",
+        "@tanstack/react-table": "^8.21.3",
         "classnames": "^2.5.1",
         "isomorphic-fetch": "^3.0.0",
         "joi": "^17.13.3",

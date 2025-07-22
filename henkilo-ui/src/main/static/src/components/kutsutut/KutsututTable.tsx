@@ -21,6 +21,8 @@ type OwnProps = {
     cancelInvitation: (kutsu: KutsuRead) => void;
 };
 
+const emptyArray = [];
+
 const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
     const [sorting, setSorting] = useState<SortingState>([{ id: 'AIKALEIMA', desc: true }]);
     const { L, locale } = useLocalisations();
@@ -162,9 +164,17 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
         []
     );
 
+    const memoizedData = useMemo(() => {
+        const renderedData = data;
+        if (!renderedData || !renderedData.length) {
+            return undefined;
+        }
+        return renderedData;
+    }, [data]);
+
     const table = useReactTable({
-        columns,
-        data: data ?? [],
+        columns: columns ?? emptyArray,
+        data: memoizedData ?? emptyArray,
         pageCount: 1,
         state: {
             sorting,

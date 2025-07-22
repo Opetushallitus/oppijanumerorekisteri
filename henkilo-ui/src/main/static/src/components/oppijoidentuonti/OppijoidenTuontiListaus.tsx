@@ -18,6 +18,8 @@ type Props = {
     loading: boolean;
 };
 
+const emptyArray = [];
+
 /**
  * Oppijoiden tuonnin listausnäkymä.
  */
@@ -91,8 +93,16 @@ const OppijoidenTuontiListaus = ({ data, onPageChange, onSortingChange, sortKey,
         [data]
     );
 
+    const memoizedData = useMemo(() => {
+        const renderedData = data?.results;
+        if (!renderedData || !renderedData.length) {
+            return undefined;
+        }
+        return renderedData;
+    }, [data]);
+
     const table = useReactTable<OppijaList>({
-        data: data?.results ?? [],
+        data: memoizedData ?? emptyArray,
         pageCount: data?.totalPages ?? 0,
         state: {
             pagination,
@@ -117,7 +127,7 @@ const OppijoidenTuontiListaus = ({ data, onPageChange, onSortingChange, sortKey,
         getCoreRowModel: getCoreRowModel(),
         manualPagination: true,
         manualSorting: true,
-        columns,
+        columns: columns ?? emptyArray,
         columnResizeMode: 'onChange',
     });
 

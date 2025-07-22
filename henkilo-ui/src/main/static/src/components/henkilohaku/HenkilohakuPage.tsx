@@ -22,6 +22,8 @@ import { useGetHenkiloHakuCountQuery, useGetHenkiloHakuQuery } from '../../api/k
 import { useDebounce } from '../../useDebounce';
 import { SelectOption } from '../../utilities/select';
 
+const emptyArray = [];
+
 const HenkilohakuPage = () => {
     const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
@@ -97,9 +99,17 @@ const HenkilohakuPage = () => {
         []
     );
 
+    const memoizedData = useMemo(() => {
+        const renderedData = result;
+        if (!renderedData || !renderedData.length) {
+            return undefined;
+        }
+        return renderedData;
+    }, [result]);
+
     const table = useReactTable({
-        columns,
-        data: result ?? [],
+        columns: columns ?? emptyArray,
+        data: memoizedData ?? emptyArray,
         pageCount: 1,
         state: {
             sorting,

@@ -69,6 +69,8 @@ type OwnProps = {
     ) => void;
 };
 
+const emptyArray = [];
+
 const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     const [sorting, setSorting] = useState<SortingState>([{ id: 'ANOTTU_PVM', desc: true }]);
     const dispatch = useAppDispatch();
@@ -422,10 +424,18 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
         [props.kayttooikeus?.kayttooikeusAnomus, dates, organisaatioCache]
     );
 
+    const memoizedData = useMemo(() => {
+        const renderedData = props.kayttooikeus?.kayttooikeusAnomus;
+        if (!renderedData || !renderedData.length) {
+            return undefined;
+        }
+        return renderedData;
+    }, [props.kayttooikeus]);
+
     const table = useReactTable({
-        columns,
+        columns: columns ?? emptyArray,
         pageCount: 1,
-        data: props.kayttooikeus?.kayttooikeusAnomus ?? [],
+        data: memoizedData ?? emptyArray,
         state: {
             sorting,
             columnVisibility: {

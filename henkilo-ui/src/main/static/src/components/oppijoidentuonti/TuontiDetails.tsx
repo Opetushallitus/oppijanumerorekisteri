@@ -4,7 +4,6 @@ import { Link } from 'react-router';
 
 import OphModal from '../common/modal/OphModal';
 import OphCheckboxButtonInput from '../common/forms/OphCheckboxButtonInput';
-import Button from '../common/button/Button';
 import { useLocalisations } from '../../selectors';
 import { useGetTuontidataQuery } from '../../api/oppijanumerorekisteri';
 import OphTable, { expanderColumn } from '../OphTable';
@@ -14,6 +13,8 @@ type OwnProps = {
     tuontiId: number;
     onClose: () => void;
 };
+
+const emptyArray = [];
 
 const TuontiDetails = ({ tuontiId, onClose }: OwnProps) => {
     const { L } = useLocalisations();
@@ -44,9 +45,17 @@ const TuontiDetails = ({ tuontiId, onClose }: OwnProps) => {
         [data]
     );
 
+    const memoizedData = useMemo(() => {
+        const renderedData = data?.filter((row) => showAll || row.conflict);
+        if (!renderedData || !renderedData.length) {
+            return undefined;
+        }
+        return renderedData;
+    }, [data]);
+
     const table = useReactTable({
-        data: (data || []).filter((row) => showAll || row.conflict),
-        columns,
+        data: memoizedData ?? emptyArray,
+        columns: columns ?? emptyArray,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getRowCanExpand: () => true,
@@ -66,7 +75,6 @@ const TuontiDetails = ({ tuontiId, onClose }: OwnProps) => {
                 isLoading={isFetching}
                 renderSubComponent={({ row }) => <pre>{JSON.stringify(row.original.henkilo, undefined, 4)}</pre>}
             />
-            <Button action={onClose}>{L['TUONTIDATA_SULJE']}</Button>
         </OphModal>
     );
 };
