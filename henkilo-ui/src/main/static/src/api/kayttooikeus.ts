@@ -246,21 +246,19 @@ export const kayttooikeusApi = createApi({
             }),
             invalidatesTags: ['palvelukayttaja', 'palvelukayttajat'],
         }),
-        getHenkiloHaku: builder.query<HenkilohakuResult[], Henkilohaku>({
-            query: ({ criteria, parameters }) => ({
-                url: `henkilo/henkilohaku?${new URLSearchParams(parameters).toString()}`,
+        getHenkiloHaku: builder.infiniteQuery<HenkilohakuResult[], Henkilohaku, number>({
+            query: ({ queryArg: { criteria, parameters }, pageParam }) => ({
+                url: `henkilo/henkilohaku?${new URLSearchParams({
+                    ...parameters,
+                    offset: String(pageParam),
+                }).toString()}`,
                 method: 'POST',
                 body: { ...criteria, isCountSearch: false },
             }),
-            // "infinite scroll" i.e. merge new results when offset is increased
-            serializeQueryArgs: ({ endpointName, queryArgs }) =>
-                endpointName + JSON.stringify(queryArgs.criteria) + queryArgs.parameters?.orderBy,
-            merge: (currentCache, newItems) => {
-                const uniqueItems = [...new Map([...currentCache, ...newItems].map((x) => [x.oidHenkilo, x])).values()];
-                return uniqueItems;
+            infiniteQueryOptions: {
+                initialPageParam: 0,
+                getNextPageParam: (_1, _2, lastPageParam) => lastPageParam + 100,
             },
-            forceRefetch: ({ currentArg, previousArg }) =>
-                JSON.stringify(currentArg?.parameters) !== JSON.stringify(previousArg?.parameters),
             providesTags: ['henkilohaku'],
         }),
         getHenkiloHakuCount: builder.query<string, HenkilohakuCriteria>({
@@ -411,7 +409,7 @@ export const {
     usePostPalvelukayttajaMutation,
     usePutPalvelukayttajaCasPasswordMutation,
     usePutPalvelukayttajaOauth2SecretMutation,
-    useGetHenkiloHakuQuery,
+    useGetHenkiloHakuInfiniteQuery,
     useGetHenkiloHakuCountQuery,
     useGetHaetutKayttooikeusryhmatQuery,
     usePutHaettuKayttooikeusryhmaMutation,

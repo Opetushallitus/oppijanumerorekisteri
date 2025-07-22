@@ -10,7 +10,6 @@ export type HenkilohakuCriteria = {
 };
 
 export type HenkilohakuQueryparameters = {
-    offset: string;
     orderBy?: string;
 };
 
