@@ -39,6 +39,8 @@ type OwnProps = {
     existingKayttooikeusRef: MutableRefObject<HTMLDivElement>;
 };
 
+const emptyArray = [];
+
 const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const { L, locale } = useLocalisations();
@@ -271,10 +273,18 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
         [emailOptions, kayttooikeus.kayttooikeus, props, organisaatioCache]
     );
 
+    const memoizedData = useMemo(() => {
+        const renderedData = kayttooikeus.kayttooikeus.filter(_filterExpiredKayttooikeus);
+        if (!renderedData || !renderedData.length) {
+            return undefined;
+        }
+        return renderedData;
+    }, [kayttooikeus.kayttooikeus]);
+
     const table = useReactTable({
-        columns,
+        columns: columns ?? emptyArray,
         pageCount: 1,
-        data: kayttooikeus.kayttooikeus.filter(_filterExpiredKayttooikeus),
+        data: memoizedData ?? emptyArray,
         state: {
             sorting,
             columnVisibility: {

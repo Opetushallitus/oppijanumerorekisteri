@@ -28,6 +28,8 @@ type OwnProps = {
     oidHenkilo: string;
 };
 
+const emptyArray = [];
+
 const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const dispatch = useAppDispatch();
@@ -186,9 +188,17 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
         [emailOptions, kayttooikeus.kayttooikeus, props]
     );
 
+    const memoizedData = useMemo(() => {
+        const renderedData = kayttooikeus.kayttooikeus.filter(_filterExistingKayttooikeus);
+        if (!renderedData || !renderedData.length) {
+            return undefined;
+        }
+        return renderedData;
+    }, [kayttooikeus.kayttooikeus]);
+
     const table = useReactTable({
-        columns,
-        data: kayttooikeus.kayttooikeus.filter(_filterExistingKayttooikeus),
+        columns: columns ?? emptyArray,
+        data: memoizedData ?? emptyArray,
         pageCount: 1,
         state: {
             sorting,
