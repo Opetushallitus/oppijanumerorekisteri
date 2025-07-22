@@ -1,3 +1,4 @@
+import { AnyAction } from '@reduxjs/toolkit';
 import { CREATE_PERSON_REQUEST, CREATE_PERSON_SUCCESS, CREATE_PERSON_FAILURE } from '../actions/actiontypes';
 
 export type RequestAction = {
@@ -29,7 +30,7 @@ export const initialState: CreatePersonState = {
 
 export const createPersonReducer = (
     state: Readonly<CreatePersonState> = initialState,
-    action: RequestAction | SuccessAction | FailureAction | never
+    action: AnyAction
 ): CreatePersonState => {
     switch (action.type) {
         case CREATE_PERSON_REQUEST:
