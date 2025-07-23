@@ -215,7 +215,7 @@ function _parseHakuappHakemus(
     };
 }
 
-const _koodistoLabel = (koodi: string, koodisto: Koodi[], locale: Locale): string | null =>
-    koodisto.find((koodistoItem) => koodistoItem.koodiArvo === koodi)?.metadata?.[locale] ?? null;
+const _koodistoLabel = (koodi: string, koodisto: Koodi[] | undefined, locale: Locale): string | null =>
+    koodisto?.find((koodistoItem) => koodistoItem.koodiArvo === koodi)?.metadata?.[locale] ?? null;
 
 export default DuplikaatitPerson;
