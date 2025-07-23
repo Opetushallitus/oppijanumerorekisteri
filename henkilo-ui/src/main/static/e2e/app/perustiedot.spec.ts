@@ -49,11 +49,11 @@ test.describe('Perustiedot for yksilöimätön hetuton', () => {
             }
         });
         await page.goto('/henkilo-ui/oppija/1.2.246.562.24.00001000000');
-        expect(await page.getByTestId('HENKILO_SUKUPUOLI_value').textContent()).toEqual('');
+        await expect(page.getByTestId('HENKILO_SUKUPUOLI_value')).toHaveText('');
         await page.locator('.henkiloViewButtons').first().getByRole('button', { name: 'Muokkaa' }).first().click();
         await page.locator('#HENKILO_SUKUPUOLI').getByRole('combobox').click();
         await page.locator('#HENKILO_SUKUPUOLI').getByText('nainen').click();
         await page.getByRole('button', { name: 'Tallenna' }).first().click();
-        expect(await page.getByTestId('HENKILO_SUKUPUOLI_value').textContent()).toEqual('nainen');
+        await expect(page.getByTestId('HENKILO_SUKUPUOLI_value')).toHaveText('nainen');
     });
 });
