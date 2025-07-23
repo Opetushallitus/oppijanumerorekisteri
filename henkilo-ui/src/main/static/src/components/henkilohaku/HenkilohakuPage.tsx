@@ -15,12 +15,11 @@ import { HenkilohakuResult } from '../../types/domain/kayttooikeus/HenkilohakuRe
 import { useLocalisations } from '../../selectors';
 import { OphTableWithInfiniteScroll } from '../OphTableWithInfiniteScroll';
 import { useSelector } from 'react-redux';
-import { HenkilohakuState } from '../../reducers/henkilohaku.reducer';
 import { RootState, useAppDispatch } from '../../store';
-import { updateFilters } from '../../actions/henkilohaku.actions';
 import { useGetHenkiloHakuCountQuery, useGetHenkiloHakuInfiniteQuery } from '../../api/kayttooikeus';
 import { useDebounce } from '../../useDebounce';
 import { SelectOption } from '../../utilities/select';
+import { HenkilohakuState, setFilters } from '../../slices/henkilohakuSlice';
 
 const emptyArray = [];
 
@@ -28,7 +27,7 @@ const HenkilohakuPage = () => {
     const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
     const [sorting, setSorting] = useState<SortingState>([]);
-    const { filters } = useSelector<RootState, HenkilohakuState>((state) => state.henkilohakuState);
+    const filters = useSelector<RootState, HenkilohakuState>((state) => state.henkilohaku);
     const [ryhmaOid, setRyhmaOid] = useState(filters.ryhmaOid);
     const [criteria, setCriteria] = useState<HenkilohakuCriteria>(filters);
     const debounced = useDebounce(criteria, 500);
@@ -44,7 +43,7 @@ const HenkilohakuPage = () => {
     const { data: resultCount } = useGetHenkiloHakuCountQuery(debounced, { skip });
 
     useEffect(() => {
-        dispatch(updateFilters({ ...criteria, ryhmaOid }));
+        dispatch(setFilters({ ...criteria, ryhmaOid }));
         setParameters({ ...parameters });
     }, [criteria, ryhmaOid]);
 

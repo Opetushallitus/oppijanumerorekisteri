@@ -8,7 +8,6 @@ import { kayttooikeus } from './kayttooikeusryhma.reducer';
 import { OrganisaatioKayttooikeusryhmat } from './organisaatiokayttooikeusryhmat.reducer';
 import { organisaatio } from './organisaatio.reducer';
 import { notifications } from './notifications.reducer';
-import { henkilohakuState } from './henkilohaku.reducer';
 import { notificationList } from './notification.reducer';
 import existinceCheckReducer from './existence.reducer';
 import createPersonReducer from './create.reducer';
@@ -25,7 +24,6 @@ const rootReducer = {
     organisaatio,
     notificationList,
     notifications,
-    henkilohakuState,
     existenceCheck: existinceCheckReducer,
     createPerson: createPersonReducer,
 };
