@@ -6,6 +6,7 @@ import { kayttooikeusApi } from './api/kayttooikeus';
 import { oppijanumerorekisteriApi } from './api/oppijanumerorekisteri';
 import { lokalisointiApi } from './api/lokalisointi';
 import { koodistoApi } from './api/koodisto';
+import henkilohakuReducer from './slices/henkilohakuSlice';
 import navigationReducer from './slices/navigationSlice';
 import toastReducer from './slices/toastSlice';
 import toastMiddleware from './middleware/toastMiddleware';
@@ -16,6 +17,7 @@ const isClient = typeof window !== 'undefined';
 export const store = configureStore({
     reducer: {
         ...rootReducer,
+        henkilohaku: henkilohakuReducer,
         toasts: toastReducer,
         navigation: navigationReducer,
         [kayttooikeusApi.reducerPath]: kayttooikeusApi.reducer,
