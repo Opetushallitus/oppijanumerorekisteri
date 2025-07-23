@@ -9,8 +9,6 @@ import { OrganisaatioKayttooikeusryhmat } from './organisaatiokayttooikeusryhmat
 import { organisaatio } from './organisaatio.reducer';
 import { notifications } from './notifications.reducer';
 import { notificationList } from './notification.reducer';
-import existinceCheckReducer from './existence.reducer';
-import createPersonReducer from './create.reducer';
 
 const rootReducer = {
     l10n,
@@ -24,8 +22,6 @@ const rootReducer = {
     organisaatio,
     notificationList,
     notifications,
-    existenceCheck: existinceCheckReducer,
-    createPerson: createPersonReducer,
 };
 
 export default rootReducer;

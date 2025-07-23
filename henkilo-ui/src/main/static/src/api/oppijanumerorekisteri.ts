@@ -24,6 +24,13 @@ export type LinkHenkilosRequest = {
     L: Localisations;
 };
 
+export type CreateHenkiloRequest = {
+    hetu: string;
+    etunimet: string;
+    kutsumanimi: string;
+    sukunimi: string;
+};
+
 const staggeredBaseQuery = retry(
     fetchBaseQuery({
         ...getCommonOptions(),
@@ -237,6 +244,28 @@ export const oppijanumerorekisteriApi = createApi({
             }),
             invalidatesTags: (_result, _error, { oid }) => [{ type: 'identifications', id: oid }],
         }),
+        createHenkilo: builder.mutation<string, CreateHenkiloRequest>({
+            query: (request) => ({
+                url: 'henkilo',
+                method: 'POST',
+                body: request,
+                responseHandler: 'text',
+            }),
+        }),
+        henkiloExists: builder.mutation<{ oid: string; status: number }, CreateHenkiloRequest>({
+            query: (request) => ({
+                url: 'henkilo/exists',
+                method: 'POST',
+                body: request,
+            }),
+            transformResponse: (data: { oid: string }, meta) => {
+                return { ...data, status: meta.response?.status };
+            },
+            transformErrorResponse: (_data, meta) => {
+                return { status: meta.response?.status };
+            },
+            extraOptions: { maxRetries: 0 }, // valid api responses include status codes 400 and 409
+        }),
     }),
 });
 
@@ -257,4 +286,6 @@ export const {
     useGetIdentificationsQuery,
     usePostIdentificationMutation,
     useDeleteIdentificationMutation,
+    useCreateHenkiloMutation,
+    useHenkiloExistsMutation,
 } = oppijanumerorekisteriApi;
