@@ -1,8 +1,7 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import type { RootState } from '../../../../store';
+
 import Field from '../../field/Field';
-import { Localisations } from '../../../../types/localisation.type';
+import { useLocalisations } from '../../../../selectors';
 
 type OwnProps = {
     values: {
@@ -25,23 +24,17 @@ type OwnProps = {
     hideLabel?: boolean;
 };
 
-type StateProps = {
-    L: Localisations;
-};
-
-type Props = OwnProps & StateProps;
-
 const LabelValue = ({
     values,
     readOnly,
     updateModelFieldAction,
     updateDateFieldAction,
-    L,
     autofocus,
     required,
     hideLabel,
-}: Props) =>
-    !values.showOnlyOnWrite || !readOnly ? (
+}: OwnProps) => {
+    const { L } = useLocalisations();
+    return !values.showOnlyOnWrite || !readOnly ? (
         <div id={values.label}>
             <div
                 className="labelValue"
@@ -67,9 +60,6 @@ const LabelValue = ({
             </div>
         </div>
     ) : null;
+};
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    L: state.l10n.localisations[state.locale],
-});
-
-export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(LabelValue);
+export default LabelValue;
