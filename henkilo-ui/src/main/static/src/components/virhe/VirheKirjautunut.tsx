@@ -9,19 +9,17 @@ type Props = {
 /**
  * Käyttö: <VirheKirjautunut>Virheilmoitus</VirheKirjautunut>
  */
-class VirheKirjautunut extends React.Component<Props> {
-    render() {
-        return (
-            <div className="VirheKirjautunut">
-                <div className="VirheKirjautunut_tausta">
-                    <div>
-                        <img src={sad} alt="" />
-                    </div>
-                    {this.props.children}
+const VirheKirjautunut = (props: Props) => {
+    return (
+        <div className="VirheKirjautunut">
+            <div className="VirheKirjautunut_tausta">
+                <div>
+                    <img src={sad} alt="" />
                 </div>
+                {props.children}
             </div>
-        );
-    }
-}
+        </div>
+    );
+};
 
 export default VirheKirjautunut;

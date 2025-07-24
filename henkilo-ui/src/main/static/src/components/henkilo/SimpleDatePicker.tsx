@@ -18,35 +18,33 @@ type SimpleDatePickerProps = {
 /**
  * Päivämäärävalitsin, jossa arvona käytetään merkkijonoa, esim. "2017-10-25".
  */
-class SimpleDatePicker extends React.Component<SimpleDatePickerProps> {
-    render() {
-        return (
-            <DatePicker
-                className={this.props.className}
-                placeholderText={this.props.placeholder}
-                selected={this.getMomentValue()}
-                onChange={this.onChange}
-                showYearDropdown
-                showWeekNumbers
-                dropdownMode="select"
-                disabled={this.props.disabled}
-                filterDate={this.props.filterDate}
-                dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
-            />
-        );
-    }
-
-    getMomentValue = (): Date | undefined => {
-        return this.props.value ? Moment(this.props.value, this.getModelFormat()).toDate() : null;
+const SimpleDatePicker = (props: SimpleDatePickerProps) => {
+    const getMomentValue = (): Date | undefined => {
+        return props.value ? Moment(props.value, getModelFormat()).toDate() : null;
     };
 
-    getModelFormat = (): string => {
-        return this.props.format ? this.props.format : DEFAULT_MODEL_FORMAT;
+    const getModelFormat = (): string => {
+        return props.format ? props.format : DEFAULT_MODEL_FORMAT;
     };
 
-    onChange = (value?: Date) => {
-        this.props.onChange(value ? Moment(value).format(this.getModelFormat()) : null);
+    const onChange = (value?: Date) => {
+        props.onChange(value ? Moment(value).format(getModelFormat()) : null);
     };
-}
+
+    return (
+        <DatePicker
+            className={props.className}
+            placeholderText={props.placeholder}
+            selected={getMomentValue()}
+            onChange={onChange}
+            showYearDropdown
+            showWeekNumbers
+            dropdownMode="select"
+            disabled={props.disabled}
+            filterDate={props.filterDate}
+            dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
+        />
+    );
+};
 
 export default SimpleDatePicker;

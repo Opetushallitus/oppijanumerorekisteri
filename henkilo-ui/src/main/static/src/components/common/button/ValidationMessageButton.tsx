@@ -13,39 +13,35 @@ type Props = {
 
 // Nappi jonka oikealla puolella tulostuvat mustat validointitekstit. Olettaa kaikkien syötteiden olevan lokalisoituja.
 // Nappi on disabloitu niin kauan kuin virheviestejä esiintyy.
-class ValidationMessageButton extends React.Component<Props> {
-    render() {
-        return (
-            <div>
-                <div className="haeButtonWrapper">
-                    <Button
-                        disabled={
-                            !!this.props.disabled ||
-                            Object.keys(this.props.validationMessages).some(
-                                (key) => !this.props.validationMessages[key].isValid
-                            )
-                        }
-                        action={this.props.buttonAction}
-                    >
-                        {this.props.children}
-                    </Button>
-                </div>
-                {Object.keys(this.props.validationMessages).length > 0 && (
-                    <div className="haeButtonWrapper">
-                        <ul>
-                            {Object.keys(this.props.validationMessages)
-                                .filter((key) => !this.props.validationMessages[key].isValid)
-                                .map((key, idx) => (
-                                    <li key={idx} className="oph-h5">
-                                        ! {this.props.validationMessages[key].labelLocalised}
-                                    </li>
-                                ))}
-                        </ul>
-                    </div>
-                )}
+const ValidationMessageButton = (props: Props) => {
+    return (
+        <div>
+            <div className="haeButtonWrapper">
+                <Button
+                    disabled={
+                        !!props.disabled ||
+                        Object.keys(props.validationMessages).some((key) => !props.validationMessages[key].isValid)
+                    }
+                    action={props.buttonAction}
+                >
+                    {props.children}
+                </Button>
             </div>
-        );
-    }
-}
+            {Object.keys(props.validationMessages).length > 0 && (
+                <div className="haeButtonWrapper">
+                    <ul>
+                        {Object.keys(props.validationMessages)
+                            .filter((key) => !props.validationMessages[key].isValid)
+                            .map((key, idx) => (
+                                <li key={idx} className="oph-h5">
+                                    ! {props.validationMessages[key].labelLocalised}
+                                </li>
+                            ))}
+                    </ul>
+                </div>
+            )}
+        </div>
+    );
+};
 
 export default ValidationMessageButton;
