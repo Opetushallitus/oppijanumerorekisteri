@@ -9,7 +9,6 @@ import {
     clearHenkilo,
     fetchHenkilo,
     fetchHenkiloOrgs,
-    fetchHenkiloSlaves,
     fetchHenkiloYksilointitieto,
     fetchKayttaja,
     fetchKayttajatieto,
@@ -29,6 +28,7 @@ import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { henkiloViewTabs } from '../navigation/NavigationTabs';
+import { useGetHenkiloMasterQuery } from '../../api/oppijanumerorekisteri';
 
 const getView = (henkiloType: string, omattiedot: Omattiedot): View => {
     if (omattiedot.isAdmin) {
@@ -53,6 +53,7 @@ const HenkiloViewContainer = () => {
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const { L } = useLocalisations();
     const { oid } = useParams();
+    const { data: master } = useGetHenkiloMasterQuery(oid);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const location = useLocation();
@@ -60,7 +61,7 @@ const HenkiloViewContainer = () => {
     const henkiloType = location.pathname.split('/')[1];
     const view = getView(henkiloType, omattiedot);
     useTitle(L[titles[henkiloType ?? 'oppija']]);
-    useNavigation(henkiloViewTabs(oid, henkilo, henkiloType), true);
+    useNavigation(henkiloViewTabs(oid, henkilo, henkiloType, master?.oidHenkilo), true);
 
     useEffect(() => {
         if (oid && omattiedot.oidHenkilo === oid) {
@@ -70,7 +71,6 @@ const HenkiloViewContainer = () => {
         dispatch<any>(clearHenkilo());
         dispatch<any>(fetchHenkilo(oid));
         dispatch<any>(fetchHenkiloYksilointitieto(oid));
-        dispatch<any>(fetchHenkiloSlaves(oid));
         dispatch<any>(fetchYhteystietotyypitKoodisto());
 
         if (view === 'admin' || view === 'virkailija') {

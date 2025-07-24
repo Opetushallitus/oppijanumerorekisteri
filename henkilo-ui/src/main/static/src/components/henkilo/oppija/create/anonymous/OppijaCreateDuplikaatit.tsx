@@ -23,13 +23,17 @@ class OppijaCreateDuplikaatit extends React.Component<Props> {
             henkilo: {
                 ...this.props.oppija,
             },
-            duplicates: this.props.duplikaatit,
         };
 
         return (
             <div>
                 <div className="oph-field">{this.props.L['OPPIJAN_LUONTI_DUPLIKAATIT_OHJE']}</div>
-                <HenkiloViewDuplikaatit henkilo={henkilo} vainLuku={true} henkiloType="oppija" />
+                <HenkiloViewDuplikaatit
+                    henkilo={henkilo}
+                    vainLuku={true}
+                    henkiloType="oppija"
+                    duplicates={this.props.duplikaatit}
+                />
                 <div className="oph-field">
                     <button type="button" className="oph-button oph-button-primary" onClick={this.tallenna}>
                         {this.props.L['OPPIJAN_LUONTI_LUO_NAPPI']}

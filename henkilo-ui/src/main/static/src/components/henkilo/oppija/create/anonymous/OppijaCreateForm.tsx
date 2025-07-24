@@ -65,7 +65,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
 
     render() {
         // oppijanumerorekisteri käyttää kielikoodiston koodeja pienillä kirjaimilla
-        const kieliKoodisto = this.props.kieliKoodisto.map((koodi) => {
+        const kieliKoodisto = this.props.kieliKoodisto?.map((koodi) => {
             return { ...koodi, koodiArvo: koodi.koodiArvo.toLowerCase() };
         });
         return (

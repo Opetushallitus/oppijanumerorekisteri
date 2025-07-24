@@ -31,7 +31,7 @@ export const KoodistoSelect = ({ className, placeholder, koodisto, value, onChan
     const { locale } = useLocalisations();
     const options = useMemo(() => {
         return koodisto
-            .map((koodi: Koodi) => {
+            ?.map((koodi: Koodi) => {
                 return {
                     value: koodi.koodiArvo,
                     label: toLocalizedText(locale, koodi.metadata, koodi.koodiArvo) as string,

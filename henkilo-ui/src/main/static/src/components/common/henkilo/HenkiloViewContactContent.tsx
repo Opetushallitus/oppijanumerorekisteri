@@ -150,7 +150,7 @@ export class HenkiloViewContactContentComponent extends React.Component<Props, S
     createContent() {
         const defaultWorkAddress = resolveDefaultWorkAddress(this.state.contactInfo, this.state.yhteystietoRemoveList);
         const content: Array<React.ReactNode> = this.state.contactInfo
-            .filter(this.isVisible)
+            ?.filter(this.isVisible)
             .filter(excludeRemovedItems(this.state.yhteystietoRemoveList))
             .map((yhteystiedotRyhmaFlat, idx) => (
                 <div key={idx}>
@@ -364,7 +364,7 @@ export class HenkiloViewContactContentComponent extends React.Component<Props, S
         yhteystietotyypit: KoodistoStateKoodi[],
         locale: string
     ) =>
-        henkiloUpdate.yhteystiedotRyhma.map((yhteystiedotRyhma, idx) => {
+        henkiloUpdate.yhteystiedotRyhma?.map((yhteystiedotRyhma, idx) => {
             const yhteystietoFlatList = this.createFlatYhteystieto(
                 contactInfoTemplate,
                 yhteystiedotRyhma.yhteystieto,
@@ -373,7 +373,7 @@ export class HenkiloViewContactContentComponent extends React.Component<Props, S
                 yhteystietotyypit,
                 locale
             );
-            yhteystiedotRyhma.yhteystieto = yhteystietoFlatList.value.map((yhteystietoFlat) => ({
+            yhteystiedotRyhma.yhteystieto = yhteystietoFlatList.value?.map((yhteystietoFlat) => ({
                 yhteystietoTyyppi: yhteystietoFlat.label,
                 yhteystietoArvo: yhteystietoFlat.value,
             }));

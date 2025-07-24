@@ -3,6 +3,7 @@ import type { RootState } from '../../../../store';
 import { connect } from 'react-redux';
 import LabelValue from './LabelValue';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
+import { useGetHenkiloMasterQuery } from '../../../../api/oppijanumerorekisteri';
 
 type OwnProps = {
     readOnly: boolean;
@@ -15,18 +16,21 @@ type StateProps = {
 
 type Props = OwnProps & StateProps;
 
-const Oppijanumero = (props: Props) => (
-    <LabelValue
-        readOnly={props.readOnly}
-        updateModelFieldAction={props.updateModelFieldAction}
-        values={{
-            label: 'HENKILO_OPPIJANUMERO',
-            value: props.henkilo.master.oppijanumero || props.henkilo.henkilo.oppijanumero,
-            inputValue: 'oppijanumero',
-            readOnly: true,
-        }}
-    />
-);
+const Oppijanumero = (props: Props) => {
+    const { data: master } = useGetHenkiloMasterQuery(props.henkilo.henkilo.oidHenkilo);
+    return (
+        <LabelValue
+            readOnly={props.readOnly}
+            updateModelFieldAction={props.updateModelFieldAction}
+            values={{
+                label: 'HENKILO_OPPIJANUMERO',
+                value: master?.oppijanumero || props.henkilo.henkilo.oppijanumero,
+                inputValue: 'oppijanumero',
+                readOnly: true,
+            }}
+        />
+    );
+};
 
 const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
