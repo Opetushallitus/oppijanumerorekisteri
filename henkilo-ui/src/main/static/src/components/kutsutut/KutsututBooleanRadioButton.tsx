@@ -1,86 +1,62 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+
 import type { RootState } from '../../store';
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup';
 import KutsuViews, { KutsuView } from './KutsuViews';
-import { Localisations } from '../../types/localisation.type';
+import { useLocalisations } from '../../selectors';
+import { OmattiedotState } from '../../reducers/omattiedot.reducer';
 
 type OwnProps = {
     view?: KutsuView;
     setView: (newView: KutsuView) => void;
 };
 
-type StateProps = {
-    L: Localisations;
-    isAdmin: boolean;
-    isOphVirkailija: boolean;
-};
+const KutsututBooleanRadioButton = (props: OwnProps) => {
+    const { L } = useLocalisations();
+    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const [trueLabel, setTrueLabel] = useState('');
+    const [falseLabel, setFalseLabel] = useState('');
+    const [radioButtonValue, setRadioButtonValue] = useState(false);
 
-type Props = OwnProps & StateProps;
-
-type State = {
-    radioButtonValue: boolean;
-};
-
-class KutsututBooleanRadioButton extends React.Component<Props, State> {
-    trueLabel: string;
-    falseLabel: string;
-
-    constructor(props: Props) {
-        super(props);
-
-        if (this.props.isAdmin) {
-            this.falseLabel = this.props.L['KUTSUTUT_OPH_BUTTON'];
-            this.trueLabel = this.props.L['KUTSUTUT_KAIKKI_BUTTON'];
-            this.props.setView(KutsuViews.OPH);
-        } else if (this.props.isOphVirkailija) {
-            this.falseLabel = this.props.L['KUTSUTUT_OMA_KAYTTOOIKEUSRYHMA_BUTTON'];
-            this.trueLabel = this.props.L['KUTSUTUT_OMA_ORGANISAATIO_BUTTON'];
-            this.props.setView(KutsuViews.KAYTTOOIKEUSRYHMA);
+    useEffect(() => {
+        if (omattiedot?.isAdmin) {
+            setFalseLabel(L['KUTSUTUT_OPH_BUTTON']);
+            setTrueLabel(L['KUTSUTUT_KAIKKI_BUTTON']);
+            props.setView(KutsuViews.OPH);
+        } else if (omattiedot?.isOphVirkailija) {
+            setFalseLabel(L['KUTSUTUT_OMA_KAYTTOOIKEUSRYHMA_BUTTON']);
+            setTrueLabel(L['KUTSUTUT_OMA_ORGANISAATIO_BUTTON']);
+            props.setView(KutsuViews.KAYTTOOIKEUSRYHMA);
         } else {
-            this.props.setView(KutsuViews.DEFAULT);
+            props.setView(KutsuViews.DEFAULT);
         }
+    }, [omattiedot]);
 
-        this.state = {
-            radioButtonValue: false,
-        };
-    }
-
-    render() {
-        return this.props.isAdmin || this.props.isOphVirkailija ? (
-            <BooleanRadioButtonGroup
-                value={this.state.radioButtonValue}
-                onChange={this._toggleView.bind(this)}
-                trueLabel={this.trueLabel}
-                falseLabel={this.falseLabel}
-                className="kutsutut-toggle"
-            />
-        ) : null;
-    }
-
-    _toggleView() {
+    function _toggleView() {
         let newView;
-        const currentView = this.props.view;
-        if (this.props.isAdmin) {
+        const currentView = props.view;
+        if (omattiedot.isAdmin) {
             newView = currentView === KutsuViews.OPH ? KutsuViews.DEFAULT : KutsuViews.OPH;
-        } else if (this.props.isOphVirkailija) {
+        } else if (omattiedot.isOphVirkailija) {
             newView = currentView === KutsuViews.KAYTTOOIKEUSRYHMA ? KutsuViews.DEFAULT : KutsuViews.KAYTTOOIKEUSRYHMA;
         } else {
             newView = KutsuViews.DEFAULT;
         }
 
-        this.setState({
-            radioButtonValue: !this.state.radioButtonValue,
-        });
-
-        this.props.setView(newView);
+        setRadioButtonValue(!radioButtonValue);
+        props.setView(newView);
     }
-}
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    L: state.l10n.localisations[state.locale],
-    isAdmin: state.omattiedot.isAdmin,
-    isOphVirkailija: state.omattiedot.isOphVirkailija,
-});
+    return omattiedot?.isAdmin || omattiedot?.isOphVirkailija ? (
+        <BooleanRadioButtonGroup
+            value={radioButtonValue}
+            onChange={_toggleView.bind(this)}
+            trueLabel={trueLabel}
+            falseLabel={falseLabel}
+            className="kutsutut-toggle"
+        />
+    ) : null;
+};
 
-export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(KutsututBooleanRadioButton);
+export default KutsututBooleanRadioButton;
