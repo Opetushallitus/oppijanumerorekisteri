@@ -2,12 +2,9 @@ import React, { useRef, ReactElement, Fragment } from 'react';
 import { Table, flexRender, Row } from '@tanstack/react-table';
 
 import { useLocalisations } from '../selectors';
+import Loader from './common/icons/Loader';
 
 import '../oph-table.css';
-import Loader from './common/icons/Loader';
-import SortAscIcon from './common/icons/SortAscIcon';
-import SortDescIcon from './common/icons/SortDescIcon';
-import SortIconNone from './common/icons/SortIconNone';
 
 export type OphTableProps<T> = {
     table: Table<T>;
@@ -60,18 +57,45 @@ const OphTable = <T,>({ table, isLoading, renderSubComponent }: OphTableProps<T>
                                                 {header.column.getIsSorted() === 'asc' ? (
                                                     <>
                                                         {' '}
-                                                        <SortAscIcon />
+                                                        <span className="fa-stack fa-lg oph-sort-asc">
+                                                            <i
+                                                                className="fa fa-sort-desc fa-stack-1x"
+                                                                aria-hidden="true"
+                                                            ></i>
+                                                            <i
+                                                                className="fa fa-sort-asc fa-stack-1x"
+                                                                aria-hidden="true"
+                                                            ></i>
+                                                        </span>
                                                     </>
                                                 ) : header.column.getIsSorted() === 'desc' ? (
                                                     <>
                                                         {' '}
-                                                        <SortDescIcon />
+                                                        <span className="fa-stack fa-lg oph-sort-desc">
+                                                            <i
+                                                                className="fa fa-sort-desc fa-stack-1x"
+                                                                aria-hidden="true"
+                                                            ></i>
+                                                            <i
+                                                                className="fa fa-sort-asc fa-stack-1x"
+                                                                aria-hidden="true"
+                                                            ></i>
+                                                        </span>
                                                     </>
                                                 ) : (
                                                     header.column.getCanSort() && (
                                                         <>
                                                             {' '}
-                                                            <SortIconNone />
+                                                            <span className="fa-stack fa-lg none">
+                                                                <i
+                                                                    className="fa fa-sort-desc fa-stack-1x"
+                                                                    aria-hidden="true"
+                                                                ></i>
+                                                                <i
+                                                                    className="fa fa-sort-asc fa-stack-1x"
+                                                                    aria-hidden="true"
+                                                                ></i>
+                                                            </span>
                                                         </>
                                                     )
                                                 )}

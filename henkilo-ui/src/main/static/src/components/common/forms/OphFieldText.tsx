@@ -6,14 +6,12 @@ type OphFieldTextProps = {
     children: React.ReactNode;
 };
 
-class OphFieldText extends React.Component<OphFieldTextProps> {
-    render() {
-        const classes = classNames({
-            'oph-field-text': true,
-            'oph-error': this.props.hasError,
-        });
-        return <div className={classes}>{this.props.children}</div>;
-    }
-}
+const OphFieldText = (props: OphFieldTextProps) => {
+    const classes = classNames({
+        'oph-field-text': true,
+        'oph-error': props.hasError,
+    });
+    return <div className={classes}>{props.children}</div>;
+};
 
 export default OphFieldText;

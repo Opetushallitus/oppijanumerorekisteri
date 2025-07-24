@@ -98,8 +98,6 @@ export const OppijaCreateAnonymousContainer = ({ goBack }: OwnProps) => {
                 />
             ) : (
                 <OppijaCreateDuplikaatit
-                    locale={locale}
-                    L={L}
                     tallenna={luoOppijaJaNavigoi}
                     peruuta={peruuta}
                     oppija={oppija}

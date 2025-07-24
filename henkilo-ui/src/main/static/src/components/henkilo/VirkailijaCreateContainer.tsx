@@ -98,13 +98,7 @@ export const VirkailijaCreateContainer = () => {
     return (
         <div className="mainContent wrapper">
             <span className="oph-h2 oph-bold">{L['VIRKAILIJAN_LUONTI_OTSIKKO']}</span>
-            <VirkailijaCreateForm
-                virkailija={virkailija}
-                disabled={disabled}
-                onChange={onChange}
-                onSubmit={onSubmit}
-                L={L}
-            />
+            <VirkailijaCreateForm virkailija={virkailija} disabled={disabled} onChange={onChange} onSubmit={onSubmit} />
             <LocalNotification
                 title={L['NOTIFICATION_HENKILOTIEDOT_VIRHE_OTSIKKO']}
                 toggle={virheet.length > 0}

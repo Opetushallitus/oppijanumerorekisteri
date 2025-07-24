@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { Params, useNavigate, useParams } from 'react-router';
 import { urls } from 'oph-urls-js';
 
-import VahvaTunnistusLisatiedotPage from './VahvaTunnistusLisatiedotPage';
-import { Values, Metadata, Errors } from './VahvaTunnistusLisatiedotInputs';
+import VahvaTunnistusLisatiedotInputs, { Values, Metadata, Errors } from './VahvaTunnistusLisatiedotInputs';
 import { Localisations } from '../../types/localisation.type';
 import { http } from '../../http';
 import { isValidPassword } from '../../validation/PasswordValidator';
 import { toSupportedLocale } from '../../reducers/locale.reducer';
 import { useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
+
+import './VahvaTunnistusLisatiedotPage.css';
 
 const getInitialValues = (): Values => ({
     password: '',
@@ -124,5 +125,16 @@ export const VahvaTunnistusLisatiedotContainer = () => {
         }
     };
 
-    return <VahvaTunnistusLisatiedotPage L={L} form={form} onChange={onChange} onSubmit={onSubmit} />;
+    return (
+        <div className="infoPageWrapper">
+            <h2 className="oph-h2 oph-bold">{L['UUDELLEENREKISTEROINTI_OTSIKKO']}</h2>
+            <div className="VahvaTunnistusLisatiedotPage_ohje">{L['UUDELLEENREKISTEROINTI_OHJE']}</div>
+            <form onSubmit={onSubmit}>
+                <VahvaTunnistusLisatiedotInputs L={L} form={form} onChange={onChange} />
+                <button type="submit" className="oph-button oph-button-primary">
+                    {L['UUDELLEENREKISTEROINTI_TALLENNA_JA_JATKA']}
+                </button>
+            </form>
+        </div>
+    );
 };

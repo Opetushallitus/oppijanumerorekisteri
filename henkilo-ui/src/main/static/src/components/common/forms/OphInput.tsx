@@ -11,25 +11,23 @@ type OphInputProps = {
     disabled?: boolean;
 };
 
-class OphInput extends React.Component<OphInputProps> {
-    render() {
-        const classes = classNames({
-            'oph-input': true,
-            'oph-input-has-error': this.props.hasError,
-        });
-        return (
-            <input
-                type={this.props.type}
-                id={this.props.name}
-                name={this.props.name}
-                value={this.props.value}
-                onChange={this.props.onChange}
-                className={classes}
-                placeholder={this.props.placeholder}
-                disabled={this.props.disabled}
-            />
-        );
-    }
-}
+const OphInput = (props: OphInputProps) => {
+    const classes = classNames({
+        'oph-input': true,
+        'oph-input-has-error': props.hasError,
+    });
+    return (
+        <input
+            type={props.type}
+            id={props.name}
+            name={props.name}
+            value={props.value}
+            onChange={props.onChange}
+            className={classes}
+            placeholder={props.placeholder}
+            disabled={props.disabled}
+        />
+    );
+};
 
 export default OphInput;
