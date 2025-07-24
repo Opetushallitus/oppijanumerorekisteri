@@ -14,15 +14,6 @@ import {
     UPDATE_KAYTTAJATIETO_SUCCESS,
     UPDATE_KAYTTAJATIETO_FAILURE,
     UPDATE_HENKILO_REQUEST,
-    FETCH_HENKILO_SLAVES_SUCCESS,
-    FETCH_HENKILO_SLAVES_FAILURE,
-    UPDATE_HENKILO_UNLINK_SUCCESS,
-    FETCH_HENKILO_DUPLICATES_REQUEST,
-    FETCH_HENKILO_DUPLICATES_SUCCESS,
-    FETCH_HENKILO_DUPLICATES_FAILURE,
-    FETCH_HENKILO_MASTER_REQUEST,
-    FETCH_HENKILO_MASTER_SUCCESS,
-    FETCH_HENKILO_MASTER_FAILURE,
     CLEAR_HENKILO,
     UPDATE_HENKILO_FAILURE,
     FETCH_HENKILO_YKSILOINTITIETO_REQUEST,
@@ -31,9 +22,8 @@ import {
     FETCH_HENKILO_HAKEMUKSET,
 } from '../actions/actiontypes';
 import StaticUtils from '../components/common/StaticUtils';
-import type { Henkilo, HenkiloOrg, LinkedHenkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
+import type { Henkilo, HenkiloOrg } from '../types/domain/oppijanumerorekisteri/henkilo.types';
 import type { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
-import type { HenkiloDuplicate } from '../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 import type { Hakemus } from '../types/domain/oppijanumerorekisteri/Hakemus.type';
 import type { Kayttaja } from '../types/domain/kayttooikeus/kayttaja.types';
 import type { Yksilointitieto } from '../types/domain/oppijanumerorekisteri/yksilointitieto.types';
@@ -51,11 +41,6 @@ export type HenkiloState = {
     readonly kayttaja: Kayttaja;
     readonly henkiloOrgs: Array<StoreOrganisaatio>;
     readonly kayttajatieto?: KayttajatiedotRead;
-    readonly slaves: Array<LinkedHenkilo>;
-    readonly duplicates: Array<HenkiloDuplicate>;
-    readonly duplicatesLoading: boolean;
-    readonly masterLoading: boolean;
-    readonly master: LinkedHenkilo;
     readonly yksilointitiedotLoading: boolean;
     readonly yksilointitiedot: Yksilointitieto;
     readonly hakemuksetLoading: boolean;
@@ -72,11 +57,6 @@ const initialState: HenkiloState = {
     kayttaja: {} as Kayttaja,
     henkiloOrgs: [],
     kayttajatieto: undefined,
-    slaves: [],
-    duplicates: [],
-    duplicatesLoading: false,
-    masterLoading: true,
-    master: {} as LinkedHenkilo,
     yksilointitiedotLoading: false,
     yksilointitiedot: {},
     hakemuksetLoading: false,
@@ -150,26 +130,6 @@ export const henkilo = (state: Readonly<HenkiloState> = initialState, action: An
                 henkiloOrgsLoading: false,
                 henkiloOrgs: mapOrgHenkilosWithOrganisations(action.henkiloOrgs, action.organisations),
             };
-        case FETCH_HENKILO_MASTER_REQUEST:
-            return { ...state, masterLoading: true };
-        case FETCH_HENKILO_MASTER_SUCCESS:
-            return { ...state, masterLoading: false, master: action.master };
-        case FETCH_HENKILO_MASTER_FAILURE:
-            return { ...state, masterLoading: false };
-        case FETCH_HENKILO_SLAVES_SUCCESS:
-            return { ...state, slaves: action.slaves };
-        case FETCH_HENKILO_SLAVES_FAILURE:
-            return { ...state, slaves: [] };
-        case UPDATE_HENKILO_UNLINK_SUCCESS: {
-            const slaves = state.slaves.filter((slave) => slave.oidHenkilo !== action.unlinkedSlaveOid);
-            return { ...state, slaves };
-        }
-        case FETCH_HENKILO_DUPLICATES_REQUEST:
-            return { ...state, duplicatesLoading: true };
-        case FETCH_HENKILO_DUPLICATES_SUCCESS:
-            return { ...state, duplicatesLoading: false, duplicates: action.duplicates };
-        case FETCH_HENKILO_DUPLICATES_FAILURE:
-            return { ...state, duplicatesLoading: false };
         case FETCH_HENKILO_HAKEMUKSET.REQUEST:
             return { ...state, hakemuksetLoading: true };
         case FETCH_HENKILO_HAKEMUKSET.SUCCESS:

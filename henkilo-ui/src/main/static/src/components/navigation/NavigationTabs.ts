@@ -8,12 +8,9 @@ import { NaviTab } from '../../types/navigation.type';
 export const enabledDuplikaattiView = (
     oidHenkilo: string | null | undefined,
     kayttaja: Kayttaja | null | undefined,
-    masterLoading: boolean,
     masterHenkiloOid?: string
 ): boolean =>
-    !masterLoading &&
-    (masterHenkiloOid === undefined || masterHenkiloOid === oidHenkilo) &&
-    kayttaja?.kayttajaTyyppi !== 'PALVELU';
+    (masterHenkiloOid === undefined || masterHenkiloOid === oidHenkilo) && kayttaja?.kayttajaTyyppi !== 'PALVELU';
 
 export const enabledVtjVertailuView = (henkilo: Henkilo): boolean =>
     henkilo?.yksilointiYritetty && !henkilo?.yksiloityVTJ && !henkilo?.duplicate;
@@ -33,7 +30,8 @@ export const vtjDataAvailable = (yksilointitieto: Yksilointitieto | null | undef
 export const henkiloViewTabs = (
     oidHenkilo: string,
     henkilo: HenkiloState | undefined,
-    henkiloType: string
+    henkiloType: string,
+    masterHenkiloOid?: string
 ): Array<NaviTab> => {
     const currentHenkilo = henkilo?.henkilo;
     if (!henkiloType) {
@@ -41,21 +39,15 @@ export const henkiloViewTabs = (
     }
     const tabs = henkiloType === 'virkailija' ? virkailijaNavi(oidHenkilo) : oppijaNavi(oidHenkilo);
 
-    const masterHenkiloOid = henkilo?.master?.oidHenkilo;
-
     // Wait until all needed and correct data has been fetched before enabling tabs to prevent them switching on/off
-    if (
-        (henkilo?.masterLoading && henkilo?.master.oidHenkilo !== oidHenkilo) ||
-        (henkilo?.henkiloLoading && henkilo?.henkilo.oidHenkilo !== oidHenkilo) ||
-        henkilo?.kayttajaLoading
-    ) {
+    if ((henkilo?.henkiloLoading && henkilo?.henkilo.oidHenkilo !== oidHenkilo) || henkilo?.kayttajaLoading) {
         return tabs;
     }
 
     return tabs.map((tab) => {
         if (
             tab.label === 'NAVI_HAE_DUPLIKAATIT' &&
-            enabledDuplikaattiView(oidHenkilo, henkilo?.kayttaja, henkilo?.masterLoading, masterHenkiloOid)
+            enabledDuplikaattiView(oidHenkilo, henkilo?.kayttaja, masterHenkiloOid)
         ) {
             tab.disabled = false;
         }

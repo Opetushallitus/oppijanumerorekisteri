@@ -6,8 +6,6 @@ import { useAppDispatch, type RootState } from '../../../store';
 import {
     fetchHenkilo,
     fetchHenkiloYksilointitieto,
-    fetchHenkiloSlaves,
-    fetchHenkiloMaster,
     overrideYksiloimatonHenkiloVtjData,
 } from '../../../actions/henkilo.actions';
 import VtjVertailuListaus from './VtjVertailuListaus';
@@ -22,6 +20,7 @@ import { useLocalisations } from '../../../selectors';
 import { useTitle } from '../../../useTitle';
 import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
 import { useNavigation } from '../../../useNavigation';
+import { useGetHenkiloMasterQuery } from '../../../api/oppijanumerorekisteri';
 
 type OwnProps = {
     henkiloType: string;
@@ -33,15 +32,14 @@ export const VtjVertailuPage = (props: OwnProps) => {
     const dispatch = useAppDispatch();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const { data: omattiedot } = useGetOmattiedotQuery();
+    const { data: master } = useGetHenkiloMasterQuery(params.oid);
     const { L } = useLocalisations();
     useTitle(L['TITLE_VTJ_VERTAILU']);
-    useNavigation(henkiloViewTabs(oidHenkilo, henkilo, props.henkiloType), true);
+    useNavigation(henkiloViewTabs(oidHenkilo, henkilo, props.henkiloType, master?.oidHenkilo), true);
 
     useEffect(() => {
         dispatch<any>(fetchHenkilo(oidHenkilo));
         dispatch<any>(fetchHenkiloYksilointitieto(oidHenkilo));
-        dispatch<any>(fetchHenkiloMaster(oidHenkilo));
-        dispatch<any>(fetchHenkiloSlaves(oidHenkilo)); // tabs need data about master to switch duplicates tab enabled
     }, []);
 
     async function overrideHenkiloInformation(): Promise<void> {

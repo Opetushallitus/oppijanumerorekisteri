@@ -12,9 +12,8 @@ import type {
     HenkiloDuplicateLenient,
 } from '../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
-import { Hakemus } from '../../../types/domain/oppijanumerorekisteri/Hakemus.type';
 import OphModal from '../../common/modal/OphModal';
-import { usePostLinkHenkilosMutation } from '../../../api/oppijanumerorekisteri';
+import { useGetHenkiloMasterQuery, usePostLinkHenkilosMutation } from '../../../api/oppijanumerorekisteri';
 import { isHenkiloValidForYksilointi } from '../../../validation/YksilointiValidator';
 import { useLocalisations } from '../../../selectors';
 import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
@@ -27,17 +26,19 @@ export type LinkRelation = {
 };
 
 type Props = {
-    oidHenkilo?: string;
-    henkilo: HenkiloDuplicateLenient & { hakemukset?: Hakemus[] };
+    henkilo: HenkiloDuplicateLenient;
     henkiloType: string;
     vainLuku: boolean;
+    duplicates: HenkiloDuplicate[];
+    oidHenkilo?: string;
 };
 
-const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, oidHenkilo }: Props) => {
+const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, duplicates, oidHenkilo }: Props) => {
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { L } = useLocalisations();
     const [linkObj, setLink] = useState<LinkRelation>();
     const [postLinkHenkilos] = usePostLinkHenkilosMutation();
+    const { data: masterHenkilo } = useGetHenkiloMasterQuery(oidHenkilo, { skip: !oidHenkilo });
     const canForceLink = hasAnyPalveluRooli(omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_YKSILOINNIN_PURKU']);
     const emails = (henkilo.henkilo.yhteystiedotRyhma || [])
         .flatMap((ryhma) => ryhma.yhteystieto)
@@ -45,7 +46,7 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, oidHenkilo }: 
         .map((yhteysTieto) => yhteysTieto.yhteystietoArvo);
     const master: HenkiloDuplicate = { ...henkilo.henkilo, emails, hakemukset: henkilo.hakemukset };
     const linkingEnabled =
-        enabledDuplikaattiView(oidHenkilo, henkilo.kayttaja, henkilo.masterLoading, henkilo.master?.oidHenkilo) ||
+        enabledDuplikaattiView(oidHenkilo, henkilo.kayttaja, masterHenkilo?.oidHenkilo) ||
         oidHenkilo !== omattiedot.oidHenkilo;
     const navigate = useNavigate();
 
@@ -67,6 +68,7 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, oidHenkilo }: 
 
     return (
         <div className="duplicates-view">
+            {!duplicates ? <Loader /> : null}
             <div className="person header">
                 <div />
                 <div />
@@ -105,7 +107,7 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, oidHenkilo }: 
                 canForceLink={canForceLink}
                 setLink={setLink}
             />
-            {henkilo.duplicates.map((duplicate) => (
+            {duplicates?.map((duplicate) => (
                 <DuplikaatitPerson
                     henkilo={duplicate}
                     master={master}
@@ -117,12 +119,11 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, oidHenkilo }: 
                     setLink={setLink}
                 />
             ))}
-            {henkilo.duplicatesLoading ? <Loader /> : null}
             <LocalNotification
                 title={L['DUPLIKAATIT_NOTIFICATION_EI_LOYTYNYT']}
                 type={NOTIFICATIONTYPES.INFO}
-                toggle={!henkilo.duplicates}
-            ></LocalNotification>
+                toggle={duplicates?.length === 0}
+            />
             {linkObj && linkingEnabled && (
                 <OphModal
                     onClose={() => setLink(undefined)}
