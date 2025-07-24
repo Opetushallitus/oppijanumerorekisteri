@@ -147,7 +147,7 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
                         <Button action={resetState}>{L['HENKILO_LUOYHTEYSTIETO']}</Button>
                     </>
                 )}
-                {createOid && (
+                {createError && (
                     <div className="create-result oph-alert-error">
                         <ReactMarkdown>{L['CREATE_PERSON_FAILURE']}</ReactMarkdown>
                     </div>
