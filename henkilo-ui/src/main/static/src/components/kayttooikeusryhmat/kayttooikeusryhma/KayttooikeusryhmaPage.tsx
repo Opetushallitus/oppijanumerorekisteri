@@ -563,11 +563,9 @@ export const KayttooikeusryhmaPage = (props: Props) => {
             <span className="oph-h2 oph-bold kayttooikeusryhma-header">
                 {L['KAYTTOOIKEUSRYHMAT_OTSIKKO'] + getStatusString()}
             </span>
-            <KayttooikeusryhmatNimi {...props} L={L} name={kayttooikeusryhmaForm.name} setName={_setName} />
+            <KayttooikeusryhmatNimi name={kayttooikeusryhmaForm.name} setName={_setName} />
 
             <KayttooikeusryhmatKuvaus
-                {...props}
-                L={L}
                 description={kayttooikeusryhmaForm.description}
                 setDescription={_setDescription}
             />
