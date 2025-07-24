@@ -255,7 +255,8 @@ export const kayttooikeusApi = createApi({
             }),
             infiniteQueryOptions: {
                 initialPageParam: 0,
-                getNextPageParam: (_1, _2, lastPageParam) => lastPageParam + 100,
+                getNextPageParam: (lastPage, _, lastPageParam) =>
+                    lastPage.length === 100 ? lastPageParam + 100 : undefined,
             },
             providesTags: ['henkilohaku'],
         }),
@@ -280,7 +281,8 @@ export const kayttooikeusApi = createApi({
             },
             infiniteQueryOptions: {
                 initialPageParam: 0,
-                getNextPageParam: (_1, _2, lastPageParam) => lastPageParam + 20,
+                getNextPageParam: (lastPage, _, lastPageParam) =>
+                    lastPage.length === 20 ? lastPageParam + 20 : undefined,
             },
             async onQueryStarted(_token, { dispatch, queryFulfilled }) {
                 const { data } = await queryFulfilled;
@@ -314,7 +316,8 @@ export const kayttooikeusApi = createApi({
                 }).toString()}`,
             infiniteQueryOptions: {
                 initialPageParam: 0,
-                getNextPageParam: (_1, _2, lastPageParam) => lastPageParam + 40,
+                getNextPageParam: (lastPage, _, lastPageParam) =>
+                    lastPage.length === 40 ? lastPageParam + 40 : undefined,
             },
             providesTags: ['kutsutut'],
         }),
