@@ -147,14 +147,32 @@ abstract public class VtjMuutostietoTestBase implements KoodistoMock {
         return new VtjMuutostieto(hetu, LocalDateTime.now(), json, null, false);
     }
 
+    protected VtjPerustieto getPerustieto(String hetu, String path) throws Exception {
+        try (var is = getClass().getResourceAsStream(path)) {
+            return getPerustieto(hetu, objectMapper.readTree(is));
+        }
+    }
+
+    protected VtjPerustieto getPerustieto(String hetu, JsonNode json) throws Exception {
+        return new VtjPerustieto(hetu, json);
+    }
+
     protected Henkilo applyPerustieto(VtjPerustieto perustieto) {
         muutostietoService.savePerustieto(perustieto);
         return henkiloRepository.findByHetu(perustieto.henkilotunnus).get();
     }
 
     protected Henkilo applyMuutostieto(VtjMuutostieto muutostieto) {
-        muutostietoRepository.save(muutostieto);
+        return applyMuutostieto(muutostieto, false);
+    }
+
+    protected Henkilo applyMuutostieto(VtjMuutostieto muutostieto, boolean assertSuccess) {
+        var muutostietoId = muutostietoRepository.save(muutostieto).getId();
         muutostietoService.handleMuutostietoTask();
+        if (assertSuccess) {
+            var updated = muutostietoRepository.findById(muutostietoId).get();
+            assertThat(updated.getError()).withFailMessage("Muutostiedon käsittelyn pitäisi onnistua").isFalse();
+        }
         return henkiloRepository.findByKaikkiHetut(muutostieto.getHenkilotunnus()).get();
     }
 }

@@ -83,6 +83,12 @@ public class KutsumanimiValidatorTest {
     }
 
     @Test
+    public void testTrailingSpaceInNameFromVTJ() {
+        KutsumanimiValidator validator = new KutsumanimiValidator("Matti ");
+        assertThat(validator.isValid("Matti ")).isTrue();
+    }
+
+    @Test
     public void testCaseInsensitivity() {
         KutsumanimiValidator validator = new KutsumanimiValidator("Jorma teppo");
         assertThat(validator.isValid("jorma")).isTrue();

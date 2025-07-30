@@ -8,11 +8,12 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 
 public final class KutsumanimiValidator {
-
+    private final String etunimet;
     private final List<String> basicDataSeparatedByWhitespace;
     private final List<String> basicDataSeparatedByWhitespaceAndDashes;
 
     public KutsumanimiValidator(String etunimet) {
+        this.etunimet = etunimet;
         String etunimetLowercase = etunimet.toLowerCase();
         // Basic set
         this.basicDataSeparatedByWhitespace = Arrays.stream(etunimetLowercase.split(" "))
@@ -26,6 +27,8 @@ public final class KutsumanimiValidator {
     }
 
     public boolean isValid(String kutsumanimi) {
+        if (etunimet.equals(kutsumanimi)) return true;
+
         // e.g. "arpa-tupla noppa kuutio" => "arpa-tupla" "noppa" "kuutio" "arpa-tupla noppa" "noppa kuutio" "arpa-tupla noppa kuutio"
         Set<String> subsequentTuples = this.basicDataSeparatedByWhitespace.stream()
                 .flatMap(etunimi -> this.findSequentialTuples(etunimi, this.basicDataSeparatedByWhitespace))

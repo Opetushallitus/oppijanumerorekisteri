@@ -241,6 +241,49 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
     }
 
     @Test
+    public void handleMuutostietoHuoltajaNimiWithTrailingSpace() throws Exception {
+        var henkilo = henkiloRepository.save(makeHenkilo().build());
+        var before = applyPerustieto(getPerustieto(henkilo.getHetu(), "/vtj/perustieto.json"));
+        var after = applyMuutostieto(getMuutostieto(before.getHetu(), objectMapper.readTree("""
+                      [{
+                          "huoltaja": {
+                              "etunimet": "Matti ",
+                              "sukunimi": "Aslan Tes",
+                              "sukupuoli": "MIES",
+                              "syntymapv": {
+                                  "arvo": "1938-01-30",
+                                  "tarkkuus": "PAIVA"
+                              },
+                              "etunimetUTF8": "Matti ",
+                              "sukunimiUTF8": "Aslan Tes"
+                          },
+                          "oikeudet": [],
+                          "tietoryhma": "HUOLTAJA",
+                          "huoltajanLaji": "LAKISAATEINEN_HUOLTAJA",
+                          "huoltajanRooli": "ISA",
+                          "lisatytOikeudet": [],
+                          "muutetutOikeudet": [],
+                          "muutosattribuutti": "LISATTY",
+                          "poistetutOikeudet": [],
+                          "huoltosuhteenAlkupv": {
+                              "arvo": "1958-01-30",
+                              "tarkkuus": "PAIVA"
+                          },
+                          "huoltosuhteenMuutos": false,
+                          "huoltosuhteenLoppupv": {
+                              "arvo": "2100-12-31",
+                              "tarkkuus": "PAIVA"
+                          },
+                          "huollonAsumisenMuutos": false,
+                          "huollonOikeudenMuutos": false
+                      }]
+                """)), true);
+        assertThat(after.getHuoltajat()).hasSize(1);
+        var huoltaja = after.getHuoltajat().iterator().next().getHuoltaja();
+        assertThat(huoltaja.getEtunimet()).isEqualTo("Matti ");
+    }
+
+    @Test
     public void savePerustietoHandlesHenkilotunnusKorjaus() throws Exception {
         henkiloRepository.save(makeHenkilo().build());
         Mockito.reset(henkiloRepository);
