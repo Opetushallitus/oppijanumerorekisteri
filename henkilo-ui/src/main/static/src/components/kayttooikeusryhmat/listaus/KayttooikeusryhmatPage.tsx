@@ -50,13 +50,11 @@ export const KayttooikeusryhmatPage = () => {
     const { L, locale } = useLocalisations();
     useTitle(L['TITLE_KAYTTO_OIKEUSRYHMA']);
     const { data: omattiedot } = useGetOmattiedotQuery();
-    const muokkausoikeus =
-        !!omattiedot?.organisaatiot &&
-        hasAnyPalveluRooli(omattiedot?.organisaatiot, [
-            'KOOSTEROOLIENHALLINTA_CRUD',
-            'HENKILONHALLINTA_OPHREKISTERI',
-            'KAYTTOOIKEUS_REKISTERINPITAJA',
-        ]);
+    const muokkausoikeus = hasAnyPalveluRooli(omattiedot.organisaatiot, [
+        'KOOSTEROOLIENHALLINTA_CRUD',
+        'HENKILONHALLINTA_OPHREKISTERI',
+        'KAYTTOOIKEUS_REKISTERINPITAJA',
+    ]);
     const [passiiviset, setPassiiviset] = useState(false);
     const [showType, setShowType] = useState<Kayttajatyyppi>('virkailija');
     const [filter, setFilter] = useState('');

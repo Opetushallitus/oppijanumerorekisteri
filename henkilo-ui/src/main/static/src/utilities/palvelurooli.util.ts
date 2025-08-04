@@ -7,16 +7,14 @@ import {
  * Parse all palveluroolit to an array of strings eg. ['OPPIJANUMEROREKISTERI_DUPLIKAATTINAKYMA', ...]
  * Note that resulting list contains all palveluroolit from all organisaatiot
  */
-export const parsePalveluRoolit = (organisaatiot?: Array<KayttooikeusOrganisaatiot>): Array<string> => {
-    return (
-        organisaatiot
-            ?.map((organisaatio: KayttooikeusOrganisaatiot) =>
-                organisaatio.kayttooikeudet.map(
-                    (kayttooikeus: KayttooikeusOikeudet) => `${kayttooikeus.palvelu}_${kayttooikeus.oikeus}`
-                )
+export const parsePalveluRoolit = (organisaatiot: Array<KayttooikeusOrganisaatiot>): Array<string> => {
+    return organisaatiot
+        .map((organisaatio: KayttooikeusOrganisaatiot) =>
+            organisaatio.kayttooikeudet.map(
+                (kayttooikeus: KayttooikeusOikeudet) => `${kayttooikeus.palvelu}_${kayttooikeus.oikeus}`
             )
-            .reduce((prev: Array<string>, current: Array<string>) => [...prev, ...current], []) ?? []
-    );
+        )
+        .reduce((prev: Array<string>, current: Array<string>) => [...prev, ...current], []);
 };
 
 /*

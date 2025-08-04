@@ -8,8 +8,6 @@ import { OphDsInput } from '../design-system/OphDsInput';
 import { useAppDispatch } from '../../store';
 import { add } from '../../slices/toastSlice';
 import { useTitle } from '../../useTitle';
-import { useNavigation } from '../../useNavigation';
-import { jarjestelmatunnusNavigation } from '../navigation/navigationconfigurations';
 
 type Props = {
     router: RouteActions;
@@ -18,7 +16,6 @@ type Props = {
 export const JarjestelmatunnusCreatePage = ({ router }: Props) => {
     const { L } = useLocalisations();
     useTitle(L['JARJESTELMATUNNUSTEN_LUONTI']);
-    useNavigation(jarjestelmatunnusNavigation(), false);
     const [nimi, setNimi] = useState('');
     const [postPalvelukayttaja, { isLoading }] = usePostPalvelukayttajaMutation();
     const dispatch = useAppDispatch();

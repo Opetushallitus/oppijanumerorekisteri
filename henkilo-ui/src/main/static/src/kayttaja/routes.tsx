@@ -12,6 +12,12 @@ import EmailVerificationErrorContainer from './sahkopostivarmennus/EmailVerifica
 import { EmailVerificationDonePage } from './sahkopostivarmennus/EmailVerificationDonePage';
 import { SalasananVaihtoPage } from './SalasananVaihtoPage';
 
+export type RouteType = {
+    path: string;
+    component: React.ReactNode;
+    title: string;
+};
+
 export default (
     <Route path="/" component={KirjautumatonApp}>
         <Route

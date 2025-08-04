@@ -25,8 +25,6 @@ import { JarjestelmatunnusOauth2Modal } from './JarjestelmatunnusOauth2Modal';
 import { useTitle } from '../../useTitle';
 
 import './JarjestelmatunnusEditPage.css';
-import { useNavigation } from '../../useNavigation';
-import { jarjestelmatunnusNavigation } from '../navigation/navigationconfigurations';
 
 type Props = {
     params: { oid: string };
@@ -36,7 +34,6 @@ export const JarjestelmatunnusEditPage = ({ params }: Props) => {
     const dispatch = useAppDispatch();
     const { L } = useLocalisations();
     useTitle(L['JARJESTELMATUNNUKSEN_HALLINTA']);
-    useNavigation(jarjestelmatunnusNavigation(params.oid), false);
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const [updateHenkilo, { isLoading: isUpdatingHenkilo }] = useUpdateHenkiloMutation();

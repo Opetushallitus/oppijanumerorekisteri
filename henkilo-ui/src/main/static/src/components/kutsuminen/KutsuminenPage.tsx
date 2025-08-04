@@ -20,8 +20,6 @@ import PropertySingleton from '../../globals/PropertySingleton';
 import AddedOrganization from './AddedOrganization';
 import { useGetOmattiedotQuery, useGetOrganisaatioRyhmatQuery } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
-import { useNavigation } from '../../useNavigation';
-import { mainNavigation } from '../navigation/navigationconfigurations';
 
 const initialBasicInfo = {
     etunimi: '',
@@ -41,7 +39,6 @@ const KutsuminenPage = () => {
     const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
     useTitle(L['TITLE_KUTSULOMAKE']);
-    useNavigation(mainNavigation, false);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { isLoading: ryhmatLoading } = useGetOrganisaatioRyhmatQuery();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);

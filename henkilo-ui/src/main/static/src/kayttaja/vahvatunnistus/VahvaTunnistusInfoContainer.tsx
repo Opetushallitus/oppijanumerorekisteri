@@ -2,14 +2,15 @@ import React from 'react';
 
 import VahvaTunnistusInfoPage from './VahvaTunnistusInfoPage';
 import VirhePage from '../../components/common/page/VirhePage';
+import { RouteType } from '../../routes';
 import { toSupportedLocale } from '../../reducers/locale.reducer';
 
-type OwnProps = { params: { loginToken?: string; locale?: string } };
+type OwnProps = { params: { loginToken?: string; locale?: string }; route: RouteType };
 
-const VahvaTunnistusInfoContainer = ({ params }: OwnProps) => {
+const VahvaTunnistusInfoContainer = ({ params, route }: OwnProps) => {
     const { loginToken, locale: anyLocale } = params;
     const locale = toSupportedLocale(anyLocale);
-    const virhe = window.location.pathname.indexOf('/vahvatunnistusinfo/virhe/') !== -1;
+    const virhe = route.path.indexOf('/vahvatunnistusinfo/virhe/') !== -1;
     if (loginToken === 'vanha') {
         return (
             <VirhePage

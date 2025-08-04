@@ -7,8 +7,6 @@ import OppijaCreateAnonymousContainer from '../anonymous/OppijaCreateAnonymousCo
 import FormPicker from './FormPicker';
 import { useLocalisations } from '../../../../../selectors';
 import { useTitle } from '../../../../../useTitle';
-import { useNavigation } from '../../../../../useNavigation';
-import { mainNavigation } from '../../../../navigation/navigationconfigurations';
 
 type Props = {
     router: RouteActions;
@@ -17,7 +15,6 @@ type Props = {
 const FormSwitch: React.FC<Props> = ({ router }) => {
     const { L } = useLocalisations();
     useTitle(L['TITLE_OPPIJA_LUONTI']);
-    useNavigation(mainNavigation, false);
     const [formType, setFormType] = React.useState<FormType>();
     const goBack = () => setFormType(undefined);
     switch (formType) {
