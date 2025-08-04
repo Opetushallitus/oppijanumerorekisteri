@@ -29,5 +29,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  nginx:
+    image: nginx:1.19.5-alpine
+    ports:
+      - 8080:8080
+    volumes:
+      - ./henkilo-ui/nginx/nginx.conf:/etc/nginx/nginx.conf
 volumes:
   database-data:
