@@ -218,7 +218,7 @@ export const KayttooikeusryhmaPage = (props: Props) => {
     };
 
     const _parseExistingOppilaitostyyppiData = (organisaatioViitteet: OrganisaatioViite[]): Array<string> => {
-        const oppilaitostyypit = oppilaitostyyppiKoodisto.map(
+        const oppilaitostyypit = (oppilaitostyyppiKoodisto ?? []).map(
             (oppilaitostyyppiKoodi) => oppilaitostyyppiKoodi.koodiUri
         );
         const oppilaitosOrganisaatioViiteet = organisaatioViitteet.filter((organisaatioViite) =>
@@ -229,7 +229,7 @@ export const KayttooikeusryhmaPage = (props: Props) => {
     };
 
     const _parseExistingOrganisaatiotyyppiData = (organisaatioViitteet: OrganisaatioViite[]): Array<string> => {
-        const organisaatiotyypit = organisaatiotyyppiKoodisto.map(
+        const organisaatiotyypit = (organisaatiotyyppiKoodisto ?? []).map(
             (organisaatiotyyppiKoodi) => organisaatiotyyppiKoodi.koodiUri
         );
         const organisaatiotyyppiOrganisaatioViiteet = organisaatioViitteet.filter((organisaatioViite) =>

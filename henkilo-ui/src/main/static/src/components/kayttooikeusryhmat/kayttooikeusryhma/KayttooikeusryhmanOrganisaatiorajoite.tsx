@@ -26,13 +26,13 @@ const KayttooikeusryhmanOrganisaatiorajoite = (props: Props) => {
     const { data: oppilaitostyypit } = useGetOppilaitostyypitQuery();
     const { data: organisaatiotyypit } = useGetOrganisaatiotyypitQuery();
     const oppilaitostyypitOptions = useMemo(() => {
-        return oppilaitostyypit.map((oppilaitostyyppi) => ({
+        return (oppilaitostyypit ?? []).map((oppilaitostyyppi) => ({
             label: toLocalizedText(locale, oppilaitostyyppi.metadata) || oppilaitostyyppi.koodiUri,
             value: oppilaitostyyppi.koodiUri,
         }));
     }, [oppilaitostyypit]);
     const organisaatiotyypitOptions = useMemo(() => {
-        return organisaatiotyypit?.map((organisaatiotyyppi) => ({
+        return (organisaatiotyypit ?? []).map((organisaatiotyyppi) => ({
             label: toLocalizedText(locale, organisaatiotyyppi.metadata) || organisaatiotyyppi.koodiUri,
             value: organisaatiotyyppi.koodiUri,
         }));
