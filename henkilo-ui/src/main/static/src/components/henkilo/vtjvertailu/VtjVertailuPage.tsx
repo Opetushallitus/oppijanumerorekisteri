@@ -41,8 +41,8 @@ export const VtjVertailuPage = (props: OwnProps) => {
 
     async function overrideHenkiloInformation(): Promise<void> {
         try {
-            await overrideYksiloimatonHenkiloVtjData(oidHenkilo);
-            await fetchHenkilo(oidHenkilo);
+            await overrideYksiloimatonHenkiloVtjData(oidHenkilo)(dispatch);
+            await fetchHenkilo(oidHenkilo)(dispatch);
             dispatch(
                 addGlobalNotification({
                     key: 'HENKILOVTJYLIAJOISUCCESS',
