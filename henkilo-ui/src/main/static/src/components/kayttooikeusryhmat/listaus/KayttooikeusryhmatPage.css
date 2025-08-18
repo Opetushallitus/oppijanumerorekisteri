@@ -30,11 +30,3 @@
     flex-wrap: wrap;
     gap: 16px;
 }
-
-.kayttooikeusryhmat-row-kayttooikeus .oph-ds-select-control {
-    max-width: 300px;
-}
-
-.kayttooikeusryhmat-row-kayttooikeus .oph-ds-select-control-focused {
-    max-width: 300px;
-}

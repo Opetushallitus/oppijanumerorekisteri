@@ -159,6 +159,12 @@ export const KayttooikeusryhmatPage = () => {
                     <div>
                         <Select
                             {...selectStyles}
+                            styles={{
+                                control: (baseStyles) => ({
+                                    ...baseStyles,
+                                    maxWidth: '300px',
+                                }),
+                            }}
                             options={palveluOptions}
                             value={palvelu}
                             placeholder={L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_PALVELU']}
@@ -167,6 +173,13 @@ export const KayttooikeusryhmatPage = () => {
                         />
                         <Select
                             {...selectStyles}
+                            styles={{
+                                control: (baseStyles) => ({
+                                    ...baseStyles,
+                                    width: '800px',
+                                    maxWidth: '100%',
+                                }),
+                            }}
                             ref={kayttooikeusSelectRef}
                             options={kayttooikeusOptions}
                             isDisabled={!palvelu}
