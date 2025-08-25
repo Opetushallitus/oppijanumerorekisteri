@@ -11,6 +11,7 @@ import { KoodistoState } from '../../../reducers/koodisto.reducer';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import { useLocalisations } from '../../../selectors';
 import { useTitle } from '../../../useTitle';
+import { useNavigation } from '../../../useNavigation';
 
 type OwnProps = {
     router: RouteActions;
@@ -21,6 +22,7 @@ export const KayttooikeusryhmaPageContainer = (props: OwnProps) => {
     const dispatch = useAppDispatch();
     const { L } = useLocalisations();
     useTitle(L['TITLE_KAYTTO_OIKEUSRYHMA']);
+    useNavigation([], true);
     const koodisto = useSelector<RootState, KoodistoState>((state) => state.koodisto);
     const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
 

@@ -1,7 +1,7 @@
 import DuplikaatitPage from './DuplikaatitPage';
 import React, { useEffect } from 'react';
 
-import { useAppDispatch } from '../../../store';
+import { RootState, useAppDispatch } from '../../../store';
 import {
     fetchHenkilo,
     fetchKayttaja,
@@ -17,16 +17,22 @@ import {
 import { RouteType } from '../../../routes';
 import { useLocalisations } from '../../../selectors';
 import { useTitle } from '../../../useTitle';
+import { useNavigation } from '../../../useNavigation';
+import { henkiloViewTabs } from '../../navigation/NavigationTabs';
+import { useSelector } from 'react-redux';
+import { HenkiloState } from '../../../reducers/henkilo.reducer';
 
 type OwnProps = {
-    params: { oid?: string };
+    params: { oid?: string; henkiloType?: string };
     route: RouteType;
 };
 
 export const DuplikaatitContainer = (props: OwnProps) => {
     const dispatch = useAppDispatch();
     const { L } = useLocalisations();
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     useTitle(L['TITLE_DUPLIKAATTIHAKU']);
+    useNavigation(henkiloViewTabs(props.params.oid, henkilo, props.params.henkiloType), true);
 
     useEffect(() => {
         const oidHenkilo = props.params.oid;

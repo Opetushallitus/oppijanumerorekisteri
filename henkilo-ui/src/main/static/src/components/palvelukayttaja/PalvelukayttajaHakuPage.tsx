@@ -11,6 +11,8 @@ import { useGetPalvelukayttajatQuery } from '../../api/kayttooikeus';
 import Loader from '../common/icons/Loader';
 import { useDebounce } from '../../useDebounce';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
+import { useNavigation } from '../../useNavigation';
+import { palvelukayttajaNavigation } from '../navigation/navigationconfigurations';
 
 const defaultCriteria = {
     subOrganisation: 'true',
@@ -18,6 +20,7 @@ const defaultCriteria = {
 };
 
 const PalvelukayttajaHakuPage = () => {
+    useNavigation(palvelukayttajaNavigation, false);
     const { L } = useLocalisations();
     const [organisaatio, setOrganisaatio] = useState<OrganisaatioSelectObject>();
     const [criteria, setCriteria] = useState<PalvelukayttajaCriteria>(defaultCriteria);

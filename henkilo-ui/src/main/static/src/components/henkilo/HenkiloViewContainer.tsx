@@ -31,6 +31,8 @@ import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
 import { Omattiedot } from '../../types/domain/kayttooikeus/Omattiedot.types';
 import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
+import { useNavigation } from '../../useNavigation';
+import { henkiloViewTabs } from '../navigation/NavigationTabs';
 
 type OwnProps = {
     router: RouteActions;
@@ -66,6 +68,7 @@ const HenkiloViewContainer = ({ router, location, params }: OwnProps) => {
     const henkiloType = location.pathname.split('/')[1];
     const view = getView(henkiloType, omattiedot);
     useTitle(L[titles[henkiloType ?? 'oppija']]);
+    useNavigation(henkiloViewTabs(params.oid, henkilo, henkiloType), true);
 
     useEffect(() => {
         if (oid && omattiedot.oidHenkilo === oid) {

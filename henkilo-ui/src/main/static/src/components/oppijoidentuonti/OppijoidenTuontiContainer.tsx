@@ -8,6 +8,8 @@ import TuontiKoosteTable from './TuontiKoosteTable';
 import { useLocalisations } from '../../selectors';
 import { useGetOppijoidenTuontiListausQuery } from '../../api/oppijanumerorekisteri';
 import { useTitle } from '../../useTitle';
+import { useNavigation } from '../../useNavigation';
+import { mainNavigation } from '../navigation/navigationconfigurations';
 
 export type SortKey = 'CREATED' | 'NAME' | 'MODIFIED';
 export type SortDirection = 'DESC' | 'ASC';
@@ -29,6 +31,7 @@ const defaultCriteria = {
 const OppijoidenTuontiContainer = () => {
     const { L } = useLocalisations();
     useTitle(L['TITLE_OPPIJOIDENTUONTI']);
+    useNavigation(mainNavigation, false);
     const [criteria, setCriteria] = useState<OppijoidenTuontiCriteria>(defaultCriteria);
     const [tuontikooste, setTuontikooste] = useState(false);
     const { data, isFetching } = useGetOppijoidenTuontiListausQuery(criteria);

@@ -7,6 +7,8 @@ import exportReport from './exportUtil';
 import { useLocalisations } from '../../../selectors';
 import { useGetAccessRightReportQuery } from '../../../api/kayttooikeus';
 import { useTitle } from '../../../useTitle';
+import { useNavigation } from '../../../useNavigation';
+import { mainNavigation } from '../../navigation/navigationconfigurations';
 
 export const AccessRightsReport = () => {
     const [oid, setOid] = useState<string>(undefined);
@@ -14,6 +16,7 @@ export const AccessRightsReport = () => {
     const [filterValues, setFilterValues] = useState<string[]>([]);
     const { L } = useLocalisations();
     useTitle(L['KAYTTOOIKEUSRAPORTTI_TITLE']);
+    useNavigation(mainNavigation, false);
     const { data, isFetching } = useGetAccessRightReportQuery(oid, { skip: !oid });
 
     useEffect(() => {
