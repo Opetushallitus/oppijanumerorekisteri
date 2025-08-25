@@ -36,7 +36,7 @@ export const TopNavigation = ({ pathName }: OwnProps) => {
         return <div></div>;
     }
 
-    const roolit = parsePalveluRoolit(omattiedot.organisaatiot);
+    const roolit = parsePalveluRoolit(omattiedot.organisaatiot) ?? [];
     return (
         <div id="topNavigation" className="oph-bg-blue">
             <ul className="tabs">
@@ -58,7 +58,9 @@ export const TopNavigation = ({ pathName }: OwnProps) => {
                     navigation.tabs
                         .filter(
                             (tab) =>
-                                omattiedot.isAdmin || !tab.sallitutRoolit || tab.sallitutRoolit.some(roolit.includes)
+                                omattiedot.isAdmin ||
+                                !tab.sallitutRoolit ||
+                                tab.sallitutRoolit.some((r) => !!r && roolit.includes(r))
                         )
                         .map((tab, index) => {
                             const className = classNames({
