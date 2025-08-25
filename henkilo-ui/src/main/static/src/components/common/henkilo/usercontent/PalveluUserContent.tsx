@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { SyntheticEvent } from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../../../store';
 import AbstractUserContent from './AbstractUserContent';
@@ -15,14 +15,13 @@ import PasswordButton from '../buttons/PasswordButton';
 import PassivoiButton from '../buttons/PassivoiButton';
 import AktivoiButton from '../buttons/AktivoiButton';
 import PoistaKayttajatunnusButton from '../buttons/PoistaKayttajatunnusButton';
-import { KoodistoState } from '../../../../reducers/koodisto.reducer';
 
 type OwnProps = {
     readOnly: boolean;
     discardAction: () => void;
     updateAction: () => void;
-    updateModelAction: () => void;
-    updateDateAction: () => void;
+    updateModelAction: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
+    updateDateAction: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
     edit: () => void;
     henkiloUpdate: Henkilo;
     oidHenkilo: string;
@@ -31,7 +30,6 @@ type OwnProps = {
 
 type StateProps = {
     henkilo: HenkiloState;
-    koodisto: KoodistoState;
     L: Localisations;
     isAdmin: boolean;
 };
@@ -110,7 +108,6 @@ class PalveluUserContent extends React.Component<Props> {
 
 const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
-    koodisto: state.koodisto,
     L: state.l10n.localisations[state.locale],
     isAdmin: state.omattiedot.isAdmin,
 });

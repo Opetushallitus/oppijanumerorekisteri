@@ -1,147 +1,115 @@
-import React from 'react';
-import { connect } from 'react-redux';
-
-import type { RootState } from '../../store';
-import { http } from '../../http';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
 import { urls } from 'oph-urls-js';
+
+import { http } from '../../http';
 import { VirkailijaCreate } from '../../types/domain/kayttooikeus/virkailija.types';
-import { Localisations } from '../../types/localisation.type';
 import VirkailijaCreateForm from './VirkailijaCreateForm';
 import { isValidKutsumanimi } from '../../validation/KutsumanimiValidator';
 import { isValidPassword } from '../../validation/PasswordValidator';
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import { isValidKayttajatunnus } from '../../validation/KayttajatunnusValidator';
+import { useLocalisations } from '../../selectors';
 
-type StateProps = {
-    L: Localisations;
-};
-
-type State = {
-    virkailija: VirkailijaCreate;
-    virheet: Array<string>;
+const initialVirkailija: VirkailijaCreate = {
+    etunimet: '',
+    kutsumanimi: '',
+    sukunimi: '',
+    kayttajatunnus: '',
+    salasana: '',
+    salasanaUudestaan: '',
+    vahvastiTunnistettu: true,
 };
 
 /**
  * Virkailijan luonti -näkymä.
  */
-class VirkailijaCreateContainer extends React.Component<StateProps, State> {
-    constructor(props: StateProps) {
-        super(props);
+export const VirkailijaCreateContainer = () => {
+    const navigate = useNavigate();
+    const [virheet, setVirheet] = useState<string[]>([]);
+    const [virkailija, setVirkailija] = useState(initialVirkailija);
+    const { L } = useLocalisations();
+    const disabled =
+        virheet.length > 0 || // pakolliset kentät:
+        !virkailija.etunimet ||
+        !virkailija.kutsumanimi ||
+        !virkailija.sukunimi ||
+        !virkailija.kayttajatunnus ||
+        !virkailija.salasana ||
+        !virkailija.salasanaUudestaan;
 
-        this.state = {
-            virkailija: {
-                etunimet: '',
-                kutsumanimi: '',
-                sukunimi: '',
-                kayttajatunnus: '',
-                salasana: '',
-                salasanaUudestaan: '',
-                vahvastiTunnistettu: true,
-            },
-            virheet: [],
-        };
-    }
-
-    render() {
-        const disabled =
-            this.state.virheet.length > 0 || // pakolliset kentät:
-            !this.state.virkailija.etunimet ||
-            !this.state.virkailija.kutsumanimi ||
-            !this.state.virkailija.sukunimi ||
-            !this.state.virkailija.kayttajatunnus ||
-            !this.state.virkailija.salasana ||
-            !this.state.virkailija.salasanaUudestaan;
-        return (
-            <div className="mainContent wrapper">
-                <span className="oph-h2 oph-bold">{this.props.L['VIRKAILIJAN_LUONTI_OTSIKKO']}</span>
-                <VirkailijaCreateForm
-                    virkailija={this.state.virkailija}
-                    disabled={disabled}
-                    onChange={this.onChange}
-                    onSubmit={this.onSubmit}
-                    L={this.props.L}
-                />
-                <LocalNotification
-                    title={this.props.L['NOTIFICATION_HENKILOTIEDOT_VIRHE_OTSIKKO']}
-                    toggle={this.state.virheet.length > 0}
-                    type="error"
-                >
-                    <ul>
-                        {this.state.virheet.map((virhe, index) => (
-                            <li key={index}>{virhe}</li>
-                        ))}
-                    </ul>
-                </LocalNotification>
-            </div>
-        );
-    }
-
-    onChange = (virkailija: VirkailijaCreate): void => {
-        const virheet = this.validate(virkailija);
-        this.setState({ virkailija: virkailija, virheet: virheet });
+    const onChange = (newVirkailija: VirkailijaCreate): void => {
+        setVirkailija(newVirkailija);
+        setVirheet(validate(newVirkailija));
     };
 
-    validate = (virkailija: VirkailijaCreate): Array<string> => {
+    const validate = (virkailija: VirkailijaCreate): Array<string> => {
         const virheet = [];
         if (virkailija.kutsumanimi) {
             if (!isValidKutsumanimi(virkailija.etunimet, virkailija.kutsumanimi)) {
-                virheet.push(this.props.L['REKISTEROIDY_ERROR_KUTSUMANIMI']);
+                virheet.push(L['REKISTEROIDY_ERROR_KUTSUMANIMI']);
             }
         }
         if (virkailija.kayttajatunnus) {
             if (!isValidKayttajatunnus(virkailija.kayttajatunnus)) {
-                virheet.push(this.props.L['NOTIFICATION_HENKILOTIEDOT_KAYTTAJATUNNUS_VIRHE']);
+                virheet.push(L['NOTIFICATION_HENKILOTIEDOT_KAYTTAJATUNNUS_VIRHE']);
             }
         }
         if (virkailija.salasana) {
             if (!isValidPassword(virkailija.salasana)) {
-                virheet.push(this.props.L['REKISTEROIDY_ERROR_PASSWORD_INVALID']);
+                virheet.push(L['REKISTEROIDY_ERROR_PASSWORD_INVALID']);
             }
             if (virkailija.salasana !== virkailija.salasanaUudestaan) {
-                virheet.push(this.props.L['REKISTEROIDY_ERROR_PASSWORD_MATCH']);
+                virheet.push(L['REKISTEROIDY_ERROR_PASSWORD_MATCH']);
             }
         }
         return virheet;
     };
 
-    onSubmit = async (virkailijaCreate: VirkailijaCreate): Promise<void> => {
+    const onSubmit = async (virkailijaCreate: VirkailijaCreate): Promise<void> => {
         try {
-            const oid = await this.createVirkailija(virkailijaCreate);
-            this.navigateToVirkailija(oid);
+            const oid = await createVirkailija(virkailijaCreate);
+            navigateToVirkailija(oid);
         } catch (error) {
-            this.handleError(error);
+            handleError(error);
             throw error;
         }
     };
 
-    handleError = (error: { errorType?: string }): void => {
+    const handleError = (error: { errorType?: string }): void => {
         if (error.errorType === 'AccessDeniedException') {
-            this.setState({
-                virheet: [...this.state.virheet, this.props.L['VIRKAILIJAN_LUONTI_EI_OIKEUKSIA']],
-            });
+            setVirheet([...virheet, L['VIRKAILIJAN_LUONTI_EI_OIKEUKSIA']]);
         } else if (error.errorType === 'UsernameAlreadyExistsException') {
-            this.setState({
-                virheet: [...this.state.virheet, this.props.L['REKISTEROIDY_USERNAMEEXISTS_OTSIKKO']],
-            });
+            setVirheet([...virheet, L['REKISTEROIDY_USERNAMEEXISTS_OTSIKKO']]);
         } else {
-            this.setState({
-                virheet: [...this.state.virheet, this.props.L['HENKILON_LUONTI_EPAONNISTUI']],
-            });
+            setVirheet([...virheet, L['HENKILON_LUONTI_EPAONNISTUI']]);
         }
     };
 
-    createVirkailija = async (virkailija: VirkailijaCreate): Promise<string> => {
+    const createVirkailija = async (virkailija: VirkailijaCreate): Promise<string> => {
         const url = urls.url('kayttooikeus-service.virkailija');
         return await http.post(url, virkailija);
     };
 
-    navigateToVirkailija = (oid: string) => {
-        window.location.href = `/henkilo-ui/virkailija/${oid}`;
+    const navigateToVirkailija = (oid: string) => {
+        navigate(`/virkailija/${oid}`);
     };
-}
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    L: state.l10n.localisations[state.locale],
-});
-
-export default connect<StateProps, object, null, RootState>(mapStateToProps)(VirkailijaCreateContainer);
+    return (
+        <div className="mainContent wrapper">
+            <span className="oph-h2 oph-bold">{L['VIRKAILIJAN_LUONTI_OTSIKKO']}</span>
+            <VirkailijaCreateForm virkailija={virkailija} disabled={disabled} onChange={onChange} onSubmit={onSubmit} />
+            <LocalNotification
+                title={L['NOTIFICATION_HENKILOTIEDOT_VIRHE_OTSIKKO']}
+                toggle={virheet.length > 0}
+                type="error"
+            >
+                <ul>
+                    {virheet.map((virhe, index) => (
+                        <li key={index}>{virhe}</li>
+                    ))}
+                </ul>
+            </LocalNotification>
+        </div>
+    );
+};

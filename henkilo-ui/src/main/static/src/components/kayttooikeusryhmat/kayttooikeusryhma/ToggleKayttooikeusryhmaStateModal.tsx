@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RouteActions } from 'react-router-redux';
+import { useNavigate } from 'react-router';
 
 import { useAppDispatch, type RootState } from '../../../store';
 import { http } from '../../../http';
@@ -13,7 +13,6 @@ import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooike
 import { useLocalisations } from '../../../selectors';
 
 type OwnProps = {
-    router: RouteActions;
     kayttooikeusryhmaId: string | null | undefined;
 };
 
@@ -22,6 +21,7 @@ type OwnProps = {
  */
 const ToggleKayttooikeusryhmaStateModal = (props: OwnProps) => {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const { L } = useLocalisations();
     const kayttooikeusryhma = useSelector<RootState, Kayttooikeusryhma>(
         (state) => state.kayttooikeus.kayttooikeusryhma
@@ -49,7 +49,7 @@ const ToggleKayttooikeusryhmaStateModal = (props: OwnProps) => {
             setIsWaitingRequest(true);
             await http.put(url);
             setIsWaitingRequest(false);
-            props.router.push('/kayttooikeusryhmat/');
+            navigate('/kayttooikeusryhmat/');
         } catch (error) {
             dispatch(
                 addGlobalNotification({

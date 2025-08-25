@@ -13,6 +13,8 @@ type Props = {
     data?: AnojaKayttooikeusryhmaData;
 };
 
+const emptyArray = [];
+
 /*
  * Komponentti anomuslistaukseen näyttämään anojan olemassa olevat ja rauenneet käyttöoikeudet
  */
@@ -45,11 +47,19 @@ export const AnojaKayttooikeusryhmat = ({ data }: Props) => {
         []
     );
 
+    const memoizedData = useMemo(() => {
+        const renderedData = data?.kayttooikeudet;
+        if (!renderedData || !renderedData.length) {
+            return undefined;
+        }
+        return renderedData;
+    }, [data]);
+
     const table = useReactTable({
-        data: data?.kayttooikeudet ?? [],
+        data: memoizedData ?? emptyArray,
         pageCount: 1,
         getCoreRowModel: getCoreRowModel(),
-        columns,
+        columns: columns ?? emptyArray,
     });
 
     if (!data) {

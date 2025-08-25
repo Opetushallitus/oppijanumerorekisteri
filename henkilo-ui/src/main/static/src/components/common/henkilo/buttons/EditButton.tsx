@@ -1,27 +1,20 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import type { RootState } from '../../../../store';
+
 import Button from '../../button/Button';
-import { Localisations } from '../../../../types/localisation.type';
+import { useLocalisations } from '../../../../selectors';
 
 type OwnProps = {
     editAction: () => void;
     disabled?: boolean;
 };
 
-type StateProps = {
-    L: Localisations;
+const EditButton = (props: OwnProps) => {
+    const { L } = useLocalisations();
+    return (
+        <Button key="edit" disabled={props.disabled} action={props.editAction}>
+            {L['MUOKKAA_LINKKI']}
+        </Button>
+    );
 };
 
-type Props = OwnProps & StateProps;
-
-const EditButton = (props: Props) => (
-    <Button key="edit" disabled={props.disabled} action={props.editAction}>
-        {props.L['MUOKKAA_LINKKI']}
-    </Button>
-);
-const mapStateToProps = (state: RootState): StateProps => ({
-    L: state.l10n.localisations[state.locale],
-});
-
-export default connect<StateProps, undefined, OwnProps, RootState>(mapStateToProps)(EditButton);
+export default EditButton;

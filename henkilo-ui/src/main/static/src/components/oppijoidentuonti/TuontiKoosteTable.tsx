@@ -13,6 +13,8 @@ import { useGetTuontikoosteQuery } from '../../api/oppijanumerorekisteri';
 import { useDebounce } from '../../useDebounce';
 import OphTable from '../OphTable';
 
+const emptyArray = [];
+
 const TuontiKoosteTable = () => {
     const [criteria, setCriteria] = useState<TuontiKoosteCriteria>({
         id: '',
@@ -102,8 +104,17 @@ const TuontiKoosteTable = () => {
         [data]
     );
 
+    const memoizedData = useMemo(() => {
+        const renderedData = data?.content;
+        if (!renderedData || !renderedData.length) {
+            return undefined;
+        }
+        return renderedData;
+    }, [data]);
+
     const table = useReactTable<TuontiKoosteRivi>({
-        data: data?.content ?? [],
+        data: memoizedData ?? emptyArray,
+        columns: columns ?? emptyArray,
         pageCount: data?.totalPages ?? 0,
         state: {
             pagination,
@@ -135,7 +146,6 @@ const TuontiKoosteTable = () => {
         getCoreRowModel: getCoreRowModel(),
         manualPagination: true,
         manualSorting: true,
-        columns,
         columnResizeMode: 'onChange',
     });
 

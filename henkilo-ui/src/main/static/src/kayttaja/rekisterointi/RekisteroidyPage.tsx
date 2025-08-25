@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { RouteActions } from 'react-router-redux';
 import { urls } from 'oph-urls-js';
+import { useNavigate } from 'react-router';
 
 import StaticUtils from '../../components/common/StaticUtils';
 import { isValidPassword } from '../../validation/PasswordValidator';
 import type { KutsuByToken, KutsuOrganisaatio } from '../../types/domain/kayttooikeus/Kutsu.types';
 import NotificationButton, { ButtonNotification } from '../../components/common/button/NotificationButton';
-import { KoodistoState } from '../../reducers/koodisto.reducer';
 import { Locale } from '../../types/locale.type';
 import { Localisations } from '../../types/localisation.type';
 import { http } from '../../http';
@@ -25,11 +24,9 @@ import { NamedSelectOption } from '../../utilities/select';
 import './RekisteroidyPage.css';
 
 type OwnProps = {
-    koodisto: KoodistoState;
     L: Localisations;
     locale: Locale;
     kutsu: KutsuByToken;
-    router: RouteActions;
 };
 
 type Henkilo = {
@@ -107,7 +104,8 @@ function validate(henkilo: Henkilo) {
 }
 
 export const RekisteroidyPage = (props: OwnProps) => {
-    const { kutsu, L, locale: anyLocale, router } = props;
+    const navigate = useNavigate();
+    const { kutsu, L, locale: anyLocale } = props;
     const locale = toSupportedLocale(anyLocale);
     const [privacyPolicySeen, setPrivacyPolicySeen] = useState(false);
     const [notification, setNotification] = useState<ButtonNotification>();
@@ -143,7 +141,7 @@ export const RekisteroidyPage = (props: OwnProps) => {
         setNotification(undefined);
         const url = urls.url('kayttooikeus-service.kutsu.by-token', kutsu.temporaryToken);
         http.post(url, henkilo).then(
-            () => router.push(`/kayttaja/rekisteroidy/valmis/${locale}`),
+            () => navigate(`/kayttaja/rekisteroidy/valmis/${locale}`),
             (error: { errorType?: string }) =>
                 setNotification(
                     rekisteroidyErrors[error.errorType] ?? {

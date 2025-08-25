@@ -7,7 +7,7 @@ import { Kayttaja } from '../../types/domain/kayttooikeus/kayttaja.types';
 import { TextGroup } from '../../types/domain/kayttooikeus/textgroup.types';
 import { Organisaatio } from '../../types/domain/organisaatio/organisaatio.types';
 import { toLocalizedText } from '../../localizabletext';
-import { Koodisto } from '../../types/domain/koodisto/koodisto.types';
+import { Koodi, Koodisto } from '../../types/domain/koodisto/koodisto.types';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../utilities/select';
 
 class StaticUtils {
@@ -164,6 +164,10 @@ class StaticUtils {
                 .find((k) => k.koodiArvo === koodiArvo)
                 ?.metadata?.find((m) => m.kieli?.toUpperCase() === locale.toUpperCase())?.nimi ?? koodiArvo
         );
+    }
+
+    static localizeKoodiNimi(koodi: Koodi, locale: Locale) {
+        return koodi?.metadata?.find((m) => m.kieli?.toUpperCase() === locale.toUpperCase())?.nimi ?? koodi.koodiArvo;
     }
 }
 

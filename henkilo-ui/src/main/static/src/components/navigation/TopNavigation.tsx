@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Link } from 'react-router';
+import { NavLink } from 'react-router';
 import classNames from 'classnames';
 import { urls } from 'oph-urls-js';
 import { useSelector } from 'react-redux';
@@ -13,11 +13,7 @@ import { RootState } from '../../store';
 
 import './TopNavigation.css';
 
-type OwnProps = {
-    pathName: string | null | undefined;
-};
-
-export const TopNavigation = ({ pathName }: OwnProps) => {
+export const TopNavigation = () => {
     const { L } = useLocalisations();
     const { data: omattiedot } = useGetOmattiedotQuery();
     const navigation = useSelector((state: RootState) => state.navigation);
@@ -46,36 +42,40 @@ export const TopNavigation = ({ pathName }: OwnProps) => {
                             href="?"
                             onClick={(e) => {
                                 e.preventDefault();
-                                window.history.go(-1);
-                                return false;
+                                window.history.back();
                             }}
                         >
                             &#8701; {L['TAKAISIN_LINKKI']} <PlaceholderIcon />
                         </a>
                     </li>
                 ) : null}
-                {navigation.tabs.length > 0 &&
-                    navigation.tabs
-                        .filter(
-                            (tab) =>
-                                omattiedot.isAdmin ||
-                                !tab.sallitutRoolit ||
-                                tab.sallitutRoolit.some((r) => !!r && roolit.includes(r))
-                        )
-                        .map((tab, index) => {
-                            const className = classNames({
-                                active: tab.path === pathName,
-                                'disabled-link': tab.disabled,
-                            });
-                            return (
-                                <li key={index}>
-                                    <Link className={className} to={tab.path}>
+                {navigation.tabs
+                    .filter(
+                        (tab) =>
+                            omattiedot.isAdmin ||
+                            !tab.sallitutRoolit ||
+                            tab.sallitutRoolit.some((r) => !!r && roolit.includes(r))
+                    )
+                    .map((tab, index) => (
+                        <li key={index}>
+                            <NavLink
+                                className={({ isActive }) =>
+                                    classNames({
+                                        active: isActive,
+                                        'disabled-link': tab.disabled,
+                                    })
+                                }
+                                to={tab.path}
+                            >
+                                {({ isActive }) => (
+                                    <span>
                                         {L[tab.label] ?? tab.label}
-                                        {tab.path === pathName ? <AngleDownIcon /> : <PlaceholderIcon />}
-                                    </Link>
-                                </li>
-                            );
-                        })}
+                                        {isActive ? <AngleDownIcon /> : <PlaceholderIcon />}
+                                    </span>
+                                )}
+                            </NavLink>
+                        </li>
+                    ))}
             </ul>
         </div>
     );

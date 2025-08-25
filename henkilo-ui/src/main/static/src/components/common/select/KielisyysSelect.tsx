@@ -14,22 +14,20 @@ type KielisyysSelectProps = {
 /**
  * Komponentti kielisyyden valitsemiseen.
  */
-class KielisyysSelect extends React.Component<KielisyysSelectProps> {
-    render() {
-        return (
-            <KoodistoSelect
-                className={this.props.className}
-                placeholder={this.props.placeholder}
-                koodisto={this.props.koodisto}
-                value={this.props.value ? this.props.value.kieliKoodi : null}
-                onChange={this.onChange}
-            />
-        );
-    }
-
-    onChange = (value: string | null | undefined) => {
-        this.props.onChange(value ? { kieliKoodi: value } : null);
+const KielisyysSelect = (props: KielisyysSelectProps) => {
+    const onChange = (value: string | null | undefined) => {
+        props.onChange(value ? { kieliKoodi: value } : null);
     };
-}
+
+    return (
+        <KoodistoSelect
+            className={props.className}
+            placeholder={props.placeholder}
+            koodisto={props.koodisto}
+            value={props.value ? props.value.kieliKoodi : null}
+            onChange={onChange}
+        />
+    );
+};
 
 export default KielisyysSelect;

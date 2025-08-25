@@ -6,14 +6,12 @@ type OphFieldProps = {
     children: React.ReactNode;
 };
 
-class OphField extends React.Component<OphFieldProps> {
-    render() {
-        const classes = classNames({
-            'oph-field': true,
-            'oph-field-is-required': this.props.required,
-        });
-        return <div className={classes}>{this.props.children}</div>;
-    }
-}
+const OphField = (props: OphFieldProps) => {
+    const classes = classNames({
+        'oph-field': true,
+        'oph-field-is-required': props.required,
+    });
+    return <div className={classes}>{props.children}</div>;
+};
 
 export default OphField;

@@ -1,13 +1,11 @@
 import React from 'react';
-import { render } from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { Router, useRouterHistory } from 'react-router';
-import { createHistory } from 'history';
-import { syncHistoryWithStore } from 'react-router-redux';
+import { BrowserRouter } from 'react-router';
 import { urls } from 'oph-urls-js';
 
 import frontUrls from './henkilo-ui-virkailija-oph';
-import routes from './routes';
+import { AppRoutes } from './routes';
 import PropertySingleton from './globals/PropertySingleton';
 import { store } from './store';
 
@@ -22,20 +20,13 @@ import './oph-design-system.css';
 urls.addProperties(frontUrls);
 urls.addCallerId(PropertySingleton.getState().opintopolkuCallerId);
 urls.load();
+window.opintopolku_caller_id = PropertySingleton.getState().opintopolkuCallerId;
 
-const App = () => {
-    const browserHistory = useRouterHistory(createHistory)({
-        basename: '/henkilo-ui',
-    });
-
-    const history = syncHistoryWithStore(browserHistory, store);
-    window.opintopolku_caller_id = PropertySingleton.getState().opintopolkuCallerId;
-
-    return (
+const root = document.getElementById('root');
+ReactDOM.createRoot(root).render(
+    <BrowserRouter basename="/henkilo-ui">
         <Provider store={store}>
-            <Router history={history} routes={routes} onUpdate={() => window.scrollTo(0, 0)} />
+            <AppRoutes />
         </Provider>
-    );
-};
-
-render(<App />, document.getElementById('root'));
+    </BrowserRouter>
+);

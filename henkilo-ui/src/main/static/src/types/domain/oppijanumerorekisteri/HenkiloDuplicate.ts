@@ -1,18 +1,13 @@
 import { Kielisyys } from './kielisyys.types';
 import { Kansalaisuus } from './kansalaisuus.types';
-import type { Henkilo, HenkiloCreate } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
+import type { HenkiloCreate } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import type { Kayttaja } from '../../../types/domain/kayttooikeus/kayttaja.types';
 import { Hakemus } from './Hakemus.type';
 
 export type HenkiloDuplicateLenient = {
-    henkilo: HenkiloCreate | Henkilo;
-    duplicates: HenkiloDuplicate[];
-    duplicatesLoading?: boolean;
+    henkilo: HenkiloCreate;
     kayttaja?: Kayttaja;
-    masterLoading?: boolean;
-    master?: {
-        oidHenkilo: string;
-    };
+    hakemukset?: Hakemus[];
 };
 
 export type HenkiloDuplicate = {

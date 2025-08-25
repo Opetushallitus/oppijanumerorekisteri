@@ -19,6 +19,8 @@ type Props = {
     report: AccessRightsReportRow[];
 };
 
+const emptyArray = [];
+
 const formatDate = (d: string) => moment(d).format(PropertySingleton.state.PVM_MOMENT_FORMAATTI);
 
 export const AccessRightsReport = ({ report }: Props) => {
@@ -75,9 +77,17 @@ export const AccessRightsReport = ({ report }: Props) => {
         [report]
     );
 
+    const memoizedData = useMemo(() => {
+        const renderedData = report;
+        if (!renderedData || !renderedData.length) {
+            return undefined;
+        }
+        return renderedData;
+    }, [report]);
+
     const table = useReactTable({
-        data: report,
-        columns,
+        data: memoizedData ?? emptyArray,
+        columns: columns ?? emptyArray,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),

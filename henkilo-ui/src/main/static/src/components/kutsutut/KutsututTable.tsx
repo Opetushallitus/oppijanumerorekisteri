@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import moment from 'moment';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, Row, SortingState } from '@tanstack/react-table';
 
@@ -14,37 +14,26 @@ import { useAppDispatch } from '../../store';
 import { OphTableWithInfiniteScroll } from '../OphTableWithInfiniteScroll';
 import { expanderColumn } from '../OphTable';
 import { KutsututSearchParams } from './KutsututPage';
-import { KutsututSortBy, useGetKutsututQuery, usePutRenewKutsuMutation } from '../../api/kayttooikeus';
+import { KutsututSortBy, useGetKutsututInfiniteQuery, usePutRenewKutsuMutation } from '../../api/kayttooikeus';
 
 type OwnProps = {
     params: KutsututSearchParams;
     cancelInvitation: (kutsu: KutsuRead) => void;
 };
 
+const emptyArray = [];
+
 const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
     const [sorting, setSorting] = useState<SortingState>([{ id: 'AIKALEIMA', desc: true }]);
     const { L, locale } = useLocalisations();
     const dispatch = useAppDispatch();
-    const [offset, setOffset] = useState(0);
-    const [allFetched, setAllFetched] = useState(false);
     const [renewKutsu] = usePutRenewKutsuMutation();
-    const { data, isFetching } = useGetKutsututQuery({
+    const { data, isFetching, fetchNextPage, hasNextPage } = useGetKutsututInfiniteQuery({
         params,
         sortBy: (sorting[0]?.id ?? 'AIKALEIMA') as KutsututSortBy,
         direction: sorting[0]?.desc ? 'DESC' : 'ASC',
-        offset: String(offset),
         amount: String(40),
     });
-    const [resultCount, setResultCount] = useState(data?.length ?? 0);
-
-    useEffect(() => {
-        setAllFetched(!isFetching && data?.length && (data?.length < 40 || data?.length === resultCount));
-        setResultCount(data?.length ?? 0);
-    }, [data]);
-
-    useEffect(() => {
-        setOffset(0);
-    }, [params]);
 
     const resendAction = async (id: number) => {
         renewKutsu(id)
@@ -162,9 +151,17 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
         []
     );
 
+    const memoizedData = useMemo(() => {
+        const renderedData = data?.pages.flat();
+        if (!renderedData || !renderedData.length) {
+            return undefined;
+        }
+        return renderedData;
+    }, [data]);
+
     const table = useReactTable({
-        columns,
-        data: data ?? [],
+        columns: columns ?? emptyArray,
+        data: memoizedData ?? emptyArray,
         pageCount: 1,
         state: {
             sorting,
@@ -180,10 +177,10 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
             <OphTableWithInfiniteScroll<KutsuRead>
                 table={table}
                 isLoading={isFetching}
-                fetch={() => setOffset(offset + 40)}
-                isActive={!allFetched && !isFetching && !!data?.length}
+                fetch={() => fetchNextPage()}
+                isActive={!isFetching && hasNextPage}
                 renderSubComponent={({ row }) => (
-                    <KutsuDetails kutsu={data?.find((kutsu) => kutsu.id === row.original.id)} />
+                    <KutsuDetails kutsu={memoizedData?.find((kutsu) => kutsu.id === row.original.id)} />
                 )}
             />
         </div>

@@ -66,7 +66,6 @@ export type GetHaetutKayttooikeusryhmatRequest = {
     adminView: string;
     anomuksenTilat: string;
     kayttoOikeudenTilas: string;
-    offset: string;
 };
 
 export type PutHaettuKayttooikeusryhmaRequest = {
@@ -101,7 +100,6 @@ type KutsututRequest = {
     params: KutsututSearchParams;
     sortBy: KutsututSortBy;
     direction: 'ASC' | 'DESC';
-    offset: string;
     amount: string;
 };
 
@@ -246,21 +244,20 @@ export const kayttooikeusApi = createApi({
             }),
             invalidatesTags: ['palvelukayttaja', 'palvelukayttajat'],
         }),
-        getHenkiloHaku: builder.query<HenkilohakuResult[], Henkilohaku>({
-            query: ({ criteria, parameters }) => ({
-                url: `henkilo/henkilohaku?${new URLSearchParams(parameters).toString()}`,
+        getHenkiloHaku: builder.infiniteQuery<HenkilohakuResult[], Henkilohaku, number>({
+            query: ({ queryArg: { criteria, parameters }, pageParam }) => ({
+                url: `henkilo/henkilohaku?${new URLSearchParams({
+                    ...parameters,
+                    offset: String(pageParam),
+                }).toString()}`,
                 method: 'POST',
                 body: { ...criteria, isCountSearch: false },
             }),
-            // "infinite scroll" i.e. merge new results when offset is increased
-            serializeQueryArgs: ({ endpointName, queryArgs }) =>
-                endpointName + JSON.stringify(queryArgs.criteria) + queryArgs.parameters?.orderBy,
-            merge: (currentCache, newItems) => {
-                const uniqueItems = [...new Map([...currentCache, ...newItems].map((x) => [x.oidHenkilo, x])).values()];
-                return uniqueItems;
+            infiniteQueryOptions: {
+                initialPageParam: 0,
+                getNextPageParam: (lastPage, _, lastPageParam) =>
+                    lastPage.length === 100 ? lastPageParam + 100 : undefined,
             },
-            forceRefetch: ({ currentArg, previousArg }) =>
-                JSON.stringify(currentArg?.parameters) !== JSON.stringify(previousArg?.parameters),
             providesTags: ['henkilohaku'],
         }),
         getHenkiloHakuCount: builder.query<string, HenkilohakuCriteria>({
@@ -272,27 +269,24 @@ export const kayttooikeusApi = createApi({
             }),
             providesTags: ['henkilohakucount'],
         }),
-        getHaetutKayttooikeusryhmat: builder.query<HaettuKayttooikeusryhma[], GetHaetutKayttooikeusryhmatRequest>({
-            query: ({ kayttooikeusRyhmaIds, ...rest }) => {
-                const params = new URLSearchParams(rest);
+        getHaetutKayttooikeusryhmat: builder.infiniteQuery<
+            HaettuKayttooikeusryhma[],
+            GetHaetutKayttooikeusryhmatRequest,
+            number
+        >({
+            query: ({ queryArg: { kayttooikeusRyhmaIds, ...rest }, pageParam }) => {
+                const params = new URLSearchParams({ ...rest, offset: String(pageParam) });
                 kayttooikeusRyhmaIds?.forEach((id) => params.append('kayttooikeusRyhmaIds', String(id)));
                 return `kayttooikeusanomus/haettuKayttoOikeusRyhma?${params.toString()}`;
             },
-            // "infinite scroll" i.e. merge new results when offset is increased
-            serializeQueryArgs: ({ endpointName, queryArgs }) =>
-                endpointName +
-                queryArgs?.orderBy +
-                queryArgs?.q +
-                queryArgs?.organisaatioOids +
-                queryArgs?.adminView +
-                queryArgs?.kayttooikeusRyhmaIds?.toString(),
-            merge: (currentCache, newItems) => [
-                ...new Map([...currentCache, ...newItems].map((x) => [x.id, x])).values(),
-            ],
-            forceRefetch: ({ currentArg, previousArg }) => currentArg?.offset !== previousArg?.offset,
+            infiniteQueryOptions: {
+                initialPageParam: 0,
+                getNextPageParam: (lastPage, _, lastPageParam) =>
+                    lastPage.length === 20 ? lastPageParam + 20 : undefined,
+            },
             async onQueryStarted(_token, { dispatch, queryFulfilled }) {
                 const { data } = await queryFulfilled;
-                await dispatch<any>(fetchOrganisations(data.map((h) => h.anomus.organisaatioOid)));
+                await dispatch<any>(fetchOrganisations(data.pages.flat().map((h) => h.anomus.organisaatioOid)));
             },
             providesTags: ['haetutKayttooikeusryhmat'],
         }),
@@ -311,16 +305,20 @@ export const kayttooikeusApi = createApi({
                 body,
             }),
         }),
-        getKutsutut: builder.query<KutsuRead[], KutsututRequest>({
-            query: ({ params, sortBy, direction, offset, amount }) =>
-                `kutsu?${new URLSearchParams({ ...params, sortBy, direction, offset, amount }).toString()}`,
-            // "infinite scroll" i.e. merge new results when offset is increased
-            serializeQueryArgs: ({ endpointName, queryArgs }) =>
-                endpointName + JSON.stringify(queryArgs.params) + queryArgs.sortBy + queryArgs.direction,
-            merge: (currentCache, newItems) => [
-                ...new Map([...currentCache, ...newItems].map((x) => [x.id, x])).values(),
-            ],
-            forceRefetch: ({ currentArg, previousArg }) => currentArg?.offset !== previousArg?.offset,
+        getKutsutut: builder.infiniteQuery<KutsuRead[], KutsututRequest, number>({
+            query: ({ queryArg: { params, sortBy, direction, amount }, pageParam }) =>
+                `kutsu?${new URLSearchParams({
+                    ...params,
+                    sortBy,
+                    direction,
+                    offset: String(pageParam),
+                    amount,
+                }).toString()}`,
+            infiniteQueryOptions: {
+                initialPageParam: 0,
+                getNextPageParam: (lastPage, _, lastPageParam) =>
+                    lastPage.length === 40 ? lastPageParam + 40 : undefined,
+            },
             providesTags: ['kutsutut'],
         }),
         deleteKutsu: builder.mutation<void, number>({
@@ -411,12 +409,12 @@ export const {
     usePostPalvelukayttajaMutation,
     usePutPalvelukayttajaCasPasswordMutation,
     usePutPalvelukayttajaOauth2SecretMutation,
-    useGetHenkiloHakuQuery,
+    useGetHenkiloHakuInfiniteQuery,
     useGetHenkiloHakuCountQuery,
-    useGetHaetutKayttooikeusryhmatQuery,
+    useGetHaetutKayttooikeusryhmatInfiniteQuery,
     usePutHaettuKayttooikeusryhmaMutation,
     usePostSalasananVaihtoMutation,
-    useGetKutsututQuery,
+    useGetKutsututInfiniteQuery,
     useDeleteKutsuMutation,
     usePutRenewKutsuMutation,
     useGetHenkiloHakuOrganisaatiotQuery,

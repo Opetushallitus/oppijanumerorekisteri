@@ -20,6 +20,8 @@ type HenkiloData = {
     palvelu: string;
 };
 
+const emptyArray = [];
+
 const VtjVertailuListaus = ({ henkilo }: Props) => {
     const { L } = useLocalisations();
 
@@ -89,12 +91,20 @@ const VtjVertailuListaus = ({ henkilo }: Props) => {
         [henkilo]
     );
 
-    const table = useReactTable({
-        data: [
+    const memoizedData = useMemo(() => {
+        const renderedData = [
             { ...henkilo?.henkilo, palvelu: 'HENKILO_VTJ_HENKILOPALVELU' },
             { ...henkilo?.yksilointitiedot, palvelu: 'HENKILO_VTJ_VRKPALVELU' },
-        ],
-        columns,
+        ];
+        if (!renderedData || !renderedData.length) {
+            return undefined;
+        }
+        return renderedData;
+    }, [henkilo?.henkilo, henkilo?.yksilointitiedot]);
+
+    const table = useReactTable({
+        data: memoizedData ?? emptyArray,
+        columns: columns ?? emptyArray,
         getCoreRowModel: getCoreRowModel(),
     });
 

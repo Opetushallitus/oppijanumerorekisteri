@@ -23,6 +23,8 @@ type Props = {
     oid?: string;
 };
 
+const emptyArray = [];
+
 export const Identifications = ({ oid }: Props) => {
     const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
@@ -104,10 +106,18 @@ export const Identifications = ({ oid }: Props) => {
         [data]
     );
 
+    const memoizedData = useMemo(() => {
+        const renderedData = data;
+        if (!renderedData || !renderedData.length) {
+            return undefined;
+        }
+        return renderedData;
+    }, [data]);
+
     const table = useReactTable({
-        columns,
+        columns: columns ?? emptyArray,
         pageCount: 1,
-        data,
+        data: memoizedData ?? emptyArray,
         enableSorting: false,
         getCoreRowModel: getCoreRowModel(),
     });

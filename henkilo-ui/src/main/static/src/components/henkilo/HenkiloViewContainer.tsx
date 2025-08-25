@@ -1,19 +1,14 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { RouteActions } from 'react-router-redux';
+import { useLocation, useNavigate, useParams } from 'react-router';
 
 import { useAppDispatch, type RootState } from '../../store';
 import Loader from '../common/icons/Loader';
-import {
-    fetchKansalaisuusKoodisto,
-    fetchKieliKoodisto,
-    fetchYhteystietotyypitKoodisto,
-} from '../../actions/koodisto.actions';
+import { fetchYhteystietotyypitKoodisto } from '../../actions/koodisto.actions';
 import {
     clearHenkilo,
     fetchHenkilo,
     fetchHenkiloOrgs,
-    fetchHenkiloSlaves,
     fetchHenkiloYksilointitieto,
     fetchKayttaja,
     fetchKayttajatieto,
@@ -33,12 +28,7 @@ import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { henkiloViewTabs } from '../navigation/NavigationTabs';
-
-type OwnProps = {
-    router: RouteActions;
-    location: { pathname: string };
-    params: { oid?: string };
-};
+import { useGetHenkiloMasterQuery } from '../../api/oppijanumerorekisteri';
 
 const getView = (henkiloType: string, omattiedot: Omattiedot): View => {
     if (omattiedot.isAdmin) {
@@ -58,30 +48,30 @@ const titles = {
 /*
  * Henkilo-näkymä. Päätellään näytetäänkö admin/virkailija/oppija -versio henkilöstä, vai siirrytäänkö omattiedot-sivulle
  */
-const HenkiloViewContainer = ({ router, location, params }: OwnProps) => {
+const HenkiloViewContainer = () => {
     const { data: omattiedot } = useGetOmattiedotQuery();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const { L } = useLocalisations();
-    const { oid } = params;
+    const { oid } = useParams();
+    const { data: master } = useGetHenkiloMasterQuery(oid);
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const henkiloType = location.pathname.split('/')[1];
     const view = getView(henkiloType, omattiedot);
     useTitle(L[titles[henkiloType ?? 'oppija']]);
-    useNavigation(henkiloViewTabs(params.oid, henkilo, henkiloType), true);
+    useNavigation(henkiloViewTabs(oid, henkilo, henkiloType, master?.oidHenkilo), true);
 
     useEffect(() => {
         if (oid && omattiedot.oidHenkilo === oid) {
-            router.replace('/omattiedot');
+            navigate('/omattiedot', { replace: true });
         }
 
         dispatch<any>(clearHenkilo());
         dispatch<any>(fetchHenkilo(oid));
         dispatch<any>(fetchHenkiloYksilointitieto(oid));
-        dispatch<any>(fetchHenkiloSlaves(oid));
         dispatch<any>(fetchYhteystietotyypitKoodisto());
-        dispatch<any>(fetchKieliKoodisto());
-        dispatch<any>(fetchKansalaisuusKoodisto());
 
         if (view === 'admin' || view === 'virkailija') {
             dispatch<any>(fetchHenkiloOrgs(oid));

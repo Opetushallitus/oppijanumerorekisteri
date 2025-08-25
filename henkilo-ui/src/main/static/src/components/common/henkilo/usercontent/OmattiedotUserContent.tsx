@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { SyntheticEvent } from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../../../store';
 import AbstractUserContent from './AbstractUserContent';
@@ -23,7 +23,6 @@ import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
 import { AnomusIlmoitus } from '../labelvalues/AnomusIlmoitus';
 import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
 import HenkiloVarmentajaSuhde from '../labelvalues/HenkiloVarmentajaSuhde';
-import { KoodistoState } from '../../../../reducers/koodisto.reducer';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
 
@@ -31,9 +30,9 @@ type OwnProps = {
     readOnly: boolean;
     discardAction: () => void;
     updateAction: () => void;
-    updateModelAction: () => void;
+    updateModelAction: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
     updateModelSelectAction: (o: NamedSelectOption | NamedMultiSelectOption) => void;
-    updateDateAction: () => void;
+    updateDateAction: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
     edit: () => void;
     henkiloUpdate: Henkilo;
     oidHenkilo: string;
@@ -42,7 +41,6 @@ type OwnProps = {
 
 type StateProps = {
     henkilo: HenkiloState;
-    koodisto: KoodistoState;
     L: Localisations;
     isAdmin: boolean;
     omattiedot: OmattiedotState;
@@ -52,11 +50,7 @@ type Props = OwnProps & StateProps;
 
 class OmattiedotUserContent extends React.Component<Props> {
     render() {
-        return this.props.henkilo.henkiloLoading ||
-            this.props.henkilo.kayttajatietoLoading ||
-            this.props.koodisto.sukupuoliKoodistoLoading ||
-            this.props.koodisto.kieliKoodistoLoading ||
-            this.props.koodisto.kansalaisuusKoodistoLoading ? (
+        return this.props.henkilo.henkiloLoading || this.props.henkilo.kayttajatietoLoading ? (
             <Loader />
         ) : (
             <AbstractUserContent
@@ -138,7 +132,6 @@ class OmattiedotUserContent extends React.Component<Props> {
 
 const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
-    koodisto: state.koodisto,
     L: state.l10n.localisations[state.locale],
     isAdmin: state.omattiedot.isAdmin,
     omattiedot: state.omattiedot,

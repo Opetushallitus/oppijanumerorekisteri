@@ -11,39 +11,37 @@ type Props = {
 /**
  * Tyylioppaan mukainen "Radio button group" -komponentti totuusarvoille.
  */
-class BooleanRadioButtonGroup extends React.Component<Props> {
-    render() {
-        return (
-            <fieldset className={`oph-fieldset ${this.props.className ?? ''}`}>
-                <div className="oph-radio-button-group">
-                    <label>
-                        <input
-                            className="oph-radio-button-input"
-                            type="radio"
-                            value="false"
-                            checked={this.props.value === false}
-                            onChange={this.onChange}
-                        />
-                        <span className="oph-radio-button-text">{this.props.falseLabel}</span>
-                    </label>
-                    <label>
-                        <input
-                            className="oph-radio-button-input"
-                            type="radio"
-                            value="true"
-                            checked={this.props.value === true}
-                            onChange={this.onChange}
-                        />
-                        <span className="oph-radio-button-text">{this.props.trueLabel}</span>
-                    </label>
-                </div>
-            </fieldset>
-        );
-    }
-
-    onChange = (event) => {
-        this.props.onChange(event.target.value === 'true');
+const BooleanRadioButtonGroup = (props: Props) => {
+    const onChange = (event) => {
+        props.onChange(event.target.value === 'true');
     };
-}
+
+    return (
+        <fieldset className={`oph-fieldset ${props.className ?? ''}`}>
+            <div className="oph-radio-button-group">
+                <label>
+                    <input
+                        className="oph-radio-button-input"
+                        type="radio"
+                        value="false"
+                        checked={props.value === false}
+                        onChange={onChange}
+                    />
+                    <span className="oph-radio-button-text">{props.falseLabel}</span>
+                </label>
+                <label>
+                    <input
+                        className="oph-radio-button-input"
+                        type="radio"
+                        value="true"
+                        checked={props.value === true}
+                        onChange={onChange}
+                    />
+                    <span className="oph-radio-button-text">{props.trueLabel}</span>
+                </label>
+            </div>
+        </fieldset>
+    );
+};
 
 export default BooleanRadioButtonGroup;

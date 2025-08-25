@@ -10,15 +10,13 @@ import { useGetLocalisationsQuery } from '../api/lokalisointi';
 import { useGetOmattiedotQuery } from '../api/kayttooikeus';
 import VirhePage from '../components/common/page/VirhePage';
 import { toSupportedLocale } from '../reducers/locale.reducer';
+import { Outlet, useParams } from 'react-router';
 
-type OwnProps = {
-    children: React.ReactNode;
-};
-
-const App = ({ children }: OwnProps) => {
+const App = () => {
     const [isInitialized, setIsInitialized] = useState(false);
-    const { l10n, locale: anyLocale } = useLocalisations();
-    const locale = toSupportedLocale(anyLocale);
+    const { l10n } = useLocalisations();
+    const params = useParams();
+    const locale = toSupportedLocale(params.locale);
     const { isSuccess: isLocalisationsSuccess } = useGetLocalisationsQuery('henkilo-ui');
     const { data: omattiedot, isSuccess: isOmattiedotSuccess } = useGetOmattiedotQuery();
     const L = l10n?.localisations[locale] ?? {};
@@ -56,7 +54,9 @@ const App = ({ children }: OwnProps) => {
                     <img src={okmLogo} alt="okm logo" style={{ paddingLeft: '70px' }} />
                 </div>
             </div>
-            <div className="mainContent">{children}</div>
+            <div className="mainContent">
+                <Outlet />
+            </div>
         </div>
     );
 };

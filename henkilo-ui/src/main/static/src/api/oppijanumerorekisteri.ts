@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
-import { LOCATION_CHANGE } from 'react-router-redux';
 
 import { getCommonOptions } from '../http';
 import { Localisations } from '../types/localisation.type';
@@ -14,7 +13,8 @@ import { Page } from '../types/Page.types';
 import { OppijaList } from '../types/domain/oppijanumerorekisteri/oppijalist.types';
 import { Identification } from '../types/domain/oppijanumerorekisteri/Identification.types';
 import { add } from '../slices/toastSlice';
-import { Henkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
+import { Henkilo, LinkedHenkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
+import { HenkiloDuplicate } from '../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 
 type Passinumerot = string[];
 
@@ -23,6 +23,13 @@ export type LinkHenkilosRequest = {
     force: boolean;
     duplicateOids: string[];
     L: Localisations;
+};
+
+export type CreateHenkiloRequest = {
+    hetu: string;
+    etunimet: string;
+    kutsumanimi: string;
+    sukunimi: string;
 };
 
 const staggeredBaseQuery = retry(
@@ -49,6 +56,9 @@ export const oppijanumerorekisteriApi = createApi({
         'oppijoidentuontiyhteenveto',
         'oppijoidentuontilistaus',
         'henkilo',
+        'master',
+        'slaves',
+        'duplicates',
     ],
     endpoints: (builder) => ({
         getLocale: builder.query<Locale, void>({
@@ -59,7 +69,6 @@ export const oppijanumerorekisteriApi = createApi({
             async onQueryStarted(_, { dispatch, queryFulfilled }) {
                 const { data } = await queryFulfilled;
                 dispatch({ type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, lang: data });
-                dispatch({ type: LOCATION_CHANGE });
             },
             providesTags: ['locale'],
         }),
@@ -83,6 +92,10 @@ export const oppijanumerorekisteriApi = createApi({
                 body: duplicateOids,
             }),
             extraOptions: { maxRetries: 0 },
+            invalidatesTags: (_result, _error, { masterOid }) => [
+                { type: 'master', id: masterOid },
+                { type: 'slaves', id: masterOid },
+            ],
             async onQueryStarted({ masterOid, L }, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
@@ -239,6 +252,74 @@ export const oppijanumerorekisteriApi = createApi({
             }),
             invalidatesTags: (_result, _error, { oid }) => [{ type: 'identifications', id: oid }],
         }),
+        createHenkilo: builder.mutation<string, CreateHenkiloRequest>({
+            query: (request) => ({
+                url: 'henkilo',
+                method: 'POST',
+                body: request,
+                responseHandler: 'text',
+            }),
+        }),
+        henkiloExists: builder.mutation<{ oid: string; status: number }, CreateHenkiloRequest>({
+            query: (request) => ({
+                url: 'henkilo/exists',
+                method: 'POST',
+                body: request,
+            }),
+            transformResponse: (data: { oid: string }, meta) => {
+                return { ...data, status: meta.response?.status };
+            },
+            transformErrorResponse: (_data, meta) => {
+                return { status: meta.response?.status };
+            },
+            extraOptions: { maxRetries: 0 }, // valid api responses include status codes 400 and 409
+        }),
+        getHenkiloMaster: builder.query<LinkedHenkilo, string>({
+            query: (oid) => `henkilo/${oid}/master`,
+            providesTags: (_result, _error, oid) => [{ type: 'master', id: oid }],
+        }),
+        getHenkiloSlaves: builder.query<LinkedHenkilo[], string>({
+            query: (oid) => `henkilo/${oid}/slaves`,
+            providesTags: (_result, _error, oid) => [{ type: 'slaves', id: oid }],
+        }),
+        unlinkHenkilo: builder.mutation<void, { masterOid: string; slaveOid: string }>({
+            query: ({ masterOid, slaveOid }) => ({
+                url: `henkilo/${masterOid}/unlink/${slaveOid}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: (_result, _error, { masterOid, slaveOid }) => [
+                { type: 'master', id: masterOid },
+                { type: 'master', id: slaveOid },
+                { type: 'slaves', id: masterOid },
+                { type: 'slaves', id: slaveOid },
+            ],
+        }),
+        getHenkiloDuplicates: builder.query<HenkiloDuplicate[], { oid: string; L: Localisations }>({
+            query: ({ oid }) => `henkilo/${oid}/duplicates`,
+            providesTags: (_result, _error, { oid }) => [{ type: 'duplicates', id: oid }],
+            async onQueryStarted({ L, oid }, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                } catch (error) {
+                    let errorMessage = L['NOTIFICATION_DUPLIKAATIT_VIRHE'] + ' ' + oid;
+                    if (
+                        error.message?.startsWith('Failed to read response from ataru') ||
+                        error.message?.startsWith('Failed to fetch applications from ataru')
+                    ) {
+                        errorMessage = L['NOTIFICATION_DUPLIKAATIT_HAKEMUKSET_ATARU_VIRHE'] + ' ' + oid;
+                    } else if (error.message?.startsWith('Failed fetching hakemuksetDto for henkilos')) {
+                        errorMessage = L['NOTIFICATION_DUPLIKAATIT_HAKEMUKSET_HAKUAPP_VIRHE'] + ' ' + oid;
+                    }
+                    dispatch(
+                        add({
+                            id: `tuontidata-${Math.random()}`,
+                            header: errorMessage,
+                            type: 'error',
+                        })
+                    );
+                }
+            },
+        }),
     }),
 });
 
@@ -259,4 +340,10 @@ export const {
     useGetIdentificationsQuery,
     usePostIdentificationMutation,
     useDeleteIdentificationMutation,
+    useCreateHenkiloMutation,
+    useHenkiloExistsMutation,
+    useGetHenkiloMasterQuery,
+    useGetHenkiloSlavesQuery,
+    useUnlinkHenkiloMutation,
+    useGetHenkiloDuplicatesQuery,
 } = oppijanumerorekisteriApi;

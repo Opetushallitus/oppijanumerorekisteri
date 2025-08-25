@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { SyntheticEvent } from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../../../store';
 import AbstractUserContent from './AbstractUserContent';
@@ -27,9 +27,9 @@ type OwnProps = {
     readOnly: boolean;
     discardAction: () => void;
     updateAction: () => void;
-    updateModelAction: () => void;
+    updateModelAction: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
     updateModelSelectAction: (o: NamedSelectOption | NamedMultiSelectOption) => void;
-    updateDateAction: () => void;
+    updateDateAction: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
     edit: () => void;
     henkiloUpdate: Henkilo;
     oidHenkilo: string;
@@ -49,8 +49,6 @@ type Props = OwnProps & StateProps;
 class VirkailijaUserContent extends React.Component<Props> {
     render() {
         return this.props.henkilo.henkiloLoading ||
-            this.props.koodisto.kieliKoodistoLoading ||
-            this.props.koodisto.kansalaisuusKoodistoLoading ||
             this.props.henkilo.kayttajatietoLoading ||
             this.props.koodisto.yhteystietotyypitKoodistoLoading ? (
             <Loader />

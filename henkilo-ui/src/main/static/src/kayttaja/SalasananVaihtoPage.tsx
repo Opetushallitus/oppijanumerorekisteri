@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useParams } from 'react-router';
 
 import { useLocalisations } from '../selectors';
 import Button from '../components/common/button/Button';
@@ -11,16 +12,10 @@ import Loader from '../components/common/icons/Loader';
 import { useTitle } from '../useTitle';
 import { toSupportedLocale } from '../reducers/locale.reducer';
 
-type Props = {
-    params: {
-        loginToken: string;
-        locale: string;
-    };
-};
-
-export const SalasananVaihtoPage = ({ params: { loginToken, locale: anyLocale } }: Props) => {
+export const SalasananVaihtoPage = () => {
     const { l10n } = useLocalisations();
-    const locale = toSupportedLocale(anyLocale);
+    const params = useParams();
+    const locale = toSupportedLocale(params.locale);
     const L = l10n.localisations[locale];
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -33,7 +28,7 @@ export const SalasananVaihtoPage = ({ params: { loginToken, locale: anyLocale } 
     useTitle(L['TITLE_SALASANANVAIHTO']);
 
     const submit = () => {
-        postPasswordChange({ loginToken, newPassword, currentPassword })
+        postPasswordChange({ loginToken: params.loginToken, newPassword, currentPassword })
             .unwrap()
             .then(() => setPasswordChanged(true))
             .catch(() =>

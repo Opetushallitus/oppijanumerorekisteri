@@ -1,15 +1,15 @@
 import React, { useMemo } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Select from 'react-select';
 
 import type { RootState } from '../../../../store';
 import StaticUtils from '../../StaticUtils';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
-import { Locale } from '../../../../types/locale.type';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
-import { KoodistoState } from '../../../../reducers/koodisto.reducer';
 import { NamedMultiSelectOption } from '../../../../utilities/select';
 import { FieldlessLabelValue } from './FieldlessLabelValue';
+import { useGetKansalaisuudetQuery } from '../../../../api/koodisto';
+import { useLocalisations } from '../../../../selectors';
 
 type OwnProps = {
     henkiloUpdate: Henkilo;
@@ -17,27 +17,21 @@ type OwnProps = {
     updateModelSelectAction: (arg0: NamedMultiSelectOption) => void;
 };
 
-type StateProps = {
-    henkilo: HenkiloState;
-    koodisto: KoodistoState;
-    locale: Locale;
-};
-
-type Props = OwnProps & StateProps;
-
-const Kansalaisuus = (props: Props) => {
+const Kansalaisuus = (props: OwnProps) => {
+    const { locale } = useLocalisations();
     const kansalaisuus = props.henkiloUpdate.kansalaisuus || [];
-    const disabled = StaticUtils.hasHetuAndIsYksiloity(props.henkilo);
-
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const disabled = StaticUtils.hasHetuAndIsYksiloity(henkilo);
+    const { data } = useGetKansalaisuudetQuery();
     const options = useMemo(() => {
         return (
-            props.koodisto.kansalaisuus?.map((koodi) => ({
-                value: koodi.value,
-                label: koodi[props.locale],
+            data?.map((koodi) => ({
+                value: koodi.koodiArvo.toLowerCase(),
+                label: StaticUtils.localizeKoodiNimi(koodi, locale),
                 optionsName: 'kansalaisuus',
             })) ?? []
         );
-    }, [kansalaisuus]);
+    }, [data]);
     return (
         <div>
             <FieldlessLabelValue readOnly={props.readOnly} label="HENKILO_KANSALAISUUS">
@@ -74,10 +68,4 @@ const Kansalaisuus = (props: Props) => {
     );
 };
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    henkilo: state.henkilo,
-    koodisto: state.koodisto,
-    locale: state.locale,
-});
-
-export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(Kansalaisuus);
+export default Kansalaisuus;

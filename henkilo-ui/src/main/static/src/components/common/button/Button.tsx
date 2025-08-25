@@ -20,42 +20,40 @@ type ButtonProps = {
     style?: CSSProperties;
 };
 
-class Button extends React.Component<ButtonProps> {
-    render() {
-        const classNameProp = this.props.className ? this.props.className : '';
-        const className = classNames({
-            'oph-button': true,
-            'oph-button-primary': !this.props.confirm && !this.props.cancel,
-            'oph-button-confirm': this.props.confirm,
-            'oph-button-big': this.props.big,
-            'oph-button-cancel': this.props.cancel,
-            [`${classNameProp}`]: classNameProp,
-        });
-        return this.props.href ? (
-            <a
-                href={this.props.href}
-                onClick={this.props.action}
-                className={this.props.isButton ? className : ''}
-                data-test-id={this.props.dataTestId}
-                style={this.props.style}
-            >
-                {this.props.children}
-            </a>
-        ) : (
-            <button
-                id={this.props.id}
-                type="button"
-                className={className}
-                disabled={this.props.disabled || this.props.loading}
-                onClick={this.props.action}
-                data-test-id={this.props.dataTestId}
-                style={this.props.style}
-            >
-                {this.props.loading && <Loader inButton={true} />}
-                {this.props.children}
-            </button>
-        );
-    }
-}
+const Button = (props: ButtonProps) => {
+    const classNameProp = props.className ? props.className : '';
+    const className = classNames({
+        'oph-button': true,
+        'oph-button-primary': !props.confirm && !props.cancel,
+        'oph-button-confirm': props.confirm,
+        'oph-button-big': props.big,
+        'oph-button-cancel': props.cancel,
+        [`${classNameProp}`]: classNameProp,
+    });
+    return props.href ? (
+        <a
+            href={props.href}
+            onClick={props.action}
+            className={props.isButton ? className : ''}
+            data-test-id={props.dataTestId}
+            style={props.style}
+        >
+            {props.children}
+        </a>
+    ) : (
+        <button
+            id={props.id}
+            type="button"
+            className={className}
+            disabled={props.disabled || props.loading}
+            onClick={props.action}
+            data-test-id={props.dataTestId}
+            style={props.style}
+        >
+            {props.loading && <Loader inButton={true} />}
+            {props.children}
+        </button>
+    );
+};
 
 export default Button;

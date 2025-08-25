@@ -11,6 +11,8 @@ type Props = {
     kutsu?: Kutsu;
 };
 
+const emptyArray = [];
+
 export const resolveInvitationRights = (
     kutsu: Kutsu | null | undefined,
     locale: Locale
@@ -47,10 +49,19 @@ const KutsuDetails = ({ kutsu }: Props) => {
         ],
         []
     );
+
+    const memoizedData = useMemo(() => {
+        const renderedData = resolveInvitationRights(kutsu, locale);
+        if (!renderedData || !renderedData.length) {
+            return undefined;
+        }
+        return renderedData;
+    }, [kutsu, locale]);
+
     const table = useReactTable({
-        data: resolveInvitationRights(kutsu, locale),
+        data: memoizedData ?? emptyArray,
         getCoreRowModel: getCoreRowModel(),
-        columns,
+        columns: columns ?? emptyArray,
     });
     return (
         <div className="anoja-kayttooikeusryhmat">

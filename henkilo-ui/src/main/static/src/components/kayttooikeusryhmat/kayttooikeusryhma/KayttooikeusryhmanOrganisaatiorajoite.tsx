@@ -1,5 +1,4 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useMemo } from 'react';
 
 import ItemList from './ItemList';
 import './KayttooikeusryhmanOrganisaatiorajoite.css';
@@ -7,9 +6,8 @@ import OrganisaatioSelectModal from '../../common/select/OrganisaatioSelectModal
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import OphCheckboxFieldset from '../../common/forms/OphCheckboxFieldset';
 import { toLocalizedText } from '../../../localizabletext';
-import { KoodistoState } from '../../../reducers/koodisto.reducer';
 import { useLocalisations } from '../../../selectors';
-import { RootState } from '../../../store';
+import { useGetOppilaitostyypitQuery, useGetOrganisaatiotyypitQuery } from '../../../api/koodisto';
 
 type Props = {
     ryhmaRestriction: boolean;
@@ -25,15 +23,20 @@ type Props = {
 
 const KayttooikeusryhmanOrganisaatiorajoite = (props: Props) => {
     const { L, locale } = useLocalisations();
-    const koodisto = useSelector<RootState, KoodistoState>((state) => state.koodisto);
-    const oppilaitostyypitOptions = koodisto.oppilaitostyypit.map((oppilaitostyyppi) => ({
-        label: oppilaitostyyppi[locale],
-        value: oppilaitostyyppi.koodiUri,
-    }));
-    const organisaatiotyypitOptions = koodisto.organisaatiotyyppiKoodisto.map((organisaatiotyyppi) => ({
-        label: toLocalizedText(locale, organisaatiotyyppi.metadata) || organisaatiotyyppi.koodiUri,
-        value: organisaatiotyyppi.koodiUri,
-    }));
+    const { data: oppilaitostyypit } = useGetOppilaitostyypitQuery();
+    const { data: organisaatiotyypit } = useGetOrganisaatiotyypitQuery();
+    const oppilaitostyypitOptions = useMemo(() => {
+        return (oppilaitostyypit ?? []).map((oppilaitostyyppi) => ({
+            label: toLocalizedText(locale, oppilaitostyyppi.metadata) || oppilaitostyyppi.koodiUri,
+            value: oppilaitostyyppi.koodiUri,
+        }));
+    }, [oppilaitostyypit]);
+    const organisaatiotyypitOptions = useMemo(() => {
+        return (organisaatiotyypit ?? []).map((organisaatiotyyppi) => ({
+            label: toLocalizedText(locale, organisaatiotyyppi.metadata) || organisaatiotyyppi.koodiUri,
+            value: organisaatiotyyppi.koodiUri,
+        }));
+    }, [organisaatiotyypit]);
 
     return (
         <div className="kayttooikeusryhman-myonto-kohde">

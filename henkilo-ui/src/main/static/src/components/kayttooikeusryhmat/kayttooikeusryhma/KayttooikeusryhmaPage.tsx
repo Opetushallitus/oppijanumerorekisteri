@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { RouteActions } from 'react-router-redux';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
 
 import './KayttooikeusryhmaPage.css';
 import KayttooikeusryhmanOrganisaatiorajoite from './KayttooikeusryhmanOrganisaatiorajoite';
@@ -19,7 +19,6 @@ import { LocalNotification } from '../../common/Notification/LocalNotification';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import { getLocalization } from '../../../utilities/localisation.util';
 import { NOTIFICATIONTYPES } from '../../common/Notification/notificationtypes';
-import { KoodistoState } from '../../../reducers/koodisto.reducer';
 import KayttooikeusryhmatSallittuKayttajatyyppi from './KayttooikeusryhmatSallittuKayttajatyyppi';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import ToggleKayttooikeusryhmaStateModal from './ToggleKayttooikeusryhmaStateModal';
@@ -35,6 +34,7 @@ import {
 } from '../../../api/kayttooikeus';
 import { RootState, useAppDispatch } from '../../../store';
 import { addGlobalNotification } from '../../../actions/notification.actions';
+import { useGetOppilaitostyypitQuery, useGetOrganisaatiotyypitQuery } from '../../../api/koodisto';
 
 type Locales = 'FI' | 'SV' | 'EN';
 
@@ -60,7 +60,6 @@ export type KayttooikeusryhmaForm = {
 };
 
 type Props = {
-    router: RouteActions;
     kayttooikeusryhmaId?: string;
 };
 
@@ -78,8 +77,10 @@ const initialKayttooikeusryhmaForm: KayttooikeusryhmaForm = {
 
 export const KayttooikeusryhmaPage = (props: Props) => {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const { L, locale } = useLocalisations();
-    const koodisto = useSelector<RootState, KoodistoState>((state) => state.koodisto);
+    const { data: oppilaitostyyppiKoodisto } = useGetOppilaitostyypitQuery();
+    const { data: organisaatiotyyppiKoodisto } = useGetOrganisaatiotyypitQuery();
     const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
     const organisaatioCache = useSelector<RootState, OrganisaatioCache>((state) => state.organisaatio.cached);
     const { data: palvelutRoolit } = useGetKayttooikeusryhmaRoolisQuery(props.kayttooikeusryhmaId, {
@@ -217,7 +218,7 @@ export const KayttooikeusryhmaPage = (props: Props) => {
     };
 
     const _parseExistingOppilaitostyyppiData = (organisaatioViitteet: OrganisaatioViite[]): Array<string> => {
-        const oppilaitostyypit = koodisto.oppilaitostyypit.map(
+        const oppilaitostyypit = (oppilaitostyyppiKoodisto ?? []).map(
             (oppilaitostyyppiKoodi) => oppilaitostyyppiKoodi.koodiUri
         );
         const oppilaitosOrganisaatioViiteet = organisaatioViitteet.filter((organisaatioViite) =>
@@ -228,7 +229,7 @@ export const KayttooikeusryhmaPage = (props: Props) => {
     };
 
     const _parseExistingOrganisaatiotyyppiData = (organisaatioViitteet: OrganisaatioViite[]): Array<string> => {
-        const organisaatiotyypit = koodisto.organisaatiotyyppiKoodisto.map(
+        const organisaatiotyypit = (organisaatiotyyppiKoodisto ?? []).map(
             (organisaatiotyyppiKoodi) => organisaatiotyyppiKoodi.koodiUri
         );
         const organisaatiotyyppiOrganisaatioViiteet = organisaatioViitteet.filter((organisaatioViite) =>
@@ -503,7 +504,7 @@ export const KayttooikeusryhmaPage = (props: Props) => {
         await postKayttooikeusryhma(parsePayload())
             .unwrap()
             .then(() => {
-                props.router.push('/kayttooikeusryhmat');
+                navigate('/kayttooikeusryhmat');
             })
             .catch((error) => {
                 dispatch(
@@ -523,7 +524,7 @@ export const KayttooikeusryhmaPage = (props: Props) => {
         await putKayttooikeusryhma({ id: props.kayttooikeusryhmaId, body: parsePayload() })
             .unwrap()
             .then(() => {
-                props.router.push('/kayttooikeusryhmat');
+                navigate('/kayttooikeusryhmat');
             })
             .catch((error) => {
                 dispatch(
@@ -562,11 +563,9 @@ export const KayttooikeusryhmaPage = (props: Props) => {
             <span className="oph-h2 oph-bold kayttooikeusryhma-header">
                 {L['KAYTTOOIKEUSRYHMAT_OTSIKKO'] + getStatusString()}
             </span>
-            <KayttooikeusryhmatNimi {...props} L={L} name={kayttooikeusryhmaForm.name} setName={_setName} />
+            <KayttooikeusryhmatNimi name={kayttooikeusryhmaForm.name} setName={_setName} />
 
             <KayttooikeusryhmatKuvaus
-                {...props}
-                L={L}
                 description={kayttooikeusryhmaForm.description}
                 setDescription={_setDescription}
             />
@@ -617,15 +616,12 @@ export const KayttooikeusryhmaPage = (props: Props) => {
                 <button
                     className="oph-button oph-button-cancel"
                     onClick={() => {
-                        props.router.push('/kayttooikeusryhmat');
+                        navigate('/kayttooikeusryhmat');
                     }}
                 >
                     {L['PERUUTA']}
                 </button>
-                <ToggleKayttooikeusryhmaStateModal
-                    router={props.router}
-                    kayttooikeusryhmaId={props.kayttooikeusryhmaId}
-                />
+                <ToggleKayttooikeusryhmaStateModal kayttooikeusryhmaId={props.kayttooikeusryhmaId} />
                 <span>
                     {L['MUOKATTU']}: {renderKayttooikeusryhmaMuokattu()}
                 </span>

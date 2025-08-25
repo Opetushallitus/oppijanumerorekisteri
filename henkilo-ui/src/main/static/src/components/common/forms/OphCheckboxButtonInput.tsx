@@ -9,24 +9,22 @@ type Props = {
     action: React.ReactEventHandler<HTMLInputElement>;
 };
 
-class OphCheckboxButtonInput extends React.Component<Props> {
-    render() {
-        return (
-            <label htmlFor={this.props.idName}>
-                <input
-                    id={this.props.idName}
-                    type="checkbox"
-                    value={this.props.value}
-                    checked={this.props.checked}
-                    className="oph-checkbox-button-input"
-                    disabled={this.props.disabled}
-                    onClick={this.props.action}
-                    onChange={() => ({})}
-                />
-                <span className="oph-checkbox-button-text">{this.props.label}</span>
-            </label>
-        );
-    }
-}
+const OphCheckboxButtonInput = (props: Props) => {
+    return (
+        <label htmlFor={props.idName}>
+            <input
+                id={props.idName}
+                type="checkbox"
+                value={props.value}
+                checked={props.checked}
+                className="oph-checkbox-button-input"
+                disabled={props.disabled}
+                onClick={props.action}
+                onChange={() => ({})}
+            />
+            <span className="oph-checkbox-button-text">{props.label}</span>
+        </label>
+    );
+};
 
 export default OphCheckboxButtonInput;
