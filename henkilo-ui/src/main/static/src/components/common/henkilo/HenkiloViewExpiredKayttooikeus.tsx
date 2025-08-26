@@ -144,7 +144,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS',
-                header: () => L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO'],
+                header: () => L['HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS'],
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => (
                     <AccessRightDetaisLink<MyonnettyKayttooikeusryhma>
