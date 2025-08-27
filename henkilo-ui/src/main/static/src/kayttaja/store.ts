@@ -5,7 +5,7 @@ import { kayttooikeusApi } from '../api/kayttooikeus';
 import { oppijanumerorekisteriApi } from '../api/oppijanumerorekisteri';
 import { lokalisointiApi } from '../api/lokalisointi';
 import l10n from '../reducers/l10n.reducer';
-import koodisto from '../reducers/koodisto.reducer';
+import { koodistoApi } from '../api/koodisto';
 import { notifications } from '../reducers/notifications.reducer';
 import { notificationList } from '../reducers/notification.reducer';
 import { henkilo } from '../reducers/henkilo.reducer';
@@ -17,7 +17,6 @@ const isClient = typeof window !== 'undefined';
 const rootReducer = {
     l10n,
     locale,
-    koodisto,
     henkilo,
     notifications,
     notificationList,
@@ -29,6 +28,7 @@ export const store = configureStore({
         [kayttooikeusApi.reducerPath]: kayttooikeusApi.reducer,
         [oppijanumerorekisteriApi.reducerPath]: oppijanumerorekisteriApi.reducer,
         [lokalisointiApi.reducerPath]: lokalisointiApi.reducer,
+        [koodistoApi.reducerPath]: koodistoApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
@@ -38,7 +38,8 @@ export const store = configureStore({
         })
             .concat(kayttooikeusApi.middleware)
             .concat(oppijanumerorekisteriApi.middleware)
-            .concat(lokalisointiApi.middleware),
+            .concat(lokalisointiApi.middleware)
+            .concat(koodistoApi.middleware),
     devTools: isDev && isClient,
 });
 
