@@ -34,7 +34,7 @@ const OppijoidenTuontiListaus = ({ data, onPageChange, onSortingChange, sortKey,
     };
 
     function renderOppijaLinkki(henkilo: OppijaList) {
-        const linkki = `oppija/${henkilo.oid}`;
+        const linkki = `/oppija/${henkilo.oid}`;
         const nimi = `${henkilo.sukunimi}, ${henkilo.etunimet}`;
         return <Link to={linkki}>{nimi}</Link>;
     }
@@ -51,7 +51,7 @@ const OppijoidenTuontiListaus = ({ data, onPageChange, onSortingChange, sortKey,
                 accessorFn: (henkilo: OppijaList) => henkilo,
                 cell: ({ getValue }) =>
                     getValue().serviceUserOid ? (
-                        <Link to={`virkailija/${getValue().serviceUserOid}`}>{getValue().serviceUserName}</Link>
+                        <Link to={`/virkailija/${getValue().serviceUserOid}`}>{getValue().serviceUserName}</Link>
                     ) : null,
                 enableSorting: false,
                 id: 'kasittelija',
