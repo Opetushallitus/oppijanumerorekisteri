@@ -1,0 +1,22 @@
+{
+    "id": 69954305,
+    "tila": "AVOIN",
+    "kutsujaOid": "1.2.3.4.5",
+    "etunimi": "Sedu",
+    "sukunimi": "Sugu",
+    "sahkoposti": "kutsuttu@ukko.com",
+    "aikaleima": "2025-08-27T07:00:29.450774",
+    "asiointikieli": "fi",
+    "organisaatiot": [
+        {
+            "nimi": { "fi": "Testiorg" },
+            "organisaatioOid": "1.2.3.4.6",
+            "kayttoOikeusRyhmat": [
+                { "id": 69321315, "nimi": { "fi": "Testiryhma", "sv": "Test ryhm", "en": "Test ryhm" } }
+            ],
+            "voimassaLoppuPvm": "2026-08-27"
+        }
+    ],
+    "hakaIdentifier": false,
+    "saate": "Saate"
+}
