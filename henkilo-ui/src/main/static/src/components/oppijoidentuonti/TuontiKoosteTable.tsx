@@ -57,7 +57,7 @@ const TuontiKoosteTable = () => {
             {
                 header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KASITTELIJA'],
                 accessorFn: (tuonti) => tuonti,
-                cell: ({ getValue }) => <Link to={`virkailija/${getValue()?.oid}`}>{getValue()?.author}</Link>,
+                cell: ({ getValue }) => <Link to={`/virkailija/${getValue()?.oid}`}>{getValue()?.author}</Link>,
                 id: 'author',
             },
             {
