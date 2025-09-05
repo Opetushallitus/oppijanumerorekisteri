@@ -7,7 +7,7 @@ import * as constructs from "constructs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as ssm from "aws-cdk-lib/aws-ssm";
 import * as sharedAccount from "./shared-account";
-import {ROUTE53_HEALTH_CHECK_REGION} from "./health-check";
+import { ROUTE53_HEALTH_CHECK_REGION } from "./health-check";
 
 class CdkAppUtil extends cdk.App {
   constructor(props: cdk.AppProps) {
@@ -22,7 +22,7 @@ class CdkAppUtil extends cdk.App {
       sharedAccount.prefix("ContinuousDeploymentStack"),
       {
         env,
-      }
+      },
     );
   }
 }
@@ -35,29 +35,45 @@ class ContinousDeploymentStack extends cdk.Stack {
       this,
       sharedAccount.prefix(`HahtuvaContinuousDeploymentPipeline`),
       "hahtuva",
-      { owner: "Opetushallitus", name: "oppijanumerorekisteri", branch: "master" },
-      props
+      {
+        owner: "Opetushallitus",
+        name: "oppijanumerorekisteri",
+        branch: "master",
+      },
+      props,
     );
     new ContinousDeploymentPipelineStack(
       this,
       sharedAccount.prefix(`DevContinuousDeploymentPipeline`),
       "dev",
-      { owner: "Opetushallitus", name: "oppijanumerorekisteri", branch: "green-hahtuva" },
-      props
+      {
+        owner: "Opetushallitus",
+        name: "oppijanumerorekisteri",
+        branch: "green-hahtuva",
+      },
+      props,
     );
     new ContinousDeploymentPipelineStack(
       this,
       sharedAccount.prefix(`QaContinuousDeploymentPipeline`),
       "qa",
-      { owner: "Opetushallitus", name: "oppijanumerorekisteri", branch: "green-dev" },
-      props
+      {
+        owner: "Opetushallitus",
+        name: "oppijanumerorekisteri",
+        branch: "green-dev",
+      },
+      props,
     );
     new ContinousDeploymentPipelineStack(
       this,
       sharedAccount.prefix(`ProdContinuousDeploymentPipeline`),
       "prod",
-      { owner: "Opetushallitus", name: "oppijanumerorekisteri", branch: "green-qa" },
-      props
+      {
+        owner: "Opetushallitus",
+        name: "oppijanumerorekisteri",
+        branch: "green-qa",
+      },
+      props,
     );
   }
 }
@@ -76,7 +92,7 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
     id: string,
     env: EnvironmentName,
     repository: Repository,
-    props: cdk.StackProps
+    props: cdk.StackProps,
   ) {
     super(scope, id, props);
     const capitalizedEnv = capitalize(env);
@@ -87,14 +103,25 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
       {
         pipelineName: sharedAccount.prefix(`Deploy${capitalizedEnv}`),
         pipelineType: PipelineType.V1,
-      }
+      },
     );
-    cdk.Tags.of(pipeline).add("Repository", `${repository.owner}/${repository.name}`, { includeResourceTypes: ["AWS::CodePipeline::Pipeline"] });
-    cdk.Tags.of(pipeline).add("FromBranch", repository.branch, { includeResourceTypes: ["AWS::CodePipeline::Pipeline"] });
-    cdk.Tags.of(pipeline).add("ToBranch", `green-${env}`, { includeResourceTypes: ["AWS::CodePipeline::Pipeline"] });
+    cdk.Tags.of(pipeline).add(
+      "Repository",
+      `${repository.owner}/${repository.name}`,
+      { includeResourceTypes: ["AWS::CodePipeline::Pipeline"] },
+    );
+    cdk.Tags.of(pipeline).add("FromBranch", repository.branch, {
+      includeResourceTypes: ["AWS::CodePipeline::Pipeline"],
+    });
+    cdk.Tags.of(pipeline).add("ToBranch", `green-${env}`, {
+      includeResourceTypes: ["AWS::CodePipeline::Pipeline"],
+    });
 
-    const connectionArn = ssm.StringParameter
-        .fromStringParameterName(this,  "CodeStarConnectionArn", sharedAccount.CODE_STAR_CONNECTION_ARN_PARAMETER_NAME).stringValue
+    const connectionArn = ssm.StringParameter.fromStringParameterName(
+      this,
+      "CodeStarConnectionArn",
+      sharedAccount.CODE_STAR_CONNECTION_ARN_PARAMETER_NAME,
+    ).stringValue;
     const sourceOutput = new codepipeline.Artifact();
     const sourceAction =
       new codepipeline_actions.CodeStarConnectionsSourceAction({
@@ -122,21 +149,18 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
             env,
             "TestOppijanumerorekisteri",
             ["scripts/ci/run-oppijanumerorekisteri-tests.sh"],
-            "corretto21"
+            "corretto21",
           ),
-        })
+        }),
       );
       testStage.addAction(
         new codepipeline_actions.CodeBuildAction({
           actionName: "TestHenkiloUi",
           input: sourceOutput,
-          project: makeUbuntuTestProject(
-            this,
-            env,
-            "TestHenkiloUi",
-            ["scripts/ci/run-henkilo-ui-tests.sh"]
-          ),
-        })
+          project: makeUbuntuTestProject(this, env, "TestHenkiloUi", [
+            "scripts/ci/run-henkilo-ui-tests.sh",
+          ]),
+        }),
       );
     }
 
@@ -197,16 +221,16 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
             },
           },
         }),
-      }
+      },
     );
 
     const deploymentTargetAccount = ssm.StringParameter.valueFromLookup(
       this,
-      `/env/${env}/account_id`
+      `/env/${env}/account_id`,
     );
     const deploymentTargetRegion = ssm.StringParameter.valueFromLookup(
       this,
-      `/env/${env}/region`
+      `/env/${env}/region`,
     );
 
     const targetRegions = [deploymentTargetRegion, ROUTE53_HEALTH_CHECK_REGION];
@@ -216,15 +240,15 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
           new iam.PolicyStatement({
             effect: iam.Effect.ALLOW,
             actions: ["sts:AssumeRole"],
-            resources: targetRegions.flatMap(targetRegion => [
+            resources: targetRegions.flatMap((targetRegion) => [
               `arn:aws:iam::${deploymentTargetAccount}:role/cdk-${sharedAccount.CDK_QUALIFIER}-lookup-role-${deploymentTargetAccount}-${targetRegion}`,
               `arn:aws:iam::${deploymentTargetAccount}:role/cdk-${sharedAccount.CDK_QUALIFIER}-file-publishing-role-${deploymentTargetAccount}-${targetRegion}`,
               `arn:aws:iam::${deploymentTargetAccount}:role/cdk-${sharedAccount.CDK_QUALIFIER}-image-publishing-role-${deploymentTargetAccount}-${targetRegion}`,
               `arn:aws:iam::${deploymentTargetAccount}:role/cdk-${sharedAccount.CDK_QUALIFIER}-deploy-role-${deploymentTargetAccount}-${targetRegion}`,
-            ])
+            ]),
           }),
         ],
-      })
+      }),
     );
     const deployAction = new codepipeline_actions.CodeBuildAction({
       actionName: "Deploy",
@@ -241,7 +265,7 @@ function makeTestProject(
   env: string,
   name: string,
   testCommands: string[],
-  javaVersion: "corretto11" | "corretto21"
+  javaVersion: "corretto11" | "corretto21",
 ): codebuild.PipelineProject {
   return new codebuild.PipelineProject(
     scope,
@@ -291,7 +315,7 @@ function makeTestProject(
           },
         },
       }),
-    }
+    },
   );
 }
 
@@ -347,14 +371,14 @@ function makeUbuntuTestProject(
               "sudo apt-get install -y netcat", // for nc command
               "sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb", // For Cypress/Chromium
               "echo $MVN_SETTINGSXML > ./settings.xml",
-            ]
+            ],
           },
           build: {
             commands: testCommands,
           },
         },
       }),
-    }
+    },
   );
 }
 

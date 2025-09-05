@@ -4,8 +4,8 @@ import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as lambda from "aws-cdk-lib/aws-lambda";
-import * as rds from "aws-cdk-lib/aws-rds"
-import * as s3 from "aws-cdk-lib/aws-s3"
+import * as rds from "aws-cdk-lib/aws-rds";
+import * as s3 from "aws-cdk-lib/aws-s3";
 import * as elasticloadbalancingv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as route53_targets from "aws-cdk-lib/aws-route53-targets";
@@ -19,14 +19,14 @@ import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import * as kms from "aws-cdk-lib/aws-kms";
 import * as sharedAccount from "./shared-account";
 import { prefix } from "./shared-account";
-import {AutoScalingLimits, getConfig, getEnvironment} from "./config";
+import { AutoScalingLimits, getConfig, getEnvironment } from "./config";
 import * as path from "node:path";
-import {createHealthCheckStacks} from "./health-check";
-import {DatabaseBackupToS3} from "./DatabaseBackupToS3";
+import { createHealthCheckStacks } from "./health-check";
+import { DatabaseBackupToS3 } from "./DatabaseBackupToS3";
 import * as datantuonti from "./datantuonti";
 import * as alarms from "./alarms";
-import * as cloudwatch from "aws-cdk-lib/aws-cloudwatch"
-import * as cloudwatch_actions from "aws-cdk-lib/aws-cloudwatch-actions"
+import * as cloudwatch from "aws-cdk-lib/aws-cloudwatch";
+import * as cloudwatch_actions from "aws-cdk-lib/aws-cloudwatch-actions";
 
 const config = getConfig();
 
@@ -40,40 +40,68 @@ class CdkApp extends cdk.App {
       },
     };
 
-    const { oauthHostedZone }  = new DnsStack(this, prefix("DnsStack"), stackProps);
-    const { alarmsToSlackLambda, alarmTopic } = new AlarmStack(this, sharedAccount.prefix("AlarmStack"), stackProps);
-    const ecsStack = new ECSStack(this, sharedAccount.prefix("ECSStack"), stackProps);
-    const datantuontiExportStack = new datantuonti.ExportStack(this, sharedAccount.prefix("DatantuontiExport"), stackProps);
+    const { oauthHostedZone } = new DnsStack(
+      this,
+      prefix("DnsStack"),
+      stackProps,
+    );
+    const { alarmsToSlackLambda, alarmTopic } = new AlarmStack(
+      this,
+      sharedAccount.prefix("AlarmStack"),
+      stackProps,
+    );
+    const ecsStack = new ECSStack(
+      this,
+      sharedAccount.prefix("ECSStack"),
+      stackProps,
+    );
+    const datantuontiExportStack = new datantuonti.ExportStack(
+      this,
+      sharedAccount.prefix("DatantuontiExport"),
+      stackProps,
+    );
     const databaseStack = new DatabaseStack(
-        this,
-        sharedAccount.prefix("Database"),
-        ecsStack.cluster,
-        datantuontiExportStack.bucket,
-        { ...stackProps, alarmTopic }
+      this,
+      sharedAccount.prefix("Database"),
+      ecsStack.cluster,
+      datantuontiExportStack.bucket,
+      { ...stackProps, alarmTopic },
     );
 
-    createHealthCheckStacks(this, alarmsToSlackLambda, [{
-      name: "Oppijanumerorekisteri",
-      url: new URL(`https://${config.virkailijaHost}/oppijanumerorekisteri-service/actuator/health`),
-    }]);
+    createHealthCheckStacks(this, alarmsToSlackLambda, [
+      {
+        name: "Oppijanumerorekisteri",
+        url: new URL(
+          `https://${config.virkailijaHost}/oppijanumerorekisteri-service/actuator/health`,
+        ),
+      },
+    ]);
 
-    new OppijanumerorekisteriApplicationStack(this, sharedAccount.prefix("OppijanumerorekisteriApplication"), {
-      alarmTopic,
-      database: databaseStack.database,
-      bastion: databaseStack.bastion,
-      exportBucket: databaseStack.exportBucket,
-      ecsCluster: ecsStack.cluster,
-      datantuontiExportBucket: datantuontiExportStack.bucket,
-      datantuontiExportEncryptionKey: datantuontiExportStack.encryptionKey,
-      oauthHostedZone,
-      ...stackProps,
-    });
+    new OppijanumerorekisteriApplicationStack(
+      this,
+      sharedAccount.prefix("OppijanumerorekisteriApplication"),
+      {
+        alarmTopic,
+        database: databaseStack.database,
+        bastion: databaseStack.bastion,
+        exportBucket: databaseStack.exportBucket,
+        ecsCluster: ecsStack.cluster,
+        datantuontiExportBucket: datantuontiExportStack.bucket,
+        datantuontiExportEncryptionKey: datantuontiExportStack.encryptionKey,
+        oauthHostedZone,
+        ...stackProps,
+      },
+    );
 
-    new HenkiloUiApplicationStack(this, sharedAccount.prefix("HenkiloUiApplication"), {
-      ...stackProps,
-      bastion: databaseStack.bastion,
-      ecsCluster: ecsStack.cluster,
-    });
+    new HenkiloUiApplicationStack(
+      this,
+      sharedAccount.prefix("HenkiloUiApplication"),
+      {
+        ...stackProps,
+        bastion: databaseStack.bastion,
+        ecsCluster: ecsStack.cluster,
+      },
+    );
   }
 }
 
@@ -160,38 +188,43 @@ class DatabaseStack extends cdk.Stack {
     datantuontiExportBucket: s3.Bucket,
     props: cdk.StackProps & {
       alarmTopic: sns.ITopic;
-    }
+    },
   ) {
     super(scope, id, props);
 
-    const vpc = ec2.Vpc.fromLookup(this, "Vpc", {vpcName: sharedAccount.VPC_NAME});
-
+    const vpc = ec2.Vpc.fromLookup(this, "Vpc", {
+      vpcName: sharedAccount.VPC_NAME,
+    });
 
     const datantuontiImportRole = new iam.Role(this, "DatantuontiImport", {
-      assumedBy: new iam.ServicePrincipal("rds.amazonaws.com")
+      assumedBy: new iam.ServicePrincipal("rds.amazonaws.com"),
     });
-    datantuonti.createS3ImporPolicyStatements(this)
-        .forEach(statement =>  datantuontiImportRole.addToPolicy(statement));
+    datantuonti
+      .createS3ImporPolicyStatements(this)
+      .forEach((statement) => datantuontiImportRole.addToPolicy(statement));
 
     this.exportBucket = new s3.Bucket(this, "ExportBucket", {});
 
     if (getEnvironment() == "hahtuva" || getEnvironment() == "dev") {
       this.database = new rds.DatabaseCluster(this, "Database", {
         vpc,
-        vpcSubnets: {subnetType: ec2.SubnetType.PRIVATE_ISOLATED},
+        vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
         defaultDatabaseName: "oppijanumerorekisteri",
         engine: rds.DatabaseClusterEngine.auroraPostgres({
           version: rds.AuroraPostgresEngineVersion.VER_16_4,
         }),
-        credentials: rds.Credentials.fromGeneratedSecret("oppijanumerorekisteri", {
-          secretName: sharedAccount.prefix("DatabaseSecret"),
-        }),
+        credentials: rds.Credentials.fromGeneratedSecret(
+          "oppijanumerorekisteri",
+          {
+            secretName: sharedAccount.prefix("DatabaseSecret"),
+          },
+        ),
         storageType: rds.DBClusterStorageType.AURORA,
         writer: rds.ClusterInstance.provisioned("writer", {
           enablePerformanceInsights: true,
           instanceType: ec2.InstanceType.of(
-              ec2.InstanceClass.R6G,
-              ec2.InstanceSize.XLARGE
+            ec2.InstanceClass.R6G,
+            ec2.InstanceSize.XLARGE,
           ),
         }),
         readers: [],
@@ -201,20 +234,23 @@ class DatabaseStack extends cdk.Stack {
     } else {
       this.database = new rds.DatabaseCluster(this, "Database", {
         vpc,
-        vpcSubnets: {subnetType: ec2.SubnetType.PRIVATE_ISOLATED},
+        vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
         defaultDatabaseName: "oppijanumerorekisteri",
         engine: rds.DatabaseClusterEngine.auroraPostgres({
           version: rds.AuroraPostgresEngineVersion.VER_12_19,
         }),
-        credentials: rds.Credentials.fromGeneratedSecret("oppijanumerorekisteri", {
-          secretName: sharedAccount.prefix("DatabaseSecret"),
-        }),
+        credentials: rds.Credentials.fromGeneratedSecret(
+          "oppijanumerorekisteri",
+          {
+            secretName: sharedAccount.prefix("DatabaseSecret"),
+          },
+        ),
         storageType: rds.DBClusterStorageType.AURORA,
         writer: rds.ClusterInstance.provisioned("writer", {
           enablePerformanceInsights: true,
           instanceType: ec2.InstanceType.of(
-              ec2.InstanceClass.R6G,
-              ec2.InstanceSize.XLARGE
+            ec2.InstanceClass.R6G,
+            ec2.InstanceSize.XLARGE,
           ),
         }),
         storageEncrypted: true,
@@ -241,37 +277,41 @@ class DatabaseStack extends cdk.Stack {
 }
 
 type OppijanumerorekisteriApplicationStackProperties = cdk.StackProps & {
-  database: rds.DatabaseCluster
-  ecsCluster: ecs.Cluster
-  bastion: ec2.BastionHostLinux
-  exportBucket: s3.Bucket
-  datantuontiExportBucket: s3.Bucket
-  datantuontiExportEncryptionKey: kms.IKey
-  alarmTopic: sns.ITopic
-  oauthHostedZone: route53.IHostedZone
-}
+  database: rds.DatabaseCluster;
+  ecsCluster: ecs.Cluster;
+  bastion: ec2.BastionHostLinux;
+  exportBucket: s3.Bucket;
+  datantuontiExportBucket: s3.Bucket;
+  datantuontiExportEncryptionKey: kms.IKey;
+  alarmTopic: sns.ITopic;
+  oauthHostedZone: route53.IHostedZone;
+};
 
 class OppijanumerorekisteriApplicationStack extends cdk.Stack {
   private readonly alarmTopic: sns.ITopic;
 
   constructor(
-      scope: constructs.Construct,
-      id: string,
-      props: OppijanumerorekisteriApplicationStackProperties,
+    scope: constructs.Construct,
+    id: string,
+    props: OppijanumerorekisteriApplicationStackProperties,
   ) {
     super(scope, id, props);
     this.alarmTopic = props.alarmTopic;
-    const vpc = ec2.Vpc.fromLookup(this, "Vpc", {vpcName: sharedAccount.VPC_NAME});
+    const vpc = ec2.Vpc.fromLookup(this, "Vpc", {
+      vpcName: sharedAccount.VPC_NAME,
+    });
 
     const logGroup = new logs.LogGroup(this, "AppLogGroup", {
       logGroupName: sharedAccount.prefix("/oppijanumerorekisteri"),
       retention: logs.RetentionDays.INFINITE,
     });
     if (config.lampiExport) {
-      this.exportFailureAlarm(logGroup, props.alarmTopic)
+      this.exportFailureAlarm(logGroup, props.alarmTopic);
     }
-    this.datantuontiExportFailureAlarm(logGroup, props.alarmTopic)
-    if (config.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]) {
+    this.datantuontiExportFailureAlarm(logGroup, props.alarmTopic);
+    if (
+      config.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]
+    ) {
       this.datantuontiImportFailureAlarm(logGroup, props.alarmTopic);
     }
     if (config.features.vtj) {
@@ -283,7 +323,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       directory: path.join(__dirname, "../../"),
       file: "Dockerfile",
       platform: ecr_assets.Platform.LINUX_ARM64,
-      exclude: ['infra/cdk.out'],
+      exclude: ["infra/cdk.out"],
     });
 
     new OppijanumerorekisteriService(this, "BatchService", {
@@ -297,7 +337,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       datantuontiExportEncryptionKey: props.datantuontiExportEncryptionKey,
       exportBucket: props.exportBucket,
       awsRegion: this.region,
-    })
+    });
 
     const apiService = new OppijanumerorekisteriService(this, "ApiService", {
       ecsCluster: props.ecsCluster,
@@ -313,23 +353,23 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       extraEnvironment: {
         "db-scheduler.enabled": "false",
       },
-    })
+    });
 
     const alb = new elasticloadbalancingv2.ApplicationLoadBalancer(
-        this,
-        "LoadBalancer",
-        {
-          vpc,
-          internetFacing: true,
-        }
+      this,
+      "LoadBalancer",
+      {
+        vpc,
+        internetFacing: true,
+      },
     );
 
     const sharedHostedZone = route53.HostedZone.fromLookup(
-        this,
-        "YleiskayttoisetHostedZone",
-        {
-          domainName: ssm.StringParameter.valueFromLookup(this, "zoneName"),
-        }
+      this,
+      "YleiskayttoisetHostedZone",
+      {
+        domainName: ssm.StringParameter.valueFromLookup(this, "zoneName"),
+      },
     );
     const albHostname = `oppijanumerorekisteri.${sharedHostedZone.zoneName}`;
 
@@ -337,7 +377,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       zone: sharedHostedZone,
       recordName: albHostname,
       target: route53.RecordTarget.fromAlias(
-          new route53_targets.LoadBalancerTarget(alb)
+        new route53_targets.LoadBalancerTarget(alb),
       ),
     });
 
@@ -345,21 +385,21 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       zone: props.oauthHostedZone,
       recordName: config.oauthDomainName,
       target: route53.RecordTarget.fromAlias(
-        new route53_targets.LoadBalancerTarget(alb)
+        new route53_targets.LoadBalancerTarget(alb),
       ),
     });
 
     const albCertificate = new certificatemanager.Certificate(
-        this,
-        "AlbCertificate",
-        {
-          domainName: albHostname,
-          subjectAlternativeNames: [config.oauthDomainName],
-          validation: certificatemanager.CertificateValidation.fromDnsMultiZone({
-            albHostanme: sharedHostedZone,
-            [config.oauthDomainName]: props.oauthHostedZone,
-          }),
-        }
+      this,
+      "AlbCertificate",
+      {
+        domainName: albHostname,
+        subjectAlternativeNames: [config.oauthDomainName],
+        validation: certificatemanager.CertificateValidation.fromDnsMultiZone({
+          albHostanme: sharedHostedZone,
+          [config.oauthDomainName]: props.oauthHostedZone,
+        }),
+      },
     );
 
     const listener = alb.addListener("Listener", {
@@ -382,116 +422,137 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
 
     this.createAlarm("LoadBalancer5XXResponsesAlarm", {
       alarmName: sharedAccount.prefix("5XXResponsesAlarm"),
-      metric: alb.metrics.httpCodeElb(elasticloadbalancingv2.HttpCodeElb.ELB_5XX_COUNT, {
-        statistic: "Sum",
-        period: cdk.Duration.minutes(5),
-      }),
-      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      metric: alb.metrics.httpCodeElb(
+        elasticloadbalancingv2.HttpCodeElb.ELB_5XX_COUNT,
+        {
+          statistic: "Sum",
+          period: cdk.Duration.minutes(5),
+        },
+      ),
+      comparisonOperator:
+        cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
       threshold: 10,
       evaluationPeriods: 2,
       datapointsToAlarm: 1,
       treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
-    })
+    });
   }
 
   createAlarm(id: string, alarmProps: cloudwatch.AlarmProps): cloudwatch.Alarm {
     const alarm = new cloudwatch.Alarm(this, id, alarmProps);
     alarm.addOkAction(new cloudwatch_actions.SnsAction(this.alarmTopic));
     alarm.addAlarmAction(new cloudwatch_actions.SnsAction(this.alarmTopic));
-    return alarm
+    return alarm;
   }
 
   exportFailureAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
     alarms.alarmIfExpectedLogLineIsMissing(
-        this,
-        sharedAccount.prefix("ExportTask"),
-        logGroup,
-        alarmTopic,
-        logs.FilterPattern.literal('"Oppijanumerorekisteri export task completed"')
-    )
+      this,
+      sharedAccount.prefix("ExportTask"),
+      logGroup,
+      alarmTopic,
+      logs.FilterPattern.literal(
+        '"Oppijanumerorekisteri export task completed"',
+      ),
+    );
   }
 
-  datantuontiExportFailureAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
+  datantuontiExportFailureAlarm(
+    logGroup: logs.LogGroup,
+    alarmTopic: sns.ITopic,
+  ) {
     alarms.alarmIfExpectedLogLineIsMissing(
-        this,
-        sharedAccount.prefix("DatantuontiExportTask"),
-        logGroup,
-        alarmTopic,
-        logs.FilterPattern.literal('"Oppijanumerorekisteri datantuonti export task completed"'),
-        cdk.Duration.hours(25),
-        1,
-    )
+      this,
+      sharedAccount.prefix("DatantuontiExportTask"),
+      logGroup,
+      alarmTopic,
+      logs.FilterPattern.literal(
+        '"Oppijanumerorekisteri datantuonti export task completed"',
+      ),
+      cdk.Duration.hours(25),
+      1,
+    );
   }
 
-  datantuontiImportFailureAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
+  datantuontiImportFailureAlarm(
+    logGroup: logs.LogGroup,
+    alarmTopic: sns.ITopic,
+  ) {
     alarms.alarmIfExpectedLogLineIsMissing(
-        this,
-        "DatantuontiImportTask",
-        logGroup,
-        alarmTopic,
-        logs.FilterPattern.literal('"Oppijanumerorekisteri datantuonti import task completed"'),
-        cdk.Duration.hours(25),
-        1,
-    )
+      this,
+      "DatantuontiImportTask",
+      logGroup,
+      alarmTopic,
+      logs.FilterPattern.literal(
+        '"Oppijanumerorekisteri datantuonti import task completed"',
+      ),
+      cdk.Duration.hours(25),
+      1,
+    );
   }
 
   vtjKyselyCertificationAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
     alarms.alarmIfExpectedLogLineIsMissing(
-        this,
-        "VtjkyselyCertificationCheckTask",
-        logGroup,
-        alarmTopic,
-        logs.FilterPattern.literal('"VTJKysely certification is valid at least 30 days."'),
-        cdk.Duration.hours(25),
-        1,
-    )
+      this,
+      "VtjkyselyCertificationCheckTask",
+      logGroup,
+      alarmTopic,
+      logs.FilterPattern.literal(
+        '"VTJKysely certification is valid at least 30 days."',
+      ),
+      cdk.Duration.hours(25),
+      1,
+    );
   }
 
   muutostietorajapintaAlarms(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
     alarms.alarmIfExpectedLogLineIsMissing(
-        this,
-        "VtjMuutostietoIntegration",
-        logGroup,
-        alarmTopic,
-        logs.FilterPattern.literal('"muutostieto processed successfully for henkilo"'),
-        cdk.Duration.hours(25),
-        1,
-    )
+      this,
+      "VtjMuutostietoIntegration",
+      logGroup,
+      alarmTopic,
+      logs.FilterPattern.literal(
+        '"muutostieto processed successfully for henkilo"',
+      ),
+      cdk.Duration.hours(25),
+      1,
+    );
     alarms.alarmIfExpectedLogLineIsMissing(
-        this,
-        "VtjPerustietoIntegration",
-        logGroup,
-        alarmTopic,
-        logs.FilterPattern.literal('"updated with perustieto"'),
-        cdk.Duration.hours(25),
-        1,
-    )
+      this,
+      "VtjPerustietoIntegration",
+      logGroup,
+      alarmTopic,
+      logs.FilterPattern.literal('"updated with perustieto"'),
+      cdk.Duration.hours(25),
+      1,
+    );
   }
 }
 
 class OppijanumerorekisteriService extends constructs.Construct {
   readonly appPort = 8080;
   readonly service: ecs.FargateService;
-  readonly healthCheckPath: string = "/oppijanumerorekisteri-service/actuator/health";
+  readonly healthCheckPath: string =
+    "/oppijanumerorekisteri-service/actuator/health";
 
   constructor(
     scope: constructs.Construct,
     id: string,
     props: {
-      ecsCluster: ecs.Cluster,
-      dockerImage: ecr_assets.DockerImageAsset,
-      autoScaling: AutoScalingLimits,
-      logGroup: logs.LogGroup,
-      streamPrefix: string,
-      database: rds.DatabaseCluster,
-      exportBucket: s3.Bucket,
-      datantuontiExportBucket: s3.Bucket,
-      datantuontiExportEncryptionKey: kms.IKey,
-      awsRegion: string,
-      extraEnvironment?: ecs.ContainerDefinitionProps["environment"],
-    }
+      ecsCluster: ecs.Cluster;
+      dockerImage: ecr_assets.DockerImageAsset;
+      autoScaling: AutoScalingLimits;
+      logGroup: logs.LogGroup;
+      streamPrefix: string;
+      database: rds.DatabaseCluster;
+      exportBucket: s3.Bucket;
+      datantuontiExportBucket: s3.Bucket;
+      datantuontiExportEncryptionKey: kms.IKey;
+      awsRegion: string;
+      extraEnvironment?: ecs.ContainerDefinitionProps["environment"];
+    },
   ) {
-    super(scope, id)
+    super(scope, id);
     const taskDefinition = new ecs.FargateTaskDefinition(
       this,
       "TaskDefinition",
@@ -502,24 +563,39 @@ class OppijanumerorekisteriService extends constructs.Construct {
           operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
           cpuArchitecture: ecs.CpuArchitecture.ARM64,
         },
-      });
-    const lampiProperties: ecs.ContainerDefinitionProps["environment"] = config.lampiExport ? {
-      "oppijanumerorekisteri.tasks.export.enabled": config.lampiExport.enabled.toString(),
-      "oppijanumerorekisteri.tasks.export.bucket-name": props.exportBucket.bucketName,
-      "oppijanumerorekisteri.tasks.export.copy-to-lampi": "true",
-      "oppijanumerorekisteri.tasks.export.lampi-bucket-name": config.lampiExport.bucketName,
-    } : {
-      "oppijanumerorekisteri.tasks.export.enabled": "false",
-    };
+      },
+    );
+    const lampiProperties: ecs.ContainerDefinitionProps["environment"] =
+      config.lampiExport
+        ? {
+            "oppijanumerorekisteri.tasks.export.enabled":
+              config.lampiExport.enabled.toString(),
+            "oppijanumerorekisteri.tasks.export.bucket-name":
+              props.exportBucket.bucketName,
+            "oppijanumerorekisteri.tasks.export.copy-to-lampi": "true",
+            "oppijanumerorekisteri.tasks.export.lampi-bucket-name":
+              config.lampiExport.bucketName,
+          }
+        : {
+            "oppijanumerorekisteri.tasks.export.enabled": "false",
+          };
 
-    const lampiSecrets: ecs.ContainerDefinitionProps["secrets"] = config.lampiExport ? {
-      "oppijanumerorekisteri.tasks.export.lampi-external-id": this.ssmSecret("LampiExternalId"),
-      "oppijanumerorekisteri.tasks.export.lampi-role-arn": this.ssmString("LampiRoleArn2"),
-    } : {};
+    const lampiSecrets: ecs.ContainerDefinitionProps["secrets"] =
+      config.lampiExport
+        ? {
+            "oppijanumerorekisteri.tasks.export.lampi-external-id":
+              this.ssmSecret("LampiExternalId"),
+            "oppijanumerorekisteri.tasks.export.lampi-role-arn":
+              this.ssmString("LampiRoleArn2"),
+          }
+        : {};
 
     taskDefinition.addContainer("AppContainer", {
       image: ecs.ContainerImage.fromDockerImageAsset(props.dockerImage),
-      logging: new ecs.AwsLogDriver({ logGroup: props.logGroup, streamPrefix: props.streamPrefix }),
+      logging: new ecs.AwsLogDriver({
+        logGroup: props.logGroup,
+        streamPrefix: props.streamPrefix,
+      }),
       environment: {
         ENV: getEnvironment(),
         postgresql_host: props.database.clusterEndpoint.hostname,
@@ -528,8 +604,10 @@ class OppijanumerorekisteriService extends constructs.Construct {
         aws_region: props.awsRegion,
         export_bucket_name: props.exportBucket.bucketName,
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": `${config.features["oppijanumerorekisteri.tasks.datantuonti.export.enabled"]}`,
-        "oppijanumerorekisteri.tasks.datantuonti.export.bucket-name": props.datantuontiExportBucket.bucketName,
-        "oppijanumerorekisteri.tasks.datantuonti.export.encryption-key-arn": props.datantuontiExportEncryptionKey.keyArn,
+        "oppijanumerorekisteri.tasks.datantuonti.export.bucket-name":
+          props.datantuontiExportBucket.bucketName,
+        "oppijanumerorekisteri.tasks.datantuonti.export.encryption-key-arn":
+          props.datantuontiExportEncryptionKey.keyArn,
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": `${config.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]}`,
         "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": `${config.features["oppijanumerorekisteri.tasks.testidatantuonti.import.enabled"]}`,
         ...lampiProperties,
@@ -538,23 +616,37 @@ class OppijanumerorekisteriService extends constructs.Construct {
       secrets: {
         postgresql_username: ecs.Secret.fromSecretsManager(
           props.database.secret!,
-          "username"
+          "username",
         ),
         postgresql_password: ecs.Secret.fromSecretsManager(
           props.database.secret!,
-          "password"
+          "password",
         ),
-        authentication_app_password_to_haku: this.ssmSecret("AuthenticationAppPasswordToHaku"),
-        authentication_app_username_to_haku: this.ssmSecret("AuthenticationAppUsernameToHaku"),
-        authentication_app_password_to_vtj: this.ssmSecret("AuthenticationAppPasswordToVtj"),
-        authentication_app_username_to_vtj: this.ssmSecret("AuthenticationAppUsernameToVtj"),
-        authentication_app_password_to_henkilotietomuutos: this.ssmSecret("AuthenticationAppPasswordToHenkilotietomuutos"),
-        authentication_app_username_to_henkilotietomuutos: this.ssmSecret("AuthenticationAppUsernameToHenkilotietomuutos"),
+        authentication_app_password_to_haku: this.ssmSecret(
+          "AuthenticationAppPasswordToHaku",
+        ),
+        authentication_app_username_to_haku: this.ssmSecret(
+          "AuthenticationAppUsernameToHaku",
+        ),
+        authentication_app_password_to_vtj: this.ssmSecret(
+          "AuthenticationAppPasswordToVtj",
+        ),
+        authentication_app_username_to_vtj: this.ssmSecret(
+          "AuthenticationAppUsernameToVtj",
+        ),
+        authentication_app_password_to_henkilotietomuutos: this.ssmSecret(
+          "AuthenticationAppPasswordToHenkilotietomuutos",
+        ),
+        authentication_app_username_to_henkilotietomuutos: this.ssmSecret(
+          "AuthenticationAppUsernameToHenkilotietomuutos",
+        ),
         kayttooikeus_password: this.ssmSecret("KayttooikeusPassword"),
         kayttooikeus_username: this.ssmSecret("KayttooikeusUsername"),
         ...lampiSecrets,
         palveluvayla_access_key_id: this.ssmSecret("PalveluvaylaAccessKeyId"),
-        palveluvayla_secret_access_key: this.ssmSecret("PalveluvaylaSecretAccessKey"),
+        palveluvayla_secret_access_key: this.ssmSecret(
+          "PalveluvaylaSecretAccessKey",
+        ),
         viestinta_username: this.ssmSecret("ViestintaUsername"),
         viestinta_password: this.ssmSecret("ViestintaPassword"),
         ataru_username: this.ssmSecret("AtaruUsername"),
@@ -565,29 +657,45 @@ class OppijanumerorekisteriService extends constructs.Construct {
         host_virkailija: this.ssmSecret("HostVirkailija"),
         slack_webhook_url: this.ssmSecret("SlackWebhookUrl"),
         palveluvayla_apigw_role_arn: this.ssmSecret("PalveluvaylaApigwRoleArn"),
-        vtj_muutosrajapinta_username: this.ssmSecret("VtjMuutosrajapintaUsername"),
-        vtj_muutosrajapinta_password: this.ssmSecret("VtjMuutosrajapintaPassword"),
+        vtj_muutosrajapinta_username: this.ssmSecret(
+          "VtjMuutosrajapintaUsername",
+        ),
+        vtj_muutosrajapinta_password: this.ssmSecret(
+          "VtjMuutosrajapintaPassword",
+        ),
         vtjkysely_truststore_base64: ecs.Secret.fromSecretsManager(
           secretsmanager.Secret.fromSecretNameV2(
             this,
             "VtjkyselyTruststoreBase64",
-            "/oppijanumerorekisteri/VtjkyselyTruststoreBase64"
-          )
+            "/oppijanumerorekisteri/VtjkyselyTruststoreBase64",
+          ),
         ),
-        vtjkysely_truststore_password: this.ssmSecret("VtjkyselyTruststorePassword"),
+        vtjkysely_truststore_password: this.ssmSecret(
+          "VtjkyselyTruststorePassword",
+        ),
         vtjkysely_keystore_base64: ecs.Secret.fromSecretsManager(
           secretsmanager.Secret.fromSecretNameV2(
             this,
             "VtjkyselyKeystoreBase64",
-            "/oppijanumerorekisteri/VtjkyselyKeystoreBase64"
-          )
+            "/oppijanumerorekisteri/VtjkyselyKeystoreBase64",
+          ),
         ),
-        vtjkysely_keystore_password: this.ssmSecret("VtjkyselyKeystorePassword"),
+        vtjkysely_keystore_password: this.ssmSecret(
+          "VtjkyselyKeystorePassword",
+        ),
         vtjkysely_username: this.ssmSecret("VtjkyselyUsername"),
         vtjkysely_password: this.ssmSecret("VtjkyselyPassword"),
-        henkilo_modified_sns_topic_arn: this.ssmSecret("HenkiloModifiedSnsTopicArn"),
-        opintopolku_cross_account_role: this.ssmString("OpintopolkuCrossAccountRole"),
-        "oppijanumerorekisteri.tasks.datantuonti.import.bucket-name": this.ssmString("oppijanumerorekisteri.tasks.datantuonti.import.bucket-name", ""),
+        henkilo_modified_sns_topic_arn: this.ssmSecret(
+          "HenkiloModifiedSnsTopicArn",
+        ),
+        opintopolku_cross_account_role: this.ssmString(
+          "OpintopolkuCrossAccountRole",
+        ),
+        "oppijanumerorekisteri.tasks.datantuonti.import.bucket-name":
+          this.ssmString(
+            "oppijanumerorekisteri.tasks.datantuonti.import.bucket-name",
+            "",
+          ),
       },
       portMappings: [
         {
@@ -600,9 +708,12 @@ class OppijanumerorekisteriService extends constructs.Construct {
 
     props.exportBucket.grantReadWrite(taskDefinition.taskRole);
     props.datantuontiExportBucket.grantReadWrite(taskDefinition.taskRole);
-    props.datantuontiExportEncryptionKey.grantEncryptDecrypt(taskDefinition.taskRole);
-    datantuonti.createS3ImporPolicyStatements(this)
-      .forEach(statement => taskDefinition.addToTaskRolePolicy(statement))
+    props.datantuontiExportEncryptionKey.grantEncryptDecrypt(
+      taskDefinition.taskRole,
+    );
+    datantuonti
+      .createS3ImporPolicyStatements(this)
+      .forEach((statement) => taskDefinition.addToTaskRolePolicy(statement));
     if (config.lampiExport) {
       taskDefinition.addToTaskRolePolicy(
         new iam.PolicyStatement({
@@ -610,10 +721,10 @@ class OppijanumerorekisteriService extends constructs.Construct {
           resources: [
             ssm.StringParameter.valueFromLookup(
               this,
-              "/oppijanumerorekisteri/LampiRoleArn2"
+              "/oppijanumerorekisteri/LampiRoleArn2",
             ),
           ],
-        })
+        }),
       );
     }
     taskDefinition.addToTaskRolePolicy(
@@ -622,10 +733,10 @@ class OppijanumerorekisteriService extends constructs.Construct {
         resources: [
           ssm.StringParameter.valueFromLookup(
             this,
-            "/oppijanumerorekisteri/OpintopolkuCrossAccountRole"
+            "/oppijanumerorekisteri/OpintopolkuCrossAccountRole",
           ),
         ],
-      })
+      }),
     );
     taskDefinition.addToTaskRolePolicy(
       new iam.PolicyStatement({
@@ -633,10 +744,10 @@ class OppijanumerorekisteriService extends constructs.Construct {
         resources: [
           ssm.StringParameter.valueFromLookup(
             this,
-            "/oppijanumerorekisteri/PalveluvaylaApigwRoleArn"
+            "/oppijanumerorekisteri/PalveluvaylaApigwRoleArn",
           ),
         ],
-      })
+      }),
     );
 
     this.service = new ecs.FargateService(this, "Service", {
@@ -666,13 +777,16 @@ class OppijanumerorekisteriService extends constructs.Construct {
     this.service.connections.allowToDefaultPort(props.database);
   }
 
-  ssmString(name: string, prefix: string = '/oppijanumerorekisteri/'): ecs.Secret {
+  ssmString(
+    name: string,
+    prefix: string = "/oppijanumerorekisteri/",
+  ): ecs.Secret {
     return ecs.Secret.fromSsmParameter(
       ssm.StringParameter.fromStringParameterName(
         this,
         `Param${name}`,
-        `${prefix}${name}`
-      )
+        `${prefix}${name}`,
+      ),
     );
   }
 
@@ -681,8 +795,8 @@ class OppijanumerorekisteriService extends constructs.Construct {
       ssm.StringParameter.fromSecureStringParameterAttributes(
         this,
         `Param${name}`,
-        { parameterName: `/oppijanumerorekisteri/${name}` }
-      )
+        { parameterName: `/oppijanumerorekisteri/${name}` },
+      ),
     );
   }
 }
@@ -696,11 +810,13 @@ class HenkiloUiApplicationStack extends cdk.Stack {
   constructor(
     scope: constructs.Construct,
     id: string,
-    props: HenkiloUiApplicationStackProps
+    props: HenkiloUiApplicationStackProps,
   ) {
     super(scope, id, props);
 
-    const vpc = ec2.Vpc.fromLookup(this, "Vpc", { vpcName:  sharedAccount.VPC_NAME });
+    const vpc = ec2.Vpc.fromLookup(this, "Vpc", {
+      vpcName: sharedAccount.VPC_NAME,
+    });
     const logGroup = new logs.LogGroup(this, "AppLogGroup", {
       logGroupName: sharedAccount.prefix("/henkilo-ui"),
       retention: logs.RetentionDays.INFINITE,
@@ -722,7 +838,7 @@ class HenkiloUiApplicationStack extends cdk.Stack {
           operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
           cpuArchitecture: ecs.CpuArchitecture.ARM64,
         },
-      }
+      },
     );
 
     const appPort = 8080;
@@ -757,7 +873,7 @@ class HenkiloUiApplicationStack extends cdk.Stack {
       {
         vpc,
         internetFacing: true,
-      }
+      },
     );
 
     const sharedHostedZone = route53.HostedZone.fromLookup(
@@ -765,7 +881,7 @@ class HenkiloUiApplicationStack extends cdk.Stack {
       "YleiskayttoisetHostedZone",
       {
         domainName: ssm.StringParameter.valueFromLookup(this, "zoneName"),
-      }
+      },
     );
     const albHostname = `henkilo-ui.${sharedHostedZone.zoneName}`;
 
@@ -773,7 +889,7 @@ class HenkiloUiApplicationStack extends cdk.Stack {
       zone: sharedHostedZone,
       recordName: albHostname,
       target: route53.RecordTarget.fromAlias(
-        new route53_targets.LoadBalancerTarget(alb)
+        new route53_targets.LoadBalancerTarget(alb),
       ),
     });
 
@@ -784,7 +900,7 @@ class HenkiloUiApplicationStack extends cdk.Stack {
         domainName: albHostname,
         validation:
           certificatemanager.CertificateValidation.fromDns(sharedHostedZone),
-      }
+      },
     );
 
     const listener = alb.addListener("Listener", {
