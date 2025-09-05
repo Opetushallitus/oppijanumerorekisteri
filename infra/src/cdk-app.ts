@@ -19,8 +19,7 @@ import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import * as kms from "aws-cdk-lib/aws-kms";
 import * as sharedAccount from "./shared-account";
 import { prefix } from "./shared-account";
-import * as config from "./config";
-import { getConfig } from "./config";
+import {AutoScalingLimits, getConfig, getEnvironment} from "./config";
 import * as path from "node:path";
 import {createHealthCheckStacks} from "./health-check";
 import {DatabaseBackupToS3} from "./DatabaseBackupToS3";
@@ -28,6 +27,8 @@ import * as datantuonti from "./datantuonti";
 import * as alarms from "./alarms";
 import * as cloudwatch from "aws-cdk-lib/aws-cloudwatch"
 import * as cloudwatch_actions from "aws-cdk-lib/aws-cloudwatch-actions"
+
+const config = getConfig();
 
 class CdkApp extends cdk.App {
   constructor(props: cdk.AppProps) {
@@ -53,7 +54,7 @@ class CdkApp extends cdk.App {
 
     createHealthCheckStacks(this, alarmsToSlackLambda, [{
       name: "Oppijanumerorekisteri",
-      url: new URL(`https://${config.getConfig().virkailijaHost}/oppijanumerorekisteri-service/actuator/health`),
+      url: new URL(`https://${config.virkailijaHost}/oppijanumerorekisteri-service/actuator/health`),
     }]);
 
     new OppijanumerorekisteriApplicationStack(this, sharedAccount.prefix("OppijanumerorekisteriApplication"), {
@@ -76,12 +77,11 @@ class CdkApp extends cdk.App {
 }
 
 class DnsStack extends cdk.Stack {
-  private readonly config = getConfig();
   constructor(scope: constructs.Construct, id: string, props: cdk.StackProps) {
     super(scope, id, props);
 
     new route53.HostedZone(this, "HostedZone", {
-      zoneName: this.config.oauthDomainName,
+      zoneName: config.oauthDomainName,
     });
   }
 }
@@ -173,7 +173,7 @@ class DatabaseStack extends cdk.Stack {
 
     this.exportBucket = new s3.Bucket(this, "ExportBucket", {});
 
-    if (config.getEnvironment() == "hahtuva" || config.getEnvironment() == "dev") {
+    if (getEnvironment() == "hahtuva" || getEnvironment() == "dev") {
       this.database = new rds.DatabaseCluster(this, "Database", {
         vpc,
         vpcSubnets: {subnetType: ec2.SubnetType.PRIVATE_ISOLATED},
@@ -258,21 +258,20 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
   ) {
     super(scope, id, props);
     this.alarmTopic = props.alarmTopic;
-    const conf = config.getConfig();
     const vpc = ec2.Vpc.fromLookup(this, "Vpc", {vpcName: sharedAccount.VPC_NAME});
 
     const logGroup = new logs.LogGroup(this, "AppLogGroup", {
       logGroupName: sharedAccount.prefix("/oppijanumerorekisteri"),
       retention: logs.RetentionDays.INFINITE,
     });
-    if (conf.lampiExport) {
+    if (config.lampiExport) {
       this.exportFailureAlarm(logGroup, props.alarmTopic)
     }
     this.datantuontiExportFailureAlarm(logGroup, props.alarmTopic)
-    if (conf.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]) {
+    if (config.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]) {
       this.datantuontiImportFailureAlarm(logGroup, props.alarmTopic);
     }
-    if (conf.features.vtj) {
+    if (config.features.vtj) {
       this.vtjKyselyCertificationAlarm(logGroup, props.alarmTopic);
       this.muutostietorajapintaAlarms(logGroup, props.alarmTopic);
     }
@@ -287,7 +286,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
     new OppijanumerorekisteriService(this, "BatchService", {
       ecsCluster: props.ecsCluster,
       dockerImage,
-      autoScaling: conf.batchCapacity,
+      autoScaling: config.batchCapacity,
       logGroup,
       streamPrefix: "batch",
       database: props.database,
@@ -300,7 +299,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
     const apiService = new OppijanumerorekisteriService(this, "ApiService", {
       ecsCluster: props.ecsCluster,
       dockerImage,
-      autoScaling: conf.apiCapacity,
+      autoScaling: config.apiCapacity,
       logGroup,
       streamPrefix: "api",
       database: props.database,
@@ -467,7 +466,7 @@ class OppijanumerorekisteriService extends constructs.Construct {
     props: {
       ecsCluster: ecs.Cluster,
       dockerImage: ecr_assets.DockerImageAsset,
-      autoScaling: config.AutoScalingLimits,
+      autoScaling: AutoScalingLimits,
       logGroup: logs.LogGroup,
       streamPrefix: string,
       database: rds.DatabaseCluster,
@@ -479,7 +478,6 @@ class OppijanumerorekisteriService extends constructs.Construct {
     }
   ) {
     super(scope, id)
-    const conf = config.getConfig();
     const taskDefinition = new ecs.FargateTaskDefinition(
       this,
       "TaskDefinition",
@@ -491,16 +489,16 @@ class OppijanumerorekisteriService extends constructs.Construct {
           cpuArchitecture: ecs.CpuArchitecture.ARM64,
         },
       });
-    const lampiProperties: ecs.ContainerDefinitionProps["environment"] = conf.lampiExport ? {
-      "oppijanumerorekisteri.tasks.export.enabled": conf.lampiExport.enabled.toString(),
+    const lampiProperties: ecs.ContainerDefinitionProps["environment"] = config.lampiExport ? {
+      "oppijanumerorekisteri.tasks.export.enabled": config.lampiExport.enabled.toString(),
       "oppijanumerorekisteri.tasks.export.bucket-name": props.exportBucket.bucketName,
       "oppijanumerorekisteri.tasks.export.copy-to-lampi": "true",
-      "oppijanumerorekisteri.tasks.export.lampi-bucket-name": conf.lampiExport.bucketName,
+      "oppijanumerorekisteri.tasks.export.lampi-bucket-name": config.lampiExport.bucketName,
     } : {
       "oppijanumerorekisteri.tasks.export.enabled": "false",
     };
 
-    const lampiSecrets: ecs.ContainerDefinitionProps["secrets"] = conf.lampiExport ? {
+    const lampiSecrets: ecs.ContainerDefinitionProps["secrets"] = config.lampiExport ? {
       "oppijanumerorekisteri.tasks.export.lampi-external-id": this.ssmSecret("LampiExternalId"),
       "oppijanumerorekisteri.tasks.export.lampi-role-arn": this.ssmString("LampiRoleArn2"),
     } : {};
@@ -509,17 +507,17 @@ class OppijanumerorekisteriService extends constructs.Construct {
       image: ecs.ContainerImage.fromDockerImageAsset(props.dockerImage),
       logging: new ecs.AwsLogDriver({ logGroup: props.logGroup, streamPrefix: props.streamPrefix }),
       environment: {
-        ENV: config.getEnvironment(),
+        ENV: getEnvironment(),
         postgresql_host: props.database.clusterEndpoint.hostname,
         postgresql_port: props.database.clusterEndpoint.port.toString(),
         postgresql_db: "oppijanumerorekisteri",
         aws_region: props.awsRegion,
         export_bucket_name: props.exportBucket.bucketName,
-        "oppijanumerorekisteri.tasks.datantuonti.export.enabled": `${conf.features["oppijanumerorekisteri.tasks.datantuonti.export.enabled"]}`,
+        "oppijanumerorekisteri.tasks.datantuonti.export.enabled": `${config.features["oppijanumerorekisteri.tasks.datantuonti.export.enabled"]}`,
         "oppijanumerorekisteri.tasks.datantuonti.export.bucket-name": props.datantuontiExportBucket.bucketName,
         "oppijanumerorekisteri.tasks.datantuonti.export.encryption-key-arn": props.datantuontiExportEncryptionKey.keyArn,
-        "oppijanumerorekisteri.tasks.datantuonti.import.enabled": `${conf.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]}`,
-        "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": `${conf.features["oppijanumerorekisteri.tasks.testidatantuonti.import.enabled"]}`,
+        "oppijanumerorekisteri.tasks.datantuonti.import.enabled": `${config.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]}`,
+        "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": `${config.features["oppijanumerorekisteri.tasks.testidatantuonti.import.enabled"]}`,
         ...lampiProperties,
         ...props.extraEnvironment,
       },
@@ -591,7 +589,7 @@ class OppijanumerorekisteriService extends constructs.Construct {
     props.datantuontiExportEncryptionKey.grantEncryptDecrypt(taskDefinition.taskRole);
     datantuonti.createS3ImporPolicyStatements(this)
       .forEach(statement => taskDefinition.addToTaskRolePolicy(statement))
-    if (conf.lampiExport) {
+    if (config.lampiExport) {
       taskDefinition.addToTaskRolePolicy(
         new iam.PolicyStatement({
           actions: ["sts:AssumeRole"],
@@ -718,7 +716,7 @@ class HenkiloUiApplicationStack extends cdk.Stack {
       image: ecs.ContainerImage.fromDockerImageAsset(dockerImage),
       logging: new ecs.AwsLogDriver({ logGroup, streamPrefix: "app" }),
       environment: {
-        ENV: config.getEnvironment(),
+        ENV: getEnvironment(),
       },
       portMappings: [
         {
