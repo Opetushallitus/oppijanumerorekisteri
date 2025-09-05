@@ -162,6 +162,15 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
           ]),
         }),
       );
+      testStage.addAction(
+        new codepipeline_actions.CodeBuildAction({
+          actionName: "Prettier",
+          input: sourceOutput,
+          project: makeUbuntuTestProject(this, env, "Prettier", [
+            "scripts/ci/run-prettier-check.sh",
+          ]),
+        }),
+      );
     }
 
     const deployProject = new codebuild.PipelineProject(
