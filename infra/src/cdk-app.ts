@@ -40,7 +40,7 @@ class CdkApp extends cdk.App {
       },
     };
 
-    new DnsStack(this, prefix("DnsStack"), stackProps);
+    const { oauthHostedZone }  = new DnsStack(this, prefix("DnsStack"), stackProps);
     const { alarmsToSlackLambda, alarmTopic } = new AlarmStack(this, sharedAccount.prefix("AlarmStack"), stackProps);
     const ecsStack = new ECSStack(this, sharedAccount.prefix("ECSStack"), stackProps);
     const datantuontiExportStack = new datantuonti.ExportStack(this, sharedAccount.prefix("DatantuontiExport"), stackProps);
@@ -65,6 +65,7 @@ class CdkApp extends cdk.App {
       ecsCluster: ecsStack.cluster,
       datantuontiExportBucket: datantuontiExportStack.bucket,
       datantuontiExportEncryptionKey: datantuontiExportStack.encryptionKey,
+      oauthHostedZone,
       ...stackProps,
     });
 
@@ -77,10 +78,11 @@ class CdkApp extends cdk.App {
 }
 
 class DnsStack extends cdk.Stack {
+  readonly oauthHostedZone: route53.IHostedZone;
   constructor(scope: constructs.Construct, id: string, props: cdk.StackProps) {
     super(scope, id, props);
 
-    new route53.HostedZone(this, "HostedZone", {
+    this.oauthHostedZone = new route53.HostedZone(this, "HostedZone", {
       zoneName: config.oauthDomainName,
     });
   }
@@ -246,6 +248,7 @@ type OppijanumerorekisteriApplicationStackProperties = cdk.StackProps & {
   datantuontiExportBucket: s3.Bucket
   datantuontiExportEncryptionKey: kms.IKey
   alarmTopic: sns.ITopic
+  oauthHostedZone: route53.IHostedZone
 }
 
 class OppijanumerorekisteriApplicationStack extends cdk.Stack {
@@ -338,13 +341,24 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       ),
     });
 
+    new route53.ARecord(this, "OAuthARecord", {
+      zone: props.oauthHostedZone,
+      recordName: config.oauthDomainName,
+      target: route53.RecordTarget.fromAlias(
+        new route53_targets.LoadBalancerTarget(alb)
+      ),
+    });
+
     const albCertificate = new certificatemanager.Certificate(
         this,
         "AlbCertificate",
         {
           domainName: albHostname,
-          validation:
-              certificatemanager.CertificateValidation.fromDns(sharedHostedZone),
+          subjectAlternativeNames: [config.oauthDomainName],
+          validation: certificatemanager.CertificateValidation.fromDnsMultiZone({
+            albHostanme: sharedHostedZone,
+            [config.oauthDomainName]: props.oauthHostedZone,
+          }),
         }
     );
 
