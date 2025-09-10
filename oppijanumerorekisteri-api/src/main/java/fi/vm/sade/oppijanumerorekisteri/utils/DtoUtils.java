@@ -4,6 +4,8 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -13,6 +15,11 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 
 public class DtoUtils {
+    public static ZonedDateTime toZonedDateTime(Date date) {
+        if (date == null) return null;
+        var utc = ZonedDateTime.ofInstant(date.toInstant(), ZoneId.of("UTC"));
+        return utc.withZoneSameInstant(ZoneId.of("Europe/Helsinki"));
+    }
     public static KielisyysDto createKielisyysDto(String kielikoodi, String kielityyppi) {
         KielisyysDto kielisyysDto = new KielisyysDto();
         kielisyysDto.setKieliKoodi(kielikoodi);

@@ -1,6 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAsiointikieli;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
 import lombok.Setter;
@@ -13,6 +15,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -82,5 +86,10 @@ public class HenkiloPerustietoDto implements Serializable {
     @AssertTrue(message = "invalid.sukunimi.empty")
     public boolean isSukunimiValidIfCreate() {
         return isFind() || hasLength(getSukunimi());
+    }
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "Europe/Helsinki", pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    public ZonedDateTime getModifiedAt() {
+        return DtoUtils.toZonedDateTime(modified);
     }
 }

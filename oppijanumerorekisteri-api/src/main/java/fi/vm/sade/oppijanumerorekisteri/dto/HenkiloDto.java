@@ -1,10 +1,13 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import lombok.Setter;
 import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -74,5 +77,15 @@ public class HenkiloDto implements Serializable {
     @Deprecated
     public Set<KielisyysDto> getKielisyys() {
         return new HashSet<>();
+    }
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "Europe/Helsinki", pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    public ZonedDateTime getCreatedAt() {
+        return DtoUtils.toZonedDateTime(created);
+    }
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "Europe/Helsinki", pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    public ZonedDateTime getModifiedAt() {
+        return DtoUtils.toZonedDateTime(modified);
     }
 }
