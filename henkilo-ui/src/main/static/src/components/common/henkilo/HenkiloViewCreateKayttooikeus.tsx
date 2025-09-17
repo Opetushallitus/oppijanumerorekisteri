@@ -39,9 +39,9 @@ const HenkiloViewCreateKayttooikeus = ({
     const [organisationSelection, setOrganisationSelection] = useState<OrganisaatioSelectObject>();
     const [ryhmaSelection, setRyhmaSelection] = useState<SelectOption>();
     const [alkupvm, setAlkupvm] = useState<moment.Moment>(moment());
-    const [loppupvm, setLoppupvm] = useState<moment.Moment>(
-        isPalvelukayttaja ? moment('2099-12-31', 'YYYY-MM-DD') : moment().add(vuosia, 'years')
-    );
+    const defaultLoppupvm = isPalvelukayttaja ? moment('2099-12-31', 'YYYY-MM-DD') : moment().add(vuosia, 'years');
+    const [loppupvmInput, setLoppupvmInput] = useState<moment.Moment>();
+    const loppupvm = loppupvmInput ?? defaultLoppupvm;
 
     const selectRyhma = (selection: SelectOption) => {
         setOrganisationSelection(undefined);
@@ -58,7 +58,7 @@ const HenkiloViewCreateKayttooikeus = ({
         setOrganisationSelection(undefined);
         setRyhmaSelection(undefined);
         setAlkupvm(moment());
-        setLoppupvm(isPalvelukayttaja ? moment('2099-12-31', 'YYYY-MM-DD') : moment().add(vuosia, 'years'));
+        setLoppupvmInput(undefined);
     };
 
     const createKayttooikeusAction = () => {
@@ -112,7 +112,7 @@ const HenkiloViewCreateKayttooikeus = ({
                         <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY']}</span>
                         <ReactDatePicker
                             className="oph-input"
-                            onChange={(date) => setLoppupvm(moment(date))}
+                            onChange={(date) => setLoppupvmInput(moment(date))}
                             selected={loppupvm.toDate()}
                             showYearDropdown
                             showWeekNumbers
