@@ -1,0 +1,47 @@
+package fi.vm.sade;
+
+import fi.vm.sade.henkiloui.configurations.security.CasUserDetailsService;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
+import org.springframework.security.cas.authentication.CasAuthenticationToken;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.GenericFilterBean;
+
+import java.io.IOException;
+import java.util.Optional;
+
+@Component
+@Slf4j
+public class RequestCallerFilter extends GenericFilterBean {
+    public static final String CALLER_HENKILO_OID_ATTRIBUTE = RequestCallerFilter.class.getName() + ".callerHenkiloOid";
+
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        try {
+            var callerOid = getUserDetails(servletRequest).map(userDetails -> userDetails.getHenkiloOid());
+            callerOid.ifPresent(oid -> {
+                MDC.put(CALLER_HENKILO_OID_ATTRIBUTE, oid);
+                servletRequest.setAttribute(CALLER_HENKILO_OID_ATTRIBUTE, oid);
+            });
+            filterChain.doFilter(servletRequest, servletResponse);
+        } finally {
+            MDC.remove(CALLER_HENKILO_OID_ATTRIBUTE);
+        }
+    }
+
+    private Optional<CasUserDetailsService.CasUserDetails> getUserDetails(ServletRequest servletRequest) {
+        if (servletRequest instanceof HttpServletRequest request) {
+            if (request.getUserPrincipal() instanceof CasAuthenticationToken token) {
+                if (token.getUserDetails() instanceof CasUserDetailsService.CasUserDetails casUserDetails) {
+                    return Optional.of(casUserDetails);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+}

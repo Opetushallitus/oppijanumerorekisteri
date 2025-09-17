@@ -30,7 +30,7 @@ public class PalvelukayttajaRedirectFilter extends GenericFilterBean {
             if (principal instanceof CasAuthenticationToken token) {
                 var userDetails = token.getUserDetails();
                 if (userDetails instanceof CasUserDetailsService.CasUserDetails casUserDetails && (casUserDetails.isPalvelukayttaja())) {
-                    log.info("Redirecting palvelukäyttäjä '{}' to palvelukäyttäjä info page", casUserDetails.getUsername());
+                    log.info("Redirecting palvelukäyttäjä '{}' to palvelukäyttäjä info page", casUserDetails.getCasKayttajatunnus());
                     response.sendRedirect(hostVirkailija + "/henkilo-ui/palvelukayttajainfo");
                     return;
                 }

@@ -16,17 +16,22 @@ public class CasUserDetailsService implements AuthenticationUserDetailsService<C
 
     @Override
     public UserDetails loadUserDetails(CasAssertionAuthenticationToken token) throws UsernameNotFoundException {
-        var username = token.getName();
+        var casKayttajatunnus = token.getName();
         var attributes = token.getAssertion().getPrincipal().getAttributes();
         boolean strongAuth = SUOMI_FI_IDP_ENTITY_ID.equals(attributes.get("idpEntityId"));
         var kayttajaTyyppi = (String) attributes.get("kayttajaTyyppi");
-        return new CasUserDetails(username, strongAuth, kayttajaTyyppi);
+        var henkiloOid = (String) attributes.get("oidHenkilo");
+        return new CasUserDetails(casKayttajatunnus, henkiloOid, casKayttajatunnus, strongAuth, kayttajaTyyppi);
     }
 
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     @Getter
     public static class CasUserDetails implements UserDetails {
+        private static final long serialVersionUID = 5084352322822608953L;
+
         private final String username;
+        private final String henkiloOid;
+        private final String casUsername;
         private final boolean strongAuth;
         private final String kayttajaTyyppi;
 
@@ -46,7 +51,15 @@ public class CasUserDetailsService implements AuthenticationUserDetailsService<C
 
         @Override
         public String getUsername() {
-            return username;
+            return getHenkiloOid();
+        }
+
+        public String getCasKayttajatunnus() {
+            return casUsername != null ? casUsername : username;
+        }
+
+        public String getHenkiloOid() {
+            return henkiloOid != null ? henkiloOid : username;
         }
 
         @Override
