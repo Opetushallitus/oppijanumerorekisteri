@@ -14,9 +14,9 @@ import { HenkiloViewCreateKayttooikeusanomus } from '../common/henkilo/HenkiloVi
 import Mfa from './Mfa';
 import { RootState } from '../../store';
 import { useLocalisations } from '../../selectors';
-import { HenkiloState } from '../../reducers/henkilo.reducer';
-import { KoodistoState } from '../../reducers/koodisto.reducer';
-import { KayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma.reducer';
+import { HenkiloState, isHenkiloStateLoading } from '../../reducers/henkilo.reducer';
+import { KoodistoState, isKoodistoStateLoading } from '../../reducers/koodisto.reducer';
+import { KayttooikeusRyhmaState, isKayttooikeusryhmaStateLoading } from '../../reducers/kayttooikeusryhma.reducer';
 import { isOnrRekisterinpitaja } from '../../utilities/palvelurooli.util';
 import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { Identifications } from './Identifications';
@@ -36,6 +36,14 @@ export const HenkiloViewPage = (props: Props) => {
     const { view, oidHenkilo } = props;
     const { data: omattiedot } = useGetOmattiedotQuery();
     const isRekisterinpitaja = omattiedot ? isOnrRekisterinpitaja(omattiedot.organisaatiot) : false;
+
+    if (
+        isHenkiloStateLoading(henkilo) ||
+        isKayttooikeusryhmaStateLoading(kayttooikeus) ||
+        isKoodistoStateLoading(koodisto)
+    ) {
+        return <Loader />;
+    }
 
     return (
         <div className="mainContent">

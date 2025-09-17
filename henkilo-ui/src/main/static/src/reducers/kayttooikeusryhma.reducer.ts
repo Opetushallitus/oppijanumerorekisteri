@@ -29,6 +29,12 @@ export type KayttooikeusRyhmaState = {
     readonly kayttooikeusryhmaSlavesLoading: boolean;
 };
 
+export const isKayttooikeusryhmaStateLoading = (state: KayttooikeusRyhmaState) =>
+    state.kayttooikeusAnomusLoading ||
+    state.kayttooikeusLoading ||
+    state.kayttooikeusryhmaLoading ||
+    state.kayttooikeusryhmaSlavesLoading;
+
 export const getEmptyKayttooikeusRyhmaState = (): KayttooikeusRyhmaState => {
     return {
         kayttooikeusLoading: true,

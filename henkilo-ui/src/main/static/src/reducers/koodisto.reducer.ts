@@ -23,6 +23,8 @@ export type KoodistoState = {
     yhteystietotyypit: Array<KoodistoStateKoodi>;
 };
 
+export const isKoodistoStateLoading = (state: KoodistoState) => state.yhteystietotyypitKoodistoLoading;
+
 const koodisto = (
     state: Readonly<KoodistoState> = {
         yhteystietotyypitKoodistoLoading: true,

@@ -47,6 +47,14 @@ export type HenkiloState = {
     readonly hakemukset: Array<Hakemus>;
 };
 
+export const isHenkiloStateLoading = (state: HenkiloState) =>
+    state.henkiloLoading ||
+    state.kayttajaLoading ||
+    state.henkiloOrgsLoading ||
+    state.kayttajatietoLoading ||
+    state.yksilointitiedotLoading ||
+    state.hakemuksetLoading;
+
 const initialState: HenkiloState = {
     henkiloLoading: true,
     kayttajaLoading: false,
