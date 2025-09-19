@@ -631,6 +631,9 @@
     gap: 9px;
 }
 
+.oph-ds-banner-error {
+    background: rgba(204, 51, 0, 0.1);
+}
 .oph-ds-banner-warning {
     background: rgba(255, 204, 51, 0.1);
 }

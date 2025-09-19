@@ -32,6 +32,7 @@ import { TextGroupModify } from '../types/domain/kayttooikeus/textgroup.types';
 import { PalveluRooliModify } from '../types/domain/kayttooikeus/PalveluRooliModify.types';
 import { SallitutKayttajatyypit } from '../components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage';
 import { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
+import { fetchAllKayttooikeusryhmasForHenkilo } from '../actions/kayttooikeusryhma.actions';
 
 type MfaSetupResponse = {
     secretKey: string;
@@ -137,8 +138,17 @@ export const kayttooikeusApi = createApi({
         'rootorganisation',
         'organisationnames',
         'kayttooikeusryhmaroolit',
+        'henkilonkayttooikeusryhmat',
     ],
     endpoints: (builder) => ({
+        getKayttooikeusryhmasForHenkilo: builder.query<MyonnettyKayttooikeusryhma[], string>({
+            query: (henkiloOid: string) => `kayttooikeusryhma/henkilo/${henkiloOid}`,
+            async onQueryStarted(henkiloOid, { dispatch }) {
+                dispatch(fetchAllKayttooikeusryhmasForHenkilo(henkiloOid));
+            },
+            providesTags: ['henkilonkayttooikeusryhmat'],
+        }),
+
         getOmattiedot: builder.query<Omattiedot, void>({
             query: () => 'henkilo/current/omattiedot',
             async onQueryStarted(_oid, { dispatch, queryFulfilled }) {
@@ -395,6 +405,7 @@ export const kayttooikeusApi = createApi({
 });
 
 export const {
+    useGetKayttooikeusryhmasForHenkiloQuery,
     useGetOmattiedotQuery,
     useGetOmatOrganisaatiotQuery,
     useGetMfaSetupQuery,
