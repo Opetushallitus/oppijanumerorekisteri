@@ -26,6 +26,10 @@ function main {
   tmux splitw -v
   tmux send-keys "$repo/scripts/run-henkilo-ui.sh" C-m
 
+  tmux select-pane -t 1
+  tmux splitw -v
+  tmux send-keys "$repo/scripts/run-mocks.sh" C-m
+
   tmux attach-session -t "$session"
 }
 
