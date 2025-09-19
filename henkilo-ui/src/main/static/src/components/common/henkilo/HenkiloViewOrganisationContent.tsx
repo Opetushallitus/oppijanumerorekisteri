@@ -6,10 +6,11 @@ import StaticUtils from '../StaticUtils';
 import { toLocalizedText } from '../../../localizabletext';
 import { passivoiHenkiloOrg } from '../../../actions/henkilo.actions';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
-import { StoreOrganisaatio } from '../../../types/domain/organisaatio/organisaatio.types';
 import { useLocalisations } from '../../../selectors';
 import ConfirmButton from '../button/ConfirmButton';
 import Button from '../button/Button';
+import { HenkiloOrg } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
+import { useGetOrganisationsQuery } from '../../../api/kayttooikeus';
 
 import './HenkiloViewOrganisationContent.css';
 
@@ -24,19 +25,21 @@ export const HenkiloViewOrganisationContent = () => {
     const { L, locale } = useLocalisations();
     const [showPassive, setShowPassive] = useState(false);
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data: apiOrganisations, isSuccess } = useGetOrganisationsQuery();
     const dispatch = useAppDispatch();
 
     function passivoiHenkiloOrganisation(organisationOid: string) {
         dispatch<any>(passivoiHenkiloOrg(henkilo.henkilo.oidHenkilo, organisationOid));
     }
 
-    function flatOrganisations(organisations: Array<StoreOrganisaatio>): Array<OrganisaatioFlat> {
-        return organisations.map((organisation) => {
+    function flatOrganisations(organisations: HenkiloOrg[]): Array<OrganisaatioFlat> {
+        return organisations.map((org) => {
+            const organisation = apiOrganisations.find((o) => o.oid === org.organisaatioOid);
             const typesFlat = organisation.tyypit ? organisationTypesFlat(organisation.tyypit) : '';
             return {
                 name: toLocalizedText(locale, organisation.nimi),
                 typesFlat: typesFlat,
-                passive: organisation.passivoitu,
+                passive: org.passivoitu,
                 id: organisation.oid,
             };
         });
@@ -59,35 +62,36 @@ export const HenkiloViewOrganisationContent = () => {
                 <span className="oph-checkable-text"> {L['HENKILO_NAYTA_PASSIIVISET_TEKSTI']}</span>
             </label>
             <div className="organisationContentWrapper">
-                {flatOrganisations(henkilo.henkiloOrgs).map((values, idx) =>
-                    !values.passive || showPassive ? (
-                        <div key={idx}>
-                            <div>
-                                <span className="oph-bold">
-                                    {values.name} {values.typesFlat}
-                                </span>
+                {isSuccess &&
+                    flatOrganisations(henkilo.henkiloOrgs).map((values, idx) =>
+                        !values.passive || showPassive ? (
+                            <div key={idx}>
+                                <div>
+                                    <span className="oph-bold">
+                                        {values.name} {values.typesFlat}
+                                    </span>
+                                </div>
+                                <div className="labelValue">
+                                    <span className="oph-bold">{L['HENKILO_ORGTUNNISTE']}:</span>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <span>{values.id}</span>
+                                </div>
+                                <div className="labelValue">
+                                    {!values.passive ? (
+                                        <ConfirmButton
+                                            key="passivoiOrg"
+                                            action={() => passivoiHenkiloOrganisation(values.id)}
+                                            confirmLabel={L['HENKILO_ORG_PASSIVOI_CONFIRM']}
+                                            normalLabel={L['HENKILO_ORG_PASSIVOI']}
+                                            id={values.id}
+                                        />
+                                    ) : (
+                                        <Button disabled>{L['HENKILO_ORG_PASSIVOITU']}</Button>
+                                    )}
+                                </div>
                             </div>
-                            <div className="labelValue">
-                                <span className="oph-bold">{L['HENKILO_ORGTUNNISTE']}:</span>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <span>{values.id}</span>
-                            </div>
-                            <div className="labelValue">
-                                {!values.passive ? (
-                                    <ConfirmButton
-                                        key="passivoiOrg"
-                                        action={() => passivoiHenkiloOrganisation(values.id)}
-                                        confirmLabel={L['HENKILO_ORG_PASSIVOI_CONFIRM']}
-                                        normalLabel={L['HENKILO_ORG_PASSIVOI']}
-                                        id={values.id}
-                                    />
-                                ) : (
-                                    <Button disabled>{L['HENKILO_ORG_PASSIVOITU']}</Button>
-                                )}
-                            </div>
-                        </div>
-                    ) : null
-                )}
+                        ) : null
+                    )}
             </div>
         </div>
     );

@@ -2,9 +2,8 @@ import { findIndex, pathEq, sortBy, uniqBy } from 'ramda';
 
 import { toLocalizedText } from '../localizabletext';
 import type { OrganisaatioHenkilo } from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
-import type { OrganisaatioWithChildren } from '../types/domain/organisaatio/organisaatio.types';
+import type { OrganisaatioNameLookup, OrganisaatioWithChildren } from '../types/domain/organisaatio/organisaatio.types';
 import type { Locale } from '../types/locale.type';
-import type { OrganisaatioNameLookup } from '../reducers/organisaatio.reducer';
 import type { OrganisaatioSelectObject } from '../types/organisaatioselectobject.types';
 import { getLocalization } from './localisation.util';
 

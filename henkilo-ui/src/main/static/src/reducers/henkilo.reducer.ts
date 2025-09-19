@@ -21,14 +21,11 @@ import {
     FETCH_HENKILO_YKSILOINTITIETO_FAILURE,
     FETCH_HENKILO_HAKEMUKSET,
 } from '../actions/actiontypes';
-import StaticUtils from '../components/common/StaticUtils';
 import type { Henkilo, HenkiloOrg } from '../types/domain/oppijanumerorekisteri/henkilo.types';
 import type { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
 import type { Hakemus } from '../types/domain/oppijanumerorekisteri/Hakemus.type';
 import type { Kayttaja } from '../types/domain/kayttooikeus/kayttaja.types';
 import type { Yksilointitieto } from '../types/domain/oppijanumerorekisteri/yksilointitieto.types';
-import { StoreOrganisaatio } from '../types/domain/organisaatio/organisaatio.types';
-import { OrganisaatioCache } from './organisaatio.reducer';
 import { AnyAction } from '@reduxjs/toolkit';
 
 export type HenkiloState = {
@@ -39,7 +36,7 @@ export type HenkiloState = {
     readonly henkiloKayttoEstetty: boolean;
     readonly henkilo: Henkilo;
     readonly kayttaja: Kayttaja;
-    readonly henkiloOrgs: Array<StoreOrganisaatio>;
+    readonly henkiloOrgs: HenkiloOrg[];
     readonly kayttajatieto?: KayttajatiedotRead;
     readonly yksilointitiedotLoading: boolean;
     readonly yksilointitiedot: Yksilointitieto;
@@ -69,17 +66,6 @@ const initialState: HenkiloState = {
     yksilointitiedot: {},
     hakemuksetLoading: false,
     hakemukset: [],
-};
-
-const mapOrgHenkilosWithOrganisations = (
-    henkiloOrgs: HenkiloOrg[],
-    organisations: OrganisaatioCache
-): StoreOrganisaatio[] => {
-    return henkiloOrgs.map((henkiloOrg) => {
-        const org =
-            organisations[henkiloOrg.organisaatioOid] || StaticUtils.defaultOrganisaatio(henkiloOrg.organisaatioOid);
-        return { ...henkiloOrg, ...org };
-    });
 };
 
 const isKayttoEstetty = (data?: { status: number; path: string; message: string }) =>
@@ -136,7 +122,7 @@ export const henkilo = (state: Readonly<HenkiloState> = initialState, action: An
             return {
                 ...state,
                 henkiloOrgsLoading: false,
-                henkiloOrgs: mapOrgHenkilosWithOrganisations(action.henkiloOrgs, action.organisations),
+                henkiloOrgs: action.henkiloOrgs,
             };
         case FETCH_HENKILO_HAKEMUKSET.REQUEST:
             return { ...state, hakemuksetLoading: true };

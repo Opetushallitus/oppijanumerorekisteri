@@ -35,7 +35,6 @@ import {
     POISTA_KAYTTAJATUNNUS_SUCCESS,
     POISTA_KAYTTAJATUNNUS_FAILURE,
 } from './actiontypes';
-import { fetchOrganisations } from './organisaatio.actions';
 import { fetchAllKayttooikeusryhmasForHenkilo } from './kayttooikeusryhma.actions';
 import { addGlobalNotification } from './notification.actions';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
@@ -44,7 +43,6 @@ import { GlobalNotificationConfig } from '../types/notification.types';
 import { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
 import { AppDispatch, RootState } from '../store';
 import { Henkilo, HenkiloOrg } from '../types/domain/oppijanumerorekisteri/henkilo.types';
-import { OrganisaatioCache } from '../reducers/organisaatio.reducer';
 
 const requestHenkilo = (oid) => ({ type: FETCH_HENKILO_REQUEST, oid });
 const receiveHenkilo = (json) => ({
@@ -288,10 +286,9 @@ export const overrideYksiloimatonHenkiloVtjData = (oid) => async (dispatch: AppD
 };
 
 const requestHenkiloOrgs = (oid) => ({ type: FETCH_HENKILOORGS_REQUEST, oid });
-const receiveHenkiloOrgsSuccess = (henkiloOrgs: HenkiloOrg[], organisations: OrganisaatioCache) => ({
+const receiveHenkiloOrgsSuccess = (henkiloOrgs: HenkiloOrg[]) => ({
     type: FETCH_HENKILOORGS_SUCCESS,
     henkiloOrgs: henkiloOrgs,
-    organisations: organisations,
     receivedAt: Date.now(),
 });
 
@@ -300,11 +297,7 @@ export const fetchHenkiloOrgs = (oidHenkilo) => (dispatch: AppDispatch, getState
     oidHenkilo = oidHenkilo || getState().omattiedot.data.oid;
     dispatch(requestHenkiloOrgs(oidHenkilo));
     const url = urls.url('kayttooikeus-service.henkilo.organisaatiohenkilos', oidHenkilo);
-    return http.get<HenkiloOrg[]>(url).then((json) => {
-        dispatch<any>(fetchOrganisations(json.map((orgHenkilo) => orgHenkilo.organisaatioOid))).then(() =>
-            dispatch(receiveHenkiloOrgsSuccess(json, getState().organisaatio.cached))
-        );
-    });
+    return http.get<HenkiloOrg[]>(url).then((json) => dispatch(receiveHenkiloOrgsSuccess(json)));
 };
 
 const requestPassivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => ({

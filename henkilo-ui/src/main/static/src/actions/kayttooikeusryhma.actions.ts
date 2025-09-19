@@ -29,7 +29,6 @@ import {
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_FAILURE,
 } from './actiontypes';
-import { fetchOrganisations } from './organisaatio.actions';
 import { fetchHenkiloOrgs } from './henkilo.actions';
 import { AppDispatch } from '../store';
 
@@ -67,11 +66,7 @@ export const fetchAllKayttooikeusryhmasForHenkilo = (henkiloOid?: string) => (di
         ? urls.url('kayttooikeus-service.kayttooikeusryhma.henkilo.oid', henkiloOid)
         : urls.url('kayttooikeus-service.kayttooikeusryhma.henkilo.current');
     http.get<[{ organisaatioOid: string }]>(url)
-        .then((kayttooikeus) => {
-            dispatch<any>(fetchOrganisations(kayttooikeus.map((ko) => ko.organisaatioOid))).then(() =>
-                dispatch(receiveAllKayttooikeusryhmasForHenkilo(henkiloOid, kayttooikeus))
-            );
-        })
+        .then((kayttooikeus) => dispatch(receiveAllKayttooikeusryhmasForHenkilo(henkiloOid, kayttooikeus)))
         .catch(() => dispatch(errorAllKayttooikeusryhmasForHenkilo(henkiloOid)));
 };
 
@@ -93,11 +88,9 @@ export const fetchAllKayttooikeusAnomusForHenkilo = (henkiloOid: string) => (dis
     dispatch(requestAllKayttooikeusryhmaAnomusForHenkilo(henkiloOid));
     const url = urls.url('kayttooikeus-service.henkilo.anomus-list', henkiloOid, { activeOnly: true });
     http.get<[{ anomus: { organisaatioOid: string } }]>(url)
-        .then((kayttooikeusAnomus) => {
-            dispatch<any>(
-                fetchOrganisations(kayttooikeusAnomus.map((koAnomus) => koAnomus.anomus.organisaatioOid))
-            ).then(() => dispatch(receiveAllKayttooikeusryhmaAnomusForHenkilo(henkiloOid, kayttooikeusAnomus)));
-        })
+        .then((kayttooikeusAnomus) =>
+            dispatch(receiveAllKayttooikeusryhmaAnomusForHenkilo(henkiloOid, kayttooikeusAnomus))
+        )
         .catch(() => dispatch(errorAllKayttooikeusryhmaAnomusForHenkilo(henkiloOid)));
 };
 

@@ -20,13 +20,15 @@ import {
 import { HenkilohakuResult } from '../types/domain/kayttooikeus/HenkilohakuResult.types';
 import { Henkilohaku, HenkilohakuCriteria } from '../types/domain/kayttooikeus/HenkilohakuCriteria.types';
 import { HaettuKayttooikeusryhma } from '../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
-import { fetchOrganisations } from '../actions/organisaatio.actions';
 import { KutsututSearchParams } from '../components/kutsutut/KutsututPage';
 import { Kayttooikeusryhma, MyonnettyKayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { Palvelu } from '../types/domain/kayttooikeus/palvelu.types';
 import { PalveluKayttooikeus } from '../types/domain/kayttooikeus/palvelukayttooikeus.types';
-import { OrganisaatioWithChildren } from '../types/domain/organisaatio/organisaatio.types';
-import { OrganisaatioNameLookup } from '../reducers/organisaatio.reducer';
+import {
+    Organisaatio,
+    OrganisaatioNameLookup,
+    OrganisaatioWithChildren,
+} from '../types/domain/organisaatio/organisaatio.types';
 import { PalveluRooli } from '../types/domain/kayttooikeus/PalveluRooli.types';
 import { TextGroupModify } from '../types/domain/kayttooikeus/textgroup.types';
 import { PalveluRooliModify } from '../types/domain/kayttooikeus/PalveluRooliModify.types';
@@ -136,6 +138,7 @@ export const kayttooikeusApi = createApi({
         'kayttooikeusryhmat',
         'organisaatioryhmat',
         'rootorganisation',
+        'organisations',
         'organisationnames',
         'kayttooikeusryhmaroolit',
         'henkilonkayttooikeusryhmat',
@@ -294,10 +297,6 @@ export const kayttooikeusApi = createApi({
                 getNextPageParam: (lastPage, _, lastPageParam) =>
                     lastPage.length === 20 ? lastPageParam + 20 : undefined,
             },
-            async onQueryStarted(_token, { dispatch, queryFulfilled }) {
-                const { data } = await queryFulfilled;
-                await dispatch<any>(fetchOrganisations(data.pages.flat().map((h) => h.anomus.organisaatioOid)));
-            },
             providesTags: ['haetutKayttooikeusryhmat'],
         }),
         putHaettuKayttooikeusryhma: builder.mutation<void, PutHaettuKayttooikeusryhmaRequest>({
@@ -401,6 +400,10 @@ export const kayttooikeusApi = createApi({
             query: () => 'organisaatio/names',
             providesTags: ['organisationnames'],
         }),
+        getOrganisations: builder.query<Organisaatio[], void>({
+            query: () => 'organisaatio?tyyppi=ORGANISAATIO&tila=AKTIIVINEN',
+            providesTags: ['organisations'],
+        }),
     }),
 });
 
@@ -440,4 +443,5 @@ export const {
     useGetOrganisaatioRyhmatQuery,
     useGetRootOrganisationQuery,
     useGetOrganisationNamesQuery,
+    useGetOrganisationsQuery,
 } = kayttooikeusApi;

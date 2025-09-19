@@ -24,11 +24,11 @@ import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.redu
 import ToggleKayttooikeusryhmaStateModal from './ToggleKayttooikeusryhmaStateModal';
 import PropertySingleton from '../../../globals/PropertySingleton';
 import { OrganisaatioViite } from '../../../types/domain/kayttooikeus/organisaatioviite.types';
-import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
 import { SelectOption } from '../../../utilities/select';
 import { useLocalisations } from '../../../selectors';
 import {
     useGetKayttooikeusryhmaRoolisQuery,
+    useGetOrganisationsQuery,
     usePostKayttooikeusryhmaMutation,
     usePutKayttooikeusryhmaMutation,
 } from '../../../api/kayttooikeus';
@@ -82,7 +82,7 @@ export const KayttooikeusryhmaPage = (props: Props) => {
     const { data: oppilaitostyyppiKoodisto } = useGetOppilaitostyypitQuery();
     const { data: organisaatiotyyppiKoodisto } = useGetOrganisaatiotyypitQuery();
     const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
-    const organisaatioCache = useSelector<RootState, OrganisaatioCache>((state) => state.organisaatio.cached);
+    const { data: organisations, isSuccess } = useGetOrganisationsQuery();
     const { data: palvelutRoolit } = useGetKayttooikeusryhmaRoolisQuery(props.kayttooikeusryhmaId, {
         skip: !props.kayttooikeusryhmaId,
     });
@@ -112,14 +112,13 @@ export const KayttooikeusryhmaPage = (props: Props) => {
     }, [props.kayttooikeusryhmaId, kayttooikeus, palvelutRoolit]);
 
     useEffect(() => {
-        if (Object.keys(organisaatioCache).length > 0) {
+        if (isSuccess) {
             const organisaatioSelections = _parseExistingOrganisaatioData(
-                kayttooikeus.kayttooikeusryhma?.organisaatioViite,
-                organisaatioCache
+                kayttooikeus.kayttooikeusryhma?.organisaatioViite
             );
             setKayttooikeusryhmaForm({ ...kayttooikeusryhmaForm, organisaatioSelections });
         }
-    }, [organisaatioCache]);
+    }, [organisations]);
 
     const _parseExistingKayttooikeusryhmaData = (
         kayttooikeusryhmaState: KayttooikeusRyhmaState
@@ -128,9 +127,7 @@ export const KayttooikeusryhmaPage = (props: Props) => {
         return {
             name: _parseExistingTextsData(kayttooikeusryhmaState.kayttooikeusryhma?.nimi?.texts),
             description: _parseExistingTextsData(kayttooikeusryhmaState.kayttooikeusryhma?.kuvaus?.texts),
-            organisaatioSelections: organisaatioviiteData
-                ? _parseExistingOrganisaatioData(organisaatioviiteData, organisaatioCache)
-                : [],
+            organisaatioSelections: organisaatioviiteData ? _parseExistingOrganisaatioData(organisaatioviiteData) : [],
             oppilaitostyypitSelections: organisaatioviiteData
                 ? _parseExistingOppilaitostyyppiData(organisaatioviiteData)
                 : [],
@@ -178,10 +175,9 @@ export const KayttooikeusryhmaPage = (props: Props) => {
     };
 
     const _parseExistingOrganisaatioData = (
-        organisaatioViitteet: OrganisaatioViite[],
-        organisaatioCache: OrganisaatioCache
+        organisaatioViitteet: OrganisaatioViite[]
     ): Array<OrganisaatioSelectObject> => {
-        if (Object.keys(organisaatioCache).length === 0 || !organisaatioViitteet) {
+        if (organisations.length === 0 || !organisaatioViitteet) {
             return [];
         }
         const organisaatioViittees = organisaatioViitteet.filter((organisaatioViite) =>
@@ -189,8 +185,7 @@ export const KayttooikeusryhmaPage = (props: Props) => {
         );
         const organisaatioOids = organisaatioViittees.map((organisaatioViite) => organisaatioViite.organisaatioTyyppi);
         return organisaatioOids
-            .map((oid) => organisaatioCache[oid])
-            .filter(Boolean) // might be undefined (at least in dev environments)
+            .map((oid) => organisations.find((o) => o.oid === oid))
             .map((organisaatio) => {
                 const localizedName = getLocalization(organisaatio.nimi, locale);
                 const name =

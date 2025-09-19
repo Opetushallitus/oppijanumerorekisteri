@@ -5,7 +5,6 @@ import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, SortingSt
 
 import { useAppDispatch, type RootState } from '../../../store';
 import StaticUtils from '../StaticUtils';
-import { toLocalizedText } from '../../../localizabletext';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import HaeJatkoaikaaButton from '../../omattiedot/HaeJatkoaikaaButton';
 import { createEmailOptions } from '../../../utilities/henkilo.util';
@@ -18,10 +17,9 @@ import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/k
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 import { localizeTextGroup } from '../../../utilities/localisation.util';
-import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
 import { useLocalisations } from '../../../selectors';
 import OphTable from '../../OphTable';
-import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
+import { useGetOmattiedotQuery, useGetOrganisationsQuery } from '../../../api/kayttooikeus';
 
 type OwnProps = {
     isOmattiedot: boolean;
@@ -36,7 +34,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
     const { L, locale, l10n } = useLocalisations();
     const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
-    const organisaatioCache = useSelector<RootState, OrganisaatioCache>((state) => state.organisaatio.cached);
+    const { data: organisations, isSuccess } = useGetOrganisationsQuery();
     const { data: omattiedot } = useGetOmattiedotQuery();
     const [emailOptions, setEmailOptions] = useState(
         createEmailOptions(henkilo, _filterExistingKayttooikeus, kayttooikeus.kayttooikeus)
@@ -133,14 +131,18 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
             {
                 id: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO',
                 header: () => L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO'],
-                accessorFn: (row) =>
-                    toLocalizedText(
-                        locale,
-                        (
-                            organisaatioCache[row.organisaatioOid] ||
-                            StaticUtils.defaultOrganisaatio(row.organisaatioOid, l10n.localisations)
-                        ).nimi
-                    ),
+                accessorFn: (row) => row,
+                cell: ({ getValue }) => (
+                    <span>
+                        {isSuccess
+                            ? StaticUtils.getOrganisationNameWithType(
+                                  organisations.find((o) => o.oid === getValue().organisaatioOid),
+                                  L,
+                                  locale
+                              )
+                            : StaticUtils.defaultOrganisaatio(getValue().organisaatioOid, l10n.localisations).nimi.fi}
+                    </span>
+                ),
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS',
@@ -185,7 +187,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
                     ),
             },
         ],
-        [emailOptions, kayttooikeus.kayttooikeus, props]
+        [emailOptions, kayttooikeus.kayttooikeus, props, organisations, isSuccess]
     );
 
     const memoizedData = useMemo(() => {

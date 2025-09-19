@@ -1,4 +1,4 @@
-import { HenkiloOrg } from '../oppijanumerorekisteri/henkilo.types';
+import { Asiointikieli } from '../kayttooikeus/Kutsu.types';
 
 export type OrganisaatioStatus = 'AKTIIVINEN' | 'SUUNNITELTU' | 'PASSIIVINEN' | 'POISTETTU';
 
@@ -38,4 +38,4 @@ export type OrganisaatioCriteria = {
     tila?: Array<OrganisaatioStatus>;
 };
 
-export type StoreOrganisaatio = HenkiloOrg & Organisaatio;
+export type OrganisaatioNameLookup = Record<string, Record<Asiointikieli, string>>;

@@ -22,13 +22,12 @@ import { removeNotification } from '../../../actions/notifications.actions';
 import { createEmailOptions } from '../../../utilities/henkilo.util';
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
-import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 import { localizeTextGroup } from '../../../utilities/localisation.util';
 import { NotificationsState } from '../../../reducers/notifications.reducer';
 import { useLocalisations } from '../../../selectors';
 import OphTable from '../../OphTable';
-import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
+import { useGetOmattiedotQuery, useGetOrganisationsQuery } from '../../../api/kayttooikeus';
 import ConfirmButton from '../button/ConfirmButton';
 import Loader from '../icons/Loader';
 
@@ -48,7 +47,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const notifications = useSelector<RootState, NotificationsState>((state) => state.notifications);
-    const organisaatioCache = useSelector<RootState, OrganisaatioCache>((state) => state.organisaatio.cached);
+    const { data: organisations, isSuccess } = useGetOrganisationsQuery();
     const { data: omattiedot } = useGetOmattiedotQuery();
     const [dates, setDates] = useState<Record<number, { alkupvm: Moment; loppupvm: Moment }>>(
         kayttooikeus.kayttooikeus.filter(_filterExpiredKayttooikeus).reduce(
@@ -199,7 +198,13 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                 header: () => L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA'],
                 accessorFn: (row) => row,
                 cell: ({ getValue }) =>
-                    StaticUtils.getOrganisationNameWithType(organisaatioCache[getValue().organisaatioOid], L, locale),
+                    isSuccess
+                        ? StaticUtils.getOrganisationNameWithType(
+                              organisations.find((o) => o.oid === getValue().organisaatioOid),
+                              L,
+                              locale
+                          )
+                        : '...',
             },
             {
                 id: 'kayttooikeus',
@@ -270,7 +275,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                 enableSorting: false,
             },
         ],
-        [emailOptions, kayttooikeus.kayttooikeus, props, organisaatioCache]
+        [emailOptions, kayttooikeus.kayttooikeus, props, organisations, isSuccess]
     );
 
     const memoizedData = useMemo(() => {

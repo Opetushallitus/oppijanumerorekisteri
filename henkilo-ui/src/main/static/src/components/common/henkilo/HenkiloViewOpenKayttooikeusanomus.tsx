@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import moment from 'moment';
-import { useSelector } from 'react-redux';
 import type { Moment } from 'moment';
 import DatePicker from 'react-datepicker';
 import { urls } from 'oph-urls-js';
@@ -21,10 +20,9 @@ import { localize, localizeTextGroup } from '../../../utilities/localisation.uti
 import './HenkiloViewOpenKayttooikeusanomus.css';
 import { KAYTTOOIKEUDENTILA, KayttooikeudenTila } from '../../../globals/KayttooikeudenTila';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
-import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 import { HenkilonNimi } from '../../../types/domain/kayttooikeus/HenkilonNimi';
-import { RootState, useAppDispatch } from '../../../store';
+import { useAppDispatch } from '../../../store';
 import {
     fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma,
@@ -33,7 +31,7 @@ import { useLocalisations } from '../../../selectors';
 import { HaettuKayttooikeusryhma } from '../../../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
 import { OphTableWithInfiniteScroll } from '../../OphTableWithInfiniteScroll';
 import OphTable, { expanderColumn } from '../../OphTable';
-import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
+import { useGetOmattiedotQuery, useGetOrganisationsQuery } from '../../../api/kayttooikeus';
 import OphModal from '../modal/OphModal';
 import ConfirmButton from '../button/ConfirmButton';
 
@@ -75,7 +73,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     const [sorting, setSorting] = useState<SortingState>([{ id: 'ANOTTU_PVM', desc: true }]);
     const dispatch = useAppDispatch();
     const { L, locale, l10n } = useLocalisations();
-    const organisaatioCache = useSelector<RootState, OrganisaatioCache>((state) => state.organisaatio.cached);
+    const { data: organisations, isSuccess } = useGetOrganisationsQuery();
     const { data: omattiedot } = useGetOmattiedotQuery();
     const [dates, setDates] = useState<{ [anomusId: number]: { alkupvm: Moment; loppupvm?: Moment } }>(
         props.kayttooikeus?.kayttooikeusAnomus?.reduce(
@@ -250,7 +248,8 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     };
 
     const _parseOrganisaatioNimi = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): string => {
-        const organisaatio = organisaatioCache[myonnettyKayttooikeusryhma.organisaatioOid];
+        const organisaatio =
+            isSuccess && organisations.find((o) => o.oid === myonnettyKayttooikeusryhma.organisaatioOid);
         return organisaatio && organisaatio.nimi
             ? organisaatio.nimi[locale] ||
                   organisaatio.nimi['fi'] ||
@@ -320,9 +319,9 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => (
                     <span className={getHandledClassName(getValue())}>
-                        {Object.keys(organisaatioCache).length
+                        {isSuccess
                             ? StaticUtils.getOrganisationNameWithType(
-                                  organisaatioCache[getValue().anomus.organisaatioOid],
+                                  organisations.find((o) => o.oid === getValue().anomus.organisaatioOid),
                                   L,
                                   locale
                               )
@@ -421,7 +420,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                         : anomusHandlingButtonsForHenkilo(getValue()),
             },
         ],
-        [props.kayttooikeus?.kayttooikeusAnomus, dates, organisaatioCache]
+        [props.kayttooikeus?.kayttooikeusAnomus, dates, organisations, isSuccess]
     );
 
     const memoizedData = useMemo(() => {
