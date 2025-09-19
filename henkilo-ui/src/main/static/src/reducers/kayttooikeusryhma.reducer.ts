@@ -12,6 +12,7 @@ import {
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_FAILURE,
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_REQUEST,
+    FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_FAILURE,
 } from '../actions/actiontypes';
 import { Kayttooikeusryhma, MyonnettyKayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { HaettuKayttooikeusryhma } from '../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
@@ -57,6 +58,8 @@ export const kayttooikeus = (
             return { ...state, kayttooikeusLoading: true };
         case FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_SUCCESS:
             return { ...state, kayttooikeusLoading: false, kayttooikeus: action.kayttooikeus };
+        case FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_FAILURE:
+            return { ...state, kayttooikeusLoading: false, kayttooikeus: [] };
         case FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_REQUEST:
             return { ...state, kayttooikeusAnomusLoading: true };
         case FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_SUCCESS:
