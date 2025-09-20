@@ -8,7 +8,7 @@ function main {
   select_java_version "21"
 
   cd "$repo"
-  if is_running_on_codebuild; then
+  if is_running_on_codebuild || is_running_on_github_actions; then
     docker compose up -d
     mvn --batch-mode clean install -s ./settings.xml
   else
@@ -17,7 +17,7 @@ function main {
 }
 
 function cleanup {
-  if is_running_on_codebuild; then
+  if is_running_on_codebuild || is_running_on_github_actions; then
     docker compose down
   fi
 }
