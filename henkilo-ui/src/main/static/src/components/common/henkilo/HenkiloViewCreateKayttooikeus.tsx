@@ -14,8 +14,6 @@ import RyhmaSelection from '../select/RyhmaSelection';
 import ValidationMessageButton from '../button/ValidationMessageButton';
 
 import './HenkiloViewCreateKayttooikeus.css';
-import { useGetKayttooikeusryhmasForHenkiloQuery } from '../../../api/kayttooikeus';
-import { OphDsBanner } from '../../design-system/OphDsBanner';
 
 type OwnProps = {
     vuosia: number;
@@ -36,7 +34,6 @@ const HenkiloViewCreateKayttooikeus = ({
     vuosia,
 }: OwnProps) => {
     const { L } = useLocalisations();
-    const { isError: kayttooikeusryhmasForHenkiloError } = useGetKayttooikeusryhmasForHenkiloQuery(oidHenkilo);
     const dispatch = useAppDispatch();
     const [selectedList, setSelectedList] = useState<ValittuKayttooikeusryhma[]>([]);
     const [organisationSelection, setOrganisationSelection] = useState<OrganisaatioSelectObject>();
@@ -80,17 +77,6 @@ const HenkiloViewCreateKayttooikeus = ({
         resetValues();
         existingKayttooikeusRef.current?.scrollIntoView(true);
     };
-
-    if (kayttooikeusryhmasForHenkiloError) {
-        return (
-            <div className="henkiloViewUserContentWrapper">
-                <h2>{L['HENKILO_LISAA_KAYTTOOIKEUDET_OTSIKKO']}</h2>
-                <OphDsBanner type="error">
-                    <p>{L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE']}</p>
-                </OphDsBanner>
-            </div>
-        );
-    }
 
     return (
         <div className="henkiloViewUserContentWrapper">

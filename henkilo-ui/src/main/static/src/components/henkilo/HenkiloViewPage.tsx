@@ -82,16 +82,12 @@ export const HenkiloViewPage = (props: Props) => {
             )}
             {view !== 'oppija' && (
                 <div className="wrapper" ref={existingKayttooikeusRef}>
-                    {kayttooikeus.kayttooikeusLoading ? (
-                        <Loader />
-                    ) : (
-                        <HenkiloViewExistingKayttooikeus
-                            vuosia={StaticUtils.getKayttooikeusKestoVuosissa(henkilo.kayttaja)}
-                            oidHenkilo={oidHenkilo}
-                            isOmattiedot={view === 'omattiedot'}
-                            existingKayttooikeusRef={existingKayttooikeusRef}
-                        />
-                    )}
+                    <HenkiloViewExistingKayttooikeus
+                        vuosia={StaticUtils.getKayttooikeusKestoVuosissa(henkilo.kayttaja)}
+                        oidHenkilo={oidHenkilo}
+                        isOmattiedot={view === 'omattiedot'}
+                        existingKayttooikeusRef={existingKayttooikeusRef}
+                    />
                 </div>
             )}
             {henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && view !== 'oppija' && (

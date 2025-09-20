@@ -17,7 +17,6 @@ import {
     removePrivilege,
 } from '../../../actions/kayttooikeusryhma.actions';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
-import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import { removeNotification } from '../../../actions/notifications.actions';
 import { createEmailOptions } from '../../../utilities/henkilo.util';
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
@@ -27,9 +26,15 @@ import { localizeTextGroup } from '../../../utilities/localisation.util';
 import { NotificationsState } from '../../../reducers/notifications.reducer';
 import { useLocalisations } from '../../../selectors';
 import OphTable from '../../OphTable';
-import { useGetOmattiedotQuery, useGetOrganisationsQuery } from '../../../api/kayttooikeus';
+import {
+    useGetKayttooikeusryhmasForHenkiloQuery,
+    useGetOmattiedotQuery,
+    useGetOrganisationsQuery,
+} from '../../../api/kayttooikeus';
 import ConfirmButton from '../button/ConfirmButton';
 import Loader from '../icons/Loader';
+import { OphDsBanner } from '../../design-system/OphDsBanner';
+import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 
 type OwnProps = {
     oidHenkilo: string;
@@ -43,14 +48,17 @@ const emptyArray = [];
 const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const { L, locale } = useLocalisations();
+    const queryKayttooikeusryhmas = useGetKayttooikeusryhmasForHenkiloQuery(props.oidHenkilo);
     const dispatch = useAppDispatch();
     const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const notifications = useSelector<RootState, NotificationsState>((state) => state.notifications);
     const { data: organisations, isSuccess } = useGetOrganisationsQuery();
     const { data: omattiedot } = useGetOmattiedotQuery();
+
+    const kayttooikeusryhmas = queryKayttooikeusryhmas.data ?? [];
     const [dates, setDates] = useState<Record<number, { alkupvm: Moment; loppupvm: Moment }>>(
-        kayttooikeus.kayttooikeus.filter(_filterExpiredKayttooikeus).reduce(
+        kayttooikeusryhmas.filter(_filterExpiredKayttooikeus).reduce(
             (acc, kayttooikeus) => ({
                 ...acc,
                 [kayttooikeus.ryhmaId]: {
@@ -64,12 +72,12 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
         )
     );
     const [emailOptions, setEmailOptions] = useState(
-        createEmailOptions(henkilo, _filterExpiredKayttooikeus, kayttooikeus.kayttooikeus)
+        createEmailOptions(henkilo, _filterExpiredKayttooikeus, kayttooikeusryhmas)
     );
     const [accessRight, setAccessRight] = useState<AccessRight>();
 
     useEffect(() => {
-        setEmailOptions(createEmailOptions(henkilo, _filterExpiredKayttooikeus, kayttooikeus.kayttooikeus));
+        setEmailOptions(createEmailOptions(henkilo, _filterExpiredKayttooikeus, kayttooikeusryhmas));
     }, [henkilo]);
 
     function loppupvmAction(value: moment.Moment, ryhmaId: number) {
@@ -303,8 +311,15 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
         getSortedRowModel: getSortedRowModel(),
     });
 
-    return kayttooikeus.kayttooikeusLoading ? (
+    return queryKayttooikeusryhmas.isLoading ? (
         <Loader />
+    ) : queryKayttooikeusryhmas.isError ? (
+        <div className="henkiloViewUserContentWrapper">
+            <h2>{L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
+            <OphDsBanner type="error">
+                <p>{L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE']}</p>
+            </OphDsBanner>
+        </div>
     ) : (
         <div ref={props.existingKayttooikeusRef} className="henkiloViewUserContentWrapper">
             {accessRight && <AccessRightDetails {...accessRight} />}
