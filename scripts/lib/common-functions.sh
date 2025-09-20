@@ -16,14 +16,20 @@ function is_running_on_codebuild {
   [ -n "${CODEBUILD_BUILD_ID:-}" ]
 }
 
+function is_running_on_github_actions {
+  [ -n "${GITHUB_ACTIONS:-}" ]
+}
+
 function select_java_version {
-  if ! is_running_on_codebuild; then
+  if is_running_on_codebuild; then
+    info "Running on CodeBuild; Java version is managed in buildspec"
+  elif is_running_on_github_actions; then
+    info "Running on Github actions; Java version is managed by actions/setup-java"
+  else
     info "Switching to Java $1"
     java_version="$1"
     JAVA_HOME="$(/usr/libexec/java_home -v "${java_version}")"
     export JAVA_HOME
-  else
-    info "Running on CodeBuild; Java version is managed in buildspec"
   fi
   java -version
 }
