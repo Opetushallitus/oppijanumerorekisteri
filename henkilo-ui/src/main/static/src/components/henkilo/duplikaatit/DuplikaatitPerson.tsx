@@ -10,8 +10,7 @@ import type { HenkiloDuplicate } from '../../../types/domain/oppijanumerorekiste
 import Button from '../../common/button/Button';
 import { LinkRelation } from './HenkiloViewDuplikaatit';
 import { useLocalisations } from '../../../selectors';
-import { useGetKansalaisuudetQuery, useGetKieletQuery } from '../../../api/koodisto';
-import { Koodi } from '../../../types/domain/koodisto/koodisto.types';
+import { Koodi, useGetKansalaisuudetQuery, useGetKieletQuery } from '../../../api/koodisto';
 
 import './DuplikaatitPerson.css';
 

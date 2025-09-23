@@ -1,12 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import Select from 'react-select';
 
-import { Koodisto, Koodi } from '../../../types/domain/koodisto/koodisto.types';
 import { toLocalizedText } from '../../../localizabletext';
 import { useLocalisations } from '../../../selectors';
 
 import './KoodistoSelect.css';
 import { Locale } from '../../../types/locale.type';
+import { Koodi, Koodisto } from '../../../api/koodisto';
 
 type OwnProps = {
     className?: string;

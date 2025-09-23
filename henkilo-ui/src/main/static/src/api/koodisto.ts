@@ -1,7 +1,19 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { getCommonOptions } from '../http';
-import { Koodi, Koodisto } from '../types/domain/koodisto/koodisto.types';
+
+export type Koodi = {
+    koodiArvo: string;
+    koodiUri: string;
+    metadata: Array<KoodiMetadata>;
+};
+export type Koodisto = Array<Koodi>;
+
+export type KoodiMetadata = {
+    kieli: string;
+    lyhytNimi: string;
+    nimi: string;
+};
 
 export const koodistoApi = createApi({
     reducerPath: 'koodistoApi',

@@ -7,8 +7,8 @@ import { Kayttaja } from '../../types/domain/kayttooikeus/kayttaja.types';
 import { TextGroup } from '../../types/domain/kayttooikeus/textgroup.types';
 import { Organisaatio } from '../../types/domain/organisaatio/organisaatio.types';
 import { toLocalizedText } from '../../localizabletext';
-import { Koodi, Koodisto } from '../../types/domain/koodisto/koodisto.types';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../utilities/select';
+import { Koodi, Koodisto } from '../../api/koodisto';
 
 class StaticUtils {
     static ddmmyyyyToDate(date: string) {

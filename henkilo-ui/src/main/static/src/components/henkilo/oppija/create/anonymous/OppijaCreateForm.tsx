@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import SimpleDatePicker from '../../../SimpleDatePicker';
 import { HenkiloCreate } from '../../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { Locale } from '../../../../../types/locale.type';
-import { Koodisto } from '../../../../../types/domain/koodisto/koodisto.types';
 import PropertySingleton from '../../../../../globals/PropertySingleton';
 import { KoodistoSelect } from '../../../../common/select/KoodistoSelect';
 import KielisyysSelect from '../../../../common/select/KielisyysSelect';
@@ -15,6 +14,7 @@ import LoaderWithText from '../../../../common/loadingbar/LoaderWithText';
 import { EMAIL } from '../../../../../types/constants';
 import { toLocalizedText } from '../../../../../localizabletext';
 import { Kielisyys } from '../../../../../types/domain/oppijanumerorekisteri/kielisyys.types';
+import { Koodisto } from '../../../../../api/koodisto';
 
 type Error = {
     name: string;
