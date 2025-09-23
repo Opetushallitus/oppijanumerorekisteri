@@ -4,7 +4,7 @@ server:
     session:
       cookie:
         name: JSESSIONID
-  port: 8080
+  port: 8090
 spring:
   main:
     banner-mode: "off"
