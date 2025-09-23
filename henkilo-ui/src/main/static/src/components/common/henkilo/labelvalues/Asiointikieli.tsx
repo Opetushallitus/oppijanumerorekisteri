@@ -13,18 +13,21 @@ type OwnProps = {
     updateModelSelectAction: (arg0: NamedSelectOption) => void;
 };
 
+const VALID_KIELI_URI_FOR_ASIOINTIKIELI = ['kieli_fi', 'kieli_sv', 'kieli_en'];
+
 const Asiointikieli = (props: OwnProps) => {
     const { locale } = useLocalisations();
-    const { data } = useGetKieletQuery();
+    const kielet = useGetKieletQuery().data ?? [];
+    const asiointikielet = kielet.filter((koodi) => VALID_KIELI_URI_FOR_ASIOINTIKIELI.includes(koodi.koodiUri));
     const options = useMemo(() => {
         return (
-            data?.map((koodi) => ({
+            asiointikielet.map((koodi) => ({
                 value: koodi.koodiArvo.toLowerCase(),
                 label: StaticUtils.localizeKoodiNimi(koodi, locale),
                 optionsName: 'asiointiKieli.kieliKoodi',
             })) ?? []
         );
-    }, [data]);
+    }, [kielet]);
 
     return (
         <FieldlessLabelValue readOnly={props.readOnly} label="HENKILO_ASIOINTIKIELI">
