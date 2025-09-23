@@ -15,6 +15,7 @@ import { Identification } from '../types/domain/oppijanumerorekisteri/Identifica
 import { add } from '../slices/toastSlice';
 import { Henkilo, LinkedHenkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
 import { HenkiloDuplicate } from '../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
+import { Yksilointitieto } from '../types/domain/oppijanumerorekisteri/yksilointitieto.types';
 
 type Passinumerot = string[];
 
@@ -149,6 +150,9 @@ export const oppijanumerorekisteriApi = createApi({
                     );
                 }
             },
+        }),
+        getYksilointitiedot: builder.query<Yksilointitieto, string>({
+            query: (oid: string) => `henkilo/${oid}/yksilointitiedot`,
         }),
         yksiloiHetuton: builder.mutation<void, string>({
             query: (oid: string) => ({
@@ -346,4 +350,5 @@ export const {
     useGetHenkiloSlavesQuery,
     useUnlinkHenkiloMutation,
     useGetHenkiloDuplicatesQuery,
+    useGetYksilointitiedotQuery,
 } = oppijanumerorekisteriApi;

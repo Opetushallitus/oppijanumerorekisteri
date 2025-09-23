@@ -16,16 +16,12 @@ import {
     UPDATE_HENKILO_REQUEST,
     CLEAR_HENKILO,
     UPDATE_HENKILO_FAILURE,
-    FETCH_HENKILO_YKSILOINTITIETO_REQUEST,
-    FETCH_HENKILO_YKSILOINTITIETO_SUCCESS,
-    FETCH_HENKILO_YKSILOINTITIETO_FAILURE,
     FETCH_HENKILO_HAKEMUKSET,
 } from '../actions/actiontypes';
 import type { Henkilo, HenkiloOrg } from '../types/domain/oppijanumerorekisteri/henkilo.types';
 import type { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
 import type { Hakemus } from '../types/domain/oppijanumerorekisteri/Hakemus.type';
 import type { Kayttaja } from '../types/domain/kayttooikeus/kayttaja.types';
-import type { Yksilointitieto } from '../types/domain/oppijanumerorekisteri/yksilointitieto.types';
 import { AnyAction } from '@reduxjs/toolkit';
 
 export type HenkiloState = {
@@ -38,8 +34,6 @@ export type HenkiloState = {
     readonly kayttaja: Kayttaja;
     readonly henkiloOrgs: HenkiloOrg[];
     readonly kayttajatieto?: KayttajatiedotRead;
-    readonly yksilointitiedotLoading: boolean;
-    readonly yksilointitiedot: Yksilointitieto;
     readonly hakemuksetLoading: boolean;
     readonly hakemukset: Array<Hakemus>;
 };
@@ -49,7 +43,6 @@ export const isHenkiloStateLoading = (state: HenkiloState) =>
     state.kayttajaLoading ||
     state.henkiloOrgsLoading ||
     state.kayttajatietoLoading ||
-    state.yksilointitiedotLoading ||
     state.hakemuksetLoading;
 
 const initialState: HenkiloState = {
@@ -62,8 +55,6 @@ const initialState: HenkiloState = {
     kayttaja: {} as Kayttaja,
     henkiloOrgs: [],
     kayttajatieto: undefined,
-    yksilointitiedotLoading: false,
-    yksilointitiedot: {},
     hakemuksetLoading: false,
     hakemukset: [],
 };
@@ -134,16 +125,6 @@ export const henkilo = (state: Readonly<HenkiloState> = initialState, action: An
             };
         case FETCH_HENKILO_HAKEMUKSET.FAILURE:
             return { ...state, hakemuksetLoading: false };
-        case FETCH_HENKILO_YKSILOINTITIETO_REQUEST:
-            return { ...state, yksilointitiedotLoading: true };
-        case FETCH_HENKILO_YKSILOINTITIETO_SUCCESS:
-            return {
-                ...state,
-                yksilointitiedot: action.payload,
-                yksilointitiedotLoading: false,
-            };
-        case FETCH_HENKILO_YKSILOINTITIETO_FAILURE:
-            return { ...state, yksilointitiedotLoading: false };
         case CLEAR_HENKILO:
             return { ...state, ...initialState };
         default:

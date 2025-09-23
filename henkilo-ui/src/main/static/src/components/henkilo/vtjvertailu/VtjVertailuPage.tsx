@@ -3,11 +3,7 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 
 import { useAppDispatch, type RootState } from '../../../store';
-import {
-    fetchHenkilo,
-    fetchHenkiloYksilointitieto,
-    overrideYksiloimatonHenkiloVtjData,
-} from '../../../actions/henkilo.actions';
+import { fetchHenkilo, overrideYksiloimatonHenkiloVtjData } from '../../../actions/henkilo.actions';
 import VtjVertailuListaus from './VtjVertailuListaus';
 import Loader from '../../common/icons/Loader';
 import Button from '../../common/button/Button';
@@ -20,7 +16,7 @@ import { useLocalisations } from '../../../selectors';
 import { useTitle } from '../../../useTitle';
 import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
 import { useNavigation } from '../../../useNavigation';
-import { useGetHenkiloMasterQuery } from '../../../api/oppijanumerorekisteri';
+import { useGetHenkiloMasterQuery, useGetYksilointitiedotQuery } from '../../../api/oppijanumerorekisteri';
 
 type OwnProps = {
     henkiloType: string;
@@ -35,11 +31,14 @@ export const VtjVertailuPage = (props: OwnProps) => {
     const { data: master } = useGetHenkiloMasterQuery(params.oid);
     const { L } = useLocalisations();
     useTitle(L['TITLE_VTJ_VERTAILU']);
-    useNavigation(henkiloViewTabs(oidHenkilo, henkilo, props.henkiloType, master?.oidHenkilo), true);
+    const yksilointitiedotQuery = useGetYksilointitiedotQuery(henkilo.henkilo.oidHenkilo);
+    useNavigation(
+        henkiloViewTabs(oidHenkilo, henkilo, props.henkiloType, master?.oidHenkilo, yksilointitiedotQuery.data),
+        true
+    );
 
     useEffect(() => {
         dispatch<any>(fetchHenkilo(oidHenkilo));
-        dispatch<any>(fetchHenkiloYksilointitieto(oidHenkilo));
     }, []);
 
     async function overrideHenkiloInformation(): Promise<void> {
@@ -79,7 +78,7 @@ export const VtjVertailuPage = (props: OwnProps) => {
         return !isEnabledVtjVertailuView || currentUserIsViewedHenkilo || !hasAccess;
     }
 
-    return henkilo.yksilointitiedotLoading || henkilo.henkiloLoading ? (
+    return yksilointitiedotQuery.isLoading || henkilo.henkiloLoading ? (
         <Loader />
     ) : (
         <div className="mainContent wrapper">

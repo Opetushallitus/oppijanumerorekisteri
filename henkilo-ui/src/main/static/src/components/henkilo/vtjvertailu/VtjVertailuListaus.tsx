@@ -6,6 +6,8 @@ import { HenkiloState } from '../../../reducers/henkilo.reducer';
 import { useLocalisations } from '../../../selectors';
 import OphTable from '../../OphTable';
 import { YhteystietoRyhma } from '../../../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
+import { useGetYksilointitiedotQuery } from '../../../api/oppijanumerorekisteri';
+import { Henkilo } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
 
 type Props = {
     henkilo: HenkiloState;
@@ -24,6 +26,7 @@ const emptyArray = [];
 
 const VtjVertailuListaus = ({ henkilo }: Props) => {
     const { L } = useLocalisations();
+    const yksilointitiedotQuery = useGetYksilointitiedotQuery(henkilo.henkilo.oidHenkilo);
 
     function renderSukupuoli(henkilo: HenkiloData) {
         if (henkilo.sukupuoli === '1') {
@@ -92,15 +95,15 @@ const VtjVertailuListaus = ({ henkilo }: Props) => {
     );
 
     const memoizedData = useMemo(() => {
-        const renderedData = [
-            { ...henkilo?.henkilo, palvelu: 'HENKILO_VTJ_HENKILOPALVELU' },
-            { ...henkilo?.yksilointitiedot, palvelu: 'HENKILO_VTJ_VRKPALVELU' },
-        ];
+        const renderedData = [{ ...henkilo?.henkilo, palvelu: 'HENKILO_VTJ_HENKILOPALVELU' }];
+        if (yksilointitiedotQuery.isSuccess) {
+            renderedData.push({ ...(yksilointitiedotQuery.data as Henkilo), palvelu: 'HENKILO_VTJ_VRKPALVELU' });
+        }
         if (!renderedData || !renderedData.length) {
             return undefined;
         }
         return renderedData;
-    }, [henkilo?.henkilo, henkilo?.yksilointitiedot]);
+    }, [henkilo?.henkilo, yksilointitiedotQuery.data]);
 
     const table = useReactTable({
         data: memoizedData ?? emptyArray,

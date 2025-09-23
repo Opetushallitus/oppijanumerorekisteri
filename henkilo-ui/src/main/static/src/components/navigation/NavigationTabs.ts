@@ -31,7 +31,8 @@ export const henkiloViewTabs = (
     oidHenkilo: string,
     henkilo: HenkiloState | undefined,
     henkiloType: string,
-    masterHenkiloOid?: string
+    masterHenkiloOid?: string,
+    yksilointitiedot?: Yksilointitieto
 ): Array<NaviTab> => {
     const currentHenkilo = henkilo?.henkilo;
     if (!henkiloType) {
@@ -54,7 +55,7 @@ export const henkiloViewTabs = (
         if (
             tab.label === 'NAVI_VTJ_VERTAILU' &&
             enabledVtjVertailuView(currentHenkilo) &&
-            vtjDataAvailable(henkilo?.yksilointitiedot)
+            vtjDataAvailable(yksilointitiedot)
         ) {
             tab.disabled = false;
         }
