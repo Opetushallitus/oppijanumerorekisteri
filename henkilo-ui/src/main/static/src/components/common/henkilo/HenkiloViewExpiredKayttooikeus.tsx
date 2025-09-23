@@ -63,7 +63,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
                   <div key={idx2}>
                       <input
                           type="radio"
-                          checked={emailOptions.emailSelection[ryhmaId].value === email.value}
+                          checked={emailOptions.emailSelection[ryhmaId]?.value === email.value}
                           onChange={() =>
                               setEmailOptions({
                                   ...emailOptions,
@@ -87,7 +87,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
         const kayttooikeusRyhmaIds = [kayttooikeusryhma.ryhmaId];
         const anomusData = {
             organisaatioOrRyhmaOid: kayttooikeusryhma.organisaatioOid,
-            email: emailOptions.emailSelection[kayttooikeusryhma.ryhmaId].value,
+            email: emailOptions.emailSelection[kayttooikeusryhma.ryhmaId]?.value,
             perustelut: 'Uusiminen',
             kayttooikeusRyhmaIds,
             anojaOid: props.oidHenkilo,
@@ -120,7 +120,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
                 vanhentunutKayttooikeusryhma.organisaatioOid === haettuKayttooikeusRyhma.anomus.organisaatioOid
         )[0];
         return (
-            emailOptions.emailSelection[ryhmaId].value === '' ||
+            emailOptions.emailSelection[ryhmaId]?.value === '' ||
             emailOptions.emailOptions.length === 0 ||
             anomusAlreadyExists
         );

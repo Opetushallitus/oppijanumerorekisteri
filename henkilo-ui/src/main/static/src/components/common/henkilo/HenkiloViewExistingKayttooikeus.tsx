@@ -106,7 +106,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                 uusittavaKayttooikeusRyhma.organisaatioOid === haettuKayttooikeusRyhma.anomus.organisaatioOid
         )[0];
         return (
-            emailOptions.emailSelection[uusittavaKayttooikeusRyhma.ryhmaId].value === '' ||
+            emailOptions.emailSelection[uusittavaKayttooikeusRyhma.ryhmaId]?.value === '' ||
             emailOptions.emailOptions.length === 0 ||
             anomusAlreadyExists
         );
@@ -118,7 +118,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                   <div key={idx2}>
                       <input
                           type="radio"
-                          checked={emailOptions.emailSelection[ryhmaId].value === email.value}
+                          checked={emailOptions.emailSelection[ryhmaId]?.value === email.value}
                           onChange={() =>
                               setEmailOptions({
                                   ...emailOptions,
@@ -148,7 +148,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
         const kayttooikeusRyhmaIds = [uusittavaKayttooikeusRyhma.ryhmaId];
         const anomusData = {
             organisaatioOrRyhmaOid: uusittavaKayttooikeusRyhma.organisaatioOid,
-            email: emailOptions.emailSelection[uusittavaKayttooikeusRyhma.ryhmaId].value,
+            email: emailOptions.emailSelection[uusittavaKayttooikeusRyhma.ryhmaId]?.value,
             perustelut: 'Uusiminen',
             kayttooikeusRyhmaIds,
             anojaOid: props.oidHenkilo,

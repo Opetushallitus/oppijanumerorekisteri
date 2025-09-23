@@ -81,7 +81,7 @@ export const HenkiloViewCreateKayttooikeusanomus = () => {
         const emailOptions = _parseEmailOptions(henkilo);
         if (emailOptions.length === 1) {
             return {
-                emailSelection: emailOptions[0].value,
+                emailSelection: emailOptions[0]?.value,
                 missingEmail: false,
                 showMissingEmailNotification: false,
             };
