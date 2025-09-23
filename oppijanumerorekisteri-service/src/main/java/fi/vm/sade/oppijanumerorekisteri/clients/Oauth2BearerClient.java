@@ -31,7 +31,7 @@ public class Oauth2BearerClient {
     private final ObjectMapper objectMapper;
     private final OppijanumerorekisteriProperties properties;
 
-    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
+    @Value("${oppijanumerorekisteri.jwt-issuer-client-uri}")
     private String oauth2IssuerUri;
 
     @Cacheable(value = CACHE_NAME_OAUTH2_BEARER, sync = true)

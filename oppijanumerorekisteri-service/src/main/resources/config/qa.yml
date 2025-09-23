@@ -1,5 +1,7 @@
-spring.security.oauth2.resourceserver.jwt.issuer-uri: https://kayttooikeus.qa.yleiskayttoiset.opintopolku.fi/kayttooikeus-service
-spring.security.oauth2.resourceserver.jwt.jwk-set-uri: https://kayttooikeus.qa.yleiskayttoiset.opintopolku.fi/kayttooikeus-service/oauth2/jwks
+#spring.security.oauth2.resourceserver.jwt.issuer-uri: https://kayttooikeus.qa.yleiskayttoiset.opintopolku.fi/kayttooikeus-service
+#spring.security.oauth2.resourceserver.jwt.jwk-set-uri: https://kayttooikeus.qa.yleiskayttoiset.opintopolku.fi/kayttooikeus-service/oauth2/jwks
+oppijanumerorekisteri.jwt-issuers: https://kayttooikeus.qa.yleiskayttoiset.opintopolku.fi/kayttooikeus-service,https://qa.otuva.opintopolku.fi/kayttooikeus-service
+oppijanumerorekisteri.jwt-issuer-client-uri: https://kayttooikeus.qa.yleiskayttoiset.opintopolku.fi/kayttooikeus-service
 
 oppijanumerorekisteri.henkilo.solmuluokka: 98
 
