@@ -24,8 +24,8 @@ import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
 import LinkitetytHenkilot from '../labelvalues/LinkitetytHenkilot';
 import MasterHenkilo from '../labelvalues/MasterHenkilo';
 import Sukupuoli from '../labelvalues/Sukupuoli';
-import { KoodistoState } from '../../../../reducers/koodisto.reducer';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
+import { useGetYhteystietotyypitQuery } from '../../../../api/koodisto';
 
 type OwnProps = {
     readOnly: boolean;
@@ -42,7 +42,6 @@ type OwnProps = {
 
 type StateProps = {
     henkilo: HenkiloState;
-    koodisto: KoodistoState;
     L: Localisations;
     locale: Locale;
     omattiedot: OmattiedotState;
@@ -50,31 +49,18 @@ type StateProps = {
 
 type Props = OwnProps & StateProps;
 
-class OppijaUserContent extends React.Component<Props> {
-    render() {
-        return this.props.henkilo.henkiloLoading || this.props.koodisto.yhteystietotyypitKoodistoLoading ? (
-            <Loader />
-        ) : (
-            <AbstractUserContent
-                readOnly={this.props.readOnly}
-                discardAction={this.props.discardAction}
-                updateAction={this.props.updateAction}
-                basicInfo={this.createBasicInfo()}
-                readOnlyButtons={this.createReadOnlyButtons()}
-                isValidForm={this.props.isValidForm}
-            />
-        );
-    }
+function OppijaUserContent(props: Props) {
+    const yhteystietotyypitQuery = useGetYhteystietotyypitQuery();
 
-    createBasicInfo = () => {
+    function createBasicInfo() {
         const basicInfoProps = {
-            readOnly: this.props.readOnly,
-            updateModelFieldAction: this.props.updateModelAction,
-            updateModelSelectAction: this.props.updateModelSelectAction,
-            updateDateFieldAction: this.props.updateDateAction,
-            henkiloUpdate: this.props.henkiloUpdate,
+            readOnly: props.readOnly,
+            updateModelFieldAction: props.updateModelAction,
+            updateModelSelectAction: props.updateModelSelectAction,
+            updateDateFieldAction: props.updateDateAction,
+            henkiloUpdate: props.henkiloUpdate,
         };
-        const oid = this.props.henkilo?.henkilo?.oidHenkilo;
+        const oid = props.henkilo?.henkilo?.oidHenkilo;
 
         // Basic info box content
         return [
@@ -95,40 +81,50 @@ class OppijaUserContent extends React.Component<Props> {
             ],
             [
                 <LinkitetytHenkilot key={`linkitetyt_${oid}`} oppija={true} />,
-                <MasterHenkilo key={`master_${oid}`} oidHenkilo={this.props.oidHenkilo} oppija={true} />,
+                <MasterHenkilo key={`master_${oid}`} oidHenkilo={props.oidHenkilo} oppija={true} />,
             ],
         ];
-    };
+    }
 
-    // Basic info default buttons
-    createReadOnlyButtons = () => {
-        const duplicate = this.props.henkilo.henkilo.duplicate;
-        const passivoitu = this.props.henkilo.henkilo.passivoitu;
+    function createReadOnlyButtons() {
+        const duplicate = props.henkilo.henkilo.duplicate;
+        const passivoitu = props.henkilo.henkilo.passivoitu;
 
-        const hasHenkiloReadUpdateRights = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, [
+        const hasHenkiloReadUpdateRights = hasAnyPalveluRooli(props.omattiedot.organisaatiot, [
             'OPPIJANUMEROREKISTERI_HENKILON_RU',
             'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
             'OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI',
         ]);
-        const hasYksilointiRights = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, [
+        const hasYksilointiRights = hasAnyPalveluRooli(props.omattiedot.organisaatiot, [
             'OPPIJANUMEROREKISTERI_MANUAALINEN_YKSILOINTI',
             'OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI',
         ]);
 
         const editButton = hasHenkiloReadUpdateRights ? (
-            <EditButton editAction={this.props.edit} disabled={duplicate || passivoitu} />
+            <EditButton editAction={props.edit} disabled={duplicate || passivoitu} />
         ) : null;
         const yksiloiHetutonButton = hasYksilointiRights ? (
             <YksiloiHetutonButton disabled={duplicate || passivoitu} />
         ) : null;
 
         return [editButton, yksiloiHetutonButton];
-    };
+    }
+    return props.henkilo.henkiloLoading || yhteystietotyypitQuery.isLoading ? (
+        <Loader />
+    ) : (
+        <AbstractUserContent
+            readOnly={props.readOnly}
+            discardAction={props.discardAction}
+            updateAction={props.updateAction}
+            basicInfo={createBasicInfo()}
+            readOnlyButtons={createReadOnlyButtons()}
+            isValidForm={props.isValidForm}
+        />
+    );
 }
 
 const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
-    koodisto: state.koodisto,
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     omattiedot: state.omattiedot,

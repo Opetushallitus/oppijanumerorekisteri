@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { getCommonOptions } from '../http';
-import { Koodisto } from '../types/domain/koodisto/koodisto.types';
+import { Koodi, Koodisto } from '../types/domain/koodisto/koodisto.types';
 
 export const koodistoApi = createApi({
     reducerPath: 'koodistoApi',
@@ -30,11 +30,25 @@ export const koodistoApi = createApi({
         getSukupuolet: builder.query<Koodisto, void>({
             query: () => 'rest/json/sukupuoli/koodi',
         }),
-        getYhteystietotyypit: builder.query<Koodisto, void>({
+        getYhteystietotyypit: builder.query<KoodistoStateKoodi[], void, Koodisto>({
             query: () => 'rest/json/yhteystietotyypit/koodi',
+            async transformResponse(baseQueryReturnValue: Koodisto) {
+                // Jäi kyllä vähän epäselväksi miksi tälle koodistolle tehdään näin toisin kuin muille
+                return baseQueryReturnValue.map((koodi: Koodi) => ({
+                    koodiUri: koodi.koodiUri,
+                    value: koodi.koodiArvo.toLowerCase(),
+                    ...Object.fromEntries(koodi.metadata.map((k) => [k.kieli.toLowerCase(), k.nimi])),
+                }));
+            },
         }),
     }),
 });
+
+export type KoodistoStateKoodi = {
+    koodiUri: string;
+    value: string;
+    [kieli: string]: string;
+};
 
 export const {
     useGetHenkilontunnistetyypitQuery,

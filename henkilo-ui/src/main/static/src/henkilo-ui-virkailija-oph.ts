@@ -73,15 +73,6 @@ const urlConfig = {
     'oppijanumerorekisteri-service.oppija': 'oppijanumerorekisteri-service/oppija',
     'oppijanumerorekisteri-service.prequel': 'oppijanumerorekisteri-service/cas/prequel',
 
-    'koodisto-service.baseUrl': '/',
-    'koodisto-service.koodisto.kieli': 'koodisto-service/rest/json/kieli/koodi',
-    'koodisto-service.koodisto.kansalaisuus': 'koodisto-service/rest/json/maatjavaltiot2/koodi',
-    'koodisto-service.koodisto.sukupuoli': 'koodisto-service/rest/json/sukupuoli/koodi',
-    'koodisto-service.koodisto.yhteystietotyypit': 'koodisto-service/rest/json/yhteystietotyypit/koodi',
-    'koodisto-service.koodisto.maatjavaltiot1': 'koodisto-service/rest/json/maatjavaltiot1/koodi',
-    'koodisto-service.koodisto.oppilaitostyypit': 'koodisto-service/rest/codeelement/codes/oppilaitostyyppi/1',
-    'koodisto-service.koodisto.organisaatiotyypit': 'koodisto-service/rest/codeelement/codes/organisaatiotyyppi/3',
-
     'virkailija-raamit.baseUrl': '/',
     'virkailija-raamit.raamit.js': 'virkailija-raamit/apply-raamit.js',
     'virkailija-raamit.raamit.css': 'virkailija-raamit/apply-raamit.css',

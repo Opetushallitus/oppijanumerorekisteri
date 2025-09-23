@@ -4,7 +4,6 @@ import { useLocation, useNavigate, useParams } from 'react-router';
 
 import { useAppDispatch, type RootState } from '../../store';
 import Loader from '../common/icons/Loader';
-import { fetchYhteystietotyypitKoodisto } from '../../actions/koodisto.actions';
 import {
     clearHenkilo,
     fetchHenkilo,
@@ -70,7 +69,6 @@ const HenkiloViewContainer = () => {
 
         dispatch<any>(clearHenkilo());
         dispatch<any>(fetchHenkilo(oid));
-        dispatch<any>(fetchYhteystietotyypitKoodisto());
 
         if (view === 'admin' || view === 'virkailija') {
             dispatch<any>(fetchHenkiloOrgs(oid));
@@ -86,7 +84,7 @@ const HenkiloViewContainer = () => {
     } else if (henkilo.henkiloKayttoEstetty) {
         return <VirheKayttoEstetty L={L} />;
     } else if (view) {
-        return <HenkiloViewPage oidHenkilo={oid} view={view} />;
+        return <HenkiloViewPage key={oid} oidHenkilo={oid} view={view} />;
     } else {
         return <LocalNotification type={NOTIFICATIONTYPES.WARNING} title={L['HENKILO_SIVU_VIRHE']} toggle={true} />;
     }

@@ -15,11 +15,11 @@ import Mfa from './Mfa';
 import { RootState } from '../../store';
 import { useLocalisations } from '../../selectors';
 import { HenkiloState, isHenkiloStateLoading } from '../../reducers/henkilo.reducer';
-import { KoodistoState, isKoodistoStateLoading } from '../../reducers/koodisto.reducer';
 import { KayttooikeusRyhmaState, isKayttooikeusryhmaStateLoading } from '../../reducers/kayttooikeusryhma.reducer';
 import { isOnrRekisterinpitaja } from '../../utilities/palvelurooli.util';
 import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { Identifications } from './Identifications';
+import { useGetYhteystietotyypitQuery } from '../../api/koodisto';
 
 export type View = 'omattiedot' | 'virkailija' | 'admin' | 'oppija';
 type Props = {
@@ -31,17 +31,13 @@ export const HenkiloViewPage = (props: Props) => {
     const { L } = useLocalisations();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
-    const koodisto = useSelector<RootState, KoodistoState>((state) => state.koodisto);
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
     const { view, oidHenkilo } = props;
     const { data: omattiedot } = useGetOmattiedotQuery();
+    const yhteystietotyypitQuery = useGetYhteystietotyypitQuery();
     const isRekisterinpitaja = omattiedot ? isOnrRekisterinpitaja(omattiedot.organisaatiot) : false;
 
-    if (
-        isHenkiloStateLoading(henkilo) ||
-        isKayttooikeusryhmaStateLoading(kayttooikeus) ||
-        isKoodistoStateLoading(koodisto)
-    ) {
+    if (isHenkiloStateLoading(henkilo) || isKayttooikeusryhmaStateLoading(kayttooikeus)) {
         return <Loader />;
     }
 
@@ -68,7 +64,7 @@ export const HenkiloViewPage = (props: Props) => {
             )}
             {henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && (
                 <div className="wrapper">
-                    {henkilo.henkiloLoading || henkilo.kayttajaLoading || koodisto.yhteystietotyypitKoodistoLoading ? (
+                    {henkilo.henkiloLoading || henkilo.kayttajaLoading || yhteystietotyypitQuery.isLoading ? (
                         <Loader />
                     ) : (
                         <HenkiloViewContactContent view={view} readOnly={true} />

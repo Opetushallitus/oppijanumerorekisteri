@@ -32,8 +32,8 @@ import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
 import Sukupuoli from '../labelvalues/Sukupuoli';
 import PassinumeroButton from '../buttons/PassinumeroButton';
 import PoistaKayttajatunnusButton from '../buttons/PoistaKayttajatunnusButton';
-import { KoodistoState } from '../../../../reducers/koodisto.reducer';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
+import { useGetYhteystietotyypitQuery } from '../../../../api/koodisto';
 
 type OwnProps = {
     readOnly: boolean;
@@ -50,7 +50,6 @@ type OwnProps = {
 
 type StateProps = {
     henkilo: HenkiloState;
-    koodisto: KoodistoState;
     L: Localisations;
     isAdmin: boolean;
     omattiedot: OmattiedotState;
@@ -59,86 +58,68 @@ type StateProps = {
 
 type Props = OwnProps & StateProps;
 
-class AdminUserContent extends React.Component<Props> {
-    render() {
-        return this.props.henkilo.henkiloLoading ||
-            this.props.henkilo.kayttajatietoLoading ||
-            this.props.koodisto.yhteystietotyypitKoodistoLoading ? (
-            <Loader />
-        ) : (
-            <AbstractUserContent
-                readOnly={this.props.readOnly}
-                discardAction={this.props.discardAction}
-                updateAction={this.props.updateAction}
-                basicInfo={this.createBasicInfo()}
-                readOnlyButtons={this.createReadOnlyButtons()}
-                isValidForm={this.props.isValidForm}
-            />
-        );
-    }
+function AdminUserContent(props: Props) {
+    const yhteystietotyypitQuery = useGetYhteystietotyypitQuery();
 
-    createBasicInfo = () => {
-        const props = {
-            readOnly: this.props.readOnly,
-            updateModelFieldAction: this.props.updateModelAction,
-            updateModelSelectAction: this.props.updateModelSelectAction,
-            updateDateFieldAction: this.props.updateDateAction,
-            henkiloUpdate: this.props.henkiloUpdate,
+    function createBasicInfo() {
+        const infoProps = {
+            readOnly: props.readOnly,
+            updateModelFieldAction: props.updateModelAction,
+            updateModelSelectAction: props.updateModelSelectAction,
+            updateDateFieldAction: props.updateDateAction,
+            henkiloUpdate: props.henkiloUpdate,
         };
 
         // Basic info box content
         return [
             [
-                <Sukunimi key="admin-sukunimi" {...props} autofocus={true} />,
-                <Etunimet key="admin-etunimi" {...props} />,
-                <Syntymaaika key="admin-syntymaaika" {...props} />,
-                <Hetu key="admin-hetu" {...props} />,
-                <Kutsumanimi key="admin-kutsumanimi" {...props} />,
+                <Sukunimi key="admin-sukunimi" {...infoProps} autofocus={true} />,
+                <Etunimet key="admin-etunimi" {...infoProps} />,
+                <Syntymaaika key="admin-syntymaaika" {...infoProps} />,
+                <Hetu key="admin-hetu" {...infoProps} />,
+                <Kutsumanimi key="admin-kutsumanimi" {...infoProps} />,
             ],
             [
-                <Kansalaisuus key="admin-kansalaisuus" {...props} />,
-                <Aidinkieli key="admin-aidinkieli" {...props} />,
-                <Sukupuoli key="admin-sukupuoli" {...props} />,
-                <Oppijanumero key="admin-oppijanumero" {...props} />,
-                <Oid key="admin-oid" {...props} />,
-                <Asiointikieli key="admin-asiointikieli" {...props} />,
+                <Kansalaisuus key="admin-kansalaisuus" {...infoProps} />,
+                <Aidinkieli key="admin-aidinkieli" {...infoProps} />,
+                <Sukupuoli key="admin-sukupuoli" {...infoProps} />,
+                <Oppijanumero key="admin-oppijanumero" {...infoProps} />,
+                <Oid key="admin-oid" {...infoProps} />,
+                <Asiointikieli key="admin-asiointikieli" {...infoProps} />,
             ],
             [
                 <Kayttajanimi
                     key="admin-kayttajanimi"
-                    {...props}
-                    disabled={!this.props.isAdmin || !this.props.henkilo.kayttajatieto?.username}
+                    {...infoProps}
+                    disabled={!props.isAdmin || !props.henkilo.kayttajatieto?.username}
                 />,
                 <LinkitetytHenkilot key="admin-linkitetythenkilot" />,
-                <MasterHenkilo key="admin-masterhenkilo" oidHenkilo={this.props.oidHenkilo} />,
+                <MasterHenkilo key="admin-masterhenkilo" oidHenkilo={props.oidHenkilo} />,
             ],
         ];
-    };
+    }
 
-    // Basic info default buttons
-    createReadOnlyButtons = () => {
+    function createReadOnlyButtons() {
         const buttonPopupStyles = {
             left: '0px',
             top: '3rem',
             width: '15rem',
             padding: '30px',
         };
-        const duplicate = this.props.henkilo.henkilo.duplicate;
-        const passivoitu = this.props.henkilo.henkilo.passivoitu;
-        const kayttajatunnukseton = !this.props.henkilo.kayttajatieto?.username;
-        const hasHenkiloReadUpdateRights: boolean = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, [
+        const duplicate = props.henkilo.henkilo.duplicate;
+        const passivoitu = props.henkilo.henkilo.passivoitu;
+        const kayttajatunnukseton = !props.henkilo.kayttajatieto?.username;
+        const hasHenkiloReadUpdateRights: boolean = hasAnyPalveluRooli(props.omattiedot.organisaatiot, [
             'OPPIJANUMEROREKISTERI_HENKILON_RU',
             'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
         ]);
-        const isRekisterinpitaja = isOnrRekisterinpitaja(this.props.omattiedot.organisaatiot);
+        const isRekisterinpitaja = isOnrRekisterinpitaja(props.omattiedot.organisaatiot);
         const editButton = hasHenkiloReadUpdateRights ? (
-            <EditButton editAction={this.props.edit} disabled={duplicate || passivoitu} />
+            <EditButton editAction={props.edit} disabled={duplicate || passivoitu} />
         ) : null;
         const yksiloiHetutonButton = <YksiloiHetutonButton disabled={duplicate || passivoitu} />;
         const puraHetuttomanYksilointiButton =
-            this.props.henkilo.henkilo.yksiloity &&
-            !this.props.henkilo.henkilo.hetu &&
-            !this.props.henkilo.henkilo.yksiloityVTJ ? (
+            props.henkilo.henkilo.yksiloity && !props.henkilo.henkilo.hetu && !props.henkilo.henkilo.yksiloityVTJ ? (
                 <PuraHetuttomanYksilointiButton disabled={duplicate || passivoitu} />
             ) : null;
         const passivoiButton =
@@ -147,26 +128,22 @@ class AdminUserContent extends React.Component<Props> {
             isRekisterinpitaja && !kayttajatunnukseton ? <PoistaKayttajatunnusButton /> : null;
         const aktivoiButton =
             passivoitu && hasHenkiloReadUpdateRights ? (
-                <AktivoiButton L={this.props.L} oidHenkilo={this.props.henkilo.henkilo.oidHenkilo} />
+                <AktivoiButton L={props.L} oidHenkilo={props.henkilo.henkilo.oidHenkilo} />
             ) : null;
         const hakaButton = (
-            <HakaButton
-                oidHenkilo={this.props.oidHenkilo}
-                styles={buttonPopupStyles}
-                disabled={duplicate || passivoitu}
-            />
+            <HakaButton oidHenkilo={props.oidHenkilo} styles={buttonPopupStyles} disabled={duplicate || passivoitu} />
         );
         const passinumeroButton = isRekisterinpitaja ? (
             <PassinumeroButton
-                oid={this.props.oidHenkilo}
+                oid={props.oidHenkilo}
                 styles={buttonPopupStyles}
-                translate={this.props.translate}
+                translate={props.translate}
             ></PassinumeroButton>
         ) : null;
         const vtjOverrideButton = <VtjOverrideButton disabled={duplicate || passivoitu} />;
         const passwordButton = (
             <PasswordButton
-                oidHenkilo={this.props.oidHenkilo}
+                oidHenkilo={props.oidHenkilo}
                 styles={{ top: '3rem', left: '0', width: '18rem' }}
                 disabled={duplicate || passivoitu || kayttajatunnukseton}
             />
@@ -184,12 +161,23 @@ class AdminUserContent extends React.Component<Props> {
             vtjOverrideButton,
             passwordButton,
         ];
-    };
+    }
+    return props.henkilo.henkiloLoading || props.henkilo.kayttajatietoLoading || yhteystietotyypitQuery.isLoading ? (
+        <Loader />
+    ) : (
+        <AbstractUserContent
+            readOnly={props.readOnly}
+            discardAction={props.discardAction}
+            updateAction={props.updateAction}
+            basicInfo={createBasicInfo()}
+            readOnlyButtons={createReadOnlyButtons()}
+            isValidForm={props.isValidForm}
+        />
+    );
 }
 
 const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
-    koodisto: state.koodisto,
     L: state.l10n.localisations[state.locale],
     translate: (key: string) => state.l10n.localisations[state.locale][key] || key,
     isAdmin: state.omattiedot.isAdmin,

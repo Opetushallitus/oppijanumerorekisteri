@@ -7,7 +7,6 @@ import {
     fetchAllKayttooikeusryhmasForHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
 } from '../../actions/kayttooikeusryhma.actions';
-import { fetchYhteystietotyypitKoodisto } from '../../actions/koodisto.actions';
 import { HenkiloViewPage } from '../henkilo/HenkiloViewPage';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
 import Loader from '../common/icons/Loader';
@@ -23,8 +22,6 @@ const OmattiedotPageContainer = () => {
     useTitle(L['TITLE_OMAT_TIEDOT']);
 
     useEffect(() => {
-        dispatch<any>(fetchYhteystietotyypitKoodisto());
-
         if (omattiedot.oidHenkilo) {
             const userOid = omattiedot.oidHenkilo;
             dispatch<any>(clearHenkilo());
