@@ -27,8 +27,10 @@ spring.flyway.locations: classpath:db/migration
 spring.flyway.baseline-version: 20241112112233000
 spring.flyway.table: schema_table_onr
 
-spring.security.oauth2.resourceserver.jwt.issuer-uri: "http://localhost/issuer-uri"
-spring.security.oauth2.resourceserver.jwt.jwk-set-uri: "http://localhost/jwk-set-uri"
+#spring.security.oauth2.resourceserver.jwt.issuer-uri: "http://localhost/issuer-uri"
+#spring.security.oauth2.resourceserver.jwt.jwk-set-uri: "http://localhost/jwk-set-uri"
+oppijanumerorekisteri.jwt-issuers: https://localhost1,https://localhost2
+oppijanumerorekisteri.jwt-issuer-client-uri: https://localhost1
 host:
   host-cas: localhost
   host-virkailija: localhost
