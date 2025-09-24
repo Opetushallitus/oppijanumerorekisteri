@@ -9,7 +9,6 @@ import { HenkiloState } from '../../../reducers/henkilo.reducer';
 import { useLocalisations } from '../../../selectors';
 import ConfirmButton from '../button/ConfirmButton';
 import Button from '../button/Button';
-import { HenkiloOrg } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { useGetOrganisationsQuery } from '../../../api/kayttooikeus';
 
 import './HenkiloViewOrganisationContent.css';
@@ -41,10 +40,10 @@ export const HenkiloViewOrganisationContent = () => {
                           ? '(' + StaticUtils.flatArray(organisation?.tyypit) + ')'
                           : '';
                   return {
-                      name: toLocalizedText(locale, organisation.nimi),
+                      name: toLocalizedText(locale, organisation?.nimi),
                       typesFlat: typesFlat,
                       passive: org.passivoitu,
-                      id: organisation.oid,
+                      id: organisation?.oid,
                   };
               })
             : [];
