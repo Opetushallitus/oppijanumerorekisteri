@@ -177,7 +177,7 @@ export const KayttooikeusryhmaPage = (props: Props) => {
     const _parseExistingOrganisaatioData = (
         organisaatioViitteet: OrganisaatioViite[]
     ): Array<OrganisaatioSelectObject> => {
-        if (organisations.length === 0 || !organisaatioViitteet) {
+        if (!organisations || organisations.length === 0 || !organisaatioViitteet) {
             return [];
         }
         const organisaatioViittees = organisaatioViitteet.filter((organisaatioViite) =>

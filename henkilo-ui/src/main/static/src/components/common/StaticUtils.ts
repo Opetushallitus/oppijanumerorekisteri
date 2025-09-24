@@ -130,7 +130,7 @@ class StaticUtils {
             : '';
     }
 
-    static getOrganisationNameWithType(org: Organisaatio, L: Localisations, locale: Locale) {
+    static getOrganisationNameWithType(org: Organisaatio | undefined, L: Localisations, locale: Locale) {
         return toLocalizedText(locale, org?.nimi) + ' ' + StaticUtils.getOrganisaatiotyypitFlat(org?.tyypit, L);
     }
 

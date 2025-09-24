@@ -35,7 +35,7 @@ const AnomusHylkaysPopup = ({ kayttooikeusryhma, updateHaettuKayttooikeusryhma }
                         <td>
                             {isSuccess
                                 ? StaticUtils.getOrganisationNameWithType(
-                                      organisations.find((o) => o.oid === organisaatioOid),
+                                      organisations?.find((o) => o.oid === organisaatioOid),
                                       L,
                                       locale
                                   )

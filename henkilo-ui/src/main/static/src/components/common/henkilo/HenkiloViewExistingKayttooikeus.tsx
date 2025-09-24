@@ -208,7 +208,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                 cell: ({ getValue }) =>
                     isSuccess
                         ? StaticUtils.getOrganisationNameWithType(
-                              organisations.find((o) => o.oid === getValue().organisaatioOid),
+                              organisations?.find((o) => o.oid === getValue().organisaatioOid),
                               L,
                               locale
                           )
