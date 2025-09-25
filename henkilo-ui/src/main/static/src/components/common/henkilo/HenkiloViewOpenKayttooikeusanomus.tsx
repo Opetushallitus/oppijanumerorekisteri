@@ -468,11 +468,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
             )}
             {accessRight && <AccessRightDetails {...accessRight} />}
             <div>
-                {!props.piilotaOtsikko && (
-                    <div className="header">
-                        <p className="oph-h2 oph-bold">{L['HENKILO_AVOIMET_KAYTTOOIKEUDET_OTSIKKO']}</p>
-                    </div>
-                )}
+                {!props.piilotaOtsikko && <h2>{L['HENKILO_AVOIMET_KAYTTOOIKEUDET_OTSIKKO']}</h2>}
                 {props.fetchMoreSettings ? (
                     <OphTableWithInfiniteScroll
                         table={table}

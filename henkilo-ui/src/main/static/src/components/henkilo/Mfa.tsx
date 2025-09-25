@@ -13,7 +13,7 @@ import googlePlay from '../../img/google_play.svg';
 import Loader from '../common/icons/Loader';
 import { RootState } from '../../store';
 import { Localisations } from '../../types/localisation.type';
-import { View } from './HenkiloViewPage';
+import { View } from '../../types/constants';
 import WideGreenNotification from '../common/notifications/WideGreenNotification';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
 import { useLocalisations } from '../../selectors';

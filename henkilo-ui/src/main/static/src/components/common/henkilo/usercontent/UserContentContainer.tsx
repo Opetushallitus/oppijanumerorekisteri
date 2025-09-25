@@ -21,7 +21,7 @@ import { http } from '../../../../http';
 import { updateAnomusilmoitus } from '../../../../actions/omattiedot.actions';
 import PropertySingleton from '../../../../globals/PropertySingleton';
 import { resetButtonNotifications } from '../../../../actions/notifications.actions';
-import { View } from '../../../henkilo/HenkiloViewPage';
+import { View } from '../../../../types/constants';
 import { copy } from '../../../../utilities/copy';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
@@ -246,9 +246,7 @@ export const UserContentContainer = ({ oidHenkilo, view }: OwnProps) => {
     }
     return (
         <div className="henkiloViewUserContentWrapper">
-            <div className="header">
-                <p className="oph-h2 oph-bold">{L['HENKILO_PERUSTIEDOT_OTSIKKO'] + _additionalInfo()}</p>
-            </div>
+            <h2>{L['HENKILO_PERUSTIEDOT_OTSIKKO'] + _additionalInfo()}</h2>
             {content}
 
             <LocalNotification

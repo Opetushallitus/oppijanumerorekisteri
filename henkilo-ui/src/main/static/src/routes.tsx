@@ -5,7 +5,7 @@ import AccessRightReport from './components/reports/accessrights/AccessRightsRep
 import { KutsututPage } from './components/kutsutut/KutsututPage';
 import KutsuminenPage from './components/kutsuminen/KutsuminenPage';
 import AnomusPage from './components/anomus/AnomusPage';
-import OmattiedotContainer from './components/omattiedot/OmattiedotPageContainer';
+import { OmattiedotPage } from './components/omattiedot/OmattiedotPage';
 import { DuplikaatitContainer } from './components/henkilo/duplikaatit/DuplikaatitContainer';
 import HenkilohakuContainer from './components/henkilohaku/HenkilohakuContainer';
 import OppijoidenTuontiContainer from './components/oppijoidentuonti/OppijoidenTuontiContainer';
@@ -15,13 +15,14 @@ import { KayttooikeusryhmatPage } from './components/kayttooikeusryhmat/listaus/
 import FormSwitch from './components/henkilo/oppija/create/form/FormSwitch';
 import { VirkailijaCreateContainer } from './components/henkilo/VirkailijaCreateContainer';
 import { PalvelukayttajaCreatePage } from './components/palvelukayttaja/PalvelukayttajaCreatePage';
-import HenkiloViewContainer from './components/henkilo/HenkiloViewContainer';
 import AdminRedirect from './components/henkilo/AdminRedirect';
 import PalvelukayttajaHakuPage from './components/palvelukayttaja/PalvelukayttajaHakuPage';
 import { PalvelukayttajaInfo } from './containers/PalvelukayttajaInfo';
 import { JarjestelmatunnusCreatePage } from './components/jarjestelmatunnus/JarjestelmatunnusCreatePage';
 import { JarjestelmatunnusListPage } from './components/jarjestelmatunnus/JarjestelmatunnusListPage';
 import { JarjestelmatunnusEditPage } from './components/jarjestelmatunnus/JarjestelmatunnusEditPage';
+import { OppijaViewPage } from './components/henkilo/OppijaViewPage';
+import { VirkailijaViewPage } from './components/henkilo/VirkailijaViewPage';
 
 export const AppRoutes = () => (
     <Routes>
@@ -34,14 +35,14 @@ export const AppRoutes = () => (
             <Route path="/henkilohaku" element={<HenkilohakuContainer />} />
             <Route path="/virkailija/luonti" element={<VirkailijaCreateContainer />} />
             <Route path="/oppija/luonti" element={<FormSwitch />} />
-            <Route path="/oppija/:oid" element={<HenkiloViewContainer />} />
-            <Route path="/virkailija/:oid" element={<HenkiloViewContainer />} />
+            <Route path="/oppija/:oid" element={<OppijaViewPage />} />
+            <Route path="/virkailija/:oid" element={<VirkailijaViewPage />} />
             <Route path="/admin/:oid" element={<AdminRedirect />} />
             <Route path="/oppija/:oid/vtjvertailu" element={<VtjVertailuPage henkiloType="oppija" />} />
             <Route path="/virkailija/:oid/vtjvertailu" element={<VtjVertailuPage henkiloType="virkailija" />} />
             <Route path="/oppija/:oid/duplikaatit" element={<DuplikaatitContainer henkiloType="oppija" />} />
             <Route path="/virkailija/:oid/duplikaatit" element={<DuplikaatitContainer henkiloType="virkailija" />} />
-            <Route path="/omattiedot" element={<OmattiedotContainer />} />
+            <Route path="/omattiedot" element={<OmattiedotPage />} />
             <Route path="/oppijoidentuonti" element={<OppijoidenTuontiContainer />} />
             <Route path="/kayttooikeusryhmat" element={<KayttooikeusryhmatPage />} />
             <Route path="/kayttooikeusryhmat/lisaa" element={<KayttooikeusryhmaPageContainer />} />
