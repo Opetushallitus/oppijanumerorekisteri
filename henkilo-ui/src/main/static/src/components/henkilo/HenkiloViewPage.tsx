@@ -37,7 +37,7 @@ export const HenkiloViewPage = (props: Props) => {
     const yhteystietotyypitQuery = useGetYhteystietotyypitQuery();
     const isRekisterinpitaja = omattiedot ? isOnrRekisterinpitaja(omattiedot.organisaatiot) : false;
 
-    if (isHenkiloStateLoading(henkilo) || isKayttooikeusryhmaStateLoading(kayttooikeus)) {
+    if (view !== 'oppija' && (isHenkiloStateLoading(henkilo) || isKayttooikeusryhmaStateLoading(kayttooikeus))) {
         return <Loader />;
     }
 
