@@ -401,7 +401,7 @@ export const kayttooikeusApi = createApi({
             providesTags: ['organisationnames'],
         }),
         getOrganisations: builder.query<Organisaatio[], void>({
-            query: () => 'organisaatio?tyyppi=ORGANISAATIO&tila=AKTIIVINEN',
+            query: () => 'organisaatio',
             providesTags: ['organisations'],
         }),
     }),
