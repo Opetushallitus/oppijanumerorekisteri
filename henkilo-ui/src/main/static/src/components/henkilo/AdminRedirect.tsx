@@ -8,7 +8,7 @@ const AdminRedirect = () => {
     const params = useParams();
     const navigate = useNavigate();
     useEffect(() => {
-        navigate(`/henkilo-ui/virkailija/${params.oid}`, { replace: true });
+        navigate(`/virkailija/${params.oid}`, { replace: true });
     });
 
     return <LocalNotification type={NOTIFICATIONTYPES.WARNING} title={'HENKILO_SIVU_VIRHE_ADMIN'} toggle={true} />;
