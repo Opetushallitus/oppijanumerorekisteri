@@ -25,7 +25,6 @@ import LinkitetytHenkilot from '../labelvalues/LinkitetytHenkilot';
 import MasterHenkilo from '../labelvalues/MasterHenkilo';
 import Sukupuoli from '../labelvalues/Sukupuoli';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
-import { useGetYhteystietotyypitQuery } from '../../../../api/koodisto';
 
 type OwnProps = {
     readOnly: boolean;
@@ -50,8 +49,6 @@ type StateProps = {
 type Props = OwnProps & StateProps;
 
 function OppijaUserContent(props: Props) {
-    const yhteystietotyypitQuery = useGetYhteystietotyypitQuery();
-
     function createBasicInfo() {
         const basicInfoProps = {
             readOnly: props.readOnly,
@@ -109,7 +106,7 @@ function OppijaUserContent(props: Props) {
 
         return [editButton, yksiloiHetutonButton];
     }
-    return props.henkilo.henkiloLoading || yhteystietotyypitQuery.isLoading ? (
+    return props.henkilo.henkiloLoading ? (
         <Loader />
     ) : (
         <AbstractUserContent

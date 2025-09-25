@@ -1,6 +1,7 @@
 import './HenkiloViewContactContent.css';
-import * as React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+
 import Field from '../field/Field';
 import Button from '../button/Button';
 import StaticUtils from '../StaticUtils';
@@ -9,42 +10,25 @@ import PropertySingleton from '../../../globals/PropertySingleton';
 import AddIcon from '../icons/AddIcon';
 import IconButton from '../button/IconButton';
 import CrossIcon from '../icons/CrossIcon';
-import { updateHenkiloAndRefetch } from '../../../actions/henkilo.actions';
-import type { Localisations } from '../../../types/localisation.type';
-import type { Locale } from '../../../types/locale.type';
 import type { HenkiloState } from '../../../reducers/henkilo.reducer';
 import type { Henkilo } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import type { Kayttaja } from '../../../types/domain/kayttooikeus/kayttaja.types';
-import type { GlobalNotificationConfig } from '../../../types/notification.types';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import type { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { validateEmail } from '../../../validation/EmailValidator';
-import { WORK_ADDRESS, EMAIL } from '../../../types/constants';
-import { RootState } from '../../../store';
-import { View } from '../../henkilo/HenkiloViewPage';
+import { WORK_ADDRESS, EMAIL, View } from '../../../types/constants';
 import { Yhteystieto } from '../../../types/domain/oppijanumerorekisteri/yhteystieto.types';
 import { YhteystietoRyhma } from '../../../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
 import { copy } from '../../../utilities/copy';
-import { useState } from 'react';
 import { KoodistoStateKoodi, useGetYhteystietotyypitQuery } from '../../../api/koodisto';
+import { RootState, useAppDispatch } from '../../../store';
+import { updateHenkiloAndRefetch } from '../../../actions/henkilo.actions';
+import { useLocalisations } from '../../../selectors';
 
 type OwnProps = {
     readOnly: boolean;
     view: View;
 };
-
-type StateProps = {
-    L: Localisations;
-    locale: Locale;
-    omattiedot: OmattiedotState;
-    henkilo: HenkiloState;
-};
-
-type DispatchProps = {
-    updateHenkiloAndRefetch: (arg0: Henkilo, arg1?: GlobalNotificationConfig) => void;
-};
-
-export type Props = OwnProps & StateProps & DispatchProps;
 
 export type ContactInfo = {
     id?: number;
@@ -94,61 +78,95 @@ export const isLastWorkEmail = (
     removeList: Array<number | string>
 ): boolean => isWorkEmail(infoGroup) && resolveWorkAddresses(contactInfo, removeList).length === 1;
 
-const isUnprivileged = (omattiedot: OmattiedotState): boolean => !omattiedot.isAdmin;
-
 const isVirkailija = (kayttaja: Kayttaja): boolean => kayttaja.kayttajaTyyppi === 'VIRKAILIJA';
-
 const isFromVTJ = (group: ContactInfo): boolean => group.alkupera === PropertySingleton.state.YHTEYSTIETO_ALKUPERA_VTJ;
 
-export function HenkiloViewContactContentComponent(props: Props) {
-    const yhteystietotyypitQuery = useGetYhteystietotyypitQuery();
-
-    function validateContactInfo(contactInfoLabel: string, contactInfoValue: string) {
-        if (contactInfoLabel === EMAIL) {
-            return validateEmail(contactInfoValue);
-        }
-        return true;
+function validateContactInfo(contactInfoLabel: string, contactInfoValue: string) {
+    if (contactInfoLabel === EMAIL) {
+        return validateEmail(contactInfoValue);
     }
+    return true;
+}
 
-    const _initialiseYhteystiedot = (
-        henkiloUpdate: Henkilo,
-        contactInfoTemplate: Array<{
-            label: string;
-            value?: string;
-            inputValue?: string;
-        }>,
-        yhteystietotyypit: KoodistoStateKoodi[],
-        locale: string
-    ) =>
-        henkiloUpdate.yhteystiedotRyhma?.map((yhteystiedotRyhma, idx) => {
-            const yhteystietoFlatList = createFlatYhteystieto(
-                contactInfoTemplate,
-                yhteystiedotRyhma.yhteystieto,
-                idx,
-                yhteystiedotRyhma,
-                yhteystietotyypit,
-                locale
-            );
-            yhteystiedotRyhma.yhteystieto = yhteystietoFlatList.value?.map((yhteystietoFlat) => ({
-                yhteystietoTyyppi: yhteystietoFlat.label,
-                yhteystietoArvo: yhteystietoFlat.value,
-            }));
-            return yhteystietoFlatList;
-        });
+function createFlatYhteystieto(
+    contactInfoTemplate: Array<{
+        label: string;
+        value?: string;
+        inputValue?: string;
+    }>,
+    yhteystietoList: Array<Yhteystieto>,
+    idx: number,
+    yhteystiedotRyhma: YhteystietoRyhma,
+    yhteystietotyypit: KoodistoStateKoodi[],
+    locale: string,
+    henkiloUiId?: string
+): ContactInfo {
+    return {
+        value: contactInfoTemplate.map((template, idx2) => ({
+            label: template.label,
+            value:
+                yhteystietoList.filter((yhteystieto) => yhteystieto.yhteystietoTyyppi === template.label)[0] &&
+                yhteystietoList.filter((yhteystieto) => yhteystieto.yhteystietoTyyppi === template.label)[0]
+                    .yhteystietoArvo,
+            inputValue: 'yhteystiedotRyhma.' + idx + '.yhteystieto.' + idx2 + '.yhteystietoArvo',
+        })),
+        name:
+            yhteystiedotRyhma.ryhmaKuvaus &&
+            yhteystietotyypit?.filter((kieli) => kieli.value === yhteystiedotRyhma.ryhmaKuvaus)?.[0]?.[locale],
+        readOnly: yhteystiedotRyhma.readOnly,
+        id: yhteystiedotRyhma.id,
+        henkiloUiId: henkiloUiId,
+        type: yhteystiedotRyhma.ryhmaKuvaus,
+        alkupera: yhteystiedotRyhma.ryhmaAlkuperaTieto,
+    };
+}
 
-    const [henkiloUpdate, setHenkiloUpdate] = useState(copy(props.henkilo.henkilo));
-    const contactInfoTemplate = [
-        { label: 'YHTEYSTIETO_SAHKOPOSTI', value: null, inputValue: null },
-        { label: 'YHTEYSTIETO_PUHELINNUMERO', value: null, inputValue: null },
-        {
-            label: 'YHTEYSTIETO_MATKAPUHELINNUMERO',
-            value: null,
-            inputValue: null,
-        },
-        { label: 'YHTEYSTIETO_KATUOSOITE', value: null, inputValue: null },
-        { label: 'YHTEYSTIETO_POSTINUMERO', value: null, inputValue: null },
-        { label: 'YHTEYSTIETO_KUNTA', value: null, inputValue: null },
-    ];
+const _initialiseYhteystiedot = (
+    henkiloUpdate: Henkilo,
+    contactInfoTemplate: Array<{
+        label: string;
+        value?: string;
+        inputValue?: string;
+    }>,
+    yhteystietotyypit: KoodistoStateKoodi[],
+    locale: string
+) =>
+    henkiloUpdate.yhteystiedotRyhma?.map((yhteystiedotRyhma, idx) => {
+        const yhteystietoFlatList = createFlatYhteystieto(
+            contactInfoTemplate,
+            yhteystiedotRyhma.yhteystieto,
+            idx,
+            yhteystiedotRyhma,
+            yhteystietotyypit,
+            locale
+        );
+        yhteystiedotRyhma.yhteystieto = yhteystietoFlatList.value?.map((yhteystietoFlat) => ({
+            yhteystietoTyyppi: yhteystietoFlat.label,
+            yhteystietoArvo: yhteystietoFlat.value,
+        }));
+        return yhteystietoFlatList;
+    });
+
+const contactInfoTemplate = [
+    { label: 'YHTEYSTIETO_SAHKOPOSTI', value: null, inputValue: null },
+    { label: 'YHTEYSTIETO_PUHELINNUMERO', value: null, inputValue: null },
+    {
+        label: 'YHTEYSTIETO_MATKAPUHELINNUMERO',
+        value: null,
+        inputValue: null,
+    },
+    { label: 'YHTEYSTIETO_KATUOSOITE', value: null, inputValue: null },
+    { label: 'YHTEYSTIETO_POSTINUMERO', value: null, inputValue: null },
+    { label: 'YHTEYSTIETO_KUNTA', value: null, inputValue: null },
+];
+
+export function HenkiloViewContactContentComponent(props: OwnProps) {
+    const yhteystietotyypitQuery = useGetYhteystietotyypitQuery();
+    const dispatch = useAppDispatch();
+    const { locale, L } = useLocalisations();
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const [henkiloUpdate, setHenkiloUpdate] = useState(copy(henkilo.henkilo));
     const [state, setState] = useState<State>({
         readOnly: props.readOnly,
         showPassive: false,
@@ -156,7 +174,7 @@ export function HenkiloViewContactContentComponent(props: Props) {
             henkiloUpdate,
             contactInfoTemplate,
             yhteystietotyypitQuery.data ?? [],
-            props.locale
+            locale
         ),
         yhteystietoRemoveList: [],
         isContactInfoValid: true,
@@ -164,12 +182,26 @@ export function HenkiloViewContactContentComponent(props: Props) {
         contactInfoErrorFields: [],
     });
     const [_preEditData, setPreEditData] = useState<{ contactInfo: Array<ContactInfo> }>();
+
+    useEffect(() => {
+        setState({
+            ...state,
+            contactInfo: _initialiseYhteystiedot(
+                henkiloUpdate,
+                contactInfoTemplate,
+                yhteystietotyypitQuery.data ?? [],
+                locale
+            ),
+        });
+    }, [yhteystietotyypitQuery.data]);
+
     function _edit() {
         setState({ ...state, readOnly: false });
         setPreEditData({
             contactInfo: state.contactInfo,
         });
     }
+
     function _removeYhteystieto(id: (number | null | undefined) | (string | null | undefined)) {
         if (id) {
             setState({
@@ -181,7 +213,7 @@ export function HenkiloViewContactContentComponent(props: Props) {
     }
 
     function _discard() {
-        setHenkiloUpdate(copy(props.henkilo.henkilo));
+        setHenkiloUpdate(copy(henkilo.henkilo));
         setState({
             ...state,
             readOnly: true,
@@ -190,6 +222,7 @@ export function HenkiloViewContactContentComponent(props: Props) {
             modified: false,
         });
     }
+
     function _updateModelField(
         contactInfo: {
             label: string;
@@ -222,153 +255,8 @@ export function HenkiloViewContactContentComponent(props: Props) {
             )
         );
         setState({ ...state, yhteystietoRemoveList: [] });
-        props.updateHenkiloAndRefetch(henkiloUpdate);
+        dispatch<any>(updateHenkiloAndRefetch(henkiloUpdate, undefined));
     }
-
-    const isHidden = (group: ContactInfo): boolean =>
-        isUnprivileged(props.omattiedot) && isVirkailija(props.henkilo.kayttaja) && isFromVTJ(group);
-
-    const isVisible = (group: ContactInfo): boolean => !isHidden(group);
-
-    function createContent() {
-        const defaultWorkAddress = resolveDefaultWorkAddress(state.contactInfo, state.yhteystietoRemoveList);
-        const content: Array<React.ReactNode> = state.contactInfo
-            ?.filter(isVisible)
-            .filter(excludeRemovedItems(state.yhteystietoRemoveList))
-            .map((yhteystiedotRyhmaFlat, idx) => (
-                <div key={idx}>
-                    <span className="oph-h3 oph-bold midHeader">
-                        {yhteystiedotRyhmaFlat.name} {yhteystiedotRyhmaFlat.id === defaultWorkAddress ? '*' : ''}
-                    </span>
-                    {!state.readOnly &&
-                    !yhteystiedotRyhmaFlat.readOnly &&
-                    !isLastWorkEmail(yhteystiedotRyhmaFlat, state.contactInfo, state.yhteystietoRemoveList) ? (
-                        <span className="float-right">
-                            <IconButton
-                                onClick={() =>
-                                    _removeYhteystieto(yhteystiedotRyhmaFlat.id || yhteystiedotRyhmaFlat.henkiloUiId)
-                                }
-                            >
-                                <CrossIcon />
-                            </IconButton>
-                        </span>
-                    ) : null}
-                    {yhteystiedotRyhmaFlat.value.map((yhteystietoFlat, idx2) => (
-                        <div key={idx2} id={yhteystietoFlat.label}>
-                            {(!state.readOnly && !yhteystiedotRyhmaFlat.readOnly) || yhteystietoFlat.value ? (
-                                <div
-                                    style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}
-                                    className="labelValue"
-                                >
-                                    <span className="oph-bold">{props.L[yhteystietoFlat.label]}</span>
-                                    <Field
-                                        inputValue={yhteystietoFlat.inputValue}
-                                        changeAction={(e) => _updateModelField(yhteystietoFlat, e)}
-                                        isEmail={isEmail(yhteystietoFlat)}
-                                        readOnly={yhteystiedotRyhmaFlat.readOnly || state.readOnly}
-                                    >
-                                        {yhteystietoFlat.value}
-                                    </Field>
-                                </div>
-                            ) : null}
-                        </div>
-                    ))}
-                </div>
-            ));
-        if (!state.readOnly) {
-            content.push(
-                <div
-                    className="contact-content-add-new"
-                    onClick={() => _createYhteystiedotRyhma(WORK_ADDRESS)}
-                    key="add-new"
-                >
-                    <span className="oph-bold oph-blue-lighten-1">
-                        <AddIcon /> {props.L['HENKILO_LUOYHTEYSTIETO']}
-                    </span>
-                </div>
-            );
-        }
-        return content;
-    }
-
-    function createFlatYhteystieto(
-        contactInfoTemplate: Array<{
-            label: string;
-            value?: string;
-            inputValue?: string;
-        }>,
-        yhteystietoList: Array<Yhteystieto>,
-        idx: number,
-        yhteystiedotRyhma: YhteystietoRyhma,
-        yhteystietotyypit: KoodistoStateKoodi[],
-        locale: string,
-        henkiloUiId?: string
-    ): ContactInfo {
-        return {
-            value: contactInfoTemplate.map((template, idx2) => ({
-                label: template.label,
-                value:
-                    yhteystietoList.filter((yhteystieto) => yhteystieto.yhteystietoTyyppi === template.label)[0] &&
-                    yhteystietoList.filter((yhteystieto) => yhteystieto.yhteystietoTyyppi === template.label)[0]
-                        .yhteystietoArvo,
-                inputValue: 'yhteystiedotRyhma.' + idx + '.yhteystieto.' + idx2 + '.yhteystietoArvo',
-            })),
-            name:
-                yhteystiedotRyhma.ryhmaKuvaus &&
-                yhteystietotyypit.filter((kieli) => kieli.value === yhteystiedotRyhma.ryhmaKuvaus)[0][locale],
-            readOnly: yhteystiedotRyhma.readOnly,
-            id: yhteystiedotRyhma.id,
-            henkiloUiId: henkiloUiId,
-            type: yhteystiedotRyhma.ryhmaKuvaus,
-            alkupera: yhteystiedotRyhma.ryhmaAlkuperaTieto,
-        };
-    }
-
-    const passivoitu = props.henkilo.henkilo.passivoitu;
-    const duplicate = props.henkilo.henkilo.duplicate;
-    const hasHenkiloReadUpdateRights: boolean =
-        props.view === 'omattiedot'
-            ? true
-            : hasAnyPalveluRooli(props.omattiedot.organisaatiot, [
-                  'OPPIJANUMEROREKISTERI_HENKILON_RU',
-                  'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
-              ]);
-
-    const editButton = hasHenkiloReadUpdateRights ? (
-        <Button disabled={passivoitu || duplicate} key="contactEdit" action={_edit}>
-            {props.L['MUOKKAA_LINKKI']}
-        </Button>
-    ) : null;
-
-    return (
-        <div className="henkiloViewUserContentWrapper contact-content">
-            <div>
-                <div className="header">
-                    <p className="oph-h2 oph-bold">{props.L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</p>
-                </div>
-                {props.henkilo.henkilo.turvakielto ? (
-                    <div className="oph-h3 oph-bold midHeader">{props.L['YHTEYSTIETO_TURVAKIELTO']}</div>
-                ) : null}
-
-                <div className="henkiloViewContent">
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
-                        {createContent()}
-                    </div>
-                </div>
-            </div>
-            {state.readOnly ? (
-                <div className="henkiloViewButtons">{editButton}</div>
-            ) : (
-                <div className="henkiloViewEditButtons">
-                    <EditButtons
-                        discardAction={_discard}
-                        updateAction={_update}
-                        isValidForm={state.modified && state.contactInfoErrorFields.length === 0}
-                    />
-                </div>
-            )}
-        </div>
-    );
 
     function _createYhteystiedotRyhma(yhteystietoryhmaTyyppi: string) {
         const henkiloUiId = 'henkilo_ui_id_' + PropertySingleton.getNewId();
@@ -391,7 +279,7 @@ export function HenkiloViewContactContentComponent(props: Props) {
                 henkiloUpdate.yhteystiedotRyhma.length - 1,
                 newYhteystiedotRyhma,
                 yhteystietotyypitQuery.data ?? [],
-                props.locale,
+                locale,
                 henkiloUiId
             ),
         ];
@@ -401,15 +289,116 @@ export function HenkiloViewContactContentComponent(props: Props) {
             modified: true,
         });
     }
+
+    const defaultWorkAddress = resolveDefaultWorkAddress(state.contactInfo, state.yhteystietoRemoveList);
+    const passivoitu = henkilo.henkilo.passivoitu;
+    const duplicate = henkilo.henkilo.duplicate;
+    const hasHenkiloReadUpdateRights: boolean =
+        props.view === 'omattiedot'
+            ? true
+            : hasAnyPalveluRooli(omattiedot.organisaatiot, [
+                  'OPPIJANUMEROREKISTERI_HENKILON_RU',
+                  'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
+              ]);
+
+    return (
+        <div className="henkiloViewUserContentWrapper contact-content">
+            <div>
+                <h2>{L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</h2>
+                {henkilo.henkilo.turvakielto ? (
+                    <div className="oph-h3 oph-bold midHeader">{L['YHTEYSTIETO_TURVAKIELTO']}</div>
+                ) : null}
+
+                <div className="henkiloViewContent">
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
+                        {state.contactInfo
+                            ?.filter((c) => omattiedot.isAdmin || !isVirkailija(henkilo.kayttaja) || !isFromVTJ(c))
+                            .filter(excludeRemovedItems(state.yhteystietoRemoveList))
+                            .map((yhteystiedotRyhmaFlat, idx) => (
+                                <div key={idx}>
+                                    <span className="oph-h3 oph-bold midHeader">
+                                        {yhteystiedotRyhmaFlat.name}{' '}
+                                        {yhteystiedotRyhmaFlat.id === defaultWorkAddress ? '*' : ''}
+                                    </span>
+                                    {!state.readOnly &&
+                                    !yhteystiedotRyhmaFlat.readOnly &&
+                                    !isLastWorkEmail(
+                                        yhteystiedotRyhmaFlat,
+                                        state.contactInfo,
+                                        state.yhteystietoRemoveList
+                                    ) ? (
+                                        <span className="float-right">
+                                            <IconButton
+                                                onClick={() =>
+                                                    _removeYhteystieto(
+                                                        yhteystiedotRyhmaFlat.id || yhteystiedotRyhmaFlat.henkiloUiId
+                                                    )
+                                                }
+                                            >
+                                                <CrossIcon />
+                                            </IconButton>
+                                        </span>
+                                    ) : null}
+                                    {yhteystiedotRyhmaFlat.value.map((yhteystietoFlat, idx2) => (
+                                        <div key={idx2} id={yhteystietoFlat.label}>
+                                            {(!state.readOnly && !yhteystiedotRyhmaFlat.readOnly) ||
+                                            yhteystietoFlat.value ? (
+                                                <div
+                                                    style={{
+                                                        display: 'grid',
+                                                        gridTemplateColumns: '1fr 1fr',
+                                                        gap: '25px',
+                                                    }}
+                                                    className="labelValue"
+                                                >
+                                                    <span className="oph-bold">{L[yhteystietoFlat.label]}</span>
+                                                    <Field
+                                                        inputValue={yhteystietoFlat.inputValue}
+                                                        changeAction={(e) => _updateModelField(yhteystietoFlat, e)}
+                                                        isEmail={isEmail(yhteystietoFlat)}
+                                                        readOnly={yhteystiedotRyhmaFlat.readOnly || state.readOnly}
+                                                    >
+                                                        {yhteystietoFlat.value}
+                                                    </Field>
+                                                </div>
+                                            ) : null}
+                                        </div>
+                                    ))}
+                                </div>
+                            ))}
+                        {!state.readOnly && (
+                            <div
+                                className="contact-content-add-new"
+                                onClick={() => _createYhteystiedotRyhma(WORK_ADDRESS)}
+                                key="add-new"
+                            >
+                                <span className="oph-bold oph-blue-lighten-1">
+                                    <AddIcon /> {L['HENKILO_LUOYHTEYSTIETO']}
+                                </span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+            {state.readOnly ? (
+                <div className="henkiloViewButtons">
+                    {hasHenkiloReadUpdateRights ? (
+                        <Button disabled={passivoitu || duplicate} key="contactEdit" action={_edit}>
+                            {L['MUOKKAA_LINKKI']}
+                        </Button>
+                    ) : null}
+                </div>
+            ) : (
+                <div className="henkiloViewEditButtons">
+                    <EditButtons
+                        discardAction={_discard}
+                        updateAction={_update}
+                        isValidForm={state.modified && state.contactInfoErrorFields.length === 0}
+                    />
+                </div>
+            )}
+        </div>
+    );
 }
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    L: state.l10n.localisations[state.locale],
-    locale: state.locale,
-    omattiedot: state.omattiedot,
-    henkilo: state.henkilo,
-});
-
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    updateHenkiloAndRefetch,
-})(HenkiloViewContactContentComponent);
+export default HenkiloViewContactContentComponent;

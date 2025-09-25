@@ -21,7 +21,6 @@ import PasswordButton from '../buttons/PasswordButton';
 import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
 import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
-import { useGetYhteystietotyypitQuery } from '../../../../api/koodisto';
 
 type OwnProps = {
     readOnly: boolean;
@@ -46,8 +45,6 @@ type StateProps = {
 type Props = OwnProps & StateProps;
 
 function VirkailijaUserContent(props: Props) {
-    const yhteystietotyypitQuery = useGetYhteystietotyypitQuery();
-
     function createBasicInfo() {
         const infoProps = {
             readOnly: props.readOnly,
@@ -110,7 +107,7 @@ function VirkailijaUserContent(props: Props) {
 
         return [editButton, hakaButton, passwordButton];
     }
-    return props.henkilo.henkiloLoading || props.henkilo.kayttajatietoLoading || yhteystietotyypitQuery.isLoading ? (
+    return props.henkilo.henkiloLoading || props.henkilo.kayttajatietoLoading ? (
         <Loader />
     ) : (
         <AbstractUserContent

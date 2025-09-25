@@ -33,7 +33,6 @@ import Sukupuoli from '../labelvalues/Sukupuoli';
 import PassinumeroButton from '../buttons/PassinumeroButton';
 import PoistaKayttajatunnusButton from '../buttons/PoistaKayttajatunnusButton';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
-import { useGetYhteystietotyypitQuery } from '../../../../api/koodisto';
 
 type OwnProps = {
     readOnly: boolean;
@@ -59,8 +58,6 @@ type StateProps = {
 type Props = OwnProps & StateProps;
 
 function AdminUserContent(props: Props) {
-    const yhteystietotyypitQuery = useGetYhteystietotyypitQuery();
-
     function createBasicInfo() {
         const infoProps = {
             readOnly: props.readOnly,
@@ -162,7 +159,7 @@ function AdminUserContent(props: Props) {
             passwordButton,
         ];
     }
-    return props.henkilo.henkiloLoading || props.henkilo.kayttajatietoLoading || yhteystietotyypitQuery.isLoading ? (
+    return props.henkilo.henkiloLoading || props.henkilo.kayttajatietoLoading ? (
         <Loader />
     ) : (
         <AbstractUserContent
