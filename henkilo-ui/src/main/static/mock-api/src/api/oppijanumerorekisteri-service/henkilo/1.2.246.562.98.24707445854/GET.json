@@ -1,0 +1,63 @@
+{
+    "oidHenkilo": "1.2.246.562.98.24707445854",
+    "hetu": "081086-998L",
+    "kaikkiHetut": [],
+    "passivoitu": false,
+    "etunimet": "Greta",
+    "kutsumanimi": "Greta",
+    "sukunimi": "Denimman",
+    "aidinkieli": {
+        "kieliKoodi": "VK",
+        "kieliTyyppi": null
+    },
+    "asiointiKieli": {
+        "kieliKoodi": "VK",
+        "kieliTyyppi": null
+    },
+    "kansalaisuus": [
+        {
+            "kansalaisuusKoodi": "246"
+        }
+    ],
+    "kasittelijaOid": "testidatantuonti",
+    "syntymaaika": "1986-10-08",
+    "sukupuoli": "2",
+    "kotikunta": "182",
+    "oppijanumero": "1.2.246.562.98.24707445854",
+    "turvakielto": false,
+    "eiSuomalaistaHetua": false,
+    "yksiloity": false,
+    "yksiloityVTJ": true,
+    "yksilointiYritetty": true,
+    "duplicate": false,
+    "created": 1741613720283,
+    "modified": 1741613720283,
+    "vtjsynced": null,
+    "yhteystiedotRyhma": [
+        {
+            "id": 166025135,
+            "ryhmaKuvaus": "yhteystietotyyppi4",
+            "ryhmaAlkuperaTieto": "alkupera1",
+            "readOnly": true,
+            "yhteystieto": [
+                {
+                    "yhteystietoTyyppi": "YHTEYSTIETO_KAUPUNKI",
+                    "yhteystietoArvo": "HELSINKI"
+                },
+                {
+                    "yhteystietoTyyppi": "YHTEYSTIETO_POSTINUMERO",
+                    "yhteystietoArvo": "00550"
+                },
+                {
+                    "yhteystietoTyyppi": "YHTEYSTIETO_KATUOSOITE",
+                    "yhteystietoArvo": "Inarintie 10 B 3"
+                }
+            ]
+        }
+    ],
+    "yksilointivirheet": [],
+    "passinumerot": [],
+    "kielisyys": [],
+    "modifiedAt": "2025-03-10T15:35:20.283+02:00",
+    "createdAt": "2025-03-10T15:35:20.283+02:00"
+}
