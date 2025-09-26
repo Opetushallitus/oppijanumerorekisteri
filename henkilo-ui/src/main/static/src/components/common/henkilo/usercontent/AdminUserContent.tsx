@@ -122,7 +122,9 @@ function AdminUserContent(props: Props) {
         const passivoiButton =
             !passivoitu && hasHenkiloReadUpdateRights ? <PassivoiButton disabled={duplicate || passivoitu} /> : null;
         const poistaKayttajatunnusBtn =
-            isRekisterinpitaja && !kayttajatunnukseton ? <PoistaKayttajatunnusButton /> : null;
+            isRekisterinpitaja && !kayttajatunnukseton ? (
+                <PoistaKayttajatunnusButton henkiloOid={props.henkilo.henkilo.oidHenkilo} />
+            ) : null;
         const aktivoiButton =
             passivoitu && hasHenkiloReadUpdateRights ? (
                 <AktivoiButton L={props.L} oidHenkilo={props.henkilo.henkilo.oidHenkilo} />

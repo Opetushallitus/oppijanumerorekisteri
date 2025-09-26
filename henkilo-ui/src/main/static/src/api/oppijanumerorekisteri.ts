@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 
 import { getCommonOptions } from '../http';
 import { Localisations } from '../types/localisation.type';
-import { fetchHenkilo } from '../actions/henkilo.actions';
+import { fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto } from '../actions/henkilo.actions';
 import { FETCH_HENKILO_ASIOINTIKIELI_SUCCESS } from '../actions/actiontypes';
 import { Locale } from '../types/locale.type';
 import { TuontiKooste, TuontiKoosteCriteria } from '../types/tuontikooste.types';
@@ -16,6 +16,8 @@ import { add } from '../slices/toastSlice';
 import { Henkilo, LinkedHenkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
 import { HenkiloDuplicate } from '../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 import { Yksilointitieto } from '../types/domain/oppijanumerorekisteri/yksilointitieto.types';
+import { kayttooikeusApi } from './kayttooikeus';
+import { fetchAllKayttooikeusryhmasForHenkilo } from '../actions/kayttooikeusryhma.actions';
 
 type Passinumerot = string[];
 
@@ -72,6 +74,20 @@ export const oppijanumerorekisteriApi = createApi({
                 dispatch({ type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, lang: data });
             },
             providesTags: ['locale'],
+        }),
+        deleteAccess: builder.mutation<void, string>({
+            query: (oid) => ({
+                url: `henkilo/${oid}/access`,
+                method: 'DELETE',
+            }),
+            async onQueryStarted(oid, { dispatch, queryFulfilled }) {
+                await queryFulfilled;
+                dispatch(kayttooikeusApi.util.invalidateTags(['henkilonkayttooikeusryhmat']));
+                dispatch<any>(fetchKayttajatieto(oid));
+                dispatch<any>(fetchHenkiloOrgs(oid));
+                dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(oid));
+                dispatch<any>(fetchHenkilo(oid));
+            },
         }),
         getPassinumerot: builder.query<Passinumerot, string>({
             query: (oid) => `henkilo/${oid}/passinumerot`,
@@ -328,6 +344,7 @@ export const oppijanumerorekisteriApi = createApi({
 });
 
 export const {
+    useDeleteAccessMutation,
     useGetLocaleQuery,
     useGetPassinumerotQuery,
     useSetPassinumerotMutation,

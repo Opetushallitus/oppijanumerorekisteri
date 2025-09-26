@@ -57,6 +57,10 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     const { data: omattiedot } = useGetOmattiedotQuery();
     const kayttooikeusryhmas = queryKayttooikeusryhmas.data ?? [];
     const [dates, setDates] = useState<Record<number, { alkupvm: Moment; loppupvm: Moment }>>([]);
+    const [emailOptions, setEmailOptions] = useState(
+        createEmailOptions(henkilo, _filterExpiredKayttooikeus, kayttooikeusryhmas)
+    );
+    const [accessRight, setAccessRight] = useState<AccessRight>();
 
     useEffect(() => {
         if (queryKayttooikeusryhmas.data) {
@@ -79,11 +83,6 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
             );
         }
     }, [queryKayttooikeusryhmas.data]);
-
-    const [emailOptions, setEmailOptions] = useState(
-        createEmailOptions(henkilo, _filterExpiredKayttooikeus, kayttooikeusryhmas)
-    );
-    const [accessRight, setAccessRight] = useState<AccessRight>();
 
     useEffect(() => {
         setEmailOptions(createEmailOptions(henkilo, _filterExpiredKayttooikeus, kayttooikeusryhmas));

@@ -1,15 +1,14 @@
 import React, { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { useAppDispatch, type RootState } from '../../../store';
+import { type RootState } from '../../../store';
 import StaticUtils from '../StaticUtils';
 import { toLocalizedText } from '../../../localizabletext';
-import { passivoiHenkiloOrg } from '../../../actions/henkilo.actions';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
 import { useLocalisations } from '../../../selectors';
 import ConfirmButton from '../button/ConfirmButton';
 import Button from '../button/Button';
-import { useGetOrganisationsQuery } from '../../../api/kayttooikeus';
+import { useDeleteHenkiloOrganisationMutation, useGetOrganisationsQuery } from '../../../api/kayttooikeus';
 
 import './HenkiloViewOrganisationContent.css';
 
@@ -25,10 +24,10 @@ export const HenkiloViewOrganisationContent = () => {
     const [showPassive, setShowPassive] = useState(false);
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const { data: apiOrganisations, isSuccess } = useGetOrganisationsQuery();
-    const dispatch = useAppDispatch();
+    const [deleteHenkiloOrganisation] = useDeleteHenkiloOrganisationMutation();
 
     function passivoiHenkiloOrganisation(organisationOid: string) {
-        dispatch<any>(passivoiHenkiloOrg(henkilo.henkilo.oidHenkilo, organisationOid));
+        deleteHenkiloOrganisation({ henkiloOid: henkilo.henkilo.oidHenkilo, organisationOid });
     }
 
     const flatOrganisations: OrganisaatioFlat[] = useMemo(() => {

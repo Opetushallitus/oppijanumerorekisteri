@@ -1,45 +1,31 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import type { RootState } from '../../../../store';
+
 import ConfirmButton from '../../button/ConfirmButton';
-import { poistaKayttajatunnus } from '../../../../actions/henkilo.actions';
-import { HenkiloState } from '../../../../reducers/henkilo.reducer';
-import { Localisations } from '../../../../types/localisation.type';
+import { useLocalisations } from '../../../../selectors';
+import { useDeleteAccessMutation } from '../../../../api/oppijanumerorekisteri';
 
 type OwnProps = {
+    henkiloOid: string;
     disabled?: boolean;
 };
 
-type StateProps = {
-    henkilo: HenkiloState;
-    L: Localisations;
+const PoistaKayttajatunnusButton = ({ henkiloOid, disabled }: OwnProps) => {
+    const { L } = useLocalisations();
+    const [deleteAccess] = useDeleteAccessMutation();
+
+    return (
+        <ConfirmButton
+            key="poistaKayttajatunnus"
+            action={() => {
+                const r = window.confirm(L['POISTAKAYTTAJATUNNUS_CONFIRM_TEKSTI']);
+                if (r) deleteAccess(henkiloOid);
+            }}
+            normalLabel={L['POISTAKAYTTAJATUNNUS_LINKKI']}
+            confirmLabel={L['POISTAKAYTTAJATUNNUS_LINKKI_CONFIRM']}
+            id="poistaKayttajatunnus"
+            disabled={!!disabled}
+        />
+    );
 };
 
-type DispatchProps = {
-    poistaKayttajatunnus: (oid: string) => void;
-};
-
-type Props = OwnProps & StateProps & DispatchProps;
-
-const PoistaKayttajatunnusButton = (props: Props) => (
-    <ConfirmButton
-        key="poistaKayttajatunnus"
-        action={() => {
-            const r = window.confirm(props.L['POISTAKAYTTAJATUNNUS_CONFIRM_TEKSTI']);
-            if (r) props.poistaKayttajatunnus(props.henkilo.henkilo.oidHenkilo);
-        }}
-        normalLabel={props.L['POISTAKAYTTAJATUNNUS_LINKKI']}
-        confirmLabel={props.L['POISTAKAYTTAJATUNNUS_LINKKI_CONFIRM']}
-        id="poistaKayttajatunnus"
-        disabled={!!props.disabled}
-    />
-);
-
-const mapStateToProps = (state: RootState): StateProps => ({
-    L: state.l10n.localisations[state.locale],
-    henkilo: state.henkilo,
-});
-
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    poistaKayttajatunnus,
-})(PoistaKayttajatunnusButton);
+export default PoistaKayttajatunnusButton;

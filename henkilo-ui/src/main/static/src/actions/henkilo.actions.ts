@@ -1,9 +1,6 @@
 import { http } from '../http';
 import { urls } from 'oph-urls-js';
 import {
-    DELETE_HENKILOORGS_FAILURE,
-    DELETE_HENKILOORGS_REQUEST,
-    DELETE_HENKILOORGS_SUCCESS,
     FETCH_HENKILO_REQUEST,
     FETCH_HENKILO_SUCCESS,
     FETCH_HENKILO_FAILURE,
@@ -31,11 +28,7 @@ import {
     VTJ_OVERRIDE_YKSILOIMATON_HENKILO_SUCCESS,
     VTJ_OVERRIDE_YKSILOIMATON_HENKILO_FAILURE,
     FETCH_HENKILO_HAKEMUKSET,
-    POISTA_KAYTTAJATUNNUS_REQUEST,
-    POISTA_KAYTTAJATUNNUS_SUCCESS,
-    POISTA_KAYTTAJATUNNUS_FAILURE,
 } from './actiontypes';
-import { fetchAllKayttooikeusryhmasForHenkilo } from './kayttooikeusryhma.actions';
 import { addGlobalNotification } from './notification.actions';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { localizeWithState } from '../utilities/localisation.util';
@@ -175,37 +168,6 @@ export const updateAndRefetchKayttajatieto =
         }
     };
 
-const requestPoistaKayttajatunnus = (oid) => ({
-    type: POISTA_KAYTTAJATUNNUS_REQUEST,
-    oid,
-});
-const receivePoistaKayttajatunnus = () => ({
-    type: POISTA_KAYTTAJATUNNUS_SUCCESS,
-    receivedAt: Date.now(),
-});
-const errorPoistaKayttajatunnus = () => ({
-    type: POISTA_KAYTTAJATUNNUS_FAILURE,
-    buttonNotification: {
-        position: 'poistaKayttajatunnus',
-        notL10nMessage: 'POISTA_KAYTTAJATUNNUS_ERROR_TOPIC',
-        notL10nText: 'POISTA_KAYTTAJATUNNUS_ERROR_TEXT',
-    },
-    receivedAt: Date.now(),
-});
-export const poistaKayttajatunnus = (oid) => (dispatch: AppDispatch) => {
-    dispatch(requestPoistaKayttajatunnus(oid));
-    const url = urls.url('oppijanumerorekisteri-service.henkilo.poista-kayttajatunnus', oid);
-    http.delete(url)
-        .then(() => {
-            dispatch(receivePoistaKayttajatunnus());
-            dispatch<any>(fetchKayttajatieto(oid));
-            dispatch<any>(fetchHenkiloOrgs(oid));
-            dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(oid));
-            dispatch<any>(fetchHenkilo(oid));
-        })
-        .catch(() => dispatch(errorPoistaKayttajatunnus()));
-};
-
 const requestHenkiloYksilointitieto = (oid) => ({
     type: FETCH_HENKILO_YKSILOINTITIETO_REQUEST,
     oid,
@@ -298,41 +260,6 @@ export const fetchHenkiloOrgs = (oidHenkilo) => (dispatch: AppDispatch, getState
     dispatch(requestHenkiloOrgs(oidHenkilo));
     const url = urls.url('kayttooikeus-service.henkilo.organisaatiohenkilos', oidHenkilo);
     return http.get<HenkiloOrg[]>(url).then((json) => dispatch(receiveHenkiloOrgsSuccess(json)));
-};
-
-const requestPassivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => ({
-    type: DELETE_HENKILOORGS_REQUEST,
-    oidHenkilo,
-    oidHenkiloOrg,
-});
-const receivePassivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => ({
-    type: DELETE_HENKILOORGS_SUCCESS,
-    oidHenkilo,
-    oidHenkiloOrg,
-    receivedAt: Date.now(),
-});
-const errorPassivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => ({
-    type: DELETE_HENKILOORGS_FAILURE,
-    oidHenkilo,
-    oidHenkiloOrg,
-    buttonNotification: {
-        position: 'passivoiOrg',
-        notL10nMessage: 'PASSIVOI_ORG_ERROR_TOPIC',
-        notL10nText: 'PASSIVOI_ORG_ERROR_TEXT',
-    },
-    receivedAt: Date.now(),
-});
-export const passivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => (dispatch: AppDispatch) => {
-    dispatch(requestPassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg));
-    const url = urls.url('kayttooikeus-service.organisaatiohenkilo.passivoi', oidHenkilo, oidHenkiloOrg);
-    return http
-        .delete(url)
-        .then(() => {
-            dispatch(receivePassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg));
-            dispatch<any>(fetchHenkiloOrgs(oidHenkilo));
-            dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo));
-        })
-        .catch(() => dispatch(errorPassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg)));
 };
 
 const requestHenkiloHakemukset = (oid) => ({

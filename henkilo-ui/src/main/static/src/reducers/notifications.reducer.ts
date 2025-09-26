@@ -2,7 +2,6 @@ import { AnyAction } from '@reduxjs/toolkit';
 import {
     ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE,
     ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS,
-    DELETE_HENKILOORGS_FAILURE,
     NOTIFICATION_REMOVED,
     PASSIVOI_HENKILO_FAILURE,
     VTJ_OVERRIDE_HENKILO_FAILURE,
@@ -99,7 +98,6 @@ export const notifications = (
         }
         case PASSIVOI_HENKILO_FAILURE:
         case YKSILOI_HENKILO_FAILURE:
-        case DELETE_HENKILOORGS_FAILURE:
         case VTJ_OVERRIDE_HENKILO_FAILURE:
         case YKSILOI_PUUTTUVAT_TIEDOT_FAILURE:
             return {

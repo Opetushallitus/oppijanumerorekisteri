@@ -95,7 +95,9 @@ class PalveluUserContent extends React.Component<Props> {
             this.props.isAdmin && this.props.henkilo.henkilo.passivoitu ? (
                 <AktivoiButton L={this.props.L} oidHenkilo={this.props.henkilo.henkilo.oidHenkilo} />
             ) : null,
-            !kayttajatunnukseton && this.props.isAdmin ? <PoistaKayttajatunnusButton /> : null,
+            !kayttajatunnukseton && this.props.isAdmin ? (
+                <PoistaKayttajatunnusButton henkiloOid={this.props.henkilo.henkilo.oidHenkilo} />
+            ) : null,
             <PasswordButton
                 key="passwordbutton"
                 oidHenkilo={this.props.oidHenkilo}

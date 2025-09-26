@@ -35,6 +35,7 @@ import { PalveluRooliModify } from '../types/domain/kayttooikeus/PalveluRooliMod
 import { SallitutKayttajatyypit } from '../components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage';
 import { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
 import { fetchAllKayttooikeusryhmasForHenkilo } from '../actions/kayttooikeusryhma.actions';
+import { fetchHenkiloOrgs } from '../actions/henkilo.actions';
 
 type MfaSetupResponse = {
     secretKey: string;
@@ -44,6 +45,11 @@ type MfaSetupResponse = {
 type MfaEnableRequest = string;
 type MfaDisableRequest = void;
 type MfaPostResponse = boolean;
+
+type DeleteHenkiloOrganisationRequest = {
+    henkiloOid: string;
+    organisationOid: string;
+};
 
 export type AccessRightsReportRow = {
     id: number;
@@ -151,7 +157,22 @@ export const kayttooikeusApi = createApi({
             },
             providesTags: ['henkilonkayttooikeusryhmat'],
         }),
-
+        deleteHenkiloOrganisation: builder.mutation<void, DeleteHenkiloOrganisationRequest>({
+            query: ({ henkiloOid, organisationOid }) => ({
+                url: `organisaatiohenkilo/${henkiloOid}/${organisationOid}`,
+                method: 'DELETE',
+            }),
+            async onQueryStarted({ henkiloOid }, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch<any>(fetchHenkiloOrgs(henkiloOid));
+                    dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(henkiloOid));
+                } catch (_err) {
+                    //
+                }
+            },
+            invalidatesTags: ['henkilonkayttooikeusryhmat'],
+        }),
         getOmattiedot: builder.query<Omattiedot, void>({
             query: () => 'henkilo/current/omattiedot',
             async onQueryStarted(_oid, { dispatch, queryFulfilled }) {
@@ -408,6 +429,7 @@ export const kayttooikeusApi = createApi({
 });
 
 export const {
+    useDeleteHenkiloOrganisationMutation,
     useGetKayttooikeusryhmasForHenkiloQuery,
     useGetOmattiedotQuery,
     useGetOmatOrganisaatiotQuery,
