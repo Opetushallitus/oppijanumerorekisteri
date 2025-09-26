@@ -22,11 +22,10 @@ import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 import { localizeTextGroup } from '../../../utilities/localisation.util';
 import { NotificationsState } from '../../../reducers/notifications.reducer';
-import { useLocalisations } from '../../../selectors';
+import { useKayttooikeusryhmas, useLocalisations } from '../../../selectors';
 import OphTable from '../../OphTable';
 import {
     useDeleteKayttooikeusryhmaForHenkiloMutation,
-    useGetKayttooikeusryhmasForHenkiloQuery,
     useGetOmattiedotQuery,
     useGetOrganisationsQuery,
     usePutKayttooikeusryhmaForHenkiloMutation,
@@ -48,7 +47,11 @@ const emptyArray = [];
 const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const { L, locale } = useLocalisations();
-    const { data: kayttooikeusryhmas, isLoading, isError } = useGetKayttooikeusryhmasForHenkiloQuery(props.oidHenkilo);
+    const {
+        data: kayttooikeusryhmas,
+        isLoading,
+        isError,
+    } = useKayttooikeusryhmas(props.isOmattiedot, props.oidHenkilo);
     const [putKayttooikeusryhma] = usePutKayttooikeusryhmaForHenkiloMutation();
     const [deleteKayttooikeusryhma] = useDeleteKayttooikeusryhmaForHenkiloMutation();
     const dispatch = useAppDispatch();
@@ -289,16 +292,16 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                 enableSorting: false,
             },
         ],
-        [emailOptions, kayttooikeus.kayttooikeus, props, organisations, isSuccess]
+        [emailOptions, kayttooikeusryhmas, props, organisations, isSuccess]
     );
 
     const memoizedData = useMemo(() => {
-        const renderedData = kayttooikeus.kayttooikeus.filter(_filterExpiredKayttooikeus);
+        const renderedData = (kayttooikeusryhmas ?? []).filter(_filterExpiredKayttooikeus);
         if (!renderedData || !renderedData.length) {
             return undefined;
         }
         return renderedData;
-    }, [kayttooikeus.kayttooikeus]);
+    }, [kayttooikeusryhmas]);
 
     const table = useReactTable({
         columns: columns ?? emptyArray,

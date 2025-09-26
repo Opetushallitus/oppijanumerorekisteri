@@ -3,10 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { useAppDispatch, type RootState } from '../../store';
 import { fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, clearHenkilo } from '../../actions/henkilo.actions';
-import {
-    fetchAllKayttooikeusryhmasForHenkilo,
-    fetchAllKayttooikeusAnomusForHenkilo,
-} from '../../actions/kayttooikeusryhma.actions';
+import { fetchAllKayttooikeusAnomusForHenkilo } from '../../actions/kayttooikeusryhma.actions';
 import { HenkiloState, isHenkiloStateLoading } from '../../reducers/henkilo.reducer';
 import Loader from '../common/icons/Loader';
 import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
@@ -39,7 +36,6 @@ export const OmattiedotPage = () => {
             dispatch<any>(fetchHenkilo(userOid));
             dispatch<any>(fetchKayttajatieto(userOid));
             dispatch<any>(fetchHenkiloOrgs(userOid));
-            dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo());
             dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(userOid));
         }
     }, []);
@@ -75,11 +71,7 @@ export const OmattiedotPage = () => {
                     )}
                 </div>
                 <div className="wrapper">
-                    {kayttooikeus.kayttooikeusLoading ? (
-                        <Loader />
-                    ) : (
-                        <HenkiloViewExpiredKayttooikeus oidHenkilo={henkilo.henkilo.oidHenkilo} isOmattiedot={true} />
-                    )}
+                    <HenkiloViewExpiredKayttooikeus oidHenkilo={henkilo.henkilo.oidHenkilo} isOmattiedot={true} />
                 </div>
                 <div className="wrapper">
                     <HenkiloViewCreateKayttooikeusanomus />

@@ -9,7 +9,6 @@ import { HenkiloViewOrganisationContent } from '../common/henkilo/HenkiloViewOrg
 import { useAppDispatch } from '../../store';
 import { clearHenkilo, fetchHenkilo, fetchHenkiloOrgs } from '../../actions/henkilo.actions';
 import HenkiloViewExpiredKayttooikeus from '../common/henkilo/HenkiloViewExpiredKayttooikeus';
-import { fetchAllKayttooikeusryhmasForHenkilo } from '../../actions/kayttooikeusryhma.actions';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { jarjestelmatunnusNavigation } from '../navigation/navigationconfigurations';
@@ -29,7 +28,6 @@ export const JarjestelmatunnusEditPage = () => {
         dispatch<any>(clearHenkilo());
         dispatch<any>(fetchHenkilo(params.oid));
         dispatch<any>(fetchHenkiloOrgs(params.oid));
-        dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(params.oid));
     }, [params.oid]);
 
     return (

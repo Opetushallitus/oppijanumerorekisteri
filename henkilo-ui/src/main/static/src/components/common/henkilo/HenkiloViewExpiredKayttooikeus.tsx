@@ -5,7 +5,6 @@ import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, SortingSt
 
 import { useAppDispatch, type RootState } from '../../../store';
 import StaticUtils from '../StaticUtils';
-import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import HaeJatkoaikaaButton from '../../omattiedot/HaeJatkoaikaaButton';
 import { createEmailOptions } from '../../../utilities/henkilo.util';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
@@ -17,9 +16,11 @@ import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/k
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 import { localizeTextGroup } from '../../../utilities/localisation.util';
-import { useLocalisations } from '../../../selectors';
+import { useKayttooikeusryhmas, useLocalisations } from '../../../selectors';
 import OphTable from '../../OphTable';
 import { useGetOmattiedotQuery, useGetOrganisationsQuery } from '../../../api/kayttooikeus';
+import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
+import Loader from '../icons/Loader';
 
 type OwnProps = {
     isOmattiedot: boolean;
@@ -32,18 +33,19 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const dispatch = useAppDispatch();
     const { L, locale, l10n } = useLocalisations();
-    const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
+    const { data: kayttooikeusryhmas, isLoading } = useKayttooikeusryhmas(props.isOmattiedot, props.oidHenkilo);
     const { data: organisations, isSuccess } = useGetOrganisationsQuery();
     const { data: omattiedot } = useGetOmattiedotQuery();
     const [emailOptions, setEmailOptions] = useState(
-        createEmailOptions(henkilo, _filterExistingKayttooikeus, kayttooikeus.kayttooikeus)
+        createEmailOptions(henkilo, _filterExistingKayttooikeus, kayttooikeusryhmas ?? [])
     );
     const [accessRight, setAccessRight] = useState<AccessRight>();
 
     useEffect(() => {
-        setEmailOptions(createEmailOptions(henkilo, _filterExistingKayttooikeus, kayttooikeus.kayttooikeus));
-    }, [henkilo, kayttooikeus.kayttooikeus]);
+        setEmailOptions(createEmailOptions(henkilo, _filterExistingKayttooikeus, kayttooikeusryhmas ?? []));
+    }, [henkilo, kayttooikeusryhmas]);
 
     function showAccessRightGroupDetails(kayttooikeusRyhma: MyonnettyKayttooikeusryhma) {
         const accessRight: AccessRight = {
@@ -98,7 +100,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
 
     function hideVanhentunutKayttooikeusUusintaButton(vanhentunutKayttooikeus: MyonnettyKayttooikeusryhma) {
         // palauttaa true jos vanhentunutKayttooikeus löytyy myös voimassaolevista käyttöoikeuksista
-        return !!kayttooikeus.kayttooikeus
+        return !!(kayttooikeusryhmas ?? [])
             .filter(
                 (kayttooikeus: MyonnettyKayttooikeusryhma) =>
                     kayttooikeus.tila !== KAYTTOOIKEUDENTILA.SULJETTU &&
@@ -114,7 +116,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
     }
 
     function isHaeJatkoaikaaButtonDisabled(ryhmaId: number, vanhentunutKayttooikeusryhma: MyonnettyKayttooikeusryhma) {
-        const anomusAlreadyExists = !!kayttooikeus.kayttooikeusAnomus.filter(
+        const anomusAlreadyExists = !!(kayttooikeus.kayttooikeusAnomus ?? []).filter(
             (haettuKayttooikeusRyhma) =>
                 haettuKayttooikeusRyhma.kayttoOikeusRyhma.id === vanhentunutKayttooikeusryhma.ryhmaId &&
                 vanhentunutKayttooikeusryhma.organisaatioOid === haettuKayttooikeusRyhma.anomus.organisaatioOid
@@ -187,16 +189,16 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
                     ),
             },
         ],
-        [emailOptions, kayttooikeus.kayttooikeus, props, organisations, isSuccess]
+        [emailOptions, kayttooikeusryhmas, props, organisations, isSuccess]
     );
 
     const memoizedData = useMemo(() => {
-        const renderedData = kayttooikeus.kayttooikeus.filter(_filterExistingKayttooikeus);
+        const renderedData = (kayttooikeusryhmas ?? []).filter(_filterExistingKayttooikeus);
         if (!renderedData || !renderedData.length) {
             return undefined;
         }
         return renderedData;
-    }, [kayttooikeus.kayttooikeus]);
+    }, [kayttooikeusryhmas]);
 
     const table = useReactTable({
         columns: columns ?? emptyArray,
@@ -213,15 +215,19 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
         getSortedRowModel: getSortedRowModel(),
     });
 
-    return (
-        <div className="henkiloViewUserContentWrapper">
-            {accessRight && <AccessRightDetails {...accessRight} />}
-            <div>
-                <h2>{L['HENKILO_VANHAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
-                <OphTable table={table} isLoading={false} />
+    if (isLoading) {
+        return <Loader />;
+    } else {
+        return (
+            <div className="henkiloViewUserContentWrapper">
+                {accessRight && <AccessRightDetails {...accessRight} />}
+                <div>
+                    <h2>{L['HENKILO_VANHAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
+                    <OphTable table={table} isLoading={false} />
+                </div>
             </div>
-        </div>
-    );
+        );
+    }
 };
 
 export default HenkiloViewExpiredKayttooikeus;

@@ -1,9 +1,6 @@
 import { http } from '../http';
 import { urls } from 'oph-urls-js';
 import {
-    FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST,
-    FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_SUCCESS,
-    FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_FAILURE,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_REQUEST,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_SUCCESS,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_FAILURE,
@@ -35,29 +32,6 @@ export type KayttooikeusAnomus = {
     perustelut: string;
     kayttooikeusRyhmaIds: number[];
     anojaOid: string;
-};
-
-const requestAllKayttooikeusryhmasForHenkilo = (henkiloOid) => ({
-    type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST,
-    henkiloOid,
-});
-const receiveAllKayttooikeusryhmasForHenkilo = (henkiloOid, kayttooikeus) => ({
-    type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_SUCCESS,
-    henkiloOid,
-    kayttooikeus,
-});
-const errorAllKayttooikeusryhmasForHenkilo = (henkiloOid) => ({
-    type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_FAILURE,
-    henkiloOid,
-});
-export const fetchAllKayttooikeusryhmasForHenkilo = (henkiloOid?: string) => (dispatch: AppDispatch) => {
-    dispatch(requestAllKayttooikeusryhmasForHenkilo(henkiloOid));
-    const url = henkiloOid
-        ? urls.url('kayttooikeus-service.kayttooikeusryhma.henkilo.oid', henkiloOid)
-        : urls.url('kayttooikeus-service.kayttooikeusryhma.henkilo.current');
-    http.get<[{ organisaatioOid: string }]>(url)
-        .then((kayttooikeus) => dispatch(receiveAllKayttooikeusryhmasForHenkilo(henkiloOid, kayttooikeus)))
-        .catch(() => dispatch(errorAllKayttooikeusryhmasForHenkilo(henkiloOid)));
 };
 
 const requestAllKayttooikeusryhmaAnomusForHenkilo = (henkiloOid) => ({

@@ -17,7 +17,6 @@ import { Henkilo, LinkedHenkilo } from '../types/domain/oppijanumerorekisteri/he
 import { HenkiloDuplicate } from '../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 import { Yksilointitieto } from '../types/domain/oppijanumerorekisteri/yksilointitieto.types';
 import { kayttooikeusApi } from './kayttooikeus';
-import { fetchAllKayttooikeusryhmasForHenkilo } from '../actions/kayttooikeusryhma.actions';
 
 type Passinumerot = string[];
 
@@ -85,7 +84,6 @@ export const oppijanumerorekisteriApi = createApi({
                 dispatch(kayttooikeusApi.util.invalidateTags(['henkilonkayttooikeusryhmat']));
                 dispatch<any>(fetchKayttajatieto(oid));
                 dispatch<any>(fetchHenkiloOrgs(oid));
-                dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(oid));
                 dispatch<any>(fetchHenkilo(oid));
             },
         }),

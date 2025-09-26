@@ -11,10 +11,7 @@ import {
     fetchKayttaja,
     fetchKayttajatieto,
 } from '../../actions/henkilo.actions';
-import {
-    fetchAllKayttooikeusAnomusForHenkilo,
-    fetchAllKayttooikeusryhmasForHenkilo,
-} from '../../actions/kayttooikeusryhma.actions';
+import { fetchAllKayttooikeusAnomusForHenkilo } from '../../actions/kayttooikeusryhma.actions';
 import { HenkiloState, isHenkiloStateLoading } from '../../reducers/henkilo.reducer';
 import { useLocalisations } from '../../selectors';
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
@@ -72,7 +69,6 @@ export const VirkailijaViewPage = () => {
         dispatch<any>(fetchHenkiloOrgs(oid));
         dispatch<any>(fetchKayttaja(oid));
         dispatch<any>(fetchKayttajatieto(oid));
-        dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(oid));
         dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(oid));
     }, [omattiedot, oid]);
 
@@ -118,11 +114,7 @@ export const VirkailijaViewPage = () => {
                     )}
                 </div>
                 <div className="wrapper">
-                    {kayttooikeus.kayttooikeusLoading ? (
-                        <Loader />
-                    ) : (
-                        <HenkiloViewExpiredKayttooikeus oidHenkilo={henkilo.henkilo.oidHenkilo} isOmattiedot={false} />
-                    )}
+                    <HenkiloViewExpiredKayttooikeus oidHenkilo={henkilo.henkilo.oidHenkilo} isOmattiedot={false} />
                 </div>
                 <div className="wrapper">
                     <HenkiloViewCreateKayttooikeus

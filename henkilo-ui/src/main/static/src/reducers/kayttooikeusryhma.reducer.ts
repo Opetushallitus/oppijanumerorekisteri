@@ -4,15 +4,12 @@ import {
     FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_FAILURE,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_REQUEST,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_SUCCESS,
-    FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST,
-    FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_BY_ID_REQUEST,
     FETCH_KAYTTOOIKEUSRYHMA_BY_ID_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_BY_ID_FAILURE,
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_FAILURE,
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_REQUEST,
-    FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_FAILURE,
 } from '../actions/actiontypes';
 import { Kayttooikeusryhma, MyonnettyKayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { HaettuKayttooikeusryhma } from '../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
@@ -22,8 +19,6 @@ export type AllowedKayttooikeus = Array<MyonnettyKayttooikeusryhma>;
 export type KayttooikeusRyhmaState = {
     readonly kayttooikeusAnomus?: Array<HaettuKayttooikeusryhma>;
     readonly kayttooikeusAnomusLoading: boolean;
-    readonly kayttooikeus: Array<MyonnettyKayttooikeusryhma>;
-    readonly kayttooikeusLoading: boolean;
     readonly kayttooikeusryhma: Kayttooikeusryhma | null | undefined;
     readonly kayttooikeusryhmaLoading: boolean;
     readonly kayttooikeusryhmaSlaves: Array<Kayttooikeusryhma>;
@@ -31,15 +26,10 @@ export type KayttooikeusRyhmaState = {
 };
 
 export const isKayttooikeusryhmaStateLoading = (state: KayttooikeusRyhmaState) =>
-    state.kayttooikeusAnomusLoading ||
-    state.kayttooikeusLoading ||
-    state.kayttooikeusryhmaLoading ||
-    state.kayttooikeusryhmaSlavesLoading;
+    state.kayttooikeusAnomusLoading || state.kayttooikeusryhmaLoading || state.kayttooikeusryhmaSlavesLoading;
 
 export const getEmptyKayttooikeusRyhmaState = (): KayttooikeusRyhmaState => {
     return {
-        kayttooikeusLoading: true,
-        kayttooikeus: [],
         kayttooikeusAnomusLoading: true,
         kayttooikeusAnomus: [],
         kayttooikeusryhma: null,
@@ -54,12 +44,6 @@ export const kayttooikeus = (
     action: AnyAction
 ): KayttooikeusRyhmaState => {
     switch (action.type) {
-        case FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST:
-            return { ...state, kayttooikeusLoading: true };
-        case FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_SUCCESS:
-            return { ...state, kayttooikeusLoading: false, kayttooikeus: action.kayttooikeus };
-        case FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_FAILURE:
-            return { ...state, kayttooikeusLoading: false, kayttooikeus: [] };
         case FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_REQUEST:
             return { ...state, kayttooikeusAnomusLoading: true };
         case FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_SUCCESS:
