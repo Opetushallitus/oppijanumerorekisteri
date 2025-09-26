@@ -7,12 +7,9 @@ import {
     FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_REQUEST,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_SUCCESS,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_FAILURE,
-    UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_REQUEST,
-    UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_REQUEST,
     FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_FAILURE,
-    UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_FAILURE,
     CREATE_KAYTTOOIKEUSANOMUS_REQUEST,
     CREATE_KAYTTOOIKEUSANOMUS_SUCCESS,
     CREATE_KAYTTOOIKEUSANOMUS_FAILURE,
@@ -86,47 +83,6 @@ export const fetchAllKayttooikeusAnomusForHenkilo = (henkiloOid: string) => (dis
         )
         .catch(() => dispatch(errorAllKayttooikeusryhmaAnomusForHenkilo(henkiloOid)));
 };
-
-const requestHaettuKayttooikeusryhmaUpdate = (id) => ({
-    type: UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_REQUEST,
-    id,
-});
-const receiveHaettuKayttooikeusryhmaUpdate = (id) => ({
-    type: UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_SUCCESS,
-    id,
-});
-const errorHaettuKayttooikeusryhmaUpdate = (id) => ({
-    type: UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_FAILURE,
-    id,
-});
-export const updateHaettuKayttooikeusryhma =
-    (
-        id: number,
-        kayttoOikeudenTila: string,
-        alkupvm: string,
-        loppupvm: string | undefined,
-        oidHenkilo: { oid: string },
-        hylkaysperuste?: string
-    ) =>
-    async (dispatch: AppDispatch) => {
-        dispatch(requestHaettuKayttooikeusryhmaUpdate(id));
-        const url = urls.url('kayttooikeus-service.henkilo.kaytto-oikeus-anomus');
-        try {
-            await http.put(url, {
-                id,
-                kayttoOikeudenTila,
-                alkupvm,
-                loppupvm,
-                hylkaysperuste,
-            });
-            dispatch(receiveHaettuKayttooikeusryhmaUpdate(id));
-            dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(oidHenkilo.oid));
-            dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo.oid));
-        } catch (error) {
-            dispatch(errorHaettuKayttooikeusryhmaUpdate(id));
-            throw error;
-        }
-    };
 
 //KAYTTOOIKEUSRYHMAT FOR ORGANISAATIO
 const requestOrganisaatioKayttooikeusryhmat = (organisaatioOid) => ({

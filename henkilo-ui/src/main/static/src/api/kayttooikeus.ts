@@ -34,7 +34,11 @@ import { TextGroupModify } from '../types/domain/kayttooikeus/textgroup.types';
 import { PalveluRooliModify } from '../types/domain/kayttooikeus/PalveluRooliModify.types';
 import { SallitutKayttajatyypit } from '../components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage';
 import { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
-import { fetchAllKayttooikeusryhmasForHenkilo, Kayttooikeus } from '../actions/kayttooikeusryhma.actions';
+import {
+    fetchAllKayttooikeusAnomusForHenkilo,
+    fetchAllKayttooikeusryhmasForHenkilo,
+    Kayttooikeus,
+} from '../actions/kayttooikeusryhma.actions';
 import { fetchHenkiloOrgs } from '../actions/henkilo.actions';
 
 type MfaSetupResponse = {
@@ -90,11 +94,14 @@ export type GetHaetutKayttooikeusryhmatRequest = {
 };
 
 export type PutHaettuKayttooikeusryhmaRequest = {
-    id: number;
-    kayttoOikeudenTila: string;
-    alkupvm: string;
-    loppupvm?: string;
-    hylkaysperuste?: string;
+    henkiloOid: string;
+    body: {
+        id: number;
+        kayttoOikeudenTila: string;
+        alkupvm: string;
+        loppupvm?: string;
+        hylkaysperuste?: string;
+    };
 };
 
 type PostSalasananVaihtoRequest = {
@@ -371,11 +378,19 @@ export const kayttooikeusApi = createApi({
             providesTags: ['haetutKayttooikeusryhmat'],
         }),
         putHaettuKayttooikeusryhma: builder.mutation<void, PutHaettuKayttooikeusryhmaRequest>({
-            query: (body) => ({
+            query: ({ body }) => ({
                 url: 'kayttooikeusanomus',
                 method: 'PUT',
                 body,
             }),
+            async onQueryStarted({ henkiloOid }, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(henkiloOid));
+                } catch (_err) {
+                    //
+                }
+            },
             invalidatesTags: ['haetutKayttooikeusryhmat'],
         }),
         postSalasananVaihto: builder.mutation<CasLoginRedirectParams, PostSalasananVaihtoRequest>({

@@ -58,7 +58,10 @@ const AnomusPage = () => {
         henkilo: HenkilonNimi,
         hylkaysperuste?: string
     ): void {
-        putHaettuKayttooikeusryhma({ id, kayttoOikeudenTila, alkupvm, loppupvm, hylkaysperuste })
+        putHaettuKayttooikeusryhma({
+            henkiloOid: henkilo.oid,
+            body: { id, kayttoOikeudenTila, alkupvm, loppupvm, hylkaysperuste },
+        })
             .unwrap()
             .then(() => {
                 const notificationMessageKey =

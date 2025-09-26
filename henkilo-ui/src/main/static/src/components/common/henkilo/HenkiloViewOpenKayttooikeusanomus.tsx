@@ -23,15 +23,16 @@ import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.redu
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 import { HenkilonNimi } from '../../../types/domain/kayttooikeus/HenkilonNimi';
 import { useAppDispatch } from '../../../store';
-import {
-    fetchAllKayttooikeusAnomusForHenkilo,
-    updateHaettuKayttooikeusryhma,
-} from '../../../actions/kayttooikeusryhma.actions';
+import { fetchAllKayttooikeusAnomusForHenkilo } from '../../../actions/kayttooikeusryhma.actions';
 import { useLocalisations } from '../../../selectors';
 import { HaettuKayttooikeusryhma } from '../../../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
 import { OphTableWithInfiniteScroll } from '../../OphTableWithInfiniteScroll';
 import OphTable, { expanderColumn } from '../../OphTable';
-import { useGetOmattiedotQuery, useGetOrganisationsQuery } from '../../../api/kayttooikeus';
+import {
+    useGetOmattiedotQuery,
+    useGetOrganisationsQuery,
+    usePutHaettuKayttooikeusryhmaMutation,
+} from '../../../api/kayttooikeus';
 import OphModal from '../modal/OphModal';
 import ConfirmButton from '../button/ConfirmButton';
 
@@ -74,6 +75,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     const dispatch = useAppDispatch();
     const { L, locale, l10n } = useLocalisations();
     const { data: organisations, isSuccess } = useGetOrganisationsQuery();
+    const [putHaettuKayttooikeusryhma] = usePutHaettuKayttooikeusryhmaMutation();
     const { data: omattiedot } = useGetOmattiedotQuery();
     const [dates, setDates] = useState<{ [anomusId: number]: { alkupvm: Moment; loppupvm?: Moment } }>(
         props.kayttooikeus?.kayttooikeusAnomus?.reduce(
@@ -144,14 +146,22 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
         );
     }
 
-    function handleAnomus(id: number, tila: KayttooikeudenTila, henkilo: HenkilonNimi, hylkaysperuste?: string) {
+    function handleAnomus(
+        id: number,
+        kayttoOikeudenTila: KayttooikeudenTila,
+        henkilo: HenkilonNimi,
+        hylkaysperuste?: string
+    ) {
         const date = dates[id];
         const alkupvm = date?.alkupvm?.format(PropertySingleton.state.PVM_DBFORMAATTI);
         const loppupvm = date?.loppupvm?.format(PropertySingleton.state.PVM_DBFORMAATTI);
         if (props.updateHaettuKayttooikeusryhmaAlt) {
-            props.updateHaettuKayttooikeusryhmaAlt(id, tila, alkupvm, loppupvm, henkilo, hylkaysperuste);
+            props.updateHaettuKayttooikeusryhmaAlt(id, kayttoOikeudenTila, alkupvm, loppupvm, henkilo, hylkaysperuste);
         } else {
-            dispatch<any>(updateHaettuKayttooikeusryhma(id, tila, alkupvm, loppupvm, henkilo, hylkaysperuste));
+            putHaettuKayttooikeusryhma({
+                henkiloOid: henkilo.oid,
+                body: { id, kayttoOikeudenTila, alkupvm, loppupvm, hylkaysperuste },
+            });
         }
         setHandledAnomusIds([...handledAnomusIds, id]);
         setHylkaaAnomus(undefined);
