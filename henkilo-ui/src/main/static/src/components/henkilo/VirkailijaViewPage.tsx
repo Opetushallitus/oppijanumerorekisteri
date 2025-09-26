@@ -56,7 +56,7 @@ export const VirkailijaViewPage = () => {
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
     const yksilointitiedotQuery = useGetYksilointitiedotQuery(oid);
 
-    useTitle(L[titles['TITLE_VIRKAILIJA']]);
+    useTitle(L[titles[view]]);
     useNavigation(henkiloViewTabs(oid, henkilo, 'virkailija', master?.oidHenkilo, yksilointitiedotQuery.data), true);
 
     useEffect(() => {
