@@ -55,22 +55,31 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     const notifications = useSelector<RootState, NotificationsState>((state) => state.notifications);
     const { data: organisations, isSuccess } = useGetOrganisationsQuery();
     const { data: omattiedot } = useGetOmattiedotQuery();
-
     const kayttooikeusryhmas = queryKayttooikeusryhmas.data ?? [];
-    const [dates, setDates] = useState<Record<number, { alkupvm: Moment; loppupvm: Moment }>>(
-        kayttooikeusryhmas.filter(_filterExpiredKayttooikeus).reduce(
-            (acc, kayttooikeus) => ({
-                ...acc,
-                [kayttooikeus.ryhmaId]: {
-                    alkupvm: moment(),
-                    loppupvm: props.vuosia
-                        ? moment().add(props.vuosia, 'years')
-                        : moment(kayttooikeus.voimassaPvm, PropertySingleton.state.PVM_DBFORMAATTI).add(1, 'years'),
-                },
-            }),
-            {}
-        )
-    );
+    const [dates, setDates] = useState<Record<number, { alkupvm: Moment; loppupvm: Moment }>>([]);
+
+    useEffect(() => {
+        if (queryKayttooikeusryhmas.data) {
+            setDates(
+                kayttooikeusryhmas.filter(_filterExpiredKayttooikeus).reduce(
+                    (acc, kayttooikeus) => ({
+                        ...acc,
+                        [kayttooikeus.ryhmaId]: {
+                            alkupvm: moment(),
+                            loppupvm: props.vuosia
+                                ? moment().add(props.vuosia, 'years')
+                                : moment(kayttooikeus.voimassaPvm, PropertySingleton.state.PVM_DBFORMAATTI).add(
+                                      1,
+                                      'years'
+                                  ),
+                        },
+                    }),
+                    {}
+                )
+            );
+        }
+    }, [queryKayttooikeusryhmas.data]);
+
     const [emailOptions, setEmailOptions] = useState(
         createEmailOptions(henkilo, _filterExpiredKayttooikeus, kayttooikeusryhmas)
     );
