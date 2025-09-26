@@ -1,0 +1,229 @@
+{
+    "oidHenkilo": "1.2.246.562.24.89447125645",
+    "username": "kkpaakayttaja",
+    "kayttajaTyyppi": "VIRKAILIJA",
+    "organisaatiot": [
+        {
+            "organisaatioOid": "1.2.246.562.10.59275359582",
+            "kayttooikeudet": [
+                {
+                    "palvelu": "ASIAKIRJAPALVELU",
+                    "oikeus": "ASIOINTITILICRUD"
+                },
+                {
+                    "palvelu": "ASIAKIRJAPALVELU",
+                    "oikeus": "CREATE_LETTER"
+                },
+                {
+                    "palvelu": "ASIAKIRJAPALVELU",
+                    "oikeus": "READ"
+                },
+                {
+                    "palvelu": "ASIAKIRJAPALVELU",
+                    "oikeus": "SEND_LETTER_EMAIL"
+                },
+                {
+                    "palvelu": "ASIAKIRJAPALVELU",
+                    "oikeus": "SYSTEM_ATTACHMENT_DOWNLOAD"
+                },
+                {
+                    "palvelu": "ATARU",
+                    "oikeus": "EDITORI_CRUD"
+                },
+                {
+                    "palvelu": "ATARU",
+                    "oikeus": "HAKEMUS_CRUD"
+                },
+                {
+                    "palvelu": "ATARU",
+                    "oikeus": "HAKEMUS_VALINTA_CRUD"
+                },
+                {
+                    "palvelu": "HAKEMUS",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "HAKEMUS",
+                    "oikeus": "HETUTTOMIENKASITTELY"
+                },
+                {
+                    "palvelu": "HAKUJENHALLINTA",
+                    "oikeus": "READ"
+                },
+                {
+                    "palvelu": "HAKUKOHDERYHMAPALVELU",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "HAKULOMAKKEENHALLINTA",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "KAYTTOOIKEUS",
+                    "oikeus": "ACCESS_RIGHTS_REPORT"
+                },
+                {
+                    "palvelu": "KAYTTOOIKEUS",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "KAYTTOOIKEUS",
+                    "oikeus": "PALVELUKAYTTAJA_CRUD"
+                },
+                {
+                    "palvelu": "KAYTTOOIKEUS",
+                    "oikeus": "VASTUUKAYTTAJAT"
+                },
+                {
+                    "palvelu": "KAYTTOOIKEUS",
+                    "oikeus": "VIRKAILIJANLUONTI"
+                },
+                {
+                    "palvelu": "KKHAKUVIRKAILIJA",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "KOODISTO",
+                    "oikeus": "READ"
+                },
+                {
+                    "palvelu": "KOUTA",
+                    "oikeus": "HAKU_CRUD"
+                },
+                {
+                    "palvelu": "KOUTA",
+                    "oikeus": "HAKUKOHDE_CRUD"
+                },
+                {
+                    "palvelu": "KOUTA",
+                    "oikeus": "KOULUTUS_CRUD"
+                },
+                {
+                    "palvelu": "KOUTA",
+                    "oikeus": "OPPILAITOS_CRUD"
+                },
+                {
+                    "palvelu": "KOUTA",
+                    "oikeus": "TOTEUTUS_CRUD"
+                },
+                {
+                    "palvelu": "KOUTA",
+                    "oikeus": "VALINTAPERUSTE_CRUD"
+                },
+                {
+                    "palvelu": "LOKALISOINTI",
+                    "oikeus": "READ"
+                },
+                {
+                    "palvelu": "OPPIJANUMEROREKISTERI",
+                    "oikeus": "DUPLIKAATTINAKYMA"
+                },
+                {
+                    "palvelu": "OPPIJANUMEROREKISTERI",
+                    "oikeus": "HENKILON_RU"
+                },
+                {
+                    "palvelu": "OPPIJANUMEROREKISTERI",
+                    "oikeus": "MANUAALINEN_YKSILOINTI"
+                },
+                {
+                    "palvelu": "OPPIJANUMEROREKISTERI",
+                    "oikeus": "VTJ_VERTAILUNAKYMA"
+                },
+                {
+                    "palvelu": "OPPIJANUMEROREKISTERI",
+                    "oikeus": "YKSILOINNIN_PURKU"
+                },
+                {
+                    "palvelu": "ORGANISAATIOHALLINTA",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "ORGANISAATIOHALLINTA",
+                    "oikeus": "RYHMA"
+                },
+                {
+                    "palvelu": "OVARA-VIRKAILIJA",
+                    "oikeus": "KK"
+                },
+                {
+                    "palvelu": "RAPORTOINTI",
+                    "oikeus": "KK"
+                },
+                {
+                    "palvelu": "RAPORTOINTI",
+                    "oikeus": "READ_UPDATE"
+                },
+                {
+                    "palvelu": "RYHMASAHKOPOSTI",
+                    "oikeus": "SEND"
+                },
+                {
+                    "palvelu": "RYHMASAHKOPOSTI",
+                    "oikeus": "VIEW"
+                },
+                {
+                    "palvelu": "SIJOITTELU",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "SUORITUSREKISTERI",
+                    "oikeus": "READ_UPDATE"
+                },
+                {
+                    "palvelu": "TARJONTA",
+                    "oikeus": "KK_READ"
+                },
+                {
+                    "palvelu": "TARJONTA",
+                    "oikeus": "READ"
+                },
+                {
+                    "palvelu": "TIEDONSIIRTO",
+                    "oikeus": "VALINTA"
+                },
+                {
+                    "palvelu": "VALINTAPERUSTEET",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "VALINTAPERUSTEETKK",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "VALINTAPERUSTEKUVAUSTENHALLINTA",
+                    "oikeus": "KK_CRUD"
+                },
+                {
+                    "palvelu": "VALINTOJENTOTEUTTAMINEN",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "VALINTOJENTOTEUTTAMINEN",
+                    "oikeus": "HYVAKSYMINEN_VARASIJALTA"
+                },
+                {
+                    "palvelu": "VALINTOJENTOTEUTTAMINENKK",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "VALINTOJENTOTEUTTAMINEN",
+                    "oikeus": "TULOSTENTUONTI"
+                },
+                {
+                    "palvelu": "VIESTINVALITYS",
+                    "oikeus": "KATSELU"
+                },
+                {
+                    "palvelu": "VIRKAILIJANTYOPOYTA",
+                    "oikeus": "KK"
+                }
+            ]
+        }
+    ],
+    "isAdmin": false,
+    "isMiniAdmin": false,
+    "anomusilmoitus": [],
+    "mfaProvider": "GAUTH",
+    "idpEntityId": "usernamePassword"
+}

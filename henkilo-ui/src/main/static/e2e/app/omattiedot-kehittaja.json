@@ -1,0 +1,129 @@
+{
+    "oidHenkilo": "1.2.246.562.24.76665076006",
+    "username": "kehittaja-yk",
+    "kayttajaTyyppi": "VIRKAILIJA",
+    "organisaatiot": [
+        {
+            "organisaatioOid": "1.2.246.562.10.00000000001",
+            "kayttooikeudet": [
+                {
+                    "palvelu": "KAYTTOOIKEUS",
+                    "oikeus": "READ"
+                },
+                {
+                    "palvelu": "RYHMASAHKOPOSTI",
+                    "oikeus": "SEND"
+                },
+                {
+                    "palvelu": "KAYTTOOIKEUS",
+                    "oikeus": "PALVELUKAYTTAJA_CRUD"
+                },
+                {
+                    "palvelu": "OPPIJANUMEROREKISTERI",
+                    "oikeus": "KOTIKUNTAHISTORIA"
+                },
+                {
+                    "palvelu": "OPPIJANUMEROREKISTERI",
+                    "oikeus": "REKISTERINPITAJA"
+                },
+                {
+                    "palvelu": "VIESTINVALITYS",
+                    "oikeus": "KATSELU"
+                },
+                {
+                    "palvelu": "YHTEYSTIETOTYYPPIENHALLINTA",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "OSOITE",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "ASIAKIRJAPALVELU",
+                    "oikeus": "CREATE_LETTER"
+                },
+                {
+                    "palvelu": "ORGANISAATIOIDEN_REKISTEROITYMINEN",
+                    "oikeus": "OPH"
+                },
+                {
+                    "palvelu": "OPPIJANUMEROREKISTERI",
+                    "oikeus": "VTJ_VERTAILUNAKYMA"
+                },
+                {
+                    "palvelu": "KAYTTOOIKEUS",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "RYHMASAHKOPOSTI",
+                    "oikeus": "VIEW"
+                },
+                {
+                    "palvelu": "OIKEUSTULKKIREKISTERI",
+                    "oikeus": "OIKEUSTULKKI_CRUD"
+                },
+                {
+                    "palvelu": "VIESTINVALITYS",
+                    "oikeus": "LAHETYS"
+                },
+                {
+                    "palvelu": "KOODISTO",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "KAYTTOOIKEUS",
+                    "oikeus": "VASTUUKAYTTAJAT"
+                },
+                {
+                    "palvelu": "KAYTTOOIKEUS",
+                    "oikeus": "KAYTTOOIKEUSRYHMIEN_LUKU"
+                },
+                {
+                    "palvelu": "ASIAKIRJAPALVELU",
+                    "oikeus": "READ"
+                },
+                {
+                    "palvelu": "KAYTTOOIKEUS",
+                    "oikeus": "VIRKAILIJANLUONTI"
+                },
+                {
+                    "palvelu": "ORGANISAATIOHALLINTA",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "ASIAKIRJAPALVELU",
+                    "oikeus": "SYSTEM_ATTACHMENT_DOWNLOAD"
+                },
+                {
+                    "palvelu": "KAYTTOOIKEUS",
+                    "oikeus": "REKISTERINPITAJA"
+                },
+                {
+                    "palvelu": "ASIAKIRJAPALVELU",
+                    "oikeus": "SEND_LETTER_EMAIL"
+                },
+                {
+                    "palvelu": "OPPIJANUMEROREKISTERI",
+                    "oikeus": "TURVAKIELTOKOTIKUNTAHISTORIA"
+                },
+                {
+                    "palvelu": "VIESTINVALITYS",
+                    "oikeus": "OPH_PAAKAYTTAJA"
+                },
+                {
+                    "palvelu": "LOKALISOINTI",
+                    "oikeus": "CRUD"
+                },
+                {
+                    "palvelu": "ASIAKIRJAPALVELU",
+                    "oikeus": "CREATE_TEMPLATE"
+                }
+            ]
+        }
+    ],
+    "isAdmin": true,
+    "isMiniAdmin": true,
+    "anomusilmoitus": [],
+    "mfaProvider": "GAUTH",
+    "idpEntityId": "usernamePassword"
+}
