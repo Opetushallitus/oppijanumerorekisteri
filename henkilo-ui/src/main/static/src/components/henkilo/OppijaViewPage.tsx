@@ -19,7 +19,7 @@ import { isOnrRekisterinpitaja } from '../../utilities/palvelurooli.util';
 import Loader from '../common/icons/Loader';
 
 export const OppijaViewPage = () => {
-    const { data: omattiedot } = useGetOmattiedotQuery();
+    const { data: omattiedot, isLoading } = useGetOmattiedotQuery();
     const isRekisterinpitaja = omattiedot ? isOnrRekisterinpitaja(omattiedot.organisaatiot) : false;
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const { L } = useLocalisations();
@@ -41,7 +41,7 @@ export const OppijaViewPage = () => {
         dispatch<any>(fetchHenkilo(oid));
     }, [omattiedot, oid]);
 
-    if (henkilo.henkiloLoading) {
+    if (henkilo.henkiloLoading || isLoading) {
         return <Loader />;
     } else if (henkilo.henkiloKayttoEstetty) {
         return <VirheKayttoEstetty L={L} />;
@@ -49,7 +49,7 @@ export const OppijaViewPage = () => {
         return (
             <div className="mainContent">
                 <div className="wrapper">
-                    <UserContentContainer oidHenkilo={oid} view="oppija" />
+                    <UserContentContainer oidHenkilo={oid} view={omattiedot.isAdmin ? 'admin' : 'oppija'} />
                 </div>
                 {isRekisterinpitaja && (
                     <div className="wrapper">
@@ -58,7 +58,7 @@ export const OppijaViewPage = () => {
                     </div>
                 )}
                 <div className="wrapper">
-                    <HenkiloViewContactContent view="oppija" readOnly={true} />
+                    <HenkiloViewContactContent view={omattiedot.isAdmin ? 'admin' : 'oppija'} readOnly={true} />
                 </div>
             </div>
         );
