@@ -58,14 +58,8 @@ type OwnProps = {
     tableLoading?: boolean;
     piilotaOtsikko?: boolean;
     kayttooikeus: KayttooikeusRyhmaState;
-    updateHaettuKayttooikeusryhmaAlt?: (
-        arg0: number,
-        arg1: KayttooikeudenTila,
-        arg2: string,
-        arg3: string | undefined,
-        arg4: HenkilonNimi,
-        arg5?: string
-    ) => void;
+    updateSuccessHandler?: (id: number, henkilo: HenkilonNimi, kayttooikeudenTila: KayttooikeudenTila) => void;
+    updateErrorHandler?: (id: number, henkilo: HenkilonNimi, kayttooikeudenTila: KayttooikeudenTila) => void;
 };
 
 const emptyArray = [];
@@ -146,7 +140,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
         );
     }
 
-    function handleAnomus(
+    async function handleAnomus(
         id: number,
         kayttoOikeudenTila: KayttooikeudenTila,
         henkilo: HenkilonNimi,
@@ -155,14 +149,13 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
         const date = dates[id];
         const alkupvm = date?.alkupvm?.format(PropertySingleton.state.PVM_DBFORMAATTI);
         const loppupvm = date?.loppupvm?.format(PropertySingleton.state.PVM_DBFORMAATTI);
-        if (props.updateHaettuKayttooikeusryhmaAlt) {
-            props.updateHaettuKayttooikeusryhmaAlt(id, kayttoOikeudenTila, alkupvm, loppupvm, henkilo, hylkaysperuste);
-        } else {
-            putHaettuKayttooikeusryhma({
-                henkiloOid: henkilo.oid,
-                body: { id, kayttoOikeudenTila, alkupvm, loppupvm, hylkaysperuste },
-            });
-        }
+        await putHaettuKayttooikeusryhma({
+            henkiloOid: henkilo.oid,
+            body: { id, kayttoOikeudenTila, alkupvm, loppupvm, hylkaysperuste },
+        })
+            .unwrap()
+            .then(() => props.updateSuccessHandler && props.updateSuccessHandler(id, henkilo, kayttoOikeudenTila))
+            .catch(() => props.updateErrorHandler && props.updateErrorHandler(id, henkilo, kayttoOikeudenTila));
         setHandledAnomusIds([...handledAnomusIds, id]);
         setHylkaaAnomus(undefined);
     }

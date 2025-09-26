@@ -5,7 +5,7 @@ import '../../oph-table.css';
 import HaetutKayttooikeusRyhmatHakuForm from './HaetutKayttooikeusRyhmatHakuForm';
 import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
 import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
-import { KAYTTOOIKEUDENTILA, KayttooikeudenTila } from '../../globals/KayttooikeudenTila';
+import { KAYTTOOIKEUDENTILA } from '../../globals/KayttooikeudenTila';
 import { getEmptyKayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma.reducer';
 import { HenkilonNimi } from '../../types/domain/kayttooikeus/HenkilonNimi';
 import { useLocalisations } from '../../selectors';
@@ -14,7 +14,6 @@ import {
     GetHaetutKayttooikeusryhmatRequest,
     useGetHaetutKayttooikeusryhmatInfiniteQuery,
     useGetOmattiedotQuery,
-    usePutHaettuKayttooikeusryhmaMutation,
 } from '../../api/kayttooikeus';
 import { addGlobalNotification } from '../../actions/notification.actions';
 import { useTitle } from '../../useTitle';
@@ -37,7 +36,6 @@ const AnomusPage = () => {
         kayttoOikeudenTilas: KAYTTOOIKEUDENTILA.ANOTTU,
     });
     const { data, isLoading, fetchNextPage, hasNextPage } = useGetHaetutKayttooikeusryhmatInfiniteQuery(parameters);
-    const [putHaettuKayttooikeusryhma] = usePutHaettuKayttooikeusryhmaMutation();
     const result = data?.pages.flat();
 
     function onSubmit(criteria: Partial<GetHaetutKayttooikeusryhmatRequest>) {
@@ -48,47 +46,6 @@ const AnomusPage = () => {
                 : sorted[0].id + '_ASC'
             : newParameters.orderBy;
         setParameters(newParameters);
-    }
-
-    function updateHaettuKayttooikeusryhma(
-        id: number,
-        kayttoOikeudenTila: KayttooikeudenTila,
-        alkupvm: string,
-        loppupvm: string | undefined,
-        henkilo: HenkilonNimi,
-        hylkaysperuste?: string
-    ): void {
-        putHaettuKayttooikeusryhma({
-            henkiloOid: henkilo.oid,
-            body: { id, kayttoOikeudenTila, alkupvm, loppupvm, hylkaysperuste },
-        })
-            .unwrap()
-            .then(() => {
-                const notificationMessageKey =
-                    kayttoOikeudenTila === KAYTTOOIKEUDENTILA.HYLATTY
-                        ? 'HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'
-                        : 'HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_SUCCESS';
-                dispatch(
-                    addGlobalNotification({
-                        key: `${henkilo.oid}_${id}_${notificationMessageKey}`,
-                        type: NOTIFICATIONTYPES.SUCCESS,
-                        title: createNotificationMessage(henkilo, notificationMessageKey),
-                        autoClose: 10000,
-                    })
-                );
-            })
-            .catch(() => {
-                const notificationMessageKey =
-                    kayttoOikeudenTila === KAYTTOOIKEUDENTILA.HYLATTY
-                        ? 'HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_FAILURE'
-                        : 'HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_FAILURE';
-                addGlobalNotification({
-                    key: `${henkilo.oid}_${id}_${notificationMessageKey}`,
-                    type: NOTIFICATIONTYPES.ERROR,
-                    title: createNotificationMessage(henkilo, notificationMessageKey),
-                    autoClose: 10000,
-                });
-            });
     }
 
     function createNotificationMessage(henkilo: HenkilonNimi, messageKey: string): string {
@@ -111,7 +68,32 @@ const AnomusPage = () => {
                         ...getEmptyKayttooikeusRyhmaState(),
                         kayttooikeusAnomus: result,
                     }}
-                    updateHaettuKayttooikeusryhmaAlt={updateHaettuKayttooikeusryhma}
+                    updateSuccessHandler={(id, henkilo, kayttoOikeudenTila) => {
+                        const notificationMessageKey =
+                            kayttoOikeudenTila === KAYTTOOIKEUDENTILA.HYLATTY
+                                ? 'HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'
+                                : 'HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_SUCCESS';
+                        dispatch(
+                            addGlobalNotification({
+                                key: `${henkilo.oid}_${id}_${notificationMessageKey}`,
+                                type: NOTIFICATIONTYPES.SUCCESS,
+                                title: createNotificationMessage(henkilo, notificationMessageKey),
+                                autoClose: 10000,
+                            })
+                        );
+                    }}
+                    updateErrorHandler={(id, henkilo, kayttoOikeudenTila) => {
+                        const notificationMessageKey =
+                            kayttoOikeudenTila === KAYTTOOIKEUDENTILA.HYLATTY
+                                ? 'HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_FAILURE'
+                                : 'HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_FAILURE';
+                        addGlobalNotification({
+                            key: `${henkilo.oid}_${id}_${notificationMessageKey}`,
+                            type: NOTIFICATIONTYPES.ERROR,
+                            title: createNotificationMessage(henkilo, notificationMessageKey),
+                            autoClose: 10000,
+                        });
+                    }}
                     fetchMoreSettings={{
                         isActive: !isLoading && hasNextPage,
                         fetchMoreAction: () => fetchNextPage(),
