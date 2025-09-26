@@ -48,22 +48,21 @@ const emptyArray = [];
 const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const { L, locale } = useLocalisations();
-    const queryKayttooikeusryhmas = useGetKayttooikeusryhmasForHenkiloQuery(props.oidHenkilo);
+    const { data: kayttooikeusryhmas, isLoading, isError } = useGetKayttooikeusryhmasForHenkiloQuery(props.oidHenkilo);
     const dispatch = useAppDispatch();
     const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const notifications = useSelector<RootState, NotificationsState>((state) => state.notifications);
     const { data: organisations, isSuccess } = useGetOrganisationsQuery();
     const { data: omattiedot } = useGetOmattiedotQuery();
-    const kayttooikeusryhmas = queryKayttooikeusryhmas.data ?? [];
     const [dates, setDates] = useState<Record<number, { alkupvm: Moment; loppupvm: Moment }>>([]);
     const [emailOptions, setEmailOptions] = useState(
-        createEmailOptions(henkilo, _filterExpiredKayttooikeus, kayttooikeusryhmas)
+        createEmailOptions(henkilo, _filterExpiredKayttooikeus, kayttooikeusryhmas ?? [])
     );
     const [accessRight, setAccessRight] = useState<AccessRight>();
 
     useEffect(() => {
-        if (queryKayttooikeusryhmas.data) {
+        if (kayttooikeusryhmas?.length) {
             setDates(
                 kayttooikeusryhmas.filter(_filterExpiredKayttooikeus).reduce(
                     (acc, kayttooikeus) => ({
@@ -81,12 +80,9 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                     {}
                 )
             );
+            setEmailOptions(createEmailOptions(henkilo, _filterExpiredKayttooikeus, kayttooikeusryhmas ?? []));
         }
-    }, [queryKayttooikeusryhmas.data]);
-
-    useEffect(() => {
-        setEmailOptions(createEmailOptions(henkilo, _filterExpiredKayttooikeus, kayttooikeusryhmas));
-    }, [henkilo]);
+    }, [henkilo, kayttooikeusryhmas]);
 
     function loppupvmAction(value: moment.Moment, ryhmaId: number) {
         const newDates = { ...dates };
@@ -319,9 +315,9 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
         getSortedRowModel: getSortedRowModel(),
     });
 
-    return queryKayttooikeusryhmas.isLoading ? (
+    return isLoading ? (
         <Loader />
-    ) : queryKayttooikeusryhmas.isError ? (
+    ) : isError ? (
         <div className="henkiloViewUserContentWrapper">
             <h2>{L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
             <OphDsBanner type="error">
