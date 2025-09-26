@@ -4,11 +4,9 @@ import {
     FETCH_HENKILO_REQUEST,
     FETCH_HENKILO_SUCCESS,
     FETCH_HENKILO_FAILURE,
-    FETCH_HENKILOORGS_REQUEST,
     FETCH_KAYTTAJA_REQUEST,
     FETCH_KAYTTAJA_SUCCESS,
     FETCH_KAYTTAJA_FAILURE,
-    FETCH_HENKILOORGS_SUCCESS,
     FETCH_KAYTTAJATIETO_FAILURE,
     FETCH_KAYTTAJATIETO_REQUEST,
     FETCH_KAYTTAJATIETO_SUCCESS,
@@ -35,7 +33,7 @@ import { localizeWithState } from '../utilities/localisation.util';
 import { GlobalNotificationConfig } from '../types/notification.types';
 import { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
 import { AppDispatch, RootState } from '../store';
-import { Henkilo, HenkiloOrg } from '../types/domain/oppijanumerorekisteri/henkilo.types';
+import { Henkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
 
 const requestHenkilo = (oid) => ({ type: FETCH_HENKILO_REQUEST, oid });
 const receiveHenkilo = (json) => ({
@@ -245,21 +243,6 @@ export const overrideYksiloimatonHenkiloVtjData = (oid) => async (dispatch: AppD
         dispatch(errorOverrideYksiloimatonHenkilo());
         throw error;
     }
-};
-
-const requestHenkiloOrgs = (oid) => ({ type: FETCH_HENKILOORGS_REQUEST, oid });
-const receiveHenkiloOrgsSuccess = (henkiloOrgs: HenkiloOrg[]) => ({
-    type: FETCH_HENKILOORGS_SUCCESS,
-    henkiloOrgs: henkiloOrgs,
-    receivedAt: Date.now(),
-});
-
-// Fetch organisations for given henkilo (non hierarchical). If no oid given user current user oid.
-export const fetchHenkiloOrgs = (oidHenkilo) => (dispatch: AppDispatch, getState: () => RootState) => {
-    oidHenkilo = oidHenkilo || getState().omattiedot.data.oid;
-    dispatch(requestHenkiloOrgs(oidHenkilo));
-    const url = urls.url('kayttooikeus-service.henkilo.organisaatiohenkilos', oidHenkilo);
-    return http.get<HenkiloOrg[]>(url).then((json) => dispatch(receiveHenkiloOrgsSuccess(json)));
 };
 
 const requestHenkiloHakemukset = (oid) => ({

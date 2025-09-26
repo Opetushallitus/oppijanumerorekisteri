@@ -7,7 +7,7 @@ import HenkiloViewCreateKayttooikeus from '../common/henkilo/HenkiloViewCreateKa
 import HenkiloViewExistingKayttooikeus from '../common/henkilo/HenkiloViewExistingKayttooikeus';
 import { HenkiloViewOrganisationContent } from '../common/henkilo/HenkiloViewOrganisationContent';
 import { useAppDispatch } from '../../store';
-import { clearHenkilo, fetchHenkilo, fetchHenkiloOrgs } from '../../actions/henkilo.actions';
+import { clearHenkilo, fetchHenkilo } from '../../actions/henkilo.actions';
 import HenkiloViewExpiredKayttooikeus from '../common/henkilo/HenkiloViewExpiredKayttooikeus';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
@@ -27,7 +27,6 @@ export const JarjestelmatunnusEditPage = () => {
     useEffect(() => {
         dispatch<any>(clearHenkilo());
         dispatch<any>(fetchHenkilo(params.oid));
-        dispatch<any>(fetchHenkiloOrgs(params.oid));
     }, [params.oid]);
 
     return (

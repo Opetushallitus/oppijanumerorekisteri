@@ -4,13 +4,7 @@ import { useNavigate, useParams } from 'react-router';
 
 import { useAppDispatch, type RootState } from '../../store';
 import Loader from '../common/icons/Loader';
-import {
-    clearHenkilo,
-    fetchHenkilo,
-    fetchHenkiloOrgs,
-    fetchKayttaja,
-    fetchKayttajatieto,
-} from '../../actions/henkilo.actions';
+import { clearHenkilo, fetchHenkilo, fetchKayttaja, fetchKayttajatieto } from '../../actions/henkilo.actions';
 import { fetchAllKayttooikeusAnomusForHenkilo } from '../../actions/kayttooikeusryhma.actions';
 import { HenkiloState, isHenkiloStateLoading } from '../../reducers/henkilo.reducer';
 import { useLocalisations } from '../../selectors';
@@ -66,7 +60,6 @@ export const VirkailijaViewPage = () => {
 
         dispatch(clearHenkilo());
         dispatch<any>(fetchHenkilo(oid));
-        dispatch<any>(fetchHenkiloOrgs(oid));
         dispatch<any>(fetchKayttaja(oid));
         dispatch<any>(fetchKayttajatieto(oid));
         dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(oid));
@@ -96,7 +89,7 @@ export const VirkailijaViewPage = () => {
                     <HenkiloViewContactContent view={view} readOnly={true} />
                 </div>
                 <div className="wrapper">
-                    {henkilo.henkiloOrgsLoading ? <Loader /> : <HenkiloViewOrganisationContent />}
+                    <HenkiloViewOrganisationContent />
                 </div>
                 <div className="wrapper" ref={existingKayttooikeusRef}>
                     <HenkiloViewExistingKayttooikeus

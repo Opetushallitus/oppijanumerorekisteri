@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 import { useAppDispatch, type RootState } from '../../store';
-import { fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, clearHenkilo } from '../../actions/henkilo.actions';
+import { fetchHenkilo, fetchKayttajatieto, clearHenkilo } from '../../actions/henkilo.actions';
 import { fetchAllKayttooikeusAnomusForHenkilo } from '../../actions/kayttooikeusryhma.actions';
 import { HenkiloState, isHenkiloStateLoading } from '../../reducers/henkilo.reducer';
 import Loader from '../common/icons/Loader';
@@ -35,7 +35,6 @@ export const OmattiedotPage = () => {
             dispatch(clearHenkilo());
             dispatch<any>(fetchHenkilo(userOid));
             dispatch<any>(fetchKayttajatieto(userOid));
-            dispatch<any>(fetchHenkiloOrgs(userOid));
             dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(userOid));
         }
     }, []);

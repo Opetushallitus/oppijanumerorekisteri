@@ -8,7 +8,12 @@ import { HenkiloState } from '../../../reducers/henkilo.reducer';
 import { useLocalisations } from '../../../selectors';
 import ConfirmButton from '../button/ConfirmButton';
 import Button from '../button/Button';
-import { useDeleteHenkiloOrganisationMutation, useGetOrganisationsQuery } from '../../../api/kayttooikeus';
+import {
+    useDeleteHenkiloOrganisationMutation,
+    useGetHenkiloOrganisaatiotQuery,
+    useGetOrganisationsQuery,
+} from '../../../api/kayttooikeus';
+import Loader from '../icons/Loader';
 
 import './HenkiloViewOrganisationContent.css';
 
@@ -23,7 +28,12 @@ export const HenkiloViewOrganisationContent = () => {
     const { L, locale } = useLocalisations();
     const [showPassive, setShowPassive] = useState(false);
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
-    const { data: apiOrganisations, isSuccess } = useGetOrganisationsQuery();
+    const {
+        data: apiOrganisations,
+        isSuccess: isApiOrgsSuccess,
+        isLoading: isApiOrgsLoading,
+    } = useGetOrganisationsQuery();
+    const { data: henkiloOrgs, isLoading, isSuccess } = useGetHenkiloOrganisaatiotQuery(henkilo.henkilo.oidHenkilo);
     const [deleteHenkiloOrganisation] = useDeleteHenkiloOrganisationMutation();
 
     function passivoiHenkiloOrganisation(organisationOid: string) {
@@ -31,8 +41,8 @@ export const HenkiloViewOrganisationContent = () => {
     }
 
     const flatOrganisations: OrganisaatioFlat[] = useMemo(() => {
-        return isSuccess && henkilo.henkiloOrgs
-            ? henkilo.henkiloOrgs?.map((org) => {
+        return isSuccess && isApiOrgsSuccess && henkiloOrgs
+            ? henkiloOrgs?.map((org) => {
                   const organisation = apiOrganisations?.find((o) => o.oid === org.organisaatioOid);
                   const typesFlat =
                       organisation?.tyypit && organisation?.tyypit.length
@@ -46,7 +56,11 @@ export const HenkiloViewOrganisationContent = () => {
                   };
               })
             : [];
-    }, [apiOrganisations, henkilo.henkiloOrgs]);
+    }, [isApiOrgsSuccess, isSuccess, apiOrganisations, henkiloOrgs]);
+
+    if (isLoading || isApiOrgsLoading) {
+        return <Loader />;
+    }
 
     return (
         <div className="henkiloViewUserContentWrapper">

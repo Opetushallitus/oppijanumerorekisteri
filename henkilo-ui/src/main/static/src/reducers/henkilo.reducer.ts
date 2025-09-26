@@ -2,11 +2,9 @@ import {
     FETCH_HENKILO_REQUEST,
     FETCH_HENKILO_SUCCESS,
     FETCH_HENKILO_FAILURE,
-    FETCH_HENKILOORGS_REQUEST,
     FETCH_KAYTTAJA_REQUEST,
     FETCH_KAYTTAJA_SUCCESS,
     FETCH_KAYTTAJA_FAILURE,
-    FETCH_HENKILOORGS_SUCCESS,
     FETCH_KAYTTAJATIETO_FAILURE,
     FETCH_KAYTTAJATIETO_REQUEST,
     FETCH_KAYTTAJATIETO_SUCCESS,
@@ -18,7 +16,7 @@ import {
     UPDATE_HENKILO_FAILURE,
     FETCH_HENKILO_HAKEMUKSET,
 } from '../actions/actiontypes';
-import type { Henkilo, HenkiloOrg } from '../types/domain/oppijanumerorekisteri/henkilo.types';
+import type { Henkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
 import type { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
 import type { Hakemus } from '../types/domain/oppijanumerorekisteri/Hakemus.type';
 import type { Kayttaja } from '../types/domain/kayttooikeus/kayttaja.types';
@@ -27,33 +25,25 @@ import { AnyAction } from '@reduxjs/toolkit';
 export type HenkiloState = {
     readonly henkiloLoading: boolean;
     readonly kayttajaLoading: boolean;
-    readonly henkiloOrgsLoading: boolean;
     readonly kayttajatietoLoading: boolean;
     readonly henkiloKayttoEstetty: boolean;
     readonly henkilo: Henkilo;
     readonly kayttaja: Kayttaja;
-    readonly henkiloOrgs: HenkiloOrg[];
     readonly kayttajatieto?: KayttajatiedotRead;
     readonly hakemuksetLoading: boolean;
     readonly hakemukset: Array<Hakemus>;
 };
 
 export const isHenkiloStateLoading = (state: HenkiloState) =>
-    state.henkiloLoading ||
-    state.kayttajaLoading ||
-    state.henkiloOrgsLoading ||
-    state.kayttajatietoLoading ||
-    state.hakemuksetLoading;
+    state.henkiloLoading || state.kayttajaLoading || state.kayttajatietoLoading || state.hakemuksetLoading;
 
 const initialState: HenkiloState = {
     henkiloLoading: true,
     kayttajaLoading: false,
-    henkiloOrgsLoading: true,
     kayttajatietoLoading: false,
     henkiloKayttoEstetty: false,
     henkilo: {} as Henkilo,
     kayttaja: {} as Kayttaja,
-    henkiloOrgs: [],
     kayttajatieto: undefined,
     hakemuksetLoading: false,
     hakemukset: [],
@@ -106,14 +96,6 @@ export const henkilo = (state: Readonly<HenkiloState> = initialState, action: An
                 ...state,
                 kayttajatietoLoading: false,
                 kayttajatieto: state.kayttajatieto,
-            };
-        case FETCH_HENKILOORGS_REQUEST:
-            return { ...state, henkiloOrgsLoading: true };
-        case FETCH_HENKILOORGS_SUCCESS:
-            return {
-                ...state,
-                henkiloOrgsLoading: false,
-                henkiloOrgs: action.henkiloOrgs,
             };
         case FETCH_HENKILO_HAKEMUKSET.REQUEST:
             return { ...state, hakemuksetLoading: true };
