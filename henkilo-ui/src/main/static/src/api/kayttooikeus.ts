@@ -34,7 +34,7 @@ import { TextGroupModify } from '../types/domain/kayttooikeus/textgroup.types';
 import { PalveluRooliModify } from '../types/domain/kayttooikeus/PalveluRooliModify.types';
 import { SallitutKayttajatyypit } from '../components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage';
 import { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
-import { fetchAllKayttooikeusryhmasForHenkilo } from '../actions/kayttooikeusryhma.actions';
+import { fetchAllKayttooikeusryhmasForHenkilo, Kayttooikeus } from '../actions/kayttooikeusryhma.actions';
 import { fetchHenkiloOrgs } from '../actions/henkilo.actions';
 
 type MfaSetupResponse = {
@@ -49,6 +49,18 @@ type MfaPostResponse = boolean;
 type DeleteHenkiloOrganisationRequest = {
     henkiloOid: string;
     organisationOid: string;
+};
+
+type DeleteKayttooikeusryhmaRequest = {
+    henkiloOid: string;
+    organisationOid: string;
+    kayttooikeusryhmaId: number;
+};
+
+type PutKayttooikeusryhmaRequest = {
+    henkiloOid: string;
+    organisationOid: string;
+    body: Kayttooikeus[];
 };
 
 export type AccessRightsReportRow = {
@@ -126,6 +138,7 @@ export const kayttooikeusApi = createApi({
     }),
     tagTypes: [
         'omattiedot',
+        'omatkayttooikeusryhmas',
         'omatorganisaatiot',
         'kutsuByToken',
         'accessRightReport',
@@ -156,6 +169,39 @@ export const kayttooikeusApi = createApi({
                 dispatch(fetchAllKayttooikeusryhmasForHenkilo(henkiloOid));
             },
             providesTags: ['henkilonkayttooikeusryhmat'],
+        }),
+        deleteKayttooikeusryhmaForHenkilo: builder.mutation<void, DeleteKayttooikeusryhmaRequest>({
+            query: ({ henkiloOid, organisationOid, kayttooikeusryhmaId }) => ({
+                url: `kayttooikeusanomus/${henkiloOid}/${organisationOid}/${kayttooikeusryhmaId}`,
+                method: 'DELETE',
+            }),
+            async onQueryStarted({ henkiloOid }, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch<any>(fetchHenkiloOrgs(henkiloOid));
+                    dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(henkiloOid));
+                } catch (_err) {
+                    //
+                }
+            },
+            invalidatesTags: ['henkilonkayttooikeusryhmat'],
+        }),
+        putKayttooikeusryhmaForHenkilo: builder.mutation<void, PutKayttooikeusryhmaRequest>({
+            query: ({ henkiloOid, organisationOid, body }) => ({
+                url: `kayttooikeusanomus/${henkiloOid}/${organisationOid}`,
+                method: 'PUT',
+                body,
+            }),
+            async onQueryStarted({ henkiloOid }, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch<any>(fetchHenkiloOrgs(henkiloOid));
+                    dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(henkiloOid));
+                } catch (_err) {
+                    //
+                }
+            },
+            invalidatesTags: ['henkilonkayttooikeusryhmat'],
         }),
         deleteHenkiloOrganisation: builder.mutation<void, DeleteHenkiloOrganisationRequest>({
             query: ({ henkiloOid, organisationOid }) => ({
@@ -192,6 +238,10 @@ export const kayttooikeusApi = createApi({
                 dispatch({ type: FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS, organisaatios: data, locale });
             },
             providesTags: ['omatorganisaatiot'],
+        }),
+        getOmatKayttooikeuryhmas: builder.query<MyonnettyKayttooikeusryhma[], void>({
+            query: () => `kayttooikeusryhma/henkilo/current`,
+            providesTags: ['omatkayttooikeusryhmas'],
         }),
         getMfaSetup: builder.query<MfaSetupResponse, void>({
             query: () => 'mfasetup/gauth/setup',
@@ -430,9 +480,12 @@ export const kayttooikeusApi = createApi({
 
 export const {
     useDeleteHenkiloOrganisationMutation,
+    useDeleteKayttooikeusryhmaForHenkiloMutation,
+    usePutKayttooikeusryhmaForHenkiloMutation,
     useGetKayttooikeusryhmasForHenkiloQuery,
     useGetOmattiedotQuery,
     useGetOmatOrganisaatiotQuery,
+    useGetOmatKayttooikeuryhmasQuery,
     useGetMfaSetupQuery,
     usePostMfaEnableMutation,
     usePostMfaDisableMutation,

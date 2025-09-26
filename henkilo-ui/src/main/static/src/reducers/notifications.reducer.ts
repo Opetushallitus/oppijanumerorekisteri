@@ -1,7 +1,5 @@
 import { AnyAction } from '@reduxjs/toolkit';
 import {
-    ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE,
-    ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS,
     NOTIFICATION_REMOVED,
     PASSIVOI_HENKILO_FAILURE,
     VTJ_OVERRIDE_HENKILO_FAILURE,
@@ -48,31 +46,6 @@ export const notifications = (
     action: AnyAction
 ): NotificationsState => {
     switch (action.type) {
-        case ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS:
-            return {
-                ...state,
-                existingKayttooikeus: [
-                    ...state.existingKayttooikeus,
-                    {
-                        type: 'ok',
-                        notL10nMessage: 'NOTIFICATION_LISAA_KAYTTOOIKEUS_ONNISTUI',
-                        organisaatioOid: action.organisaatioOid,
-                        ryhmaIdList: action.ryhmaIdList,
-                    },
-                ],
-            };
-        case ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE:
-            return {
-                ...state,
-                existingKayttooikeus: [
-                    ...state.existingKayttooikeus,
-                    {
-                        type: 'error',
-                        notL10nMessage: action.notL10nMessage || 'NOTIFICATION_LISAA_KAYTTOOIKEUS_EPAONNISTUI',
-                        id: action.id,
-                    },
-                ],
-            };
         case NOTIFICATION_REMOVED: {
             let removeNotifications; // For button notifications (remove all)
 

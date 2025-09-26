@@ -11,10 +11,8 @@ import StaticUtils from '../StaticUtils';
 import HaeJatkoaikaaButton from '../../omattiedot/HaeJatkoaikaaButton';
 import PropertySingleton from '../../../globals/PropertySingleton';
 import {
-    addKayttooikeusToHenkilo,
     createKayttooikeusanomus,
     fetchAllKayttooikeusAnomusForHenkilo,
-    removePrivilege,
 } from '../../../actions/kayttooikeusryhma.actions';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
 import { removeNotification } from '../../../actions/notifications.actions';
@@ -27,9 +25,11 @@ import { NotificationsState } from '../../../reducers/notifications.reducer';
 import { useLocalisations } from '../../../selectors';
 import OphTable from '../../OphTable';
 import {
+    useDeleteKayttooikeusryhmaForHenkiloMutation,
     useGetKayttooikeusryhmasForHenkiloQuery,
     useGetOmattiedotQuery,
     useGetOrganisationsQuery,
+    usePutKayttooikeusryhmaForHenkiloMutation,
 } from '../../../api/kayttooikeus';
 import ConfirmButton from '../button/ConfirmButton';
 import Loader from '../icons/Loader';
@@ -49,6 +49,8 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const { L, locale } = useLocalisations();
     const { data: kayttooikeusryhmas, isLoading, isError } = useGetKayttooikeusryhmasForHenkiloQuery(props.oidHenkilo);
+    const [putKayttooikeusryhma] = usePutKayttooikeusryhmaForHenkiloMutation();
+    const [deleteKayttooikeusryhma] = useDeleteKayttooikeusryhmaForHenkiloMutation();
     const dispatch = useAppDispatch();
     const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
@@ -88,19 +90,6 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
         const newDates = { ...dates };
         newDates[ryhmaId].loppupvm = value;
         setDates(newDates);
-    }
-
-    function updateKayttooikeusryhma(id: number, kayttoOikeudenTila: string, organisaatioOid: string) {
-        dispatch<any>(
-            addKayttooikeusToHenkilo(props.oidHenkilo, organisaatioOid, [
-                {
-                    id,
-                    kayttoOikeudenTila,
-                    alkupvm: moment(dates[id].alkupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
-                    loppupvm: moment(dates[id].loppupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
-                },
-            ])
-        );
     }
 
     function isHaeJatkoaikaaButtonDisabled(uusittavaKayttooikeusRyhma: MyonnettyKayttooikeusryhma) {
@@ -188,11 +177,22 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                 <div style={{ display: 'table-cell' }}>
                     <ConfirmButton
                         action={() =>
-                            updateKayttooikeusryhma(
-                                kayttooikeus.ryhmaId,
-                                KAYTTOOIKEUDENTILA.MYONNETTY,
-                                kayttooikeus.organisaatioOid
-                            )
+                            putKayttooikeusryhma({
+                                henkiloOid: props.oidHenkilo,
+                                organisationOid: kayttooikeus.organisaatioOid,
+                                body: [
+                                    {
+                                        id: kayttooikeus.ryhmaId,
+                                        kayttoOikeudenTila: KAYTTOOIKEUDENTILA.MYONNETTY,
+                                        alkupvm: moment(dates[kayttooikeus.ryhmaId].alkupvm).format(
+                                            PropertySingleton.state.PVM_DBFORMAATTI
+                                        ),
+                                        loppupvm: moment(dates[kayttooikeus.ryhmaId].loppupvm).format(
+                                            PropertySingleton.state.PVM_DBFORMAATTI
+                                        ),
+                                    },
+                                ],
+                            })
                         }
                         normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA']}
                         confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA_CONFIRM']}
@@ -262,9 +262,11 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                 cell: ({ getValue }) => (
                     <SuljeButton
                         suljeAction={() =>
-                            dispatch<any>(
-                                removePrivilege(props.oidHenkilo, getValue().organisaatioOid, getValue().ryhmaId)
-                            )
+                            deleteKayttooikeusryhma({
+                                henkiloOid: props.oidHenkilo,
+                                organisationOid: getValue().organisaatioOid,
+                                kayttooikeusryhmaId: getValue().ryhmaId,
+                            })
                         }
                         L={L}
                     />

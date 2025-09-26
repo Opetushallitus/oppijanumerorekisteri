@@ -13,15 +13,9 @@ import {
     FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_FAILURE,
     UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_FAILURE,
-    ADD_KAYTTOOIKEUS_TO_HENKILO_REQUEST,
-    ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS,
-    ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE,
     CREATE_KAYTTOOIKEUSANOMUS_REQUEST,
     CREATE_KAYTTOOIKEUSANOMUS_SUCCESS,
     CREATE_KAYTTOOIKEUSANOMUS_FAILURE,
-    REMOVE_KAYTTOOIKEUS_REQUEST,
-    REMOVE_KAYTTOOIKEUS_SUCCESS,
-    REMOVE_KAYTTOOIKEUS_FAILURE,
     FETCH_KAYTTOOIKEUSRYHMA_BY_ID_REQUEST,
     FETCH_KAYTTOOIKEUSRYHMA_BY_ID_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_BY_ID_FAILURE,
@@ -29,7 +23,6 @@ import {
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_FAILURE,
 } from './actiontypes';
-import { fetchHenkiloOrgs } from './henkilo.actions';
 import { AppDispatch } from '../store';
 
 export type Kayttooikeus = {
@@ -160,43 +153,6 @@ export const fetchOrganisaatioKayttooikeusryhmat = (organisaatioOid) => async (d
     }
 };
 
-const requestAddKayttooikeusToHenkilo = () => ({
-    type: ADD_KAYTTOOIKEUS_TO_HENKILO_REQUEST,
-});
-const receiveAddKayttooikeusToHenkilo = (organisaatioOid, ryhmaIdList) => ({
-    type: ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS,
-    organisaatioOid,
-    ryhmaIdList,
-});
-const errorAddKayttooikeusToHenkilo = (organisaatioOid, ryhmaIdList) => ({
-    type: ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE,
-    id: organisaatioOid + ryhmaIdList.join(''),
-});
-export const addKayttooikeusToHenkilo =
-    (henkiloOid: string, organisaatioOid: string, payload: Kayttooikeus[]) => (dispatch: AppDispatch) => {
-        dispatch(requestAddKayttooikeusToHenkilo());
-        const url = urls.url('kayttooikeus-service.henkilo.kayttooikeus-myonto', henkiloOid, organisaatioOid);
-        http.put(url, payload)
-            .then(() => {
-                dispatch(
-                    receiveAddKayttooikeusToHenkilo(
-                        organisaatioOid,
-                        payload.map((kayttooikeus) => kayttooikeus.id)
-                    )
-                );
-                dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(henkiloOid));
-                dispatch<any>(fetchHenkiloOrgs(henkiloOid));
-            })
-            .catch(() =>
-                dispatch(
-                    errorAddKayttooikeusToHenkilo(
-                        organisaatioOid,
-                        payload.map((kayttooikeus) => kayttooikeus.id)
-                    )
-                )
-            );
-    };
-
 const createKayttooikeusanomusRequest = () => ({
     type: CREATE_KAYTTOOIKEUSANOMUS_REQUEST,
 });
@@ -220,40 +176,6 @@ export const createKayttooikeusanomus = (anomusData: KayttooikeusAnomus) => asyn
         throw error;
     }
 };
-
-// Remove käyttöoikeus from henkilo in given organisation
-const removePrivilegeRequest = (data) => ({
-    type: REMOVE_KAYTTOOIKEUS_REQUEST,
-    ...data,
-});
-const removePrivilegeSuccess = (data) => ({
-    type: REMOVE_KAYTTOOIKEUS_SUCCESS,
-    ...data,
-});
-const removePrivilegeFailure = (error, data) => ({
-    type: REMOVE_KAYTTOOIKEUS_FAILURE,
-    error,
-    ...data,
-});
-
-export const removePrivilege =
-    (oidHenkilo: string, oidOrganisaatio: string, kayttooikeusryhmaId: number) => (dispatch: AppDispatch) => {
-        const data = { oidHenkilo, oidOrganisaatio, kayttooikeusryhmaId };
-        const url = urls.url(
-            'kayttooikeus-service.henkilo.kayttooikeus-remove',
-            oidHenkilo,
-            oidOrganisaatio,
-            kayttooikeusryhmaId
-        );
-        dispatch(removePrivilegeRequest(data));
-        http.delete(url)
-            .then(() => {
-                dispatch(removePrivilegeSuccess(data));
-                dispatch<any>(fetchHenkiloOrgs(oidHenkilo));
-                dispatch<any>(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo));
-            })
-            .catch((error) => dispatch(removePrivilegeFailure(error, data)));
-    };
 
 // Fetch kayttooikeusryhma by id
 const fetchKayttooikeusryhmaByIdrequest = () => ({

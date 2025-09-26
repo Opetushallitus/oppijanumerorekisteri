@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import moment from 'moment';
 import ReactDatePicker from 'react-datepicker';
 
-import { useAppDispatch } from '../../../store';
 import CKKayttooikeudet, { ValittuKayttooikeusryhma } from './createkayttooikeus/CKKayttooikeudet';
-import { addKayttooikeusToHenkilo } from '../../../actions/kayttooikeusryhma.actions';
 import PropertySingleton from '../../../globals/PropertySingleton';
 import { useLocalisations } from '../../../selectors';
 import { SelectOption } from '../../../utilities/select';
@@ -12,6 +10,9 @@ import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobjec
 import { OphDsOrganisaatioSelect } from '../../design-system/OphDsOrganisaatioSelect';
 import RyhmaSelection from '../select/RyhmaSelection';
 import ValidationMessageButton from '../button/ValidationMessageButton';
+import { usePutKayttooikeusryhmaForHenkiloMutation } from '../../../api/kayttooikeus';
+import { add } from '../../../slices/toastSlice';
+import { useAppDispatch } from '../../../store';
 
 import './HenkiloViewCreateKayttooikeus.css';
 
@@ -35,6 +36,7 @@ const HenkiloViewCreateKayttooikeus = ({
 }: OwnProps) => {
     const { L } = useLocalisations();
     const dispatch = useAppDispatch();
+    const [putKayttooikeusryhma] = usePutKayttooikeusryhmaForHenkiloMutation();
     const [selectedList, setSelectedList] = useState<ValittuKayttooikeusryhma[]>([]);
     const [organisationSelection, setOrganisationSelection] = useState<OrganisaatioSelectObject>();
     const [ryhmaSelection, setRyhmaSelection] = useState<SelectOption>();
@@ -61,21 +63,38 @@ const HenkiloViewCreateKayttooikeus = ({
         setLoppupvmInput(undefined);
     };
 
-    const createKayttooikeusAction = () => {
-        dispatch<any>(
-            addKayttooikeusToHenkilo(
-                oidHenkilo,
-                organisationSelection?.oid ?? ryhmaSelection?.value,
-                selectedList.map((selected) => ({
-                    id: selected.value,
-                    kayttoOikeudenTila: 'MYONNA',
-                    alkupvm: moment(alkupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
-                    loppupvm: moment(loppupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
-                }))
-            )
-        );
-        resetValues();
-        existingKayttooikeusRef.current?.scrollIntoView(true);
+    const createKayttooikeusAction = async () => {
+        await putKayttooikeusryhma({
+            henkiloOid: oidHenkilo,
+            organisationOid: organisationSelection?.oid ?? ryhmaSelection?.value,
+            body: selectedList.map((selected) => ({
+                id: selected.value,
+                kayttoOikeudenTila: 'MYONNA',
+                alkupvm: moment(alkupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
+                loppupvm: moment(loppupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
+            })),
+        })
+            .unwrap()
+            .then(() => {
+                dispatch(
+                    add({
+                        id: `kayttooikeus-${oidHenkilo}-${Math.random()}`,
+                        header: L['NOTIFICATION_LISAA_KAYTTOOIKEUS_ONNISTUI'],
+                        type: 'ok',
+                    })
+                );
+                resetValues();
+                existingKayttooikeusRef.current?.scrollIntoView(true);
+            })
+            .catch(() => {
+                dispatch(
+                    add({
+                        id: `kayttooikeus-${oidHenkilo}-${Math.random()}`,
+                        header: L['NOTIFICATION_LISAA_KAYTTOOIKEUS_EPAONNISTUI'],
+                        type: 'error',
+                    })
+                );
+            });
     };
 
     return (
