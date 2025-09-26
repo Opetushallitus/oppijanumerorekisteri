@@ -110,15 +110,9 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
         return (
             <PopupButton
                 popupClass={'oph-popup-default oph-popup-bottom'}
-                popupButtonWrapperPositioning={'absolute'}
+                popupButtonWrapperPositioning="relative"
                 popupArrowStyles={{ marginLeft: '10px' }}
                 popupButtonClasses={'oph-button oph-button-ghost anomuslistaus-avaabutton'}
-                popupStyle={{
-                    left: '-20px',
-                    width: '20rem',
-                    padding: '30px',
-                    position: 'absolute',
-                }}
                 simple={true}
                 disabled={!perustelut}
                 popupContent={<p>{perustelut}</p>}
