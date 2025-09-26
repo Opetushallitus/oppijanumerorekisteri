@@ -22,6 +22,7 @@ test.describe('kayttooikeusryhmat list', () => {
 
         await expect(page.locator('#react-select-3-input')).toBeEditable();
         await page.type('#react-select-3-input', 'gugu');
+        await expect(page.getByText('Gugutus')).toBeVisible();
         await page.keyboard.press('Enter');
 
         await expect(page.locator('.oph-ds-accordion-header')).toHaveCount(1);
