@@ -34,6 +34,7 @@ import ConfirmButton from '../button/ConfirmButton';
 import Loader from '../icons/Loader';
 import { OphDsBanner } from '../../design-system/OphDsBanner';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
+import { add } from '../../../slices/toastSlice';
 
 type OwnProps = {
     oidHenkilo: string;
@@ -196,6 +197,25 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                                     },
                                 ],
                             })
+                                .unwrap()
+                                .then(() => {
+                                    dispatch(
+                                        add({
+                                            id: `jatkoaika-ok-${Math.random()}`,
+                                            type: 'ok',
+                                            header: L['NOTIFICATION_LISAA_KAYTTOOIKEUS_ONNISTUI'],
+                                        })
+                                    );
+                                })
+                                .catch(() => {
+                                    dispatch(
+                                        add({
+                                            id: `jatkoaika-error-${Math.random()}`,
+                                            type: 'error',
+                                            header: L['NOTIFICATION_LISAA_KAYTTOOIKEUS_EPAONNISTUI'],
+                                        })
+                                    );
+                                })
                         }
                         normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA']}
                         confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA_CONFIRM']}
