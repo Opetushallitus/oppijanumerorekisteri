@@ -166,7 +166,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                 <div style={{ display: 'table-cell', paddingRight: '10px', minWidth: '96px' }}>
                     <DatePicker
                         className="oph-input"
-                        onChange={(date) => loppupvmAction(moment(date), kayttooikeus.ryhmaId)}
+                        onChange={(date) => date && loppupvmAction(moment(date), kayttooikeus.ryhmaId)}
                         selected={dates[kayttooikeus.ryhmaId]?.loppupvm.toDate()}
                         showYearDropdown
                         showWeekNumbers
