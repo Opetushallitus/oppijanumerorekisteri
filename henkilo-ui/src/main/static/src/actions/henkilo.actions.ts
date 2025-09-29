@@ -19,9 +19,6 @@ import {
     VTJ_OVERRIDE_HENKILO_SUCCESS,
     VTJ_OVERRIDE_HENKILO_FAILURE,
     CLEAR_HENKILO,
-    FETCH_HENKILO_YKSILOINTITIETO_REQUEST,
-    FETCH_HENKILO_YKSILOINTITIETO_SUCCESS,
-    FETCH_HENKILO_YKSILOINTITIETO_FAILURE,
     VTJ_OVERRIDE_YKSILOIMATON_HENKILO_REQUEST,
     VTJ_OVERRIDE_YKSILOIMATON_HENKILO_SUCCESS,
     VTJ_OVERRIDE_YKSILOIMATON_HENKILO_FAILURE,
@@ -165,30 +162,6 @@ export const updateAndRefetchKayttajatieto =
             dispatch(requestKayttajatietoUpdateFailure());
         }
     };
-
-const requestHenkiloYksilointitieto = (oid) => ({
-    type: FETCH_HENKILO_YKSILOINTITIETO_REQUEST,
-    oid,
-});
-const receiveHenkiloYksilointitieto = (payload) => ({
-    type: FETCH_HENKILO_YKSILOINTITIETO_SUCCESS,
-    payload,
-});
-const failureHenkiloYksilointitieto = (error) => ({
-    type: FETCH_HENKILO_YKSILOINTITIETO_FAILURE,
-    error,
-});
-
-export const fetchHenkiloYksilointitieto = (oid) => async (dispatch: AppDispatch) => {
-    dispatch<any>(requestHenkiloYksilointitieto);
-    const url = urls.url('oppijanumerorekisteri-service.henkilo.yksilointitiedot', oid);
-    try {
-        const data = await http.get(url);
-        dispatch(receiveHenkiloYksilointitieto(data));
-    } catch (error) {
-        dispatch(failureHenkiloYksilointitieto(error));
-    }
-};
 
 // Henkikön tietojen yliajo yksilöintitiedoille niille, jotka henkilöille jotka on yksilöity
 const requestOverrideHenkiloVtjData = (oid) => ({
