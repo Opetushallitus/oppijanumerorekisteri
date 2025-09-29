@@ -39,6 +39,7 @@ public class Oauth2Client {
             }
             return response;
         } catch (IOException|InterruptedException e) {
+            log.error("error while executing request", e);
             throw new RestClientException("error while executing request", e);
         }
     }

@@ -52,7 +52,7 @@ public class Oauth2BearerClient {
         if (res.statusCode() != 200) {
             throw new RuntimeException("Oauth2 bearer returned status code " + res.statusCode() + ": " + res.body());
         }
-        log.debug("oauth2 bearer body: " + res.body());
+        log.info("oauth2 bearer body: " + res.body());
         return objectMapper.readValue(res.body(), Oauth2Token.class).getAccess_token();
     }
 
