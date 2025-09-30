@@ -97,7 +97,7 @@ export const VirkailijaViewPage = () => {
                     />
                 </div>
                 <div className="wrapper">
-                    <HenkiloViewOpenKayttooikeusanomus anomukset={anomukset} isOmattiedot={false} />
+                    <HenkiloViewOpenKayttooikeusanomus anomukset={anomukset ?? []} isOmattiedot={false} />
                 </div>
                 <div className="wrapper">
                     <HenkiloViewExpiredKayttooikeus oidHenkilo={henkilo.henkilo.oidHenkilo} isOmattiedot={false} />

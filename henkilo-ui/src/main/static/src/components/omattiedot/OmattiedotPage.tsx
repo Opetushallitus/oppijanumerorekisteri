@@ -63,7 +63,7 @@ export const OmattiedotPage = () => {
                     />
                 </div>
                 <div className="wrapper">
-                    <HenkiloViewOpenKayttooikeusanomus anomukset={anomukset} isOmattiedot={true} />
+                    <HenkiloViewOpenKayttooikeusanomus anomukset={anomukset ?? []} isOmattiedot={true} />
                 </div>
                 <div className="wrapper">
                     <HenkiloViewExpiredKayttooikeus oidHenkilo={henkilo.henkilo.oidHenkilo} isOmattiedot={true} />
