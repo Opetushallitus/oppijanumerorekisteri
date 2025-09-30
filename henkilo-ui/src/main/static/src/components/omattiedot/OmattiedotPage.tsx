@@ -3,10 +3,9 @@ import { useSelector } from 'react-redux';
 
 import { useAppDispatch, type RootState } from '../../store';
 import { fetchHenkilo, fetchKayttajatieto, clearHenkilo } from '../../actions/henkilo.actions';
-import { fetchAllKayttooikeusAnomusForHenkilo } from '../../actions/kayttooikeusryhma.actions';
 import { HenkiloState, isHenkiloStateLoading } from '../../reducers/henkilo.reducer';
 import Loader from '../common/icons/Loader';
-import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
+import { useGetKayttooikeusAnomuksetForHenkiloQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
 import { UserContentContainer } from '../common/henkilo/usercontent/UserContentContainer';
@@ -17,15 +16,17 @@ import StaticUtils from '../common/StaticUtils';
 import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
 import HenkiloViewExpiredKayttooikeus from '../common/henkilo/HenkiloViewExpiredKayttooikeus';
 import { HenkiloViewCreateKayttooikeusanomus } from '../common/henkilo/HenkiloViewCreateKayttooikeusanomus';
-import { isKayttooikeusryhmaStateLoading, KayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma.reducer';
 
 export const OmattiedotPage = () => {
     const { data: omattiedot, isLoading } = useGetOmattiedotQuery();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const dispatch = useAppDispatch();
     const { L } = useLocalisations();
-    const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
+    const { data: anomukset, isLoading: isAnomuksetLoading } = useGetKayttooikeusAnomuksetForHenkiloQuery(
+        omattiedot.oidHenkilo,
+        { skip: !omattiedot.oidHenkilo }
+    );
 
     useTitle(L['TITLE_OMAT_TIEDOT']);
 
@@ -35,11 +36,10 @@ export const OmattiedotPage = () => {
             dispatch(clearHenkilo());
             dispatch<any>(fetchHenkilo(userOid));
             dispatch<any>(fetchKayttajatieto(userOid));
-            dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(userOid));
         }
     }, []);
 
-    if (isLoading || isHenkiloStateLoading(henkilo) || isKayttooikeusryhmaStateLoading(kayttooikeus)) {
+    if (isLoading || isHenkiloStateLoading(henkilo) || isAnomuksetLoading) {
         return <Loader />;
     } else {
         return (
@@ -63,11 +63,7 @@ export const OmattiedotPage = () => {
                     />
                 </div>
                 <div className="wrapper">
-                    {kayttooikeus.kayttooikeusAnomusLoading ? (
-                        <Loader />
-                    ) : (
-                        <HenkiloViewOpenKayttooikeusanomus kayttooikeus={kayttooikeus} isOmattiedot={true} />
-                    )}
+                    <HenkiloViewOpenKayttooikeusanomus anomukset={anomukset} isOmattiedot={true} />
                 </div>
                 <div className="wrapper">
                     <HenkiloViewExpiredKayttooikeus oidHenkilo={henkilo.henkilo.oidHenkilo} isOmattiedot={true} />

@@ -17,24 +17,24 @@ import {
     MyonnettyKayttooikeusryhma,
 } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { localize, localizeTextGroup } from '../../../utilities/localisation.util';
-import './HenkiloViewOpenKayttooikeusanomus.css';
 import { KAYTTOOIKEUDENTILA, KayttooikeudenTila } from '../../../globals/KayttooikeudenTila';
-import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 import { HenkilonNimi } from '../../../types/domain/kayttooikeus/HenkilonNimi';
 import { useAppDispatch } from '../../../store';
-import { fetchAllKayttooikeusAnomusForHenkilo } from '../../../actions/kayttooikeusryhma.actions';
 import { useLocalisations } from '../../../selectors';
 import { HaettuKayttooikeusryhma } from '../../../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
 import { OphTableWithInfiniteScroll } from '../../OphTableWithInfiniteScroll';
 import OphTable, { expanderColumn } from '../../OphTable';
 import {
-    useGetOmattiedotQuery,
     useGetOrganisationsQuery,
     usePutHaettuKayttooikeusryhmaMutation,
+    usePutPeruKayttooikeusAnomusMutation,
 } from '../../../api/kayttooikeus';
 import OphModal from '../modal/OphModal';
 import ConfirmButton from '../button/ConfirmButton';
+
+import './HenkiloViewOpenKayttooikeusanomus.css';
+import { add } from '../../../slices/toastSlice';
 
 export type KayttooikeusryhmaData = {
     voimassaPvm: string;
@@ -49,6 +49,7 @@ export type AnojaKayttooikeusryhmaData = {
 };
 
 type OwnProps = {
+    anomukset: HaettuKayttooikeusryhma[];
     isOmattiedot: boolean;
     fetchMoreSettings?: {
         fetchMoreAction: () => void;
@@ -57,7 +58,6 @@ type OwnProps = {
     onSortingChange?: (sorting: SortingState) => void;
     tableLoading?: boolean;
     piilotaOtsikko?: boolean;
-    kayttooikeus: KayttooikeusRyhmaState;
     updateSuccessHandler?: (id: number, henkilo: HenkilonNimi, kayttooikeudenTila: KayttooikeudenTila) => void;
     updateErrorHandler?: (id: number, henkilo: HenkilonNimi, kayttooikeudenTila: KayttooikeudenTila) => void;
 };
@@ -70,9 +70,9 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     const { L, locale, l10n } = useLocalisations();
     const { data: organisations, isSuccess } = useGetOrganisationsQuery();
     const [putHaettuKayttooikeusryhma] = usePutHaettuKayttooikeusryhmaMutation();
-    const { data: omattiedot } = useGetOmattiedotQuery();
+    const [peruKayttooikeusAnomus] = usePutPeruKayttooikeusAnomusMutation();
     const [dates, setDates] = useState<{ [anomusId: number]: { alkupvm: Moment; loppupvm?: Moment } }>(
-        props.kayttooikeus?.kayttooikeusAnomus?.reduce(
+        props.anomukset.reduce(
             (acc, kayttooikeus) => ({
                 ...acc,
                 [String(kayttooikeus.id)]: {
@@ -91,7 +91,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     useEffect(() => {
         const currentDates = { ...dates };
         setDates(
-            props.kayttooikeus?.kayttooikeusAnomus?.reduce(
+            props.anomukset.reduce(
                 (acc, kayttooikeus) => ({
                     ...acc,
                     [String(kayttooikeus.id)]: dates[String(kayttooikeus.id)] ?? {
@@ -102,7 +102,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 currentDates
             ) ?? {}
         );
-    }, [props.kayttooikeus?.kayttooikeusAnomus]);
+    }, [props.anomukset]);
 
     useEffect(() => (props.onSortingChange && sorting.length ? props.onSortingChange(sorting) : undefined), [sorting]);
 
@@ -184,16 +184,21 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     }
 
     async function cancelAnomus(haettuKayttooikeusRyhma: HaettuKayttooikeusryhma) {
-        const url = urls.url('kayttooikeus-service.omattiedot.anomus.muokkaus');
-        await http.put(url, haettuKayttooikeusRyhma.id);
-        if (omattiedot) {
-            dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(omattiedot.oidHenkilo));
-        }
+        peruKayttooikeusAnomus(haettuKayttooikeusRyhma.id)
+            .unwrap()
+            .catch(() => {
+                dispatch(
+                    add({
+                        id: `peru-kayttooikeus-error-${Math.random()}`,
+                        type: 'error',
+                        header: L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'],
+                    })
+                );
+            });
     }
 
     function fetchKayttooikeusryhmatByAnoja({ row }: { row: Row<HaettuKayttooikeusryhma> }) {
-        const anojaOid = props.kayttooikeus.kayttooikeusAnomus?.find((a) => a.id === row.original.id)?.anomus.henkilo
-            .oid;
+        const anojaOid = props.anomukset?.find((a) => a.id === row.original.id)?.anomus.henkilo.oid;
         if (anojaOid && !kayttooikeusRyhmatByAnoja.find((a) => a.anojaOid === anojaOid)) {
             _parseAnojaKayttooikeusryhmat(anojaOid);
         }
@@ -417,16 +422,16 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                         : anomusHandlingButtonsForHenkilo(getValue()),
             },
         ],
-        [props.kayttooikeus?.kayttooikeusAnomus, dates, organisations, isSuccess]
+        [props.anomukset, dates, organisations, isSuccess]
     );
 
     const memoizedData = useMemo(() => {
-        const renderedData = props.kayttooikeus?.kayttooikeusAnomus;
+        const renderedData = props.anomukset;
         if (!renderedData || !renderedData.length) {
             return undefined;
         }
         return renderedData;
-    }, [props.kayttooikeus]);
+    }, [props.anomukset]);
 
     const table = useReactTable({
         columns: columns ?? emptyArray,
@@ -447,8 +452,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
         getRowCanExpand: () => true,
     });
 
-    const hylattyKayttooikeusryhma =
-        hylkaaAnomus && props.kayttooikeus?.kayttooikeusAnomus?.find((a) => a.id === hylkaaAnomus);
+    const hylattyKayttooikeusryhma = hylkaaAnomus && props.anomukset.find((a) => a.id === hylkaaAnomus);
     return (
         <div className="henkiloViewUserContentWrapper">
             {hylattyKayttooikeusryhma && (

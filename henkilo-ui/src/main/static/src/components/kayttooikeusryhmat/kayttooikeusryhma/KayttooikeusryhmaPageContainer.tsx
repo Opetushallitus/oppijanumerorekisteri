@@ -1,33 +1,25 @@
-import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React from 'react';
 import { useParams } from 'react-router';
 
-import { useAppDispatch, type RootState } from '../../../store';
 import { KayttooikeusryhmaPage } from './KayttooikeusryhmaPage';
-import { fetchKayttooikeusryhmaById, fetchKayttooikeusryhmaSlaves } from '../../../actions/kayttooikeusryhma.actions';
 import Loader from '../../common/icons/Loader';
-import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import { useLocalisations } from '../../../selectors';
 import { useTitle } from '../../../useTitle';
 import { useNavigation } from '../../../useNavigation';
+import { useGetKayttooikeusryhmaMyontoviiteQuery, useGetKayttooikeusryhmaQuery } from '../../../api/kayttooikeus';
 
 export const KayttooikeusryhmaPageContainer = () => {
-    const dispatch = useAppDispatch();
     const params = useParams();
     const { L } = useLocalisations();
+    const { isLoading: isKayttooikeusryhmaLoading } = useGetKayttooikeusryhmaQuery(params.id, { skip: !params.id });
+    const { isLoading: isKayttooikeusryhmaMyontoviiteLoading } = useGetKayttooikeusryhmaMyontoviiteQuery(params.id, {
+        skip: !params.id,
+    });
+
     useTitle(L['TITLE_KAYTTO_OIKEUSRYHMA']);
     useNavigation([], true);
-    const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
 
-    useEffect(() => {
-        const kayttooikeusryhmaId = params.id;
-        if (kayttooikeusryhmaId) {
-            dispatch<any>(fetchKayttooikeusryhmaById(kayttooikeusryhmaId));
-            dispatch<any>(fetchKayttooikeusryhmaSlaves(kayttooikeusryhmaId));
-        }
-    }, []);
-
-    return kayttooikeus.kayttooikeusryhmaLoading || kayttooikeus.kayttooikeusryhmaSlavesLoading ? (
+    return isKayttooikeusryhmaLoading || isKayttooikeusryhmaMyontoviiteLoading ? (
         <Loader />
     ) : (
         <KayttooikeusryhmaPage kayttooikeusryhmaId={params.id} />

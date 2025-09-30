@@ -10,10 +10,6 @@ import SuljeButton from './buttons/SuljeButton';
 import StaticUtils from '../StaticUtils';
 import HaeJatkoaikaaButton from '../../omattiedot/HaeJatkoaikaaButton';
 import PropertySingleton from '../../../globals/PropertySingleton';
-import {
-    createKayttooikeusanomus,
-    fetchAllKayttooikeusAnomusForHenkilo,
-} from '../../../actions/kayttooikeusryhma.actions';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
 import { removeNotification } from '../../../actions/notifications.actions';
 import { createEmailOptions } from '../../../utilities/henkilo.util';
@@ -26,14 +22,14 @@ import { useKayttooikeusryhmas, useLocalisations } from '../../../selectors';
 import OphTable from '../../OphTable';
 import {
     useDeleteKayttooikeusryhmaForHenkiloMutation,
-    useGetOmattiedotQuery,
+    useGetKayttooikeusAnomuksetForHenkiloQuery,
     useGetOrganisationsQuery,
+    usePostKayttooikeusAnomusMutation,
     usePutKayttooikeusryhmaForHenkiloMutation,
 } from '../../../api/kayttooikeus';
 import ConfirmButton from '../button/ConfirmButton';
 import Loader from '../icons/Loader';
 import { OphDsBanner } from '../../design-system/OphDsBanner';
-import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import { add } from '../../../slices/toastSlice';
 
 type OwnProps = {
@@ -55,12 +51,12 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     } = useKayttooikeusryhmas(props.isOmattiedot, props.oidHenkilo);
     const [putKayttooikeusryhma] = usePutKayttooikeusryhmaForHenkiloMutation();
     const [deleteKayttooikeusryhma] = useDeleteKayttooikeusryhmaForHenkiloMutation();
+    const [postKayttooikeusAnomus] = usePostKayttooikeusAnomusMutation();
     const dispatch = useAppDispatch();
-    const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const notifications = useSelector<RootState, NotificationsState>((state) => state.notifications);
     const { data: organisations, isSuccess } = useGetOrganisationsQuery();
-    const { data: omattiedot } = useGetOmattiedotQuery();
+    const { data: anomukset } = useGetKayttooikeusAnomuksetForHenkiloQuery(props.oidHenkilo);
     const [dates, setDates] = useState<Record<number, { alkupvm: Moment; loppupvm: Moment }>>([]);
     const [emailOptions, setEmailOptions] = useState(
         createEmailOptions(henkilo, _filterExpiredKayttooikeus, kayttooikeusryhmas ?? [])
@@ -97,7 +93,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     }
 
     function isHaeJatkoaikaaButtonDisabled(uusittavaKayttooikeusRyhma: MyonnettyKayttooikeusryhma) {
-        const anomusAlreadyExists = !!kayttooikeus.kayttooikeusAnomus?.filter(
+        const anomusAlreadyExists = !!(anomukset ?? []).filter(
             (haettuKayttooikeusRyhma) =>
                 haettuKayttooikeusRyhma.kayttoOikeusRyhma.id === uusittavaKayttooikeusRyhma.ryhmaId &&
                 uusittavaKayttooikeusRyhma.organisaatioOid === haettuKayttooikeusRyhma.anomus.organisaatioOid
@@ -150,8 +146,26 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
             kayttooikeusRyhmaIds,
             anojaOid: props.oidHenkilo,
         };
-        await dispatch<any>(createKayttooikeusanomus(anomusData));
-        dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(omattiedot.oidHenkilo));
+        postKayttooikeusAnomus(anomusData)
+            .unwrap()
+            .then(() => {
+                dispatch(
+                    add({
+                        id: `anomus-ok-${Math.random()}`,
+                        type: 'ok',
+                        header: L['OMATTIEDOT_ANOMUKSEN_TALLENNUS_OK'],
+                    })
+                );
+            })
+            .catch(() => {
+                dispatch(
+                    add({
+                        id: `anomus-error-${Math.random()}`,
+                        type: 'error',
+                        header: L['OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS'],
+                    })
+                );
+            });
     }
 
     function _filterExpiredKayttooikeus(kayttooikeus: MyonnettyKayttooikeusryhma) {

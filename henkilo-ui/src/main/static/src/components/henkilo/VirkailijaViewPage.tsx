@@ -5,16 +5,14 @@ import { useNavigate, useParams } from 'react-router';
 import { useAppDispatch, type RootState } from '../../store';
 import Loader from '../common/icons/Loader';
 import { clearHenkilo, fetchHenkilo, fetchKayttaja, fetchKayttajatieto } from '../../actions/henkilo.actions';
-import { fetchAllKayttooikeusAnomusForHenkilo } from '../../actions/kayttooikeusryhma.actions';
 import { HenkiloState, isHenkiloStateLoading } from '../../reducers/henkilo.reducer';
 import { useLocalisations } from '../../selectors';
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
-import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
+import { useGetKayttooikeusAnomuksetForHenkiloQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { henkiloViewTabs } from '../navigation/NavigationTabs';
 import { useGetHenkiloMasterQuery, useGetYksilointitiedotQuery } from '../../api/oppijanumerorekisteri';
-import { isKayttooikeusryhmaStateLoading, KayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma.reducer';
 import { UserContentContainer } from '../common/henkilo/usercontent/UserContentContainer';
 import { Identifications } from './Identifications';
 import Mfa from './Mfa';
@@ -36,7 +34,6 @@ const titles = {
 export const VirkailijaViewPage = () => {
     const { data: omattiedot } = useGetOmattiedotQuery();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
-    const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
     const [view, setView] = useState<View>('virkailija');
     const { L } = useLocalisations();
     const { oid } = useParams();
@@ -46,6 +43,7 @@ export const VirkailijaViewPage = () => {
     const isRekisterinpitaja = omattiedot ? isOnrRekisterinpitaja(omattiedot.organisaatiot) : false;
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
     const yksilointitiedotQuery = useGetYksilointitiedotQuery(oid);
+    const { data: anomukset, isLoading: isAnomuksetLoading } = useGetKayttooikeusAnomuksetForHenkiloQuery(oid);
 
     useTitle(L[titles[view]]);
     useNavigation(henkiloViewTabs(oid, henkilo, 'virkailija', master?.oidHenkilo, yksilointitiedotQuery.data), true);
@@ -62,10 +60,9 @@ export const VirkailijaViewPage = () => {
         dispatch<any>(fetchHenkilo(oid));
         dispatch<any>(fetchKayttaja(oid));
         dispatch<any>(fetchKayttajatieto(oid));
-        dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(oid));
     }, [omattiedot, oid]);
 
-    if (isHenkiloStateLoading(henkilo) || isKayttooikeusryhmaStateLoading(kayttooikeus)) {
+    if (isHenkiloStateLoading(henkilo) || isAnomuksetLoading) {
         return <Loader />;
     } else if (henkilo.henkiloKayttoEstetty) {
         return <VirheKayttoEstetty L={L} />;
@@ -100,11 +97,7 @@ export const VirkailijaViewPage = () => {
                     />
                 </div>
                 <div className="wrapper">
-                    {kayttooikeus.kayttooikeusAnomusLoading ? (
-                        <Loader />
-                    ) : (
-                        <HenkiloViewOpenKayttooikeusanomus kayttooikeus={kayttooikeus} isOmattiedot={false} />
-                    )}
+                    <HenkiloViewOpenKayttooikeusanomus anomukset={anomukset} isOmattiedot={false} />
                 </div>
                 <div className="wrapper">
                     <HenkiloViewExpiredKayttooikeus oidHenkilo={henkilo.henkilo.oidHenkilo} isOmattiedot={false} />

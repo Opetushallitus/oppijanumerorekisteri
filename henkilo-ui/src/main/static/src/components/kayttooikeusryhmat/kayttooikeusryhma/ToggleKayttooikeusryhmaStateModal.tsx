@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 
-import { useAppDispatch, type RootState } from '../../../store';
-import { http } from '../../../http';
-import { urls } from 'oph-urls-js';
+import { useAppDispatch } from '../../../store';
 import { SpinnerInButton } from '../../common/icons/SpinnerInButton';
-import { NOTIFICATIONTYPES } from '../../common/Notification/notificationtypes';
-import { addGlobalNotification } from '../../../actions/notification.actions';
 import OphModal from '../../common/modal/OphModal';
-import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { useLocalisations } from '../../../selectors';
+import {
+    useGetKayttooikeusryhmaQuery,
+    usePutAktivoiKayttooikeusryhmaMutation,
+    usePutPassivoiKayttooikeusryhmaMutation,
+} from '../../../api/kayttooikeus';
+import { add } from '../../../slices/toastSlice';
 
 type OwnProps = {
-    kayttooikeusryhmaId: string | null | undefined;
+    kayttooikeusryhmaId?: string;
 };
 
 /**
@@ -23,46 +23,57 @@ const ToggleKayttooikeusryhmaStateModal = (props: OwnProps) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { L } = useLocalisations();
-    const kayttooikeusryhma = useSelector<RootState, Kayttooikeusryhma>(
-        (state) => state.kayttooikeus.kayttooikeusryhma
-    );
+    const { data: kayttooikeusryhma } = useGetKayttooikeusryhmaQuery(props.kayttooikeusryhmaId, {
+        skip: !props.kayttooikeusryhmaId,
+    });
     const [isPassivoitu, setIsPassivoitu] = useState(false);
     const [isWaitingRequest, setIsWaitingRequest] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [aktivoiKayttooikeusryhma, aktivoiProps] = usePutAktivoiKayttooikeusryhmaMutation();
+    const [passivoiKayttooikeusryhma, passivoiProps] = usePutPassivoiKayttooikeusryhmaMutation();
 
     useEffect(() => {
         setIsPassivoitu(kayttooikeusryhma?.passivoitu);
     }, [props, kayttooikeusryhma]);
 
-    const passivoiKayttooikeusryhma = async () => {
-        const url = urls.url('kayttooikeus-service.kayttooikeusryhma.id.passivoi', props.kayttooikeusryhmaId);
-        await toggleKayttooikeusryhmaState(url);
-    };
+    useEffect(() => {
+        setIsWaitingRequest(aktivoiProps.isLoading || passivoiProps.isLoading);
+    }, [aktivoiProps, passivoiProps]);
 
-    const aktivoiKayttooikeusryhma = async () => {
-        const url = urls.url('kayttooikeus-service.kayttooikeusryhma.id.aktivoi', props.kayttooikeusryhmaId);
-        await toggleKayttooikeusryhmaState(url);
-    };
-
-    const toggleKayttooikeusryhmaState = async (url: string) => {
-        try {
-            setIsWaitingRequest(true);
-            await http.put(url);
-            setIsWaitingRequest(false);
-            navigate('/kayttooikeusryhmat/');
-        } catch (error) {
-            dispatch(
-                addGlobalNotification({
-                    key: 'KAYTTOOIKEUSRYHMATOGGLEVIRHE',
-                    title: L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'],
-                    type: NOTIFICATIONTYPES.ERROR,
-                    autoClose: 10000,
-                })
+    const passivoi = async () => {
+        passivoiKayttooikeusryhma(props.kayttooikeusryhmaId)
+            .unwrap()
+            .then(() => {
+                setShowModal(false);
+                navigate('/kayttooikeusryhmat/');
+            })
+            .catch(() =>
+                dispatch(
+                    add({
+                        id: `passivoi-kayttooikeusryhma-error-${Math.random()}`,
+                        type: 'error',
+                        header: L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'],
+                    })
+                )
             );
-            throw error;
-        } finally {
-            setShowModal(false);
-        }
+    };
+
+    const aktivoi = async () => {
+        aktivoiKayttooikeusryhma(props.kayttooikeusryhmaId)
+            .unwrap()
+            .then(() => {
+                setShowModal(false);
+                navigate('/kayttooikeusryhmat/');
+            })
+            .catch(() =>
+                dispatch(
+                    add({
+                        id: `passivoi-kayttooikeusryhma-error-${Math.random()}`,
+                        type: 'error',
+                        header: L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'],
+                    })
+                )
+            );
     };
 
     return (
@@ -88,7 +99,7 @@ const ToggleKayttooikeusryhmaStateModal = (props: OwnProps) => {
                     <div className="passivoi-modal">
                         <button
                             className="oph-button oph-button-primary"
-                            onClick={() => (isPassivoitu ? aktivoiKayttooikeusryhma() : passivoiKayttooikeusryhma())}
+                            onClick={() => (isPassivoitu ? aktivoi() : passivoi())}
                         >
                             <SpinnerInButton show={isWaitingRequest} />{' '}
                             {isPassivoitu ? L['KAYTTOOIKEUSRYHMAT_AKTIVOI'] : L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI']}

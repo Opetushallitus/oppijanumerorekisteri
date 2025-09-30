@@ -8,19 +8,19 @@ import StaticUtils from '../StaticUtils';
 import HaeJatkoaikaaButton from '../../omattiedot/HaeJatkoaikaaButton';
 import { createEmailOptions } from '../../../utilities/henkilo.util';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
-import {
-    createKayttooikeusanomus,
-    fetchAllKayttooikeusAnomusForHenkilo,
-} from '../../../actions/kayttooikeusryhma.actions';
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 import { localizeTextGroup } from '../../../utilities/localisation.util';
 import { useKayttooikeusryhmas, useLocalisations } from '../../../selectors';
 import OphTable from '../../OphTable';
-import { useGetOmattiedotQuery, useGetOrganisationsQuery } from '../../../api/kayttooikeus';
-import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
+import {
+    useGetKayttooikeusAnomuksetForHenkiloQuery,
+    useGetOrganisationsQuery,
+    usePostKayttooikeusAnomusMutation,
+} from '../../../api/kayttooikeus';
 import Loader from '../icons/Loader';
+import { add } from '../../../slices/toastSlice';
 
 type OwnProps = {
     isOmattiedot: boolean;
@@ -30,18 +30,18 @@ type OwnProps = {
 const emptyArray = [];
 
 const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
-    const [sorting, setSorting] = useState<SortingState>([]);
     const dispatch = useAppDispatch();
+    const [sorting, setSorting] = useState<SortingState>([]);
     const { L, locale, l10n } = useLocalisations();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
-    const kayttooikeus = useSelector<RootState, KayttooikeusRyhmaState>((state) => state.kayttooikeus);
     const { data: kayttooikeusryhmas, isLoading } = useKayttooikeusryhmas(props.isOmattiedot, props.oidHenkilo);
     const { data: organisations, isSuccess } = useGetOrganisationsQuery();
-    const { data: omattiedot } = useGetOmattiedotQuery();
+    const [postKayttooikeusAnomus] = usePostKayttooikeusAnomusMutation();
     const [emailOptions, setEmailOptions] = useState(
         createEmailOptions(henkilo, _filterExistingKayttooikeus, kayttooikeusryhmas ?? [])
     );
     const [accessRight, setAccessRight] = useState<AccessRight>();
+    const { data: anomukset } = useGetKayttooikeusAnomuksetForHenkiloQuery(props.oidHenkilo);
 
     useEffect(() => {
         setEmailOptions(createEmailOptions(henkilo, _filterExistingKayttooikeus, kayttooikeusryhmas ?? []));
@@ -94,8 +94,26 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
             kayttooikeusRyhmaIds,
             anojaOid: props.oidHenkilo,
         };
-        await dispatch<any>(createKayttooikeusanomus(anomusData));
-        dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(omattiedot.oidHenkilo));
+        postKayttooikeusAnomus(anomusData)
+            .unwrap()
+            .then(() => {
+                dispatch(
+                    add({
+                        id: `anomus-ok-${Math.random()}`,
+                        type: 'ok',
+                        header: L['OMATTIEDOT_ANOMUKSEN_TALLENNUS_OK'],
+                    })
+                );
+            })
+            .catch(() => {
+                dispatch(
+                    add({
+                        id: `anomus-error-${Math.random()}`,
+                        type: 'error',
+                        header: L['OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS'],
+                    })
+                );
+            });
     }
 
     function hideVanhentunutKayttooikeusUusintaButton(vanhentunutKayttooikeus: MyonnettyKayttooikeusryhma) {
@@ -116,7 +134,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
     }
 
     function isHaeJatkoaikaaButtonDisabled(ryhmaId: number, vanhentunutKayttooikeusryhma: MyonnettyKayttooikeusryhma) {
-        const anomusAlreadyExists = !!(kayttooikeus.kayttooikeusAnomus ?? []).filter(
+        const anomusAlreadyExists = !!(anomukset ?? []).filter(
             (haettuKayttooikeusRyhma) =>
                 haettuKayttooikeusRyhma.kayttoOikeusRyhma.id === vanhentunutKayttooikeusryhma.ryhmaId &&
                 vanhentunutKayttooikeusryhma.organisaatioOid === haettuKayttooikeusRyhma.anomus.organisaatioOid
@@ -189,7 +207,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
                     ),
             },
         ],
-        [emailOptions, kayttooikeusryhmas, props, organisations, isSuccess]
+        [emailOptions, kayttooikeusryhmas, props, organisations, isSuccess, anomukset]
     );
 
     const memoizedData = useMemo(() => {

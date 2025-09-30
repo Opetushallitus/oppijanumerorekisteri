@@ -34,7 +34,7 @@ import { TextGroupModify } from '../types/domain/kayttooikeus/textgroup.types';
 import { PalveluRooliModify } from '../types/domain/kayttooikeus/PalveluRooliModify.types';
 import { SallitutKayttajatyypit } from '../components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage';
 import { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
-import { fetchAllKayttooikeusAnomusForHenkilo, Kayttooikeus } from '../actions/kayttooikeusryhma.actions';
+import { Kayttooikeus } from '../actions/kayttooikeusryhma.actions';
 import { HenkiloOrg } from '../types/domain/oppijanumerorekisteri/henkilo.types';
 
 type MfaSetupResponse = {
@@ -100,6 +100,14 @@ export type PutHaettuKayttooikeusryhmaRequest = {
     };
 };
 
+export type PostKayttooikeusAnomusRequest = {
+    organisaatioOrRyhmaOid: string;
+    email: string;
+    perustelut: string;
+    kayttooikeusRyhmaIds: number[];
+    anojaOid: string;
+};
+
 type PostSalasananVaihtoRequest = {
     loginToken: string;
     newPassword: string;
@@ -158,6 +166,9 @@ export const kayttooikeusApi = createApi({
         'allowedKayttooikeusryhmasForOrganisation',
         'palvelut',
         'palvelukayttoooikeudet',
+        'kayttooikeusanomukset',
+        'kayttooikeusryhma',
+        'kayttooikeusryhmamyontoviite',
         'kayttooikeusryhmat',
         'organisaatioryhmat',
         'rootorganisation',
@@ -354,15 +365,7 @@ export const kayttooikeusApi = createApi({
                 method: 'PUT',
                 body,
             }),
-            async onQueryStarted({ henkiloOid }, { dispatch, queryFulfilled }) {
-                try {
-                    await queryFulfilled;
-                    dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(henkiloOid));
-                } catch (_err) {
-                    //
-                }
-            },
-            invalidatesTags: ['haetutKayttooikeusryhmat'],
+            invalidatesTags: ['haetutKayttooikeusryhmat', 'kayttooikeusanomukset', 'henkilonkayttooikeusryhmat'],
         }),
         postSalasananVaihto: builder.mutation<CasLoginRedirectParams, PostSalasananVaihtoRequest>({
             query: (body) => ({
@@ -418,6 +421,30 @@ export const kayttooikeusApi = createApi({
             query: (palvelu) => `kayttooikeus/${palvelu}`,
             providesTags: ['palvelukayttoooikeudet'],
         }),
+        postKayttooikeusAnomus: builder.mutation<void, PostKayttooikeusAnomusRequest>({
+            query: (body) => ({ url: `kayttooikeusanomus/${body.anojaOid}`, method: 'POST', body }),
+            invalidatesTags: ['kayttooikeusanomukset', 'haetutKayttooikeusryhmat'],
+        }),
+        putPeruKayttooikeusAnomus: builder.mutation<void, number>({
+            query: (body) => ({
+                url: `kayttooikeusanomus/peruminen/currentuser`,
+                method: 'PUT',
+                body: String(body),
+            }),
+            invalidatesTags: ['kayttooikeusanomukset', 'haetutKayttooikeusryhmat'],
+        }),
+        getKayttooikeusAnomuksetForHenkilo: builder.query<HaettuKayttooikeusryhma[], string>({
+            query: (oid) => `kayttooikeusanomus/${oid}`,
+            providesTags: ['kayttooikeusanomukset'],
+        }),
+        getKayttooikeusryhma: builder.query<Kayttooikeusryhma, string>({
+            query: (id) => `kayttooikeusryhma/${id}?passiiviset=true`,
+            providesTags: ['kayttooikeusryhma'],
+        }),
+        getKayttooikeusryhmaMyontoviite: builder.query<Kayttooikeusryhma[], string>({
+            query: (id) => `kayttooikeusryhma/${id}/sallitut`,
+            providesTags: ['kayttooikeusryhmamyontoviite'],
+        }),
         getKayttooikeusryhmas: builder.query<
             Kayttooikeusryhma[],
             { passiiviset: boolean; palvelu?: string; kayttooikeus?: string }
@@ -435,11 +462,39 @@ export const kayttooikeusApi = createApi({
         }),
         postKayttooikeusryhma: builder.mutation<void, KayttooikeusryhmaRequest>({
             query: (body) => ({ url: 'kayttooikeusryhma', method: 'POST', body }),
-            invalidatesTags: ['kayttooikeusryhmat', 'kayttooikeusryhmaroolit'],
+            invalidatesTags: [
+                'kayttooikeusryhma',
+                'kayttooikeusryhmat',
+                'kayttooikeusryhmaroolit',
+                'kayttooikeusryhmamyontoviite',
+            ],
         }),
         putKayttooikeusryhma: builder.mutation<void, { id: string; body: KayttooikeusryhmaRequest }>({
             query: ({ id, body }) => ({ url: `kayttooikeusryhma/${id}`, method: 'PUT', body }),
-            invalidatesTags: ['kayttooikeusryhmat', 'kayttooikeusryhmaroolit'],
+            invalidatesTags: [
+                'kayttooikeusryhma',
+                'kayttooikeusryhmat',
+                'kayttooikeusryhmaroolit',
+                'kayttooikeusryhmamyontoviite',
+            ],
+        }),
+        putAktivoiKayttooikeusryhma: builder.mutation<void, string>({
+            query: (id) => ({ url: `kayttooikeusryhma/${id}/aktivoi`, method: 'PUT' }),
+            invalidatesTags: [
+                'kayttooikeusryhma',
+                'kayttooikeusryhmat',
+                'kayttooikeusryhmaroolit',
+                'kayttooikeusryhmamyontoviite',
+            ],
+        }),
+        putPassivoiKayttooikeusryhma: builder.mutation<void, string>({
+            query: (id) => ({ url: `kayttooikeusryhma/${id}/passivoi`, method: 'PUT' }),
+            invalidatesTags: [
+                'kayttooikeusryhma',
+                'kayttooikeusryhmat',
+                'kayttooikeusryhmaroolit',
+                'kayttooikeusryhmamyontoviite',
+            ],
         }),
         getOrganisaatioRyhmat: builder.query<OrganisaatioWithChildren[], void>({
             query: () => `organisaatio?${new URLSearchParams({ tyyppi: 'RYHMA' }).toString()}`,
@@ -498,6 +553,13 @@ export const {
     useGetAllowedKayttooikeusryhmasForOrganisationQuery,
     useGetPalvelutQuery,
     useGetPalveluKayttooikeudetQuery,
+    usePostKayttooikeusAnomusMutation,
+    usePutPeruKayttooikeusAnomusMutation,
+    useGetKayttooikeusAnomuksetForHenkiloQuery,
+    usePutAktivoiKayttooikeusryhmaMutation,
+    usePutPassivoiKayttooikeusryhmaMutation,
+    useGetKayttooikeusryhmaQuery,
+    useGetKayttooikeusryhmaMyontoviiteQuery,
     useGetKayttooikeusryhmasQuery,
     usePutKayttooikeusryhmaMutation,
     usePostKayttooikeusryhmaMutation,

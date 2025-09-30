@@ -9,12 +9,7 @@ import CrossCircleIcon from '../icons/CrossCircleIcon';
 import WideBlueNotification from '../../common/notifications/WideBlueNotification';
 import KayttooikeusryhmaSelectModal from '../select/KayttooikeusryhmaSelectModal';
 import Loader from '../icons/Loader';
-import {
-    createKayttooikeusanomus,
-    fetchOrganisaatioKayttooikeusryhmat,
-    fetchAllKayttooikeusAnomusForHenkilo,
-} from '../../../actions/kayttooikeusryhma.actions';
-import { addGlobalNotification } from '../../../actions/notification.actions';
+import { fetchOrganisaatioKayttooikeusryhmat } from '../../../actions/kayttooikeusryhma.actions';
 import OrganisaatioSelectModal from '../select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import { LocalNotification } from '../Notification/LocalNotification';
@@ -29,10 +24,12 @@ import {
     useGetOmattiedotQuery,
     useGetOrganisaatioRyhmatQuery,
     useGetRootOrganisationQuery,
+    usePostKayttooikeusAnomusMutation,
 } from '../../../api/kayttooikeus';
 import { FastMenuList, SelectOption } from '../../../utilities/select';
 
 import './HenkiloViewCreateKayttooikeusanomus.css';
+import { add } from '../../../slices/toastSlice';
 
 type KayttooikeusryhmaSelection = {
     value: number;
@@ -57,6 +54,7 @@ export const HenkiloViewCreateKayttooikeusanomus = () => {
     const [emailOptions, setEmailOptions] = useState(createEmailOptions(henkilo));
     const { data: rootOrganisation, isLoading: isRootOrganisationLoading } = useGetRootOrganisationQuery();
     const { data: ryhmat } = useGetOrganisaatioRyhmatQuery();
+    const [postKayttooikeusAnomus] = usePostKayttooikeusAnomusMutation();
 
     const ryhmaOptions = useMemo(() => {
         return (ryhmat ?? [])
@@ -166,37 +164,33 @@ export const HenkiloViewCreateKayttooikeusanomus = () => {
     }
 
     async function _createKayttooikeusAnomus() {
-        try {
-            await dispatch<any>(
-                createKayttooikeusanomus({
-                    organisaatioOrRyhmaOid: selectedOrganisationOid,
-                    email: emailOptions.emailSelection,
-                    perustelut: perustelut,
-                    kayttooikeusRyhmaIds: kayttooikeusryhmaSelections.map((selection) => selection.value),
-                    anojaOid: omattiedot.oidHenkilo,
-                })
-            );
-            dispatch(
-                addGlobalNotification({
-                    key: 'OMATTIEDOT_ANOMUKSEN_TALLENNUS_OK',
-                    type: NOTIFICATIONTYPES.SUCCESS,
-                    title: L['OMATTIEDOT_ANOMUKSEN_TALLENNUS_OK'],
-                    autoClose: 5000,
-                })
-            );
-        } catch (error) {
-            dispatch(
-                addGlobalNotification({
-                    key: 'OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS',
-                    type: NOTIFICATIONTYPES.ERROR,
-                    title: L['OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS'],
-                    autoClose: 10000,
-                })
-            );
-            throw error;
-        }
-        _resetAnomusFormFields();
-        dispatch<any>(fetchAllKayttooikeusAnomusForHenkilo(omattiedot.oidHenkilo));
+        postKayttooikeusAnomus({
+            organisaatioOrRyhmaOid: selectedOrganisationOid,
+            email: emailOptions.emailSelection,
+            perustelut: perustelut,
+            kayttooikeusRyhmaIds: kayttooikeusryhmaSelections.map((selection) => selection.value),
+            anojaOid: omattiedot.oidHenkilo,
+        })
+            .unwrap()
+            .then(() => {
+                dispatch(
+                    add({
+                        id: `anomus-ok-${Math.random()}`,
+                        type: 'ok',
+                        header: L['OMATTIEDOT_ANOMUKSEN_TALLENNUS_OK'],
+                    })
+                );
+                _resetAnomusFormFields();
+            })
+            .catch(() => {
+                dispatch(
+                    add({
+                        id: `anomus-error-${Math.random()}`,
+                        type: 'error',
+                        header: L['OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS'],
+                    })
+                );
+            });
     }
 
     return henkilo.henkiloLoading ? (

@@ -4,9 +4,7 @@ import { SortingState } from '@tanstack/react-table';
 import '../../oph-table.css';
 import HaetutKayttooikeusRyhmatHakuForm from './HaetutKayttooikeusRyhmatHakuForm';
 import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
-import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
 import { KAYTTOOIKEUDENTILA } from '../../globals/KayttooikeudenTila';
-import { getEmptyKayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma.reducer';
 import { HenkilonNimi } from '../../types/domain/kayttooikeus/HenkilonNimi';
 import { useLocalisations } from '../../selectors';
 import { useAppDispatch } from '../../store';
@@ -15,10 +13,10 @@ import {
     useGetHaetutKayttooikeusryhmatInfiniteQuery,
     useGetOmattiedotQuery,
 } from '../../api/kayttooikeus';
-import { addGlobalNotification } from '../../actions/notification.actions';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { mainNavigation } from '../navigation/navigationconfigurations';
+import { add } from '../../slices/toastSlice';
 
 const AnomusPage = () => {
     const dispatch = useAppDispatch();
@@ -36,7 +34,6 @@ const AnomusPage = () => {
         kayttoOikeudenTilas: KAYTTOOIKEUDENTILA.ANOTTU,
     });
     const { data, isLoading, fetchNextPage, hasNextPage } = useGetHaetutKayttooikeusryhmatInfiniteQuery(parameters);
-    const result = data?.pages.flat();
 
     function onSubmit(criteria: Partial<GetHaetutKayttooikeusryhmatRequest>) {
         const newParameters = { ...parameters, ...criteria };
@@ -64,21 +61,17 @@ const AnomusPage = () => {
                 <HaetutKayttooikeusRyhmatHakuForm onSubmit={onSubmit} />
                 <HenkiloViewOpenKayttooikeusanomus
                     isOmattiedot={false}
-                    kayttooikeus={{
-                        ...getEmptyKayttooikeusRyhmaState(),
-                        kayttooikeusAnomus: result,
-                    }}
+                    anomukset={data?.pages.flat() ?? []}
                     updateSuccessHandler={(id, henkilo, kayttoOikeudenTila) => {
                         const notificationMessageKey =
                             kayttoOikeudenTila === KAYTTOOIKEUDENTILA.HYLATTY
                                 ? 'HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'
                                 : 'HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_SUCCESS';
                         dispatch(
-                            addGlobalNotification({
-                                key: `${henkilo.oid}_${id}_${notificationMessageKey}`,
-                                type: NOTIFICATIONTYPES.SUCCESS,
-                                title: createNotificationMessage(henkilo, notificationMessageKey),
-                                autoClose: 10000,
+                            add({
+                                id: `${henkilo.oid}_${id}_${notificationMessageKey}`,
+                                type: 'ok',
+                                header: createNotificationMessage(henkilo, notificationMessageKey),
                             })
                         );
                     }}
@@ -87,12 +80,13 @@ const AnomusPage = () => {
                             kayttoOikeudenTila === KAYTTOOIKEUDENTILA.HYLATTY
                                 ? 'HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_FAILURE'
                                 : 'HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_FAILURE';
-                        addGlobalNotification({
-                            key: `${henkilo.oid}_${id}_${notificationMessageKey}`,
-                            type: NOTIFICATIONTYPES.ERROR,
-                            title: createNotificationMessage(henkilo, notificationMessageKey),
-                            autoClose: 10000,
-                        });
+                        dispatch(
+                            add({
+                                id: `${henkilo.oid}_${id}_${notificationMessageKey}`,
+                                type: 'error',
+                                header: createNotificationMessage(henkilo, notificationMessageKey),
+                            })
+                        );
                     }}
                     fetchMoreSettings={{
                         isActive: !isLoading && hasNextPage,
