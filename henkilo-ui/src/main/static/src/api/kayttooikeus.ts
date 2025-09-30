@@ -34,7 +34,6 @@ import { TextGroupModify } from '../types/domain/kayttooikeus/textgroup.types';
 import { PalveluRooliModify } from '../types/domain/kayttooikeus/PalveluRooliModify.types';
 import { SallitutKayttajatyypit } from '../components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage';
 import { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
-import { Kayttooikeus } from '../actions/kayttooikeusryhma.actions';
 import { HenkiloOrg } from '../types/domain/oppijanumerorekisteri/henkilo.types';
 
 type MfaSetupResponse = {
@@ -60,7 +59,14 @@ type DeleteKayttooikeusryhmaRequest = {
 type PutKayttooikeusryhmaRequest = {
     henkiloOid: string;
     organisationOid: string;
-    body: Kayttooikeus[];
+    body: PutKayttooikeus[];
+};
+
+type PutKayttooikeus = {
+    id: number;
+    kayttoOikeudenTila: string;
+    alkupvm: string;
+    loppupvm: string;
 };
 
 export type AccessRightsReportRow = {
@@ -169,6 +175,7 @@ export const kayttooikeusApi = createApi({
         'kayttooikeusanomukset',
         'kayttooikeusryhma',
         'kayttooikeusryhmamyontoviite',
+        'kayttooikeusryhmaorganisaatiot',
         'kayttooikeusryhmat',
         'organisaatioryhmat',
         'rootorganisation',
@@ -456,6 +463,10 @@ export const kayttooikeusApi = createApi({
                 }).toString()}`,
             providesTags: ['kayttooikeusryhmat'],
         }),
+        getKayttooikeusryhmaOrganisaatiot: builder.query<Kayttooikeusryhma[], string>({
+            query: (oid) => `kayttooikeusryhma/organisaatio/${oid}`,
+            providesTags: ['kayttooikeusryhmaorganisaatiot'],
+        }),
         getKayttooikeusryhmaRoolis: builder.query<PalveluRooli[], string>({
             query: (ryhmaId) => `kayttooikeusryhma/${ryhmaId}/kayttooikeus`,
             providesTags: ['kayttooikeusryhmaroolit'],
@@ -467,6 +478,7 @@ export const kayttooikeusApi = createApi({
                 'kayttooikeusryhmat',
                 'kayttooikeusryhmaroolit',
                 'kayttooikeusryhmamyontoviite',
+                'kayttooikeusryhmaorganisaatiot',
             ],
         }),
         putKayttooikeusryhma: builder.mutation<void, { id: string; body: KayttooikeusryhmaRequest }>({
@@ -476,6 +488,7 @@ export const kayttooikeusApi = createApi({
                 'kayttooikeusryhmat',
                 'kayttooikeusryhmaroolit',
                 'kayttooikeusryhmamyontoviite',
+                'kayttooikeusryhmaorganisaatiot',
             ],
         }),
         putAktivoiKayttooikeusryhma: builder.mutation<void, string>({
@@ -485,6 +498,7 @@ export const kayttooikeusApi = createApi({
                 'kayttooikeusryhmat',
                 'kayttooikeusryhmaroolit',
                 'kayttooikeusryhmamyontoviite',
+                'kayttooikeusryhmaorganisaatiot',
             ],
         }),
         putPassivoiKayttooikeusryhma: builder.mutation<void, string>({
@@ -494,6 +508,7 @@ export const kayttooikeusApi = createApi({
                 'kayttooikeusryhmat',
                 'kayttooikeusryhmaroolit',
                 'kayttooikeusryhmamyontoviite',
+                'kayttooikeusryhmaorganisaatiot',
             ],
         }),
         getOrganisaatioRyhmat: builder.query<OrganisaatioWithChildren[], void>({
@@ -559,6 +574,7 @@ export const {
     usePutAktivoiKayttooikeusryhmaMutation,
     usePutPassivoiKayttooikeusryhmaMutation,
     useGetKayttooikeusryhmaQuery,
+    useGetKayttooikeusryhmaOrganisaatiotQuery,
     useGetKayttooikeusryhmaMyontoviiteQuery,
     useGetKayttooikeusryhmasQuery,
     usePutKayttooikeusryhmaMutation,

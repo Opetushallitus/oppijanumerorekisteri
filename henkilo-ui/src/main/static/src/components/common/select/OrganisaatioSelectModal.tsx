@@ -133,7 +133,8 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
                 validationMessages={{}}
                 buttonAction={() => setModalVisible(true)}
             >
-                <SpinnerInButton show={isDisabled} /> {L['OMATTIEDOT_VALITSE_ORGANISAATIO']}
+                <SpinnerInButton show={!(props.organisaatiot ?? omattiedotOrganisations)?.length} />{' '}
+                {L['OMATTIEDOT_VALITSE_ORGANISAATIO']}
             </ValidationMessageButton>
             {isModalVisible && (
                 <OphModal onClose={() => setModalVisible(false)}>

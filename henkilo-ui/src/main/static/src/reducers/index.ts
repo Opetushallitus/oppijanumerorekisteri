@@ -3,7 +3,6 @@ import { henkilo } from './henkilo.reducer';
 import { prequels } from './prequels.reducer';
 import omattiedot from './omattiedot.reducer';
 import { locale } from './locale.reducer';
-import { OrganisaatioKayttooikeusryhmat } from './organisaatiokayttooikeusryhmat.reducer';
 import { notifications } from './notifications.reducer';
 import { notificationList } from './notification.reducer';
 
@@ -13,7 +12,6 @@ const rootReducer = {
     prequels,
     omattiedot,
     locale,
-    OrganisaatioKayttooikeusryhmat,
     notificationList,
     notifications,
 };
