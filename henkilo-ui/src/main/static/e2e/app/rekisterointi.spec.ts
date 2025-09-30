@@ -14,7 +14,7 @@ test.describe('virkailijan rekisteröinti', () => {
         });
 
         await page.goto('/henkilo-ui/kayttaja/rekisteroidy?temporaryKutsuToken=tokenpoken');
-        await page.locator('button#rekisteroidyPage').click();
+        await page.locator('button').click();
 
         await expect(page.getByRole('button', { name: 'Tallenna ja jatka virkailijan Opintopolkuun' })).toBeDisabled();
 
