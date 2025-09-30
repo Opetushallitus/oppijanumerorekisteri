@@ -13,8 +13,6 @@ const HylkaaButton = ({ L, hylkaaAction, disabled }: Props) => (
         action={hylkaaAction}
         confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA_CONFIRM']}
         normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA']}
-        key="hylkaa"
-        id="hylkaa"
         disabled={disabled}
     />
 );

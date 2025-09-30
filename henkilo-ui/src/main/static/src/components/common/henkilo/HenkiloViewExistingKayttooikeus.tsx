@@ -5,19 +5,16 @@ import DatePicker from 'react-datepicker';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, SortingState } from '@tanstack/react-table';
 
 import { useAppDispatch, type RootState } from '../../../store';
-import Notifications from '../notifications/Notifications';
 import SuljeButton from './buttons/SuljeButton';
 import StaticUtils from '../StaticUtils';
 import HaeJatkoaikaaButton from '../../omattiedot/HaeJatkoaikaaButton';
 import PropertySingleton from '../../../globals/PropertySingleton';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
-import { removeNotification } from '../../../actions/notifications.actions';
 import { createEmailOptions } from '../../../utilities/henkilo.util';
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 import { localizeTextGroup } from '../../../utilities/localisation.util';
-import { NotificationsState } from '../../../reducers/notifications.reducer';
 import { useKayttooikeusryhmas, useLocalisations } from '../../../selectors';
 import OphTable from '../../OphTable';
 import {
@@ -54,7 +51,6 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     const [postKayttooikeusAnomus] = usePostKayttooikeusAnomusMutation();
     const dispatch = useAppDispatch();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
-    const notifications = useSelector<RootState, NotificationsState>((state) => state.notifications);
     const { data: organisations, isSuccess } = useGetOrganisationsQuery();
     const { data: anomukset } = useGetKayttooikeusAnomuksetForHenkiloQuery(props.oidHenkilo);
     const [dates, setDates] = useState<Record<number, { alkupvm: Moment; loppupvm: Moment }>>([]);
@@ -233,7 +229,6 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                         }
                         normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA']}
                         confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA_CONFIRM']}
-                        id={`myonna-${kayttooikeus.ryhmaId}`}
                     />
                 </div>
             </div>
@@ -367,11 +362,6 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
         <div ref={props.existingKayttooikeusRef} className="henkiloViewUserContentWrapper">
             {accessRight && <AccessRightDetails {...accessRight} />}
             <h2>{L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
-            <Notifications
-                notifications={notifications.existingKayttooikeus}
-                L={L}
-                closeAction={(status, id) => dispatch(removeNotification(status, 'existingKayttooikeus', id))}
-            />
             <OphTable table={table} isLoading={false} />
         </div>
     );

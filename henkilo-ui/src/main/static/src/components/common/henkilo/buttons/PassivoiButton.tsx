@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { useAppDispatch, type RootState } from '../../../../store';
+import { type RootState } from '../../../../store';
 import ConfirmButton from '../../button/ConfirmButton';
 import Button from '../../button/Button';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { Localisations } from '../../../../types/localisation.type';
 import { usePassivoiHenkiloMutation } from '../../../../api/oppijanumerorekisteri';
-import { PASSIVOI_HENKILO_FAILURE } from '../../../../actions/actiontypes';
+import { ButtonNotification } from '../../button/NotificationButton';
 
 type OwnProps = {
     disabled?: boolean;
@@ -21,7 +21,7 @@ type Props = OwnProps & StateProps;
 
 const PassivoiButton = (props: Props) => {
     const [passivoiHenkilo] = usePassivoiHenkiloMutation();
-    const dispatch = useAppDispatch();
+    const [notification, setNotification] = useState<ButtonNotification>();
     return props.henkilo.henkilo.passivoitu ? (
         <Button key="passivoi" disabled={!!props.henkilo.henkilo.passivoitu}>
             {props.L['PASSIVOI_PASSIVOITU']}
@@ -33,21 +33,17 @@ const PassivoiButton = (props: Props) => {
                 passivoiHenkilo(props.henkilo.henkilo.oidHenkilo)
                     .unwrap()
                     .catch(() =>
-                        dispatch({
-                            type: PASSIVOI_HENKILO_FAILURE,
-                            receivedAt: Date.now(),
-                            buttonNotification: {
-                                position: 'passivoi',
-                                notL10nMessage: 'PASSIVOI_ERROR_TOPIC',
-                                notL10nText: 'PASSIVOI_ERROR_TEXT',
-                            },
+                        setNotification({
+                            notL10nMessage: 'PASSIVOI_ERROR_TOPIC',
+                            notL10nText: 'PASSIVOI_ERROR_TEXT',
                         })
                     )
             }
             normalLabel={props.L['PASSIVOI_LINKKI']}
             confirmLabel={props.L['PASSIVOI_LINKKI_CONFIRM']}
-            id="passivoi"
             disabled={!!props.disabled}
+            notification={notification}
+            removeNotification={() => setNotification(undefined)}
         />
     );
 };

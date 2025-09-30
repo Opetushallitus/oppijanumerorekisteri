@@ -7,8 +7,6 @@ const SuljeButton = ({ L, suljeAction, disabled }) => (
         action={suljeAction}
         normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_SULJE']}
         confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_SULJE_CONFIRM']}
-        key="sulje"
-        id="sulje"
         disabled={disabled}
     />
 );

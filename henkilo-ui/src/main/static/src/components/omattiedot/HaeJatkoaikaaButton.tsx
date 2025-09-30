@@ -13,7 +13,6 @@ const HaeJatkoaikaaButton = ({ haeJatkoaikaaAction, disabled }: OwnProps) => {
     return (
         <ConfirmButton
             action={haeJatkoaikaaAction}
-            id="haeJatkoaikaaButton"
             normalLabel={L['OMATTIEDOT_HAE_JATKOAIKAA']}
             confirmLabel={L['OMATTIEDOT_HAE_JATKOAIKAA_CONFIRM']}
             disabled={disabled}

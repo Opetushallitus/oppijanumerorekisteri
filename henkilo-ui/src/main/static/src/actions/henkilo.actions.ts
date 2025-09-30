@@ -15,9 +15,6 @@ import {
     UPDATE_KAYTTAJATIETO_REQUEST,
     UPDATE_KAYTTAJATIETO_SUCCESS,
     UPDATE_KAYTTAJATIETO_FAILURE,
-    VTJ_OVERRIDE_HENKILO_REQUEST,
-    VTJ_OVERRIDE_HENKILO_SUCCESS,
-    VTJ_OVERRIDE_HENKILO_FAILURE,
     CLEAR_HENKILO,
     VTJ_OVERRIDE_YKSILOIMATON_HENKILO_REQUEST,
     VTJ_OVERRIDE_YKSILOIMATON_HENKILO_SUCCESS,
@@ -162,37 +159,6 @@ export const updateAndRefetchKayttajatieto =
             dispatch(requestKayttajatietoUpdateFailure());
         }
     };
-
-// Henkikön tietojen yliajo yksilöintitiedoille niille, jotka henkilöille jotka on yksilöity
-const requestOverrideHenkiloVtjData = (oid) => ({
-    type: VTJ_OVERRIDE_HENKILO_REQUEST,
-    oid,
-});
-const receiveOverrideHenkiloVtjData = (oid) => ({
-    type: VTJ_OVERRIDE_HENKILO_SUCCESS,
-    oid,
-    receivedAt: Date.now(),
-});
-const errorOverrideHenkiloVtjData = () => ({
-    type: VTJ_OVERRIDE_HENKILO_FAILURE,
-    receivedAt: Date.now(),
-    buttonNotification: {
-        position: 'vtjOverride',
-        notL10nMessage: 'VTJ_OVERRIDE_ERROR_TOPIC',
-        notL10nText: 'VTJ_OVERRIDE_ERROR_TEXT',
-    },
-});
-export const overrideHenkiloVtjData = (oid) => async (dispatch: AppDispatch) => {
-    dispatch(requestOverrideHenkiloVtjData(oid));
-    const url = urls.url('oppijanumerorekisteri-service.henkilo.yksilointitiedot', oid);
-    try {
-        await http.put(url);
-        dispatch(receiveOverrideHenkiloVtjData(oid));
-    } catch (error) {
-        dispatch(errorOverrideHenkiloVtjData());
-        throw error;
-    }
-};
 
 // Henkilön tietojen yliajo yksilöintitiedoilla niille henkilöille, joiden VTJ-yksilöinti on epäonnistunut
 const requestOverrideYksiloimatonHenkilo = (oid) => ({

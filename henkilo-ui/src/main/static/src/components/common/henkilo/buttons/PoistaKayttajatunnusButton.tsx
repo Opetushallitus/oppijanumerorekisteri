@@ -22,7 +22,6 @@ const PoistaKayttajatunnusButton = ({ henkiloOid, disabled }: OwnProps) => {
             }}
             normalLabel={L['POISTAKAYTTAJATUNNUS_LINKKI']}
             confirmLabel={L['POISTAKAYTTAJATUNNUS_LINKKI_CONFIRM']}
-            id="poistaKayttajatunnus"
             disabled={!!disabled}
         />
     );

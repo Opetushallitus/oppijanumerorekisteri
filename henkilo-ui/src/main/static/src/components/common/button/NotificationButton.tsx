@@ -1,47 +1,24 @@
 import React, { ReactNode } from 'react';
-import { connect } from 'react-redux';
 
-import type { RootState } from '../../../store';
-import type { Localisations } from '../../../types/localisation.type';
-import type { Notification } from '../../../reducers/notifications.reducer';
-import { removeNotification } from '../../../actions/notifications.actions';
 import Button from './Button';
+import { useLocalisations } from '../../../selectors';
 
 import './NotificationButton.css';
 
 export type ButtonNotification = { notL10nMessage: string; notL10nText?: string };
 
 type OwnProps = {
-    id: string;
     action?: () => void;
     disabled?: boolean;
     confirm?: boolean;
-    localNotification?: ButtonNotification;
-    removeLocalNotification?: () => void;
+    notification?: ButtonNotification;
+    removeNotification?: () => void;
     children?: ReactNode;
 };
 
-type StateProps = {
-    notifications: Notification[];
-    L: Localisations;
-};
-
-type DispatchProps = {
-    removeNotification: (status: string, group: string, id: string) => void;
-};
-
-type Props = OwnProps & StateProps & DispatchProps;
-
-const NotificationButton = (props: Props) => {
-    const { id, L, localNotification, notifications, removeLocalNotification, removeNotification } = props;
-    const notification = localNotification ?? notifications.filter((item) => item.id === id)[0];
-
-    const hide = () => {
-        if (removeLocalNotification) {
-            removeLocalNotification();
-        }
-        removeNotification('error', 'buttonNotifications', id);
-    };
+const NotificationButton = (props: OwnProps) => {
+    const { L } = useLocalisations();
+    const { notification, removeNotification } = props;
 
     return (
         <div className="popup-button" style={{ position: 'relative' }}>
@@ -53,7 +30,7 @@ const NotificationButton = (props: Props) => {
                         type="button"
                         title="Close"
                         aria-label="Close"
-                        onClick={hide}
+                        onClick={() => removeNotification && removeNotification()}
                     >
                         <span aria-hidden="true">×</span>
                     </button>
@@ -66,11 +43,4 @@ const NotificationButton = (props: Props) => {
     );
 };
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    notifications: state.notifications.buttonNotifications,
-    L: state.l10n.localisations[state.locale],
-});
-
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, { removeNotification })(
-    NotificationButton
-);
+export default NotificationButton;

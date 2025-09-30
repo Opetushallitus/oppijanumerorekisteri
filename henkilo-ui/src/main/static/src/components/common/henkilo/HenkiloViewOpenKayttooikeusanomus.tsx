@@ -163,7 +163,6 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                         action={() => handleAnomus(haettuKayttooikeusRyhma.id, KAYTTOOIKEUDENTILA.MYONNETTY, henkilo)}
                         normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA']}
                         confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA_CONFIRM']}
-                        id={`myonna-${haettuKayttooikeusRyhma.id}`}
                         disabled={
                             !!handledAnomusIds.find((id) => id === haettuKayttooikeusRyhma.id) ||
                             !dates?.[haettuKayttooikeusRyhma.id]?.loppupvm

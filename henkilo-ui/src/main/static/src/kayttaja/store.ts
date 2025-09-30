@@ -6,7 +6,6 @@ import { oppijanumerorekisteriApi } from '../api/oppijanumerorekisteri';
 import { lokalisointiApi } from '../api/lokalisointi';
 import l10n from '../reducers/l10n.reducer';
 import { koodistoApi } from '../api/koodisto';
-import { notifications } from '../reducers/notifications.reducer';
 import { notificationList } from '../reducers/notification.reducer';
 import { henkilo } from '../reducers/henkilo.reducer';
 import { locale } from '../reducers/locale.reducer';
@@ -18,7 +17,6 @@ const rootReducer = {
     l10n,
     locale,
     henkilo,
-    notifications,
     notificationList,
 };
 

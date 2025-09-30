@@ -231,9 +231,8 @@ export const RekisteroidyPage = (props: OwnProps) => {
                             <NotificationButton
                                 action={createHenkilo}
                                 disabled={!validate(henkilo)}
-                                id="rekisteroidyPage"
-                                localNotification={notification}
-                                removeLocalNotification={() => setNotification(undefined)}
+                                notification={notification}
+                                removeNotification={() => setNotification(undefined)}
                             >
                                 {L['REKISTEROIDY_TALLENNA_NAPPI']}
                             </NotificationButton>
@@ -265,7 +264,7 @@ export const RekisteroidyPage = (props: OwnProps) => {
                             {L['REKISTEROIDY_PRIVACY_POLICY']}
                         </ReactMarkdown>
                     </div>
-                    <NotificationButton action={() => setPrivacyPolicySeen(true)} id="rekisteroidyPage">
+                    <NotificationButton action={() => setPrivacyPolicySeen(true)}>
                         {L['REKISTEROIDY_ACCEPT_PRIVACY_POLICY']}
                     </NotificationButton>
                 </div>

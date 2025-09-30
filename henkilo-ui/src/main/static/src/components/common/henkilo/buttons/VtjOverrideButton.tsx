@@ -1,44 +1,42 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+
 import type { RootState } from '../../../../store';
 import ConfirmButton from '../../button/ConfirmButton';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
-import { Localisations } from '../../../../types/localisation.type';
-import { overrideHenkiloVtjData } from '../../../../actions/henkilo.actions';
+import { useLocalisations } from '../../../../selectors';
+import { usePutYliajaTiedotVtjMutation } from '../../../../api/oppijanumerorekisteri';
+import { ButtonNotification } from '../../button/NotificationButton';
 
 type OwnProps = {
     disabled?: boolean;
 };
 
-type StateProps = {
-    henkilo: HenkiloState;
-    L: Localisations;
-};
-
-type DispatchProps = {
-    overrideHenkiloVtjData: (oid: string) => void;
-};
-
-type Props = OwnProps & StateProps & DispatchProps;
-
-const VtjOverrideButton = (props: Props) => {
-    return props.henkilo.henkilo.yksiloityVTJ && props.henkilo.henkilo.hetu ? (
+const VtjOverrideButton = ({ disabled }: OwnProps) => {
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { L } = useLocalisations();
+    const [notification, setNotification] = useState<ButtonNotification>();
+    const [yliajaTiedotVtj] = usePutYliajaTiedotVtjMutation();
+    return henkilo.henkilo.yksiloityVTJ && henkilo.henkilo.hetu ? (
         <ConfirmButton
             key="vtjOverride"
-            action={() => props.overrideHenkiloVtjData(props.henkilo.henkilo.oidHenkilo)}
-            normalLabel={props.L['VTJ_OVERRIDE_LINKKI']}
-            confirmLabel={props.L['VTJ_OVERRIDE_LINKKI_CONFIRM']}
-            id="vtjOverride"
-            disabled={props.disabled}
+            action={() =>
+                yliajaTiedotVtj(henkilo.henkilo.oidHenkilo)
+                    .unwrap()
+                    .catch(() =>
+                        setNotification({
+                            notL10nMessage: 'VTJ_OVERRIDE_ERROR_TOPIC',
+                            notL10nText: 'VTJ_OVERRIDE_ERROR_TEXT',
+                        })
+                    )
+            }
+            normalLabel={L['VTJ_OVERRIDE_LINKKI']}
+            confirmLabel={L['VTJ_OVERRIDE_LINKKI_CONFIRM']}
+            disabled={disabled}
+            notification={notification}
+            removeNotification={() => setNotification(undefined)}
         />
     ) : null;
 };
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    L: state.l10n.localisations[state.locale],
-    henkilo: state.henkilo,
-});
-
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    overrideHenkiloVtjData,
-})(VtjOverrideButton);
+export default VtjOverrideButton;

@@ -20,7 +20,6 @@ import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
 import { http } from '../../../../http';
 import { updateAnomusilmoitus } from '../../../../actions/omattiedot.actions';
 import PropertySingleton from '../../../../globals/PropertySingleton';
-import { resetButtonNotifications } from '../../../../actions/notifications.actions';
 import { View } from '../../../../types/constants';
 import { copy } from '../../../../utilities/copy';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
@@ -53,7 +52,6 @@ export const UserContentContainer = ({ oidHenkilo, view }: OwnProps) => {
     }, [henkilo, omattiedot]);
 
     function _edit() {
-        dispatch(resetButtonNotifications());
         setReadOnly(false);
     }
 

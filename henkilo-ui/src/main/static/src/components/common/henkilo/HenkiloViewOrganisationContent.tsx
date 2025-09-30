@@ -95,7 +95,6 @@ export const HenkiloViewOrganisationContent = () => {
                                         action={() => passivoiHenkiloOrganisation(values.id)}
                                         confirmLabel={L['HENKILO_ORG_PASSIVOI_CONFIRM']}
                                         normalLabel={L['HENKILO_ORG_PASSIVOI']}
-                                        id={values.id}
                                     />
                                 ) : (
                                     <Button disabled>{L['HENKILO_ORG_PASSIVOITU']}</Button>
