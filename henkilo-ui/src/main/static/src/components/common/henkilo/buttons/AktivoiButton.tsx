@@ -1,14 +1,15 @@
 import React from 'react';
-import { Localisations } from '../../../../types/localisation.type';
+
 import ConfirmButton from '../../button/ConfirmButton';
 import { useAktivoiHenkiloMutation } from '../../../../api/oppijanumerorekisteri';
+import { useLocalisations } from '../../../../selectors';
 
 type Props = {
-    L: Localisations;
     oidHenkilo: string;
 };
 
-const AktivoiButton = ({ L, oidHenkilo }: Props) => {
+const AktivoiButton = ({ oidHenkilo }: Props) => {
+    const { L } = useLocalisations();
     const [aktivoiHenkilo] = useAktivoiHenkiloMutation();
     return (
         <ConfirmButton

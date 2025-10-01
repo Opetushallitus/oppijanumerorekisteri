@@ -1,12 +1,12 @@
-import React, { SyntheticEvent } from 'react';
-import { connect } from 'react-redux';
+import React, { SyntheticEvent, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+
 import type { RootState } from '../../../../store';
 import AbstractUserContent from './AbstractUserContent';
 import Sukunimi from '../labelvalues/Sukunimi';
 import EditButton from '../buttons/EditButton';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
-import { Localisations } from '../../../../types/localisation.type';
 import { fetchKayttajatieto } from '../../../../actions/henkilo.actions';
 import Loader from '../../icons/Loader';
 import Oid from '../labelvalues/Oid';
@@ -15,6 +15,7 @@ import PasswordButton from '../buttons/PasswordButton';
 import PassivoiButton from '../buttons/PassivoiButton';
 import AktivoiButton from '../buttons/AktivoiButton';
 import PoistaKayttajatunnusButton from '../buttons/PoistaKayttajatunnusButton';
+import { useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
 
 type OwnProps = {
     readOnly: boolean;
@@ -28,92 +29,70 @@ type OwnProps = {
     isValidForm: boolean;
 };
 
-type StateProps = {
-    henkilo: HenkiloState;
-    L: Localisations;
-    isAdmin: boolean;
-};
+const PalveluUserContent = (props: OwnProps) => {
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data: omattiedot } = useGetOmattiedotQuery();
 
-type DispatchProps = {
-    fetchKayttajatieto: (oid: string) => void;
-};
-
-type Props = OwnProps & StateProps & DispatchProps;
-
-class PalveluUserContent extends React.Component<Props> {
-    componentDidMount() {
-        if (!this.props.henkilo.kayttajatieto?.username && !this.props.henkilo.kayttajatietoLoading) {
-            this.props.fetchKayttajatieto(this.props.oidHenkilo);
+    useEffect(() => {
+        if (!henkilo.kayttajatieto?.username && !henkilo.kayttajatietoLoading) {
+            fetchKayttajatieto(props.oidHenkilo);
         }
-    }
+    }, []);
 
-    render() {
-        return this.props.henkilo.henkiloLoading || this.props.henkilo.kayttajatietoLoading ? (
-            <Loader />
-        ) : (
-            <AbstractUserContent
-                readOnly={this.props.readOnly}
-                discardAction={this.props.discardAction}
-                updateAction={this.props.updateAction}
-                basicInfo={this.createBasicInfo()}
-                readOnlyButtons={this.createReadOnlyButtons()}
-                isValidForm={this.props.isValidForm}
-            />
-        );
-    }
-
-    createBasicInfo = () => {
-        const props = {
-            readOnly: this.props.readOnly,
-            updateModelFieldAction: this.props.updateModelAction,
-            updateDateFieldAction: this.props.updateDateAction,
-            henkiloUpdate: this.props.henkiloUpdate,
-        };
-
-        // Basic info box content
+    const createBasicInfo = () => {
         return [
             [<Sukunimi key="palveluuser-sukunimi" autofocus={true} label="HENKILO_PALVELUN_NIMI" {...props} />],
             [
-                <Oid key="palveluuser-oid" {...props} />,
+                <Oid
+                    key="palveluuser-oid"
+                    readOnly={props.readOnly}
+                    updateModelFieldAction={props.updateModelAction}
+                />,
                 <Kayttajanimi
                     key="palveluuser-kayttajanimi"
-                    disabled={!this.props.isAdmin && !!this.props.henkilo.kayttajatieto?.username}
-                    {...props}
+                    disabled={!omattiedot?.isAdmin && !!henkilo.kayttajatieto?.username}
+                    readOnly={props.readOnly}
+                    updateModelFieldAction={props.updateModelAction}
                 />,
             ],
         ];
     };
 
     // Basic info default buttons
-    createReadOnlyButtons = () => {
-        const duplicate = this.props.henkilo.henkilo.duplicate;
-        const passivoitu = this.props.henkilo.henkilo.passivoitu;
-        const kayttajatunnukseton = !this.props.henkilo.kayttajatieto?.username;
+    const createReadOnlyButtons = () => {
+        const duplicate = henkilo.henkilo.duplicate;
+        const passivoitu = henkilo.henkilo.passivoitu;
+        const kayttajatunnukseton = !henkilo.kayttajatieto?.username;
         return [
-            <EditButton key="editbutton" editAction={this.props.edit} disabled={duplicate || passivoitu} />,
-            this.props.isAdmin ? <PassivoiButton disabled={duplicate || passivoitu} /> : null,
-            this.props.isAdmin && this.props.henkilo.henkilo.passivoitu ? (
-                <AktivoiButton L={this.props.L} oidHenkilo={this.props.henkilo.henkilo.oidHenkilo} />
+            <EditButton key="editbutton" editAction={props.edit} disabled={duplicate || passivoitu} />,
+            omattiedot?.isAdmin ? <PassivoiButton disabled={duplicate || passivoitu} /> : null,
+            omattiedot?.isAdmin && henkilo.henkilo.passivoitu ? (
+                <AktivoiButton oidHenkilo={henkilo.henkilo.oidHenkilo} />
             ) : null,
-            !kayttajatunnukseton && this.props.isAdmin ? (
-                <PoistaKayttajatunnusButton henkiloOid={this.props.henkilo.henkilo.oidHenkilo} />
+            !kayttajatunnukseton && omattiedot.isAdmin ? (
+                <PoistaKayttajatunnusButton henkiloOid={henkilo.henkilo.oidHenkilo} />
             ) : null,
             <PasswordButton
                 key="passwordbutton"
-                oidHenkilo={this.props.oidHenkilo}
+                oidHenkilo={props.oidHenkilo}
                 styles={{ top: '3rem', left: '0', width: '18rem' }}
                 disabled={duplicate || passivoitu || kayttajatunnukseton}
             />,
         ];
     };
-}
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    henkilo: state.henkilo,
-    L: state.l10n.localisations[state.locale],
-    isAdmin: state.omattiedot.isAdmin,
-});
+    return henkilo.henkiloLoading || henkilo.kayttajatietoLoading ? (
+        <Loader />
+    ) : (
+        <AbstractUserContent
+            readOnly={props.readOnly}
+            discardAction={props.discardAction}
+            updateAction={props.updateAction}
+            basicInfo={createBasicInfo()}
+            readOnlyButtons={createReadOnlyButtons()}
+            isValidForm={props.isValidForm}
+        />
+    );
+};
 
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    fetchKayttajatieto,
-})(PalveluUserContent);
+export default PalveluUserContent;

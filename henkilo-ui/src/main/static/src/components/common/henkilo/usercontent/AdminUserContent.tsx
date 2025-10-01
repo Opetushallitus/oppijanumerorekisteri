@@ -127,7 +127,7 @@ function AdminUserContent(props: Props) {
             ) : null;
         const aktivoiButton =
             passivoitu && hasHenkiloReadUpdateRights ? (
-                <AktivoiButton L={props.L} oidHenkilo={props.henkilo.henkilo.oidHenkilo} />
+                <AktivoiButton oidHenkilo={props.henkilo.henkilo.oidHenkilo} />
             ) : null;
         const hakaButton = (
             <HakaButton oidHenkilo={props.oidHenkilo} styles={buttonPopupStyles} disabled={duplicate || passivoitu} />
