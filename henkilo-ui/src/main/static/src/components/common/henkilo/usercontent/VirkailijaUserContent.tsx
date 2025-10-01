@@ -1,6 +1,6 @@
-import React, { SyntheticEvent } from 'react';
-import { connect } from 'react-redux';
-import type { RootState } from '../../../../store';
+import React, { SyntheticEvent, useMemo } from 'react';
+import { useSelector } from 'react-redux';
+
 import AbstractUserContent from './AbstractUserContent';
 import Sukunimi from '../labelvalues/Sukunimi';
 import Etunimet from '../labelvalues/Etunimet';
@@ -11,7 +11,6 @@ import Asiointikieli from '../labelvalues/Asiointikieli';
 import EditButton from '../buttons/EditButton';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
-import { Localisations } from '../../../../types/localisation.type';
 import Loader from '../../icons/Loader';
 import Kayttajanimi from '../labelvalues/Kayttajanimi';
 import LinkitetytHenkilot from '../labelvalues/LinkitetytHenkilot';
@@ -19,8 +18,9 @@ import MasterHenkilo from '../labelvalues/MasterHenkilo';
 import HakaButton from '../buttons/HakaButton';
 import PasswordButton from '../buttons/PasswordButton';
 import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
-import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
+import { useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
+import { RootState } from '../../../../store';
 
 type OwnProps = {
     readOnly: boolean;
@@ -35,16 +35,17 @@ type OwnProps = {
     isValidForm: boolean;
 };
 
-type StateProps = {
-    henkilo: HenkiloState;
-    L: Localisations;
-    isAdmin: boolean;
-    omattiedot: OmattiedotState;
-};
+function VirkailijaUserContent(props: OwnProps) {
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data: omattiedot } = useGetOmattiedotQuery();
 
-type Props = OwnProps & StateProps;
+    const hasHenkiloReadUpdateRights = useMemo(() => {
+        return hasAnyPalveluRooli(omattiedot?.organisaatiot, [
+            'OPPIJANUMEROREKISTERI_HENKILON_RU',
+            'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
+        ]);
+    }, [omattiedot]);
 
-function VirkailijaUserContent(props: Props) {
     function createBasicInfo() {
         const infoProps = {
             readOnly: props.readOnly,
@@ -75,13 +76,9 @@ function VirkailijaUserContent(props: Props) {
     }
 
     function createReadOnlyButtons() {
-        const duplicate = props.henkilo.henkilo.duplicate;
-        const passivoitu = props.henkilo.henkilo.passivoitu;
-        const kayttajatunnukseton = !props.henkilo.kayttajatieto?.username;
-        const hasHenkiloReadUpdateRights = hasAnyPalveluRooli(props.omattiedot.organisaatiot, [
-            'OPPIJANUMEROREKISTERI_HENKILON_RU',
-            'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
-        ]);
+        const duplicate = henkilo.henkilo.duplicate;
+        const passivoitu = henkilo.henkilo.passivoitu;
+        const kayttajatunnukseton = !henkilo.kayttajatieto?.username;
         const editButton = hasHenkiloReadUpdateRights ? (
             <EditButton editAction={props.edit} disabled={duplicate || passivoitu} />
         ) : null;
@@ -107,7 +104,7 @@ function VirkailijaUserContent(props: Props) {
 
         return [editButton, hakaButton, passwordButton];
     }
-    return props.henkilo.henkiloLoading || props.henkilo.kayttajatietoLoading ? (
+    return henkilo.henkiloLoading || henkilo.kayttajatietoLoading ? (
         <Loader />
     ) : (
         <AbstractUserContent
@@ -121,11 +118,4 @@ function VirkailijaUserContent(props: Props) {
     );
 }
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    henkilo: state.henkilo,
-    L: state.l10n.localisations[state.locale],
-    isAdmin: state.omattiedot.isAdmin,
-    omattiedot: state.omattiedot,
-});
-
-export default connect<StateProps, undefined, OwnProps, RootState>(mapStateToProps)(VirkailijaUserContent);
+export default VirkailijaUserContent;

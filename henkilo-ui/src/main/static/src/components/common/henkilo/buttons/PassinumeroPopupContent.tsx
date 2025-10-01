@@ -6,13 +6,14 @@ import { useGetPassinumerotQuery, useSetPassinumerotMutation } from '../../../..
 import { addGlobalNotification } from '../../../../actions/notification.actions';
 import './PassinumeroPopupContent.css';
 import { useAppDispatch } from '../../../../store';
+import { useLocalisations } from '../../../../selectors';
 
 type Props = {
     oid: string;
-    translate: (key: string) => string;
 };
 
-const PassinumeroPopupContent = ({ oid, translate }: Props) => {
+const PassinumeroPopupContent = ({ oid }: Props) => {
+    const { L } = useLocalisations();
     const dispatch = useAppDispatch();
     const {
         data: passinumerot = [],
@@ -29,11 +30,11 @@ const PassinumeroPopupContent = ({ oid, translate }: Props) => {
                 addGlobalNotification({
                     key: 'PASSINUMEROT_NETWORK_ERROR',
                     type: 'error',
-                    title: translate('PASSINUMEROT_NETWORK_ERROR'),
+                    title: L['PASSINUMEROT_NETWORK_ERROR'],
                 })
             );
         }
-    }, [readError, writeError, dispatch, translate]);
+    }, [readError, writeError, dispatch]);
 
     const {
         register,
@@ -67,11 +68,11 @@ const PassinumeroPopupContent = ({ oid, translate }: Props) => {
                     type="text"
                     className="oph-input passinumero-input"
                     aria-required="true"
-                    placeholder={translate('LISAA_PASSINUMERO_PLACEHOLDER')}
+                    placeholder={L['LISAA_PASSINUMERO_PLACEHOLDER']}
                     {...register('passinumero', { required: true })}
                 />
                 <Button action={handleSubmit(onSubmit)} disabled={!isValid || readError || writeError}>
-                    {translate('LISAA_PASSINUMERO')}
+                    {L['LISAA_PASSINUMERO']}
                 </Button>
             </form>
         </>

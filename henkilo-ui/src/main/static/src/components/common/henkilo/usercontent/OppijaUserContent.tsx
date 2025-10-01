@@ -1,5 +1,6 @@
-import React, { SyntheticEvent } from 'react';
-import { connect } from 'react-redux';
+import React, { SyntheticEvent, useMemo } from 'react';
+import { useSelector } from 'react-redux';
+
 import type { RootState } from '../../../../store';
 import AbstractUserContent from './AbstractUserContent';
 import Sukunimi from '../labelvalues/Sukunimi';
@@ -16,15 +17,13 @@ import EditButton from '../buttons/EditButton';
 import YksiloiHetutonButton from '../buttons/YksiloiHetutonButton';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
-import { Localisations } from '../../../../types/localisation.type';
-import { Locale } from '../../../../types/locale.type';
 import Loader from '../../icons/Loader';
 import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
-import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
 import LinkitetytHenkilot from '../labelvalues/LinkitetytHenkilot';
 import MasterHenkilo from '../labelvalues/MasterHenkilo';
 import Sukupuoli from '../labelvalues/Sukupuoli';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
+import { useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
 
 type OwnProps = {
     readOnly: boolean;
@@ -39,16 +38,24 @@ type OwnProps = {
     isValidForm: boolean;
 };
 
-type StateProps = {
-    henkilo: HenkiloState;
-    L: Localisations;
-    locale: Locale;
-    omattiedot: OmattiedotState;
-};
+function OppijaUserContent(props: OwnProps) {
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data: omattiedot } = useGetOmattiedotQuery();
 
-type Props = OwnProps & StateProps;
+    const hasHenkiloReadUpdateRights = useMemo(() => {
+        return hasAnyPalveluRooli(omattiedot?.organisaatiot, [
+            'OPPIJANUMEROREKISTERI_HENKILON_RU',
+            'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
+            'OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI',
+        ]);
+    }, [omattiedot]);
+    const hasYksilointiRights = useMemo(() => {
+        return hasAnyPalveluRooli(omattiedot?.organisaatiot, [
+            'OPPIJANUMEROREKISTERI_MANUAALINEN_YKSILOINTI',
+            'OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI',
+        ]);
+    }, [omattiedot]);
 
-function OppijaUserContent(props: Props) {
     function createBasicInfo() {
         const basicInfoProps = {
             readOnly: props.readOnly,
@@ -57,7 +64,7 @@ function OppijaUserContent(props: Props) {
             updateDateFieldAction: props.updateDateAction,
             henkiloUpdate: props.henkiloUpdate,
         };
-        const oid = props.henkilo?.henkilo?.oidHenkilo;
+        const oid = henkilo?.henkilo?.oidHenkilo;
 
         // Basic info box content
         return [
@@ -84,18 +91,8 @@ function OppijaUserContent(props: Props) {
     }
 
     function createReadOnlyButtons() {
-        const duplicate = props.henkilo.henkilo.duplicate;
-        const passivoitu = props.henkilo.henkilo.passivoitu;
-
-        const hasHenkiloReadUpdateRights = hasAnyPalveluRooli(props.omattiedot.organisaatiot, [
-            'OPPIJANUMEROREKISTERI_HENKILON_RU',
-            'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
-            'OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI',
-        ]);
-        const hasYksilointiRights = hasAnyPalveluRooli(props.omattiedot.organisaatiot, [
-            'OPPIJANUMEROREKISTERI_MANUAALINEN_YKSILOINTI',
-            'OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI',
-        ]);
+        const duplicate = henkilo.henkilo.duplicate;
+        const passivoitu = henkilo.henkilo.passivoitu;
 
         const editButton = hasHenkiloReadUpdateRights ? (
             <EditButton editAction={props.edit} disabled={duplicate || passivoitu} />
@@ -106,7 +103,7 @@ function OppijaUserContent(props: Props) {
 
         return [editButton, yksiloiHetutonButton];
     }
-    return props.henkilo.henkiloLoading ? (
+    return henkilo.henkiloLoading ? (
         <Loader />
     ) : (
         <AbstractUserContent
@@ -120,11 +117,4 @@ function OppijaUserContent(props: Props) {
     );
 }
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    henkilo: state.henkilo,
-    L: state.l10n.localisations[state.locale],
-    locale: state.locale,
-    omattiedot: state.omattiedot,
-});
-
-export default connect<StateProps, null, OwnProps, RootState>(mapStateToProps)(OppijaUserContent);
+export default OppijaUserContent;

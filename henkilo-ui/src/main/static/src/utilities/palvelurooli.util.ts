@@ -38,15 +38,18 @@ export const hasPalveluRooliByOrganisaatioOid = (
  * Check if given organisaatio contains at least one of the given palvelurooli
  */
 export const hasAnyPalveluRooli = (
-    organisaatiot: Array<KayttooikeusOrganisaatiot>,
-    palveluRoolit: Array<string>
+    organisaatiot?: Array<KayttooikeusOrganisaatiot>,
+    palveluRoolit?: Array<string>
 ): boolean => {
+    if (!organisaatiot || !palveluRoolit) {
+        return false;
+    }
     return organisaatiot.some((organisaatio: KayttooikeusOrganisaatiot) =>
         organisaatioContainsAnyPalveluRooli(organisaatio, palveluRoolit)
     );
 };
 
-export const isOnrRekisterinpitaja = (organisaatiot: KayttooikeusOrganisaatiot[]) =>
+export const isOnrRekisterinpitaja = (organisaatiot?: KayttooikeusOrganisaatiot[]) =>
     hasAnyPalveluRooli(organisaatiot, ['OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'HENKILONHALLINTA_OPHREKISTERI']);
 
 /*
