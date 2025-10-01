@@ -1,19 +1,15 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { urls } from 'oph-urls-js';
+import React, { useMemo } from 'react';
 import Select from 'react-select';
 
-import { http } from '../../../../http';
-import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
-import { Kayttooikeusryhma } from '../../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { localizeTextGroup } from '../../../../utilities/localisation.util';
 import { NamedMultiSelectOption } from '../../../../utilities/select';
 import { FieldlessLabelValue } from './FieldlessLabelValue';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { useLocalisations } from '../../../../selectors';
+import { useGetKayttooikeusryhmaByKayttooikeusQuery, useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
 
 type OwnProps = {
     updateModelSelectAction: (arg0: NamedMultiSelectOption) => void;
-    omattiedot: OmattiedotState;
     readOnly?: boolean;
     henkiloUpdate: Henkilo;
 };
@@ -22,7 +18,7 @@ const renderOptions = (options: { value: number; label: string }[], anomusilmoit
     return (
         <ul>
             {options
-                .filter((o) => !!anomusilmoitus.find((a) => a === o.value))
+                ?.filter((o) => !!anomusilmoitus.find((a) => a === o.value))
                 .map((o) => (
                     <li key={o.value}>{o.label}</li>
                 ))}
@@ -32,22 +28,11 @@ const renderOptions = (options: { value: number; label: string }[], anomusilmoit
 
 export const AnomusIlmoitus = (props: OwnProps) => {
     const { locale } = useLocalisations();
-    const [vastuukayttajaRyhmat, setVastuukayttajaRyhmat] = useState<Kayttooikeusryhma[]>([]);
-
-    useEffect(() => {
-        const fetch = async () => {
-            const url = urls.url('kayttooikeus-service.kayttooikeusryhma.by-kayttooiokeus');
-            const v: Array<Kayttooikeusryhma> = await http.post(url, {
-                KAYTTOOIKEUS: 'VASTUUKAYTTAJAT',
-            });
-            setVastuukayttajaRyhmat(v);
-        };
-
-        fetch();
-    }, []);
+    const { data: omattiedot } = useGetOmattiedotQuery();
+    const { data: vastuukayttajaRyhmat } = useGetKayttooikeusryhmaByKayttooikeusQuery('VASTUUKAYTTAJAT');
 
     const options = useMemo(() => {
-        return vastuukayttajaRyhmat.map((vastuukayttajaRyhma) => ({
+        return vastuukayttajaRyhmat?.map((vastuukayttajaRyhma) => ({
             value: vastuukayttajaRyhma.id,
             label: localizeTextGroup(vastuukayttajaRyhma.nimi?.texts, locale),
             optionsName: 'anomusilmoitus',
@@ -57,7 +42,7 @@ export const AnomusIlmoitus = (props: OwnProps) => {
     return (
         <FieldlessLabelValue label="HENKILO_ANOMUSILMOITUKSET">
             {props.readOnly ? (
-                renderOptions(options, props.henkiloUpdate.anomusilmoitus)
+                renderOptions(options, omattiedot?.anomusilmoitus)
             ) : (
                 <Select
                     options={options}

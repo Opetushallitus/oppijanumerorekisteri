@@ -1,8 +1,4 @@
-import {
-    UPDATE_ANOMUSILMOITUS,
-    FETCH_OMATTIEDOT_SUCCESS,
-    FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS,
-} from '../actions/actiontypes';
+import { FETCH_OMATTIEDOT_SUCCESS, FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS } from '../actions/actiontypes';
 import { KayttooikeusOrganisaatiot } from '../types/domain/kayttooikeus/KayttooikeusPerustiedot.types';
 import { OrganisaatioHenkilo } from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { AnyAction } from '@reduxjs/toolkit';
@@ -47,8 +43,6 @@ const omattiedot = (state: Readonly<OmattiedotState> = initialState, action: Any
                 organisaatios: action.organisaatios,
             };
         }
-        case UPDATE_ANOMUSILMOITUS:
-            return { ...state, anomusilmoitus: action.value };
         default:
             return state;
     }

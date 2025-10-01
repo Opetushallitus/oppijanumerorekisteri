@@ -7,4 +7,5 @@ export type Omattiedot = {
     idpEntityId?: string;
     oidHenkilo: string;
     organisaatiot: Array<KayttooikeusOrganisaatiot>;
+    anomusilmoitus: number[];
 };

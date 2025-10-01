@@ -174,6 +174,7 @@ export const kayttooikeusApi = createApi({
         'palvelukayttoooikeudet',
         'kayttooikeusanomukset',
         'kayttooikeusryhma',
+        'kayttooikeusryhmabykayttooikeus',
         'kayttooikeusryhmamyontoviite',
         'kayttooikeusryhmaorganisaatiot',
         'kayttooikeusryhmat',
@@ -222,6 +223,14 @@ export const kayttooikeusApi = createApi({
                 }
             },
             providesTags: ['omattiedot'],
+        }),
+        putAnomusilmoitus: builder.mutation<void, { oid: string; anomusilmoitus: number[] }>({
+            query: ({ oid, anomusilmoitus }) => ({
+                url: `henkilo/${oid}/anomusilmoitus`,
+                method: 'PUT',
+                body: anomusilmoitus,
+            }),
+            invalidatesTags: ['omattiedot'],
         }),
         getOmatKayttooikeusryhmas: builder.query<MyonnettyKayttooikeusryhma[], void>({
             query: () => 'kayttooikeusryhma/henkilo/current',
@@ -463,6 +472,14 @@ export const kayttooikeusApi = createApi({
                 }).toString()}`,
             providesTags: ['kayttooikeusryhmat'],
         }),
+        getKayttooikeusryhmaByKayttooikeus: builder.query<Kayttooikeusryhma[], string>({
+            query: (kayttooikeus) => ({
+                url: 'kayttooikeusryhma/ryhmasByKayttooikeus',
+                method: 'POST',
+                body: { KAYTTOOIKEUS: kayttooikeus },
+            }),
+            providesTags: ['kayttooikeusryhmabykayttooikeus'],
+        }),
         getKayttooikeusryhmaOrganisaatiot: builder.query<Kayttooikeusryhma[], string>({
             query: (oid) => `kayttooikeusryhma/organisaatio/${oid}`,
             providesTags: ['kayttooikeusryhmaorganisaatiot'],
@@ -540,6 +557,7 @@ export const {
     usePutKayttooikeusryhmaForHenkiloMutation,
     useGetKayttooikeusryhmasForHenkiloQuery,
     useGetOmattiedotQuery,
+    usePutAnomusilmoitusMutation,
     useGetOmatOrganisaatiotQuery,
     useGetOmatKayttooikeusryhmasQuery,
     useGetHenkiloOrganisaatiotQuery,
@@ -574,6 +592,7 @@ export const {
     usePutAktivoiKayttooikeusryhmaMutation,
     usePutPassivoiKayttooikeusryhmaMutation,
     useGetKayttooikeusryhmaQuery,
+    useGetKayttooikeusryhmaByKayttooikeusQuery,
     useGetKayttooikeusryhmaOrganisaatiotQuery,
     useGetKayttooikeusryhmaMyontoviiteQuery,
     useGetKayttooikeusryhmasQuery,

@@ -1,5 +1,6 @@
-import React, { SyntheticEvent } from 'react';
-import { connect } from 'react-redux';
+import React, { SyntheticEvent, useMemo } from 'react';
+import { useSelector } from 'react-redux';
+
 import type { RootState } from '../../../../store';
 import AbstractUserContent from './AbstractUserContent';
 import Sukunimi from '../labelvalues/Sukunimi';
@@ -10,7 +11,6 @@ import Oppijanumero from '../labelvalues/Oppijanumero';
 import Asiointikieli from '../labelvalues/Asiointikieli';
 import EditButton from '../buttons/EditButton';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
-import { Localisations } from '../../../../types/localisation.type';
 import Loader from '../../icons/Loader';
 import Kayttajanimi from '../labelvalues/Kayttajanimi';
 import PasswordButton from '../buttons/PasswordButton';
@@ -21,10 +21,10 @@ import Aidinkieli from '../labelvalues/Aidinkieli';
 import Sukupuoli from '../labelvalues/Sukupuoli';
 import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
 import { AnomusIlmoitus } from '../labelvalues/AnomusIlmoitus';
-import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
 import HenkiloVarmentajaSuhde from '../labelvalues/HenkiloVarmentajaSuhde';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
+import { useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
 
 type OwnProps = {
     readOnly: boolean;
@@ -39,102 +39,129 @@ type OwnProps = {
     isValidForm: boolean;
 };
 
-type StateProps = {
-    henkilo: HenkiloState;
-    L: Localisations;
-    isAdmin: boolean;
-    omattiedot: OmattiedotState;
-};
+const OmattiedotUserContent = (props: OwnProps) => {
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data: omattiedot } = useGetOmattiedotQuery();
 
-type Props = OwnProps & StateProps;
+    const showAnomusIlmoitus = useMemo(() => {
+        return hasAnyPalveluRooli(omattiedot?.organisaatiot, ['KAYTTOOIKEUS_REKISTERINPITAJA']);
+    }, [omattiedot]);
 
-class OmattiedotUserContent extends React.Component<Props> {
-    render() {
-        return this.props.henkilo.henkiloLoading || this.props.henkilo.kayttajatietoLoading ? (
-            <Loader />
-        ) : (
-            <AbstractUserContent
-                readOnly={this.props.readOnly}
-                discardAction={this.props.discardAction}
-                updateAction={this.props.updateAction}
-                basicInfo={this.createBasicInfo()}
-                readOnlyButtons={this.createReadOnlyButtons()}
-                isValidForm={this.props.isValidForm}
-            />
-        );
-    }
-
-    createBasicInfo = () => {
-        const props = {
-            readOnly: this.props.readOnly,
-            updateModelFieldAction: this.props.updateModelAction,
-            updateModelSelectAction: this.props.updateModelSelectAction,
-            updateDateFieldAction: this.props.updateDateAction,
-            henkiloUpdate: this.props.henkiloUpdate,
-            henkilo: this.props.henkilo,
-            omattiedot: this.props.omattiedot,
-        };
-
-        const showAnomusIlmoitus = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, [
-            'KAYTTOOIKEUS_REKISTERINPITAJA',
-        ]);
-
-        // Basic info box content
+    const createBasicInfo = () => {
         return [
             [
-                <Etunimet key="omattiedot-etunimet" {...props} />,
-                <Sukunimi key="omattiedot-sukunimi" {...props} />,
-                <Syntymaaika key="omattiedot-syntymaaika" {...props} />,
-                <Hetu key="omattiedot-hetu" {...props} />,
-                <Kutsumanimi key="omattiedot-kutsumanimi" {...props} />,
+                <Etunimet
+                    key="omattiedot-etunimet"
+                    readOnly={props.readOnly}
+                    updateModelFieldAction={props.updateModelAction}
+                />,
+                <Sukunimi
+                    key="omattiedot-sukunimi"
+                    readOnly={props.readOnly}
+                    updateModelFieldAction={props.updateModelAction}
+                />,
+                <Syntymaaika
+                    key="omattiedot-syntymaaika"
+                    readOnly={props.readOnly}
+                    updateDateFieldAction={props.updateDateAction}
+                    henkiloUpdate={props.henkiloUpdate}
+                />,
+                <Hetu
+                    key="omattiedot-hetu"
+                    readOnly={props.readOnly}
+                    updateModelFieldAction={props.updateModelAction}
+                />,
+                <Kutsumanimi
+                    key="omattiedot-kutsumanimi"
+                    readOnly={props.readOnly}
+                    updateModelFieldAction={props.updateModelAction}
+                />,
             ],
             [
-                <Kansalaisuus key="omattiedot-kansalaisuus" {...props} />,
-                <Aidinkieli key="omattiedot-aidinkieli" {...props} />,
-                <Sukupuoli key="omattiedot-sukupuoli" {...props} />,
-                <Oppijanumero key="omattiedot-oppijanumero" {...props} />,
-                <Oid key="omattiedot-oid" {...props} />,
-                <Asiointikieli key="omattiedot-asiointikieli" {...props} />,
+                <Kansalaisuus
+                    key="omattiedot-kansalaisuus"
+                    readOnly={props.readOnly}
+                    updateModelSelectAction={props.updateModelSelectAction}
+                    henkiloUpdate={props.henkiloUpdate}
+                />,
+                <Aidinkieli
+                    key="omattiedot-aidinkieli"
+                    readOnly={props.readOnly}
+                    updateModelSelectAction={props.updateModelSelectAction}
+                    henkiloUpdate={props.henkiloUpdate}
+                />,
+                <Sukupuoli
+                    key="omattiedot-sukupuoli"
+                    readOnly={props.readOnly}
+                    updateModelSelectAction={props.updateModelSelectAction}
+                    henkiloUpdate={props.henkiloUpdate}
+                />,
+                <Oppijanumero
+                    key="omattiedot-oppijanumero"
+                    readOnly={props.readOnly}
+                    updateModelFieldAction={props.updateModelAction}
+                />,
+                <Oid key="omattiedot-oid" readOnly={props.readOnly} updateModelFieldAction={props.updateModelAction} />,
+                <Asiointikieli
+                    key="omattiedot-asiointikieli"
+                    readOnly={props.readOnly}
+                    updateModelSelectAction={props.updateModelSelectAction}
+                    henkiloUpdate={props.henkiloUpdate}
+                />,
             ],
             [
-                <Kayttajanimi key="omattiedot-kayttajanimi" {...props} disabled={true} />,
-                showAnomusIlmoitus ? <AnomusIlmoitus key="omattiedot-anomusilmoitus" {...props} /> : null,
+                <Kayttajanimi
+                    key="omattiedot-kayttajanimi"
+                    readOnly={props.readOnly}
+                    updateModelFieldAction={props.updateModelAction}
+                    disabled={true}
+                />,
+                showAnomusIlmoitus ? (
+                    <AnomusIlmoitus
+                        key="omattiedot-anomusilmoitus"
+                        readOnly={props.readOnly}
+                        updateModelSelectAction={props.updateModelSelectAction}
+                        henkiloUpdate={props.henkiloUpdate}
+                    />
+                ) : null,
                 <HenkiloVarmentajaSuhde
                     key="omattiedot-henkiloVarmentajas"
-                    oidHenkilo={this.props.omattiedot.data.oid}
+                    oidHenkilo={omattiedot?.oidHenkilo}
                     type="henkiloVarmentajas"
                 />,
                 <HenkiloVarmentajaSuhde
                     key="omattiedot-henkiloVarmennettavas"
-                    oidHenkilo={this.props.omattiedot.data.oid}
+                    oidHenkilo={omattiedot?.oidHenkilo}
                     type="henkiloVarmennettavas"
                 />,
             ],
         ];
     };
 
-    // Basic info default buttons
-    createReadOnlyButtons = () => {
-        const duplicate = this.props.henkilo.henkilo.duplicate;
-        const passivoitu = this.props.henkilo.henkilo.passivoitu;
-        const kayttajatunnukseton = !this.props.henkilo.kayttajatieto?.username;
+    const createReadOnlyButtons = () => {
         return [
-            <EditButton key="editbutton" editAction={this.props.edit} disabled={duplicate || passivoitu} />,
+            <EditButton key="editbutton" editAction={props.edit} disabled={false} />,
             <PasswordButton
                 key="passwordbutton"
-                oidHenkilo={this.props.omattiedot.data.oid}
+                oidHenkilo={omattiedot?.oidHenkilo}
                 styles={{ top: '3rem', left: '0', width: '18rem' }}
-                disabled={duplicate || passivoitu || kayttajatunnukseton}
+                disabled={false}
             />,
         ];
     };
-}
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    henkilo: state.henkilo,
-    L: state.l10n.localisations[state.locale],
-    isAdmin: state.omattiedot.isAdmin,
-    omattiedot: state.omattiedot,
-});
+    return henkilo.henkiloLoading || henkilo.kayttajatietoLoading ? (
+        <Loader />
+    ) : (
+        <AbstractUserContent
+            readOnly={props.readOnly}
+            discardAction={props.discardAction}
+            updateAction={props.updateAction}
+            basicInfo={createBasicInfo()}
+            readOnlyButtons={createReadOnlyButtons()}
+            isValidForm={props.isValidForm}
+        />
+    );
+};
 
-export default connect<StateProps, undefined, OwnProps, RootState>(mapStateToProps)(OmattiedotUserContent);
+export default OmattiedotUserContent;

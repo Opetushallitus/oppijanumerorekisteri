@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
-import { urls } from 'oph-urls-js';
 
 import { useAppDispatch, type RootState } from '../../../../store';
 import StaticUtils from '../../StaticUtils';
@@ -16,15 +15,13 @@ import { isValidKutsumanimi } from '../../../../validation/KutsumanimiValidator'
 import { LocalNotification } from '../../Notification/LocalNotification';
 import { NOTIFICATIONTYPES } from '../../Notification/notificationtypes';
 import { isValidKayttajatunnus } from '../../../../validation/KayttajatunnusValidator';
-import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
-import { http } from '../../../../http';
-import { updateAnomusilmoitus } from '../../../../actions/omattiedot.actions';
 import PropertySingleton from '../../../../globals/PropertySingleton';
 import { View } from '../../../../types/constants';
 import { copy } from '../../../../utilities/copy';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { useLocalisations } from '../../../../selectors';
+import { useGetOmattiedotQuery, usePutAnomusilmoitusMutation } from '../../../../api/kayttooikeus';
 
 type OwnProps = {
     oidHenkilo: string;
@@ -35,7 +32,8 @@ export const UserContentContainer = ({ oidHenkilo, view }: OwnProps) => {
     const { L } = useLocalisations();
     const dispatch = useAppDispatch();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
-    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const { data: omattiedot } = useGetOmattiedotQuery();
+    const [putAnomusilmoitus] = usePutAnomusilmoitusMutation();
     const [readOnly, setReadOnly] = useState(true);
     const [henkiloUpdate, setHenkiloUpdate] = useState<any>({
         ...(henkilo.henkilo
@@ -81,7 +79,7 @@ export const UserContentContainer = ({ oidHenkilo, view }: OwnProps) => {
 
     function _discard() {
         const henkiloUpdate = copy(henkilo.henkilo);
-        henkiloUpdate.anomusilmoitus = omattiedot && omattiedot.anomusilmoitus;
+        henkiloUpdate.anomusilmoitus = omattiedot?.anomusilmoitus;
         setHenkiloUpdate(henkiloUpdate);
         setReadOnly(true);
     }
@@ -100,20 +98,14 @@ export const UserContentContainer = ({ oidHenkilo, view }: OwnProps) => {
     async function anomus(henkiloUpdate: Henkilo) {
         if (view === 'omattiedot' && omattiedot.isAdmin) {
             const initialAnomusilmoitusValue = omattiedot.anomusilmoitus;
-            const url = urls.url('kayttooikeus-service.henkilo.anomusilmoitus', henkiloUpdate.oidHenkilo);
-            try {
-                // päivitetään anomusilmoitus optimistisesti, jotta vältyttäisiin näytön vilkkumiselta
-                dispatch(updateAnomusilmoitus(henkiloUpdate.anomusilmoitus));
-                await http.put(url, henkiloUpdate.anomusilmoitus);
-            } catch (error) {
-                // perutaan anomusilmoituksen optimistinen päivitys
-                dispatch(updateAnomusilmoitus(initialAnomusilmoitusValue));
-                setHenkiloUpdate({
-                    ...henkiloUpdate,
-                    anomusilmoitus: initialAnomusilmoitusValue,
+            putAnomusilmoitus({ oid: henkiloUpdate.oidHenkilo, anomusilmoitus: henkiloUpdate.anomusilmoitus })
+                .unwrap()
+                .catch(() => {
+                    setHenkiloUpdate({
+                        ...henkiloUpdate,
+                        anomusilmoitus: initialAnomusilmoitusValue,
+                    });
                 });
-                throw error;
-            }
         }
     }
 
