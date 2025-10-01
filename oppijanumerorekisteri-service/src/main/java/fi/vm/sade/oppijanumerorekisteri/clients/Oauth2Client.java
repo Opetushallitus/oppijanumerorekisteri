@@ -35,6 +35,7 @@ public class Oauth2Client {
             if (response.statusCode() == 404 || response.statusCode() == 204) {
                 throw new NoContentOrNotFoundException(request.uri().toString());
             } else if (response.statusCode() != 401 && (response.statusCode() < 200 || response.statusCode() > 299)) {
+                log.error("request failed (HTTP " + response.statusCode() + ") with body: " + response.body());
                 throw new RestClientException(request.uri().toString());
             }
             return response;
