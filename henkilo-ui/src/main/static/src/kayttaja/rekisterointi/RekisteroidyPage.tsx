@@ -248,9 +248,7 @@ export const RekisteroidyPage = (props: OwnProps) => {
                                     henkiloUpdate={henkilo}
                                     updateModelSelectAction={updatePayloadModelSelect}
                                 />
-                                <IconButton
-                                    href={`/cas/login?forceIdp=haka&service=https%3A%2F%2F${window.location.hostname}%2Fkayttooikeus-service%2FhakaRegistrationTemporaryToken%2F${kutsu.temporaryToken}`}
-                                >
+                                <IconButton href={urls.url('cas.haka', { temporaryToken: kutsu.temporaryToken })}>
                                     <HakaIcon />
                                 </IconButton>
                             </div>
