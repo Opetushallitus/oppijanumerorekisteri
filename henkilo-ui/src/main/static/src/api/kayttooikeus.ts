@@ -450,7 +450,7 @@ export const kayttooikeusApi = createApi({
             invalidatesTags: ['kayttooikeusanomukset', 'haetutKayttooikeusryhmat'],
         }),
         getKayttooikeusAnomuksetForHenkilo: builder.query<HaettuKayttooikeusryhma[], string>({
-            query: (oid) => `kayttooikeusanomus/${oid}`,
+            query: (oid) => `kayttooikeusanomus/${oid}?activeOnly=true`,
             providesTags: ['kayttooikeusanomukset'],
         }),
         getKayttooikeusryhma: builder.query<Kayttooikeusryhma, string>({
