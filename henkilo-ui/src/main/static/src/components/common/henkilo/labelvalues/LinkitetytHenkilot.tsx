@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router';
 
@@ -8,10 +8,10 @@ import TextButton from '../../button/TextButton';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
 import HenkiloVarmentajaSuhde from './HenkiloVarmentajaSuhde';
-import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
 import { useLocalisations } from '../../../../selectors';
 import { useGetHenkiloSlavesQuery, useUnlinkHenkiloMutation } from '../../../../api/oppijanumerorekisteri';
 import { fetchHenkilo } from '../../../../actions/henkilo.actions';
+import { useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
 
 type OwnProps = {
     oppija?: boolean;
@@ -24,15 +24,18 @@ const LinkitetytHenkilot = ({ oppija }: OwnProps) => {
     const dispatch = useAppDispatch();
     const { L } = useLocalisations();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
-    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: slaves } = useGetHenkiloSlavesQuery(henkilo.henkilo.oidHenkilo);
     const [unlinkHenkilo] = useUnlinkHenkiloMutation();
 
-    function valueGroup() {
-        const hasPermission = hasAnyPalveluRooli(omattiedot.organisaatiot, [
+    const hasPermission = useMemo(() => {
+        return hasAnyPalveluRooli(omattiedot?.organisaatiot, [
             'HENKILONHALLINTA_OPHREKISTERI',
             'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
         ]);
+    }, [omattiedot]);
+
+    function valueGroup() {
         return (
             <div>
                 {slaves?.map((slave, index) => (

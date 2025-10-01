@@ -31,13 +31,13 @@ export const OmattiedotPage = () => {
     useTitle(L['TITLE_OMAT_TIEDOT']);
 
     useEffect(() => {
-        if (omattiedot.oidHenkilo) {
+        if (omattiedot?.oidHenkilo) {
             const userOid = omattiedot.oidHenkilo;
             dispatch(clearHenkilo());
             dispatch<any>(fetchHenkilo(userOid));
             dispatch<any>(fetchKayttajatieto(userOid));
         }
-    }, []);
+    }, [omattiedot]);
 
     if (isLoading || isHenkiloStateLoading(henkilo) || isAnomuksetLoading) {
         return <Loader />;

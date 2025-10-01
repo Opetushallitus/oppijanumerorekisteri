@@ -1,15 +1,14 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router';
 
-import { useAppDispatch, type RootState } from '../../../../store';
+import { useAppDispatch } from '../../../../store';
 import { fetchHenkilo } from '../../../../actions/henkilo.actions';
 import TextButton from '../../button/TextButton';
 import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
 import { FieldlessLabelValue } from './FieldlessLabelValue';
 import { useLocalisations } from '../../../../selectors';
-import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
 import { useGetHenkiloMasterQuery, useUnlinkHenkiloMutation } from '../../../../api/oppijanumerorekisteri';
+import { useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
 
 type OwnProps = {
     oidHenkilo: string;
@@ -19,7 +18,7 @@ type OwnProps = {
 const MasterHenkilo = ({ oidHenkilo, oppija }: OwnProps) => {
     const dispatch = useAppDispatch();
     const { L } = useLocalisations();
-    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: master, isFetching } = useGetHenkiloMasterQuery(oidHenkilo);
     const [unlinkHenkilo] = useUnlinkHenkiloMutation();
 
@@ -36,10 +35,12 @@ const MasterHenkilo = ({ oidHenkilo, oppija }: OwnProps) => {
             });
     }
 
-    const hasPermission = hasAnyPalveluRooli(omattiedot.organisaatiot, [
-        'HENKILONHALLINTA_OPHREKISTERI',
-        'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
-    ]);
+    const hasPermission = useMemo(() => {
+        return hasAnyPalveluRooli(omattiedot?.organisaatiot, [
+            'HENKILONHALLINTA_OPHREKISTERI',
+            'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
+        ]);
+    }, [omattiedot]);
     const renderLinkitetyt = !isFetching && master.oidHenkilo && oidHenkilo !== master.oidHenkilo;
 
     return renderLinkitetyt ? (

@@ -1,11 +1,12 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 
 import KayttooikeusryhmaSelectModal from '../../select/KayttooikeusryhmaSelectModal';
 import { toLocalizedText } from '../../../../localizabletext';
 import { myonnettyToKayttooikeusryhma } from '../../../../utils/KayttooikeusryhmaUtils';
-import { useGetAllowedKayttooikeusryhmasForOrganisationQuery } from '../../../../api/kayttooikeus';
-import { RootState } from '../../../../store';
+import {
+    useGetAllowedKayttooikeusryhmasForOrganisationQuery,
+    useGetOmattiedotQuery,
+} from '../../../../api/kayttooikeus';
 import { useLocalisations } from '../../../../selectors';
 
 export type ValittuKayttooikeusryhma = {
@@ -29,11 +30,11 @@ const CKKayttooikeudet = ({
     isPalvelukayttaja,
 }: Props) => {
     const { L, locale } = useLocalisations();
-    const oidHenkilo = useSelector<RootState, string>((state) => state.omattiedot?.data.oid);
+    const { data: omattiedot } = useGetOmattiedotQuery();
     const { data, isLoading } = useGetAllowedKayttooikeusryhmasForOrganisationQuery(
-        { oidHenkilo, oidOrganisaatio: selectedOrganisationOid },
+        { oidHenkilo: omattiedot.oidHenkilo, oidOrganisaatio: selectedOrganisationOid },
         {
-            skip: !oidHenkilo || !selectedOrganisationOid,
+            skip: !omattiedot || !selectedOrganisationOid,
         }
     );
     const kayttooikeusryhmat =

@@ -1,13 +1,11 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { difference } from 'ramda';
 import moment from 'moment';
 
-import type { RootState } from '../../store';
 import { toLocalizedText } from '../../localizabletext';
 import RyhmaSelection from '../common/select/RyhmaSelection';
 import { findOmattiedotOrganisatioOrRyhmaByOid } from '../../utilities/organisaatio.util';
-import { KutsuOrganisaatio, OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
+import { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import KayttooikeusryhmaSelectModal from '../common/select/KayttooikeusryhmaSelectModal';
 import { myonnettyToKayttooikeusryhma } from '../../utils/KayttooikeusryhmaUtils';
 import { Kayttooikeusryhma, MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
@@ -18,6 +16,8 @@ import { useLocalisations } from '../../selectors';
 import { isOrganisaatioSelection, OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import {
     useGetAllowedKayttooikeusryhmasForOrganisationQuery,
+    useGetOmatOrganisaatiotQuery,
+    useGetOmattiedotQuery,
     useGetOrganisationNamesQuery,
 } from '../../api/kayttooikeus';
 import { SelectOption } from '../../utilities/select';
@@ -32,14 +32,17 @@ type OwnProps = {
 
 const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }: OwnProps) => {
     const { L, locale } = useLocalisations();
-    const oidHenkilo = useSelector<RootState, string>((state) => state.omattiedot?.data.oid);
-    const omatOrganisaatios = useSelector<RootState, OrganisaatioHenkilo[]>((state) => state.omattiedot.organisaatios);
+    const { data: omattiedot } = useGetOmattiedotQuery();
+    const { data: omatOrganisaatios } = useGetOmatOrganisaatiotQuery(
+        { oid: omattiedot?.oidHenkilo, locale },
+        { skip: !omattiedot }
+    );
     const { data: organisationNames } = useGetOrganisationNamesQuery();
     const selectedOrganisaatioOid = addedOrg.organisation?.oid;
     const { data: allPermissions, isLoading } = useGetAllowedKayttooikeusryhmasForOrganisationQuery(
-        { oidHenkilo, oidOrganisaatio: selectedOrganisaatioOid },
+        { oidHenkilo: omattiedot?.oidHenkilo, oidOrganisaatio: selectedOrganisaatioOid },
         {
-            skip: !oidHenkilo || !selectedOrganisaatioOid,
+            skip: !omattiedot || !selectedOrganisaatioOid,
         }
     );
     const selectablePermissions = allPermissions ? difference(allPermissions, addedOrg.selectedPermissions) : [];

@@ -1,5 +1,5 @@
 import './HenkiloViewContactContent.css';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import Field from '../field/Field';
@@ -14,7 +14,6 @@ import type { HenkiloState } from '../../../reducers/henkilo.reducer';
 import type { Henkilo } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import type { Kayttaja } from '../../../types/domain/kayttooikeus/kayttaja.types';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
-import type { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { validateEmail } from '../../../validation/EmailValidator';
 import { WORK_ADDRESS, EMAIL, View } from '../../../types/constants';
 import { Yhteystieto } from '../../../types/domain/oppijanumerorekisteri/yhteystieto.types';
@@ -24,6 +23,7 @@ import { KoodistoStateKoodi, useGetYhteystietotyypitQuery } from '../../../api/k
 import { RootState, useAppDispatch } from '../../../store';
 import { updateHenkiloAndRefetch } from '../../../actions/henkilo.actions';
 import { useLocalisations } from '../../../selectors';
+import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
 
 type OwnProps = {
     readOnly: boolean;
@@ -165,7 +165,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
     const dispatch = useAppDispatch();
     const { locale, L } = useLocalisations();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
-    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const { data: omattiedot } = useGetOmattiedotQuery();
     const [henkiloUpdate, setHenkiloUpdate] = useState(copy(henkilo.henkilo));
     const [state, setState] = useState<State>({
         readOnly: props.readOnly,
@@ -182,6 +182,14 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
         contactInfoErrorFields: [],
     });
     const [_preEditData, setPreEditData] = useState<{ contactInfo: Array<ContactInfo> }>();
+    const hasHenkiloReadUpdateRights = useMemo(() => {
+        return props.view === 'omattiedot'
+            ? true
+            : hasAnyPalveluRooli(omattiedot?.organisaatiot, [
+                  'OPPIJANUMEROREKISTERI_HENKILON_RU',
+                  'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
+              ]);
+    }, [props.view, omattiedot]);
 
     useEffect(() => {
         setState({
@@ -293,13 +301,6 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
     const defaultWorkAddress = resolveDefaultWorkAddress(state.contactInfo, state.yhteystietoRemoveList);
     const passivoitu = henkilo.henkilo.passivoitu;
     const duplicate = henkilo.henkilo.duplicate;
-    const hasHenkiloReadUpdateRights: boolean =
-        props.view === 'omattiedot'
-            ? true
-            : hasAnyPalveluRooli(omattiedot.organisaatiot, [
-                  'OPPIJANUMEROREKISTERI_HENKILON_RU',
-                  'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
-              ]);
 
     return (
         <div className="henkiloViewUserContentWrapper contact-content">
@@ -312,7 +313,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
                 <div className="henkiloViewContent">
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
                         {state.contactInfo
-                            ?.filter((c) => omattiedot.isAdmin || !isVirkailija(henkilo.kayttaja) || !isFromVTJ(c))
+                            ?.filter((c) => omattiedot?.isAdmin || !isVirkailija(henkilo.kayttaja) || !isFromVTJ(c))
                             .filter(excludeRemovedItems(state.yhteystietoRemoveList))
                             .map((yhteystiedotRyhmaFlat, idx) => (
                                 <div key={idx}>
