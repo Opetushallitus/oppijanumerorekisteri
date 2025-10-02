@@ -1,5 +1,4 @@
 import React, { Children, useMemo, useState } from 'react';
-import { compose, prop, sortBy, toLower } from 'ramda';
 import { FixedSizeList } from 'react-window';
 import Select, { components, MenuListProps, OptionProps, SingleValueProps } from 'react-select';
 
@@ -8,6 +7,7 @@ import { useLocalisations, useOmatOrganisaatiot } from '../../selectors';
 import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../utilities/organisaatio.util';
 import { useGetOrganisationNamesQuery } from '../../api/kayttooikeus';
 import { selectStyles } from '../../utilities/select';
+import { containsSearchword, filterAndSortOrganisaatios } from '../common/select/OrganisaatioSelectModal';
 
 type OwnProps = {
     onChange: (organisaatio: OrganisaatioSelectObject) => void;
@@ -33,6 +33,7 @@ export const OphDsOrganisaatioSelect = ({ disabled, onChange }: OwnProps) => {
     const { data: organisationNames } = useGetOrganisationNamesQuery();
     const omattiedotOrganisations = useOmatOrganisaatiot();
     const [selection, setSelection] = useState<OrganisaatioSelectObject>();
+    const [searchWord, setSearchWord] = useState<string>('');
 
     const allOrganisations = useMemo(() => {
         if (omattiedotOrganisations?.length && organisationNames) {
@@ -41,11 +42,11 @@ export const OphDsOrganisaatioSelect = ({ disabled, onChange }: OwnProps) => {
                 organisationNames,
                 locale
             );
-            return sortBy(compose(toLower, prop('name')), options);
+            return filterAndSortOrganisaatios(options, searchWord);
         } else {
             return [];
         }
-    }, [omattiedotOrganisations, organisationNames, locale]);
+    }, [omattiedotOrganisations, organisationNames, locale, searchWord]);
 
     const onSelect = (o: OrganisaatioSelectObject) => {
         setSelection(o);
@@ -84,13 +85,8 @@ export const OphDsOrganisaatioSelect = ({ disabled, onChange }: OwnProps) => {
             className="oph-ds-select-org"
             isDisabled={disabled || !omattiedotOrganisations?.length}
             options={allOrganisations}
-            filterOption={(o, input) => {
-                const iinput = input.toLowerCase();
-                return (
-                    o.data.name.toLowerCase().includes(iinput) ||
-                    !!o.data.parentNames.find((p) => p.toLowerCase().includes(iinput))
-                );
-            }}
+            onInputChange={setSearchWord}
+            filterOption={(o, input) => containsSearchword(input.toLowerCase())(o.data)}
             placeholder={L['OMATTIEDOT_VALITSE_ORGANISAATIO']}
             onChange={onSelect}
             value={selection}

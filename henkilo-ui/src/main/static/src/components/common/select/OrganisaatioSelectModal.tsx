@@ -76,7 +76,7 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
 
         if (previousSearchWord.length > currentSearchWord.length) {
             if (allOrganisations.length !== organisations.length) {
-                const newOrganisations = _filterAndSortOrganisaatios(allOrganisations, currentSearchWord);
+                const newOrganisations = filterAndSortOrganisaatios(allOrganisations, currentSearchWord);
                 setSearchWord(currentSearchWord);
                 setOrganisations(newOrganisations);
             } else {
@@ -84,46 +84,10 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
             }
         } else {
             // optimize filtering if the new search searchword starts with the previous
-            const newOrganisations = _filterAndSortOrganisaatios(organisations, currentSearchWord);
+            const newOrganisations = filterAndSortOrganisaatios(organisations, currentSearchWord);
             setSearchWord(currentSearchWord);
             setOrganisations(newOrganisations);
         }
-    }
-
-    function _filterAndSortOrganisaatios(
-        organisations: OrganisaatioSelectObject[],
-        searchWord: string
-    ): OrganisaatioSelectObject[] {
-        const containsSearchword = (organisaatio: OrganisaatioSelectObject) =>
-            organisaatio.name.toLowerCase().includes(searchWord.toLowerCase());
-        const startsWithSearchWord = (organisaatio: OrganisaatioSelectObject) =>
-            organisaatio.name.toLowerCase().startsWith(searchWord.toLowerCase());
-        const notStartingWithSearchWord = (organisaatio: OrganisaatioSelectObject) =>
-            !organisaatio.name.toLowerCase().startsWith(searchWord.toLowerCase());
-
-        const organisaatioFilteredBySearchword = organisations.filter(containsSearchword);
-        const organisaatiotStartingWithSearchword = organisaatioFilteredBySearchword.filter(startsWithSearchWord);
-        const organisaatiotStartingWithSearchwordSortedByParentName = _sortOrganisaatiotByParentName(
-            organisaatiotStartingWithSearchword
-        );
-        const organisaatiotNotStartingWithSearchword =
-            organisaatioFilteredBySearchword.filter(notStartingWithSearchWord);
-
-        return [...organisaatiotStartingWithSearchwordSortedByParentName, ...organisaatiotNotStartingWithSearchword];
-    }
-
-    function _sortOrganisaatiotByParentName(organisations: OrganisaatioSelectObject[]): OrganisaatioSelectObject[] {
-        const [organisaatiotHavingParents, organisaatiotNotHavingParents] = partition(
-            (o) => o.parentNames && o.parentNames.length > 0,
-            organisations
-        );
-
-        return [
-            ...organisaatiotNotHavingParents,
-            ...sortBy<OrganisaatioSelectObject>(compose(toLower, last, prop('parentNames')))(
-                organisaatiotHavingParents
-            ),
-        ];
     }
 
     return (
@@ -163,5 +127,41 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
         </>
     );
 };
+
+export function containsSearchword(searchWord: string) {
+    return (organisaatio: OrganisaatioSelectObject) =>
+        organisaatio.name.toLowerCase().includes(searchWord.toLowerCase());
+}
+
+export function filterAndSortOrganisaatios(
+    organisations: OrganisaatioSelectObject[],
+    searchWord: string
+): OrganisaatioSelectObject[] {
+    const startsWithSearchWord = (organisaatio: OrganisaatioSelectObject) =>
+        organisaatio.name.toLowerCase().startsWith(searchWord.toLowerCase());
+    const notStartingWithSearchWord = (organisaatio: OrganisaatioSelectObject) =>
+        !organisaatio.name.toLowerCase().startsWith(searchWord.toLowerCase());
+
+    const organisaatioFilteredBySearchword = organisations.filter(containsSearchword(searchWord));
+    const organisaatiotStartingWithSearchword = organisaatioFilteredBySearchword.filter(startsWithSearchWord);
+    const organisaatiotStartingWithSearchwordSortedByParentName = sortOrganisaatiotByParentName(
+        organisaatiotStartingWithSearchword
+    );
+    const organisaatiotNotStartingWithSearchword = organisaatioFilteredBySearchword.filter(notStartingWithSearchWord);
+
+    return [...organisaatiotStartingWithSearchwordSortedByParentName, ...organisaatiotNotStartingWithSearchword];
+}
+
+function sortOrganisaatiotByParentName(organisations: OrganisaatioSelectObject[]): OrganisaatioSelectObject[] {
+    const [organisaatiotHavingParents, organisaatiotNotHavingParents] = partition(
+        (o) => o.parentNames && o.parentNames.length > 0,
+        organisations
+    );
+
+    return [
+        ...organisaatiotNotHavingParents,
+        ...sortBy<OrganisaatioSelectObject>(compose(toLower, last, prop('parentNames')))(organisaatiotHavingParents),
+    ];
+}
 
 export default OrganisaatioSelectModal;
