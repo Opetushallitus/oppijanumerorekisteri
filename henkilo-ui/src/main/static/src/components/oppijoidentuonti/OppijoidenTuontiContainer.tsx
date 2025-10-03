@@ -70,7 +70,6 @@ const OppijoidenTuontiContainer = () => {
                 <>
                     <DelayedSearchInput
                         setSearchQueryAction={onChangeNimiHaku}
-                        loading={isFetching}
                         defaultNameQuery={criteria.nimiHaku}
                         minSearchValueLength={2}
                         placeholder={L['OPPIJOIDEN_TUONTI_HAE_HENKILOITA']}

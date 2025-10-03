@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import debounce from 'lodash.debounce';
+import React, { useEffect, useState } from 'react';
+
+import { useDebounce } from '../../useDebounce';
 
 type SearchQuery = (value: string) => void;
 
 type DelayedSearchInputProps = {
     setSearchQueryAction: SearchQuery;
-    loading?: boolean;
     defaultNameQuery?: string;
     placeholder?: string;
     customTimeout?: number;
@@ -14,20 +14,18 @@ type DelayedSearchInputProps = {
 
 const DelayedSearchInput = ({
     setSearchQueryAction,
-    loading,
     defaultNameQuery,
     placeholder,
-    customTimeout,
     minSearchValueLength,
 }: DelayedSearchInputProps) => {
-    const debouncedSearch = useCallback(debounce(setSearchQueryAction, customTimeout ?? 500), []);
     const [searchInput, setSearchInput] = useState('');
+    const debouncedSearch = useDebounce(searchInput, 300);
 
     useEffect(() => {
-        if (searchInput.length > (minSearchValueLength ?? 0) && !loading) {
-            debouncedSearch(searchInput);
+        if (debouncedSearch.length > (minSearchValueLength ?? 0) || debouncedSearch.length === 0) {
+            setSearchQueryAction(debouncedSearch);
         }
-    }, [searchInput]);
+    }, [debouncedSearch]);
 
     return (
         <input
