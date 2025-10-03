@@ -1,5 +1,5 @@
 import './HenkiloViewContactContent.css';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useId, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import Field from '../field/Field';
@@ -302,11 +302,12 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
     const defaultWorkAddress = resolveDefaultWorkAddress(state.contactInfo, state.yhteystietoRemoveList);
     const passivoitu = henkilo.henkilo.passivoitu;
     const duplicate = henkilo.henkilo.duplicate;
+    const sectionLabelId = useId();
 
     return (
-        <div className="henkiloViewUserContentWrapper contact-content">
+        <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper contact-content">
             <div>
-                <h2>{L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</h2>
+                <h2 id={sectionLabelId}>{L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</h2>
                 {henkilo.henkilo.turvakielto ? (
                     <div className="oph-h3 oph-bold midHeader">{L['YHTEYSTIETO_TURVAKIELTO']}</div>
                 ) : null}
@@ -399,7 +400,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
                     />
                 </div>
             )}
-        </div>
+        </section>
     );
 }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router';
 
@@ -64,6 +64,9 @@ export const VirkailijaViewPage = () => {
         dispatch<any>(fetchHenkilo(oid));
     }, [omattiedot, oid]);
 
+    const henkilotunnisteetSectionLabel = useId();
+    const mfaSectionLabelId = useId();
+
     if (isHenkiloStateLoading(henkilo) || isAnomuksetLoading) {
         return <Loader />;
     } else if (henkilo.henkiloKayttoEstetty) {
@@ -75,15 +78,15 @@ export const VirkailijaViewPage = () => {
                     <UserContentContainer oidHenkilo={oid} view={view} />
                 </div>
                 {isRekisterinpitaja && (
-                    <div className="wrapper">
-                        <h2>{L.TUNNISTEET_OTSIKKO}</h2>
+                    <section aria-labelledby={henkilotunnisteetSectionLabel} className="wrapper">
+                        <h2 id={henkilotunnisteetSectionLabel}>{L.TUNNISTEET_OTSIKKO}</h2>
                         <Identifications oid={oid} />
-                    </div>
+                    </section>
                 )}
-                <div className="wrapper">
-                    <h2>{L.TIETOTURVA_ASETUKSET_OTSIKKO}</h2>
+                <section aria-labelledby={mfaSectionLabelId} className="wrapper">
+                    <h2 id={mfaSectionLabelId}>{L.TIETOTURVA_ASETUKSET_OTSIKKO}</h2>
                     <Mfa henkiloOid={oid} view={view} />
-                </div>
+                </section>
                 <div className="wrapper">
                     <HenkiloViewContactContent view={view} readOnly={true} />
                 </div>

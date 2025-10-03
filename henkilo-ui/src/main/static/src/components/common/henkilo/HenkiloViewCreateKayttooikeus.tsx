@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import moment from 'moment';
 import ReactDatePicker from 'react-datepicker';
 
@@ -91,9 +91,10 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
             });
     };
 
+    const sectionLabelId = useId();
     return (
-        <section aria-labelledby="lisaa-kayttooikeudet-title" className="henkiloViewUserContentWrapper">
-            <h2 id="lisaa-kayttooikeudet-title">{L['HENKILO_LISAA_KAYTTOOIKEUDET_OTSIKKO']}</h2>
+        <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
+            <h2 id={sectionLabelId}>{L['HENKILO_LISAA_KAYTTOOIKEUDET_OTSIKKO']}</h2>
             <div className="kayttooikeus-form-grid">
                 <div className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE']}</div>
                 <div className="kayttooikeus-form-organisation-selection">

@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useEffect, useMemo, useState } from 'react';
+import React, { MutableRefObject, useEffect, useId, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import moment, { Moment } from 'moment';
 import DatePicker from 'react-datepicker';
@@ -347,21 +347,26 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
         getSortedRowModel: getSortedRowModel(),
     });
 
+    const sectionLabelId = useId();
     return isLoading ? (
         <Loader />
     ) : isError ? (
-        <div className="henkiloViewUserContentWrapper">
-            <h2>{L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
+        <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
+            <h2 id={sectionLabelId}>{L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
             <OphDsBanner type="error">
                 <p>{L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE']}</p>
             </OphDsBanner>
-        </div>
+        </section>
     ) : (
-        <div ref={props.existingKayttooikeusRef} className="henkiloViewUserContentWrapper">
+        <section
+            aria-labelledby={sectionLabelId}
+            ref={props.existingKayttooikeusRef}
+            className="henkiloViewUserContentWrapper"
+        >
             {accessRight && <AccessRightDetails {...accessRight} />}
-            <h2>{L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
+            <h2 id={sectionLabelId}>{L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
             <OphTable table={table} isLoading={false} />
-        </div>
+        </section>
     );
 };
 

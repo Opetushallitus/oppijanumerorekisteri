@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useId } from 'react';
 import moment from 'moment';
 import type { Moment } from 'moment';
 import DatePicker from 'react-datepicker';
@@ -452,8 +452,9 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     });
 
     const hylattyKayttooikeusryhma = hylkaaAnomus && props.anomukset.find((a) => a.id === hylkaaAnomus);
+    const sectionLabelId = useId();
     return (
-        <div className="henkiloViewUserContentWrapper">
+        <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
             {hylattyKayttooikeusryhma && (
                 <OphModal
                     title={L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA_HAKEMUS']}
@@ -468,7 +469,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
             )}
             {accessRight && <AccessRightDetails {...accessRight} />}
             <div>
-                {!props.piilotaOtsikko && <h2>{L['HENKILO_AVOIMET_KAYTTOOIKEUDET_OTSIKKO']}</h2>}
+                {!props.piilotaOtsikko && <h2 id={sectionLabelId}>{L['HENKILO_AVOIMET_KAYTTOOIKEUDET_OTSIKKO']}</h2>}
                 {props.fetchMoreSettings ? (
                     <OphTableWithInfiniteScroll
                         table={table}
@@ -485,7 +486,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                     />
                 )}
             </div>
-        </div>
+        </section>
     );
 };
 

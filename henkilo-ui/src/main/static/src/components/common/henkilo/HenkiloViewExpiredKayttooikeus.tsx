@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useId, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, SortingState } from '@tanstack/react-table';
@@ -233,17 +233,18 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
         getSortedRowModel: getSortedRowModel(),
     });
 
+    const sectionLabelId = useId();
     if (isLoading) {
         return <Loader />;
     } else {
         return (
-            <div className="henkiloViewUserContentWrapper">
+            <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
                 {accessRight && <AccessRightDetails {...accessRight} />}
                 <div>
-                    <h2>{L['HENKILO_VANHAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
+                    <h2 id={sectionLabelId}>{L['HENKILO_VANHAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
                     <OphTable table={table} isLoading={false} />
                 </div>
-            </div>
+            </section>
         );
     }
 };

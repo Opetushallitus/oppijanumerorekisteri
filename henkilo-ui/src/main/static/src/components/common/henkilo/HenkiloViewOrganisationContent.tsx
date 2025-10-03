@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useId, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { type RootState } from '../../../store';
@@ -58,13 +58,15 @@ export const HenkiloViewOrganisationContent = () => {
             : [];
     }, [isApiOrgsSuccess, isSuccess, apiOrganisations, henkiloOrgs]);
 
+    const sectionLabelId = useId();
+
     if (isLoading || isApiOrgsLoading) {
         return <Loader />;
     }
 
     return (
-        <div className="henkiloViewUserContentWrapper">
-            <h2>{L['HENKILO_ORGANISAATIOT_OTSIKKO']}</h2>
+        <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
+            <h2 id={sectionLabelId}>{L['HENKILO_ORGANISAATIOT_OTSIKKO']}</h2>
             <label className="oph-checkable" htmlFor="showPassive">
                 <input
                     id="showPassive"
@@ -104,6 +106,6 @@ export const HenkiloViewOrganisationContent = () => {
                     ) : null
                 )}
             </div>
-        </div>
+        </section>
     );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 
@@ -256,9 +256,11 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
     } else {
         throw new Error(`Unidentified view ${view}`);
     }
+
+    const sectionLabelId = useId();
     return (
-        <div className="henkiloViewUserContentWrapper">
-            <h2>{L['HENKILO_PERUSTIEDOT_OTSIKKO'] + _additionalInfo()}</h2>
+        <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
+            <h2 id={sectionLabelId}>{L['HENKILO_PERUSTIEDOT_OTSIKKO'] + _additionalInfo()}</h2>
             {content}
 
             <LocalNotification
@@ -274,6 +276,6 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
             <LocalNotification title={L['HENKILO_YKSILOINTIVIRHE_OTSIKKO']} type={NOTIFICATIONTYPES.ERROR}>
                 <ul>{_validYksilointi() ? null : <li>{_getYksilointivirhe()}</li>}</ul>
             </LocalNotification>
-        </div>
+        </section>
     );
 };
