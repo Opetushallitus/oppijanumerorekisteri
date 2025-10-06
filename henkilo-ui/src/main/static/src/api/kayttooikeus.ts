@@ -301,6 +301,13 @@ export const kayttooikeusApi = createApi({
             }),
             invalidatesTags: ['kayttajatiedot'],
         }),
+        putPassword: builder.mutation<void, { oid: string; password: string }>({
+            query: ({ oid, password }) => ({
+                url: `henkilo/${oid}/password`,
+                method: 'POST',
+                body: `"${password}"`,
+            }),
+        }),
         getPalvelukayttajat: builder.query<PalvelukayttajaRead[], PalvelukayttajaCriteria>({
             query: (criteria) => `palvelukayttaja?${new URLSearchParams(criteria).toString()}`,
             providesTags: ['palvelukayttajat'],
@@ -569,6 +576,7 @@ export const {
     useGetAccessRightReportQuery,
     useGetKayttajatiedotQuery,
     usePutKayttajatiedotMutation,
+    usePutPasswordMutation,
     useGetPalvelukayttajatQuery,
     useGetPalvelukayttajaQuery,
     usePostPalvelukayttajaMutation,

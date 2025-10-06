@@ -1,38 +1,28 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import type { RootState } from '../../../../store';
 import ConfirmButton from '../../button/ConfirmButton';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
-import { Localisations } from '../../../../types/localisation.type';
 import { usePuraYksilointiMutation } from '../../../../api/oppijanumerorekisteri';
+import { useLocalisations } from '../../../../selectors';
 
 type OwnProps = {
     disabled?: boolean;
 };
 
-type StateProps = {
-    henkilo: HenkiloState;
-    L: Localisations;
-};
-
-type Props = OwnProps & StateProps;
-
-const PuraHetuttomanYksilointiButton = (props: Props) => {
+const PuraHetuttomanYksilointiButton = (props: OwnProps) => {
+    const { L } = useLocalisations();
+    const { henkilo } = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const [puraYksilointi] = usePuraYksilointiMutation();
     return (
         <ConfirmButton
             key="purayksilointi"
-            action={() => puraYksilointi(props.henkilo.henkilo.oidHenkilo)}
-            normalLabel={props.L['PURA_YKSILOINTI_LINKKI']}
-            confirmLabel={props.L['PURA_YKSILOINTI_LINKKI_CONFIRM']}
+            action={() => puraYksilointi(henkilo.oidHenkilo)}
+            normalLabel={L['PURA_YKSILOINTI_LINKKI']}
+            confirmLabel={L['PURA_YKSILOINTI_LINKKI_CONFIRM']}
             disabled={props.disabled}
         />
     );
 };
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    henkilo: state.henkilo,
-    L: state.l10n.localisations[state.locale],
-});
-
-export default connect<StateProps, null, OwnProps, RootState>(mapStateToProps)(PuraHetuttomanYksilointiButton);
+export default PuraHetuttomanYksilointiButton;
