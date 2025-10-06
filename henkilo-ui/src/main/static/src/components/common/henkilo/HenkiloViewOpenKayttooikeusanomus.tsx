@@ -16,7 +16,7 @@ import {
     Kayttooikeusryhma,
     MyonnettyKayttooikeusryhma,
 } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import { localize, localizeTextGroup } from '../../../utilities/localisation.util';
+import { localizeTextGroup } from '../../../utilities/localisation.util';
 import { KAYTTOOIKEUDENTILA, KayttooikeudenTila } from '../../../globals/KayttooikeudenTila';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 import { HenkilonNimi } from '../../../types/domain/kayttooikeus/HenkilonNimi';
@@ -67,7 +67,7 @@ const emptyArray = [];
 const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     const [sorting, setSorting] = useState<SortingState>([{ id: 'ANOTTU_PVM', desc: true }]);
     const dispatch = useAppDispatch();
-    const { L, locale, l10n } = useLocalisations();
+    const { L, locale } = useLocalisations();
     const { data: organisations, isSuccess } = useGetOrganisationsQuery();
     const [putHaettuKayttooikeusryhma] = usePutHaettuKayttooikeusryhmaMutation();
     const [peruKayttooikeusAnomus] = usePutPeruKayttooikeusAnomusMutation();
@@ -257,11 +257,11 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                   organisaatio.nimi['en'] ||
                   organisaatio.nimi['sv'] ||
                   organisaatio.oid
-            : localize('HENKILO_AVOIMET_KAYTTOOIKEUDET_ORGANISAATIOTA_EI_LOYDY', l10n.localisations, locale);
+            : L['HENKILO_AVOIMET_KAYTTOOIKEUDET_ORGANISAATIOTA_EI_LOYDY'];
     };
 
     const _parseVoimassaPvm = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): string => {
-        const noLoppupvm = localize('HENKILO_AVOIMET_KAYTTOOIKEUDET_EI_LOPPUPVM', l10n.localisations, locale);
+        const noLoppupvm = L['HENKILO_AVOIMET_KAYTTOOIKEUDET_EI_LOPPUPVM'];
         if (!myonnettyKayttooikeusryhma.voimassaPvm) {
             return noLoppupvm;
         } else if (myonnettyKayttooikeusryhma.tila !== KAYTTOOIKEUDENTILA.SULJETTU) {
