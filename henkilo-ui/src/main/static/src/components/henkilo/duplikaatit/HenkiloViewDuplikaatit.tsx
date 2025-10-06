@@ -7,16 +7,18 @@ import Loader from '../../common/icons/Loader';
 import { enabledDuplikaattiView } from '../../navigation/NavigationTabs';
 import { LocalNotification } from '../../common/Notification/LocalNotification';
 import { NOTIFICATIONTYPES } from '../../common/Notification/notificationtypes';
-import type {
-    HenkiloDuplicate,
-    HenkiloDuplicateLenient,
-} from '../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
+import type { HenkiloDuplicate } from '../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import OphModal from '../../common/modal/OphModal';
-import { useGetHenkiloMasterQuery, usePostLinkHenkilosMutation } from '../../../api/oppijanumerorekisteri';
+import {
+    useGetHakemuksetQuery,
+    useGetHenkiloMasterQuery,
+    usePostLinkHenkilosMutation,
+} from '../../../api/oppijanumerorekisteri';
 import { isHenkiloValidForYksilointi } from '../../../validation/YksilointiValidator';
 import { useLocalisations } from '../../../selectors';
 import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
+import { HenkiloCreate } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
 
 import './HenkiloViewDuplikaatit.css';
 
@@ -26,7 +28,7 @@ export type LinkRelation = {
 };
 
 type Props = {
-    henkilo: HenkiloDuplicateLenient;
+    henkilo: HenkiloCreate;
     henkiloType: string;
     vainLuku: boolean;
     duplicates: HenkiloDuplicate[];
@@ -39,12 +41,13 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, duplicates, oi
     const [linkObj, setLink] = useState<LinkRelation>();
     const [postLinkHenkilos] = usePostLinkHenkilosMutation();
     const { data: masterHenkilo } = useGetHenkiloMasterQuery(oidHenkilo, { skip: !oidHenkilo });
+    const { data: hakemukset } = useGetHakemuksetQuery({ oid: oidHenkilo, L }, { skip: !oidHenkilo });
     const canForceLink = hasAnyPalveluRooli(omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_YKSILOINNIN_PURKU']);
-    const emails = (henkilo.henkilo.yhteystiedotRyhma || [])
+    const emails = (henkilo.yhteystiedotRyhma || [])
         .flatMap((ryhma) => ryhma.yhteystieto)
         .filter((yhteysTieto) => yhteysTieto.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI')
         .map((yhteysTieto) => yhteysTieto.yhteystietoArvo);
-    const master: HenkiloDuplicate = { ...henkilo.henkilo, emails, hakemukset: henkilo.hakemukset };
+    const master: HenkiloDuplicate = { ...henkilo, emails };
     const linkingEnabled =
         enabledDuplikaattiView(oidHenkilo, masterHenkilo?.oidHenkilo) || oidHenkilo !== omattiedot.oidHenkilo;
     const navigate = useNavigate();
@@ -99,6 +102,7 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, duplicates, oi
             </div>
             <DuplikaatitPerson
                 henkilo={master}
+                hakemukset={hakemukset}
                 master={master}
                 isMaster={true}
                 vainLuku={vainLuku}
@@ -109,6 +113,7 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, duplicates, oi
             {duplicates?.map((duplicate) => (
                 <DuplikaatitPerson
                     henkilo={duplicate}
+                    hakemukset={duplicate.hakemukset}
                     master={master}
                     key={duplicate.oidHenkilo}
                     isMaster={false}

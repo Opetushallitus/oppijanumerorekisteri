@@ -30,11 +30,7 @@ const OppijaCreateDuplikaatit = (props: Props) => {
         <div>
             <div className="oph-field">{L['OPPIJAN_LUONTI_DUPLIKAATIT_OHJE']}</div>
             <HenkiloViewDuplikaatit
-                henkilo={{
-                    henkilo: {
-                        ...props.oppija,
-                    },
-                }}
+                henkilo={{ ...props.oppija }}
                 vainLuku={true}
                 henkiloType="oppija"
                 duplicates={props.duplikaatit}

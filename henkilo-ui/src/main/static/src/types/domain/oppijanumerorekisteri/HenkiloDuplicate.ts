@@ -1,12 +1,6 @@
 import { Kielisyys } from './kielisyys.types';
 import { Kansalaisuus } from './kansalaisuus.types';
-import type { HenkiloCreate } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { Hakemus } from './Hakemus.type';
-
-export type HenkiloDuplicateLenient = {
-    henkilo: HenkiloCreate;
-    hakemukset?: Hakemus[];
-};
 
 export type HenkiloDuplicate = {
     oidHenkilo?: string;

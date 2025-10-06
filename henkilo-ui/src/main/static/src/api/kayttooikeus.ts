@@ -3,12 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getCommonOptions } from '../http';
 import { OrganisaatioHenkilo } from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { Omattiedot } from '../types/domain/kayttooikeus/Omattiedot.types';
-import {
-    FETCH_HENKILO_ASIOINTIKIELI_SUCCESS,
-    FETCH_HENKILO_SUCCESS,
-    FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS,
-    FETCH_OMATTIEDOT_SUCCESS,
-} from '../actions/actiontypes';
+import { FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, FETCH_HENKILO_SUCCESS } from '../actions/actiontypes';
 import { Locale } from '../types/locale.type';
 import { KutsuRead } from '../types/domain/kayttooikeus/Kutsu.types';
 import {
@@ -214,14 +209,6 @@ export const kayttooikeusApi = createApi({
         }),
         getOmattiedot: builder.query<Omattiedot, void>({
             query: () => 'henkilo/current/omattiedot',
-            async onQueryStarted(_oid, { dispatch, queryFulfilled }) {
-                try {
-                    const { data } = await queryFulfilled;
-                    dispatch({ type: FETCH_OMATTIEDOT_SUCCESS, omattiedot: data });
-                } catch (_err) {
-                    //
-                }
-            },
             providesTags: ['omattiedot'],
         }),
         putAnomusilmoitus: builder.mutation<void, { oid: string; anomusilmoitus: number[] }>({
@@ -238,10 +225,6 @@ export const kayttooikeusApi = createApi({
         }),
         getOmatOrganisaatiot: builder.query<OrganisaatioHenkilo[], { oid: string; locale: Locale }>({
             query: ({ oid }) => `henkilo/${oid}/organisaatio?piilotaOikeudettomat=true`,
-            async onQueryStarted({ locale }, { dispatch, queryFulfilled }) {
-                const { data } = await queryFulfilled;
-                dispatch({ type: FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS, organisaatios: data, locale });
-            },
             providesTags: ['omatorganisaatiot'],
         }),
         getHenkiloOrganisaatiot: builder.query<HenkiloOrg[], string>({

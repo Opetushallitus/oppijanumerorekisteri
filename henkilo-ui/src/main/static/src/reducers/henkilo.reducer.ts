@@ -5,28 +5,22 @@ import {
     UPDATE_HENKILO_REQUEST,
     CLEAR_HENKILO,
     UPDATE_HENKILO_FAILURE,
-    FETCH_HENKILO_HAKEMUKSET,
 } from '../actions/actiontypes';
 import type { Henkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
-import type { Hakemus } from '../types/domain/oppijanumerorekisteri/Hakemus.type';
 import { AnyAction } from '@reduxjs/toolkit';
 
 export type HenkiloState = {
     readonly henkiloLoading: boolean;
     readonly henkiloKayttoEstetty: boolean;
     readonly henkilo: Henkilo;
-    readonly hakemuksetLoading: boolean;
-    readonly hakemukset: Array<Hakemus>;
 };
 
-export const isHenkiloStateLoading = (state: HenkiloState) => state.henkiloLoading || state.hakemuksetLoading;
+export const isHenkiloStateLoading = (state: HenkiloState) => state.henkiloLoading;
 
 const initialState: HenkiloState = {
     henkiloLoading: true,
     henkiloKayttoEstetty: false,
     henkilo: {} as Henkilo,
-    hakemuksetLoading: false,
-    hakemukset: [],
 };
 
 const isKayttoEstetty = (data?: { status: number; path: string; message: string }) =>
@@ -56,16 +50,6 @@ export const henkilo = (state: Readonly<HenkiloState> = initialState, action: An
             };
         case UPDATE_HENKILO_FAILURE:
             return { ...state, henkiloLoading: false };
-        case FETCH_HENKILO_HAKEMUKSET.REQUEST:
-            return { ...state, hakemuksetLoading: true };
-        case FETCH_HENKILO_HAKEMUKSET.SUCCESS:
-            return {
-                ...state,
-                hakemuksetLoading: false,
-                hakemukset: action.hakemukset,
-            };
-        case FETCH_HENKILO_HAKEMUKSET.FAILURE:
-            return { ...state, hakemuksetLoading: false };
         case CLEAR_HENKILO:
             return { ...state, ...initialState };
         default:

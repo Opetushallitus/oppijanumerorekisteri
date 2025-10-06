@@ -16,6 +16,7 @@ import './DuplikaatitPerson.css';
 
 type DuplikaatitPersonProps = {
     henkilo: HenkiloDuplicate;
+    hakemukset?: Hakemus[];
     master: HenkiloDuplicate;
     isMaster: boolean;
     canForceLink: boolean;
@@ -71,7 +72,7 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
     const { data: kielet } = useGetKieletQuery();
     const { data: kansalaisuudet } = useGetKansalaisuudetQuery();
     const { L, locale } = useLocalisations();
-    const hakemukset = henkilo.hakemukset ? henkilo.hakemukset.map(_parseHakemus(kansalaisuudet, kielet, locale)) : [];
+    const hakemukset = props.hakemukset ? props.hakemukset.map(_parseHakemus(kansalaisuudet, kielet, locale)) : [];
     const hakemus = hakemukset.shift();
     const canLinkDuplicateToMaster =
         !master.passivoitu && !henkilo.yksiloityVTJ && (!henkilo.yksiloity || canForceLink);

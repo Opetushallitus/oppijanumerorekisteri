@@ -17,6 +17,7 @@ import { Henkilo, LinkedHenkilo } from '../types/domain/oppijanumerorekisteri/he
 import { HenkiloDuplicate } from '../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 import { Yksilointitieto } from '../types/domain/oppijanumerorekisteri/yksilointitieto.types';
 import { kayttooikeusApi } from './kayttooikeus';
+import { Hakemus } from '../types/domain/oppijanumerorekisteri/Hakemus.type';
 
 type Passinumerot = string[];
 
@@ -61,6 +62,7 @@ export const oppijanumerorekisteriApi = createApi({
         'master',
         'slaves',
         'duplicates',
+        'hakemukset',
     ],
     endpoints: (builder) => ({
         getLocale: builder.query<Locale, void>({
@@ -332,11 +334,11 @@ export const oppijanumerorekisteriApi = createApi({
                 } catch (error) {
                     let errorMessage = L['NOTIFICATION_DUPLIKAATIT_VIRHE'] + ' ' + oid;
                     if (
-                        error.message?.startsWith('Failed to read response from ataru') ||
-                        error.message?.startsWith('Failed to fetch applications from ataru')
+                        error.data?.message?.startsWith('Failed to read response from ataru') ||
+                        error.data?.message?.startsWith('Failed to fetch applications from ataru')
                     ) {
                         errorMessage = L['NOTIFICATION_DUPLIKAATIT_HAKEMUKSET_ATARU_VIRHE'] + ' ' + oid;
-                    } else if (error.message?.startsWith('Failed fetching hakemuksetDto for henkilos')) {
+                    } else if (error.data?.message?.startsWith('Failed fetching hakemuksetDto for henkilos')) {
                         errorMessage = L['NOTIFICATION_DUPLIKAATIT_HAKEMUKSET_HAKUAPP_VIRHE'] + ' ' + oid;
                     }
                     dispatch(
@@ -344,6 +346,32 @@ export const oppijanumerorekisteriApi = createApi({
                             id: `tuontidata-${Math.random()}`,
                             header: errorMessage,
                             type: 'error',
+                        })
+                    );
+                }
+            },
+        }),
+        getHakemukset: builder.query<Hakemus[], { oid: string; L: Localisations }>({
+            query: ({ oid }) => `henkilo/${oid}/hakemuksett`,
+            providesTags: (_result, _error, { oid }) => [{ type: 'hakemukset', id: oid }],
+            async onQueryStarted({ L, oid }, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                } catch (error) {
+                    let errorMessage = L['NOTIFICATION_HENKILO_HAKEMUKSET_VIRHE'] + ' ' + oid;
+                    if (
+                        error.data?.message?.startsWith('Failed to read response from ataru') ||
+                        error.data?.message?.startsWith('Failed to fetch applications from ataru')
+                    ) {
+                        errorMessage = L['NOTIFICATION_HENKILO_HAKEMUKSET_ATARU_VIRHE'] + ' ' + oid;
+                    } else if (error.data?.message?.startsWith('Failed fetching hakemuksetDto for henkilos')) {
+                        errorMessage = L['NOTIFICATION_HENKILO_HAKEMUKSET_HAKUAPP_VIRHE'] + ' ' + oid;
+                    }
+                    dispatch(
+                        add({
+                            id: `hakemukset-${Math.random()}`,
+                            type: 'error',
+                            header: errorMessage,
                         })
                     );
                 }
@@ -378,4 +406,5 @@ export const {
     useUnlinkHenkiloMutation,
     useGetHenkiloDuplicatesQuery,
     useGetYksilointitiedotQuery,
+    useGetHakemuksetQuery,
 } = oppijanumerorekisteriApi;
