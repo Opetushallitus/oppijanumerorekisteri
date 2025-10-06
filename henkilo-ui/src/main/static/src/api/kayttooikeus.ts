@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getCommonOptions } from '../http';
 import { OrganisaatioHenkilo } from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { Omattiedot } from '../types/domain/kayttooikeus/Omattiedot.types';
-import { FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, FETCH_HENKILO_SUCCESS } from '../actions/actiontypes';
+import { FETCH_HENKILO_SUCCESS } from '../actions/actiontypes';
 import { Locale } from '../types/locale.type';
 import { KutsuRead } from '../types/domain/kayttooikeus/Kutsu.types';
 import {
@@ -272,7 +272,6 @@ export const kayttooikeusApi = createApi({
             query: (token) => `kutsu/token/${token}`,
             async onQueryStarted(_token, { dispatch, queryFulfilled }) {
                 const { data } = await queryFulfilled;
-                dispatch({ type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, lang: data.asiointikieli ?? 'fi' });
                 dispatch({
                     type: FETCH_HENKILO_SUCCESS,
                     henkilo: {

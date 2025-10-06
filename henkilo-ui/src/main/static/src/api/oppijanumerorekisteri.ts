@@ -3,7 +3,6 @@ import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 import { getCommonOptions } from '../http';
 import { Localisations } from '../types/localisation.type';
 import { fetchHenkilo } from '../actions/henkilo.actions';
-import { FETCH_HENKILO_ASIOINTIKIELI_SUCCESS } from '../actions/actiontypes';
 import { Locale } from '../types/locale.type';
 import { TuontiKooste, TuontiKoosteCriteria } from '../types/tuontikooste.types';
 import { Tuontidata } from '../types/tuontidata.types';
@@ -70,10 +69,6 @@ export const oppijanumerorekisteriApi = createApi({
                 url: 'henkilo/current/asiointiKieli',
                 responseHandler: 'text',
             }),
-            async onQueryStarted(_, { dispatch, queryFulfilled }) {
-                const { data } = await queryFulfilled;
-                dispatch({ type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, lang: data });
-            },
             providesTags: ['locale'],
         }),
         deleteAccess: builder.mutation<void, string>({

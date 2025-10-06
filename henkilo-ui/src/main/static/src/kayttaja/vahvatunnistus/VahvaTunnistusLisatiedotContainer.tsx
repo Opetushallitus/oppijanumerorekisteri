@@ -6,8 +6,7 @@ import VahvaTunnistusLisatiedotInputs, { Values, Metadata, Errors } from './Vahv
 import { Localisations } from '../../types/localisation.type';
 import { http } from '../../http';
 import { isValidPassword } from '../../validation/PasswordValidator';
-import { toSupportedLocale } from '../../reducers/locale.reducer';
-import { useLocalisations } from '../../selectors';
+import { toSupportedLocale, useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
 
 import './VahvaTunnistusLisatiedotPage.css';
@@ -60,10 +59,10 @@ const getErrors = (values: Values, metadata: Metadata, L: Localisations): Errors
 
 export const VahvaTunnistusLisatiedotContainer = () => {
     const navigate = useNavigate();
-    const { l10n } = useLocalisations();
+    const { getLocalisations } = useLocalisations();
     const params = useParams();
     const locale = toSupportedLocale(params.locale);
-    const L = l10n.localisations[locale];
+    const L = getLocalisations(params.locale);
     useTitle(L['TITLE_VIRKAILIJA_UUDELLEENTUNNISTAUTUMINEN']);
 
     const [form, setForm] = useState({

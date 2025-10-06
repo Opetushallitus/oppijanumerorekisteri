@@ -4,18 +4,14 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import { kayttooikeusApi } from '../api/kayttooikeus';
 import { oppijanumerorekisteriApi } from '../api/oppijanumerorekisteri';
 import { lokalisointiApi } from '../api/lokalisointi';
-import l10n from '../reducers/l10n.reducer';
 import { koodistoApi } from '../api/koodisto';
 import { notificationList } from '../reducers/notification.reducer';
 import { henkilo } from '../reducers/henkilo.reducer';
-import { locale } from '../reducers/locale.reducer';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const isClient = typeof window !== 'undefined';
 
 const rootReducer = {
-    l10n,
-    locale,
     henkilo,
     notificationList,
 };

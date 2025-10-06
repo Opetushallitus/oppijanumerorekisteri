@@ -4,19 +4,18 @@ import { useLocation } from 'react-router';
 import { RekisteroidyPage } from './RekisteroidyPage';
 import Loader from '../../components/common/icons/Loader';
 import VirhePage from '../../components/common/page/VirhePage';
-import { useLocalisations } from '../../selectors';
+import { toSupportedLocale, useLocalisations } from '../../selectors';
 import { useGetKutsuByTokenQuery } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
-import { toSupportedLocale } from '../../reducers/locale.reducer';
 
 const RekisteroidyContainer = () => {
     const location = useLocation();
-    const { l10n } = useLocalisations();
+    const { getLocalisations } = useLocalisations();
     const search = new URLSearchParams(location.search);
     const temporaryToken = search.get('temporaryKutsuToken');
     const { data: kutsu, isLoading: isKutsuLoading, isError } = useGetKutsuByTokenQuery(temporaryToken);
     const locale = toSupportedLocale(kutsu?.asiointikieli);
-    const L = l10n.localisations[locale];
+    const L = getLocalisations(kutsu?.asiointikieli);
 
     useTitle(L['TITLE_REKISTEROINTI']);
 

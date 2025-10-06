@@ -9,17 +9,15 @@ import okmLogo from '../img/logo_okm.png';
 import { useGetLocalisationsQuery } from '../api/lokalisointi';
 import { useGetOmattiedotQuery } from '../api/kayttooikeus';
 import VirhePage from '../components/common/page/VirhePage';
-import { toSupportedLocale } from '../reducers/locale.reducer';
 import { Outlet, useParams } from 'react-router';
 
 const App = () => {
     const [isInitialized, setIsInitialized] = useState(false);
-    const { l10n } = useLocalisations();
+    const { getLocalisations } = useLocalisations();
     const params = useParams();
-    const locale = toSupportedLocale(params.locale);
     const { isSuccess: isLocalisationsSuccess } = useGetLocalisationsQuery('henkilo-ui');
     const { data: omattiedot, isSuccess: isOmattiedotSuccess } = useGetOmattiedotQuery();
-    const L = l10n?.localisations[locale] ?? {};
+    const L = getLocalisations(params.locale) ?? {};
 
     useEffect(() => {
         window.document.body.style.backgroundImage = `url('${background}')`;

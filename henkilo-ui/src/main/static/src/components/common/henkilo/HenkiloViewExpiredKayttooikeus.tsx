@@ -32,7 +32,7 @@ const emptyArray = [];
 const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
     const dispatch = useAppDispatch();
     const [sorting, setSorting] = useState<SortingState>([]);
-    const { L, locale, l10n } = useLocalisations();
+    const { L, locale, allLocalisations } = useLocalisations();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const { data: kayttooikeusryhmas, isLoading } = useKayttooikeusryhmas(props.isOmattiedot, props.oidHenkilo);
     const { data: organisations, isSuccess } = useGetOrganisationsQuery();
@@ -160,7 +160,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
                                   L,
                                   locale
                               )
-                            : StaticUtils.defaultOrganisaatio(getValue().organisaatioOid, l10n.localisations).nimi.fi}
+                            : StaticUtils.defaultOrganisaatio(getValue().organisaatioOid, allLocalisations).nimi.fi}
                     </span>
                 ),
             },

@@ -18,7 +18,7 @@ import Kayttajanimi from '../../components/common/henkilo/labelvalues/Kayttajani
 import Kutsumanimi from '../../components/common/henkilo/labelvalues/Kutsumanimi';
 import Sukunimi from '../../components/common/henkilo/labelvalues/Sukunimi';
 import Etunimet from '../../components/common/henkilo/labelvalues/Etunimet';
-import { toSupportedLocale } from '../../reducers/locale.reducer';
+import { toSupportedLocale } from '../../selectors';
 import { NamedSelectOption } from '../../utilities/select';
 
 import './RekisteroidyPage.css';

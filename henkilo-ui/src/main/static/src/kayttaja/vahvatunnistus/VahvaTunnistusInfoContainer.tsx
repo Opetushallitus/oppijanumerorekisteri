@@ -3,7 +3,7 @@ import { useParams } from 'react-router';
 
 import VahvaTunnistusInfoPage from './VahvaTunnistusInfoPage';
 import VirhePage from '../../components/common/page/VirhePage';
-import { toSupportedLocale } from '../../reducers/locale.reducer';
+import { toSupportedLocale } from '../../selectors';
 
 const VahvaTunnistusInfoContainer = () => {
     const params = useParams();

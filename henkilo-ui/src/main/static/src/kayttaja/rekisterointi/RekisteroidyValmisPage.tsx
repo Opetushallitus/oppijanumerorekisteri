@@ -3,13 +3,11 @@ import { useParams } from 'react-router';
 
 import { useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
-import { toSupportedLocale } from '../../reducers/locale.reducer';
 
 export const RekisteroidyValmisPage = () => {
-    const { l10n } = useLocalisations();
+    const { getLocalisations } = useLocalisations();
     const params = useParams();
-    const locale = toSupportedLocale(params.locale);
-    const L = l10n.localisations[locale];
+    const L = getLocalisations(params.locale);
 
     useTitle(L['TITLE_REKISTEROINTI']);
 

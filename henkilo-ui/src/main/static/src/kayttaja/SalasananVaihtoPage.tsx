@@ -10,13 +10,11 @@ import { useAppDispatch } from '../store';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import Loader from '../components/common/icons/Loader';
 import { useTitle } from '../useTitle';
-import { toSupportedLocale } from '../reducers/locale.reducer';
 
 export const SalasananVaihtoPage = () => {
-    const { l10n } = useLocalisations();
+    const { getLocalisations } = useLocalisations();
     const params = useParams();
-    const locale = toSupportedLocale(params.locale);
-    const L = l10n.localisations[locale];
+    const L = getLocalisations(params.locale);
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [newPasswordError, setNewPasswordError] = useState(false);

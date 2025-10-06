@@ -1,10 +1,8 @@
 import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 
 import { getCommonOptions } from '../http';
-import { FETCH_LOCALISATIONS_SUCCESS } from '../actions/actiontypes';
-import { L10n } from '../types/localisation.type';
 
-type Localisation = {
+export type Localisation = {
     accesscount: number;
     id: number;
     category: string;
@@ -17,18 +15,6 @@ type Localisation = {
     force: boolean;
     locale: string;
     value: string;
-};
-
-const mapLocalisationsByLocale = (localisations: Localisation[]): L10n => {
-    const result = { fi: {}, sv: {}, en: {} };
-    localisations.forEach((localisation) => {
-        try {
-            result[localisation.locale][localisation.key] = localisation.value;
-        } catch {
-            // nop, survive malformed data from localization service
-        }
-    });
-    return result;
 };
 
 const staggeredBaseQuery = retry(
@@ -50,11 +36,6 @@ export const lokalisointiApi = createApi({
     endpoints: (builder) => ({
         getLocalisations: builder.query<Localisation[], string>({
             query: (category) => `cxf/rest/v1/localisation?category=${category}`,
-            async onQueryStarted(_, { dispatch, queryFulfilled }) {
-                const { data } = await queryFulfilled;
-                const localisations = mapLocalisationsByLocale(data);
-                dispatch({ type: FETCH_LOCALISATIONS_SUCCESS, localisations });
-            },
         }),
     }),
 });

@@ -15,8 +15,8 @@ import {
 import { Yhteystieto } from '../../types/domain/oppijanumerorekisteri/yhteystieto.types';
 import PropertySingleton from '../../globals/PropertySingleton';
 import { WORK_ADDRESS, EMAIL } from '../../types/constants';
-import { toSupportedLocale } from '../../reducers/locale.reducer';
 import { Localisations } from '../../types/localisation.type';
+import { toSupportedLocale } from '../../selectors';
 
 type Props = {
     L: Localisations;

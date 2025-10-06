@@ -3,14 +3,12 @@ import React from 'react';
 import VirhePage from '../../components/common/page/VirhePage';
 import { useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
-import { toSupportedLocale } from '../../reducers/locale.reducer';
 import { useParams } from 'react-router';
 
 const EmailVerificationErrorContainer = () => {
-    const { l10n } = useLocalisations();
+    const { getLocalisations } = useLocalisations();
     const params = useParams();
-    const locale = toSupportedLocale(params.locale);
-    const L = l10n.localisations[locale];
+    const L = getLocalisations(params.locale);
 
     useTitle(L['TITLE_VIRHESIVU']);
     if (params.virhekoodi === 'TOKEN_KAYTETTY') {

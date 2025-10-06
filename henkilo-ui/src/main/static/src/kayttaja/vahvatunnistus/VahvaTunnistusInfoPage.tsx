@@ -3,7 +3,6 @@ import React from 'react';
 import { useLocalisations } from '../../selectors';
 import Button from '../../components/common/button/Button';
 import { useTitle } from '../../useTitle';
-import { toSupportedLocale } from '../../reducers/locale.reducer';
 
 type Props = {
     loginToken: string;
@@ -19,10 +18,9 @@ const getHost = () => {
     }
 };
 
-const VahvaTunnistusInfoPage = ({ loginToken, locale: anyLocale }: Props) => {
-    const { l10n } = useLocalisations();
-    const locale = toSupportedLocale(anyLocale);
-    const L = l10n.localisations[locale];
+const VahvaTunnistusInfoPage = ({ loginToken, locale }: Props) => {
+    const { getLocalisations } = useLocalisations();
+    const L = getLocalisations(locale);
 
     useTitle(L['TITLE_VIRKAILIJA_UUDELLEENTUNNISTAUTUMINEN']);
 

@@ -1,24 +1,52 @@
-import { useSelector, shallowEqual } from 'react-redux';
-import { RootState } from './store';
-import { Localisations } from './types/localisation.type';
+import { Localisations, L10n } from './types/localisation.type';
 import { Locale } from './types/locale.type';
-import { LocalisationState } from './reducers/l10n.reducer';
 import {
     useGetKayttooikeusryhmasForHenkiloQuery,
     useGetOmatKayttooikeusryhmasQuery,
     useGetOmatOrganisaatiotQuery,
     useGetOmattiedotQuery,
 } from './api/kayttooikeus';
+import { Localisation, useGetLocalisationsQuery } from './api/lokalisointi';
+import { useGetLocaleQuery } from './api/oppijanumerorekisteri';
+import { useMemo } from 'react';
 
-export const useLocalisations = () =>
-    useSelector<RootState, { L: Localisations; locale: Locale; l10n: LocalisationState }>(
-        (state) => ({
-            L: state.l10n.localisations[state.locale],
-            locale: state.locale,
-            l10n: state.l10n,
-        }),
-        shallowEqual
-    );
+export function toSupportedLocale(anyLocale: string): Locale {
+    const locale = anyLocale?.toLocaleLowerCase();
+    if (locale === 'fi' || locale === 'sv') {
+        return locale;
+    } else {
+        return 'fi';
+    }
+}
+
+const mapLocalisationsByLocale = (localisations: Localisation[]): L10n => {
+    const result = { fi: {}, sv: {}, en: {} };
+    localisations?.forEach((localisation) => {
+        try {
+            result[localisation.locale][localisation.key] = localisation.value;
+        } catch {
+            // nop, survive malformed data from localization service
+        }
+    });
+    return result;
+};
+
+export const useLocalisations = (): {
+    L: Localisations;
+    locale: Locale;
+    allLocalisations: L10n;
+    getLocalisations: (l: string) => Localisations;
+} => {
+    const { data: locale } = useGetLocaleQuery();
+    const { data: localisations } = useGetLocalisationsQuery('henkilo-ui');
+    const { L, allLocalisations, getLocalisations } = useMemo(() => {
+        const allLocalisations = mapLocalisationsByLocale(localisations);
+        const L = allLocalisations?.[locale];
+        const getLocalisations = (l: string) => allLocalisations?.[toSupportedLocale(l)];
+        return { L, allLocalisations, getLocalisations };
+    }, [localisations, locale]);
+    return { L, locale, allLocalisations, getLocalisations };
+};
 
 export const useOmatOrganisaatiot = () => {
     const { locale } = useLocalisations();

@@ -11,16 +11,14 @@ import Loader from '../../components/common/icons/Loader';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
-import { toSupportedLocale } from '../../reducers/locale.reducer';
 
 const EmailVerificationContainer = () => {
     const dispatch = useAppDispatch();
     const params = useParams();
-    const { l10n } = useLocalisations();
+    const { getLocalisations } = useLocalisations();
     const [loading, setLoading] = useState(true);
     const [henkilo, setHenkilo] = useState<Partial<Henkilo>>({ yhteystiedotRyhma: [] });
-    const locale = toSupportedLocale(params.locale);
-    const L = l10n.localisations[locale];
+    const L = getLocalisations(params.locale);
 
     useTitle(L['TITLE_SAHKOPOSTI_VARMISTAMINEN']);
 
