@@ -4,7 +4,6 @@ import moment from 'moment';
 
 import { useAppDispatch, type RootState } from '../../../../store';
 import StaticUtils from '../../StaticUtils';
-import { updateHenkiloAndRefetch } from '../../../../actions/henkilo.actions';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import OppijaUserContent from './OppijaUserContent';
 import AdminUserContent from './AdminUserContent';
@@ -28,6 +27,8 @@ import {
     usePutKayttajatiedotMutation,
 } from '../../../../api/kayttooikeus';
 import { add } from '../../../../slices/toastSlice';
+import { useUpdateHenkiloMutation } from '../../../../api/oppijanumerorekisteri';
+import { fetchHenkilo } from '../../../../actions/henkilo.actions';
 
 type OwnProps = {
     oidHenkilo: string;
@@ -43,6 +44,7 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
     const { data: kayttajatiedot } = useGetKayttajatiedotQuery(oidHenkilo, { skip: isOppija });
     const [putKayttajatiedot] = usePutKayttajatiedotMutation();
     const [putAnomusilmoitus] = usePutAnomusilmoitusMutation();
+    const [putHenkilo] = useUpdateHenkiloMutation();
     const [readOnly, setReadOnly] = useState(true);
     const [henkiloUpdate, setHenkiloUpdate] = useState<any>({
         ...(henkilo.henkilo
@@ -93,34 +95,54 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
         setReadOnly(true);
     }
 
-    function _update() {
+    async function _update() {
         const newHenkiloUpdate = Object.assign({}, henkiloUpdate);
-        dispatch<any>(updateHenkiloAndRefetch(newHenkiloUpdate, true));
-        anomus(newHenkiloUpdate);
+        await updateAnomusilmoitus(newHenkiloUpdate);
         if (newHenkiloUpdate.kayttajanimi !== undefined) {
-            putKayttajatiedot({ oid: newHenkiloUpdate.oidHenkilo, username: newHenkiloUpdate.kayttajanimi })
-                .unwrap()
-                .catch((err) => {
-                    const errorKey = err.data?.message?.includes('username_unique')
-                        ? 'NOTIFICATION_HENKILOTIEDOT_KAYTTAJANIMI_EXISTS'
-                        : 'NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE';
-                    dispatch(
-                        add({
-                            id: `put-kayttajatiedot-${Math.random()}`,
-                            type: 'error',
-                            header: L[errorKey],
-                        })
-                    );
-                });
+            await updateKayttajatiedot(newHenkiloUpdate);
         }
-
+        updateHenkilo(newHenkiloUpdate);
         setReadOnly(true);
     }
 
-    async function anomus(henkiloUpdate: Henkilo) {
+    async function updateHenkilo(henkiloUpdate: Henkilo) {
+        return putHenkilo(henkiloUpdate)
+            .unwrap()
+            .then(() => fetchHenkilo(oidHenkilo)(dispatch))
+            .catch((error) => {
+                const errorMessages = [];
+                if (error.status === 400 && error.data?.message && error.data?.message.indexOf('invalid.hetu') !== -1) {
+                    errorMessages.push(L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU']);
+                }
+                if (error.status === 400 && JSON.stringify(error).includes('socialsecuritynr.already.exists')) {
+                    errorMessages.push(L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU_KAYTOSSA']);
+                }
+                if (errorMessages.length > 0) {
+                    errorMessages.forEach((errorMessage) =>
+                        dispatch(
+                            add({
+                                id: `henkilo-update-failed-${Math.random()}`,
+                                type: 'error',
+                                header: errorMessage,
+                            })
+                        )
+                    );
+                } else {
+                    dispatch(
+                        add({
+                            id: `henkilo-update-failed-${Math.random()}`,
+                            type: 'error',
+                            header: L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE'],
+                        })
+                    );
+                }
+            });
+    }
+
+    async function updateAnomusilmoitus(henkiloUpdate: Henkilo) {
         if (view === 'omattiedot' && omattiedot.isAdmin) {
             const initialAnomusilmoitusValue = omattiedot.anomusilmoitus;
-            putAnomusilmoitus({ oid: henkiloUpdate.oidHenkilo, anomusilmoitus: henkiloUpdate.anomusilmoitus })
+            return putAnomusilmoitus({ oid: henkiloUpdate.oidHenkilo, anomusilmoitus: henkiloUpdate.anomusilmoitus })
                 .unwrap()
                 .catch(() => {
                     setHenkiloUpdate({
@@ -129,6 +151,23 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
                     });
                 });
         }
+    }
+
+    async function updateKayttajatiedot(henkiloUpdate: Henkilo) {
+        return putKayttajatiedot({ oid: henkiloUpdate.oidHenkilo, username: henkiloUpdate.kayttajanimi })
+            .unwrap()
+            .catch((err) => {
+                const errorKey = err.data?.message?.includes('username_unique')
+                    ? 'NOTIFICATION_HENKILOTIEDOT_KAYTTAJANIMI_EXISTS'
+                    : 'NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE';
+                dispatch(
+                    add({
+                        id: `put-kayttajatiedot-${Math.random()}`,
+                        type: 'error',
+                        header: L[errorKey],
+                    })
+                );
+            });
     }
 
     function _updateModelField(event: React.SyntheticEvent<HTMLInputElement>) {

@@ -2,9 +2,7 @@ import {
     FETCH_HENKILO_REQUEST,
     FETCH_HENKILO_SUCCESS,
     FETCH_HENKILO_FAILURE,
-    UPDATE_HENKILO_REQUEST,
     CLEAR_HENKILO,
-    UPDATE_HENKILO_FAILURE,
 } from '../actions/actiontypes';
 import type { Henkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
 import { AnyAction } from '@reduxjs/toolkit';
@@ -37,7 +35,6 @@ const isKayttoEstettyOppijanumerorekisteri = (data?: { status: number; path: str
 
 export const henkilo = (state: Readonly<HenkiloState> = initialState, action: AnyAction): HenkiloState => {
     switch (action.type) {
-        case UPDATE_HENKILO_REQUEST:
         case FETCH_HENKILO_REQUEST:
             return { ...state, henkiloLoading: true };
         case FETCH_HENKILO_SUCCESS:
@@ -48,8 +45,6 @@ export const henkilo = (state: Readonly<HenkiloState> = initialState, action: An
                 henkiloLoading: false,
                 henkiloKayttoEstetty: isKayttoEstetty(action.data),
             };
-        case UPDATE_HENKILO_FAILURE:
-            return { ...state, henkiloLoading: false };
         case CLEAR_HENKILO:
             return { ...state, ...initialState };
         default:

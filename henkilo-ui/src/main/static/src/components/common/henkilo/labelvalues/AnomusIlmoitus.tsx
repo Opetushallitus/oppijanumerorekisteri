@@ -32,11 +32,13 @@ export const AnomusIlmoitus = (props: OwnProps) => {
     const { data: vastuukayttajaRyhmat } = useGetKayttooikeusryhmaByKayttooikeusQuery('VASTUUKAYTTAJAT');
 
     const options = useMemo(() => {
-        return vastuukayttajaRyhmat?.map((vastuukayttajaRyhma) => ({
-            value: vastuukayttajaRyhma.id,
-            label: localizeTextGroup(vastuukayttajaRyhma.nimi?.texts, locale),
-            optionsName: 'anomusilmoitus',
-        }));
+        return (
+            vastuukayttajaRyhmat?.map((vastuukayttajaRyhma) => ({
+                value: vastuukayttajaRyhma.id,
+                label: localizeTextGroup(vastuukayttajaRyhma.nimi?.texts, locale),
+                optionsName: 'anomusilmoitus',
+            })) ?? []
+        );
     }, [vastuukayttajaRyhmat]);
 
     return (

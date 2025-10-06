@@ -159,7 +159,7 @@ export const oppijanumerorekisteriApi = createApi({
                 body: henkilo,
                 responseHandler: 'text',
             }),
-            invalidatesTags: ['henkilo'],
+            invalidatesTags: ['henkilo', 'locale'],
         }),
         aktivoiHenkilo: builder.mutation<void, { oidHenkilo: string; L: Localisations }>({
             query: ({ oidHenkilo }) => ({

@@ -20,10 +20,12 @@ import { YhteystietoRyhma } from '../../../types/domain/oppijanumerorekisteri/yh
 import { copy } from '../../../utilities/copy';
 import { KoodistoStateKoodi, useGetYhteystietotyypitQuery } from '../../../api/koodisto';
 import { RootState, useAppDispatch } from '../../../store';
-import { updateHenkiloAndRefetch } from '../../../actions/henkilo.actions';
 import { useLocalisations } from '../../../selectors';
 import { useGetKayttajatiedotQuery, useGetOmattiedotQuery } from '../../../api/kayttooikeus';
 import { KayttajatiedotRead } from '../../../types/domain/kayttooikeus/KayttajatiedotRead';
+import { useUpdateHenkiloMutation } from '../../../api/oppijanumerorekisteri';
+import { fetchHenkilo } from '../../../actions/henkilo.actions';
+import { add } from '../../../slices/toastSlice';
 
 type OwnProps = {
     readOnly: boolean;
@@ -165,6 +167,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
     const dispatch = useAppDispatch();
     const { locale, L } = useLocalisations();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const [putHenkilo] = useUpdateHenkiloMutation();
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: kayttajatiedot } = useGetKayttajatiedotQuery(henkilo.henkilo.oidHenkilo);
     const [henkiloUpdate, setHenkiloUpdate] = useState(copy(henkilo.henkilo));
@@ -254,7 +257,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
         setState({ ...state, modified: true, contactInfoErrorFields });
     }
 
-    function _update() {
+    async function _update() {
         state.yhteystietoRemoveList.forEach((yhteystietoId) =>
             henkiloUpdate.yhteystiedotRyhma.splice(
                 henkiloUpdate.yhteystiedotRyhma.findIndex(
@@ -264,7 +267,19 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
             )
         );
         setState({ ...state, yhteystietoRemoveList: [] });
-        dispatch<any>(updateHenkiloAndRefetch(henkiloUpdate, undefined));
+
+        putHenkilo(henkiloUpdate)
+            .unwrap()
+            .then(() => fetchHenkilo(henkilo.henkilo.oidHenkilo)(dispatch))
+            .catch(() =>
+                dispatch(
+                    add({
+                        id: `henkilo-update-failed-${Math.random()}`,
+                        type: 'error',
+                        header: L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE'],
+                    })
+                )
+            );
     }
 
     function _createYhteystiedotRyhma(yhteystietoryhmaTyyppi: string) {
