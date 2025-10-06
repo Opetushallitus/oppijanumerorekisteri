@@ -1,7 +1,5 @@
 import React, { SyntheticEvent } from 'react';
-import { connect } from 'react-redux';
-import type { RootState } from '../../../../store';
-import type { HenkiloState } from '../../../../reducers/henkilo.reducer';
+
 import type { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import LabelValue from './LabelValue';
 
@@ -11,13 +9,7 @@ type OwnProps = {
     updateDateFieldAction: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
 };
 
-type StateProps = {
-    henkilo: HenkiloState;
-};
-
-type Props = OwnProps & StateProps;
-
-const Syntymaaika = (props: Props) => {
+const Syntymaaika = (props: OwnProps) => {
     return (
         <LabelValue
             readOnly={props.readOnly}
@@ -33,8 +25,4 @@ const Syntymaaika = (props: Props) => {
     );
 };
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    henkilo: state.henkilo,
-});
-
-export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(Syntymaaika);
+export default Syntymaaika;

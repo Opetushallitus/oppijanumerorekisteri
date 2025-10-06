@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import type { RootState } from '../../../../store';
 import LabelValue from './LabelValue';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
@@ -17,21 +17,20 @@ type StateProps = {
 
 type Props = OwnProps & StateProps;
 
-const Kutsumanimi = (props: Props) => (
-    <LabelValue
-        readOnly={props.readOnly}
-        updateModelFieldAction={props.updateModelFieldAction}
-        values={{
-            label: 'HENKILO_KUTSUMANIMI',
-            value: props.defaultValue || props.henkilo.henkilo.kutsumanimi,
-            inputValue: 'kutsumanimi',
-            isError: props.isError,
-        }}
-    />
-);
+const Kutsumanimi = (props: Props) => {
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    return (
+        <LabelValue
+            readOnly={props.readOnly}
+            updateModelFieldAction={props.updateModelFieldAction}
+            values={{
+                label: 'HENKILO_KUTSUMANIMI',
+                value: props.defaultValue || henkilo.henkilo.kutsumanimi,
+                inputValue: 'kutsumanimi',
+                isError: props.isError,
+            }}
+        />
+    );
+};
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    henkilo: state.henkilo,
-});
-
-export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(Kutsumanimi);
+export default Kutsumanimi;

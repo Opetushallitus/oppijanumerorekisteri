@@ -1,5 +1,5 @@
 import React, { SyntheticEvent } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import type { RootState } from '../../../../store';
 import LabelValue from './LabelValue';
 import StaticUtils from '../../StaticUtils';
@@ -10,27 +10,20 @@ type OwnProps = {
     updateModelFieldAction?: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
 };
 
-type StateProps = {
-    henkilo: HenkiloState;
+const Etunimet = (props: OwnProps) => {
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    return (
+        <LabelValue
+            updateModelFieldAction={props.updateModelFieldAction}
+            readOnly={props.readOnly}
+            values={{
+                label: 'HENKILO_ETUNIMET',
+                value: henkilo.henkilo.etunimet,
+                inputValue: 'etunimet',
+                disabled: StaticUtils.hasHetuAndIsYksiloity(henkilo),
+            }}
+        />
+    );
 };
 
-type Props = OwnProps & StateProps;
-
-const Etunimet = (props: Props) => (
-    <LabelValue
-        updateModelFieldAction={props.updateModelFieldAction}
-        readOnly={props.readOnly}
-        values={{
-            label: 'HENKILO_ETUNIMET',
-            value: props.henkilo.henkilo.etunimet,
-            inputValue: 'etunimet',
-            disabled: StaticUtils.hasHetuAndIsYksiloity(props.henkilo),
-        }}
-    />
-);
-
-const mapStateToProps = (state: RootState): StateProps => ({
-    henkilo: state.henkilo,
-});
-
-export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(Etunimet);
+export default Etunimet;

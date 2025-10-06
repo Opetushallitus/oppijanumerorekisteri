@@ -1,5 +1,6 @@
 import React, { SyntheticEvent } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
+
 import type { RootState } from '../../../../store';
 import LabelValue from './LabelValue';
 import StaticUtils from '../../StaticUtils';
@@ -12,28 +13,21 @@ type OwnProps = {
     label?: string;
 };
 
-type StateProps = {
-    henkilo: HenkiloState;
+const Sukunimi = (props: OwnProps) => {
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    return (
+        <LabelValue
+            readOnly={props.readOnly}
+            updateModelFieldAction={props.updateModelFieldAction}
+            autofocus={props.autofocus}
+            values={{
+                label: props.label || 'HENKILO_SUKUNIMI',
+                value: henkilo.henkilo.sukunimi,
+                inputValue: 'sukunimi',
+                disabled: StaticUtils.hasHetuAndIsYksiloity(henkilo),
+            }}
+        />
+    );
 };
 
-type Props = OwnProps & StateProps;
-
-const Sukunimi = (props: Props) => (
-    <LabelValue
-        readOnly={props.readOnly}
-        updateModelFieldAction={props.updateModelFieldAction}
-        autofocus={props.autofocus}
-        values={{
-            label: props.label || 'HENKILO_SUKUNIMI',
-            value: props.henkilo.henkilo.sukunimi,
-            inputValue: 'sukunimi',
-            disabled: StaticUtils.hasHetuAndIsYksiloity(props.henkilo),
-        }}
-    />
-);
-
-const mapStateToProps = (state: RootState): StateProps => ({
-    henkilo: state.henkilo,
-});
-
-export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(Sukunimi);
+export default Sukunimi;

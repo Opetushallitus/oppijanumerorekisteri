@@ -1,5 +1,5 @@
 import React, { SyntheticEvent } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import type { RootState } from '../../../../store';
 import LabelValue from './LabelValue';
 import StaticUtils from '../../StaticUtils';
@@ -10,27 +10,20 @@ type OwnProps = {
     updateModelFieldAction: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
 };
 
-type StateProps = {
-    henkilo: HenkiloState;
+const Hetu = (props: OwnProps) => {
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    return (
+        <LabelValue
+            readOnly={props.readOnly}
+            updateModelFieldAction={props.updateModelFieldAction}
+            values={{
+                label: 'HENKILO_HETU',
+                value: henkilo.henkilo.hetu,
+                inputValue: 'hetu',
+                disabled: StaticUtils.hasHetuAndIsYksiloity(henkilo),
+            }}
+        />
+    );
 };
 
-type Props = OwnProps & StateProps;
-
-const Hetu = (props: Props) => (
-    <LabelValue
-        readOnly={props.readOnly}
-        updateModelFieldAction={props.updateModelFieldAction}
-        values={{
-            label: 'HENKILO_HETU',
-            value: props.henkilo.henkilo.hetu,
-            inputValue: 'hetu',
-            disabled: StaticUtils.hasHetuAndIsYksiloity(props.henkilo),
-        }}
-    />
-);
-
-const mapStateToProps = (state: RootState): StateProps => ({
-    henkilo: state.henkilo,
-});
-
-export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(Hetu);
+export default Hetu;

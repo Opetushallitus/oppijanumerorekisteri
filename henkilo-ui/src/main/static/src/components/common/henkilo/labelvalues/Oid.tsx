@@ -1,6 +1,6 @@
 import React, { SyntheticEvent } from 'react';
 import type { RootState } from '../../../../store';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import LabelValue from './LabelValue';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 
@@ -9,27 +9,20 @@ type OwnProps = {
     updateModelFieldAction: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
 };
 
-type StateProps = {
-    henkilo: HenkiloState;
+const Oid = (props: OwnProps) => {
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    return (
+        <LabelValue
+            readOnly={props.readOnly}
+            updateModelFieldAction={props.updateModelFieldAction}
+            values={{
+                label: 'HENKILO_OID',
+                value: henkilo.henkilo.oidHenkilo,
+                inputValue: 'oidHenkilo',
+                readOnly: true,
+            }}
+        />
+    );
 };
 
-type Props = OwnProps & StateProps;
-
-const Oid = (props: Props) => (
-    <LabelValue
-        readOnly={props.readOnly}
-        updateModelFieldAction={props.updateModelFieldAction}
-        values={{
-            label: 'HENKILO_OID',
-            value: props.henkilo.henkilo.oidHenkilo,
-            inputValue: 'oidHenkilo',
-            readOnly: true,
-        }}
-    />
-);
-
-const mapStateToProps = (state: RootState): StateProps => ({
-    henkilo: state.henkilo,
-});
-
-export default connect<StateProps, object, OwnProps, RootState>(mapStateToProps)(Oid);
+export default Oid;
