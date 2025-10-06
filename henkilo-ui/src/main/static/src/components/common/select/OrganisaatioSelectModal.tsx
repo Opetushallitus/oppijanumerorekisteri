@@ -137,11 +137,7 @@ export function filterAndSortOrganisaatios(
     organisations: OrganisaatioSelectObject[],
     searchWord: string
 ): OrganisaatioSelectObject[] {
-    const sorter = combinedSort(
-        sortStartingWithFirst(searchWord),
-        sortParentlessFirst(),
-        sortByParentName()
-    );
+    const sorter = combinedSort(sortStartingWithFirst(searchWord), sortParentlessFirst(), sortByParentName());
 
     return sorter(organisations.filter(containsSearchword(searchWord)));
 }
