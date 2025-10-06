@@ -24,7 +24,7 @@ const HakaButton = (props: OwnProps) => {
             popupClass="oph-popup-default oph-popup-bottom"
             disabled={props.disabled}
             popupButtonWrapperPositioning="relative"
-            popupContent={<HakatunnistePopupContent henkiloOid={props.oidHenkilo} L={L} />}
+            popupContent={<HakatunnistePopupContent henkiloOid={props.oidHenkilo} />}
         >
             {L['LISAA_HAKA_LINKKI']}
         </PopupButton>

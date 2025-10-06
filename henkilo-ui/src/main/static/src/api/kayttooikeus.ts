@@ -171,6 +171,7 @@ export const kayttooikeusApi = createApi({
         'kutsuByToken',
         'accessRightReport',
         'kayttajatiedot',
+        'hakatunnisteet',
         'palvelukayttaja',
         'palvelukayttajat',
         'henkilohaku',
@@ -307,6 +308,18 @@ export const kayttooikeusApi = createApi({
                 method: 'POST',
                 body: `"${password}"`,
             }),
+        }),
+        getHakatunnisteet: builder.query<string[], string>({
+            query: (oid) => `henkilo/${oid}/hakatunnus`,
+            providesTags: ['hakatunnisteet'],
+        }),
+        putHakatunnisteet: builder.mutation<string[], { oid: string; tunnisteet: string[] }>({
+            query: ({ oid, tunnisteet }) => ({
+                url: `henkilo/${oid}/hakatunnus`,
+                method: 'PUT',
+                body: tunnisteet,
+            }),
+            invalidatesTags: ['hakatunnisteet'],
         }),
         getPalvelukayttajat: builder.query<PalvelukayttajaRead[], PalvelukayttajaCriteria>({
             query: (criteria) => `palvelukayttaja?${new URLSearchParams(criteria).toString()}`,
@@ -575,6 +588,8 @@ export const {
     useGetKutsuByTokenQuery,
     useGetAccessRightReportQuery,
     useGetKayttajatiedotQuery,
+    useGetHakatunnisteetQuery,
+    usePutHakatunnisteetMutation,
     usePutKayttajatiedotMutation,
     usePutPasswordMutation,
     useGetPalvelukayttajatQuery,

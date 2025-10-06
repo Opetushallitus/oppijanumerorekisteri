@@ -1,140 +1,92 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import type { RootState } from '../../../store';
-import { urls } from 'oph-urls-js';
-import { http } from '../../../http';
-import { reject } from 'ramda';
+import React, { useState } from 'react';
+
+import { useGetHakatunnisteetQuery, usePutHakatunnisteetMutation } from '../../../api/kayttooikeus';
+import { useLocalisations } from '../../../selectors';
+import { useAppDispatch } from '../../../store';
+import { add } from '../../../slices/toastSlice';
+
 import './HakaPopupContent.css';
-import { Localisations } from '../../../types/localisation.type';
-import { addGlobalNotification } from '../../../actions/notification.actions';
-import { GlobalNotificationConfig } from '../../../types/notification.types';
-import { NOTIFICATIONTYPES } from '../Notification/notificationtypes';
 
 type OwnProps = {
     henkiloOid: string;
-    L: Localisations;
 };
 
-type DispatchProps = {
-    addGlobalNotification: (arg0: GlobalNotificationConfig) => void;
-};
+const HakatunnistePopupContent = ({ henkiloOid }: OwnProps) => {
+    const dispatch = useAppDispatch();
+    const { L } = useLocalisations();
+    const { data: hakatunnisteet } = useGetHakatunnisteetQuery(henkiloOid);
+    const [putHakatunnisteet] = usePutHakatunnisteetMutation();
+    const [newTunniste, setNewTunniste] = useState('');
 
-type Props = OwnProps & DispatchProps;
-
-type State = {
-    hakatunnisteet: string[];
-    newTunnisteValue: string;
-};
-
-class HakatunnistePopupContent extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            hakatunnisteet: [],
-            newTunnisteValue: '',
-        };
+    async function addHakatunniste() {
+        if (newTunniste.length > 0) {
+            await saveHakatunnisteet([...hakatunnisteet, newTunniste]);
+            setNewTunniste('');
+        }
     }
 
-    async componentDidMount() {
-        const tunnisteet = await this.getHakatunnisteet();
-        this.setState({
-            hakatunnisteet: tunnisteet,
-        });
+    async function removeHakatunniste(tunniste: string) {
+        const filteredTunnisteet = hakatunnisteet?.filter((t) => t !== tunniste);
+        await saveHakatunnisteet(filteredTunnisteet);
     }
 
-    render() {
-        return (
-            <div className="hakapopupcontent">
-                <ul>
-                    {this.state.hakatunnisteet.length > 0 ? (
-                        this.state.hakatunnisteet.map((hakatunniste) => (
-                            <li className="tag" key={hakatunniste}>
-                                <span>{hakatunniste}</span>{' '}
-                                <a
-                                    className="remove"
-                                    href="#poista"
-                                    onClick={() => this.removeHakatunniste(hakatunniste)}
-                                >
-                                    {this.props.L['POISTA']}
-                                </a>
-                            </li>
-                        ))
-                    ) : (
-                        <span className="oph-h4 oph-strong hakapopup">{this.props.L['EI_HAKATUNNUKSIA']}</span>
-                    )}
-                </ul>
-                <div className="oph-field oph-field-is-required">
-                    <input
-                        type="text"
-                        className="oph-input haka-input"
-                        aria-required="true"
-                        placeholder="Lisää uusi tunnus"
-                        value={this.state.newTunnisteValue}
-                        onChange={this.handleChange.bind(this)}
-                        onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) =>
-                            e.key === 'Enter' ? this.addHakatunniste() : null
-                        }
-                    />
-                    {this.state.hakatunnisteet.includes(this.state.newTunnisteValue) ? (
-                        <div className="oph-field-text oph-error">
-                            {this.props.L['HAKATUNNISTEET_VIRHE_OLEMASSAOLEVA']}
-                        </div>
-                    ) : null}
-                    <button
-                        className="save oph-button oph-button-primary"
-                        disabled={this.state.hakatunnisteet.includes(this.state.newTunnisteValue)}
-                        onClick={() => this.addHakatunniste()}
-                    >
-                        {this.props.L['TALLENNA_TUNNUS']}
-                    </button>
-                </div>
+    async function saveHakatunnisteet(tunnisteet: Array<string>) {
+        await putHakatunnisteet({ oid: henkiloOid, tunnisteet: tunnisteet })
+            .unwrap()
+            .catch(({ data }) => {
+                if (data?.errorType === 'ValidationException' && data?.message.indexOf('ovat jo käytössä') !== -1) {
+                    dispatch(
+                        add({
+                            id: `DUPLICATE_HAKA_KEY-${Math.random()}`,
+                            type: 'error',
+                            header: `${L['HAKATUNNISTEET_VIRHE_KAYTOSSA_ALKU']} (${newTunniste}) ${L['HAKATUNNISTEET_VIRHE_KAYTOSSA_LOPPU']}`,
+                        })
+                    );
+                }
+            });
+    }
+
+    return (
+        <div className="hakapopupcontent">
+            <ul>
+                {hakatunnisteet?.length > 0 ? (
+                    hakatunnisteet.map((hakatunniste) => (
+                        <li className="tag" key={hakatunniste}>
+                            <span>{hakatunniste}</span>{' '}
+                            <a className="remove" href="#poista" onClick={() => removeHakatunniste(hakatunniste)}>
+                                {L['POISTA']}
+                            </a>
+                        </li>
+                    ))
+                ) : (
+                    <span className="oph-h4 oph-strong hakapopup">{L['EI_HAKATUNNUKSIA']}</span>
+                )}
+            </ul>
+            <div className="oph-field oph-field-is-required">
+                <input
+                    type="text"
+                    className="oph-input haka-input"
+                    aria-required="true"
+                    placeholder="Lisää uusi tunnus"
+                    value={newTunniste}
+                    onChange={(e) => setNewTunniste(e.target.value)}
+                    onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) =>
+                        e.key === 'Enter' ? addHakatunniste() : null
+                    }
+                />
+                {hakatunnisteet?.includes(newTunniste) ? (
+                    <div className="oph-field-text oph-error">{L['HAKATUNNISTEET_VIRHE_OLEMASSAOLEVA']}</div>
+                ) : null}
+                <button
+                    className="save oph-button oph-button-primary"
+                    disabled={!!hakatunnisteet?.includes(newTunniste)}
+                    onClick={() => addHakatunniste()}
+                >
+                    {L['TALLENNA_TUNNUS']}
+                </button>
             </div>
-        );
-    }
+        </div>
+    );
+};
 
-    handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({ newTunnisteValue: event.target.value });
-    }
-
-    addHakatunniste() {
-        if (this.state.newTunnisteValue.length > 0) {
-            const tunnisteet = this.state.hakatunnisteet.slice(0);
-            tunnisteet.push(this.state.newTunnisteValue);
-            this.saveHakatunnisteet(tunnisteet, this.state.newTunnisteValue);
-            this.setState({ newTunnisteValue: '' });
-        }
-    }
-
-    async removeHakatunniste(tunniste: string) {
-        const filteredTunnisteet = reject((hakatunniste) => hakatunniste === tunniste)(this.state.hakatunnisteet);
-        await this.saveHakatunnisteet(filteredTunnisteet, tunniste);
-    }
-
-    async getHakatunnisteet() {
-        const url = urls.url('kayttooikeus-service.henkilo.hakatunnus', this.props.henkiloOid);
-        const hakatunnisteet = await http.get<string[]>(url);
-        return hakatunnisteet;
-    }
-
-    async saveHakatunnisteet(newHakatunnisteet: Array<string>, newTunnisteValue: string) {
-        const url = urls.url('kayttooikeus-service.henkilo.hakatunnus', this.props.henkiloOid);
-        try {
-            const hakatunnisteet = await http.put<string[]>(url, newHakatunnisteet);
-            this.setState({ hakatunnisteet });
-        } catch (error) {
-            if (error.errorType === 'ValidationException' && error.message.indexOf('ovat jo käytössä') !== -1) {
-                this.props.addGlobalNotification({
-                    key: 'DUPLICATE_HAKA_KEY',
-                    type: NOTIFICATIONTYPES.ERROR,
-                    title: `${this.props.L['HAKATUNNISTEET_VIRHE_KAYTOSSA_ALKU']} (${newTunnisteValue}) ${this.props.L['HAKATUNNISTEET_VIRHE_KAYTOSSA_LOPPU']}`,
-                    autoClose: 5000,
-                });
-            }
-            throw error;
-        }
-    }
-}
-
-export default connect<object, DispatchProps, OwnProps, RootState>(undefined, {
-    addGlobalNotification,
-})(HakatunnistePopupContent);
+export default HakatunnistePopupContent;
