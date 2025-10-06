@@ -25,7 +25,7 @@ export const JarjestelmatunnusEditPage = () => {
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        dispatch<any>(clearHenkilo());
+        dispatch(clearHenkilo());
         dispatch<any>(fetchHenkilo(params.oid));
     }, [params.oid]);
 
@@ -37,7 +37,7 @@ export const JarjestelmatunnusEditPage = () => {
             <hr />
             <HenkiloViewExistingKayttooikeus
                 existingKayttooikeusRef={existingKayttooikeusRef}
-                vuosia={null}
+                isPalvelukayttaja={true}
                 oidHenkilo={params.oid}
                 isOmattiedot={false}
             />
@@ -46,7 +46,6 @@ export const JarjestelmatunnusEditPage = () => {
             <hr />
             <HenkiloViewCreateKayttooikeus
                 oidHenkilo={params.oid}
-                vuosia={null}
                 existingKayttooikeusRef={existingKayttooikeusRef}
                 isPalvelukayttaja={true}
             />

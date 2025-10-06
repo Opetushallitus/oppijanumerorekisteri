@@ -4,7 +4,7 @@ import moment from 'moment';
 
 import { useAppDispatch, type RootState } from '../../../../store';
 import StaticUtils from '../../StaticUtils';
-import { updateHenkiloAndRefetch, updateAndRefetchKayttajatieto } from '../../../../actions/henkilo.actions';
+import { updateHenkiloAndRefetch } from '../../../../actions/henkilo.actions';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import OppijaUserContent from './OppijaUserContent';
 import AdminUserContent from './AdminUserContent';
@@ -21,18 +21,27 @@ import { copy } from '../../../../utilities/copy';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { useLocalisations } from '../../../../selectors';
-import { useGetOmattiedotQuery, usePutAnomusilmoitusMutation } from '../../../../api/kayttooikeus';
+import {
+    useGetKayttajatiedotQuery,
+    useGetOmattiedotQuery,
+    usePutAnomusilmoitusMutation,
+    usePutKayttajatiedotMutation,
+} from '../../../../api/kayttooikeus';
+import { add } from '../../../../slices/toastSlice';
 
 type OwnProps = {
     oidHenkilo: string;
     view: View;
+    isOppija?: boolean;
 };
 
-export const UserContentContainer = ({ oidHenkilo, view }: OwnProps) => {
+export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) => {
     const { L } = useLocalisations();
     const dispatch = useAppDispatch();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const { data: omattiedot } = useGetOmattiedotQuery();
+    const { data: kayttajatiedot } = useGetKayttajatiedotQuery(oidHenkilo, { skip: isOppija });
+    const [putKayttajatiedot] = usePutKayttajatiedotMutation();
     const [putAnomusilmoitus] = usePutAnomusilmoitusMutation();
     const [readOnly, setReadOnly] = useState(true);
     const [henkiloUpdate, setHenkiloUpdate] = useState<any>({
@@ -55,7 +64,7 @@ export const UserContentContainer = ({ oidHenkilo, view }: OwnProps) => {
 
     function _additionalInfo() {
         const info = [];
-        if (henkilo.kayttaja.kayttajaTyyppi === 'PALVELU') {
+        if (kayttajatiedot?.kayttajaTyyppi === 'PALVELU') {
             info.push(L['HENKILO_ADDITIOINALINFO_PALVELU']);
         } else {
             if (henkilo.henkilo.yksiloity) {
@@ -89,7 +98,20 @@ export const UserContentContainer = ({ oidHenkilo, view }: OwnProps) => {
         dispatch<any>(updateHenkiloAndRefetch(newHenkiloUpdate, true));
         anomus(newHenkiloUpdate);
         if (newHenkiloUpdate.kayttajanimi !== undefined) {
-            dispatch<any>(updateAndRefetchKayttajatieto(newHenkiloUpdate.oidHenkilo, newHenkiloUpdate.kayttajanimi));
+            putKayttajatiedot({ oid: newHenkiloUpdate.oidHenkilo, username: newHenkiloUpdate.kayttajanimi })
+                .unwrap()
+                .catch((err) => {
+                    const errorKey = err.data?.message?.includes('username_unique')
+                        ? 'NOTIFICATION_HENKILOTIEDOT_KAYTTAJANIMI_EXISTS'
+                        : 'NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE';
+                    dispatch(
+                        add({
+                            id: `put-kayttajatiedot-${Math.random()}`,
+                            type: 'error',
+                            header: L[errorKey],
+                        })
+                    );
+                });
         }
 
         setReadOnly(true);
@@ -157,7 +179,7 @@ export const UserContentContainer = ({ oidHenkilo, view }: OwnProps) => {
     }
 
     let content;
-    if (henkilo?.kayttaja?.kayttajaTyyppi === 'PALVELU') {
+    if (kayttajatiedot?.kayttajaTyyppi === 'PALVELU') {
         content = (
             <PalveluUserContent
                 readOnly={readOnly}

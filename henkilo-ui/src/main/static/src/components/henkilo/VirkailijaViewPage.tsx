@@ -4,11 +4,15 @@ import { useNavigate, useParams } from 'react-router';
 
 import { useAppDispatch, type RootState } from '../../store';
 import Loader from '../common/icons/Loader';
-import { clearHenkilo, fetchHenkilo, fetchKayttaja, fetchKayttajatieto } from '../../actions/henkilo.actions';
+import { clearHenkilo, fetchHenkilo } from '../../actions/henkilo.actions';
 import { HenkiloState, isHenkiloStateLoading } from '../../reducers/henkilo.reducer';
 import { useLocalisations } from '../../selectors';
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
-import { useGetKayttooikeusAnomuksetForHenkiloQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
+import {
+    useGetKayttajatiedotQuery,
+    useGetKayttooikeusAnomuksetForHenkiloQuery,
+    useGetOmattiedotQuery,
+} from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { henkiloViewTabs } from '../navigation/NavigationTabs';
@@ -19,7 +23,6 @@ import Mfa from './Mfa';
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent';
 import { HenkiloViewOrganisationContent } from '../common/henkilo/HenkiloViewOrganisationContent';
 import HenkiloViewExistingKayttooikeus from '../common/henkilo/HenkiloViewExistingKayttooikeus';
-import StaticUtils from '../common/StaticUtils';
 import HenkiloViewExpiredKayttooikeus from '../common/henkilo/HenkiloViewExpiredKayttooikeus';
 import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
 import HenkiloViewCreateKayttooikeus from '../common/henkilo/HenkiloViewCreateKayttooikeus';
@@ -38,6 +41,7 @@ export const VirkailijaViewPage = () => {
     const { L } = useLocalisations();
     const { oid } = useParams();
     const { data: master } = useGetHenkiloMasterQuery(oid);
+    const { data: kayttajatiedot } = useGetKayttajatiedotQuery(oid);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const isRekisterinpitaja = omattiedot ? isOnrRekisterinpitaja(omattiedot.organisaatiot) : false;
@@ -58,8 +62,6 @@ export const VirkailijaViewPage = () => {
 
         dispatch(clearHenkilo());
         dispatch<any>(fetchHenkilo(oid));
-        dispatch<any>(fetchKayttaja(oid));
-        dispatch<any>(fetchKayttajatieto(oid));
     }, [omattiedot, oid]);
 
     if (isHenkiloStateLoading(henkilo) || isAnomuksetLoading) {
@@ -80,7 +82,7 @@ export const VirkailijaViewPage = () => {
                 )}
                 <div className="wrapper">
                     <h2>{L.TIETOTURVA_ASETUKSET_OTSIKKO}</h2>
-                    <Mfa view={view} />
+                    <Mfa henkiloOid={oid} view={view} />
                 </div>
                 <div className="wrapper">
                     <HenkiloViewContactContent view={view} readOnly={true} />
@@ -90,7 +92,7 @@ export const VirkailijaViewPage = () => {
                 </div>
                 <div className="wrapper" ref={existingKayttooikeusRef}>
                     <HenkiloViewExistingKayttooikeus
-                        vuosia={StaticUtils.getKayttooikeusKestoVuosissa(henkilo.kayttaja)}
+                        isPalvelukayttaja={kayttajatiedot?.kayttajaTyyppi === 'PALVELU'}
                         oidHenkilo={oid}
                         isOmattiedot={false}
                         existingKayttooikeusRef={existingKayttooikeusRef}
@@ -105,9 +107,8 @@ export const VirkailijaViewPage = () => {
                 <div className="wrapper">
                     <HenkiloViewCreateKayttooikeus
                         oidHenkilo={oid}
-                        vuosia={StaticUtils.getKayttooikeusKestoVuosissa(henkilo.kayttaja)}
                         existingKayttooikeusRef={existingKayttooikeusRef}
-                        isPalvelukayttaja={henkilo.kayttaja.kayttajaTyyppi === 'PALVELU'}
+                        isPalvelukayttaja={kayttajatiedot?.kayttajaTyyppi === 'PALVELU'}
                     />
                 </div>
             </div>

@@ -1,8 +1,8 @@
 import React, { ReactNode, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import PinInput from 'react-pin-input';
 
 import {
+    useGetKayttajatiedotQuery,
     useGetMfaSetupQuery,
     useGetOmattiedotQuery,
     usePostMfaDisableMutation,
@@ -11,12 +11,11 @@ import {
 import appleStore from '../../img/apple_store.svg';
 import googlePlay from '../../img/google_play.svg';
 import Loader from '../common/icons/Loader';
-import { RootState } from '../../store';
 import { Localisations } from '../../types/localisation.type';
 import { View } from '../../types/constants';
-import WideGreenNotification from '../common/notifications/WideGreenNotification';
-import { HenkiloState } from '../../reducers/henkilo.reducer';
 import { useLocalisations } from '../../selectors';
+import { useAppDispatch } from '../../store';
+import { add } from '../../slices/toastSlice';
 
 import styles from './Mfa.module.css';
 
@@ -70,10 +69,10 @@ const isMfaSetupEnabled = (idpEntityId: string) => {
 type MfaRegisteredProps = {
     L: Localisations;
     idpEntityId: string;
-    setSetupSuccess: (s: string) => void;
 };
 
-const MfaRegistered = ({ L, idpEntityId, setSetupSuccess }: MfaRegisteredProps) => {
+const MfaRegistered = ({ L, idpEntityId }: MfaRegisteredProps) => {
+    const dispatch = useAppDispatch();
     const [postMfaDisable, { isLoading }] = usePostMfaDisableMutation();
     const [setupError, setSetupError] = useState<string>();
 
@@ -82,10 +81,22 @@ const MfaRegistered = ({ L, idpEntityId, setSetupSuccess }: MfaRegisteredProps) 
         await postMfaDisable()
             .unwrap()
             .then(() => {
-                setSetupSuccess(L.MFA_POISTETTU_KAYTOSTA);
+                dispatch(
+                    add({
+                        id: `enable-mfa-${Math.random()}`,
+                        type: 'ok',
+                        header: L.MFA_POISTETTU_KAYTOSTA,
+                    })
+                );
             })
             .catch(() => {
-                setSetupError(L.MFA_VIRHE);
+                dispatch(
+                    add({
+                        id: `enable-mfa-${Math.random()}`,
+                        type: 'error',
+                        header: L.MFA_VIRHE,
+                    })
+                );
             });
     };
 
@@ -192,14 +203,13 @@ const MfaSetupStep = ({ icon, info, children }: MfaSetupStepProps) => {
 
 type MfaSetupProps = {
     setMfaSetup: (b: boolean) => void;
-    setSetupSuccess: (s: string) => void;
     L: Localisations;
 };
 
-const MfaSetup = ({ setMfaSetup, setSetupSuccess, L }: MfaSetupProps) => {
+const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
+    const dispatch = useAppDispatch();
     const { data, isLoading: isGetLoading, isSuccess } = useGetMfaSetupQuery();
     const [postMfaEnable, { isLoading: isPostLoading }] = usePostMfaEnableMutation();
-    const [setupError, setSetupError] = useState<string>('');
     const pinInput = useRef(null);
 
     if (isGetLoading) {
@@ -218,24 +228,47 @@ const MfaSetup = ({ setMfaSetup, setSetupSuccess, L }: MfaSetupProps) => {
     };
 
     const handleMfaEnable = async (token: string) => {
-        setSetupError(undefined);
         await postMfaEnable(token)
             .unwrap()
             .then((enabled) => {
                 if (enabled) {
+                    dispatch(
+                        add({
+                            id: `enable-mfa-${Math.random()}`,
+                            type: 'ok',
+                            header: L.MFA_OTETTU_KAYTTOON,
+                        })
+                    );
                     setMfaSetup(false);
-                    setSetupSuccess(L.MFA_OTETTU_KAYTTOON);
                 } else {
-                    setSetupError(L.MFA_VIRHE);
+                    dispatch(
+                        add({
+                            id: `enable-mfa-${Math.random()}`,
+                            type: 'error',
+                            header: L.MFA_VIRHE,
+                        })
+                    );
                 }
             })
             .catch((e) => {
                 if (e.data.message === 'Invalid token') {
-                    setSetupError(L.MFA_VAARA_KOODI);
+                    dispatch(
+                        add({
+                            id: `enable-mfa-${Math.random()}`,
+                            type: 'error',
+                            header: L.MFA_VAARA_KOODI,
+                        })
+                    );
                     pinInput.current.clear();
                     pinInput.current.focus();
                 } else {
-                    setSetupError(L.MFA_VIRHE);
+                    dispatch(
+                        add({
+                            id: `enable-mfa-${Math.random()}`,
+                            type: 'error',
+                            header: L.MFA_VIRHE,
+                        })
+                    );
                 }
             });
     };
@@ -292,11 +325,6 @@ const MfaSetup = ({ setMfaSetup, setSetupSuccess, L }: MfaSetupProps) => {
                         ref={pinInput}
                     />
                     {isPostLoading && <div>{L.MFA_OTETAAN_KAYTTOON}</div>}
-                    {setupError && (
-                        <div className="error-txt" data-test-id="token-error">
-                            {setupError}
-                        </div>
-                    )}
                 </MfaSetupStep>
             </div>
             <hr className={styles.hr} />
@@ -315,36 +343,27 @@ const MfaSetup = ({ setMfaSetup, setSetupSuccess, L }: MfaSetupProps) => {
 };
 
 type MfaProps = {
+    henkiloOid: string;
     view: View;
 };
 
-const Mfa = ({ view }: MfaProps) => {
+const Mfa = ({ view, henkiloOid }: MfaProps) => {
     const {
         data: { mfaProvider, idpEntityId },
     } = useGetOmattiedotQuery();
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
-    const userMfaProvider = view === 'omattiedot' ? mfaProvider : henkilo.kayttajatieto?.mfaProvider;
+    const { data: kayttajatiedot } = useGetKayttajatiedotQuery(henkiloOid);
+    const userMfaProvider = view === 'omattiedot' ? mfaProvider : kayttajatiedot?.mfaProvider;
     const { L } = useLocalisations();
     const [isMfaSetup, setMfaSetup] = useState(false);
-    const [setupSuccess, setSetupSuccess] = useState<string>();
 
     const mfaSetupComponent = isMfaSetup ? (
-        <MfaSetup setMfaSetup={setMfaSetup} setSetupSuccess={setSetupSuccess} L={L} />
+        <MfaSetup setMfaSetup={setMfaSetup} L={L} />
     ) : (
         <MfaUnregistered setMfaSetup={setMfaSetup} L={L} idpEntityId={idpEntityId} />
     );
-    const mfaStateComponent = mfaProvider ? (
-        <MfaRegistered L={L} idpEntityId={idpEntityId} setSetupSuccess={setSetupSuccess} />
-    ) : (
-        mfaSetupComponent
-    );
+    const mfaStateComponent = mfaProvider ? <MfaRegistered L={L} idpEntityId={idpEntityId} /> : mfaSetupComponent;
     return (
         <div>
-            {setupSuccess && (
-                <div className={styles.setupSuccessContainer} data-test-id="success-notification">
-                    <WideGreenNotification message={setupSuccess} closeAction={() => setSetupSuccess(undefined)} />
-                </div>
-            )}
             <div className={styles.infoTitle}>
                 <span className={styles.mfaTitle}>
                     {L.MFA_TUNNISTAUTUMINEN}

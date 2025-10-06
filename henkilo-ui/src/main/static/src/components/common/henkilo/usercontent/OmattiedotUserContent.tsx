@@ -24,7 +24,7 @@ import { AnomusIlmoitus } from '../labelvalues/AnomusIlmoitus';
 import HenkiloVarmentajaSuhde from '../labelvalues/HenkiloVarmentajaSuhde';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
-import { useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
+import { useGetKayttajatiedotQuery, useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
 
 type OwnProps = {
     readOnly: boolean;
@@ -42,6 +42,7 @@ type OwnProps = {
 const OmattiedotUserContent = (props: OwnProps) => {
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const { data: omattiedot } = useGetOmattiedotQuery();
+    const { data: kayttajatiedot, isLoading } = useGetKayttajatiedotQuery(props.oidHenkilo);
 
     const showAnomusIlmoitus = useMemo(() => {
         return hasAnyPalveluRooli(omattiedot?.organisaatiot, ['KAYTTOOIKEUS_REKISTERINPITAJA']);
@@ -112,6 +113,7 @@ const OmattiedotUserContent = (props: OwnProps) => {
             [
                 <Kayttajanimi
                     key="omattiedot-kayttajanimi"
+                    kayttajatiedot={kayttajatiedot}
                     readOnly={props.readOnly}
                     updateModelFieldAction={props.updateModelAction}
                     disabled={true}
@@ -150,7 +152,7 @@ const OmattiedotUserContent = (props: OwnProps) => {
         ];
     };
 
-    return henkilo.henkiloLoading || henkilo.kayttajatietoLoading ? (
+    return henkilo.henkiloLoading || isLoading ? (
         <Loader />
     ) : (
         <AbstractUserContent

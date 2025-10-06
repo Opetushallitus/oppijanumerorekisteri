@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 import { useAppDispatch, type RootState } from '../../store';
-import { fetchHenkilo, fetchKayttajatieto, clearHenkilo } from '../../actions/henkilo.actions';
+import { fetchHenkilo, clearHenkilo } from '../../actions/henkilo.actions';
 import { HenkiloState, isHenkiloStateLoading } from '../../reducers/henkilo.reducer';
 import Loader from '../common/icons/Loader';
 import { useGetKayttooikeusAnomuksetForHenkiloQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
@@ -12,7 +12,6 @@ import { UserContentContainer } from '../common/henkilo/usercontent/UserContentC
 import Mfa from '../henkilo/Mfa';
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent';
 import HenkiloViewExistingKayttooikeus from '../common/henkilo/HenkiloViewExistingKayttooikeus';
-import StaticUtils from '../common/StaticUtils';
 import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
 import HenkiloViewExpiredKayttooikeus from '../common/henkilo/HenkiloViewExpiredKayttooikeus';
 import { HenkiloViewCreateKayttooikeusanomus } from '../common/henkilo/HenkiloViewCreateKayttooikeusanomus';
@@ -35,7 +34,6 @@ export const OmattiedotPage = () => {
             const userOid = omattiedot.oidHenkilo;
             dispatch(clearHenkilo());
             dispatch<any>(fetchHenkilo(userOid));
-            dispatch<any>(fetchKayttajatieto(userOid));
         }
     }, [omattiedot]);
 
@@ -49,14 +47,14 @@ export const OmattiedotPage = () => {
                 </div>
                 <div className="wrapper">
                     <h2>{L.TIETOTURVA_ASETUKSET_OTSIKKO}</h2>
-                    <Mfa view="omattiedot" />
+                    <Mfa henkiloOid={omattiedot.oidHenkilo} view="omattiedot" />
                 </div>
                 <div className="wrapper">
                     <HenkiloViewContactContent view="omattiedot" readOnly={true} />
                 </div>
                 <div className="wrapper" ref={existingKayttooikeusRef}>
                     <HenkiloViewExistingKayttooikeus
-                        vuosia={StaticUtils.getKayttooikeusKestoVuosissa(henkilo.kayttaja)}
+                        isPalvelukayttaja={false}
                         oidHenkilo={omattiedot.oidHenkilo}
                         isOmattiedot={true}
                         existingKayttooikeusRef={existingKayttooikeusRef}

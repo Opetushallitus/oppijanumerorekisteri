@@ -32,7 +32,7 @@ import Sukupuoli from '../labelvalues/Sukupuoli';
 import PassinumeroButton from '../buttons/PassinumeroButton';
 import PoistaKayttajatunnusButton from '../buttons/PoistaKayttajatunnusButton';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
-import { useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
+import { useGetKayttajatiedotQuery, useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
 
 type OwnProps = {
     readOnly: boolean;
@@ -50,6 +50,7 @@ type OwnProps = {
 function AdminUserContent(props: OwnProps) {
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const { data: omattiedot } = useGetOmattiedotQuery();
+    const { data: kayttajatiedot, isLoading } = useGetKayttajatiedotQuery(props.oidHenkilo);
 
     const hasHenkiloReadUpdateRights = useMemo(() => {
         return hasAnyPalveluRooli(omattiedot?.organisaatiot, [
@@ -91,7 +92,8 @@ function AdminUserContent(props: OwnProps) {
                 <Kayttajanimi
                     key="admin-kayttajanimi"
                     {...infoProps}
-                    disabled={!omattiedot?.isAdmin || !henkilo.kayttajatieto?.username}
+                    kayttajatiedot={kayttajatiedot}
+                    disabled={!omattiedot?.isAdmin || !kayttajatiedot?.username}
                 />,
                 <LinkitetytHenkilot key="admin-linkitetythenkilot" />,
                 <MasterHenkilo key="admin-masterhenkilo" oidHenkilo={props.oidHenkilo} />,
@@ -108,7 +110,7 @@ function AdminUserContent(props: OwnProps) {
         };
         const duplicate = henkilo.henkilo.duplicate;
         const passivoitu = henkilo.henkilo.passivoitu;
-        const kayttajatunnukseton = !henkilo.kayttajatieto?.username;
+        const kayttajatunnukseton = !kayttajatiedot?.username;
         const editButton = hasHenkiloReadUpdateRights ? (
             <EditButton editAction={props.edit} disabled={duplicate || passivoitu} />
         ) : null;
@@ -153,7 +155,7 @@ function AdminUserContent(props: OwnProps) {
             passwordButton,
         ];
     }
-    return henkilo.henkiloLoading || henkilo.kayttajatietoLoading ? (
+    return henkilo.henkiloLoading || isLoading ? (
         <Loader />
     ) : (
         <AbstractUserContent

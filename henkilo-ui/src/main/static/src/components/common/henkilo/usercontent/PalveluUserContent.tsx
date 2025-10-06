@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useEffect } from 'react';
+import React, { SyntheticEvent } from 'react';
 import { useSelector } from 'react-redux';
 
 import type { RootState } from '../../../../store';
@@ -7,7 +7,6 @@ import Sukunimi from '../labelvalues/Sukunimi';
 import EditButton from '../buttons/EditButton';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
-import { fetchKayttajatieto } from '../../../../actions/henkilo.actions';
 import Loader from '../../icons/Loader';
 import Oid from '../labelvalues/Oid';
 import Kayttajanimi from '../labelvalues/Kayttajanimi';
@@ -15,7 +14,7 @@ import PasswordButton from '../buttons/PasswordButton';
 import PassivoiButton from '../buttons/PassivoiButton';
 import AktivoiButton from '../buttons/AktivoiButton';
 import PoistaKayttajatunnusButton from '../buttons/PoistaKayttajatunnusButton';
-import { useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
+import { useGetKayttajatiedotQuery, useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
 
 type OwnProps = {
     readOnly: boolean;
@@ -32,12 +31,7 @@ type OwnProps = {
 const PalveluUserContent = (props: OwnProps) => {
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const { data: omattiedot } = useGetOmattiedotQuery();
-
-    useEffect(() => {
-        if (!henkilo.kayttajatieto?.username && !henkilo.kayttajatietoLoading) {
-            fetchKayttajatieto(props.oidHenkilo);
-        }
-    }, []);
+    const { data: kayttajatiedot } = useGetKayttajatiedotQuery(props.oidHenkilo);
 
     const createBasicInfo = () => {
         return [
@@ -50,7 +44,8 @@ const PalveluUserContent = (props: OwnProps) => {
                 />,
                 <Kayttajanimi
                     key="palveluuser-kayttajanimi"
-                    disabled={!omattiedot?.isAdmin && !!henkilo.kayttajatieto?.username}
+                    kayttajatiedot={kayttajatiedot}
+                    disabled={!omattiedot?.isAdmin && !!kayttajatiedot?.username}
                     readOnly={props.readOnly}
                     updateModelFieldAction={props.updateModelAction}
                 />,
@@ -62,7 +57,7 @@ const PalveluUserContent = (props: OwnProps) => {
     const createReadOnlyButtons = () => {
         const duplicate = henkilo.henkilo.duplicate;
         const passivoitu = henkilo.henkilo.passivoitu;
-        const kayttajatunnukseton = !henkilo.kayttajatieto?.username;
+        const kayttajatunnukseton = !kayttajatiedot?.username;
         return [
             <EditButton key="editbutton" editAction={props.edit} disabled={duplicate || passivoitu} />,
             omattiedot?.isAdmin ? <PassivoiButton disabled={duplicate || passivoitu} /> : null,
@@ -81,7 +76,7 @@ const PalveluUserContent = (props: OwnProps) => {
         ];
     };
 
-    return henkilo.henkiloLoading || henkilo.kayttajatietoLoading ? (
+    return henkilo.henkiloLoading ? (
         <Loader />
     ) : (
         <AbstractUserContent

@@ -46,8 +46,7 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, duplicates, oi
         .map((yhteysTieto) => yhteysTieto.yhteystietoArvo);
     const master: HenkiloDuplicate = { ...henkilo.henkilo, emails, hakemukset: henkilo.hakemukset };
     const linkingEnabled =
-        enabledDuplikaattiView(oidHenkilo, henkilo.kayttaja, masterHenkilo?.oidHenkilo) ||
-        oidHenkilo !== omattiedot.oidHenkilo;
+        enabledDuplikaattiView(oidHenkilo, masterHenkilo?.oidHenkilo) || oidHenkilo !== omattiedot.oidHenkilo;
     const navigate = useNavigate();
 
     const link = async () =>

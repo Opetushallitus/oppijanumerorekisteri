@@ -2,8 +2,6 @@ import { HenkiloState } from '../../reducers/henkilo.reducer';
 import { Localisations, L10n } from '../../types/localisation.type';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { Locale } from '../../types/locale.type';
-
-import { Kayttaja } from '../../types/domain/kayttooikeus/kayttaja.types';
 import { TextGroup } from '../../types/domain/kayttooikeus/textgroup.types';
 import { Organisaatio } from '../../types/domain/organisaatio/organisaatio.types';
 import { toLocalizedText } from '../../localizabletext';
@@ -152,10 +150,6 @@ class StaticUtils {
 
     static stringIsNotEmpty(entity: string | null | undefined) {
         return entity && entity !== '';
-    }
-
-    static getKayttooikeusKestoVuosissa(kayttaja: Kayttaja) {
-        return kayttaja.kayttajaTyyppi === 'PALVELU' ? null : 1;
     }
 
     static getKoodiNimi(koodiArvo: string, koodisto: Koodisto, locale: Locale) {

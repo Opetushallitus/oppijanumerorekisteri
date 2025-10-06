@@ -2,6 +2,7 @@ import { test, expect, Page } from '@playwright/test';
 
 import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/current/omattiedot/GET.json';
 import mfasetup from '../../mock-api/src/api/kayttooikeus-service/mfasetup/gauth/setup/GET.json';
+import { toastWithText } from '../locators';
 
 const inputToken = async (page: Page, token: string) => {
     await page.locator('input[class="pincode-input-text"]').first().type(token[0]);
@@ -30,9 +31,7 @@ test.describe('mfa setup', () => {
 
         await inputToken(page, '123456');
 
-        await expect(page.locator('[data-test-id="success-notification"] .oph-alert-title')).toContainText(
-            'otettu onnistuneesti käyttöön'
-        );
+        await expect(toastWithText(page, 'otettu onnistuneesti käyttöön')).toBeVisible();
         await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Käytössä');
     });
 
@@ -72,9 +71,7 @@ test.describe('mfa setup', () => {
         await page.goto('/henkilo-ui/omattiedot');
         await page.click('[data-test-id="start-mfa-setup"]');
         await inputToken(page, '123456');
-        await expect(page.locator('[data-test-id="token-error"]')).toHaveText(
-            'Jotain meni vikaan. Yritä hetken kuluttua uudelleen.'
-        );
+        await expect(toastWithText(page, 'Jotain meni vikaan. Yritä hetken kuluttua uudelleen.')).toBeVisible();
     });
 
     test('shows error when token is invalid', async ({ page }) => {
@@ -85,7 +82,7 @@ test.describe('mfa setup', () => {
         await page.goto('/henkilo-ui/omattiedot');
         await page.click('[data-test-id="start-mfa-setup"]');
         await inputToken(page, '123456');
-        await expect(page.locator('[data-test-id="token-error"]')).toHaveText('Väärä vahvistuskoodi');
+        await expect(toastWithText(page, 'Väärä vahvistuskoodi')).toBeVisible();
     });
 
     test('shows info when already set up', async ({ page }) => {
@@ -131,9 +128,7 @@ test.describe('mfa setup', () => {
 
         await page.click('[data-test-id="disable-mfa"]');
 
-        await expect(page.locator('[data-test-id="success-notification"] .oph-alert-title')).toContainText(
-            'poistettu käytöstä'
-        );
+        await expect(toastWithText(page, 'poistettu käytöstä')).toBeVisible();
         await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Ei käytössä');
     });
 });

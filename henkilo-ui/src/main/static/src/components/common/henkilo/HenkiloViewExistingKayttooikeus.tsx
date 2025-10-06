@@ -32,7 +32,7 @@ import { add } from '../../../slices/toastSlice';
 type OwnProps = {
     oidHenkilo: string;
     isOmattiedot: boolean;
-    vuosia: number;
+    isPalvelukayttaja: boolean;
     existingKayttooikeusRef: MutableRefObject<HTMLDivElement>;
 };
 
@@ -67,12 +67,12 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                         ...acc,
                         [kayttooikeus.ryhmaId]: {
                             alkupvm: moment(),
-                            loppupvm: props.vuosia
-                                ? moment().add(props.vuosia, 'years')
-                                : moment(kayttooikeus.voimassaPvm, PropertySingleton.state.PVM_DBFORMAATTI).add(
+                            loppupvm: props.isPalvelukayttaja
+                                ? moment(kayttooikeus.voimassaPvm, PropertySingleton.state.PVM_DBFORMAATTI).add(
                                       1,
                                       'years'
-                                  ),
+                                  )
+                                : moment().add(1, 'years'),
                         },
                     }),
                     {}
@@ -181,9 +181,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                         showYearDropdown
                         showWeekNumbers
                         filterDate={(date) =>
-                            Number.isInteger(props.vuosia)
-                                ? moment(date).isBefore(moment().add(props.vuosia, 'years'))
-                                : true
+                            props.isPalvelukayttaja ? true : moment(date).isBefore(moment().add(1, 'years'))
                         }
                         dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
                     />

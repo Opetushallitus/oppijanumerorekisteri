@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router';
 
 import { RootState, useAppDispatch } from '../../../store';
-import { fetchHenkilo, fetchKayttaja, fetchHenkiloHakemukset } from '../../../actions/henkilo.actions';
+import { fetchHenkilo, fetchHenkiloHakemukset } from '../../../actions/henkilo.actions';
 import { useLocalisations } from '../../../selectors';
 import { useTitle } from '../../../useTitle';
 import { useNavigation } from '../../../useNavigation';
@@ -29,7 +29,6 @@ export const DuplikaatitContainer = (props: OwnProps) => {
 
     useEffect(() => {
         dispatch<any>(fetchHenkilo(oid));
-        dispatch<any>(fetchKayttaja(oid));
         dispatch<any>(fetchHenkiloHakemukset(oid));
     }, []);
 

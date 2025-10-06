@@ -19,7 +19,7 @@ import HakaButton from '../buttons/HakaButton';
 import PasswordButton from '../buttons/PasswordButton';
 import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
-import { useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
+import { useGetKayttajatiedotQuery, useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
 import { RootState } from '../../../../store';
 
 type OwnProps = {
@@ -38,6 +38,7 @@ type OwnProps = {
 function VirkailijaUserContent(props: OwnProps) {
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const { data: omattiedot } = useGetOmattiedotQuery();
+    const { data: kayttajatiedot, isLoading } = useGetKayttajatiedotQuery(props.oidHenkilo);
 
     const hasHenkiloReadUpdateRights = useMemo(() => {
         return hasAnyPalveluRooli(omattiedot?.organisaatiot, [
@@ -53,6 +54,7 @@ function VirkailijaUserContent(props: OwnProps) {
             updateModelSelectAction: props.updateModelSelectAction,
             updateDateFieldAction: props.updateDateAction,
             henkiloUpdate: props.henkiloUpdate,
+            kayttajatiedot,
         };
 
         // Basic info box content
@@ -78,7 +80,7 @@ function VirkailijaUserContent(props: OwnProps) {
     function createReadOnlyButtons() {
         const duplicate = henkilo.henkilo.duplicate;
         const passivoitu = henkilo.henkilo.passivoitu;
-        const kayttajatunnukseton = !henkilo.kayttajatieto?.username;
+        const kayttajatunnukseton = !kayttajatiedot?.username;
         const editButton = hasHenkiloReadUpdateRights ? (
             <EditButton editAction={props.edit} disabled={duplicate || passivoitu} />
         ) : null;
@@ -104,7 +106,7 @@ function VirkailijaUserContent(props: OwnProps) {
 
         return [editButton, hakaButton, passwordButton];
     }
-    return henkilo.henkiloLoading || henkilo.kayttajatietoLoading ? (
+    return henkilo.henkiloLoading || isLoading ? (
         <Loader />
     ) : (
         <AbstractUserContent

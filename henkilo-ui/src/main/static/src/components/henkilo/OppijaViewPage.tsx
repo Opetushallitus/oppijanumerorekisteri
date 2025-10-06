@@ -49,7 +49,11 @@ export const OppijaViewPage = () => {
         return (
             <div className="mainContent">
                 <div className="wrapper">
-                    <UserContentContainer oidHenkilo={oid} view={omattiedot.isAdmin ? 'admin' : 'oppija'} />
+                    <UserContentContainer
+                        oidHenkilo={oid}
+                        view={omattiedot.isAdmin ? 'admin' : 'oppija'}
+                        isOppija={true}
+                    />
                 </div>
                 {isRekisterinpitaja && (
                     <div className="wrapper">

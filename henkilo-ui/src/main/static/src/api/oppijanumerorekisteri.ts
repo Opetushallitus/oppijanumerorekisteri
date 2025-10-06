@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 
 import { getCommonOptions } from '../http';
 import { Localisations } from '../types/localisation.type';
-import { fetchHenkilo, fetchKayttajatieto } from '../actions/henkilo.actions';
+import { fetchHenkilo } from '../actions/henkilo.actions';
 import { FETCH_HENKILO_ASIOINTIKIELI_SUCCESS } from '../actions/actiontypes';
 import { Locale } from '../types/locale.type';
 import { TuontiKooste, TuontiKoosteCriteria } from '../types/tuontikooste.types';
@@ -81,8 +81,13 @@ export const oppijanumerorekisteriApi = createApi({
             }),
             async onQueryStarted(oid, { dispatch, queryFulfilled }) {
                 await queryFulfilled;
-                dispatch(kayttooikeusApi.util.invalidateTags(['henkilonkayttooikeusryhmat', 'henkiloorganisaatiot']));
-                dispatch<any>(fetchKayttajatieto(oid));
+                dispatch(
+                    kayttooikeusApi.util.invalidateTags([
+                        'henkilonkayttooikeusryhmat',
+                        'henkiloorganisaatiot',
+                        'kayttajatiedot',
+                    ])
+                );
                 dispatch<any>(fetchHenkilo(oid));
             },
         }),

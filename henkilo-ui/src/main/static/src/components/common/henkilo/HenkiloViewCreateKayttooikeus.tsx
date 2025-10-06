@@ -17,23 +17,17 @@ import { useAppDispatch } from '../../../store';
 import './HenkiloViewCreateKayttooikeus.css';
 
 type OwnProps = {
-    vuosia: number;
     existingKayttooikeusRef: React.MutableRefObject<HTMLDivElement>;
     oidHenkilo: string;
     isPalvelukayttaja: boolean;
 };
 
-const filterDate = (date: Date, vuosia: number) =>
-    vuosia !== null
-        ? moment(date).isBefore(moment().add(vuosia, 'years')) && moment(date).isAfter(moment().add(-1, 'days'))
-        : true;
+const filterDate = (date: Date, isPalvelukayttaja: boolean) =>
+    isPalvelukayttaja
+        ? true
+        : moment(date).isBefore(moment().add(1, 'years')) && moment(date).isAfter(moment().add(-1, 'days'));
 
-const HenkiloViewCreateKayttooikeus = ({
-    existingKayttooikeusRef,
-    isPalvelukayttaja,
-    oidHenkilo,
-    vuosia,
-}: OwnProps) => {
+const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukayttaja, oidHenkilo }: OwnProps) => {
     const { L } = useLocalisations();
     const dispatch = useAppDispatch();
     const [putKayttooikeusryhma] = usePutKayttooikeusryhmaForHenkiloMutation();
@@ -41,7 +35,7 @@ const HenkiloViewCreateKayttooikeus = ({
     const [organisationSelection, setOrganisationSelection] = useState<OrganisaatioSelectObject>();
     const [ryhmaSelection, setRyhmaSelection] = useState<SelectOption>();
     const [alkupvm, setAlkupvm] = useState<moment.Moment>(moment());
-    const defaultLoppupvm = isPalvelukayttaja ? moment('2099-12-31', 'YYYY-MM-DD') : moment().add(vuosia, 'years');
+    const defaultLoppupvm = isPalvelukayttaja ? moment('2099-12-31', 'YYYY-MM-DD') : moment().add(1, 'years');
     const [loppupvmInput, setLoppupvmInput] = useState<moment.Moment>();
     const loppupvm = loppupvmInput ?? defaultLoppupvm;
 
@@ -123,7 +117,7 @@ const HenkiloViewCreateKayttooikeus = ({
                             selected={alkupvm.toDate()}
                             showYearDropdown
                             showWeekNumbers
-                            filterDate={(date) => filterDate(date, vuosia)}
+                            filterDate={(date) => filterDate(date, isPalvelukayttaja)}
                             dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
                         />
                     </div>
@@ -135,7 +129,7 @@ const HenkiloViewCreateKayttooikeus = ({
                             selected={loppupvm.toDate()}
                             showYearDropdown
                             showWeekNumbers
-                            filterDate={(date) => filterDate(date, vuosia)}
+                            filterDate={(date) => filterDate(date, isPalvelukayttaja)}
                             dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
                         />
                     </div>

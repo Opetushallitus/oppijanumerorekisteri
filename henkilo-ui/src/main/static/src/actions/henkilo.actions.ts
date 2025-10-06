@@ -4,17 +4,8 @@ import {
     FETCH_HENKILO_REQUEST,
     FETCH_HENKILO_SUCCESS,
     FETCH_HENKILO_FAILURE,
-    FETCH_KAYTTAJA_REQUEST,
-    FETCH_KAYTTAJA_SUCCESS,
-    FETCH_KAYTTAJA_FAILURE,
-    FETCH_KAYTTAJATIETO_FAILURE,
-    FETCH_KAYTTAJATIETO_REQUEST,
-    FETCH_KAYTTAJATIETO_SUCCESS,
     UPDATE_HENKILO_FAILURE,
     UPDATE_HENKILO_REQUEST,
-    UPDATE_KAYTTAJATIETO_REQUEST,
-    UPDATE_KAYTTAJATIETO_SUCCESS,
-    UPDATE_KAYTTAJATIETO_FAILURE,
     CLEAR_HENKILO,
     VTJ_OVERRIDE_YKSILOIMATON_HENKILO_REQUEST,
     VTJ_OVERRIDE_YKSILOIMATON_HENKILO_SUCCESS,
@@ -25,7 +16,6 @@ import { addGlobalNotification } from './notification.actions';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { localizeWithState } from '../utilities/localisation.util';
 import { GlobalNotificationConfig } from '../types/notification.types';
-import { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
 import { AppDispatch, RootState } from '../store';
 import { Henkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
 
@@ -92,73 +82,6 @@ const getUpdateHenkiloErrorMessages = (error, L): Array<string> => {
     }
     return errorMessages;
 };
-
-export const fetchKayttaja = (oid) => async (dispatch: AppDispatch) => {
-    dispatch({ type: FETCH_KAYTTAJA_REQUEST, oid });
-    const url = urls.url('kayttooikeus-service.henkilo.byOid', oid);
-    try {
-        const kayttaja = await http.get(url);
-        dispatch({ type: FETCH_KAYTTAJA_SUCCESS, kayttaja });
-    } catch (error) {
-        dispatch({ type: FETCH_KAYTTAJA_FAILURE, oid });
-        throw error;
-    }
-};
-
-const requestKayttajatieto = (oid: string) => ({ type: FETCH_KAYTTAJATIETO_REQUEST, oid });
-const receiveKayttajatieto = (kayttajatieto: KayttajatiedotRead) => ({
-    type: FETCH_KAYTTAJATIETO_SUCCESS,
-    kayttajatieto,
-    receivedAt: Date.now(),
-});
-const errorKayttajatieto = () => ({
-    type: FETCH_KAYTTAJATIETO_FAILURE,
-    kayttajatieto: undefined,
-});
-export const fetchKayttajatieto = (oid: string) => (dispatch: AppDispatch) => {
-    dispatch(requestKayttajatieto(oid));
-    const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
-    http.get<KayttajatiedotRead>(url)
-        .then((json) => {
-            dispatch(receiveKayttajatieto(json));
-        })
-        .catch(() => dispatch(errorKayttajatieto()));
-};
-
-const requestKayttajatietoUpdate = (kayttajatieto) => ({
-    type: UPDATE_KAYTTAJATIETO_REQUEST,
-    kayttajatieto,
-});
-const requestKayttajatietoUpdateSuccess = (kayttajatieto) => ({
-    type: UPDATE_KAYTTAJATIETO_SUCCESS,
-    kayttajatieto,
-});
-const requestKayttajatietoUpdateFailure = () => ({
-    type: UPDATE_KAYTTAJATIETO_FAILURE,
-});
-export const updateAndRefetchKayttajatieto =
-    (oid: string, username: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
-        dispatch(requestKayttajatietoUpdate(username));
-        const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
-        try {
-            const kayttajatieto = await http.put(url, { username: username });
-            dispatch(requestKayttajatietoUpdateSuccess(kayttajatieto));
-            dispatch<any>(fetchKayttajatieto(oid));
-        } catch (error) {
-            const errorKey = error.message?.includes('username_unique')
-                ? 'NOTIFICATION_HENKILOTIEDOT_KAYTTAJANIMI_EXISTS'
-                : 'NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE';
-            dispatch(
-                addGlobalNotification({
-                    autoClose: 10000,
-                    title: localizeWithState(errorKey, getState()),
-                    type: NOTIFICATIONTYPES.ERROR,
-                    key: errorKey,
-                })
-            );
-            dispatch(requestKayttajatietoUpdateFailure());
-        }
-    };
 
 // Henkilön tietojen yliajo yksilöintitiedoilla niille henkilöille, joiden VTJ-yksilöinti on epäonnistunut
 const requestOverrideYksiloimatonHenkilo = (oid) => ({

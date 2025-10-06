@@ -12,7 +12,6 @@ import IconButton from '../button/IconButton';
 import CrossIcon from '../icons/CrossIcon';
 import type { HenkiloState } from '../../../reducers/henkilo.reducer';
 import type { Henkilo } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
-import type { Kayttaja } from '../../../types/domain/kayttooikeus/kayttaja.types';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { validateEmail } from '../../../validation/EmailValidator';
 import { WORK_ADDRESS, EMAIL, View } from '../../../types/constants';
@@ -23,7 +22,8 @@ import { KoodistoStateKoodi, useGetYhteystietotyypitQuery } from '../../../api/k
 import { RootState, useAppDispatch } from '../../../store';
 import { updateHenkiloAndRefetch } from '../../../actions/henkilo.actions';
 import { useLocalisations } from '../../../selectors';
-import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
+import { useGetKayttajatiedotQuery, useGetOmattiedotQuery } from '../../../api/kayttooikeus';
+import { KayttajatiedotRead } from '../../../types/domain/kayttooikeus/KayttajatiedotRead';
 
 type OwnProps = {
     readOnly: boolean;
@@ -78,7 +78,7 @@ export const isLastWorkEmail = (
     removeList: Array<number | string>
 ): boolean => isWorkEmail(infoGroup) && resolveWorkAddresses(contactInfo, removeList).length === 1;
 
-const isVirkailija = (kayttaja: Kayttaja): boolean => kayttaja.kayttajaTyyppi === 'VIRKAILIJA';
+const isVirkailija = (kayttaja?: KayttajatiedotRead): boolean => kayttaja?.kayttajaTyyppi === 'VIRKAILIJA';
 const isFromVTJ = (group: ContactInfo): boolean => group.alkupera === PropertySingleton.state.YHTEYSTIETO_ALKUPERA_VTJ;
 
 function validateContactInfo(contactInfoLabel: string, contactInfoValue: string) {
@@ -166,6 +166,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
     const { locale, L } = useLocalisations();
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const { data: omattiedot } = useGetOmattiedotQuery();
+    const { data: kayttajatiedot } = useGetKayttajatiedotQuery(henkilo.henkilo.oidHenkilo);
     const [henkiloUpdate, setHenkiloUpdate] = useState(copy(henkilo.henkilo));
     const [state, setState] = useState<State>({
         readOnly: props.readOnly,
@@ -313,7 +314,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
                 <div className="henkiloViewContent">
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
                         {state.contactInfo
-                            ?.filter((c) => omattiedot?.isAdmin || !isVirkailija(henkilo.kayttaja) || !isFromVTJ(c))
+                            ?.filter((c) => omattiedot?.isAdmin || !isVirkailija(kayttajatiedot) || !isFromVTJ(c))
                             .filter(excludeRemovedItems(state.yhteystietoRemoveList))
                             .map((yhteystiedotRyhmaFlat, idx) => (
                                 <div key={idx}>

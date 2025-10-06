@@ -1,16 +1,11 @@
 import { oppijaNavi, virkailijaNavi } from './navigationconfigurations';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
-import { Kayttaja } from '../../types/domain/kayttooikeus/kayttaja.types';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
 import { Yksilointitieto } from '../../types/domain/oppijanumerorekisteri/yksilointitieto.types';
 import { NaviTab } from '../../types/navigation.type';
 
-export const enabledDuplikaattiView = (
-    oidHenkilo: string | null | undefined,
-    kayttaja: Kayttaja | null | undefined,
-    masterHenkiloOid?: string
-): boolean =>
-    (masterHenkiloOid === undefined || masterHenkiloOid === oidHenkilo) && kayttaja?.kayttajaTyyppi !== 'PALVELU';
+export const enabledDuplikaattiView = (oidHenkilo: string | null | undefined, masterHenkiloOid?: string): boolean =>
+    masterHenkiloOid === undefined || masterHenkiloOid === oidHenkilo;
 
 export const enabledVtjVertailuView = (henkilo: Henkilo): boolean =>
     henkilo?.yksilointiYritetty && !henkilo?.yksiloityVTJ && !henkilo?.duplicate;
@@ -41,15 +36,12 @@ export const henkiloViewTabs = (
     const tabs = henkiloType === 'virkailija' ? virkailijaNavi(oidHenkilo) : oppijaNavi(oidHenkilo);
 
     // Wait until all needed and correct data has been fetched before enabling tabs to prevent them switching on/off
-    if ((henkilo?.henkiloLoading && henkilo?.henkilo.oidHenkilo !== oidHenkilo) || henkilo?.kayttajaLoading) {
+    if (henkilo?.henkiloLoading && henkilo?.henkilo.oidHenkilo !== oidHenkilo) {
         return tabs;
     }
 
     return tabs.map((tab) => {
-        if (
-            tab.label === 'NAVI_HAE_DUPLIKAATIT' &&
-            enabledDuplikaattiView(oidHenkilo, henkilo?.kayttaja, masterHenkiloOid)
-        ) {
+        if (tab.label === 'NAVI_HAE_DUPLIKAATIT' && enabledDuplikaattiView(oidHenkilo, masterHenkiloOid)) {
             tab.disabled = false;
         }
         if (
