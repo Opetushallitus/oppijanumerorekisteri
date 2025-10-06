@@ -4,7 +4,7 @@ import moment from 'moment';
 
 import { useAppDispatch, type RootState } from '../../store';
 import BasicInfoForm from './BasicinfoForm';
-import KutsuConfirmation from './KutsuConfirmation';
+import { KutsuConfirmation } from './KutsuConfirmation';
 import Loader from '../common/icons/Loader';
 import { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import ValidationMessageButton from '../common/button/ValidationMessageButton';
@@ -197,11 +197,8 @@ const KutsuminenPage = () => {
                         <KutsuConfirmation
                             addedOrgs={kutsuOrganisaatios}
                             modalCloseFn={modalCloseFn}
-                            modalOpen={modalOpen}
                             basicInfo={basicInfo}
                             resetFormValues={resetFormValues}
-                            L={L}
-                            locale={locale}
                         />
                     )}
                 </form>

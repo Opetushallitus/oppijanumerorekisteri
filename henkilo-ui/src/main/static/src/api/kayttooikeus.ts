@@ -64,6 +64,21 @@ type PutKayttooikeus = {
     loppupvm: string;
 };
 
+type PutKutsuRequest = {
+    etunimi: string;
+    sukunimi: string;
+    sahkoposti: string;
+    asiointikieli: string;
+    saate?: string;
+    organisaatiot: {
+        organisaatioOid: string;
+        voimassaLoppuPvm: string;
+        kayttoOikeusRyhmat: {
+            id: number;
+        }[];
+    }[];
+};
+
 export type AccessRightsReportRow = {
     id: number;
     personName: string;
@@ -393,6 +408,9 @@ export const kayttooikeusApi = createApi({
             query: (id) => ({ url: `kutsu/${id}`, method: 'DELETE' }),
             invalidatesTags: ['kutsutut'],
         }),
+        putKutsu: builder.mutation<void, PutKutsuRequest>({
+            query: (body) => ({ url: 'kutsu', method: 'POST', body }),
+        }),
         putRenewKutsu: builder.mutation<void, number>({
             query: (id) => ({ url: `kutsu/${id}/renew`, method: 'PUT' }),
             invalidatesTags: ['kutsutut'],
@@ -563,6 +581,7 @@ export const {
     usePostSalasananVaihtoMutation,
     useGetKutsututInfiniteQuery,
     useDeleteKutsuMutation,
+    usePutKutsuMutation,
     usePutRenewKutsuMutation,
     useGetHenkiloHakuOrganisaatiotQuery,
     useGetHenkiloLinkityksetQuery,

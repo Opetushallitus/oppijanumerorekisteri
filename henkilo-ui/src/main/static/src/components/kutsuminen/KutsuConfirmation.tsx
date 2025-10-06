@@ -1,116 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Button from '../common/button/Button';
 import { toLocalizedText } from '../../localizabletext';
-import { http } from '../../http';
-import { urls } from 'oph-urls-js';
 import { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
-import { Localisations } from '../../types/localisation.type';
-import { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import { LocalNotification } from '../common/Notification/LocalNotification';
 import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
-import { Locale } from '../../types/locale.type';
 import OphModal from '../common/modal/OphModal';
+import { useLocalisations } from '../../selectors';
+import { usePutKutsuMutation } from '../../api/kayttooikeus';
+import { useAppDispatch } from '../../store';
+import { add } from '../../slices/toastSlice';
 
 type Props = {
     addedOrgs: readonly KutsuOrganisaatio[];
     modalCloseFn: (arg0: React.SyntheticEvent<EventTarget>) => void;
-    modalOpen: boolean;
     basicInfo: KutsuBasicInfo;
     resetFormValues: () => void;
-    locale: Locale;
-    L: Localisations;
 };
 
-type State = {
-    notifications: Array<string>;
-    loading: boolean;
-    sent: boolean;
-};
+export const KutsuConfirmation = (props: Props) => {
+    const dispatch = useAppDispatch();
+    const { L, locale } = useLocalisations();
+    const [sent, setSent] = useState(false);
+    const [putKutsu, { isLoading }] = usePutKutsuMutation();
 
-export default class KutsuConfirmation extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            notifications: [],
-            loading: false,
-            sent: false,
-        };
+    function onClose(e: React.SyntheticEvent<HTMLElement>) {
+        props.resetFormValues();
+        props.modalCloseFn(e);
+        setSent(false);
     }
 
-    render() {
-        const { L } = this.props;
-        return (
-            <OphModal onClose={this.props.modalCloseFn} onOverlayClick={this.props.modalCloseFn}>
-                <h2>{L['VIRKAILIJAN_LISAYS_ESIKATSELU_OTSIKKO']}</h2>
-                <p>
-                    {L['VIRKAILIJAN_LISAYS_ESIKATSELU_TEKSTI']} {this.props.basicInfo.email}
-                </p>
-                <h3>{L['VIRKAILIJAN_LISAYS_ESIKATSELU_ALAOTSIKKO']}</h3>
-                {this.props.addedOrgs.map(this.renderAddedOrg.bind(this))}
-                <div className="row">
-                    {this.state.sent ? (
-                        <Button action={this.onClose.bind(this)}>{L['VIRKAILIJAN_LISAYS_LAHETETTY']}</Button>
-                    ) : (
-                        <Button action={this._sendInvitation.bind(this)} loading={this.state.loading}>
-                            {L['VIRKAILIJAN_LISAYS_TALLENNA']}
-                        </Button>
-                    )}
-                </div>
-
-                <LocalNotification
-                    type="error"
-                    title={L['KUTSU_LUONTI_EPAONNISTUI']}
-                    toggle={this.state.notifications.length > 0}
-                >
-                    <ul>
-                        {this.state.notifications.map((notification, index) => (
-                            <li key={index}>{notification}</li>
-                        ))}
-                    </ul>
-                </LocalNotification>
-            </OphModal>
-        );
-    }
-
-    onClose(e: React.SyntheticEvent<HTMLElement>) {
-        this.props.resetFormValues();
-        this.props.modalCloseFn(e);
-        this.setState({ sent: false });
-    }
-
-    renderAddedOrg(org: KutsuOrganisaatio) {
-        return (
-            <div key={org.organisation.oid}>
-                <span className="oph-h3 oph-strong">{org.organisation.name}</span>
-                {org.selectedPermissions.map(this.renderAddedOrgPermission.bind(this))}
-            </div>
-        );
-    }
-
-    renderAddedOrgPermission(permission: MyonnettyKayttooikeusryhma) {
-        return (
-            <div key={permission.ryhmaId}>
-                <span className="oph-h4 oph-strong">{toLocalizedText(this.props.locale, permission.ryhmaNames)}</span>
-            </div>
-        );
-    }
-
-    _sendInvitation(e: React.SyntheticEvent<HTMLButtonElement>) {
-        this.sendInvitation(e, this.props.L);
-    }
-
-    async sendInvitation(e: React.SyntheticEvent<HTMLButtonElement>, L: Localisations) {
+    async function sendInvitation(e: React.SyntheticEvent<HTMLElement>) {
         e.preventDefault();
 
-        const sahkoposti = this.props.basicInfo.email && this.props.basicInfo.email.trim();
+        const sahkoposti = props.basicInfo.email && props.basicInfo.email.trim();
         const payload = {
-            etunimi: this.props.basicInfo.etunimi,
-            sukunimi: this.props.basicInfo.sukunimi,
+            etunimi: props.basicInfo.etunimi,
+            sukunimi: props.basicInfo.sukunimi,
             sahkoposti,
-            asiointikieli: this.props.basicInfo.languageCode,
-            saate: this.props.basicInfo.saate ? this.props.basicInfo.saate : undefined,
-            organisaatiot: this.props.addedOrgs.map((addedOrg) => ({
+            asiointikieli: props.basicInfo.languageCode,
+            saate: props.basicInfo.saate ? props.basicInfo.saate : undefined,
+            organisaatiot: props.addedOrgs.map((addedOrg) => ({
                 organisaatioOid: addedOrg.organisation.oid,
                 voimassaLoppuPvm: addedOrg.voimassaLoppuPvm,
                 kayttoOikeusRyhmat: addedOrg.selectedPermissions.map((selectedPermission) => ({
@@ -119,16 +48,55 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
             })),
         };
 
-        try {
-            this.setState({ loading: true });
-            const url = urls.url('kayttooikeus-service.kutsu');
-            await http.post(url, payload);
-            this.setState({ loading: false, sent: true });
-        } catch (error) {
-            const notifications = [];
-            notifications.push(L['KUTSU_LUONTI_EPAONNISTUI_TUNTEMATON_VIRHE']);
-            this.setState({ loading: false, notifications: notifications });
-            throw error;
-        }
+        await putKutsu(payload)
+            .unwrap()
+            .then(() => {
+                dispatch(
+                    add({
+                        id: `kutsu-ok-${Math.random()}`,
+                        type: 'ok',
+                        header: L['VIRKAILIJAN_LISAYS_LAHETETTY'],
+                    })
+                );
+                setSent(true);
+            })
+            .catch(() => {
+                dispatch(
+                    add({
+                        id: `kutsu-failed-${Math.random()}`,
+                        type: 'error',
+                        header: L['KUTSU_LUONTI_EPAONNISTUI_TUNTEMATON_VIRHE'],
+                    })
+                );
+            });
     }
-}
+
+    return (
+        <OphModal onClose={props.modalCloseFn} onOverlayClick={props.modalCloseFn}>
+            <h2>{L['VIRKAILIJAN_LISAYS_ESIKATSELU_OTSIKKO']}</h2>
+            <p>
+                {L['VIRKAILIJAN_LISAYS_ESIKATSELU_TEKSTI']} {props.basicInfo.email}
+            </p>
+            <h3>{L['VIRKAILIJAN_LISAYS_ESIKATSELU_ALAOTSIKKO']}</h3>
+            {props.addedOrgs.map((org) => (
+                <div key={org.organisation.oid}>
+                    <span className="oph-h3 oph-strong">{org.organisation.name}</span>
+                    {org.selectedPermissions.map((permission) => (
+                        <div key={permission.ryhmaId}>
+                            <span className="oph-h4 oph-strong">{toLocalizedText(locale, permission.ryhmaNames)}</span>
+                        </div>
+                    ))}
+                </div>
+            ))}
+            <div className="row">
+                {sent ? (
+                    <Button action={onClose}>{L['VIRKAILIJAN_LISAYS_LAHETETTY']}</Button>
+                ) : (
+                    <Button action={sendInvitation} loading={isLoading}>
+                        {L['VIRKAILIJAN_LISAYS_TALLENNA']}
+                    </Button>
+                )}
+            </div>
+        </OphModal>
+    );
+};

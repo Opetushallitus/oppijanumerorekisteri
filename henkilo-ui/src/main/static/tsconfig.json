@@ -18,6 +18,8 @@
     "noImplicitThis": true,
     "noImplicitReturns": true,
     "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictBuiltinIteratorReturn": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "noUncheckedIndexedAccess": true,
