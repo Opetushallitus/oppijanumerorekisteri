@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { compose, last, partition, prop, sortBy, toLower } from 'ramda';
+import { compose, last, prop, sortBy, toLower } from 'ramda';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 
 import type { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
@@ -137,31 +137,63 @@ export function filterAndSortOrganisaatios(
     organisations: OrganisaatioSelectObject[],
     searchWord: string
 ): OrganisaatioSelectObject[] {
-    const startsWithSearchWord = (organisaatio: OrganisaatioSelectObject) =>
-        organisaatio.name.toLowerCase().startsWith(searchWord.toLowerCase());
-    const notStartingWithSearchWord = (organisaatio: OrganisaatioSelectObject) =>
-        !organisaatio.name.toLowerCase().startsWith(searchWord.toLowerCase());
-
-    const organisaatioFilteredBySearchword = organisations.filter(containsSearchword(searchWord));
-    const organisaatiotStartingWithSearchword = organisaatioFilteredBySearchword.filter(startsWithSearchWord);
-    const organisaatiotStartingWithSearchwordSortedByParentName = sortOrganisaatiotByParentName(
-        organisaatiotStartingWithSearchword
+    const sorter = combinedSort(
+        sortStartingWithFirst(searchWord),
+        sortParentlessFirst(),
+        sortByParentName()
     );
-    const organisaatiotNotStartingWithSearchword = organisaatioFilteredBySearchword.filter(notStartingWithSearchWord);
 
-    return [...organisaatiotStartingWithSearchwordSortedByParentName, ...organisaatiotNotStartingWithSearchword];
+    return sorter(organisations.filter(containsSearchword(searchWord)));
 }
 
-function sortOrganisaatiotByParentName(organisations: OrganisaatioSelectObject[]): OrganisaatioSelectObject[] {
-    const [organisaatiotHavingParents, organisaatiotNotHavingParents] = partition(
-        (o) => o.parentNames && o.parentNames.length > 0,
-        organisations
-    );
+type OrganisaatioSelectObjectSorter = (a: OrganisaatioSelectObject, b: OrganisaatioSelectObject) => number;
 
-    return [
-        ...organisaatiotNotHavingParents,
-        ...sortBy<OrganisaatioSelectObject>(compose(toLower, last, prop('parentNames')))(organisaatiotHavingParents),
-    ];
+function sortStartingWithFirst(search: string): OrganisaatioSelectObjectSorter {
+    return (a, b) => {
+        const aStartsWith = a.name.toLowerCase().startsWith(search.toLowerCase());
+        const bStartsWith = b.name.toLowerCase().startsWith(search.toLowerCase());
+        if (aStartsWith && !bStartsWith) return -1;
+        else if (!aStartsWith && bStartsWith) return 1;
+        else return 0;
+    };
+}
+
+function combinedSort<T>(...sorters: ((a: T, b: T) => number)[]) {
+    return (items) => {
+        const copy = JSON.parse(JSON.stringify(items));
+        copy.sort((a: T, b: T): number => {
+            for (const fn of sorters) {
+                const result = fn(a, b);
+                if (result !== 0) return result;
+            }
+            return 0;
+        });
+        return copy;
+    };
+}
+
+function sortParentlessFirst(): OrganisaatioSelectObjectSorter {
+    return (a, b) => {
+        if (!hasParents(a) && hasParents(b)) return -1;
+        if (hasParents(a) && !hasParents(b)) return 1;
+        else return 0;
+    };
+}
+
+function sortByParentName(): OrganisaatioSelectObjectSorter {
+    return (a, b) => parentName(a).localeCompare(parentName(b));
+}
+
+function hasParents(o: OrganisaatioSelectObject): boolean {
+    return o.parentNames?.length > 0;
+}
+
+function parentName(o: OrganisaatioSelectObject): string {
+    if (hasParents(o)) {
+        return compose(toLower, last, prop('parentNames'))(o);
+    } else {
+        return o.name;
+    }
 }
 
 export default OrganisaatioSelectModal;
