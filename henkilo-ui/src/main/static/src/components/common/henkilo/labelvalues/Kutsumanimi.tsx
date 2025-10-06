@@ -11,13 +11,7 @@ type OwnProps = {
     defaultValue?: string;
 };
 
-type StateProps = {
-    henkilo: HenkiloState;
-};
-
-type Props = OwnProps & StateProps;
-
-const Kutsumanimi = (props: Props) => {
+const Kutsumanimi = (props: OwnProps) => {
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     return (
         <LabelValue
