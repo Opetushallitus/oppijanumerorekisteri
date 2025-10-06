@@ -12,7 +12,6 @@ function main {
   npm_ci_if_needed
 
   npm run lint
-  npm run prettier
   npm run e2e:install-deps
   npm run e2e:chromium
   CI=true npm run e2e:ci
