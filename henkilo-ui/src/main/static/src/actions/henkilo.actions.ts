@@ -7,9 +7,6 @@ import {
     UPDATE_HENKILO_FAILURE,
     UPDATE_HENKILO_REQUEST,
     CLEAR_HENKILO,
-    VTJ_OVERRIDE_YKSILOIMATON_HENKILO_REQUEST,
-    VTJ_OVERRIDE_YKSILOIMATON_HENKILO_SUCCESS,
-    VTJ_OVERRIDE_YKSILOIMATON_HENKILO_FAILURE,
 } from './actiontypes';
 import { addGlobalNotification } from './notification.actions';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
@@ -79,30 +76,6 @@ const getUpdateHenkiloErrorMessages = (error, L): Array<string> => {
         errorMessages.push(L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU_KAYTOSSA']);
     }
     return errorMessages;
-};
-
-// Henkilön tietojen yliajo yksilöintitiedoilla niille henkilöille, joiden VTJ-yksilöinti on epäonnistunut
-const requestOverrideYksiloimatonHenkilo = (oid) => ({
-    type: VTJ_OVERRIDE_YKSILOIMATON_HENKILO_REQUEST,
-    oid,
-});
-const successOverrideYksiloimatonHenkilo = (oid) => ({
-    type: VTJ_OVERRIDE_YKSILOIMATON_HENKILO_SUCCESS,
-    oid,
-});
-const errorOverrideYksiloimatonHenkilo = () => ({
-    type: VTJ_OVERRIDE_YKSILOIMATON_HENKILO_FAILURE,
-});
-export const overrideYksiloimatonHenkiloVtjData = (oid) => async (dispatch: AppDispatch) => {
-    dispatch(requestOverrideYksiloimatonHenkilo(oid));
-    const url = urls.url('oppijanumerorekisteri-service.henkilo.yksilointitiedot.yliajayksiloimaton', oid);
-    try {
-        await http.put(url);
-        dispatch(successOverrideYksiloimatonHenkilo(oid));
-    } catch (error) {
-        dispatch(errorOverrideYksiloimatonHenkilo());
-        throw error;
-    }
 };
 
 export const clearHenkilo = () => (dispatch: AppDispatch) => dispatch({ type: CLEAR_HENKILO });

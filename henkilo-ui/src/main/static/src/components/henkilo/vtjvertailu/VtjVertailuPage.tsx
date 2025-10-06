@@ -3,20 +3,23 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 
 import { useAppDispatch, type RootState } from '../../../store';
-import { fetchHenkilo, overrideYksiloimatonHenkiloVtjData } from '../../../actions/henkilo.actions';
+import { fetchHenkilo } from '../../../actions/henkilo.actions';
 import VtjVertailuListaus from './VtjVertailuListaus';
 import Loader from '../../common/icons/Loader';
 import Button from '../../common/button/Button';
 import { enabledVtjVertailuView, henkiloViewTabs } from '../../navigation/NavigationTabs';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
-import { NOTIFICATIONTYPES } from '../../common/Notification/notificationtypes';
-import { addGlobalNotification } from '../../../actions/notification.actions';
 import { useLocalisations } from '../../../selectors';
 import { useTitle } from '../../../useTitle';
 import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
 import { useNavigation } from '../../../useNavigation';
-import { useGetHenkiloMasterQuery, useGetYksilointitiedotQuery } from '../../../api/oppijanumerorekisteri';
+import {
+    useGetHenkiloMasterQuery,
+    useGetYksilointitiedotQuery,
+    usePutYliajaYksiloimatonMutation,
+} from '../../../api/oppijanumerorekisteri';
+import { add } from '../../../slices/toastSlice';
 
 type OwnProps = {
     henkiloType: string;
@@ -30,8 +33,10 @@ export const VtjVertailuPage = (props: OwnProps) => {
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: master } = useGetHenkiloMasterQuery(params.oid);
     const { L } = useLocalisations();
-    useTitle(L['TITLE_VTJ_VERTAILU']);
     const yksilointitiedotQuery = useGetYksilointitiedotQuery(henkilo.henkilo.oidHenkilo);
+    const [yliajaYksiloimaton] = usePutYliajaYksiloimatonMutation();
+
+    useTitle(L['TITLE_VTJ_VERTAILU']);
     useNavigation(
         henkiloViewTabs(oidHenkilo, henkilo, props.henkiloType, master?.oidHenkilo, yksilointitiedotQuery.data),
         true
@@ -42,28 +47,27 @@ export const VtjVertailuPage = (props: OwnProps) => {
     }, []);
 
     async function overrideHenkiloInformation(): Promise<void> {
-        try {
-            await overrideYksiloimatonHenkiloVtjData(oidHenkilo)(dispatch);
-            await fetchHenkilo(oidHenkilo)(dispatch);
-            dispatch(
-                addGlobalNotification({
-                    key: 'HENKILOVTJYLIAJOISUCCESS',
-                    title: L['HENKILO_VTJ_YLIAJA_SUCCESS'],
-                    type: NOTIFICATIONTYPES.SUCCESS,
-                    autoClose: 10000,
-                })
-            );
-        } catch (error) {
-            dispatch(
-                addGlobalNotification({
-                    key: 'HENKILOVTJYLIAJOIFAILURE',
-                    title: L['HENKILO_VTJ_YLIAJA_FAILURE'],
-                    type: NOTIFICATIONTYPES.ERROR,
-                    autoClose: 10000,
-                })
-            );
-            throw error;
-        }
+        await yliajaYksiloimaton(oidHenkilo)
+            .unwrap()
+            .then(() => {
+                fetchHenkilo(oidHenkilo)(dispatch);
+                dispatch(
+                    add({
+                        id: `HENKILOVTJYLIAJOISUCCESS-${Math.random()}`,
+                        header: L['HENKILO_VTJ_YLIAJA_SUCCESS'],
+                        type: 'ok',
+                    })
+                );
+            })
+            .catch(() => {
+                dispatch(
+                    add({
+                        id: `HENKILOVTJYLIAJOIFAILURE-${Math.random()}`,
+                        header: L['HENKILO_VTJ_YLIAJA_FAILURE'],
+                        type: 'error',
+                    })
+                );
+            });
     }
 
     function isDisabled(): boolean {

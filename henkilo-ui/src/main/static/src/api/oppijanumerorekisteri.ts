@@ -145,6 +145,13 @@ export const oppijanumerorekisteriApi = createApi({
             }),
             invalidatesTags: ['henkilo'],
         }),
+        putYliajaYksiloimaton: builder.mutation<void, string>({
+            query: (oid) => ({
+                url: `henkilo/${oid}/yksilointitiedot/yliajayksiloimaton`,
+                method: 'PUT',
+            }),
+            invalidatesTags: ['henkilo'],
+        }),
         updateHenkilo: builder.mutation<void, Partial<Henkilo>>({
             query: (henkilo) => ({
                 url: 'henkilo',
@@ -390,6 +397,7 @@ export const {
     useAktivoiHenkiloMutation,
     useYksiloiHetutonMutation,
     usePutYliajaTiedotVtjMutation,
+    usePutYliajaYksiloimatonMutation,
     usePuraYksilointiMutation,
     usePassivoiHenkiloMutation,
     useGetTuontikoosteQuery,
