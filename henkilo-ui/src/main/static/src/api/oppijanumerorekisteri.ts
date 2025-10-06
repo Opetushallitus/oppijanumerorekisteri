@@ -359,7 +359,8 @@ export const oppijanumerorekisteriApi = createApi({
             },
         }),
         getHakemukset: builder.query<Hakemus[], { oid: string; L: Localisations }>({
-            query: ({ oid }) => `henkilo/${oid}/hakemuksett`,
+            query: ({ oid }) => `henkilo/${oid}/hakemukset`,
+            extraOptions: { maxRetries: 1 },
             providesTags: (_result, _error, { oid }) => [{ type: 'hakemukset', id: oid }],
             async onQueryStarted({ L, oid }, { dispatch, queryFulfilled }) {
                 try {
