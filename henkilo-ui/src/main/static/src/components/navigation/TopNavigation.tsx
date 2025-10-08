@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { NavLink } from 'react-router';
 import classNames from 'classnames';
-import { urls } from 'oph-urls-js';
 import { useSelector } from 'react-redux';
 
 import { parsePalveluRoolit } from '../../utilities/palvelurooli.util';
@@ -20,7 +19,7 @@ export const TopNavigation = () => {
 
     useMemo(() => {
         const script = document.createElement('script');
-        script.src = urls.url('virkailija-raamit.raamit.js');
+        script.src = '/virkailija-raamit/apply-raamit.js';
         document.body.appendChild(script);
 
         return () => {
