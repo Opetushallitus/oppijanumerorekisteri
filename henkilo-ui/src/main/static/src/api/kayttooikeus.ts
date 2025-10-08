@@ -31,6 +31,7 @@ import { SallitutKayttajatyypit } from '../components/kayttooikeusryhmat/kayttoo
 import { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
 import { HenkiloOrg } from '../types/domain/oppijanumerorekisteri/henkilo.types';
 import { Values } from '../kayttaja/vahvatunnistus/VahvaTunnistusLisatiedotInputs';
+import { VirkailijaCreate } from '../types/domain/kayttooikeus/virkailija.types';
 
 type MfaSetupResponse = {
     secretKey: string;
@@ -585,6 +586,13 @@ export const kayttooikeusApi = createApi({
                 body,
             }),
         }),
+        postCreateVirkailija: builder.mutation<string, VirkailijaCreate>({
+            query: (body) => ({
+                url: 'virkailija',
+                method: 'POST',
+                body,
+            }),
+        }),
     }),
 });
 
@@ -646,4 +654,5 @@ export const {
     useGetOrganisationNamesQuery,
     useGetOrganisationsQuery,
     usePostUudelleenRekisterointiMutation,
+    usePostCreateVirkailijaMutation,
 } = kayttooikeusApi;

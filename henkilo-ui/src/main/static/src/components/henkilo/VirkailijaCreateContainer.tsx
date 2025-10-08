@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { urls } from 'oph-urls-js';
 
-import { http } from '../../http';
 import { VirkailijaCreate } from '../../types/domain/kayttooikeus/virkailija.types';
 import VirkailijaCreateForm from './VirkailijaCreateForm';
 import { isValidKutsumanimi } from '../../validation/KutsumanimiValidator';
@@ -10,6 +8,7 @@ import { isValidPassword } from '../../validation/PasswordValidator';
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import { isValidKayttajatunnus } from '../../validation/KayttajatunnusValidator';
 import { useLocalisations } from '../../selectors';
+import { usePostCreateVirkailijaMutation } from '../../api/kayttooikeus';
 
 const initialVirkailija: VirkailijaCreate = {
     etunimet: '',
@@ -28,6 +27,7 @@ export const VirkailijaCreateContainer = () => {
     const navigate = useNavigate();
     const [virheet, setVirheet] = useState<string[]>([]);
     const [virkailija, setVirkailija] = useState(initialVirkailija);
+    const [postCreateVirkailija] = usePostCreateVirkailijaMutation();
     const { L } = useLocalisations();
     const disabled =
         virheet.length > 0 || // pakolliset kentät:
@@ -67,32 +67,20 @@ export const VirkailijaCreateContainer = () => {
     };
 
     const onSubmit = async (virkailijaCreate: VirkailijaCreate): Promise<void> => {
-        try {
-            const oid = await createVirkailija(virkailijaCreate);
-            navigateToVirkailija(oid);
-        } catch (error) {
-            handleError(error);
-            throw error;
-        }
+        await postCreateVirkailija(virkailijaCreate)
+            .unwrap()
+            .then((oid) => navigate(`/virkailija/${oid}`))
+            .catch(handleError);
     };
 
-    const handleError = (error: { errorType?: string }): void => {
-        if (error.errorType === 'AccessDeniedException') {
+    const handleError = (error: { data?: { errorType?: string } }): void => {
+        if (error.data?.errorType === 'AccessDeniedException') {
             setVirheet([...virheet, L['VIRKAILIJAN_LUONTI_EI_OIKEUKSIA']]);
-        } else if (error.errorType === 'UsernameAlreadyExistsException') {
+        } else if (error.data?.errorType === 'UsernameAlreadyExistsException') {
             setVirheet([...virheet, L['REKISTEROIDY_USERNAMEEXISTS_OTSIKKO']]);
         } else {
             setVirheet([...virheet, L['HENKILON_LUONTI_EPAONNISTUI']]);
         }
-    };
-
-    const createVirkailija = async (virkailija: VirkailijaCreate): Promise<string> => {
-        const url = urls.url('kayttooikeus-service.virkailija');
-        return await http.post(url, virkailija);
-    };
-
-    const navigateToVirkailija = (oid: string) => {
-        navigate(`/virkailija/${oid}`);
     };
 
     return (
