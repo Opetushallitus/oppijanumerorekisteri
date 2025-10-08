@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 
+import { toastWithText } from '../locators';
+
 import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/current/omattiedot/GET.json';
 
 test.describe('Person page', () => {
@@ -70,7 +72,7 @@ test.describe('Person page', () => {
             );
             await content.locator('input').fill('testi-passinumero');
             await content.locator('button').click();
-            await expect(page.locator('.oph-alert')).toHaveCount(1);
+            await expect(toastWithText(page, 'Tapahtui odottamaton virhe.')).toBeVisible();
         });
 
         await test.step('Popup can be closed', async () => {

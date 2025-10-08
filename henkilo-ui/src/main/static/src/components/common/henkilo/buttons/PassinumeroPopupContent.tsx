@@ -28,13 +28,13 @@ const PassinumeroPopupContent = ({ oid }: Props) => {
         if (readError || writeError) {
             dispatch(
                 add({
-                    id: `PASSINUMEROT_NETWORK_ERROR-${Math.random()}`,
+                    id: `KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE-${Math.random()}`,
                     type: 'error',
-                    header: L['PASSINUMEROT_NETWORK_ERROR'],
+                    header: L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'],
                 })
             );
         }
-    }, [readError, writeError, dispatch]);
+    }, [readError, writeError]);
 
     const {
         register,
