@@ -197,6 +197,9 @@ export const kayttooikeusApi = createApi({
         'henkilonkayttooikeusryhmat',
     ],
     endpoints: (builder) => ({
+        getOtuvaPrequel: builder.query<void, void>({
+            query: () => 'cas/prequel',
+        }),
         getKayttooikeusryhmasForHenkilo: builder.query<MyonnettyKayttooikeusryhma[], string>({
             query: (henkiloOid: string) => `kayttooikeusryhma/henkilo/${henkiloOid}`,
             providesTags: ['henkilonkayttooikeusryhmat'],
@@ -572,6 +575,7 @@ export const kayttooikeusApi = createApi({
 });
 
 export const {
+    useGetOtuvaPrequelQuery,
     useDeleteHenkiloOrganisationMutation,
     useDeleteKayttooikeusryhmaForHenkiloMutation,
     usePutKayttooikeusryhmaForHenkiloMutation,

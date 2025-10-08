@@ -85,7 +85,7 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
         if (henkilo.henkilo.passivoitu) {
             info.push(L['PASSIVOI_PASSIVOITU']);
         }
-        return info.length ? ' (' + StaticUtils.flatArray(info) + ')' : '';
+        return info.length ? ' (' + info.join(', ') + ')' : '';
     }
 
     function _discard() {

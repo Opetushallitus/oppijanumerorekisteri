@@ -74,11 +74,11 @@ function passwordsAreSame(henkilo: Henkilo) {
 }
 
 function kielikoodiIsNotEmpty(henkilo: Henkilo) {
-    return StaticUtils.stringIsNotEmpty(henkilo.asiointiKieli.kieliKoodi);
+    return !!henkilo.asiointiKieli.kieliKoodi;
 }
 
 function kayttajanimiIsNotEmpty(henkilo: Henkilo) {
-    return StaticUtils.stringIsNotEmpty(henkilo.kayttajanimi);
+    return !!henkilo.kayttajanimi;
 }
 
 function isPasswordError(henkilo: Henkilo) {

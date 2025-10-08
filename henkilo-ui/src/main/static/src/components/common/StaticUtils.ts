@@ -9,11 +9,6 @@ import { NamedMultiSelectOption, NamedSelectOption } from '../../utilities/selec
 import { Koodi, Koodisto } from '../../api/koodisto';
 
 class StaticUtils {
-    static ddmmyyyyToDate(date: string) {
-        const from = date.split('.');
-        return new Date(Number(from[2]), Number(from[1]) - 1, Number(from[0]));
-    }
-
     // Example fieldpath: organisaatio.nimet.0.nimiValue
     static updateFieldByDotAnnotation<T>(obj: T, event: React.SyntheticEvent<HTMLInputElement>): T {
         if (event === null) {
@@ -114,10 +109,6 @@ class StaticUtils {
         return !!henkilo.henkilo.hetu && henkilo.henkilo.yksiloityVTJ;
     }
 
-    static flatArray(arr: Array<string>) {
-        return arr && arr.length ? arr.filter((item) => item).reduce((type1, type2) => type1.concat(', ', type2)) : '';
-    }
-
     static getOrganisaatiotyypitFlat(tyypit: Array<string>, L: Localisations, uppercase?: boolean) {
         return tyypit && tyypit.length
             ? '(' +
@@ -146,10 +137,6 @@ class StaticUtils {
 
     static getLocalisedText(description: TextGroup | null | undefined, locale: Locale) {
         return description ? description.texts.filter((text) => text.lang.toLowerCase() === locale)[0].text : '';
-    }
-
-    static stringIsNotEmpty(entity: string | null | undefined) {
-        return entity && entity !== '';
     }
 
     static getKoodiNimi(koodiArvo: string, koodisto: Koodisto, locale: Locale) {

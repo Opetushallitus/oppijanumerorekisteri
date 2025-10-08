@@ -2,7 +2,6 @@ import React, { useId, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { type RootState } from '../../../store';
-import StaticUtils from '../StaticUtils';
 import { toLocalizedText } from '../../../localizabletext';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
 import { useLocalisations } from '../../../selectors';
@@ -44,10 +43,7 @@ export const HenkiloViewOrganisationContent = () => {
         return isSuccess && isApiOrgsSuccess && henkiloOrgs
             ? henkiloOrgs?.map((org) => {
                   const organisation = apiOrganisations?.find((o) => o.oid === org.organisaatioOid);
-                  const typesFlat =
-                      organisation?.tyypit && organisation?.tyypit.length
-                          ? '(' + StaticUtils.flatArray(organisation?.tyypit) + ')'
-                          : '';
+                  const typesFlat = organisation?.tyypit?.length ? '(' + organisation?.tyypit?.join(', ') + ')' : '';
                   return {
                       name: toLocalizedText(locale, organisation?.nimi),
                       typesFlat: typesFlat,

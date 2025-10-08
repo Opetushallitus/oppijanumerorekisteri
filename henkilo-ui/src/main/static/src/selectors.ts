@@ -41,7 +41,7 @@ export const useLocalisations = (): {
     const { data: localisations } = useGetLocalisationsQuery('henkilo-ui');
     const { L, allLocalisations, getLocalisations } = useMemo(() => {
         const allLocalisations = mapLocalisationsByLocale(localisations);
-        const L = allLocalisations?.[locale];
+        const L = allLocalisations?.[toSupportedLocale(locale)];
         const getLocalisations = (l: string) => allLocalisations?.[toSupportedLocale(l)];
         return { L, allLocalisations, getLocalisations };
     }, [localisations, locale]);

@@ -64,6 +64,12 @@ export const oppijanumerorekisteriApi = createApi({
         'hakemukset',
     ],
     endpoints: (builder) => ({
+        getOnrPrequel: builder.query<void, void>({
+            query: () => ({
+                url: 'cas/prequel',
+                responseHandler: 'text',
+            }),
+        }),
         getLocale: builder.query<Locale, void>({
             query: () => ({
                 url: 'henkilo/current/asiointiKieli',
@@ -384,6 +390,7 @@ export const oppijanumerorekisteriApi = createApi({
 });
 
 export const {
+    useGetOnrPrequelQuery,
     useDeleteAccessMutation,
     useGetLocaleQuery,
     useGetPassinumerotQuery,
