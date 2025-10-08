@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { Outlet, useParams } from 'react-router';
 
 import Loader from '../components/common/icons/Loader';
-import { GlobalNotifications } from '../components/common/Notification/GlobalNotifications';
 import background from '../img/unauthenticated_background.jpg';
 import { useLocalisations } from '../selectors';
 import ophLogo from '../img/logo_oph.svg';
@@ -9,7 +9,7 @@ import okmLogo from '../img/logo_okm.png';
 import { useGetLocalisationsQuery } from '../api/lokalisointi';
 import { useGetOmattiedotQuery } from '../api/kayttooikeus';
 import VirhePage from '../components/common/page/VirhePage';
-import { Outlet, useParams } from 'react-router';
+import { OphDsToasts } from '../components/design-system/OphDsToast';
 
 const App = () => {
     const [isInitialized, setIsInitialized] = useState(false);
@@ -45,7 +45,7 @@ const App = () => {
         </VirhePage>
     ) : (
         <div className="oph-typography mainContainer">
-            <GlobalNotifications />
+            <OphDsToasts />
             <div style={{ textAlign: 'center' }}>
                 <div>
                     <img src={ophLogo} alt="oph logo" style={{ paddingLeft: '19px', paddingTop: '5px' }} />{' '}

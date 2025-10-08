@@ -5,11 +5,10 @@ import { useLocalisations } from '../selectors';
 import Button from '../components/common/button/Button';
 import { isValidPassword } from '../validation/PasswordValidator';
 import { usePostSalasananVaihtoMutation } from '../api/kayttooikeus';
-import { addGlobalNotification } from '../actions/notification.actions';
 import { useAppDispatch } from '../store';
-import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import Loader from '../components/common/icons/Loader';
 import { useTitle } from '../useTitle';
+import { add } from '../slices/toastSlice';
 
 export const SalasananVaihtoPage = () => {
     const { getLocalisations } = useLocalisations();
@@ -31,11 +30,10 @@ export const SalasananVaihtoPage = () => {
             .then(() => setPasswordChanged(true))
             .catch(() =>
                 dispatch(
-                    addGlobalNotification({
-                        key: 'PASSWORD_CHANGE_ERROR',
-                        title: L['SALASANA_VIRHE'],
-                        type: NOTIFICATIONTYPES.ERROR,
-                        autoClose: 10000,
+                    add({
+                        id: `PASSWORD_CHANGE_ERROR-${Math.random()}`,
+                        header: L['SALASANA_VIRHE'],
+                        type: 'error',
                     })
                 )
             );

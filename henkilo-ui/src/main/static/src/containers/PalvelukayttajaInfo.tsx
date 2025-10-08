@@ -1,5 +1,5 @@
-import { GlobalNotifications } from '../components/common/Notification/GlobalNotifications';
 import React from 'react';
+
 import { useLocalisations } from '../selectors';
 import { useTitle } from '../useTitle';
 
@@ -8,7 +8,6 @@ export function PalvelukayttajaInfo() {
     useTitle('Palvelukäyttäjä');
     return (
         <div className="oph-typography mainContainer">
-            <GlobalNotifications />
             <div className="mainContent">
                 <div className={'wrapper'}>
                     <div className="user-content">

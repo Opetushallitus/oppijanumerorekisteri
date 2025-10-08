@@ -11,13 +11,12 @@ import {
 import { Identification } from '../../types/domain/oppijanumerorekisteri/Identification.types';
 import { useLocalisations } from '../../selectors';
 import Button from '../common/button/Button';
-import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
 import { useAppDispatch } from '../../store';
-import { addGlobalNotification } from '../../actions/notification.actions';
 import OphModal from '../common/modal/OphModal';
 import { useGetHenkilontunnistetyypitQuery } from '../../api/koodisto';
 import StaticUtils from '../common/StaticUtils';
 import Loader from '../common/icons/Loader';
+import { add } from '../../slices/toastSlice';
 
 type Props = {
     oid?: string;
@@ -44,11 +43,10 @@ export const Identifications = ({ oid }: Props) => {
             .unwrap()
             .catch(() => {
                 dispatch(
-                    addGlobalNotification({
-                        key: 'REMOVE_SAHKOPOSTITUNNISTEET',
-                        type: NOTIFICATIONTYPES.ERROR,
-                        autoClose: 10000,
-                        title: L['SAHKOPOSTITUNNISTE_POISTO_VIRHE'],
+                    add({
+                        id: `REMOVE_SAHKOPOSTITUNNISTEET-${Math.random()}`,
+                        type: 'error',
+                        header: L['SAHKOPOSTITUNNISTE_POISTO_VIRHE'],
                     })
                 );
             });
@@ -64,11 +62,10 @@ export const Identifications = ({ oid }: Props) => {
             })
             .catch(() => {
                 dispatch(
-                    addGlobalNotification({
-                        key: 'SAVE_SAHKOPOSTITUNNISTEET',
-                        type: NOTIFICATIONTYPES.ERROR,
-                        autoClose: 10000,
-                        title: L['SAHKOPOSTITUNNISTE_TALLENNUS_VIRHE'],
+                    add({
+                        id: `SAVE_SAHKOPOSTITUNNISTEET-${Math.random()}`,
+                        type: 'error',
+                        header: L['SAHKOPOSTITUNNISTE_TALLENNUS_VIRHE'],
                     })
                 );
             });

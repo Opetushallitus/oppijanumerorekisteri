@@ -4,8 +4,6 @@ import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, Row, Sort
 
 import Button from '../common/button/Button';
 import { toLocalizedText } from '../../localizabletext';
-import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
-import { addGlobalNotification } from '../../actions/notification.actions';
 import PopupButton from '../common/button/PopupButton';
 import KutsuDetails from './KutsuDetails';
 import { KutsuRead } from '../../types/domain/kayttooikeus/Kutsu.types';
@@ -15,6 +13,7 @@ import { OphTableWithInfiniteScroll } from '../OphTableWithInfiniteScroll';
 import { expanderColumn } from '../OphTable';
 import { KutsututSearchParams } from './KutsututPage';
 import { KutsututSortBy, useGetKutsututInfiniteQuery, usePutRenewKutsuMutation } from '../../api/kayttooikeus';
+import { add } from '../../slices/toastSlice';
 
 type OwnProps = {
     params: KutsututSearchParams;
@@ -40,11 +39,10 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
             .unwrap()
             .then(() =>
                 dispatch(
-                    addGlobalNotification({
-                        key: 'KUTSU_CONFIRMATION_SUCCESS',
-                        type: NOTIFICATIONTYPES.SUCCESS,
-                        autoClose: 10000,
-                        title: L['KUTSU_LUONTI_ONNISTUI'],
+                    add({
+                        id: `KUTSU_CONFIRMATION_SUCCESS-${Math.random()}`,
+                        type: 'ok',
+                        header: L['KUTSU_LUONTI_ONNISTUI'],
                     })
                 )
             );

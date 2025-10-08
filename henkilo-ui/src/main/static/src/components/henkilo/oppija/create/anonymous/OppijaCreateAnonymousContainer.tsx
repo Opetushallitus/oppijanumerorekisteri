@@ -7,12 +7,11 @@ import OppijaCreateForm from './OppijaCreateForm';
 import { HenkiloCreate } from '../../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { HenkiloDuplicate } from '../../../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 import OppijaCreateDuplikaatit from './OppijaCreateDuplikaatit';
-import { addGlobalNotification } from '../../../../../actions/notification.actions';
-import { NOTIFICATIONTYPES } from '../../../../common/Notification/notificationtypes';
 import CloseButton from '../../../../common/button/CloseButton';
 import { useAppDispatch } from '../../../../../store';
 import { useLocalisations } from '../../../../../selectors';
 import { useGetKansalaisuudetQuery, useGetKieletQuery, useGetSukupuoletQuery } from '../../../../../api/koodisto';
+import { add } from '../../../../../slices/toastSlice';
 
 type OwnProps = {
     goBack: () => void;
@@ -46,10 +45,10 @@ export const OppijaCreateAnonymousContainer = ({ goBack }: OwnProps) => {
             }
         } catch (error) {
             dispatch(
-                addGlobalNotification({
-                    key: 'HENKILON_LUONTI_VIRHE',
-                    type: NOTIFICATIONTYPES.ERROR,
-                    title: L['HENKILON_LUONTI_EPAONNISTUI'],
+                add({
+                    id: `HENKILON_LUONTI_VIRHE-${Math.random()}`,
+                    type: 'error',
+                    header: L['HENKILON_LUONTI_EPAONNISTUI'],
                 })
             );
             throw error;

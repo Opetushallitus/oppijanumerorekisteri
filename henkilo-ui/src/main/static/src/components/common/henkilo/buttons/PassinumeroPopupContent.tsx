@@ -3,10 +3,10 @@ import { useForm } from 'react-hook-form';
 import Button from '../../../common/button/Button';
 import Loader from '../../../common/icons/Loader';
 import { useGetPassinumerotQuery, useSetPassinumerotMutation } from '../../../../api/oppijanumerorekisteri';
-import { addGlobalNotification } from '../../../../actions/notification.actions';
 import './PassinumeroPopupContent.css';
 import { useAppDispatch } from '../../../../store';
 import { useLocalisations } from '../../../../selectors';
+import { add } from '../../../../slices/toastSlice';
 
 type Props = {
     oid: string;
@@ -27,10 +27,10 @@ const PassinumeroPopupContent = ({ oid }: Props) => {
     useEffect(() => {
         if (readError || writeError) {
             dispatch(
-                addGlobalNotification({
-                    key: 'PASSINUMEROT_NETWORK_ERROR',
+                add({
+                    id: `PASSINUMEROT_NETWORK_ERROR-${Math.random()}`,
                     type: 'error',
-                    title: L['PASSINUMEROT_NETWORK_ERROR'],
+                    header: L['PASSINUMEROT_NETWORK_ERROR'],
                 })
             );
         }

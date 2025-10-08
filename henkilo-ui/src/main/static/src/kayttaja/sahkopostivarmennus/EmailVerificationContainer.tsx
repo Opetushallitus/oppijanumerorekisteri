@@ -5,12 +5,11 @@ import { useParams } from 'react-router';
 import { useAppDispatch } from '../store';
 import { EmailVerificationPage } from './EmailVerificationPage';
 import { http } from '../../http';
-import { addGlobalNotification } from '../../actions/notification.actions';
-import { NOTIFICATIONTYPES } from '../../components/common/Notification/notificationtypes';
 import Loader from '../../components/common/icons/Loader';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
+import { add } from '../../slices/toastSlice';
 
 const EmailVerificationContainer = () => {
     const dispatch = useAppDispatch();
@@ -22,13 +21,12 @@ const EmailVerificationContainer = () => {
 
     useTitle(L['TITLE_SAHKOPOSTI_VARMISTAMINEN']);
 
-    const errorNotification = (title: string) => {
+    const errorNotification = (header: string) => {
         dispatch(
-            addGlobalNotification({
-                key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
-                title,
-                type: NOTIFICATIONTYPES.ERROR,
-                autoClose: 10000,
+            add({
+                id: `KAYTTOOIKEUSRAPORTTI_ERROR-${Math.random()}`,
+                header,
+                type: 'error',
             })
         );
     };

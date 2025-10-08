@@ -6,7 +6,6 @@ import { useAppDispatch } from '../store';
 import { TopNavigation } from '../components/navigation/TopNavigation';
 import Loader from '../components/common/icons/Loader';
 import PropertySingleton from '../globals/PropertySingleton';
-import { GlobalNotifications } from '../components/common/Notification/GlobalNotifications';
 import { useLocalisations } from '../selectors';
 import { useGetOmatOrganisaatiotQuery, useGetOmattiedotQuery, useGetOtuvaPrequelQuery } from '../api/kayttooikeus';
 import { useGetLocaleQuery, useGetOnrPrequelQuery } from '../api/oppijanumerorekisteri';
@@ -54,7 +53,6 @@ const App = () => {
 
     return isInitialized ? (
         <div className="oph-typography mainContainer">
-            <GlobalNotifications />
             <OphDsToasts />
             <TopNavigation />
             <Outlet />
