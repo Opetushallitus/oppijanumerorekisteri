@@ -1,16 +1,26 @@
 import React, { useMemo } from 'react';
 import { useReactTable, getCoreRowModel, ColumnDef } from '@tanstack/react-table';
+import moment from 'moment';
 
-import { AnojaKayttooikeusryhmaData, KayttooikeusryhmaData } from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
 import Loader from '../common/icons/Loader';
 import './AnojaKayttoooikeusryhma.css';
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
 import { useLocalisations } from '../../selectors';
 import OphTable from '../OphTable';
+import { useGetKayttooikeusryhmasForHenkiloQuery, useGetOrganisationsQuery } from '../../api/kayttooikeus';
+import { KAYTTOOIKEUDENTILA } from '../../globals/KayttooikeudenTila';
+import { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
+import { localizeTextGroup } from '../../utilities/localisation.util';
+
+type KayttooikeusryhmaData = {
+    voimassaPvm: string;
+    organisaatioNimi: string;
+    kayttooikeusryhmaNimi: string;
+};
 
 type Props = {
-    data?: AnojaKayttooikeusryhmaData;
+    henkiloOid: string;
 };
 
 const emptyArray = [];
@@ -18,8 +28,49 @@ const emptyArray = [];
 /*
  * Komponentti anomuslistaukseen näyttämään anojan olemassa olevat ja rauenneet käyttöoikeudet
  */
-export const AnojaKayttooikeusryhmat = ({ data }: Props) => {
-    const { L } = useLocalisations();
+export const AnojaKayttooikeusryhmat = ({ henkiloOid }: Props) => {
+    const { L, locale } = useLocalisations();
+    const { data: kayttooikeusryhmat, isLoading, isError } = useGetKayttooikeusryhmasForHenkiloQuery(henkiloOid);
+    const { data: organisations, isSuccess } = useGetOrganisationsQuery();
+
+    const _parseAnojaKayttooikeus = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): KayttooikeusryhmaData => {
+        const kayttooikeusryhmaNimiTexts =
+            myonnettyKayttooikeusryhma.ryhmaNames && myonnettyKayttooikeusryhma.ryhmaNames.texts;
+        const kayttooikeusryhmaNimi = kayttooikeusryhmaNimiTexts
+            ? localizeTextGroup(kayttooikeusryhmaNimiTexts, locale) || ''
+            : '';
+        const organisaatioNimi = _parseOrganisaatioNimi(myonnettyKayttooikeusryhma);
+        return {
+            voimassaPvm: _parseVoimassaPvm(myonnettyKayttooikeusryhma),
+            organisaatioNimi: organisaatioNimi,
+            kayttooikeusryhmaNimi: kayttooikeusryhmaNimi,
+        };
+    };
+
+    const _parseOrganisaatioNimi = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): string => {
+        const organisaatio =
+            isSuccess && organisations.find((o) => o.oid === myonnettyKayttooikeusryhma.organisaatioOid);
+        return organisaatio && organisaatio.nimi
+            ? organisaatio.nimi[locale] ||
+                  organisaatio.nimi['fi'] ||
+                  organisaatio.nimi['en'] ||
+                  organisaatio.nimi['sv'] ||
+                  organisaatio.oid
+            : L['HENKILO_AVOIMET_KAYTTOOIKEUDET_ORGANISAATIOTA_EI_LOYDY'];
+    };
+
+    const _parseVoimassaPvm = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): string => {
+        const noLoppupvm = L['HENKILO_AVOIMET_KAYTTOOIKEUDET_EI_LOPPUPVM'];
+        if (!myonnettyKayttooikeusryhma.voimassaPvm) {
+            return noLoppupvm;
+        } else if (myonnettyKayttooikeusryhma.tila !== KAYTTOOIKEUDENTILA.SULJETTU) {
+            return myonnettyKayttooikeusryhma.voimassaPvm
+                ? moment(new Date(myonnettyKayttooikeusryhma.voimassaPvm)).format()
+                : noLoppupvm;
+        }
+        return new Date(myonnettyKayttooikeusryhma.kasitelty).toString();
+    };
+
     const columns = useMemo<ColumnDef<KayttooikeusryhmaData>[]>(
         () => [
             {
@@ -48,12 +99,15 @@ export const AnojaKayttooikeusryhmat = ({ data }: Props) => {
     );
 
     const memoizedData = useMemo(() => {
-        const renderedData = data?.kayttooikeudet;
+        const renderedData =
+            kayttooikeusryhmat
+                ?.filter((myonnettyKayttooikeusryhma) => myonnettyKayttooikeusryhma.tila !== KAYTTOOIKEUDENTILA.ANOTTU)
+                .map(_parseAnojaKayttooikeus) ?? [];
         if (!renderedData || !renderedData.length) {
             return undefined;
         }
         return renderedData;
-    }, [data]);
+    }, [kayttooikeusryhmat]);
 
     const table = useReactTable({
         data: memoizedData ?? emptyArray,
@@ -62,13 +116,13 @@ export const AnojaKayttooikeusryhmat = ({ data }: Props) => {
         columns: columns ?? emptyArray,
     });
 
-    if (!data) {
+    if (isLoading) {
         return (
             <div className="anoja-kayttooikeusryhmat">
                 <Loader />
             </div>
         );
-    } else if (data?.error) {
+    } else if (isError) {
         return (
             <LocalNotification
                 type={NOTIFICATIONTYPES.ERROR}
@@ -76,7 +130,7 @@ export const AnojaKayttooikeusryhmat = ({ data }: Props) => {
                 toggle={true}
             />
         );
-    } else if (data?.kayttooikeudet.length > 0) {
+    } else if (memoizedData?.length > 0) {
         return <OphTable table={table} isLoading={false} />;
     }
     return (

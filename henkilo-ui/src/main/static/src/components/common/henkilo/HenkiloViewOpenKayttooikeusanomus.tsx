@@ -2,20 +2,15 @@ import React, { useEffect, useMemo, useState, useId } from 'react';
 import moment from 'moment';
 import type { Moment } from 'moment';
 import DatePicker from 'react-datepicker';
-import { urls } from 'oph-urls-js';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, Row, SortingState } from '@tanstack/react-table';
 
 import StaticUtils from '../StaticUtils';
 import Button from '../button/Button';
-import { http } from '../../../http';
 import PopupButton from '../button/PopupButton';
 import AnomusHylkaysPopup from '../../anomus/AnomusHylkaysPopup';
 import PropertySingleton from '../../../globals/PropertySingleton';
 import { AnojaKayttooikeusryhmat } from '../../anomus/AnojaKayttooikeusryhmat';
-import {
-    Kayttooikeusryhma,
-    MyonnettyKayttooikeusryhma,
-} from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
+import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { localizeTextGroup } from '../../../utilities/localisation.util';
 import { KAYTTOOIKEUDENTILA, KayttooikeudenTila } from '../../../globals/KayttooikeudenTila';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
@@ -32,21 +27,9 @@ import {
 } from '../../../api/kayttooikeus';
 import OphModal from '../modal/OphModal';
 import ConfirmButton from '../button/ConfirmButton';
-
-import './HenkiloViewOpenKayttooikeusanomus.css';
 import { add } from '../../../slices/toastSlice';
 
-export type KayttooikeusryhmaData = {
-    voimassaPvm: string;
-    organisaatioNimi: string;
-    kayttooikeusryhmaNimi: string;
-};
-
-export type AnojaKayttooikeusryhmaData = {
-    anojaOid: string;
-    kayttooikeudet: Array<KayttooikeusryhmaData>;
-    error: boolean;
-};
+import './HenkiloViewOpenKayttooikeusanomus.css';
 
 type OwnProps = {
     anomukset: HaettuKayttooikeusryhma[];
@@ -83,7 +66,6 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
             {}
         ) ?? {}
     );
-    const [kayttooikeusRyhmatByAnoja, setKayttooikeusRyhmatByAnoja] = useState<AnojaKayttooikeusryhmaData[]>([]);
     const [handledAnomusIds, setHandledAnomusIds] = useState<number[]>([]);
     const [accessRight, setAccessRight] = useState<AccessRight>();
     const [hylkaaAnomus, setHylkaaAnomus] = useState<number>();
@@ -197,80 +179,8 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     }
 
     function fetchKayttooikeusryhmatByAnoja({ row }: { row: Row<HaettuKayttooikeusryhma> }) {
-        const anojaOid = props.anomukset?.find((a) => a.id === row.original.id)?.anomus.henkilo.oid;
-        if (anojaOid && !kayttooikeusRyhmatByAnoja.find((a) => a.anojaOid === anojaOid)) {
-            _parseAnojaKayttooikeusryhmat(anojaOid);
-        }
-
-        return (
-            <AnojaKayttooikeusryhmat data={kayttooikeusRyhmatByAnoja.find((ryhma) => ryhma.anojaOid === anojaOid)} />
-        );
+        return <AnojaKayttooikeusryhmat henkiloOid={row.original.anomus.henkilo.oid} />;
     }
-
-    function _parseAnojaKayttooikeusryhmat(anojaOid: string): void {
-        const url = urls.url('kayttooikeus-service.kayttooikeusryhma.henkilo.oid', anojaOid);
-        http.get<MyonnettyKayttooikeusryhma[]>(url)
-            .then((myonnettyKayttooikeusryhmat: MyonnettyKayttooikeusryhma[]) => {
-                const kayttooikeudet: KayttooikeusryhmaData[] = myonnettyKayttooikeusryhmat
-                    .filter(
-                        (myonnettyKayttooikeusryhma) => myonnettyKayttooikeusryhma.tila !== KAYTTOOIKEUDENTILA.ANOTTU
-                    )
-                    .map(_parseAnojaKayttooikeus);
-                const anojaKayttooikeusryhmat = {
-                    anojaOid,
-                    kayttooikeudet: kayttooikeudet,
-                    error: false,
-                };
-                setKayttooikeusRyhmatByAnoja([...kayttooikeusRyhmatByAnoja, anojaKayttooikeusryhmat]);
-            })
-            .catch(() => {
-                const anojaKayttooikeusryhmat = {
-                    anojaOid,
-                    kayttooikeudet: [],
-                    error: true,
-                };
-                setKayttooikeusRyhmatByAnoja([...kayttooikeusRyhmatByAnoja, anojaKayttooikeusryhmat]);
-                console.error(`Anojan ${anojaOid} käyttöoikeuksien hakeminen epäonnistui`);
-            });
-    }
-
-    const _parseAnojaKayttooikeus = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): KayttooikeusryhmaData => {
-        const kayttooikeusryhmaNimiTexts =
-            myonnettyKayttooikeusryhma.ryhmaNames && myonnettyKayttooikeusryhma.ryhmaNames.texts;
-        const kayttooikeusryhmaNimi = kayttooikeusryhmaNimiTexts
-            ? localizeTextGroup(kayttooikeusryhmaNimiTexts, locale) || ''
-            : '';
-        const organisaatioNimi = _parseOrganisaatioNimi(myonnettyKayttooikeusryhma);
-        return {
-            voimassaPvm: _parseVoimassaPvm(myonnettyKayttooikeusryhma),
-            organisaatioNimi: organisaatioNimi,
-            kayttooikeusryhmaNimi: kayttooikeusryhmaNimi,
-        };
-    };
-
-    const _parseOrganisaatioNimi = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): string => {
-        const organisaatio =
-            isSuccess && organisations.find((o) => o.oid === myonnettyKayttooikeusryhma.organisaatioOid);
-        return organisaatio && organisaatio.nimi
-            ? organisaatio.nimi[locale] ||
-                  organisaatio.nimi['fi'] ||
-                  organisaatio.nimi['en'] ||
-                  organisaatio.nimi['sv'] ||
-                  organisaatio.oid
-            : L['HENKILO_AVOIMET_KAYTTOOIKEUDET_ORGANISAATIOTA_EI_LOYDY'];
-    };
-
-    const _parseVoimassaPvm = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): string => {
-        const noLoppupvm = L['HENKILO_AVOIMET_KAYTTOOIKEUDET_EI_LOPPUPVM'];
-        if (!myonnettyKayttooikeusryhma.voimassaPvm) {
-            return noLoppupvm;
-        } else if (myonnettyKayttooikeusryhma.tila !== KAYTTOOIKEUDENTILA.SULJETTU) {
-            return myonnettyKayttooikeusryhma.voimassaPvm
-                ? moment(new Date(myonnettyKayttooikeusryhma.voimassaPvm)).format()
-                : noLoppupvm;
-        }
-        return new Date(myonnettyKayttooikeusryhma.kasitelty).toString();
-    };
 
     function showAccessRightGroupDetails(kayttooikeusRyhma: Kayttooikeusryhma) {
         const accessRight: AccessRight = {
