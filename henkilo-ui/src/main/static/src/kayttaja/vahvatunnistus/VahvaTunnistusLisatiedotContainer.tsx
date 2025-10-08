@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { Params, useNavigate, useParams } from 'react-router';
-import { urls } from 'oph-urls-js';
 
 import VahvaTunnistusLisatiedotInputs, { Values, Metadata, Errors } from './VahvaTunnistusLisatiedotInputs';
 import { Localisations } from '../../types/localisation.type';
-import { http } from '../../http';
 import { isValidPassword } from '../../validation/PasswordValidator';
 import { toSupportedLocale, useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
+import { usePostUudelleenRekisterointiMutation } from '../../api/kayttooikeus';
 
 import './VahvaTunnistusLisatiedotPage.css';
 
@@ -63,6 +62,8 @@ export const VahvaTunnistusLisatiedotContainer = () => {
     const params = useParams();
     const locale = toSupportedLocale(params.locale);
     const L = getLocalisations(params.locale);
+    const [postUudelleenRekisterointi] = usePostUudelleenRekisterointiMutation();
+
     useTitle(L['TITLE_VIRKAILIJA_UUDELLEENTUNNISTAUTUMINEN']);
 
     const [form, setForm] = useState({
@@ -95,16 +96,15 @@ export const VahvaTunnistusLisatiedotContainer = () => {
             const newForm = { ...form, submitted: true };
             setForm(newForm);
             if (form.errors.length === 0) {
-                const tunnistusParameters = {
+                await postUudelleenRekisterointi({
                     kielisyys: locale,
                     loginToken: params.loginToken,
-                };
-                const tunnistusUrl = urls.url('kayttooikeus-service.cas.uudelleenrekisterointi', tunnistusParameters);
-                await http.post(tunnistusUrl, {
-                    ...form.values,
-                    salasana: form.values.password,
-                });
-                navigate(`/kayttaja/vahvatunnistusinfo/valmis/${locale}`);
+                    body: { ...form.values, salasana: form.values.password },
+                })
+                    .unwrap()
+                    .then(() => {
+                        navigate(`/kayttaja/vahvatunnistusinfo/valmis/${locale}`);
+                    });
             }
         } catch (error) {
             onServerError(error);
