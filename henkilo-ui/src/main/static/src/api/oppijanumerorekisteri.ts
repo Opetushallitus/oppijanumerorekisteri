@@ -12,7 +12,7 @@ import { Page } from '../types/Page.types';
 import { OppijaList } from '../types/domain/oppijanumerorekisteri/oppijalist.types';
 import { Identification } from '../types/domain/oppijanumerorekisteri/Identification.types';
 import { add } from '../slices/toastSlice';
-import { Henkilo, LinkedHenkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
+import { Henkilo, HenkiloCreate, LinkedHenkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
 import { HenkiloDuplicate } from '../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 import { Yksilointitieto } from '../types/domain/oppijanumerorekisteri/yksilointitieto.types';
 import { kayttooikeusApi } from './kayttooikeus';
@@ -32,6 +32,13 @@ export type CreateHenkiloRequest = {
     etunimet: string;
     kutsumanimi: string;
     sukunimi: string;
+};
+
+type GetDuplicatesRequest = {
+    etunimet?: string;
+    kutsumanimi?: string;
+    sukunimi?: string;
+    syntymaaika?: string;
 };
 
 const staggeredBaseQuery = retry(
@@ -359,6 +366,19 @@ export const oppijanumerorekisteriApi = createApi({
                 }
             },
         }),
+        getDuplicates: builder.query<HenkiloDuplicate[], GetDuplicatesRequest>({
+            query: (request) => `henkilo/duplikaatit?${new URLSearchParams(request).toString()}`,
+            providesTags: ['duplicates'],
+        }),
+        createOppija: builder.mutation<string, HenkiloCreate>({
+            query: (body) => ({
+                url: 'oppija',
+                method: 'POST',
+                body,
+                responseHandler: 'text',
+            }),
+            invalidatesTags: ['henkilo', 'duplicates'],
+        }),
         getHakemukset: builder.query<Hakemus[], { oid: string; L: Localisations }>({
             query: ({ oid }) => `henkilo/${oid}/hakemukset`,
             extraOptions: { maxRetries: 1 },
@@ -418,4 +438,6 @@ export const {
     useGetHenkiloDuplicatesQuery,
     useGetYksilointitiedotQuery,
     useGetHakemuksetQuery,
+    useCreateOppijaMutation,
+    useLazyGetDuplicatesQuery,
 } = oppijanumerorekisteriApi;
