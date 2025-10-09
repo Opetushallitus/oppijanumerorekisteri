@@ -21,26 +21,26 @@ const App = () => {
     const [isInitialized, setIsInitialized] = useState(false);
     const { isSuccess: isOnrPrequelSuccess } = useGetOnrPrequelQuery(undefined, { pollingInterval: 30000 });
     const { isSuccess: isOtuvaPrequelSuccess } = useGetOtuvaPrequelQuery(undefined, { pollingInterval: 30000 });
-    const { isSuccess: isLocaleSuccess } = useGetLocaleQuery(undefined, {
+    const { data: locale, isSuccess: isLocaleSuccess } = useGetLocaleQuery(undefined, {
         skip: !isOnrPrequelSuccess || !isOtuvaPrequelSuccess,
     });
     const { data: omattiedot, isSuccess: isOmattiedotSuccess } = useGetOmattiedotQuery(undefined, {
         skip: !isOnrPrequelSuccess || !isOtuvaPrequelSuccess,
     });
     const { isSuccess: isLocalisationsSuccess } = useGetLocalisationsQuery('henkilo-ui');
-    const { L, locale } = useLocalisations();
+    const { L } = useLocalisations();
 
     useGetOmatOrganisaatiotQuery({ oid: omattiedot?.oidHenkilo, locale }, { skip: !omattiedot?.oidHenkilo || !locale });
 
     useEffect(() => {
-        if (isOmattiedotSuccess && isLocaleSuccess && isLocalisationsSuccess) {
+        if (isOmattiedotSuccess && isLocaleSuccess && isLocalisationsSuccess && !!locale && !!L) {
             moment.locale(locale);
             moment.defaultFormat = PropertySingleton.getState().PVM_MOMENT_FORMAATTI;
 
             if (locale?.toLowerCase() !== 'fi' && locale?.toLowerCase() !== 'sv') {
                 dispatch(
                     add({
-                        id: 'EN_LOCALE_KEY-${Math.random()}',
+                        id: `EN_LOCALE_KEY-${Math.random()}`,
                         type: 'error',
                         header: L['HENKILO_YHTEISET_ASIOINTIKIELI_EN_VAROITUS'],
                     })
@@ -49,7 +49,7 @@ const App = () => {
 
             setIsInitialized(true);
         }
-    }, [isOmattiedotSuccess, isLocaleSuccess, isLocalisationsSuccess]);
+    }, [isOmattiedotSuccess, isLocaleSuccess, isLocalisationsSuccess, locale, L]);
 
     return isInitialized ? (
         <div className="oph-typography mainContainer">
