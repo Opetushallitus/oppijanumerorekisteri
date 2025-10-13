@@ -33,6 +33,7 @@
         "@playwright/test": "^1.49.1",
         "@types/isomorphic-fetch": "^0.0.39",
         "@types/node": "^20",
+        "@types/papaparse": "5.3.16",
         "@types/ramda": "^0.30.2",
         "@types/react": "18.3.23",
         "@types/react-datepicker": "^4.19.6",
