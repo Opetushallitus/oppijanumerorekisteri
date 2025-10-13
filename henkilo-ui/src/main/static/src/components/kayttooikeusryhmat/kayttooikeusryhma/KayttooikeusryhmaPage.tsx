@@ -23,6 +23,7 @@ import { OrganisaatioViite } from '../../../types/domain/kayttooikeus/organisaat
 import { SelectOption } from '../../../utilities/select';
 import { useLocalisations } from '../../../selectors';
 import {
+    KayttooikeusryhmaRequest,
     useGetKayttooikeusryhmaMyontoviiteQuery,
     useGetKayttooikeusryhmaQuery,
     useGetKayttooikeusryhmaRoolisQuery,
@@ -469,7 +470,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId?: string }) =
         );
     };
 
-    const parsePayload = () => ({
+    const parsePayload = (): KayttooikeusryhmaRequest => ({
         nimi: _parseNameData(),
         kuvaus: _parseDescriptionData(),
         palvelutRoolit: _parsePalvelutRoolit(),

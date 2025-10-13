@@ -33,20 +33,24 @@ export const FastMenuList = (props: MenuListProps<SelectOption, false>) => {
     );
 };
 
+type SelectState = { isFocused: boolean; isDisabled: boolean };
+
 export const selectStyles = {
     unstyled: true,
     classNames: {
-        container: (state) => (state.isFocused ? 'oph-ds-select-container-focused' : 'oph-ds-select-container'),
+        container: (state: SelectState) =>
+            state.isFocused ? 'oph-ds-select-container-focused' : 'oph-ds-select-container',
         indicatorSeparator: () => 'oph-ds-select-indicatorSeparator',
         clearIndicator: () => 'oph-ds-select-clearIndicator',
-        control: (state) =>
+        control: (state: SelectState) =>
             state.isFocused
                 ? 'oph-ds-select-control-focused'
                 : state.isDisabled
                 ? 'oph-ds-select-control-disabled'
                 : 'oph-ds-select-control',
-        placeholder: (state) => (state.isDisabled ? 'oph-ds-select-placeholder-disabled' : 'oph-ds-select-placeholder'),
-        dropdownIndicator: (state) =>
+        placeholder: (state: SelectState) =>
+            state.isDisabled ? 'oph-ds-select-placeholder-disabled' : 'oph-ds-select-placeholder',
+        dropdownIndicator: (state: SelectState) =>
             state.isFocused ? 'oph-ds-select-dropdownIndicator-focused' : 'oph-ds-select-dropdownIndicator',
         menu: () => 'oph-ds-select-menu',
         option: () => 'oph-ds-select-option',

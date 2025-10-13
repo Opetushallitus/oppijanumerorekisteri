@@ -34,7 +34,7 @@ const organisaatioHierarkiaToOrganisaatioSelectObject = (
     orgNames: OrganisaatioNameLookup,
     locale: Locale
 ): OrganisaatioSelectObject[] => {
-    const result = [];
+    const result: OrganisaatioSelectObject[] = [];
     mapOrganisaatioLevelsRecursively(organisaatioHierarkia, orgNames, locale, result);
     return result;
 };
@@ -107,7 +107,7 @@ export const findOmattiedotOrganisatioOrRyhmaByOid = (
 const organisaatioHierarchyRoots = (orgs: OrganisaatioHenkilo[], locale: Locale): Array<OrganisaatioWithChildren> => {
     // First sort by name:
     orgs = sortBy((org: OrganisaatioHenkilo) => toLocalizedText(locale, org.organisaatio?.nimi), orgs);
-    const byOid = {};
+    const byOid: Record<string, OrganisaatioWithChildren> = {};
     // Determine direct parent oid and map by oid:
     const mapOrg = (oldOrg: OrganisaatioWithChildren) => {
         const org = { ...oldOrg };
@@ -124,7 +124,7 @@ const organisaatioHierarchyRoots = (orgs: OrganisaatioHenkilo[], locale: Locale)
     // clone organisaatios for now since rtk createApi responses have Object.preventExtensions and we're mutating here...
     const organisaatios = orgs.map((o) => o.organisaatio).map(mapOrg);
     // Map children by direct parent:
-    const roots = [];
+    const roots: OrganisaatioWithChildren[] = [];
     organisaatios.forEach((org: OrganisaatioWithChildren) => {
         if (org.parentOid) {
             const parent = byOid[org.parentOid];

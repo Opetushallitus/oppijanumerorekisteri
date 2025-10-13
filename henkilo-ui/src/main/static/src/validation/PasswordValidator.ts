@@ -11,7 +11,7 @@ export const containsNumber = (password: string) => numberRegex.exec(password) !
 export const containsLowercaseLetters = (password: string) => lowercaseLetters.exec(password) !== null;
 export const containsUppercaseLetters = (password: string) => uppercaseLetters.exec(password) !== null;
 export const containsSpecialCharacter = (password: string) => specialCharacterRegex.exec(password) !== null;
-const atLeast = (password: string, n: number, fn: ((string) => boolean)[]): boolean =>
+const atLeast = (password: string, n: number, fn: ((s: string) => boolean)[]): boolean =>
     fn.map((f) => f(password)).filter(Boolean).length >= n;
 
 export const isValidPassword = (password: string): boolean => {
