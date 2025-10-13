@@ -17,16 +17,20 @@ import 'moment/locale/fi';
 import 'moment/locale/sv';
 
 const App = () => {
-    const dispatch = useAppDispatch();
-    const [isInitialized, setIsInitialized] = useState(false);
     const { isSuccess: isOnrPrequelSuccess } = useGetOnrPrequelQuery(undefined, { pollingInterval: 30000 });
     const { isSuccess: isOtuvaPrequelSuccess } = useGetOtuvaPrequelQuery(undefined, { pollingInterval: 30000 });
-    const { data: locale, isSuccess: isLocaleSuccess } = useGetLocaleQuery(undefined, {
-        skip: !isOnrPrequelSuccess || !isOtuvaPrequelSuccess,
-    });
-    const { data: omattiedot, isSuccess: isOmattiedotSuccess } = useGetOmattiedotQuery(undefined, {
-        skip: !isOnrPrequelSuccess || !isOtuvaPrequelSuccess,
-    });
+    if (!isOnrPrequelSuccess || !isOtuvaPrequelSuccess) {
+        return <Loader />;
+    } else {
+        return <PostPrequelApp />;
+    }
+};
+
+const PostPrequelApp = () => {
+    const dispatch = useAppDispatch();
+    const [isInitialized, setIsInitialized] = useState(false);
+    const { data: locale, isSuccess: isLocaleSuccess } = useGetLocaleQuery();
+    const { data: omattiedot, isSuccess: isOmattiedotSuccess } = useGetOmattiedotQuery();
     const { isSuccess: isLocalisationsSuccess } = useGetLocalisationsQuery('henkilo-ui');
     const { L } = useLocalisations();
 
