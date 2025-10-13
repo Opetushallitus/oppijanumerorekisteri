@@ -10,6 +10,7 @@ function main {
   init_nodejs
   npm_ci_if_needed
 
+  export PORT=8484
   node ./src/app.js
 }
 
