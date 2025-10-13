@@ -29,7 +29,7 @@ import { TextGroupModify } from '../types/domain/kayttooikeus/textgroup.types';
 import { PalveluRooliModify } from '../types/domain/kayttooikeus/PalveluRooliModify.types';
 import { SallitutKayttajatyypit } from '../components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage';
 import { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
-import { HenkiloOrg } from '../types/domain/oppijanumerorekisteri/henkilo.types';
+import { Henkilo, HenkiloOrg } from '../types/domain/oppijanumerorekisteri/henkilo.types';
 import { Values } from '../kayttaja/vahvatunnistus/VahvaTunnistusLisatiedotInputs';
 import { VirkailijaCreate } from '../types/domain/kayttooikeus/virkailija.types';
 
@@ -132,7 +132,7 @@ type PostSalasananVaihtoRequest = {
     currentPassword: string;
 };
 
-type KayttooikeusryhmaRequest = {
+export type KayttooikeusryhmaRequest = {
     nimi: TextGroupModify;
     kuvaus: TextGroupModify;
     palvelutRoolit: PalveluRooliModify[];
@@ -162,6 +162,18 @@ type PutUudelleenRekisterointiRequest = {
     kielisyys: string;
     loginToken: string;
     body: Values & { salasana: string };
+};
+
+export type RekisteroidyRequest = {
+    etunimet: string;
+    sukunimi: string;
+    kutsumanimi: string;
+    asiointiKieli: {
+        kieliKoodi: string;
+    };
+    kayttajanimi: string;
+    password: string;
+    passwordAgain: string;
 };
 
 export const kayttooikeusApi = createApi({
@@ -203,6 +215,7 @@ export const kayttooikeusApi = createApi({
         'organisationnames',
         'kayttooikeusryhmaroolit',
         'henkilonkayttooikeusryhmat',
+        'henkiloByLoginToken',
     ],
     endpoints: (builder) => ({
         getOtuvaPrequel: builder.query<void, void>({
@@ -593,6 +606,28 @@ export const kayttooikeusApi = createApi({
                 body,
             }),
         }),
+        postRekisteroidy: builder.mutation<void, { token: string; body: RekisteroidyRequest }>({
+            query: ({ token, body }) => ({
+                url: `kutsu/token/${token}`,
+                method: 'POST',
+                body,
+                responseHandler: 'text',
+            }),
+        }),
+        getHenkiloByLoginToken: builder.query<Henkilo, string>({
+            query: (loginToken) => `cas/henkilo/loginToken/${loginToken}`,
+            providesTags: ['henkiloByLoginToken'],
+        }),
+        getEmailVerificationLoginTokenValidation: builder.query<string, string>({
+            query: (loginToken) => `cas/emailverification/loginTokenValidation/${loginToken}`,
+        }),
+        postEmailVerification: builder.mutation<void, { loginToken: string; body: Partial<Henkilo> }>({
+            query: ({ loginToken, body }) => ({
+                url: `cas/emailverification/${loginToken}`,
+                method: 'POST',
+                body,
+            }),
+        }),
     }),
 });
 
@@ -655,4 +690,8 @@ export const {
     useGetOrganisationsQuery,
     usePostUudelleenRekisterointiMutation,
     usePostCreateVirkailijaMutation,
+    usePostRekisteroidyMutation,
+    useGetHenkiloByLoginTokenQuery,
+    useLazyGetEmailVerificationLoginTokenValidationQuery,
+    usePostEmailVerificationMutation,
 } = kayttooikeusApi;

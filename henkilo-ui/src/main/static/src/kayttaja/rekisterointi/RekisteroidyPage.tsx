@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { urls } from 'oph-urls-js';
 import { useNavigate } from 'react-router';
 
 import StaticUtils from '../../components/common/StaticUtils';
@@ -9,7 +8,6 @@ import type { KutsuByToken, KutsuOrganisaatio } from '../../types/domain/kayttoo
 import NotificationButton, { ButtonNotification } from '../../components/common/button/NotificationButton';
 import { Locale } from '../../types/locale.type';
 import { Localisations } from '../../types/localisation.type';
-import { http } from '../../http';
 import Asiointikieli from '../../components/common/henkilo/labelvalues/Asiointikieli';
 import IconButton from '../../components/common/button/IconButton';
 import HakaIcon from '../../components/common/icons/HakaIcon';
@@ -20,6 +18,7 @@ import Sukunimi from '../../components/common/henkilo/labelvalues/Sukunimi';
 import Etunimet from '../../components/common/henkilo/labelvalues/Etunimet';
 import { toSupportedLocale } from '../../selectors';
 import { NamedSelectOption } from '../../utilities/select';
+import { RekisteroidyRequest, usePostRekisteroidyMutation } from '../../api/kayttooikeus';
 
 import './RekisteroidyPage.css';
 
@@ -27,18 +26,6 @@ type OwnProps = {
     L: Localisations;
     locale: Locale;
     kutsu: KutsuByToken;
-};
-
-type Henkilo = {
-    etunimet: string;
-    sukunimi: string;
-    kutsumanimi: string;
-    asiointiKieli: {
-        kieliKoodi: string;
-    };
-    kayttajanimi: string;
-    password: string;
-    passwordAgain: string;
 };
 
 type ErrorMessage = {
@@ -65,35 +52,36 @@ const rekisteroidyErrors: Record<string, ErrorMessage> = {
     },
 };
 
-function etunimetContainsKutsumanimi(henkilo: Henkilo) {
+function etunimetContainsKutsumanimi(henkilo: RekisteroidyRequest) {
     return henkilo.etunimet.split(' ').filter((nimi) => nimi === henkilo.kutsumanimi).length;
 }
 
-function passwordsAreSame(henkilo: Henkilo) {
+function passwordsAreSame(henkilo: RekisteroidyRequest) {
     return henkilo.password === henkilo.passwordAgain;
 }
 
-function kielikoodiIsNotEmpty(henkilo: Henkilo) {
+function kielikoodiIsNotEmpty(henkilo: RekisteroidyRequest) {
     return !!henkilo.asiointiKieli.kieliKoodi;
 }
 
-function kayttajanimiIsNotEmpty(henkilo: Henkilo) {
+function kayttajanimiIsNotEmpty(henkilo: RekisteroidyRequest) {
     return !!henkilo.kayttajanimi;
 }
 
-function isPasswordError(henkilo: Henkilo) {
+function isPasswordError(henkilo: RekisteroidyRequest) {
     return !henkilo.password || !isValidPassword(henkilo.password) || henkilo.password !== henkilo.passwordAgain;
 }
 
 const errorChecks = [
-    (henkilo: Henkilo) => (!etunimetContainsKutsumanimi(henkilo) ? 'REKISTEROIDY_ERROR_KUTSUMANIMI' : null),
-    (henkilo: Henkilo) => (!kayttajanimiIsNotEmpty(henkilo) ? 'REKISTEROIDY_ERROR_KAYTTAJANIMI' : null),
-    (henkilo: Henkilo) => (!passwordsAreSame(henkilo) ? 'REKISTEROIDY_ERROR_PASSWORD_MATCH' : null),
-    (henkilo: Henkilo) => (!isValidPassword(henkilo.password) ? 'REKISTEROIDY_ERROR_PASSWORD_INVALID' : null),
-    (henkilo: Henkilo) => (!kielikoodiIsNotEmpty(henkilo) ? 'REKISTEROIDY_ERROR_KIELIKOODI' : null),
+    (henkilo: RekisteroidyRequest) => (!etunimetContainsKutsumanimi(henkilo) ? 'REKISTEROIDY_ERROR_KUTSUMANIMI' : null),
+    (henkilo: RekisteroidyRequest) => (!kayttajanimiIsNotEmpty(henkilo) ? 'REKISTEROIDY_ERROR_KAYTTAJANIMI' : null),
+    (henkilo: RekisteroidyRequest) => (!passwordsAreSame(henkilo) ? 'REKISTEROIDY_ERROR_PASSWORD_MATCH' : null),
+    (henkilo: RekisteroidyRequest) =>
+        !isValidPassword(henkilo.password) ? 'REKISTEROIDY_ERROR_PASSWORD_INVALID' : null,
+    (henkilo: RekisteroidyRequest) => (!kielikoodiIsNotEmpty(henkilo) ? 'REKISTEROIDY_ERROR_KIELIKOODI' : null),
 ];
 
-function validate(henkilo: Henkilo) {
+function validate(henkilo: RekisteroidyRequest) {
     return (
         etunimetContainsKutsumanimi(henkilo) &&
         kayttajanimiIsNotEmpty(henkilo) &&
@@ -109,7 +97,8 @@ export const RekisteroidyPage = (props: OwnProps) => {
     const locale = toSupportedLocale(anyLocale);
     const [privacyPolicySeen, setPrivacyPolicySeen] = useState(false);
     const [notification, setNotification] = useState<ButtonNotification>();
-    const [henkilo, setHenkilo] = useState<Henkilo>({
+    const [rekisteroidy] = usePostRekisteroidyMutation();
+    const [henkilo, setHenkilo] = useState<RekisteroidyRequest>({
         etunimet: kutsu.etunimi,
         sukunimi: kutsu.sukunimi,
         kutsumanimi: kutsu.etunimi.split(' ')[0] || '',
@@ -137,19 +126,19 @@ export const RekisteroidyPage = (props: OwnProps) => {
         setHenkilo(newHenkilo);
     }
 
-    function createHenkilo() {
+    async function createHenkilo() {
         setNotification(undefined);
-        const url = urls.url('kayttooikeus-service.kutsu.by-token', kutsu.temporaryToken);
-        http.post(url, henkilo).then(
-            () => navigate(`/kayttaja/rekisteroidy/valmis/${locale}`),
-            (error: { errorType?: string }) =>
+        await rekisteroidy({ token: kutsu.temporaryToken, body: henkilo })
+            .unwrap()
+            .then(() => navigate(`/kayttaja/rekisteroidy/valmis/${locale}`))
+            .catch((error) => {
                 setNotification(
-                    rekisteroidyErrors[error.errorType] ?? {
+                    rekisteroidyErrors[error.data?.errorType] ?? {
                         notL10nMessage: '',
                         notL10nText: 'KUTSU_LUONTI_EPAONNISTUI_TUNTEMATON_VIRHE',
                     }
-                )
-        );
+                );
+            });
     }
 
     function printErrors() {
@@ -248,7 +237,11 @@ export const RekisteroidyPage = (props: OwnProps) => {
                                     henkiloUpdate={henkilo}
                                     updateModelSelectAction={updatePayloadModelSelect}
                                 />
-                                <IconButton href={urls.url('cas.haka', { temporaryToken: kutsu.temporaryToken })}>
+                                <IconButton
+                                    href={`/service-provider-app/saml/login/alias/hakasp?${new URLSearchParams({
+                                        temporaryToken: kutsu.temporaryToken,
+                                    }).toString()}`}
+                                >
                                     <HakaIcon />
                                 </IconButton>
                             </div>

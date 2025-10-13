@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { clone, remove } from 'ramda';
 import { useNavigate } from 'react-router';
-import { urls } from 'oph-urls-js';
 
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
-import { http } from '../../http';
 import Button from '../../components/common/button/Button';
 import { YhteystietoRyhma } from '../../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
 import { EmailVerificationList } from './EmailVerificationList';
@@ -17,6 +15,11 @@ import PropertySingleton from '../../globals/PropertySingleton';
 import { WORK_ADDRESS, EMAIL } from '../../types/constants';
 import { Localisations } from '../../types/localisation.type';
 import { toSupportedLocale } from '../../selectors';
+import { copy } from '../../utilities/copy';
+import {
+    useLazyGetEmailVerificationLoginTokenValidationQuery,
+    usePostEmailVerificationMutation,
+} from '../../api/kayttooikeus';
 
 type Props = {
     L: Localisations;
@@ -36,11 +39,13 @@ export const EmailVerificationPage = ({
     L,
     locale: localeProp,
 }: Props) => {
+    const [getEmailVerificationLoginTokenValidation] = useLazyGetEmailVerificationLoginTokenValidationQuery();
+    const [postEmailVerification] = usePostEmailVerificationMutation();
     const navigate = useNavigate();
     const [validForm, setValidForm] = useState(
         henkiloProp.yhteystiedotRyhma ? validateYhteystiedotRyhmaEmails(henkiloProp.yhteystiedotRyhma) : false
     );
-    const [henkilo, setHenkilo] = useState(henkiloProp);
+    const [henkilo, setHenkilo] = useState(copy(henkiloProp));
     const [emailFieldCount, setEmailFieldCount] = useState(
         notEmptyYhteystiedotRyhmaEmailCount(henkilo.yhteystiedotRyhma)
     );
@@ -75,21 +80,17 @@ export const EmailVerificationPage = ({
 
     async function verifyEmailAddresses() {
         const locale = toSupportedLocale(localeProp);
-        const loginTokenValidationCodeUrl = urls.url(
-            'kayttooikeus-service.cas.emailverification.loginToken.validation',
-            loginToken
-        );
-        const loginTokenValidationCode = await http.get(loginTokenValidationCodeUrl);
-        if (loginTokenValidationCode !== 'TOKEN_OK') {
-            navigate(`/sahkopostivarmistus/virhe/${locale}/${loginToken}/${loginTokenValidationCode}`);
-        } else {
-            const emailVerificationUrl = urls.url('kayttooikeus-service.cas.emailverification', loginToken);
-            await http.post(emailVerificationUrl, henkilo).catch((error) => {
-                errorNotification(L['REKISTEROIDY_ILLEGALARGUMENT_OTSIKKO']);
-                throw error;
+        await getEmailVerificationLoginTokenValidation(loginToken)
+            .unwrap()
+            .then((responseCode) => {
+                if (responseCode !== 'TOKEN_OK') {
+                    navigate(`/sahkopostivarmistus/virhe/${locale}/${loginToken}/${responseCode}`);
+                }
             });
-            navigate(`/kayttaja/sahkopostivarmistus/valmis/${locale}`);
-        }
+        await postEmailVerification({ loginToken, body: henkilo })
+            .unwrap()
+            .then(() => navigate(`/kayttaja/sahkopostivarmistus/valmis/${locale}`))
+            .catch(() => errorNotification(L['REKISTEROIDY_ILLEGALARGUMENT_OTSIKKO']));
     }
 
     function emailChangeEvent(yhteystiedotRyhmaIndex: number, yhteystietoIndex: number, value: string): void {
