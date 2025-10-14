@@ -18,6 +18,7 @@ public class HenkiloHakuPerustietoDto {
     private String sukunimi;
 
     private Boolean yksiloityVTJ;
+    private Boolean yksiloityEidas;
     private Boolean yksiloity;
     private Boolean passivoitu;
     private Boolean duplicate;

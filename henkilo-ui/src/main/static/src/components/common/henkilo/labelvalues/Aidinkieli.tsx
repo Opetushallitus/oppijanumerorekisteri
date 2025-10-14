@@ -39,7 +39,7 @@ const Aidinkieli = (props: OwnProps) => {
                     options={options}
                     value={options.find((o) => o.value === props.henkiloUpdate.aidinkieli?.kieliKoodi)}
                     onChange={props.updateModelSelectAction}
-                    isDisabled={StaticUtils.hasHetuAndIsYksiloity(henkilo)}
+                    isDisabled={StaticUtils.isVahvastiYksiloity(henkilo.henkilo)}
                 />
             )}
         </FieldlessLabelValue>

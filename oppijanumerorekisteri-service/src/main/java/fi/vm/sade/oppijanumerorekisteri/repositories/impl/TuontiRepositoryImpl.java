@@ -66,7 +66,8 @@ public class TuontiRepositoryImpl implements TuontiRepositoryCustom {
                         .and(qTuonti.sahkoposti.isNotNull())
                         .and( qHenkilo.yksilointiYritetty.isTrue()
                                 .and(qHenkilo.yksiloity.isFalse())
-                                .and(qHenkilo.yksiloityVTJ.isFalse()))
+                                .and(qHenkilo.yksiloityVTJ.isFalse())
+                                .and(qHenkilo.yksiloityEidas.isFalse()))
                         .and(qTuonti.ilmoitustarveKasitelty.isFalse()) );
         return query.fetch();
     }
@@ -85,7 +86,7 @@ public class TuontiRepositoryImpl implements TuontiRepositoryCustom {
                 .where( qTuonti.kasiteltyja.eq(qTuonti.kasiteltavia)
                             .and( qTuonti.ilmoitustarveKasitelty.isFalse())
                             .and( qHenkilo.yksilointiYritetty.isTrue()
-                                .and( qHenkilo.yksiloity.isTrue().or( qHenkilo.yksiloityVTJ.isTrue() )
+                                .and( qHenkilo.yksiloity.isTrue().or( qHenkilo.yksiloityVTJ.isTrue() ).or( qHenkilo.yksiloityEidas.isTrue() )
                                 .or(qTuonti.sahkoposti.isNull()))
                         ));
         return query.fetch();

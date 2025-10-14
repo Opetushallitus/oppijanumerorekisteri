@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 
@@ -72,10 +72,13 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
             if (henkilo.henkilo.yksiloity) {
                 info.push(L['HENKILO_ADDITIONALINFO_YKSILOITY']);
             }
+            if (henkilo.henkilo.yksiloityEidas) {
+                info.push(L['HENKILO_ADDITIONALINFO_YKSILOITYEIDAS']);
+            }
             if (henkilo.henkilo.yksiloityVTJ) {
                 info.push(L['HENKILO_ADDITIONALINFO_YKSILOITYVTJ']);
             }
-            if (!henkilo.henkilo.yksiloity && !henkilo.henkilo.yksiloityVTJ) {
+            if (!henkilo.henkilo.yksiloity && !henkilo.henkilo.yksiloityVTJ && !henkilo.henkilo.yksiloityEidas) {
                 info.push(L['HENKILO_ADDITIOINALINFO_EIYKSILOITY']);
             }
         }
@@ -296,10 +299,9 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
         throw new Error(`Unidentified view ${view}`);
     }
 
-    const sectionLabelId = useId();
     return (
-        <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
-            <h2 id={sectionLabelId}>{L['HENKILO_PERUSTIEDOT_OTSIKKO'] + _additionalInfo()}</h2>
+        <section aria-label={L['HENKILO_PERUSTIEDOT_OTSIKKO']} className="henkiloViewUserContentWrapper">
+            <h2>{L['HENKILO_PERUSTIEDOT_OTSIKKO'] + _additionalInfo()}</h2>
             {content}
 
             <LocalNotification

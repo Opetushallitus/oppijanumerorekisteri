@@ -159,6 +159,9 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     private @NotNull Henkilo yksiloiHenkilo(@NotNull final Henkilo henkilo) {
+        if (henkilo.isYksiloityEidas()) {
+            throw new SuspendableIdentificationException("Henkilö on eIDAS-yksilöity: " + henkilo.getOidHenkilo());
+        }
         if (isFakeHetu(henkilo.getHetu())) {
             throw new SuspendableIdentificationException("Henkilön hetu ei ole oikea: " + henkilo.getHetu());
         }
@@ -488,6 +491,10 @@ public class YksilointiServiceImpl implements YksilointiService {
             throw new ValidationException("Yksilöintiä ei voi purkaa koska henkilöä ei ole yksilöity");
         }
 
+        if (henkilo.isYksiloityVahvasti()) {
+            throw new ValidationException("Henkilö on eIDAS-yksilöity; yksilöintiä ei voida purkaa");
+        }
+
         if (StringUtils.hasText(henkilo.getHetu()) || henkilo.isYksiloityVTJ()) {
             throw new ValidationException("Henkilöllä on hetu tai se on VTJ yksilöity, yksilöintiä ei voida purkaa");
         }
@@ -501,12 +508,12 @@ public class YksilointiServiceImpl implements YksilointiService {
     public void paivitaYksilointitiedot(String henkiloOid) {
         Henkilo henkilo = getHenkiloByOid(henkiloOid);
         if (!henkilo.isYksiloityVTJ()) {
-            throw new ValidationException("Henkilöä " + henkiloOid + " ei ole yksilöity");
+            throw new ValidationException("Henkilöä " + henkiloOid + " ei ole VTJ-yksilöity");
         }
 
         String hetu = henkilo.getHetu();
         if (hetu == null || hetu.isEmpty()) {
-            throw new DataInconsistencyException("Henkilöllä " + henkiloOid + " ei ole hetua vaikka yksilöinti on suoritettu");
+            throw new DataInconsistencyException("Henkilöllä " + henkiloOid + " ei ole hetua vaikka VTJ-yksilöinti on suoritettu");
         }
 
         YksiloityHenkilo yksiloityHenkilo = vtjService.teeHenkiloKysely(henkilo.getHetu())

@@ -28,6 +28,7 @@
     "eiSuomalaistaHetua": false,
     "yksiloity": false,
     "yksiloityVTJ": true,
+    "yksiloityEidas": false,
     "yksilointiYritetty": true,
     "duplicate": false,
     "created": 1741613720283,

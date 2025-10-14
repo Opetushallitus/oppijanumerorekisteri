@@ -7,6 +7,7 @@ import { useYksiloiHetutonMutation } from '../../../../api/oppijanumerorekisteri
 import { isHenkiloValidForYksilointi } from '../../../../validation/YksilointiValidator';
 import { ButtonNotification } from '../../button/NotificationButton';
 import { useLocalisations } from '../../../../selectors';
+import StaticUtils from '../../StaticUtils';
 
 type OwnProps = {
     disabled?: boolean;
@@ -17,7 +18,7 @@ const YksiloiHetutonButton = (props: OwnProps) => {
     const { henkilo } = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const [yksiloiHetuton] = useYksiloiHetutonMutation();
     const [notification, setNotification] = useState<ButtonNotification>();
-    if (henkilo.yksiloityVTJ || henkilo.hetu || henkilo.yksiloity) {
+    if (StaticUtils.isVahvastiYksiloity(henkilo) || henkilo.yksiloity || henkilo.hetu) {
         return null;
     }
 

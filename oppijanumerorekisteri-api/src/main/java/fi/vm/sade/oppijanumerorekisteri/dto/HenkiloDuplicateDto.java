@@ -26,6 +26,7 @@ public class HenkiloDuplicateDto {
     private String email;
     private boolean yksiloity;
     private boolean yksiloityVTJ;
+    private boolean yksiloityEidas;
     private KielisyysDto aidinkieli;
     private KielisyysDto asiointiKieli;
     private List<HakemusDto> hakemukset;

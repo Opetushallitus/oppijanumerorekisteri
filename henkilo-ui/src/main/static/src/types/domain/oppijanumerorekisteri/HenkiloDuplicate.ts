@@ -15,6 +15,7 @@ export type HenkiloDuplicate = {
     emails?: string[];
     yksiloity?: boolean;
     yksiloityVTJ?: boolean;
+    yksiloityEidas?: boolean;
     aidinkieli?: Kielisyys;
     asiointiKieli?: Kielisyys;
     hakemukset?: Hakemus[];

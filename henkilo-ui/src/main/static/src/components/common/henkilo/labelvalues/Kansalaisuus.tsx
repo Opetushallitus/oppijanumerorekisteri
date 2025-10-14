@@ -21,7 +21,7 @@ const Kansalaisuus = (props: OwnProps) => {
     const { locale } = useLocalisations();
     const kansalaisuus = props.henkiloUpdate.kansalaisuus || [];
     const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
-    const disabled = StaticUtils.hasHetuAndIsYksiloity(henkilo);
+    const disabled = StaticUtils.isVahvastiYksiloity(henkilo.henkilo);
     const { data } = useGetKansalaisuudetQuery();
     const options = useMemo(() => {
         return (

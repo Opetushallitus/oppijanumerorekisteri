@@ -16,7 +16,7 @@ public class HenkiloDuplicateDtoConverter extends CustomConverter<Henkilo, Henki
                                        MappingContext mappingContext) {
         HenkiloDuplicateDto henkiloDuplicateDto = new HenkiloDuplicateDto();
         this.mapperFacade.map(henkilos, henkiloDuplicateDto);
-        henkiloDuplicateDto.setYksiloity(henkilos.isYksiloity() || henkilos.isYksiloityVTJ());
+        henkiloDuplicateDto.setYksiloity(henkilos.isYksiloityWithAnyMethod());
         return henkiloDuplicateDto;
     }
 }

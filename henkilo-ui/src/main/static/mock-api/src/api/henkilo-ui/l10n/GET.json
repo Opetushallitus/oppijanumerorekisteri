@@ -72,6 +72,7 @@
         "KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUS": "Valitse käyttöoikeus",
         "KAYTTOOIKEUSRYHMAT_LISAA_PALVELUT_JA_OIKEUDET": "Käyttöoikeusryhmän sisältämät palvelut ja käyttöoikeudet",
         "HENKILO_ADDITIONALINFO_YKSILOITYVTJ": "yksilöity VTJ",
+        "HENKILO_ADDITIONALINFO_YKSILOITYEIDAS": "yksilöity eIDAS-tunnisteella",
         "VIRHE_PAGE_DEFAULT_OTSIKKO": "Virhe",
         "YHTEYSTIETO_KATUOSOITE": "Osoite",
         "HENKILON_TIEDOT": "Henkilön tiedot",

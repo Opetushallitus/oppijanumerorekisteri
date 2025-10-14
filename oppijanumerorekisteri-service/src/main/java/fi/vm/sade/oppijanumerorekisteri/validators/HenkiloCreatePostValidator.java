@@ -37,6 +37,10 @@ public class HenkiloCreatePostValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Henkilo henkilo = (Henkilo) o;
 
+        if (henkilo.isYksiloityEidas()) {
+            errors.rejectValue("yksiloityEidas", "eidasyksilointi.not.allowed", "eIDAS-yksilöityjen henkilöiden luonti ei ole sallittu");
+        }
+
         String hetu = henkilo.getHetu();
         if (StringUtils.hasText(hetu)) {
             Stream<Function<String, Optional<Henkilo>>> findByHetuFunctions = Stream

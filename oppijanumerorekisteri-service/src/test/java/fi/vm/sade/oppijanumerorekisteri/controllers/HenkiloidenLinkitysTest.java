@@ -189,7 +189,7 @@ public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
                 .kutsumanimi("Maija")
                 .sukunimi("Mehiläinen")
                 .yksiloityVTJ(true)
-                .yksiloity(false)
+                .yksiloityEidas(false)
                 .created(now.toDate())
                 .modified(now.toDate())
                 .build());
@@ -200,7 +200,7 @@ public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
                 .kutsumanimi("Maija")
                 .sukunimi("Mehiläinen")
                 .yksiloityVTJ(false)
-                .yksiloity(false)
+                .yksiloityEidas(false)
                 .created(now.toDate())
                 .modified(now.toDate())
                 .build());
@@ -218,7 +218,7 @@ public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
                 .kutsumanimi("Maija")
                 .sukunimi("Mehiläinen")
                 .yksiloityVTJ(false)
-                .yksiloity(false)
+                .yksiloityEidas(false)
                 .created(now.toDate())
                 .modified(now.toDate())
                 .build());

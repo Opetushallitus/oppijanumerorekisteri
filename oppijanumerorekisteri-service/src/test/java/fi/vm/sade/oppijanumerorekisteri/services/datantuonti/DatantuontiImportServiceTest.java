@@ -130,7 +130,10 @@ public class DatantuontiImportServiceTest {
         assertThat(eka.getSukunimi()).matches(Pattern.compile(".*-Testi"));
         assertThat(eka.getHetu()).isNotBlank();
         assertThat(eka.isPassivoitu()).isFalse();
+        assertThat(eka.isYksiloityWithAnyMethod()).isTrue();
+        assertThat(eka.isYksiloityVahvasti()).isTrue();
         assertThat(eka.isYksiloityVTJ()).isTrue();
+        assertThat(eka.isYksiloityEidas()).isFalse();
         assertThat(eka.isYksiloity()).isFalse();
         assertThat(getAidinkieli(eka.getOidHenkilo())).isEqualTo("fi");
         assertThat(getAsiointikieli(eka.getOidHenkilo())).isEqualTo("fi");
@@ -141,7 +144,10 @@ public class DatantuontiImportServiceTest {
         assertThat(toka.getSukunimi()).matches(Pattern.compile(".*-Testi"));
         assertThat(toka.getHetu()).isNull();
         assertThat(toka.isPassivoitu()).isTrue();
+        assertThat(toka.isYksiloityWithAnyMethod()).isFalse();
+        assertThat(toka.isYksiloityVahvasti()).isFalse();
         assertThat(toka.isYksiloityVTJ()).isFalse();
+        assertThat(toka.isYksiloityEidas()).isFalse();
         assertThat(toka.isYksiloity()).isFalse();
         assertThat(getAidinkieli(toka.getOidHenkilo())).isEqualTo("fi");
         assertThat(getKansalaisuus(toka.getOidHenkilo())).containsExactlyInAnyOrder("368", "246");

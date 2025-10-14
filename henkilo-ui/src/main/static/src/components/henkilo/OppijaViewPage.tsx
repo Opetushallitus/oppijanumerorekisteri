@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useId } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router';
 
@@ -41,6 +41,7 @@ export const OppijaViewPage = () => {
         dispatch<any>(fetchHenkilo(oid));
     }, [omattiedot, oid]);
 
+    const henkilotunnisteetSectionLabel = useId();
     if (henkilo.henkiloLoading || isLoading) {
         return <Loader />;
     } else if (henkilo.henkiloKayttoEstetty) {
@@ -56,10 +57,10 @@ export const OppijaViewPage = () => {
                     />
                 </div>
                 {isRekisterinpitaja && (
-                    <div className="wrapper">
-                        <h2>{L.TUNNISTEET_OTSIKKO}</h2>
+                    <section aria-labelledby={henkilotunnisteetSectionLabel} className="wrapper">
+                        <h2 id={henkilotunnisteetSectionLabel}>{L.TUNNISTEET_OTSIKKO}</h2>
                         <Identifications oid={henkilo.henkilo.oidHenkilo} />
-                    </div>
+                    </section>
                 )}
                 <div className="wrapper">
                     <HenkiloViewContactContent view={omattiedot.isAdmin ? 'admin' : 'oppija'} readOnly={true} />

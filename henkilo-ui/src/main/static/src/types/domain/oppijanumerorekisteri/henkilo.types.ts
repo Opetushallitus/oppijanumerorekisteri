@@ -27,6 +27,7 @@ export type Henkilo = {
     eiSuomalaistaHetua: boolean;
     yksiloity: boolean;
     yksiloityVTJ: boolean;
+    yksiloityEidas: boolean;
     yksilointiYritetty: boolean;
     duplicate: boolean;
     created: number;

@@ -24,7 +24,7 @@ const Sukunimi = (props: OwnProps) => {
                 label: props.label || 'HENKILO_SUKUNIMI',
                 value: henkilo.henkilo.sukunimi,
                 inputValue: 'sukunimi',
-                disabled: StaticUtils.hasHetuAndIsYksiloity(henkilo),
+                disabled: StaticUtils.isVahvastiYksiloity(henkilo.henkilo),
             }}
         />
     );

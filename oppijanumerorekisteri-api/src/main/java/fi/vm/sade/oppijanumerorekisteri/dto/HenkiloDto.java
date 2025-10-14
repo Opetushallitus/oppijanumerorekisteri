@@ -58,6 +58,8 @@ public class HenkiloDto implements Serializable {
 
     private boolean yksiloityVTJ;
 
+    private boolean yksiloityEidas;
+
     private boolean yksilointiYritetty;
 
     private boolean duplicate;

@@ -20,7 +20,7 @@ const Etunimet = (props: OwnProps) => {
                 label: 'HENKILO_ETUNIMET',
                 value: henkilo.henkilo.etunimet,
                 inputValue: 'etunimet',
-                disabled: StaticUtils.hasHetuAndIsYksiloity(henkilo),
+                disabled: StaticUtils.isVahvastiYksiloity(henkilo.henkilo),
             }}
         />
     );

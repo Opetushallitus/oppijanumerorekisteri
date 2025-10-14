@@ -81,6 +81,14 @@ public class HenkiloJsonTest {
     }
 
     @Test
+    public void testHenkiloDtoDeserializePreEidas() throws Exception {
+        HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
+                false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
+        assertThat(this.henkiloDtoJson.read("/henkilo/testHenkiloDto-noeidas.json").getObject())
+                .usingRecursiveComparison().isEqualTo(henkiloDto);
+    }
+
+    @Test
     public void testSerializeYhteystiedot() throws IOException {
         HenkilonYhteystiedotViewDto dto = new HenkilonYhteystiedotViewDto()
                 .put("yhteystietotyyppi1", YhteystiedotDto.builder()

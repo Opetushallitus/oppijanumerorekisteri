@@ -29,6 +29,7 @@ public class HenkiloReadDto {
     private Boolean passivoitu;
     private Boolean yksiloity;
     private Boolean yksiloityVTJ;
+    private Boolean yksiloityEidas;
     private Boolean yksilointiYritetty;
     private Boolean duplicate;
     private Date created;

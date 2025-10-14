@@ -1,4 +1,3 @@
-import { HenkiloState } from '../../reducers/henkilo.reducer';
 import { Localisations, L10n } from '../../types/localisation.type';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { Locale } from '../../types/locale.type';
@@ -7,6 +6,7 @@ import { Organisaatio } from '../../types/domain/organisaatio/organisaatio.types
 import { toLocalizedText } from '../../localizabletext';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../utilities/select';
 import { Koodi, Koodisto } from '../../api/koodisto';
+import type { HenkiloDuplicate } from '../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 
 class StaticUtils {
     // Example fieldpath: organisaatio.nimet.0.nimiValue
@@ -105,8 +105,8 @@ class StaticUtils {
         };
     }
 
-    static hasHetuAndIsYksiloity(henkilo: HenkiloState) {
-        return !!henkilo.henkilo.hetu && henkilo.henkilo.yksiloityVTJ;
+    static isVahvastiYksiloity(henkilo: Henkilo | HenkiloDuplicate) {
+        return henkilo.yksiloityVTJ || henkilo.yksiloityEidas;
     }
 
     static getOrganisaatiotyypitFlat(tyypit: Array<string>, L: Localisations, uppercase?: boolean) {

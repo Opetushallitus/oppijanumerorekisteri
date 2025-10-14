@@ -461,8 +461,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     @Override
     public boolean isHenkiloValidForHetuttomanYksilointi(Henkilo henkilo) {
         return henkilo.getHetu() == null
-            && henkilo.isYksiloityVTJ() == false
-            && henkilo.isYksiloity() == false
+            && !henkilo.isYksiloityWithAnyMethod()
             && henkilo.isDuplicate() == false
             && StringUtils.hasLength(henkilo.getEtunimet())
             && StringUtils.hasLength(henkilo.getSukunimi())
@@ -531,6 +530,15 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         henkiloCreate.setModified(henkiloCreate.getCreated());
         henkiloCreate.setKasittelijaOid(kasittelijaOid);
 
+        if (henkiloCreate.isYksiloityEidas()) {
+            if (henkiloCreate.getHetu() != null) {
+                throw new ValidationException("Henkilöllä on hetu, eIDAS-yyksilöintiä ei voida tehdä");
+            }
+            if (henkiloCreate.isDuplicate()) {
+                throw new ValidationException("Henkilö on duplikaatti, eIDAS-yyksilöintiä ei voida tehdä");
+            }
+        }
+
         if (henkiloCreate.isYksiloity()) {
             // yksilöidään hetuton luonnin yhteydessä
             if (henkiloCreate.getHetu() != null) {
@@ -594,7 +602,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     }
 
     private void validateForceLinkCandidates(List<Henkilo> candidates) {
-        candidates.stream().filter(henkilo -> henkilo.isYksiloityVTJ() || henkilo.getHetu() != null).findAny()
+        candidates.stream().filter(henkilo -> henkilo.isYksiloityVahvasti() || henkilo.getHetu() != null).findAny()
                 .ifPresent(henkilo -> {
                     throw new ValidationException();
                 });

@@ -20,7 +20,7 @@ const Hetu = (props: OwnProps) => {
                 label: 'HENKILO_HETU',
                 value: henkilo.henkilo.hetu,
                 inputValue: 'hetu',
-                disabled: StaticUtils.hasHetuAndIsYksiloity(henkilo),
+                disabled: StaticUtils.isVahvastiYksiloity(henkilo.henkilo),
             }}
         />
     );

@@ -88,11 +88,13 @@ public class OppijaTuontiCriteria {
                     allOf(
                             qHenkilo.hetu.isNull(),
                             qHenkilo.yksiloity.isFalse(),
-                            qHenkilo.yksiloityVTJ.isFalse()),
+                            qHenkilo.yksiloityVTJ.isFalse(),
+                            qHenkilo.yksiloityEidas.isFalse()),
                     allOf(
                             qHenkilo.hetu.isNotNull(),
                             qHenkilo.yksiloity.isFalse(),
                             qHenkilo.yksiloityVTJ.isFalse(),
+                            qHenkilo.yksiloityEidas.isFalse(),
                             qHenkilo.yksilointiYritetty.isTrue())
             ).collect(toList());
             query.where(allOf(

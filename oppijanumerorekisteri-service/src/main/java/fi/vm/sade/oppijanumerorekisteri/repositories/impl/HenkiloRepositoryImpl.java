@@ -158,6 +158,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                         qHenkilo.kutsumanimi,
                         qHenkilo.sukunimi,
                         qHenkilo.yksiloityVTJ,
+                        qHenkilo.yksiloityEidas,
                         qHenkilo.yksiloity,
                         qHenkilo.passivoitu,
                         qHenkilo.duplicate
@@ -617,7 +618,8 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                 subQHenkilo.duplicate.isFalse(),
                 subQHenkilo.passivoitu.isFalse(),
                 subQHenkilo.yksiloity.isFalse(),
-                subQHenkilo.yksiloityVTJ.isFalse())
+                subQHenkilo.yksiloityVTJ.isFalse(),
+                subQHenkilo.yksiloityEidas.isFalse())
         );
         if (criteria.hasConditions()) {
             return criteria.getQuery(this.entityManager, qHenkilo).where(qTuontiRivi.henkilo.id.notIn(subQuery))
@@ -639,12 +641,14 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                         allOf(
                                 qHenkilo.hetu.isNull(),
                                 qHenkilo.yksiloity.isFalse(),
-                                qHenkilo.yksiloityVTJ.isFalse()
+                                qHenkilo.yksiloityVTJ.isFalse(),
+                                qHenkilo.yksiloityEidas.isFalse()
                         ),
                         allOf(
                                 qHenkilo.hetu.isNotNull(),
                                 qHenkilo.yksiloity.isFalse(),
                                 qHenkilo.yksiloityVTJ.isFalse(),
+                                qHenkilo.yksiloityEidas.isFalse(),
                                 qHenkilo.yksilointiYritetty.isTrue()
                         )
                 )).select(qTuontiRivi.henkilo.id).distinct().fetchCount();
@@ -661,6 +665,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                         qHenkilo.hetu.isNotNull(),
                         qHenkilo.yksiloity.isFalse(),
                         qHenkilo.yksiloityVTJ.isFalse(),
+                        qHenkilo.yksiloityEidas.isFalse(),
                         qHenkilo.yksilointiYritetty.isFalse()
                 )).select(qTuontiRivi.henkilo.id).distinct().fetchCount();
     }
@@ -756,7 +761,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
         QHenkilo qHenkilo = QHenkilo.henkilo;
         return jpa()
                 .from(qHenkilo)
-                .where(qHenkilo.vtjBucket.eq(bucketId), qHenkilo.passivoitu.isFalse(), qHenkilo.hetu.isNotNull(), qHenkilo.yksiloityVTJ.isTrue())
+                .where(qHenkilo.vtjBucket.eq(bucketId), qHenkilo.passivoitu.isFalse(), qHenkilo.hetu.isNotNull(), qHenkilo.yksiloityVTJ.isTrue(), qHenkilo.yksiloityEidas.isFalse())
                 .select(qHenkilo.hetu)
                 .fetch();
     }
@@ -766,7 +771,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
         QHenkilo qHenkilo = QHenkilo.henkilo;
         return jpa()
                 .from(qHenkilo)
-                .where(qHenkilo.vtjBucket.isNull(), qHenkilo.passivoitu.isFalse(), qHenkilo.hetu.isNotNull(), qHenkilo.yksiloityVTJ.isTrue())
+                .where(qHenkilo.vtjBucket.isNull(), qHenkilo.passivoitu.isFalse(), qHenkilo.hetu.isNotNull(), qHenkilo.yksiloityVTJ.isTrue(), qHenkilo.yksiloityEidas.isFalse())
                 .select(qHenkilo.hetu)
                 .fetch();
     }

@@ -112,7 +112,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     /**
      * true jos virkailija on manuaalisesti yksilöinyt hetuttoman henkilön.
      */
-    @Column(nullable = false)
+    @Column(name = "yksiloity", nullable = false)
     private boolean yksiloity;
 
     /**
@@ -123,6 +123,14 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     @Column(name = "yksiloityeidas", nullable = false)
     private boolean yksiloityEidas;
+
+    public boolean isYksiloityWithAnyMethod() {
+        return yksiloity || isYksiloityVahvasti();
+    }
+
+    public boolean isYksiloityVahvasti() {
+        return yksiloityVTJ || yksiloityEidas;
+    }
 
     @Column(name = "vtj_bucket")
     private Long vtjBucket;
@@ -282,7 +290,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
         if (duplicate || passivoitu) {
             return YksilointiTila.OK;
         }
-        if (yksiloity || yksiloityVTJ) {
+        if (isYksiloityWithAnyMethod()) {
             return YksilointiTila.OK;
         }
         if (hetu == null) {
@@ -347,7 +355,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     }
 
     public String getOppijanumero() {
-        if (this.yksiloity || this.yksiloityVTJ) {
+        if (isYksiloityWithAnyMethod()) {
             return oidHenkilo;
         }
 

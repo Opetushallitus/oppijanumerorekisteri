@@ -13,6 +13,7 @@ import { useLocalisations } from '../../../selectors';
 import { Koodi, useGetKansalaisuudetQuery, useGetKieletQuery } from '../../../api/koodisto';
 
 import './DuplikaatitPerson.css';
+import StaticUtils from '../../common/StaticUtils';
 
 type DuplikaatitPersonProps = {
     henkilo: HenkiloDuplicate;
@@ -74,9 +75,10 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
     const { L, locale } = useLocalisations();
     const hakemukset = props.hakemukset ? props.hakemukset.map(_parseHakemus(kansalaisuudet, kielet, locale)) : [];
     const hakemus = hakemukset.shift();
-    const canLinkDuplicateToMaster =
-        !master.passivoitu && !henkilo.yksiloityVTJ && (!henkilo.yksiloity || canForceLink);
-    const canLinkMasterToDuplicate = !henkilo.passivoitu && !master.yksiloityVTJ && (!master.yksiloity || canForceLink);
+    const vahvastiYksiloity = StaticUtils.isVahvastiYksiloity(henkilo);
+    const canLinkDuplicateToMaster = !master.passivoitu && !vahvastiYksiloity && (!henkilo.yksiloity || canForceLink);
+    const canLinkMasterToDuplicate =
+        !henkilo.passivoitu && !StaticUtils.isVahvastiYksiloity(master) && (!master.yksiloity || canForceLink);
 
     return (
         <div className={classNames({ person: true, master: isMaster })}>
@@ -86,7 +88,7 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
             <DataCell className="type">{L['DUPLIKAATIT_ONR']}</DataCell>
             <DataCell>{henkilo.hetu}</DataCell>
             <DataCell>
-                {henkilo.yksiloity || henkilo.yksiloityVTJ ? L['HENKILO_YHTEISET_KYLLA'] : L['HENKILO_YHTEISET_EI']}
+                {henkilo.yksiloity || vahvastiYksiloity ? L['HENKILO_YHTEISET_KYLLA'] : L['HENKILO_YHTEISET_EI']}
             </DataCell>
             <DataCell>{henkilo.kutsumanimi}</DataCell>
             <DataCell>{henkilo.etunimet}</DataCell>

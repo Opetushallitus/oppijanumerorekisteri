@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.impl.AwsSnsHenkiloModifiedTopic;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite;
@@ -27,6 +28,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -49,6 +52,17 @@ public abstract class OppijanumerorekisteriApiTest {
     protected void assertLinked(String masterOid, String slaveOid) {
         List<HenkiloViite> viitteet = henkiloViiteRepository.findByMasterOid(masterOid).stream().filter(viite -> viite.getSlaveOid().equals(slaveOid)).collect(Collectors.toList());
         assertEquals(1, viitteet.size(), "Expected henkilös " + masterOid + " and " + slaveOid + " to be linked");
+    }
+
+    protected <T> T getJson(Class<T> responseClass, String endpoint, Object... args) throws Exception {
+        var result = mvc.perform(get(String.format(endpoint, args))).andExpect(status().is(200)).andReturn();
+        return objectMapper.readValue(result.getResponse().getContentAsString(), responseClass);
+    }
+
+    protected <T> List<T> getJsonArray(Class<T> responseClass, String endpoint, Object... args) throws Exception {
+        var arrayType = TypeFactory.defaultInstance().constructCollectionType(List.class, responseClass);
+        var result = mvc.perform(get(String.format(endpoint, args))).andExpect(status().is(200)).andReturn();
+        return objectMapper.readValue(result.getResponse().getContentAsString(), arrayType);
     }
 
     protected <RequestT> MockHttpServletRequestBuilder createRequest(MockHttpServletRequestBuilder builder, RequestT requestBody) throws JsonProcessingException {

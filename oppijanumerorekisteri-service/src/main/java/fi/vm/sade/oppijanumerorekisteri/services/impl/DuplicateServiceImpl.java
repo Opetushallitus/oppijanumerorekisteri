@@ -154,7 +154,7 @@ public class DuplicateServiceImpl implements DuplicateService {
                 .or(() -> henkiloDataRepository.findByHetu(hetu))
                 .filter(henkiloByHetu -> !henkiloByHetu.equals(henkilo))
                 .map(henkiloByHetu -> {
-                    if (henkiloByHetu.isYksiloityVTJ() && (henkilo.isYksiloity() || henkilo.isYksiloityVTJ())) {
+                    if (henkiloByHetu.isYksiloityVTJ() && henkilo.isYksiloityWithAnyMethod()) {
                         throw new ValidationException(
                                 String.format("Henkilöitä %s ja %s ei voida yhdistää koska molemmat ovat jo yksilöity",
                                         henkilo.getOidHenkilo(), henkiloByHetu.getOidHenkilo()));
@@ -318,7 +318,8 @@ public class DuplicateServiceImpl implements DuplicateService {
     }
 
     private boolean isHenkiloIdentified(Henkilo henkilo) {
-        return henkilo.isYksiloity() || henkilo.isYksiloityVTJ() || hasHetu(henkilo);
+        // Mysteeri: Miksi hetu ilman VTJ-yksilöintiä riittää tulkitsemaan henkilö yksilöidyksi?
+        return henkilo.isYksiloityWithAnyMethod() || hasHetu(henkilo);
     }
 
     private boolean hasHetu(Henkilo henkilo) {

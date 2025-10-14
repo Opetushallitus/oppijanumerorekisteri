@@ -66,6 +66,9 @@ public class OppijaMappers {
                     if (henkilo.getTurvakielto()) {
                         dto.setKotikunta(null);
                     }
+                    if (henkilo.getYksilointivirheet() == null) {
+                        dto.setYksilointivirheet(null);
+                    }
                 }))
                 .toClassMap();
     }
