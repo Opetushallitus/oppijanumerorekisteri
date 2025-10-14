@@ -121,6 +121,9 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(nullable = false)
     private boolean yksiloityVTJ;
 
+    @Column(name = "yksiloityeidas", nullable = false)
+    private boolean yksiloityEidas;
+
     @Column(name = "vtj_bucket")
     private Long vtjBucket;
 
