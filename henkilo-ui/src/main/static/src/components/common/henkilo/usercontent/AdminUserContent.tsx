@@ -33,6 +33,7 @@ import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities
 import { useGetKayttajatiedotQuery, useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
 import StaticUtils from '../../StaticUtils';
 import { useGetHenkiloQuery } from '../../../../api/oppijanumerorekisteri';
+import EidasTunnisteet from '../labelvalues/EidasTunnisteet';
 
 type OwnProps = {
     readOnly: boolean;
@@ -78,7 +79,11 @@ function AdminUserContent(props: OwnProps) {
                 <Sukunimi key="admin-sukunimi" {...infoProps} autofocus={true} />,
                 <Etunimet key="admin-etunimi" {...infoProps} />,
                 <Syntymaaika key="admin-syntymaaika" {...infoProps} />,
-                <Hetu key="admin-hetu" {...infoProps} />,
+                props.henkiloUpdate.yksiloityEidas ? (
+                    <EidasTunnisteet key="admin-eidas" {...infoProps} />
+                ) : (
+                    <Hetu key="admin-hetu" {...infoProps} />
+                ),
                 <Kutsumanimi key="admin-kutsumanimi" {...infoProps} />,
             ],
             [

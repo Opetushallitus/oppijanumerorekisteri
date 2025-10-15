@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Date;
+import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -81,11 +82,25 @@ public class HenkiloJsonTest {
     }
 
     @Test
+    public void testHenkiloDtoDeserializeEidas() throws Exception {
+        HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("Leon Elias", "Leon Elias", "Germany", null, "1.2.3.4.5",
+                false, "fi", "suomi", "246", "1.2.3.4.1", "+49 69 1234 5678");
+        henkiloDto.setYksiloityEidas(true);
+        henkiloDto.setEidasTunnisteet(List.of(EidasTunnisteDto.builder().tunniste("DE/FI/366193B0E55D436B494769486A9284D04E0A1DCFDBF8B9EDA63E5BF4C3CFE6F5").build()));
+        var parsed = this.henkiloDtoJson.read("/henkilo/testHenkiloDto-eidas.json").getObject();
+        assertThat(parsed).usingRecursiveComparison().isEqualTo(henkiloDto);
+        assertThat(parsed.isYksiloityEidas()).isTrue();
+        assertThat(parsed.getEidasTunnisteet()).hasSize(1);
+    }
+
+    @Test
     public void testHenkiloDtoDeserializePreEidas() throws Exception {
         HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
-        assertThat(this.henkiloDtoJson.read("/henkilo/testHenkiloDto-noeidas.json").getObject())
-                .usingRecursiveComparison().isEqualTo(henkiloDto);
+        var parsed = this.henkiloDtoJson.read("/henkilo/testHenkiloDto-noeidas.json").getObject();
+        assertThat(parsed).usingRecursiveComparison().isEqualTo(henkiloDto);
+        assertThat(parsed.isYksiloityEidas()).isFalse();
+        assertThat(parsed.getEidasTunnisteet()).isEmpty();
     }
 
     @Test

@@ -60,9 +60,6 @@ test.describe('henkilönäkymä', () => {
             json: {
                 oidHenkilo: oid,
                 hetu: null,
-                eidasTunnisteet: [
-                    { tunniste: 'DE/FI/366193B0E55D436B494769486A9284D04E0A1DCFDBF8B9EDA63E5BF4C3CFE6F5' },
-                ],
                 kaikkiHetut: [],
                 passivoitu: false,
                 etunimet: 'Leon Elias',
@@ -80,8 +77,11 @@ test.describe('henkilönäkymä', () => {
                 eiSuomalaistaHetua: true,
                 yksiloity: false,
                 yksiloityVTJ: false,
-                yksiloityEidas: true,
                 yksilointiYritetty: false,
+                yksiloityEidas: true,
+                eidasTunnisteet: [
+                    { tunniste: 'DE/FI/366193B0E55D436B494769486A9284D04E0A1DCFDBF8B9EDA63E5BF4C3CFE6F5' },
+                ],
                 duplicate: false,
                 created: 1734097904137,
                 modified: 1750934803202,
@@ -102,9 +102,6 @@ test.describe('henkilönäkymä', () => {
                 kuolinpaiva: null,
                 hetu: null,
                 kaikkiHetut: [],
-                eidasTunnisteet: [
-                    { tunniste: 'DE/FI/366193B0E55D436B494769486A9284D04E0A1DCFDBF8B9EDA63E5BF4C3CFE6F5' },
-                ],
                 kutsumanimi: 'Leon Elias',
                 oidHenkilo: oid,
                 oppijanumero: oid,
@@ -116,8 +113,11 @@ test.describe('henkilönäkymä', () => {
                 passivoitu: false,
                 yksiloity: false,
                 yksiloityVTJ: false,
-                yksiloityEidas: true,
                 yksilointiYritetty: false,
+                yksiloityEidas: true,
+                eidasTunnisteet: [
+                    { tunniste: 'DE/FI/366193B0E55D436B494769486A9284D04E0A1DCFDBF8B9EDA63E5BF4C3CFE6F5' },
+                ],
                 duplicate: false,
                 created: 1734097904137,
                 modified: 1750934803202,
@@ -164,6 +164,9 @@ test.describe('henkilönäkymä', () => {
         const henkiloPage = await gotoHenkiloView(page, oid);
         await expect(henkiloPage.perustiedot.etunimet).toHaveText('Leon Elias');
         await expect(henkiloPage.perustiedot.otsikko).toHaveText('Perustiedot (yksilöity eIDAS-tunnisteella)');
+        await expect(henkiloPage.perustiedot.eidas).toHaveText(
+            'DE/FI/366193B0E55D436B494769486A9284D04E0A1DCFDBF8B9EDA63E5BF4C3CFE6F5'
+        );
     });
 });
 
@@ -192,6 +195,7 @@ function henkilonakymaLocators(page: Page) {
             otsikko: perustiedot.getByRole('heading'),
             etunimet: perustiedot.locator('div#HENKILO_ETUNIMET span.field'),
             sukunimi: perustiedot.locator('div#HENKILO_SUKUNIMI span.field'),
+            eidas: perustiedot.locator('div#HENKILO_EIDASTUNNISTEET span.field'),
         },
         henkilotunnisteet: page.getByRole('region', { name: 'Henkilötunnisteet' }),
     };

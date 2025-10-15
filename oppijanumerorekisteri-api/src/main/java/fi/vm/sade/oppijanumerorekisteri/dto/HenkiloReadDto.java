@@ -6,6 +6,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -29,8 +30,9 @@ public class HenkiloReadDto {
     private Boolean passivoitu;
     private Boolean yksiloity;
     private Boolean yksiloityVTJ;
-    private Boolean yksiloityEidas;
     private Boolean yksilointiYritetty;
+    private Boolean yksiloityEidas;
+    private List<EidasTunnisteDto> eidasTunnisteet;
     private Boolean duplicate;
     private Date created;
     private Date modified;

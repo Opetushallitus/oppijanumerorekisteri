@@ -6,10 +6,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
@@ -20,6 +17,12 @@ public class DtoUtils {
         var utc = ZonedDateTime.ofInstant(date.toInstant(), ZoneId.of("UTC"));
         return utc.withZoneSameInstant(ZoneId.of("Europe/Helsinki"));
     }
+
+    public static Date toDate(ZonedDateTime zonedDateTime) {
+        if (zonedDateTime == null) return null;
+        return Date.from(zonedDateTime.toInstant());
+    }
+
     public static KielisyysDto createKielisyysDto(String kielikoodi, String kielityyppi) {
         KielisyysDto kielisyysDto = new KielisyysDto();
         kielisyysDto.setKieliKoodi(kielikoodi);
@@ -68,10 +71,37 @@ public class DtoUtils {
         Date createdModified = new Date(29364800000L);
         YhteystiedotRyhmaDto yhteystiedotRyhmaDto = createYhteystiedotRyhmaDto(yhteystietoArvo);
 
-        return new HenkiloDto(oidHenkilo, hetu, null, passivoitu, etunimet, kutsumanimi, sukunimi,
-                aidinkieli, aidinkieli, Collections.singleton(kansalaisuus), kasittelija,
-                syntymaAika, "1", null, "1.2.3.4.5", null, false, false, false, false, false, false, createdModified,
-                createdModified, null, Collections.singleton(yhteystiedotRyhmaDto), new HashSet<>(), null);
+        return HenkiloDto.builder()
+                .oidHenkilo(oidHenkilo)
+                .hetu(hetu)
+                .kaikkiHetut(null)
+                .passivoitu(passivoitu)
+                .etunimet(etunimet)
+                .kutsumanimi(kutsumanimi)
+                .sukunimi(sukunimi)
+                .aidinkieli(aidinkieli)
+                .asiointiKieli(aidinkieli)
+                .kansalaisuus(Collections.singleton(kansalaisuus))
+                .kasittelijaOid(kasittelija)
+                .syntymaaika(syntymaAika)
+                .sukupuoli("1")
+                .kotikunta(null)
+                .oppijanumero("1.2.3.4.5")
+                .turvakielto(null)
+                .eiSuomalaistaHetua(false)
+                .yksiloity(false)
+                .yksiloityVTJ(false)
+                .yksilointiYritetty(false)
+                .yksiloityEidas(false)
+                .eidasTunnisteet(new ArrayList<>())
+                .duplicate(false)
+                .created(createdModified)
+                .modified(createdModified)
+                .vtjsynced(null)
+                .yhteystiedotRyhma(Collections.singleton(yhteystiedotRyhmaDto))
+                .yksilointivirheet(new HashSet<>())
+                .passinumerot(null)
+                .build();
     }
 
     public static HenkiloCreateDto createHenkiloCreateDto(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,

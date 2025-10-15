@@ -1,6 +1,7 @@
 import { Kielisyys } from './kielisyys.types';
 import { Kansalaisuus } from './kansalaisuus.types';
 import { Hakemus } from './Hakemus.type';
+import { EidasTunniste } from './henkilo.types';
 
 export type HenkiloDuplicate = {
     oidHenkilo?: string;
@@ -16,6 +17,7 @@ export type HenkiloDuplicate = {
     yksiloity?: boolean;
     yksiloityVTJ?: boolean;
     yksiloityEidas?: boolean;
+    eidasTunnisteet?: EidasTunniste[];
     aidinkieli?: Kielisyys;
     asiointiKieli?: Kielisyys;
     hakemukset?: Hakemus[];

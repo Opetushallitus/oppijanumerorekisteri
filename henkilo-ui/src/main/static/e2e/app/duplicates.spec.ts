@@ -10,10 +10,10 @@ const groupedDuplicates = groupBy((h) => {
     return h.yksiloityVTJ
         ? 'yksiloityVtj'
         : h.yksiloityEidas
-        ? 'yksiloityEidas'
-        : h.yksiloity
-        ? 'yksiloity'
-        : 'yksiloimaton';
+          ? 'yksiloityEidas'
+          : h.yksiloity
+            ? 'yksiloity'
+            : 'yksiloimaton';
 }, duplicates);
 
 const routeOmattiedotWithoutRoles = async (page: Page) => {
@@ -63,7 +63,9 @@ const routeMainWithYksilointi = async (
                 yksiloityVTJ,
                 yksiloityEidas,
                 hetu: yksiloityVTJ ? '111111-1111' : null,
-                eidasTunnisteet: yksiloityEidas ? [{ tunniste: 'FOO/BAR/1234' }] : [],
+                eidasTunnisteet: yksiloityEidas
+                    ? [{ tunniste: 'DE/FI/366193B0E55D436B494769486A9284D04E0A1DCFDBF8B9EDA63E5BF4C3CFE6F5' }]
+                    : [],
             },
         });
     });

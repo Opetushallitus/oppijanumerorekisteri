@@ -10,6 +10,7 @@ TRUNCATE TABLE
     henkilo_kielisyys,
     henkilo_passinumero,
     identification,
+    eidastunniste,
     kjhh_2422_invalid_identification,
     kotikunta_historia,
     kotikunta_historia_mass_update,

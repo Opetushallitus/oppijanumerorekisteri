@@ -14,6 +14,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -184,6 +185,11 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @JoinColumn(name = "henkilo_id", nullable = false)
     @NotAudited
     private Set<Identification> identifications = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE}, orphanRemoval = true)
+    @JoinColumn(name = "henkilo_id", nullable = false)
+    @NotAudited
+    private List<EidasTunniste> eidasTunnisteet;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "henkilo_id", nullable = false)

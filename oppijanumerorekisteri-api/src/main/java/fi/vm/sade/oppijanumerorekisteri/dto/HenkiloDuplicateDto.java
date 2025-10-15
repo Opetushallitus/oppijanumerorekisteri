@@ -27,6 +27,7 @@ public class HenkiloDuplicateDto {
     private boolean yksiloity;
     private boolean yksiloityVTJ;
     private boolean yksiloityEidas;
+    private List<EidasTunnisteDto> eidasTunnisteet;
     private KielisyysDto aidinkieli;
     private KielisyysDto asiointiKieli;
     private List<HakemusDto> hakemukset;

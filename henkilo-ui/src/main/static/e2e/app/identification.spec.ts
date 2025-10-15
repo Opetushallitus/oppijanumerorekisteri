@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 
 import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/current/omattiedot/GET.json';
 import identifications from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/identification/GET.json';
+import { gotoOppijaView } from './locators/henkilo-page';
 
 test.describe('identifications', () => {
     test.beforeEach(async ({ page }) => {
@@ -16,15 +17,15 @@ test.describe('identifications', () => {
     });
 
     test('can be added', async ({ page }) => {
-        await page.goto('/henkilo-ui/oppija/1.2.246.562.24.49146995140');
-        await expect(page.locator('#identifications tbody tr')).toHaveCount(2);
+        const oppijaPage = await gotoOppijaView(page, '1.2.246.562.24.49146995140');
+        await expect(oppijaPage.henkilotunnisteet.section.locator('tbody tr')).toHaveCount(2);
 
-        await page.click('[data-test-id="identification-add-button"]');
-        await expect(page.locator('[data-test-id="identification-confirm-add"]')).toBeDisabled();
+        const dialog = await oppijaPage.henkilotunnisteet.openLisääHenkilötunnisteDialog();
+        await expect(dialog.lisaaHenkilotunnisteButton).toBeDisabled();
 
-        await page.type('#newIdentifier', 'new@identifier.fi');
-        await page.type('#newIdpEntityId', 'sähkö');
-        await page.keyboard.press('Enter');
+        await dialog.identifier.fill('new@identifier.fi');
+        await dialog.idpEntityId.fill('sähkö');
+        await dialog.idpEntityId.press('Enter');
 
         // frontend should update identifications from microservice
         await page.route(
@@ -42,17 +43,20 @@ test.describe('identifications', () => {
             }
         );
 
-        await expect(page.locator('[data-test-id="identification-confirm-add"]')).toBeEnabled();
-        await page.click('[data-test-id="identification-confirm-add"]');
+        await expect(dialog.lisaaHenkilotunnisteButton).toBeEnabled();
+        await dialog.lisaaHenkilotunnisteButton.click();
 
-        await expect(page.locator('#identifications tbody tr')).toHaveCount(3);
+        await expect(oppijaPage.henkilotunnisteet.section.locator('tbody tr')).toHaveCount(3);
     });
 
     test('can be removed', async ({ page }) => {
-        await page.goto('/henkilo-ui/oppija/1.2.246.562.24.49146995140');
-        await expect(page.locator('#identifications tbody tr')).toHaveCount(2);
+        const oppijaPage = await gotoOppijaView(page, '1.2.246.562.24.49146995140');
+        await expect(oppijaPage.henkilotunnisteet.section.locator('tbody tr')).toHaveCount(2);
 
-        await page.click('#identifications [data-test-id="identification-remove-button"]:first-of-type');
+        await oppijaPage.henkilotunnisteet.section
+            .locator('[data-test-id="identification-remove-button"]')
+            .first()
+            .click();
 
         let deleteCalled = false;
         await page.route(
@@ -75,7 +79,7 @@ test.describe('identifications', () => {
             }
         );
 
-        await expect(page.locator('#identifications tbody tr')).toHaveCount(1);
+        await expect(oppijaPage.henkilotunnisteet.section.locator('tbody tr')).toHaveCount(1);
         await expect(deleteCalled).toBeTruthy();
     });
 
@@ -94,8 +98,8 @@ test.describe('identifications', () => {
             });
         });
 
-        await page.goto('/henkilo-ui/oppija/1.2.246.562.24.49146995140');
+        const oppijaPage = await gotoOppijaView(page, '1.2.246.562.24.49146995140');
         await page.waitForLoadState('networkidle');
-        await expect(page.locator('#identifications')).not.toBeVisible();
+        await expect(oppijaPage.henkilotunnisteet.section).not.toBeVisible();
     });
 });

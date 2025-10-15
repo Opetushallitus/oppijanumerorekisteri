@@ -1,0 +1,37 @@
+{
+    "id": 166132533,
+    "etunimet": "Leon Elias",
+    "syntymaaika": "1981-02-06",
+    "kuolinpaiva": null,
+    "hetu": null,
+    "kaikkiHetut": [],
+    "kutsumanimi": "Leon Elias",
+    "oidHenkilo": "1.2.246.562.24.92212175391",
+    "oppijanumero": "1.2.246.562.24.92212175391",
+    "sukunimi": "Germany",
+    "sukupuoli": null,
+    "kotikunta": null,
+    "turvakielto": false,
+    "eiSuomalaistaHetua": true,
+    "passivoitu": false,
+    "yksiloity": false,
+    "yksiloityVTJ": false,
+    "yksilointiYritetty": false,
+    "yksiloityEidas": true,
+    "eidasTunnisteet": [
+        {
+            "tunniste": "DE/FI/366193B0E55D436B494769486A9284D04E0A1DCFDBF8B9EDA63E5BF4C3CFE6F5"
+        }
+    ],
+    "duplicate": false,
+    "created": 1734097904137,
+    "modified": 1750934803202,
+    "vtjsynced": null,
+    "kasittelijaOid": "1.2.246.562.24.00000000007",
+    "asiointiKieli": null,
+    "aidinkieli": null,
+    "kansalaisuus": [],
+    "yhteystiedotRyhma": [],
+    "passinumerot": [],
+    "kielisyys": []
+}

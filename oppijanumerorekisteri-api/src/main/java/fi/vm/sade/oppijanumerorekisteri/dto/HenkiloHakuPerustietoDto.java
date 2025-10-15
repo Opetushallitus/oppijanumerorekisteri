@@ -3,6 +3,8 @@ package fi.vm.sade.oppijanumerorekisteri.dto;
 import lombok.Setter;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -19,6 +21,7 @@ public class HenkiloHakuPerustietoDto {
 
     private Boolean yksiloityVTJ;
     private Boolean yksiloityEidas;
+    private List<EidasTunnisteDto> eidasTunnisteet;
     private Boolean yksiloity;
     private Boolean passivoitu;
     private Boolean duplicate;

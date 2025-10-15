@@ -9,11 +9,11 @@
       "kansalaisuusKoodi": "246"
     }
   ],
-  "etunimet": "arpa",
-  "hetu": "123456-9999",
-  "kutsumanimi": "arpa",
+  "etunimet": "Leon Elias",
+  "hetu": null,
+  "kutsumanimi": "Leon Elias",
   "oidHenkilo": "1.2.3.4.5",
-  "sukunimi": "kuutio",
+  "sukunimi": "Germany",
   "passivoitu": false,
   "kasittelijaOid": "1.2.3.4.1",
   "asiointiKieli": {
@@ -28,8 +28,12 @@
   "yksiloity": false,
   "yksiloityVTJ": false,
   "yksilointiYritetty": false,
-  "yksiloityEidas": false,
-  "eidasTunnisteet": [],
+  "yksiloityEidas": true,
+  "eidasTunnisteet": [
+    {
+      "tunniste": "DE/FI/366193B0E55D436B494769486A9284D04E0A1DCFDBF8B9EDA63E5BF4C3CFE6F5"
+    }
+  ],
   "duplicate": false,
   "created": 29364800000,
   "modified": 29364800000,
@@ -44,7 +48,7 @@
       "yhteystieto": [
         {
           "yhteystietoTyyppi": "YHTEYSTIETO_MATKAPUHELINNUMERO",
-          "yhteystietoArvo": "arpa@kuutio.fi"
+          "yhteystietoArvo": "+49 69 1234 5678"
         }
       ]
     }

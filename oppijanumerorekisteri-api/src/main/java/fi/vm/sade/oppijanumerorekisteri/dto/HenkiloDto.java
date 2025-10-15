@@ -8,9 +8,7 @@ import lombok.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -58,9 +56,11 @@ public class HenkiloDto implements Serializable {
 
     private boolean yksiloityVTJ;
 
+    private boolean yksilointiYritetty;
+
     private boolean yksiloityEidas;
 
-    private boolean yksilointiYritetty;
+    private List<EidasTunnisteDto> eidasTunnisteet = new ArrayList<>();
 
     private boolean duplicate;
 

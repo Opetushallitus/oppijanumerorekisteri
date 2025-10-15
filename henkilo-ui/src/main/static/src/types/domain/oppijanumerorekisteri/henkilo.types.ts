@@ -27,8 +27,9 @@ export type Henkilo = {
     eiSuomalaistaHetua: boolean;
     yksiloity: boolean;
     yksiloityVTJ: boolean;
-    yksiloityEidas: boolean;
     yksilointiYritetty: boolean;
+    yksiloityEidas: boolean;
+    eidasTunnisteet: Array<EidasTunniste>;
     duplicate: boolean;
     created: number;
     modified: number;
@@ -38,6 +39,10 @@ export type Henkilo = {
     yksilointivirheet: Array<Yksilointivirhe>;
     anomusilmoitus?: number[];
     kayttajanimi?: string;
+};
+
+export type EidasTunniste = {
+    tunniste: string;
 };
 
 export type LinkedHenkilo = Henkilo & { id: string };
