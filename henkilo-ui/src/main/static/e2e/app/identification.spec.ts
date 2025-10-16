@@ -4,8 +4,19 @@ import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/curr
 import identifications from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/identification/GET.json';
 
 test.describe('identifications', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.route(
+            `/oppijanumerorekisteri-service/henkilo/1.2.246.562.24.49146995140/yksilointitiedot`,
+            async (route) => {
+                await route.fulfill({
+                    json: { etunimet: null, sukunimi: null, kutsumanimi: null, sukupuoli: null, yhteystiedot: null },
+                });
+            }
+        );
+    });
+
     test('can be added', async ({ page }) => {
-        await page.goto('/henkilo-ui/oppija/1.2.3.4.5');
+        await page.goto('/henkilo-ui/oppija/1.2.246.562.24.49146995140');
         await expect(page.locator('#identifications tbody tr')).toHaveCount(2);
 
         await page.click('[data-test-id="identification-add-button"]');
@@ -38,7 +49,7 @@ test.describe('identifications', () => {
     });
 
     test('can be removed', async ({ page }) => {
-        await page.goto('/henkilo-ui/oppija/1.2.3.4.5');
+        await page.goto('/henkilo-ui/oppija/1.2.246.562.24.49146995140');
         await expect(page.locator('#identifications tbody tr')).toHaveCount(2);
 
         await page.click('#identifications [data-test-id="identification-remove-button"]:first-of-type');
@@ -83,7 +94,7 @@ test.describe('identifications', () => {
             });
         });
 
-        await page.goto('/henkilo-ui/oppija/1.2.3.4.5');
+        await page.goto('/henkilo-ui/oppija/1.2.246.562.24.49146995140');
         await page.waitForLoadState('networkidle');
         await expect(page.locator('#identifications')).not.toBeVisible();
     });

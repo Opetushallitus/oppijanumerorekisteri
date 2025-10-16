@@ -14,6 +14,15 @@ const inputToken = async (page: Page, token: string) => {
 };
 
 test.describe('mfa setup', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.route(
+            `/kayttooikeus-service/kayttooikeusanomus/${omattiedot.oidHenkilo}?activeOnly=true`,
+            async (route) => {
+                await route.fulfill({ json: [] });
+            }
+        );
+    });
+
     test('happy flow', async ({ page }) => {
         await page.route('/kayttooikeus-service/mfasetup/gauth/enable', async (route) => {
             await route.fulfill({ json: true });
