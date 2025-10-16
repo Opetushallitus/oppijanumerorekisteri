@@ -2,7 +2,6 @@ import React from 'react';
 import { difference } from 'ramda';
 import moment from 'moment';
 
-import { toLocalizedText } from '../../localizabletext';
 import RyhmaSelection from '../common/select/RyhmaSelection';
 import { findOmattiedotOrganisatioOrRyhmaByOid } from '../../utilities/organisaatio.util';
 import { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
@@ -21,6 +20,7 @@ import {
     useGetOrganisationNamesQuery,
 } from '../../api/kayttooikeus';
 import { SelectOption } from '../../utilities/select';
+import { localizeTextGroup } from '../../utilities/localisation.util';
 
 import './AddedOrganization.css';
 
@@ -132,7 +132,7 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
                     {addedOrg.selectedPermissions.map((permission) => {
                         return (
                             <li key={permission.ryhmaId}>
-                                {toLocalizedText(locale, permission.ryhmaNames)}
+                                {localizeTextGroup(permission.ryhmaNames?.texts, locale)}
                                 <i
                                     className="fa fa-times-circle right remove-icon"
                                     onClick={(e) => removePermission(permission, e)}

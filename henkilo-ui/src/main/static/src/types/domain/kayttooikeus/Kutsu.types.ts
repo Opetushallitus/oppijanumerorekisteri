@@ -1,15 +1,13 @@
-import { TextGroupMap } from './textgroup.types';
-
 export type Asiointikieli = 'fi' | 'sv' | 'en';
 export type KutsunTila = 'AVOIN' | 'KAYTETTY' | 'POISTETTU';
 
 type KayttooikeusRyhma = {
     id: number;
-    nimi: TextGroupMap;
+    nimi: { fi?: string; sv?: string; en?: string };
 };
 
 export type KutsuOrganisaatio = {
-    nimi: TextGroupMap;
+    nimi: { fi?: string; sv?: string; en?: string };
     organisaatioOid: string;
     voimassaLoppuPvm: string | null | undefined;
     kayttoOikeusRyhmat: Array<KayttooikeusRyhma>;

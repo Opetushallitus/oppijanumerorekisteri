@@ -171,15 +171,15 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId?: string }) =
                     organisaatio.status === 'AKTIIVINEN'
                         ? localizedName
                         : `${localizedName} (${L['KAYTTOOIKEUSRYHMAT_PASSIVOITU']})`;
-                return {
+                const orgData: OrganisaatioSelectObject = {
                     oid: organisaatio.oid,
                     name,
                     parentNames: [],
-                    organisaatioTyypit: [],
                     organisaatiotyypit: undefined,
                     oidPath: undefined,
                     status: undefined,
                 };
+                return orgData;
             });
     };
 
@@ -427,7 +427,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId?: string }) =
         const name = kayttooikeusryhmaForm.name;
         const texts: Text[] = Object.keys(name).map((key) => ({
             lang: key as Locales,
-            text: name[key] as string,
+            text: name[key as Locales],
         }));
         return { texts };
     };
@@ -436,7 +436,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId?: string }) =
         const description = kayttooikeusryhmaForm.description;
         const texts: Text[] = Object.keys(description).map((key) => ({
             lang: key as Locales,
-            text: description[key] as string,
+            text: description[key as Locales],
         }));
         return { texts };
     };

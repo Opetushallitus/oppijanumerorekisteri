@@ -72,7 +72,7 @@ const formFieldErrors: Record<string, string> = {
     'any.custom': 'HENKILO_KUTSUMANIMI_VALIDOINTI',
 };
 
-export const statusToMessage = {
+export const statusToMessage: Record<number, string> = {
     200: 'EXISTENCE_CHECK_ONR',
     204: 'EXISTENCE_CHECK_VTJ',
     400: 'EXISTENCE_CHECK_BAD_REQUEST',

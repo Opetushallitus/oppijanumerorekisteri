@@ -1,7 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { Localisations } from '../../../types/localisation.type';
 
-const DuplikaatitOrganisationCheckbox = ({ L, duplikaatitValue, duplikaatitAction }) => (
+type Props = {
+    L: Localisations;
+    duplikaatitValue: boolean;
+    duplikaatitAction: () => void;
+};
+
+const DuplikaatitOrganisationCheckbox = ({ L, duplikaatitValue, duplikaatitAction }: Props) => (
     <label className="oph-checkable" htmlFor="duplikaatitCriteria">
         <input
             id="duplikaatitCriteria"
@@ -13,11 +19,5 @@ const DuplikaatitOrganisationCheckbox = ({ L, duplikaatitValue, duplikaatitActio
         <span className="oph-checkable-text"> {L['HENKILOHAKU_FILTERS_DUPLIKAATIT']}</span>
     </label>
 );
-
-DuplikaatitOrganisationCheckbox.propTypes = {
-    L: PropTypes.object.isRequired,
-    duplikaatitValue: PropTypes.bool.isRequired,
-    duplikaatitAction: PropTypes.func.isRequired,
-};
 
 export default DuplikaatitOrganisationCheckbox;

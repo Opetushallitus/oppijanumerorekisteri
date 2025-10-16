@@ -1,6 +1,5 @@
 import React, { useId, useMemo, useState } from 'react';
 
-import { toLocalizedText } from '../../../localizabletext';
 import { useLocalisations } from '../../../selectors';
 import ConfirmButton from '../button/ConfirmButton';
 import Button from '../button/Button';
@@ -41,7 +40,7 @@ export const HenkiloViewOrganisationContent = (props: { henkiloOid: string }) =>
                   const organisation = apiOrganisations?.find((o) => o.oid === org.organisaatioOid);
                   const typesFlat = organisation?.tyypit?.length ? '(' + organisation?.tyypit?.join(', ') + ')' : '';
                   return {
-                      name: toLocalizedText(locale, organisation?.nimi),
+                      name: organisation?.nimi?.[locale],
                       typesFlat: typesFlat,
                       passive: org.passivoitu,
                       id: organisation?.oid,

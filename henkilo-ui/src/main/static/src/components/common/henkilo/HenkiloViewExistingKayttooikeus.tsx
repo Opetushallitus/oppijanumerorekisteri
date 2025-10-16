@@ -35,7 +35,8 @@ type OwnProps = {
     existingKayttooikeusRef: MutableRefObject<HTMLDivElement>;
 };
 
-const emptyArray = [];
+const emptyData: MyonnettyKayttooikeusryhma[] = [];
+const emptyColumns: ColumnDef<MyonnettyKayttooikeusryhma, MyonnettyKayttooikeusryhma>[] = [];
 
 const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     const [sorting, setSorting] = useState<SortingState>([]);
@@ -120,7 +121,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
             : null;
     }
 
-    function showAccessRightGroupDetails(kayttooikeusRyhma) {
+    function showAccessRightGroupDetails(kayttooikeusRyhma: MyonnettyKayttooikeusryhma) {
         const accessRight = {
             name: localizeTextGroup(kayttooikeusRyhma.ryhmaNames?.texts, locale),
             description: localizeTextGroup(
@@ -299,6 +300,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                                 kayttooikeusryhmaId: getValue().ryhmaId,
                             })
                         }
+                        disabled={false}
                         L={L}
                     />
                 ),
@@ -332,9 +334,9 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     }, [kayttooikeusryhmas]);
 
     const table = useReactTable({
-        columns: columns ?? emptyArray,
+        columns: columns ?? emptyColumns,
         pageCount: 1,
-        data: memoizedData ?? emptyArray,
+        data: memoizedData ?? emptyData,
         state: {
             sorting,
             columnVisibility: {

@@ -3,14 +3,16 @@ import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types'
 import { Locale } from '../../types/locale.type';
 import { TextGroup } from '../../types/domain/kayttooikeus/textgroup.types';
 import { Organisaatio } from '../../types/domain/organisaatio/organisaatio.types';
-import { toLocalizedText } from '../../localizabletext';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../utilities/select';
 import { Koodi, Koodisto } from '../../api/koodisto';
 import type { HenkiloDuplicate } from '../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 
 class StaticUtils {
     // Example fieldpath: organisaatio.nimet.0.nimiValue
-    static updateFieldByDotAnnotation<T>(obj: T, event: React.SyntheticEvent<HTMLInputElement>): T {
+    static updateFieldByDotAnnotation<T extends Record<string, any>>(
+        obj: T,
+        event: React.SyntheticEvent<HTMLInputElement>
+    ): T {
         if (event === null) {
             return null;
         }
@@ -28,8 +30,12 @@ class StaticUtils {
         return this.updateByDotAnnotation(obj, value, fieldpath);
     }
 
-    static updateByDotAnnotation<T>(obj: T, value: string | unknown[], fieldpath: string): T {
-        let schema = obj; // a moving reference to internal objects within obj
+    static updateByDotAnnotation<T extends Record<string, any>>(
+        obj: T,
+        value: string | unknown[],
+        fieldpath: string
+    ): T {
+        let schema: Record<string, any> = obj; // a moving reference to internal objects within obj
         const pList = fieldpath.split('.');
         const len = pList.length;
         for (let i = 0; i < len - 1; i++) {
@@ -51,8 +57,8 @@ class StaticUtils {
         yhteystietotyyppi: string,
         label: string
     ) {
-        let yhteystiedotRyhmaIndex = null;
-        let yhteystietoIndex = null;
+        let yhteystiedotRyhmaIndex: number = null;
+        let yhteystietoIndex: number = null;
         let yhteystietoRyhma = henkiloUpdate.yhteystiedotRyhma.filter((yhteystiedotRyhma, idx) => {
             const yhteystietoByTyyppi = yhteystiedotRyhma.yhteystieto.filter(
                 (yhteystieto) => yhteystieto.yhteystietoTyyppi === yhteystietotyyppi
@@ -120,7 +126,7 @@ class StaticUtils {
     }
 
     static getOrganisationNameWithType(org: Organisaatio | undefined, L: Localisations, locale: Locale) {
-        return toLocalizedText(locale, org?.nimi) + ' ' + StaticUtils.getOrganisaatiotyypitFlat(org?.tyypit, L);
+        return org?.nimi?.[locale] + ' ' + StaticUtils.getOrganisaatiotyypitFlat(org?.tyypit, L);
     }
 
     static defaultOrganisaatio = (organisaatioOid: string, l10n?: L10n): Organisaatio => ({

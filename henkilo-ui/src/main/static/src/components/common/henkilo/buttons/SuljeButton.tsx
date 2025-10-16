@@ -1,8 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import ConfirmButton from '../../button/ConfirmButton';
+import { Localisations } from '../../../../types/localisation.type';
 
-const SuljeButton = ({ L, suljeAction, disabled }) => (
+type Props = {
+    L: Localisations;
+    suljeAction: () => void;
+    disabled: boolean;
+};
+
+const SuljeButton = ({ L, suljeAction, disabled }: Props) => (
     <ConfirmButton
         action={suljeAction}
         normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_SULJE']}
@@ -10,11 +16,5 @@ const SuljeButton = ({ L, suljeAction, disabled }) => (
         disabled={disabled}
     />
 );
-
-SuljeButton.propTypes = {
-    L: PropTypes.object,
-    suljeAction: PropTypes.func,
-    disabled: PropTypes.bool,
-};
 
 export default SuljeButton;

@@ -42,10 +42,11 @@ class Field extends React.Component<Props, State> {
             'oph-input': !this.props.readOnly,
             'oph-input-has-error': this.props.isError || this.state.inputError,
         };
-        if (this.props.className) {
-            classNamesCreator[this.props.className] = this.props.className;
-        }
-        const className = classNames(classNamesCreator);
+        const className = classNames(
+            this.props.className
+                ? { ...classNamesCreator, [this.props.className]: this.props.className }
+                : classNamesCreator
+        );
         return <span>{this.createField(className)}</span>;
     }
 

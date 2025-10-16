@@ -155,7 +155,7 @@ function sortStartingWithFirst(search: string): OrganisaatioSelectObjectSorter {
 }
 
 function combinedSort<T>(...sorters: ((a: T, b: T) => number)[]) {
-    return (items) => {
+    return (items: unknown) => {
         const copy = JSON.parse(JSON.stringify(items));
         copy.sort((a: T, b: T): number => {
             for (const fn of sorters) {

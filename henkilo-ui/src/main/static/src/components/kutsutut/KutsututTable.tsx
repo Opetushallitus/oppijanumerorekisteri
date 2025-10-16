@@ -3,7 +3,6 @@ import moment from 'moment';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, Row, SortingState } from '@tanstack/react-table';
 
 import Button from '../common/button/Button';
-import { toLocalizedText } from '../../localizabletext';
 import PopupButton from '../common/button/PopupButton';
 import KutsuDetails from './KutsuDetails';
 import { KutsuRead } from '../../types/domain/kayttooikeus/Kutsu.types';
@@ -20,7 +19,8 @@ type OwnProps = {
     cancelInvitation: (kutsu: KutsuRead) => void;
 };
 
-const emptyArray = [];
+const emptyData: KutsuRead[] = [];
+const emptyColumns: ColumnDef<KutsuRead>[] = [];
 
 const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
     const [sorting, setSorting] = useState<SortingState>([{ id: 'AIKALEIMA', desc: true }]);
@@ -50,7 +50,7 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
 
     const columns = useMemo<ColumnDef<KutsuRead, KutsuRead>[]>(
         () => [
-            expanderColumn,
+            expanderColumn(),
             {
                 id: 'NIMI',
                 header: () => L['KUTSUT_NIMI_OTSIKKO'],
@@ -68,9 +68,7 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
                 cell: ({ getValue }) => (
                     <div>
                         {getValue().organisaatiot.map((org) => (
-                            <div key={org.organisaatioOid}>
-                                {toLocalizedText(locale, org.nimi) || org.organisaatioOid}
-                            </div>
+                            <div key={org.organisaatioOid}>{org.nimi[locale] ?? org.organisaatioOid}</div>
                         ))}
                     </div>
                 ),
@@ -150,10 +148,9 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
         }
         return renderedData;
     }, [data]);
-
     const table = useReactTable({
-        columns: columns ?? emptyArray,
-        data: memoizedData ?? emptyArray,
+        columns: columns ?? emptyColumns,
+        data: memoizedData ?? emptyData,
         pageCount: 1,
         state: {
             sorting,

@@ -10,10 +10,10 @@ import type { HenkiloDuplicate } from '../../../types/domain/oppijanumerorekiste
 import Button from '../../common/button/Button';
 import { LinkRelation } from './HenkiloViewDuplikaatit';
 import { useLocalisations } from '../../../selectors';
-import { Koodi, useGetKansalaisuudetQuery, useGetKieletQuery } from '../../../api/koodisto';
+import { Koodi, koodiLabel, useGetKansalaisuudetQuery, useGetKieletQuery } from '../../../api/koodisto';
+import StaticUtils from '../../common/StaticUtils';
 
 import './DuplikaatitPerson.css';
-import StaticUtils from '../../common/StaticUtils';
 
 type DuplikaatitPersonProps = {
     henkilo: HenkiloDuplicate;
@@ -217,7 +217,10 @@ function _parseHakuappHakemus(
     };
 }
 
-const _koodistoLabel = (koodi: string, koodisto: Koodi[] | undefined, locale: Locale): string | null =>
-    koodisto?.find((koodistoItem) => koodistoItem.koodiArvo === koodi)?.metadata?.[locale] ?? null;
+const _koodistoLabel = (koodi: string, koodisto: Koodi[] | undefined, locale: Locale): string | undefined =>
+    koodiLabel(
+        koodisto?.find((koodistoItem) => koodistoItem.koodiArvo === koodi),
+        locale
+    );
 
 export default DuplikaatitPerson;

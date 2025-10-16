@@ -20,7 +20,7 @@ export function toSupportedLocale(anyLocale: string): Locale {
 }
 
 const mapLocalisationsByLocale = (localisations: Localisation[]): L10n => {
-    const result = { fi: {}, sv: {}, en: {} };
+    const result: L10n = { fi: {}, sv: {}, en: {} };
     localisations?.forEach((localisation) => {
         try {
             result[localisation.locale][localisation.key] = localisation.value;

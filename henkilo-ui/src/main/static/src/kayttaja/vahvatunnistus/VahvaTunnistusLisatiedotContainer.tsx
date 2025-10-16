@@ -32,12 +32,12 @@ const getInitialMetadata = (params: Readonly<Params<string>>): Metadata => ({
 const getErrors = (values: Values, metadata: Metadata, L: Localisations): Errors => {
     const errors: Errors = [];
 
-    // tarkistetaan pakollisuudet
-    Object.entries(values).forEach(([name, value]) => {
-        if (!value && metadata[name] && metadata[name].visible && metadata[name].required) {
-            errors.push({ name: name, text: L['LOMAKE_PAKOLLINEN_TIETO'] });
-        }
-    });
+    if (!values.password && metadata.password?.visible && metadata.password?.required) {
+        errors.push({ name: 'password', text: L['LOMAKE_PAKOLLINEN_TIETO'] });
+    }
+    if (!values.passwordAgain && metadata.tyosahkopostiosoite?.visible && metadata.tyosahkopostiosoite?.required) {
+        errors.push({ name: 'tyosahkopostiosoite', text: L['LOMAKE_PAKOLLINEN_TIETO'] });
+    }
 
     if (values.password) {
         if (!isValidPassword(values.password)) {

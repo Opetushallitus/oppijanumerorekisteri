@@ -45,7 +45,8 @@ type OwnProps = {
     updateErrorHandler?: (id: number, henkilo: HenkilonNimi, kayttooikeudenTila: KayttooikeudenTila) => void;
 };
 
-const emptyArray = [];
+const emptyData: HaettuKayttooikeusryhma[] = [];
+const emptyColumns: ColumnDef<HaettuKayttooikeusryhma>[] = [];
 
 const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     const [sorting, setSorting] = useState<SortingState>([{ id: 'ANOTTU_PVM', desc: true }]);
@@ -54,7 +55,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     const { data: organisations, isSuccess } = useGetOrganisationsQuery();
     const [putHaettuKayttooikeusryhma] = usePutHaettuKayttooikeusryhmaMutation();
     const [peruKayttooikeusAnomus] = usePutPeruKayttooikeusAnomusMutation();
-    const [dates, setDates] = useState<{ [anomusId: number]: { alkupvm: Moment; loppupvm?: Moment } }>(
+    const [dates, setDates] = useState<{ [anomusId: string]: { alkupvm: Moment; loppupvm?: Moment } }>(
         props.anomukset.reduce(
             (acc, kayttooikeus) => ({
                 ...acc,
@@ -200,7 +201,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
 
     const columns = useMemo<ColumnDef<HaettuKayttooikeusryhma, HaettuKayttooikeusryhma>[]>(
         () => [
-            expanderColumn,
+            expanderColumn(),
             {
                 id: 'ANOTTU_PVM',
                 header: () => L['ANOTTU_PVM'],
@@ -262,7 +263,6 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
             {
                 id: 'HENKILO_KAYTTOOIKEUSANOMUS_PERUSTELU',
                 header: () => L['HENKILO_KAYTTOOIKEUSANOMUS_PERUSTELU'],
-                key: 'HENKILO_KAYTTOOIKEUSANOMUS_PERUSTELU',
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => createSelitePopupButton(getValue().anomus.perustelut),
                 enableSorting: false,
@@ -343,9 +343,9 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     }, [props.anomukset]);
 
     const table = useReactTable({
-        columns: columns ?? emptyArray,
+        columns: columns ?? emptyColumns,
         pageCount: 1,
-        data: memoizedData ?? emptyArray,
+        data: memoizedData ?? emptyData,
         state: {
             sorting,
             columnVisibility: {

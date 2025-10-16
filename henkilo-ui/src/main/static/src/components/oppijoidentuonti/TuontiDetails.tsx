@@ -14,7 +14,8 @@ type OwnProps = {
     onClose: () => void;
 };
 
-const emptyArray = [];
+const emptyData: Tuontidata[] = [];
+const emptyColumns: ColumnDef<Tuontidata>[] = [];
 
 const TuontiDetails = ({ tuontiId, onClose }: OwnProps) => {
     const { L } = useLocalisations();
@@ -23,7 +24,7 @@ const TuontiDetails = ({ tuontiId, onClose }: OwnProps) => {
 
     const columns = useMemo<ColumnDef<Tuontidata, Tuontidata>[]>(
         () => [
-            expanderColumn,
+            expanderColumn(),
             { accessorFn: (row) => row.tunniste, header: () => L['TUONTIDATA_TUNNISTE'], id: 'tunniste' },
             {
                 accessorFn: (row) => row,
@@ -54,8 +55,8 @@ const TuontiDetails = ({ tuontiId, onClose }: OwnProps) => {
     }, [data]);
 
     const table = useReactTable({
-        data: memoizedData ?? emptyArray,
-        columns: columns ?? emptyArray,
+        data: memoizedData ?? emptyData,
+        columns: columns ?? emptyColumns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getRowCanExpand: () => true,

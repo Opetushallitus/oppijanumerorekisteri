@@ -1,5 +1,5 @@
 import React, { useRef, ReactElement, Fragment } from 'react';
-import { Table, flexRender, Row } from '@tanstack/react-table';
+import { Table, flexRender, Row, ColumnDef } from '@tanstack/react-table';
 
 import { useLocalisations } from '../selectors';
 import Loader from './common/icons/Loader';
@@ -12,24 +12,25 @@ export type OphTableProps<T> = {
     renderSubComponent?: (props: { row: Row<T> }) => ReactElement;
 };
 
-export const expanderColumn = {
-    id: 'expander',
-    header: () => null,
-    className: 'expander',
-    cell: ({ row }) => {
-        return (
-            row.getCanExpand() && (
-                <button
-                    className={`reset-button-styles expander-button ${row.getIsExpanded() ? 'open' : ''}`}
-                    onClick={row.getToggleExpandedHandler()}
-                    style={{ cursor: 'pointer' }}
-                >
-                    {''}
-                </button>
-            )
-        );
-    },
-};
+export function expanderColumn<T, U>(): ColumnDef<T, U> {
+    return {
+        id: 'expander',
+        header: () => null,
+        cell: ({ row }) => {
+            return (
+                row.getCanExpand() && (
+                    <button
+                        className={`reset-button-styles expander-button ${row.getIsExpanded() ? 'open' : ''}`}
+                        onClick={row.getToggleExpandedHandler()}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        {''}
+                    </button>
+                )
+            );
+        },
+    };
+}
 
 const OphTable = <T,>({ table, isLoading, renderSubComponent }: OphTableProps<T>) => {
     const { L } = useLocalisations();

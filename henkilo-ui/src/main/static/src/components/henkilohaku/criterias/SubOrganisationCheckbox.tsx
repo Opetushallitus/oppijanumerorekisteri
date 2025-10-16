@@ -1,7 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { Localisations } from '../../../types/localisation.type';
 
-const SubOrganisationCheckbox = ({ L, subOrganisationValue, subOrganisationAction }) => (
+type Props = {
+    L: Localisations;
+    subOrganisationValue: boolean;
+    subOrganisationAction: (arg?: React.ChangeEvent<HTMLInputElement>) => void;
+};
+
+const SubOrganisationCheckbox = ({ L, subOrganisationValue, subOrganisationAction }: Props) => (
     <label className="oph-checkable" htmlFor="subOrganisaatioCriteria">
         <input
             id="subOrganisaatioCriteria"
@@ -13,11 +19,5 @@ const SubOrganisationCheckbox = ({ L, subOrganisationValue, subOrganisationActio
         <span className="oph-checkable-text"> {L['HENKILOHAKU_FILTERS_ALIORGANISAATIOISTA']}</span>
     </label>
 );
-
-SubOrganisationCheckbox.propTypes = {
-    L: PropTypes.object.isRequired,
-    subOrganisationValue: PropTypes.bool.isRequired,
-    subOrganisationAction: PropTypes.func.isRequired,
-};
 
 export default SubOrganisationCheckbox;

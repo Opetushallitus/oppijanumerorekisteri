@@ -13,7 +13,8 @@ import { useGetTuontikoosteQuery } from '../../api/oppijanumerorekisteri';
 import { useDebounce } from '../../useDebounce';
 import OphTable from '../OphTable';
 
-const emptyArray = [];
+const emptyData: TuontiKoosteRivi[] = [];
+const emptyColumns: ColumnDef<TuontiKoosteRivi>[] = [];
 
 const TuontiKoosteTable = () => {
     const [criteria, setCriteria] = useState<TuontiKoosteCriteria>({
@@ -113,8 +114,8 @@ const TuontiKoosteTable = () => {
     }, [data]);
 
     const table = useReactTable<TuontiKoosteRivi>({
-        data: memoizedData ?? emptyArray,
-        columns: columns ?? emptyArray,
+        data: memoizedData ?? emptyData,
+        columns: columns ?? emptyColumns,
         pageCount: data?.totalPages ?? 0,
         state: {
             pagination,

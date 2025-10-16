@@ -26,7 +26,8 @@ type OwnProps = {
     oidHenkilo: string;
 };
 
-const emptyArray = [];
+const emptyData: MyonnettyKayttooikeusryhma[] = [];
+const emptyColumns: ColumnDef<MyonnettyKayttooikeusryhma>[] = [];
 
 const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
     const dispatch = useAppDispatch();
@@ -220,8 +221,8 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
     }, [kayttooikeusryhmas]);
 
     const table = useReactTable({
-        columns: columns ?? emptyArray,
-        data: memoizedData ?? emptyArray,
+        columns: columns ?? emptyColumns,
+        data: memoizedData ?? emptyData,
         pageCount: 1,
         state: {
             sorting,

@@ -19,9 +19,10 @@ import { OphDsRadioGroup } from '../../design-system/OphDsRadioGroup';
 import { OphDsAccordion } from '../../design-system/OphDsAccordion';
 import KayttooikeusryhmaTiedot from './KayttooikeusryhmaTiedot';
 import { SelectOption, selectStyles } from '../../../utilities/select';
+import { useTitle } from '../../../useTitle';
+import { Locale } from '../../../types/locale.type';
 
 import './KayttooikeusryhmatPage.css';
-import { useTitle } from '../../../useTitle';
 
 type Kayttajatyyppi = 'virkailija' | 'palvelu';
 
@@ -34,7 +35,7 @@ const nimiFilter = (filter: string, locale: string) => (item: Kayttooikeusryhma)
     return text.toLowerCase().indexOf(filter.toLowerCase()) >= 0;
 };
 
-const nimiSort = (locale: string) => (a: Kayttooikeusryhma, b: Kayttooikeusryhma) => {
+const nimiSort = (locale: Locale) => (a: Kayttooikeusryhma, b: Kayttooikeusryhma) => {
     const nameA = (localizeTextGroup(a?.nimi?.texts ?? [], locale) ?? '').toLowerCase();
     const nameB = (localizeTextGroup(b?.nimi?.texts ?? [], locale) ?? '').toLowerCase();
     if (nameA < nameB) {

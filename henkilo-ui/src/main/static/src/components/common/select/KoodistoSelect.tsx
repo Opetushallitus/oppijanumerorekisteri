@@ -1,12 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import Select from 'react-select';
 
-import { toLocalizedText } from '../../../localizabletext';
 import { useLocalisations } from '../../../selectors';
+import { Locale } from '../../../types/locale.type';
+import { Koodi, koodiLabel, Koodisto } from '../../../api/koodisto';
 
 import './KoodistoSelect.css';
-import { Locale } from '../../../types/locale.type';
-import { Koodi, Koodisto } from '../../../api/koodisto';
 
 type OwnProps = {
     className?: string;
@@ -20,7 +19,7 @@ const getInitialValue = (koodisto: Koodisto, value: string, locale: Locale) => {
     const koodi = koodisto?.find((k) => k.koodiArvo === value);
     return {
         value: koodi.koodiArvo,
-        label: toLocalizedText(locale, koodi.metadata, koodi.koodiArvo),
+        label: koodiLabel(koodi, locale),
     };
 };
 
@@ -34,7 +33,7 @@ export const KoodistoSelect = ({ className, placeholder, koodisto, value, onChan
             ?.map((koodi: Koodi) => {
                 return {
                     value: koodi.koodiArvo,
-                    label: toLocalizedText(locale, koodi.metadata, koodi.koodiArvo) as string,
+                    label: koodiLabel(koodi, locale),
                 };
             })
             .sort((a, b) => a.label.localeCompare(b.label));

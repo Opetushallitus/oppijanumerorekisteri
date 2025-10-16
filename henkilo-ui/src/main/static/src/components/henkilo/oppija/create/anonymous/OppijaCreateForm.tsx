@@ -12,9 +12,8 @@ import { isValidKutsumanimi } from '../../../../../validation/KutsumanimiValidat
 import { Localisations } from '../../../../../types/localisation.type';
 import LoaderWithText from '../../../../common/loadingbar/LoaderWithText';
 import { EMAIL } from '../../../../../types/constants';
-import { toLocalizedText } from '../../../../../localizabletext';
 import { Kielisyys } from '../../../../../types/domain/oppijanumerorekisteri/kielisyys.types';
-import { Koodisto } from '../../../../../api/koodisto';
+import { koodiLabel, Koodisto } from '../../../../../api/koodisto';
 
 type Error = {
     name: string;
@@ -44,7 +43,7 @@ type State = {
     form: Form;
 };
 
-const initialState = {
+const initialState: State = {
     disabled: false,
     loading: false,
     submitted: false,
@@ -172,7 +171,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
                         options={this.props.kansalaisuusKoodisto
                             ?.map((k) => ({
                                 value: k.koodiArvo,
-                                label: toLocalizedText(this.props.locale, k.metadata, k.koodiArvo),
+                                label: koodiLabel(k, this.props.locale),
                             }))
                             .sort((a, b) => a.label.localeCompare(b.label))}
                         onChange={(values) =>
@@ -184,7 +183,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
                         value={this.props.kansalaisuusKoodisto
                             ?.map((k) => ({
                                 value: k.koodiArvo,
-                                label: toLocalizedText(this.props.locale, k.metadata, k.koodiArvo),
+                                label: koodiLabel(k, this.props.locale),
                             }))
                             .filter((k) =>
                                 this.state.henkilo.kansalaisuus?.find((kans) => kans.kansalaisuusKoodi === k.value)

@@ -6,7 +6,6 @@ import { Link } from 'react-router';
 import HenkilohakuFilters from './HenkilohakuFilters';
 import StaticUtils from '../common/StaticUtils';
 import Loader from '../common/icons/Loader';
-import { toLocalizedText } from '../../localizabletext';
 import {
     HenkilohakuCriteria,
     HenkilohakuQueryparameters,
@@ -21,7 +20,8 @@ import { useDebounce } from '../../useDebounce';
 import { SelectOption } from '../../utilities/select';
 import { HenkilohakuState, setFilters } from '../../slices/henkilohakuSlice';
 
-const emptyArray = [];
+const emptyData: HenkilohakuResult[] = [];
+const emptyColumns: ColumnDef<HenkilohakuResult>[] = [];
 
 const HenkilohakuPage = () => {
     const dispatch = useAppDispatch();
@@ -87,7 +87,7 @@ const HenkilohakuPage = () => {
                     <ul>
                         {getValue().organisaatioNimiList.map((organisaatio, idx2) => (
                             <li key={idx2}>
-                                {(toLocalizedText(locale, organisaatio.localisedLabels) || organisaatio.identifier) +
+                                {(organisaatio.localisedLabels[locale] ?? organisaatio.identifier) +
                                     ' ' +
                                     StaticUtils.getOrganisaatiotyypitFlat(organisaatio.tyypit, L, true)}
                             </li>
@@ -109,8 +109,8 @@ const HenkilohakuPage = () => {
     }, [result]);
 
     const table = useReactTable({
-        columns: columns ?? emptyArray,
-        data: memoizedData ?? emptyArray,
+        columns: columns ?? emptyColumns,
+        data: memoizedData ?? emptyData,
         pageCount: 1,
         state: {
             sorting,

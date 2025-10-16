@@ -29,9 +29,11 @@ import HenkiloViewCreateKayttooikeus from '../common/henkilo/HenkiloViewCreateKa
 import { isOnrRekisterinpitaja } from '../../utilities/palvelurooli.util';
 import { View } from '../../types/constants';
 
-const titles = {
+const titles: Record<View, string> = {
     virkailija: 'TITLE_VIRKAILIJA',
     admin: 'TITLE_ADMIN',
+    omattiedot: 'TITLE_VIRKAILIJA',
+    oppija: 'TITLE_OPPIJA',
 };
 
 export const VirkailijaViewPage = () => {

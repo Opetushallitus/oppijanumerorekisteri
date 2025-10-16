@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { getCommonOptions } from './common';
+import { Locale } from '../types/locale.type';
 
 export type Koodi = {
     koodiArvo: string;
@@ -14,6 +15,10 @@ export type KoodiMetadata = {
     lyhytNimi: string;
     nimi: string;
 };
+
+export const koodiLabel = (koodi?: Koodi, locale?: Locale): string | undefined =>
+    koodi?.metadata?.find((m) => m.kieli?.toLocaleUpperCase() === locale?.toLocaleUpperCase())?.nimi ??
+    koodi?.koodiArvo;
 
 export const koodistoApi = createApi({
     reducerPath: 'koodistoApi',

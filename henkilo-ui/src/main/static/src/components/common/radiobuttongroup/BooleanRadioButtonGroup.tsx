@@ -12,7 +12,7 @@ type Props = {
  * Tyylioppaan mukainen "Radio button group" -komponentti totuusarvoille.
  */
 const BooleanRadioButtonGroup = (props: Props) => {
-    const onChange = (event) => {
+    const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         props.onChange(event.target.value === 'true');
     };
 

@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 
 import { getCommonOptions } from './common';
+import { Locale } from '../types/locale.type';
 
 export type Localisation = {
     accesscount: number;
@@ -13,7 +14,7 @@ export type Localisation = {
     modified: number;
     modifiedBy: string;
     force: boolean;
-    locale: string;
+    locale: Locale;
     value: string;
 };
 

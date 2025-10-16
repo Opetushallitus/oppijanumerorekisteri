@@ -1,7 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { Localisations } from '../../../types/localisation.type';
 
-const PassiivisetOrganisationCheckbox = ({ L, passiivisetValue, passiivisetAction }) => (
+type Props = {
+    L: Localisations;
+    passiivisetValue: boolean;
+    passiivisetAction: () => void;
+};
+
+const PassiivisetOrganisationCheckbox = ({ L, passiivisetValue, passiivisetAction }: Props) => (
     <label className="oph-checkable" htmlFor="passiivisetCriteria">
         <input
             id="passiivisetCriteria"
@@ -13,11 +19,5 @@ const PassiivisetOrganisationCheckbox = ({ L, passiivisetValue, passiivisetActio
         <span className="oph-checkable-text"> {L['HENKILOHAKU_FILTERS_PASSIIVISET']}</span>
     </label>
 );
-
-PassiivisetOrganisationCheckbox.propTypes = {
-    L: PropTypes.object.isRequired,
-    passiivisetValue: PropTypes.bool.isRequired,
-    passiivisetAction: PropTypes.func.isRequired,
-};
 
 export default PassiivisetOrganisationCheckbox;

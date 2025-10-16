@@ -51,7 +51,7 @@ type State = {
     isContactInfoValid: boolean;
 };
 
-const isEmail = ({ label }) => label === EMAIL;
+const isEmail = ({ label }: { label: string }) => label === EMAIL;
 
 const containsEmail = (infoGroup: ContactInfo): boolean =>
     !!infoGroup.value.filter((info) => isEmail(info)).filter((info) => info.value).length;
@@ -148,7 +148,11 @@ const _initialiseYhteystiedot = (
         return yhteystietoFlatList;
     });
 
-const contactInfoTemplate = [
+const contactInfoTemplate: {
+    label: string;
+    value?: string | null;
+    inputValue?: string | null;
+}[] = [
     { label: 'YHTEYSTIETO_SAHKOPOSTI', value: null, inputValue: null },
     { label: 'YHTEYSTIETO_PUHELINNUMERO', value: null, inputValue: null },
     {
@@ -298,7 +302,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
 
     function _createYhteystiedotRyhma(yhteystietoryhmaTyyppi: string) {
         const henkiloUiId = 'henkilo_ui_id_' + PropertySingleton.getNewId();
-        const newYhteystiedotRyhma = {
+        const newYhteystiedotRyhma: YhteystietoRyhma = {
             readOnly: false,
             ryhmaAlkuperaTieto: PropertySingleton.state.YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI,
             ryhmaKuvaus: yhteystietoryhmaTyyppi,

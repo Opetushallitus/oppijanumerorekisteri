@@ -4,6 +4,7 @@ import Select from 'react-select';
 import { Localisations } from '../../types/localisation.type';
 import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
 import { SelectOption } from '../../utilities/select';
+import { Locale } from '../../types/locale.type';
 
 import './BasicinfoForm.css';
 
@@ -11,7 +12,7 @@ type Props = {
     disabled: boolean;
     basicInfo: KutsuBasicInfo;
     L: Localisations;
-    locale: string;
+    locale: Locale;
     setBasicInfo: (arg0: KutsuBasicInfo) => void;
 };
 

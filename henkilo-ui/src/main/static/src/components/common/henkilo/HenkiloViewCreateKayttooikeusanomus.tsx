@@ -134,7 +134,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
     }
 
     function _parseEmailOptions(henkilo: Henkilo): { value: string; label: string }[] {
-        const emails = [];
+        const emails: string[] = [];
         if (henkilo?.yhteystiedotRyhma) {
             henkilo.yhteystiedotRyhma.forEach((yhteystietoRyhma) => {
                 yhteystietoRyhma.yhteystieto.forEach((yhteys) => {

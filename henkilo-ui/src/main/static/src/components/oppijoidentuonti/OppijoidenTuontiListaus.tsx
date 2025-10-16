@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router';
-import { useReactTable, getCoreRowModel, PaginationState } from '@tanstack/react-table';
+import { useReactTable, getCoreRowModel, PaginationState, ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
 
 import { OppijaList } from '../../types/domain/oppijanumerorekisteri/oppijalist.types';
@@ -18,7 +18,8 @@ type Props = {
     loading: boolean;
 };
 
-const emptyArray = [];
+const emptyData: OppijaList[] = [];
+const emptyColumns: ColumnDef<OppijaList>[] = [];
 
 /**
  * Oppijoiden tuonnin listausnäkymä.
@@ -39,7 +40,7 @@ const OppijoidenTuontiListaus = ({ data, onPageChange, onSortingChange, sortKey,
         return <Link to={linkki}>{nimi}</Link>;
     }
 
-    const columns = useMemo(
+    const columns = useMemo<ColumnDef<OppijaList, OppijaList>[]>(
         () => [
             {
                 header: () => L['OPPIJOIDEN_TUONTI_LUONTIAIKA'],
@@ -102,7 +103,7 @@ const OppijoidenTuontiListaus = ({ data, onPageChange, onSortingChange, sortKey,
     }, [data]);
 
     const table = useReactTable<OppijaList>({
-        data: memoizedData ?? emptyArray,
+        data: memoizedData ?? emptyData,
         pageCount: data?.totalPages ?? 0,
         state: {
             pagination,
@@ -127,7 +128,7 @@ const OppijoidenTuontiListaus = ({ data, onPageChange, onSortingChange, sortKey,
         getCoreRowModel: getCoreRowModel(),
         manualPagination: true,
         manualSorting: true,
-        columns: columns ?? emptyArray,
+        columns: columns ?? emptyColumns,
         columnResizeMode: 'onChange',
     });
 

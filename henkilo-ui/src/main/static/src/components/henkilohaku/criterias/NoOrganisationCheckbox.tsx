@@ -1,7 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { Localisations } from '../../../types/localisation.type';
 
-const NoOrganisationCheckbox = ({ L, noOrganisationValue, noOrganisationAction }) => (
+type Props = {
+    L: Localisations;
+    noOrganisationValue: boolean;
+    noOrganisationAction: () => void;
+};
+
+const NoOrganisationCheckbox = ({ L, noOrganisationValue, noOrganisationAction }: Props) => (
     <label className="oph-checkable" htmlFor="noOrganisaatioCriteria">
         <input
             id="noOrganisaatioCriteria"
@@ -13,11 +19,5 @@ const NoOrganisationCheckbox = ({ L, noOrganisationValue, noOrganisationAction }
         <span className="oph-checkable-text"> {L['HENKILOHAKU_FILTERS_ILMANORGANISAATIOTA']}</span>
     </label>
 );
-
-NoOrganisationCheckbox.propTypes = {
-    L: PropTypes.object.isRequired,
-    noOrganisationValue: PropTypes.bool.isRequired,
-    noOrganisationAction: PropTypes.func.isRequired,
-};
 
 export default NoOrganisationCheckbox;

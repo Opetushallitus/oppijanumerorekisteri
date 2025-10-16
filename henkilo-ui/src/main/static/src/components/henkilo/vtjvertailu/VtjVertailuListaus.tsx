@@ -21,7 +21,8 @@ type HenkiloData = {
     palvelu: string;
 };
 
-const emptyArray = [];
+const emptyData: HenkiloData[] = [];
+const emptyColumns: ColumnDef<HenkiloData>[] = [];
 
 const VtjVertailuListaus = ({ henkilo }: Props) => {
     const { L } = useLocalisations();
@@ -105,8 +106,8 @@ const VtjVertailuListaus = ({ henkilo }: Props) => {
     }, [henkilo, yksilointitiedotQuery.data]);
 
     const table = useReactTable({
-        data: memoizedData ?? emptyArray,
-        columns: columns ?? emptyArray,
+        data: memoizedData ?? emptyData,
+        columns: columns ?? emptyColumns,
         getCoreRowModel: getCoreRowModel(),
     });
 

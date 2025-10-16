@@ -5,9 +5,8 @@ import './KayttooikeusryhmanOrganisaatiorajoite.css';
 import OrganisaatioSelectModal from '../../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import OphCheckboxFieldset from '../../common/forms/OphCheckboxFieldset';
-import { toLocalizedText } from '../../../localizabletext';
 import { useLocalisations } from '../../../selectors';
-import { useGetOppilaitostyypitQuery, useGetOrganisaatiotyypitQuery } from '../../../api/koodisto';
+import { koodiLabel, useGetOppilaitostyypitQuery, useGetOrganisaatiotyypitQuery } from '../../../api/koodisto';
 
 type Props = {
     ryhmaRestriction: boolean;
@@ -27,13 +26,13 @@ const KayttooikeusryhmanOrganisaatiorajoite = (props: Props) => {
     const { data: organisaatiotyypit } = useGetOrganisaatiotyypitQuery();
     const oppilaitostyypitOptions = useMemo(() => {
         return (oppilaitostyypit ?? []).map((oppilaitostyyppi) => ({
-            label: toLocalizedText(locale, oppilaitostyyppi.metadata) || oppilaitostyyppi.koodiUri,
+            label: koodiLabel(oppilaitostyyppi, locale) ?? oppilaitostyyppi.koodiUri,
             value: oppilaitostyyppi.koodiUri,
         }));
     }, [oppilaitostyypit]);
     const organisaatiotyypitOptions = useMemo(() => {
         return (organisaatiotyypit ?? []).map((organisaatiotyyppi) => ({
-            label: toLocalizedText(locale, organisaatiotyyppi.metadata) || organisaatiotyyppi.koodiUri,
+            label: koodiLabel(organisaatiotyyppi, locale) ?? organisaatiotyyppi.koodiUri,
             value: organisaatiotyyppi.koodiUri,
         }));
     }, [organisaatiotyypit]);

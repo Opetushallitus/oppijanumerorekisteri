@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { useReactTable, getCoreRowModel, ColumnDef } from '@tanstack/react-table';
 
-import { toLocalizedText } from '../../localizabletext';
 import { Locale } from '../../types/locale.type';
 import { KutsuRead as Kutsu } from '../../types/domain/kayttooikeus/Kutsu.types';
 import OphTable from '../OphTable';
@@ -11,7 +10,8 @@ type Props = {
     kutsu?: Kutsu;
 };
 
-const emptyArray = [];
+const emptyData: { organisaatio: string; ryhma: string }[] = [];
+const emptyColumns: ColumnDef<{ organisaatio: string; ryhma: string }>[] = [];
 
 export const resolveInvitationRights = (
     kutsu: Kutsu | null | undefined,
@@ -20,8 +20,8 @@ export const resolveInvitationRights = (
     kutsu
         ? kutsu.organisaatiot.flatMap((organisaatio) =>
               organisaatio.kayttoOikeusRyhmat.map((ryhma) => ({
-                  organisaatio: toLocalizedText(locale, organisaatio.nimi),
-                  ryhma: toLocalizedText(locale, ryhma.nimi),
+                  organisaatio: organisaatio.nimi[locale] ?? organisaatio.nimi.fi,
+                  ryhma: ryhma.nimi[locale] ?? ryhma.nimi.fi,
               }))
           )
         : [];
@@ -59,9 +59,9 @@ const KutsuDetails = ({ kutsu }: Props) => {
     }, [kutsu, locale]);
 
     const table = useReactTable({
-        data: memoizedData ?? emptyArray,
+        data: memoizedData ?? emptyData,
         getCoreRowModel: getCoreRowModel(),
-        columns: columns ?? emptyArray,
+        columns: columns ?? emptyColumns,
     });
     return (
         <div className="anoja-kayttooikeusryhmat">

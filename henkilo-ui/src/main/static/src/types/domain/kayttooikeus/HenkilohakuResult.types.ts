@@ -1,3 +1,5 @@
+import { Locale } from '../../locale.type';
+
 export type HenkilohakuResult = {
     oidHenkilo: string;
     nimi: string;
@@ -8,7 +10,5 @@ export type HenkilohakuResult = {
 export type OrganisaatioMinimal = {
     identifier: string;
     tyypit: Array<string>;
-    localisedLabels: {
-        [key: string]: string;
-    };
+    localisedLabels: Record<Locale, string>;
 };

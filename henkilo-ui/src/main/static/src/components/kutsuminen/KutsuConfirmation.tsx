@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import Button from '../common/button/Button';
-import { toLocalizedText } from '../../localizabletext';
 import { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
 import OphModal from '../common/modal/OphModal';
@@ -9,6 +8,7 @@ import { useLocalisations } from '../../selectors';
 import { usePutKutsuMutation } from '../../api/kayttooikeus';
 import { useAppDispatch } from '../../store';
 import { add } from '../../slices/toastSlice';
+import { localizeTextGroup } from '../../utilities/localisation.util';
 
 type Props = {
     addedOrgs: readonly KutsuOrganisaatio[];
@@ -70,7 +70,6 @@ export const KutsuConfirmation = (props: Props) => {
                 );
             });
     }
-
     return (
         <OphModal onClose={props.modalCloseFn} onOverlayClick={props.modalCloseFn}>
             <h2>{L['VIRKAILIJAN_LISAYS_ESIKATSELU_OTSIKKO']}</h2>
@@ -83,7 +82,9 @@ export const KutsuConfirmation = (props: Props) => {
                     <span className="oph-h3 oph-strong">{org.organisation.name}</span>
                     {org.selectedPermissions.map((permission) => (
                         <div key={permission.ryhmaId}>
-                            <span className="oph-h4 oph-strong">{toLocalizedText(locale, permission.ryhmaNames)}</span>
+                            <span className="oph-h4 oph-strong">
+                                {localizeTextGroup(permission.ryhmaNames?.texts, locale)}
+                            </span>
                         </div>
                     ))}
                 </div>

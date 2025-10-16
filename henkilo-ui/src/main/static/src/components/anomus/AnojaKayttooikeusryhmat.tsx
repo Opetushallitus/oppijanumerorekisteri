@@ -23,7 +23,8 @@ type Props = {
     henkiloOid: string;
 };
 
-const emptyArray = [];
+const emptyData: KayttooikeusryhmaData[] = [];
+const emptyColumns: ColumnDef<KayttooikeusryhmaData>[] = [];
 
 /*
  * Komponentti anomuslistaukseen näyttämään anojan olemassa olevat ja rauenneet käyttöoikeudet
@@ -110,10 +111,10 @@ export const AnojaKayttooikeusryhmat = ({ henkiloOid }: Props) => {
     }, [kayttooikeusryhmat]);
 
     const table = useReactTable({
-        data: memoizedData ?? emptyArray,
+        data: memoizedData ?? emptyData,
         pageCount: 1,
         getCoreRowModel: getCoreRowModel(),
-        columns: columns ?? emptyArray,
+        columns: columns ?? emptyColumns,
     });
 
     if (isLoading) {

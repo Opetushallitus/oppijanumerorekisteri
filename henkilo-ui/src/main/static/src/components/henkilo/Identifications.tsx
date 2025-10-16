@@ -22,7 +22,8 @@ type Props = {
     oid?: string;
 };
 
-const emptyArray = [];
+const emptyData: Identification[] = [];
+const emptyColumns: ColumnDef<Identification>[] = [];
 
 export const Identifications = ({ oid }: Props) => {
     const dispatch = useAppDispatch();
@@ -112,9 +113,9 @@ export const Identifications = ({ oid }: Props) => {
     }, [data]);
 
     const table = useReactTable({
-        columns: columns ?? emptyArray,
+        columns: columns ?? emptyColumns,
         pageCount: 1,
-        data: memoizedData ?? emptyArray,
+        data: memoizedData ?? emptyData,
         enableSorting: false,
         getCoreRowModel: getCoreRowModel(),
     });

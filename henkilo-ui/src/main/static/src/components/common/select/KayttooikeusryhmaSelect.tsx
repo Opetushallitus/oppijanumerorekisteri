@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import { toLocalizedText } from '../../../localizabletext';
 import { SallitutKayttajatyypit } from '../../kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage';
 import { useLocalisations } from '../../../selectors';
+import { localizeTextGroup } from '../../../utilities/localisation.util';
 
 import './KayttooikeusryhmaSelect.css';
 
@@ -42,8 +42,8 @@ const KayttooikeusryhmaSelect = (props: Props) => {
         const kayttooikeusryhmat = sallitut
             .map((s) => ({
                 id: s.id,
-                nimi: toLocalizedText(locale, s.nimi, ''),
-                kuvaus: toLocalizedText(locale, s.kuvaus, ''),
+                nimi: localizeTextGroup(s.nimi?.texts, locale),
+                kuvaus: localizeTextGroup(s.kuvaus?.texts, locale),
             }))
             .sort((a, b) => a.nimi.localeCompare(b.nimi));
         const newNaytettavat = kayttooikeusryhmat.filter(

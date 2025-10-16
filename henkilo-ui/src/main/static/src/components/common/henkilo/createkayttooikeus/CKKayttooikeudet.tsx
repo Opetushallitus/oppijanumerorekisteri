@@ -1,13 +1,13 @@
 import React from 'react';
 
 import KayttooikeusryhmaSelectModal from '../../select/KayttooikeusryhmaSelectModal';
-import { toLocalizedText } from '../../../../localizabletext';
 import { myonnettyToKayttooikeusryhma } from '../../../../utils/KayttooikeusryhmaUtils';
 import {
     useGetAllowedKayttooikeusryhmasForOrganisationQuery,
     useGetOmattiedotQuery,
 } from '../../../../api/kayttooikeus';
 import { useLocalisations } from '../../../../selectors';
+import { localizeTextGroup } from '../../../../utilities/localisation.util';
 
 export type ValittuKayttooikeusryhma = {
     value: number;
@@ -47,12 +47,13 @@ const CKKayttooikeudet = ({
                 <KayttooikeusryhmaSelectModal
                     kayttooikeusryhmat={kayttooikeusryhmat}
                     kayttooikeusryhmaValittu={selectedList.length > 0}
-                    onSelect={(kayttooikeusryhma) =>
+                    onSelect={(kayttooikeusryhma) => {
+                        console.log(kayttooikeusryhma);
                         addKayttooikeus({
                             value: kayttooikeusryhma.id,
-                            label: toLocalizedText(locale, kayttooikeusryhma.nimi),
-                        })
-                    }
+                            label: localizeTextGroup(kayttooikeusryhma.nimi.texts, locale),
+                        });
+                    }}
                     loading={isLoading}
                     isOrganisaatioSelected={!!selectedOrganisationOid}
                     sallittuKayttajatyyppi={isPalvelukayttaja ? 'PALVELU' : 'VIRKAILIJA'}
