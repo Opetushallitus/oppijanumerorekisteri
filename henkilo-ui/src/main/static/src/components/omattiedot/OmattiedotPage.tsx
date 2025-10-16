@@ -1,9 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useRef } from 'react';
 
-import { useAppDispatch, type RootState } from '../../store';
-import { fetchHenkilo, clearHenkilo } from '../../actions/henkilo.actions';
-import { HenkiloState, isHenkiloStateLoading } from '../../reducers/henkilo.reducer';
 import Loader from '../common/icons/Loader';
 import { useGetKayttooikeusAnomuksetForHenkiloQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { useLocalisations } from '../../selectors';
@@ -15,29 +11,21 @@ import HenkiloViewExistingKayttooikeus from '../common/henkilo/HenkiloViewExisti
 import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
 import HenkiloViewExpiredKayttooikeus from '../common/henkilo/HenkiloViewExpiredKayttooikeus';
 import { HenkiloViewCreateKayttooikeusanomus } from '../common/henkilo/HenkiloViewCreateKayttooikeusanomus';
+import { useGetHenkiloQuery } from '../../api/oppijanumerorekisteri';
 
 export const OmattiedotPage = () => {
-    const { data: omattiedot, isLoading } = useGetOmattiedotQuery();
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
-    const dispatch = useAppDispatch();
+    const { data: omattiedot, isSuccess: isOmattiedotSuccess } = useGetOmattiedotQuery();
+    const { isSuccess: isHenkiloSuccess } = useGetHenkiloQuery(omattiedot?.oidHenkilo, { skip: !omattiedot });
     const { L } = useLocalisations();
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
-    const { data: anomukset, isLoading: isAnomuksetLoading } = useGetKayttooikeusAnomuksetForHenkiloQuery(
+    const { data: anomukset, isSuccess: isAnomusetSuccess } = useGetKayttooikeusAnomuksetForHenkiloQuery(
         omattiedot.oidHenkilo,
-        { skip: !omattiedot.oidHenkilo }
+        { skip: !omattiedot }
     );
 
     useTitle(L['TITLE_OMAT_TIEDOT']);
 
-    useEffect(() => {
-        if (omattiedot?.oidHenkilo) {
-            const userOid = omattiedot.oidHenkilo;
-            dispatch(clearHenkilo());
-            dispatch<any>(fetchHenkilo(userOid));
-        }
-    }, [omattiedot]);
-
-    if (isLoading || isHenkiloStateLoading(henkilo) || isAnomuksetLoading) {
+    if (!isOmattiedotSuccess || !isHenkiloSuccess || !isAnomusetSuccess) {
         return <Loader />;
     } else {
         return (
@@ -50,7 +38,7 @@ export const OmattiedotPage = () => {
                     <Mfa henkiloOid={omattiedot.oidHenkilo} view="omattiedot" />
                 </div>
                 <div className="wrapper">
-                    <HenkiloViewContactContent view="omattiedot" readOnly={true} />
+                    <HenkiloViewContactContent henkiloOid={omattiedot.oidHenkilo} view="omattiedot" readOnly={true} />
                 </div>
                 <div className="wrapper" ref={existingKayttooikeusRef}>
                     <HenkiloViewExistingKayttooikeus
@@ -64,10 +52,10 @@ export const OmattiedotPage = () => {
                     <HenkiloViewOpenKayttooikeusanomus anomukset={anomukset ?? []} isOmattiedot={true} />
                 </div>
                 <div className="wrapper">
-                    <HenkiloViewExpiredKayttooikeus oidHenkilo={henkilo.henkilo.oidHenkilo} isOmattiedot={true} />
+                    <HenkiloViewExpiredKayttooikeus oidHenkilo={omattiedot.oidHenkilo} isOmattiedot={true} />
                 </div>
                 <div className="wrapper">
-                    <HenkiloViewCreateKayttooikeusanomus />
+                    <HenkiloViewCreateKayttooikeusanomus henkiloOid={omattiedot.oidHenkilo} />
                 </div>
             </div>
         );

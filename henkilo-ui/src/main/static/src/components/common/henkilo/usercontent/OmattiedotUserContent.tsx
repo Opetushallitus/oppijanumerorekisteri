@@ -1,7 +1,5 @@
 import React, { SyntheticEvent, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 
-import type { RootState } from '../../../../store';
 import AbstractUserContent from './AbstractUserContent';
 import Sukunimi from '../labelvalues/Sukunimi';
 import Etunimet from '../labelvalues/Etunimet';
@@ -10,7 +8,6 @@ import Oid from '../labelvalues/Oid';
 import Oppijanumero from '../labelvalues/Oppijanumero';
 import Asiointikieli from '../labelvalues/Asiointikieli';
 import EditButton from '../buttons/EditButton';
-import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import Loader from '../../icons/Loader';
 import Kayttajanimi from '../labelvalues/Kayttajanimi';
 import PasswordButton from '../buttons/PasswordButton';
@@ -25,6 +22,7 @@ import HenkiloVarmentajaSuhde from '../labelvalues/HenkiloVarmentajaSuhde';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
 import { useGetKayttajatiedotQuery, useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
+import { useGetHenkiloQuery } from '../../../../api/oppijanumerorekisteri';
 
 type OwnProps = {
     readOnly: boolean;
@@ -40,7 +38,7 @@ type OwnProps = {
 };
 
 const OmattiedotUserContent = (props: OwnProps) => {
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { isLoading: isHenkiloLoading } = useGetHenkiloQuery(props.oidHenkilo);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: kayttajatiedot, isLoading } = useGetKayttajatiedotQuery(props.oidHenkilo);
 
@@ -53,11 +51,13 @@ const OmattiedotUserContent = (props: OwnProps) => {
             [
                 <Etunimet
                     key="omattiedot-etunimet"
+                    henkiloOid={props.oidHenkilo}
                     readOnly={props.readOnly}
                     updateModelFieldAction={props.updateModelAction}
                 />,
                 <Sukunimi
                     key="omattiedot-sukunimi"
+                    henkiloOid={props.oidHenkilo}
                     readOnly={props.readOnly}
                     updateModelFieldAction={props.updateModelAction}
                 />,
@@ -69,11 +69,13 @@ const OmattiedotUserContent = (props: OwnProps) => {
                 />,
                 <Hetu
                     key="omattiedot-hetu"
+                    henkiloOid={props.oidHenkilo}
                     readOnly={props.readOnly}
                     updateModelFieldAction={props.updateModelAction}
                 />,
                 <Kutsumanimi
                     key="omattiedot-kutsumanimi"
+                    henkiloOid={props.oidHenkilo}
                     readOnly={props.readOnly}
                     updateModelFieldAction={props.updateModelAction}
                 />,
@@ -99,10 +101,16 @@ const OmattiedotUserContent = (props: OwnProps) => {
                 />,
                 <Oppijanumero
                     key="omattiedot-oppijanumero"
+                    henkiloOid={props.oidHenkilo}
                     readOnly={props.readOnly}
                     updateModelFieldAction={props.updateModelAction}
                 />,
-                <Oid key="omattiedot-oid" readOnly={props.readOnly} updateModelFieldAction={props.updateModelAction} />,
+                <Oid
+                    key="omattiedot-oid"
+                    henkiloOid={props.oidHenkilo}
+                    readOnly={props.readOnly}
+                    updateModelFieldAction={props.updateModelAction}
+                />,
                 <Asiointikieli
                     key="omattiedot-asiointikieli"
                     readOnly={props.readOnly}
@@ -152,7 +160,7 @@ const OmattiedotUserContent = (props: OwnProps) => {
         ];
     };
 
-    return henkilo.henkiloLoading || isLoading ? (
+    return isHenkiloLoading || isLoading ? (
         <Loader />
     ) : (
         <AbstractUserContent

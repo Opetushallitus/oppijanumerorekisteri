@@ -1,7 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 
-import rootReducer from './reducers';
 import { kayttooikeusApi } from './api/kayttooikeus';
 import { oppijanumerorekisteriApi } from './api/oppijanumerorekisteri';
 import { lokalisointiApi } from './api/lokalisointi';
@@ -16,7 +15,6 @@ const isClient = typeof window !== 'undefined';
 
 export const store = configureStore({
     reducer: {
-        ...rootReducer,
         henkilohaku: henkilohakuReducer,
         toasts: toastReducer,
         navigation: navigationReducer,

@@ -14,11 +14,10 @@ import HakaIcon from '../../components/common/icons/HakaIcon';
 import Salasana from '../../components/common/henkilo/labelvalues/Salasana';
 import Kayttajanimi from '../../components/common/henkilo/labelvalues/Kayttajanimi';
 import Kutsumanimi from '../../components/common/henkilo/labelvalues/Kutsumanimi';
-import Sukunimi from '../../components/common/henkilo/labelvalues/Sukunimi';
-import Etunimet from '../../components/common/henkilo/labelvalues/Etunimet';
 import { toSupportedLocale } from '../../selectors';
 import { NamedSelectOption } from '../../utilities/select';
 import { RekisteroidyRequest, usePostRekisteroidyMutation } from '../../api/kayttooikeus';
+import LabelValue from '../../components/common/henkilo/labelvalues/LabelValue';
 
 import './RekisteroidyPage.css';
 
@@ -193,8 +192,24 @@ export const RekisteroidyPage = (props: OwnProps) => {
                         <div className="wrapper flex-item-1">
                             <div>
                                 <p className="oph-h3 oph-bold">{props.L['REKISTEROIDY_PERUSTIEDOT']}</p>
-                                <Etunimet readOnly={true} />
-                                <Sukunimi readOnly={true} />
+                                <LabelValue
+                                    readOnly={true}
+                                    values={{
+                                        label: 'HENKILO_ETUNIMET',
+                                        value: kutsu.etunimi,
+                                        inputValue: 'etunimet',
+                                        disabled: false,
+                                    }}
+                                />
+                                <LabelValue
+                                    readOnly={true}
+                                    values={{
+                                        label: 'HENKILO_SUKUNIMI',
+                                        value: kutsu?.sukunimi,
+                                        inputValue: 'sukunimi',
+                                        disabled: false,
+                                    }}
+                                />
                                 <Kutsumanimi
                                     readOnly={false}
                                     defaultValue={henkilo.kutsumanimi}

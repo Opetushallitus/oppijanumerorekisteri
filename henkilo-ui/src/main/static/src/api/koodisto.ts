@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-import { getCommonOptions } from '../http';
+import { getCommonOptions } from './common';
 
 export type Koodi = {
     koodiArvo: string;

@@ -1,12 +1,11 @@
 import React, { SyntheticEvent } from 'react';
-import { useSelector } from 'react-redux';
 
-import type { RootState } from '../../../../store';
 import LabelValue from './LabelValue';
 import StaticUtils from '../../StaticUtils';
-import { HenkiloState } from '../../../../reducers/henkilo.reducer';
+import { useGetHenkiloQuery } from '../../../../api/oppijanumerorekisteri';
 
 type OwnProps = {
+    henkiloOid: string;
     readOnly: boolean;
     autofocus?: boolean;
     updateModelFieldAction?: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
@@ -14,7 +13,7 @@ type OwnProps = {
 };
 
 const Sukunimi = (props: OwnProps) => {
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data: henkilo } = useGetHenkiloQuery(props.henkiloOid);
     return (
         <LabelValue
             readOnly={props.readOnly}
@@ -22,9 +21,9 @@ const Sukunimi = (props: OwnProps) => {
             autofocus={props.autofocus}
             values={{
                 label: props.label || 'HENKILO_SUKUNIMI',
-                value: henkilo.henkilo.sukunimi,
+                value: henkilo?.sukunimi,
                 inputValue: 'sukunimi',
-                disabled: StaticUtils.isVahvastiYksiloity(henkilo.henkilo),
+                disabled: StaticUtils.isVahvastiYksiloity(henkilo),
             }}
         />
     );

@@ -1,10 +1,10 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../../../store';
+
 import LabelValue from './LabelValue';
-import { HenkiloState } from '../../../../reducers/henkilo.reducer';
+import { useGetHenkiloQuery } from '../../../../api/oppijanumerorekisteri';
 
 type OwnProps = {
+    henkiloOid?: string;
     isError?: boolean;
     readOnly: boolean;
     updateModelFieldAction: (arg0: React.SyntheticEvent<HTMLInputElement>) => void;
@@ -12,14 +12,14 @@ type OwnProps = {
 };
 
 const Kutsumanimi = (props: OwnProps) => {
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data: henkilo } = useGetHenkiloQuery(props.henkiloOid, { skip: !props.henkiloOid });
     return (
         <LabelValue
             readOnly={props.readOnly}
             updateModelFieldAction={props.updateModelFieldAction}
             values={{
                 label: 'HENKILO_KUTSUMANIMI',
-                value: props.defaultValue || henkilo.henkilo.kutsumanimi,
+                value: props.defaultValue || henkilo?.kutsumanimi,
                 inputValue: 'kutsumanimi',
                 isError: props.isError,
             }}

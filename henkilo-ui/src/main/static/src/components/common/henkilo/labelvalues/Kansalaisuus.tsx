@@ -1,15 +1,13 @@
 import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import Select from 'react-select';
 
-import type { RootState } from '../../../../store';
 import StaticUtils from '../../StaticUtils';
-import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { NamedMultiSelectOption } from '../../../../utilities/select';
 import { FieldlessLabelValue } from './FieldlessLabelValue';
 import { useGetKansalaisuudetQuery } from '../../../../api/koodisto';
 import { useLocalisations } from '../../../../selectors';
+import { useGetHenkiloQuery } from '../../../../api/oppijanumerorekisteri';
 
 type OwnProps = {
     henkiloUpdate: Henkilo;
@@ -20,8 +18,8 @@ type OwnProps = {
 const Kansalaisuus = (props: OwnProps) => {
     const { locale } = useLocalisations();
     const kansalaisuus = props.henkiloUpdate.kansalaisuus || [];
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
-    const disabled = StaticUtils.isVahvastiYksiloity(henkilo.henkilo);
+    const { data: henkilo } = useGetHenkiloQuery(props.henkiloUpdate.oidHenkilo);
+    const disabled = StaticUtils.isVahvastiYksiloity(henkilo);
     const { data } = useGetKansalaisuudetQuery();
     const options = useMemo(() => {
         return (

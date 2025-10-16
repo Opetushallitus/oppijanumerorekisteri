@@ -1,6 +1,5 @@
 import { oppijaNavi, virkailijaNavi } from './navigationconfigurations';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
-import { HenkiloState } from '../../reducers/henkilo.reducer';
 import { Yksilointitieto } from '../../types/domain/oppijanumerorekisteri/yksilointitieto.types';
 import { NaviTab } from '../../types/navigation.type';
 
@@ -24,19 +23,19 @@ export const vtjDataAvailable = (yksilointitieto: Yksilointitieto | null | undef
  */
 export const henkiloViewTabs = (
     oidHenkilo: string,
-    henkilo: HenkiloState | undefined,
+    isHenkiloLoading: boolean,
+    henkilo: Henkilo | undefined,
     henkiloType: string,
     masterHenkiloOid?: string,
     yksilointitiedot?: Yksilointitieto
 ): Array<NaviTab> => {
-    const currentHenkilo = henkilo?.henkilo;
     if (!henkiloType) {
         henkiloType = 'virkailija';
     }
     const tabs = henkiloType === 'virkailija' ? virkailijaNavi(oidHenkilo) : oppijaNavi(oidHenkilo);
 
     // Wait until all needed and correct data has been fetched before enabling tabs to prevent them switching on/off
-    if (henkilo?.henkiloLoading && henkilo?.henkilo.oidHenkilo !== oidHenkilo) {
+    if (isHenkiloLoading || henkilo?.oidHenkilo !== oidHenkilo) {
         return tabs;
     }
 
@@ -46,7 +45,7 @@ export const henkiloViewTabs = (
         }
         if (
             tab.label === 'NAVI_VTJ_VERTAILU' &&
-            enabledVtjVertailuView(currentHenkilo) &&
+            enabledVtjVertailuView(henkilo) &&
             vtjDataAvailable(yksilointitiedot)
         ) {
             tab.disabled = false;

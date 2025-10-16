@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import moment from 'moment';
 
-import { useAppDispatch, type RootState } from '../../store';
 import BasicInfoForm from './BasicinfoForm';
 import { KutsuConfirmation } from './KutsuConfirmation';
 import Loader from '../common/icons/Loader';
 import { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import ValidationMessageButton from '../common/button/ValidationMessageButton';
 import { ValidationMessage } from '../../types/validation.type';
-import { fetchHenkilo } from '../../actions/henkilo.actions';
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
 import { validateEmail } from '../../validation/EmailValidator';
 import { useLocalisations } from '../../selectors';
-import { HenkiloState } from '../../reducers/henkilo.reducer';
 import Button from '../common/button/Button';
 import PropertySingleton from '../../globals/PropertySingleton';
 import AddedOrganization from './AddedOrganization';
@@ -22,6 +18,7 @@ import { useGetOmattiedotQuery, useGetOrganisaatioRyhmatQuery } from '../../api/
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { mainNavigation } from '../navigation/navigationconfigurations';
+import { useGetHenkiloQuery } from '../../api/oppijanumerorekisteri';
 
 const initialBasicInfo = {
     etunimi: '',
@@ -38,13 +35,12 @@ type ValidationMessages = {
 };
 
 const KutsuminenPage = () => {
-    const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
     useTitle(L['TITLE_KUTSULOMAKE']);
     useNavigation(mainNavigation, false);
     const { data: omattiedot } = useGetOmattiedotQuery();
+    const { data: henkilo, isLoading } = useGetHenkiloQuery(omattiedot.oidHenkilo);
     const { isLoading: ryhmatLoading } = useGetOrganisaatioRyhmatQuery();
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const initialValidationMessages: ValidationMessages = {
         organisaatioKayttooikeus: {
             id: 'organisaatioKayttooikeus',
@@ -67,10 +63,6 @@ const KutsuminenPage = () => {
     const [basicInfo, setBasicInfo] = useState<KutsuBasicInfo>({ ...initialBasicInfo });
     const [kutsuOrganisaatios, setKutsuOrganisaatios] = useState<KutsuOrganisaatio[]>([]);
     const [validationMessages, setValidationMessages] = useState<ValidationMessages>({ ...initialValidationMessages });
-
-    useEffect(() => {
-        dispatch<any>(fetchHenkilo(omattiedot.oidHenkilo));
-    }, []);
 
     useEffect(() => {
         setValidationMessages({
@@ -143,14 +135,14 @@ const KutsuminenPage = () => {
         setKutsuOrganisaatios(newOrgs);
     }
 
-    if (henkilo.henkiloLoading || ryhmatLoading) {
+    if (isLoading || ryhmatLoading) {
         return (
             <div className="wrapper">
                 <Loader />
             </div>
         );
     } else {
-        const disabled = !henkilo.henkilo.hetu || !henkilo.henkilo.yksiloityVTJ;
+        const disabled = !henkilo?.hetu || !henkilo?.yksiloityVTJ;
         return (
             <div>
                 <form className="mainContent wrapper">

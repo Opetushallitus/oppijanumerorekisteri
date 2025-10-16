@@ -1,5 +1,4 @@
 import React, { SyntheticEvent, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 
 import AbstractUserContent from './AbstractUserContent';
 import Sukunimi from '../labelvalues/Sukunimi';
@@ -10,7 +9,6 @@ import Oppijanumero from '../labelvalues/Oppijanumero';
 import Asiointikieli from '../labelvalues/Asiointikieli';
 import EditButton from '../buttons/EditButton';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
-import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import Loader from '../../icons/Loader';
 import Kayttajanimi from '../labelvalues/Kayttajanimi';
 import LinkitetytHenkilot from '../labelvalues/LinkitetytHenkilot';
@@ -20,7 +18,7 @@ import PasswordButton from '../buttons/PasswordButton';
 import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
 import { useGetKayttajatiedotQuery, useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
-import { RootState } from '../../../../store';
+import { useGetHenkiloQuery } from '../../../../api/oppijanumerorekisteri';
 
 type OwnProps = {
     readOnly: boolean;
@@ -36,7 +34,7 @@ type OwnProps = {
 };
 
 function VirkailijaUserContent(props: OwnProps) {
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data: henkilo, isLoading: isHenkiloLoading } = useGetHenkiloQuery(props.oidHenkilo);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: kayttajatiedot, isLoading } = useGetKayttajatiedotQuery(props.oidHenkilo);
 
@@ -50,6 +48,7 @@ function VirkailijaUserContent(props: OwnProps) {
     function createBasicInfo() {
         const infoProps = {
             readOnly: props.readOnly,
+            henkiloOid: props.oidHenkilo,
             updateModelFieldAction: props.updateModelAction,
             updateModelSelectAction: props.updateModelSelectAction,
             updateDateFieldAction: props.updateDateAction,
@@ -71,15 +70,15 @@ function VirkailijaUserContent(props: OwnProps) {
             ],
             [
                 <Kayttajanimi key="virkailija-kayttajanimi" {...infoProps} disabled={true} />,
-                <LinkitetytHenkilot key="virkailija-linkitetyt" />,
+                <LinkitetytHenkilot key="virkailija-linkitetyt" henkiloOid={props.oidHenkilo} />,
                 <MasterHenkilo key="virkailija-master" oidHenkilo={props.oidHenkilo} />,
             ],
         ];
     }
 
     function createReadOnlyButtons() {
-        const duplicate = henkilo.henkilo.duplicate;
-        const passivoitu = henkilo.henkilo.passivoitu;
+        const duplicate = henkilo?.duplicate;
+        const passivoitu = henkilo?.passivoitu;
         const kayttajatunnukseton = !kayttajatiedot?.username;
         const editButton = hasHenkiloReadUpdateRights ? (
             <EditButton editAction={props.edit} disabled={duplicate || passivoitu} />
@@ -106,7 +105,7 @@ function VirkailijaUserContent(props: OwnProps) {
 
         return [editButton, hakaButton, passwordButton];
     }
-    return henkilo.henkiloLoading || isLoading ? (
+    return isHenkiloLoading || isLoading ? (
         <Loader />
     ) : (
         <AbstractUserContent

@@ -1,12 +1,9 @@
 import React, { SyntheticEvent } from 'react';
-import { useSelector } from 'react-redux';
 
-import type { RootState } from '../../../../store';
 import AbstractUserContent from './AbstractUserContent';
 import Sukunimi from '../labelvalues/Sukunimi';
 import EditButton from '../buttons/EditButton';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
-import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import Loader from '../../icons/Loader';
 import Oid from '../labelvalues/Oid';
 import Kayttajanimi from '../labelvalues/Kayttajanimi';
@@ -15,6 +12,7 @@ import PassivoiButton from '../buttons/PassivoiButton';
 import AktivoiButton from '../buttons/AktivoiButton';
 import PoistaKayttajatunnusButton from '../buttons/PoistaKayttajatunnusButton';
 import { useGetKayttajatiedotQuery, useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
+import { useGetHenkiloQuery } from '../../../../api/oppijanumerorekisteri';
 
 type OwnProps = {
     readOnly: boolean;
@@ -29,16 +27,25 @@ type OwnProps = {
 };
 
 const PalveluUserContent = (props: OwnProps) => {
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data: henkilo, isLoading: isHenkiloLoading } = useGetHenkiloQuery(props.oidHenkilo);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: kayttajatiedot } = useGetKayttajatiedotQuery(props.oidHenkilo);
 
     const createBasicInfo = () => {
         return [
-            [<Sukunimi key="palveluuser-sukunimi" autofocus={true} label="HENKILO_PALVELUN_NIMI" {...props} />],
+            [
+                <Sukunimi
+                    key="palveluuser-sukunimi"
+                    henkiloOid={props.oidHenkilo}
+                    readOnly={props.readOnly}
+                    autofocus={true}
+                    label="HENKILO_PALVELUN_NIMI"
+                />,
+            ],
             [
                 <Oid
                     key="palveluuser-oid"
+                    henkiloOid={props.oidHenkilo}
                     readOnly={props.readOnly}
                     updateModelFieldAction={props.updateModelAction}
                 />,
@@ -55,17 +62,21 @@ const PalveluUserContent = (props: OwnProps) => {
 
     // Basic info default buttons
     const createReadOnlyButtons = () => {
-        const duplicate = henkilo.henkilo.duplicate;
-        const passivoitu = henkilo.henkilo.passivoitu;
+        const duplicate = henkilo?.duplicate;
+        const passivoitu = henkilo?.passivoitu;
         const kayttajatunnukseton = !kayttajatiedot?.username;
         return [
             <EditButton key="editbutton" editAction={props.edit} disabled={duplicate || passivoitu} />,
-            omattiedot?.isAdmin ? <PassivoiButton disabled={duplicate || passivoitu} /> : null,
-            omattiedot?.isAdmin && henkilo.henkilo.passivoitu ? (
-                <AktivoiButton oidHenkilo={henkilo.henkilo.oidHenkilo} />
+            omattiedot?.isAdmin ? (
+                <PassivoiButton
+                    henkiloOid={props.oidHenkilo}
+                    passivoitu={henkilo?.passivoitu}
+                    disabled={duplicate || passivoitu}
+                />
             ) : null,
+            omattiedot?.isAdmin && henkilo?.passivoitu ? <AktivoiButton oidHenkilo={henkilo?.oidHenkilo} /> : null,
             !kayttajatunnukseton && omattiedot.isAdmin ? (
-                <PoistaKayttajatunnusButton henkiloOid={henkilo.henkilo.oidHenkilo} />
+                <PoistaKayttajatunnusButton henkiloOid={henkilo?.oidHenkilo} />
             ) : null,
             <PasswordButton
                 key="passwordbutton"
@@ -76,7 +87,7 @@ const PalveluUserContent = (props: OwnProps) => {
         ];
     };
 
-    return henkilo.henkiloLoading ? (
+    return isHenkiloLoading ? (
         <Loader />
     ) : (
         <AbstractUserContent

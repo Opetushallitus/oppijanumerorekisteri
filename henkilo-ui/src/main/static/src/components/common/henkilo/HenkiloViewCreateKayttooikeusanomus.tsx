@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
 import Select, { createFilter } from 'react-select';
 
-import { useAppDispatch, type RootState } from '../../../store';
+import { useAppDispatch } from '../../../store';
 import Button from '../button/Button';
 import IconButton from '../button/IconButton';
 import CrossCircleIcon from '../icons/CrossCircleIcon';
@@ -12,7 +11,6 @@ import Loader from '../icons/Loader';
 import OrganisaatioSelectModal from '../select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import { LocalNotification } from '../Notification/LocalNotification';
-import { HenkiloState } from '../../../reducers/henkilo.reducer';
 import { NOTIFICATIONTYPES } from '../Notification/notificationtypes';
 import { OrganisaatioWithChildren } from '../../../types/domain/organisaatio/organisaatio.types';
 import type { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
@@ -26,9 +24,11 @@ import {
     usePostKayttooikeusAnomusMutation,
 } from '../../../api/kayttooikeus';
 import { FastMenuList, SelectOption } from '../../../utilities/select';
+import { add } from '../../../slices/toastSlice';
+import { useGetHenkiloQuery } from '../../../api/oppijanumerorekisteri';
+import { Henkilo } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
 
 import './HenkiloViewCreateKayttooikeusanomus.css';
-import { add } from '../../../slices/toastSlice';
 
 type KayttooikeusryhmaSelection = {
     value: number;
@@ -36,10 +36,10 @@ type KayttooikeusryhmaSelection = {
     description: string;
 };
 
-export const HenkiloViewCreateKayttooikeusanomus = () => {
+export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string }) => {
     const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data: henkilo, isLoading } = useGetHenkiloQuery(props.henkiloOid);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const [showInstructions, setShowInstructions] = useState(false);
     const [organisationSelection, setOrganisationSelection] = useState<OrganisaatioSelectObject>();
@@ -77,7 +77,7 @@ export const HenkiloViewCreateKayttooikeusanomus = () => {
         setEmailOptions(createEmailOptions(henkilo));
     }, [henkilo]);
 
-    function createEmailOptions(henkilo: HenkiloState) {
+    function createEmailOptions(henkilo: Henkilo) {
         const emailOptions = _parseEmailOptions(henkilo);
         if (emailOptions.length === 1) {
             return {
@@ -133,10 +133,10 @@ export const HenkiloViewCreateKayttooikeusanomus = () => {
         setEmailOptions(createEmailOptions(henkilo));
     }
 
-    function _parseEmailOptions(henkilo: HenkiloState): { value: string; label: string }[] {
+    function _parseEmailOptions(henkilo: Henkilo): { value: string; label: string }[] {
         const emails = [];
-        if (henkilo.henkilo.yhteystiedotRyhma) {
-            henkilo.henkilo.yhteystiedotRyhma.forEach((yhteystietoRyhma) => {
+        if (henkilo?.yhteystiedotRyhma) {
+            henkilo.yhteystiedotRyhma.forEach((yhteystietoRyhma) => {
                 yhteystietoRyhma.yhteystieto.forEach((yhteys) => {
                     if (yhteys.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI') {
                         emails.push(yhteys.yhteystietoArvo);
@@ -195,7 +195,7 @@ export const HenkiloViewCreateKayttooikeusanomus = () => {
             });
     }
 
-    return henkilo.henkiloLoading ? (
+    return isLoading ? (
         <Loader />
     ) : (
         <div className="kayttooikeus-anomus-wrapper">

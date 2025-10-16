@@ -1,8 +1,7 @@
-import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery, FetchBaseQueryMeta, retry } from '@reduxjs/toolkit/query/react';
 
-import { getCommonOptions } from '../http';
+import { getCommonOptions } from './common';
 import { Localisations } from '../types/localisation.type';
-import { fetchHenkilo } from '../actions/henkilo.actions';
 import { Locale } from '../types/locale.type';
 import { TuontiKooste, TuontiKoosteCriteria } from '../types/tuontikooste.types';
 import { Tuontidata } from '../types/tuontidata.types';
@@ -41,6 +40,8 @@ type GetDuplicatesRequest = {
     syntymaaika?: string;
 };
 
+type GetHenkiloResponse = Henkilo & { henkiloKayttoEstetty: boolean };
+
 const staggeredBaseQuery = retry(
     fetchBaseQuery({
         ...getCommonOptions(),
@@ -52,6 +53,8 @@ const staggeredBaseQuery = retry(
     }),
     { maxRetries: 5 }
 );
+
+const isKayttoEstetty = (meta: FetchBaseQueryMeta) => meta.response?.status === 403 || meta.response?.status === 401;
 
 export const oppijanumerorekisteriApi = createApi({
     reducerPath: 'oppijanumerorekisteriApi',
@@ -77,6 +80,17 @@ export const oppijanumerorekisteriApi = createApi({
                 responseHandler: 'text',
             }),
         }),
+        getHenkilo: builder.query<GetHenkiloResponse, string>({
+            query: (oid) => `henkilo/${oid}`,
+            providesTags: ['henkilo'],
+            transformResponse: (data: Henkilo) => {
+                return { ...data, henkiloKayttoEstetty: false };
+            },
+            transformErrorResponse: (_data, meta) => {
+                return { henkiloKayttoEstetty: isKayttoEstetty(meta) };
+            },
+            extraOptions: { maxRetries: 0 }, // valid api responses include status codes 401 and 403
+        }),
         getLocale: builder.query<Locale, void>({
             query: () => ({
                 url: 'henkilo/current/asiointiKieli',
@@ -89,7 +103,7 @@ export const oppijanumerorekisteriApi = createApi({
                 url: `henkilo/${oid}/access`,
                 method: 'DELETE',
             }),
-            async onQueryStarted(oid, { dispatch, queryFulfilled }) {
+            async onQueryStarted(_oid, { dispatch, queryFulfilled }) {
                 await queryFulfilled;
                 dispatch(
                     kayttooikeusApi.util.invalidateTags([
@@ -98,8 +112,8 @@ export const oppijanumerorekisteriApi = createApi({
                         'kayttajatiedot',
                     ])
                 );
-                dispatch<any>(fetchHenkilo(oid));
             },
+            invalidatesTags: ['henkilo'],
         }),
         getPassinumerot: builder.query<Passinumerot, string>({
             query: (oid) => `henkilo/${oid}/passinumerot`,
@@ -181,7 +195,6 @@ export const oppijanumerorekisteriApi = createApi({
             async onQueryStarted({ oidHenkilo, L }, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
-                    dispatch(fetchHenkilo(oidHenkilo));
                 } catch (_err) {
                     dispatch(
                         add({
@@ -202,10 +215,7 @@ export const oppijanumerorekisteriApi = createApi({
                 method: 'POST',
             }),
             extraOptions: { maxRetries: 0 },
-            async onQueryStarted(oid, { dispatch, queryFulfilled }) {
-                await queryFulfilled;
-                dispatch(fetchHenkilo(oid));
-            },
+            invalidatesTags: ['henkilo'],
         }),
         puraYksilointi: builder.mutation<void, string>({
             query: (oid: string) => ({
@@ -213,10 +223,7 @@ export const oppijanumerorekisteriApi = createApi({
                 method: 'POST',
             }),
             extraOptions: { maxRetries: 0 },
-            async onQueryStarted(oid, { dispatch, queryFulfilled }) {
-                await queryFulfilled;
-                dispatch(fetchHenkilo(oid));
-            },
+            invalidatesTags: ['henkilo'],
         }),
         passivoiHenkilo: builder.mutation<void, string>({
             query: (oid: string) => ({
@@ -224,10 +231,7 @@ export const oppijanumerorekisteriApi = createApi({
                 method: 'DELETE',
             }),
             extraOptions: { maxRetries: 0 },
-            async onQueryStarted(oid, { dispatch, queryFulfilled }) {
-                await queryFulfilled;
-                dispatch(fetchHenkilo(oid));
-            },
+            invalidatesTags: ['henkilo'],
         }),
         getTuontikooste: builder.query<TuontiKooste, { L: Localisations; criteria: TuontiKoosteCriteria }>({
             query: ({ criteria }) => ({
@@ -305,6 +309,7 @@ export const oppijanumerorekisteriApi = createApi({
                 body: request,
                 responseHandler: 'text',
             }),
+            invalidatesTags: ['henkilo'],
         }),
         henkiloExists: builder.mutation<{ oid: string; status: number }, CreateHenkiloRequest>({
             query: (request) => ({
@@ -338,6 +343,7 @@ export const oppijanumerorekisteriApi = createApi({
                 { type: 'master', id: slaveOid },
                 { type: 'slaves', id: masterOid },
                 { type: 'slaves', id: slaveOid },
+                'henkilo',
             ],
         }),
         getHenkiloDuplicates: builder.query<HenkiloDuplicate[], { oid: string; L: Localisations }>({
@@ -411,6 +417,7 @@ export const oppijanumerorekisteriApi = createApi({
 
 export const {
     useGetOnrPrequelQuery,
+    useGetHenkiloQuery,
     useDeleteAccessMutation,
     useGetLocaleQuery,
     useGetPassinumerotQuery,

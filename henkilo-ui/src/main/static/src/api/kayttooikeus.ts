@@ -1,9 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-import { getCommonOptions } from '../http';
+import { getCommonOptions } from './common';
 import { OrganisaatioHenkilo } from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { Omattiedot } from '../types/domain/kayttooikeus/Omattiedot.types';
-import { FETCH_HENKILO_SUCCESS } from '../actions/actiontypes';
 import { Locale } from '../types/locale.type';
 import { KutsuRead } from '../types/domain/kayttooikeus/Kutsu.types';
 import {
@@ -294,19 +293,6 @@ export const kayttooikeusApi = createApi({
         }),
         getKutsuByToken: builder.query<KutsuRead, string>({
             query: (token) => `kutsu/token/${token}`,
-            async onQueryStarted(_token, { dispatch, queryFulfilled }) {
-                const { data } = await queryFulfilled;
-                dispatch({
-                    type: FETCH_HENKILO_SUCCESS,
-                    henkilo: {
-                        ...data,
-                        etunimet: data.etunimi,
-                        asiointiKieli: {
-                            kieliKoodi: data.asiointikieli,
-                        },
-                    },
-                });
-            },
             providesTags: ['kutsuByToken'],
         }),
         getAccessRightReport: builder.query<AccessRightsReportRow[], string>({

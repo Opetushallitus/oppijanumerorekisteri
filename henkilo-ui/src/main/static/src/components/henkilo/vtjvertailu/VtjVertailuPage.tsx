@@ -1,21 +1,19 @@
-import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React from 'react';
 import { useParams } from 'react-router';
 
-import { useAppDispatch, type RootState } from '../../../store';
-import { fetchHenkilo } from '../../../actions/henkilo.actions';
+import { useAppDispatch } from '../../../store';
 import VtjVertailuListaus from './VtjVertailuListaus';
 import Loader from '../../common/icons/Loader';
 import Button from '../../common/button/Button';
 import { enabledVtjVertailuView, henkiloViewTabs } from '../../navigation/NavigationTabs';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
-import { HenkiloState } from '../../../reducers/henkilo.reducer';
 import { useLocalisations } from '../../../selectors';
 import { useTitle } from '../../../useTitle';
 import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
 import { useNavigation } from '../../../useNavigation';
 import {
     useGetHenkiloMasterQuery,
+    useGetHenkiloQuery,
     useGetYksilointitiedotQuery,
     usePutYliajaYksiloimatonMutation,
 } from '../../../api/oppijanumerorekisteri';
@@ -26,31 +24,32 @@ type OwnProps = {
 };
 
 export const VtjVertailuPage = (props: OwnProps) => {
-    const params = useParams();
-    const oidHenkilo = params.oid;
+    const { oid } = useParams();
     const dispatch = useAppDispatch();
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data: henkilo, isLoading: isHenkiloLoading } = useGetHenkiloQuery(oid);
     const { data: omattiedot } = useGetOmattiedotQuery();
-    const { data: master } = useGetHenkiloMasterQuery(params.oid);
+    const { data: master } = useGetHenkiloMasterQuery(oid);
     const { L } = useLocalisations();
-    const yksilointitiedotQuery = useGetYksilointitiedotQuery(henkilo.henkilo.oidHenkilo);
+    const yksilointitiedotQuery = useGetYksilointitiedotQuery(oid);
     const [yliajaYksiloimaton] = usePutYliajaYksiloimatonMutation();
 
     useTitle(L['TITLE_VTJ_VERTAILU']);
     useNavigation(
-        henkiloViewTabs(oidHenkilo, henkilo, props.henkiloType, master?.oidHenkilo, yksilointitiedotQuery.data),
+        henkiloViewTabs(
+            oid,
+            isHenkiloLoading,
+            henkilo,
+            props.henkiloType,
+            master?.oidHenkilo,
+            yksilointitiedotQuery.data
+        ),
         true
     );
 
-    useEffect(() => {
-        dispatch<any>(fetchHenkilo(oidHenkilo));
-    }, []);
-
     async function overrideHenkiloInformation(): Promise<void> {
-        await yliajaYksiloimaton(oidHenkilo)
+        await yliajaYksiloimaton(oid)
             .unwrap()
             .then(() => {
-                fetchHenkilo(oidHenkilo)(dispatch);
                 dispatch(
                     add({
                         id: `HENKILOVTJYLIAJOISUCCESS-${Math.random()}`,
@@ -77,12 +76,12 @@ export const VtjVertailuPage = (props: OwnProps) => {
             'OPPIJANUMEROREKISTERI_VTJ_VERTAILUNAKYMA',
             'OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI',
         ]);
-        const currentUserIsViewedHenkilo = oidHenkilo === omattiedot?.oidHenkilo;
-        const isEnabledVtjVertailuView = enabledVtjVertailuView(henkilo.henkilo);
+        const currentUserIsViewedHenkilo = oid === omattiedot?.oidHenkilo;
+        const isEnabledVtjVertailuView = enabledVtjVertailuView(henkilo);
         return !isEnabledVtjVertailuView || currentUserIsViewedHenkilo || !hasAccess;
     }
 
-    return yksilointitiedotQuery.isLoading || henkilo.henkiloLoading ? (
+    return yksilointitiedotQuery.isLoading || isHenkiloLoading ? (
         <Loader />
     ) : (
         <div className="mainContent wrapper">

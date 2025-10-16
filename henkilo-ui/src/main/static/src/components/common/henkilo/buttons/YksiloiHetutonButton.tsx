@@ -1,21 +1,20 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { type RootState } from '../../../../store';
+
 import ConfirmButton from '../../button/ConfirmButton';
-import { HenkiloState } from '../../../../reducers/henkilo.reducer';
-import { useYksiloiHetutonMutation } from '../../../../api/oppijanumerorekisteri';
+import { useGetHenkiloQuery, useYksiloiHetutonMutation } from '../../../../api/oppijanumerorekisteri';
 import { isHenkiloValidForYksilointi } from '../../../../validation/YksilointiValidator';
 import { ButtonNotification } from '../../button/NotificationButton';
 import { useLocalisations } from '../../../../selectors';
 import StaticUtils from '../../StaticUtils';
 
 type OwnProps = {
+    henkiloOid: string;
     disabled?: boolean;
 };
 
 const YksiloiHetutonButton = (props: OwnProps) => {
     const { L } = useLocalisations();
-    const { henkilo } = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data: henkilo } = useGetHenkiloQuery(props.henkiloOid);
     const [yksiloiHetuton] = useYksiloiHetutonMutation();
     const [notification, setNotification] = useState<ButtonNotification>();
     if (StaticUtils.isVahvastiYksiloity(henkilo) || henkilo.yksiloity || henkilo.hetu) {
@@ -27,7 +26,7 @@ const YksiloiHetutonButton = (props: OwnProps) => {
             key="yksilointi"
             action={() =>
                 isHenkiloValidForYksilointi(henkilo)
-                    ? yksiloiHetuton(henkilo.oidHenkilo)
+                    ? yksiloiHetuton(henkilo?.oidHenkilo)
                           .unwrap()
                           .catch(() =>
                               setNotification({

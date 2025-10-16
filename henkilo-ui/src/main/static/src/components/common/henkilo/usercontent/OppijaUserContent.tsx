@@ -1,7 +1,5 @@
 import React, { SyntheticEvent, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 
-import type { RootState } from '../../../../store';
 import AbstractUserContent from './AbstractUserContent';
 import Sukunimi from '../labelvalues/Sukunimi';
 import Etunimet from '../labelvalues/Etunimet';
@@ -16,7 +14,6 @@ import Asiointikieli from '../labelvalues/Asiointikieli';
 import EditButton from '../buttons/EditButton';
 import YksiloiHetutonButton from '../buttons/YksiloiHetutonButton';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
-import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import Loader from '../../icons/Loader';
 import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
 import LinkitetytHenkilot from '../labelvalues/LinkitetytHenkilot';
@@ -24,6 +21,7 @@ import MasterHenkilo from '../labelvalues/MasterHenkilo';
 import Sukupuoli from '../labelvalues/Sukupuoli';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
 import { useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
+import { useGetHenkiloQuery } from '../../../../api/oppijanumerorekisteri';
 
 type OwnProps = {
     readOnly: boolean;
@@ -39,7 +37,7 @@ type OwnProps = {
 };
 
 function OppijaUserContent(props: OwnProps) {
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data: henkilo, isLoading } = useGetHenkiloQuery(props.oidHenkilo);
     const { data: omattiedot } = useGetOmattiedotQuery();
 
     const hasHenkiloReadUpdateRights = useMemo(() => {
@@ -63,8 +61,9 @@ function OppijaUserContent(props: OwnProps) {
             updateModelSelectAction: props.updateModelSelectAction,
             updateDateFieldAction: props.updateDateAction,
             henkiloUpdate: props.henkiloUpdate,
+            henkiloOid: props.oidHenkilo,
         };
-        const oid = henkilo?.henkilo?.oidHenkilo;
+        const oid = henkilo?.oidHenkilo;
 
         // Basic info box content
         return [
@@ -84,26 +83,26 @@ function OppijaUserContent(props: OwnProps) {
                 <Asiointikieli key={`asiointikieli_${oid}`} {...basicInfoProps} />,
             ],
             [
-                <LinkitetytHenkilot key={`linkitetyt_${oid}`} oppija={true} />,
+                <LinkitetytHenkilot key={`linkitetyt_${oid}`} henkiloOid={props.oidHenkilo} oppija={true} />,
                 <MasterHenkilo key={`master_${oid}`} oidHenkilo={props.oidHenkilo} oppija={true} />,
             ],
         ];
     }
 
     function createReadOnlyButtons() {
-        const duplicate = henkilo.henkilo.duplicate;
-        const passivoitu = henkilo.henkilo.passivoitu;
+        const duplicate = henkilo?.duplicate;
+        const passivoitu = henkilo?.passivoitu;
 
         const editButton = hasHenkiloReadUpdateRights ? (
             <EditButton editAction={props.edit} disabled={duplicate || passivoitu} />
         ) : null;
         const yksiloiHetutonButton = hasYksilointiRights ? (
-            <YksiloiHetutonButton disabled={duplicate || passivoitu} />
+            <YksiloiHetutonButton henkiloOid={props.oidHenkilo} disabled={duplicate || passivoitu} />
         ) : null;
 
         return [editButton, yksiloiHetutonButton];
     }
-    return henkilo.henkiloLoading ? (
+    return isLoading ? (
         <Loader />
     ) : (
         <AbstractUserContent

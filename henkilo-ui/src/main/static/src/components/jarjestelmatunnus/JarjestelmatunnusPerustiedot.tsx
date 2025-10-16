@@ -1,20 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import moment from 'moment';
-import { useSelector } from 'react-redux';
 
 import { JarjestelmatunnusCasModal } from './JarjestelmatunnusCasModal';
 import PropertySingleton from '../../globals/PropertySingleton';
 import { JarjestelmatunnusOauth2Modal } from './JarjestelmatunnusOauth2Modal';
-import { HenkiloState } from '../../reducers/henkilo.reducer';
 import { OphDsInput } from '../design-system/OphDsInput';
-import { useUpdateHenkiloMutation } from '../../api/oppijanumerorekisteri';
-import { fetchHenkilo } from '../../actions/henkilo.actions';
+import { useGetHenkiloQuery, useUpdateHenkiloMutation } from '../../api/oppijanumerorekisteri';
 import { add } from '../../slices/toastSlice';
 import OphModal from '../common/modal/OphModal';
 import { useGetPalvelukayttajaQuery } from '../../api/kayttooikeus';
 import { OphDsBanner } from '../design-system/OphDsBanner';
-import { RootState, useAppDispatch } from '../../store';
+import { useAppDispatch } from '../../store';
 import { useLocalisations } from '../../selectors';
 
 export const JarjestelmatunnusPerustiedot = () => {
@@ -24,10 +21,16 @@ export const JarjestelmatunnusPerustiedot = () => {
     const [muokkaa, setMuokkaa] = useState(false);
     const [oauth2Modal, setOauth2Modal] = useState(false);
     const [casModal, setCasModal] = useState(false);
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data: henkilo } = useGetHenkiloQuery(params.oid);
     const [updateHenkilo, { isLoading: isUpdatingHenkilo }] = useUpdateHenkiloMutation();
     const { data: jarjestelmatunnus } = useGetPalvelukayttajaQuery(params.oid);
-    const [palvelunNimi, setPalvelunNimi] = useState(henkilo.henkilo.sukunimi);
+    const [palvelunNimi, setPalvelunNimi] = useState(henkilo?.sukunimi);
+
+    useEffect(() => {
+        if (henkilo) {
+            setPalvelunNimi(henkilo.sukunimi);
+        }
+    }, [henkilo]);
 
     const updatePerustiedot = async () => {
         await updateHenkilo({ oidHenkilo: params.oid, sukunimi: palvelunNimi })
@@ -40,7 +43,6 @@ export const JarjestelmatunnusPerustiedot = () => {
                         type: 'ok',
                     })
                 );
-                dispatch<any>(fetchHenkilo(params.oid));
                 setMuokkaa(false);
             })
             .catch(() => {
@@ -63,7 +65,7 @@ export const JarjestelmatunnusPerustiedot = () => {
                         <form onSubmit={updatePerustiedot}>
                             <OphDsInput
                                 id="palvelunnimi"
-                                defaultValue={henkilo.henkilo.sukunimi}
+                                defaultValue={henkilo?.sukunimi}
                                 label={L['HENKILO_PALVELUN_NIMI']}
                                 onChange={setPalvelunNimi}
                             />
@@ -89,7 +91,7 @@ export const JarjestelmatunnusPerustiedot = () => {
                         <>
                             <div className="jarjestelmatunnus-edit-info-grid">
                                 <div>{L['HENKILO_PALVELUN_NIMI']}</div>
-                                <div data-test-id="palvelunnimi">{henkilo.henkilo.sukunimi}</div>
+                                <div data-test-id="palvelunnimi">{henkilo?.sukunimi}</div>
                             </div>
                             <button className="oph-ds-button" onClick={() => setMuokkaa(true)}>
                                 {L['MUOKKAA_PALVELUN_NIMEA']}

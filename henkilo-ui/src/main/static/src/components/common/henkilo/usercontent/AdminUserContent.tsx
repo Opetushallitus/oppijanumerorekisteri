@@ -1,7 +1,5 @@
 import React, { SyntheticEvent, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 
-import type { RootState } from '../../../../store';
 import AbstractUserContent from './AbstractUserContent';
 import Sukunimi from '../labelvalues/Sukunimi';
 import Etunimet from '../labelvalues/Etunimet';
@@ -17,7 +15,6 @@ import EditButton from '../buttons/EditButton';
 import YksiloiHetutonButton from '../buttons/YksiloiHetutonButton';
 import PassivoiButton from '../buttons/PassivoiButton';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
-import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import Loader from '../../icons/Loader';
 import Kayttajanimi from '../labelvalues/Kayttajanimi';
 import LinkitetytHenkilot from '../labelvalues/LinkitetytHenkilot';
@@ -34,6 +31,7 @@ import PoistaKayttajatunnusButton from '../buttons/PoistaKayttajatunnusButton';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
 import { useGetKayttajatiedotQuery, useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
 import StaticUtils from '../../StaticUtils';
+import { useGetHenkiloQuery } from '../../../../api/oppijanumerorekisteri';
 
 type OwnProps = {
     readOnly: boolean;
@@ -49,7 +47,7 @@ type OwnProps = {
 };
 
 function AdminUserContent(props: OwnProps) {
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data: henkilo, isLoading: isHenkiloLoading } = useGetHenkiloQuery(props.oidHenkilo);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: kayttajatiedot, isLoading } = useGetKayttajatiedotQuery(props.oidHenkilo);
 
@@ -70,6 +68,7 @@ function AdminUserContent(props: OwnProps) {
             updateModelSelectAction: props.updateModelSelectAction,
             updateDateFieldAction: props.updateDateAction,
             henkiloUpdate: props.henkiloUpdate,
+            henkiloOid: props.oidHenkilo,
         };
 
         // Basic info box content
@@ -96,7 +95,7 @@ function AdminUserContent(props: OwnProps) {
                     kayttajatiedot={kayttajatiedot}
                     disabled={!omattiedot?.isAdmin || !kayttajatiedot?.username}
                 />,
-                <LinkitetytHenkilot key="admin-linkitetythenkilot" />,
+                <LinkitetytHenkilot key="admin-linkitetythenkilot" henkiloOid={props.oidHenkilo} />,
                 <MasterHenkilo key="admin-masterhenkilo" oidHenkilo={props.oidHenkilo} />,
             ],
         ];
@@ -109,37 +108,38 @@ function AdminUserContent(props: OwnProps) {
             width: '15rem',
             padding: '30px',
         };
-        const duplicate = henkilo.henkilo.duplicate;
-        const passivoitu = henkilo.henkilo.passivoitu;
+        const disabled = henkilo?.duplicate || henkilo?.passivoitu;
         const kayttajatunnukseton = !kayttajatiedot?.username;
         const editButton = hasHenkiloReadUpdateRights ? (
-            <EditButton editAction={props.edit} disabled={duplicate || passivoitu} />
+            <EditButton editAction={props.edit} disabled={disabled} />
         ) : null;
-        const yksiloiHetutonButton = <YksiloiHetutonButton disabled={duplicate || passivoitu} />;
+        const yksiloiHetutonButton = <YksiloiHetutonButton henkiloOid={props.oidHenkilo} disabled={disabled} />;
         const puraHetuttomanYksilointiButton =
-            henkilo.henkilo.yksiloity && !StaticUtils.isVahvastiYksiloity(henkilo.henkilo) && !henkilo.henkilo.hetu ? (
-                <PuraHetuttomanYksilointiButton disabled={duplicate || passivoitu} />
+            henkilo?.yksiloity && !StaticUtils.isVahvastiYksiloity(henkilo) && !henkilo?.hetu ? (
+                <PuraHetuttomanYksilointiButton henkiloOid={props.oidHenkilo} disabled={disabled} />
             ) : null;
         const passivoiButton =
-            !passivoitu && hasHenkiloReadUpdateRights ? <PassivoiButton disabled={duplicate || passivoitu} /> : null;
+            !henkilo?.passivoitu && hasHenkiloReadUpdateRights ? (
+                <PassivoiButton henkiloOid={props.oidHenkilo} passivoitu={henkilo.passivoitu} disabled={disabled} />
+            ) : null;
         const poistaKayttajatunnusBtn =
             isRekisterinpitaja && !kayttajatunnukseton ? (
-                <PoistaKayttajatunnusButton henkiloOid={henkilo.henkilo.oidHenkilo} />
+                <PoistaKayttajatunnusButton henkiloOid={henkilo?.oidHenkilo} />
             ) : null;
         const aktivoiButton =
-            passivoitu && hasHenkiloReadUpdateRights ? <AktivoiButton oidHenkilo={henkilo.henkilo.oidHenkilo} /> : null;
-        const hakaButton = (
-            <HakaButton oidHenkilo={props.oidHenkilo} styles={buttonPopupStyles} disabled={duplicate || passivoitu} />
-        );
+            henkilo?.passivoitu && hasHenkiloReadUpdateRights ? (
+                <AktivoiButton oidHenkilo={henkilo?.oidHenkilo} />
+            ) : null;
+        const hakaButton = <HakaButton oidHenkilo={props.oidHenkilo} styles={buttonPopupStyles} disabled={disabled} />;
         const passinumeroButton = isRekisterinpitaja ? (
             <PassinumeroButton oid={props.oidHenkilo} styles={buttonPopupStyles} />
         ) : null;
-        const vtjOverrideButton = <VtjOverrideButton disabled={duplicate || passivoitu} />;
+        const vtjOverrideButton = <VtjOverrideButton henkiloOid={props.oidHenkilo} disabled={disabled} />;
         const passwordButton = (
             <PasswordButton
                 oidHenkilo={props.oidHenkilo}
                 styles={{ top: '3rem', left: '0', width: '18rem' }}
-                disabled={duplicate || passivoitu || kayttajatunnukseton}
+                disabled={disabled || kayttajatunnukseton}
             />
         );
 
@@ -156,7 +156,7 @@ function AdminUserContent(props: OwnProps) {
             passwordButton,
         ];
     }
-    return henkilo.henkiloLoading || isLoading ? (
+    return isHenkiloLoading || isLoading ? (
         <Loader />
     ) : (
         <AbstractUserContent

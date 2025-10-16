@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useParams } from 'react-router';
 
 import { useLocalisations } from '../../selectors';
@@ -6,8 +6,6 @@ import { OphDsPage } from '../design-system/OphDsPage';
 import HenkiloViewCreateKayttooikeus from '../common/henkilo/HenkiloViewCreateKayttooikeus';
 import HenkiloViewExistingKayttooikeus from '../common/henkilo/HenkiloViewExistingKayttooikeus';
 import { HenkiloViewOrganisationContent } from '../common/henkilo/HenkiloViewOrganisationContent';
-import { useAppDispatch } from '../../store';
-import { clearHenkilo, fetchHenkilo } from '../../actions/henkilo.actions';
 import HenkiloViewExpiredKayttooikeus from '../common/henkilo/HenkiloViewExpiredKayttooikeus';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
@@ -17,23 +15,17 @@ import { JarjestelmatunnusPerustiedot } from './JarjestelmatunnusPerustiedot';
 import './JarjestelmatunnusEditPage.css';
 
 export const JarjestelmatunnusEditPage = () => {
-    const dispatch = useAppDispatch();
     const params = useParams();
     const { L } = useLocalisations();
     useTitle(L['JARJESTELMATUNNUKSEN_HALLINTA']);
     useNavigation(jarjestelmatunnusNavigation(params.oid), false);
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        dispatch(clearHenkilo());
-        dispatch<any>(fetchHenkilo(params.oid));
-    }, [params.oid]);
-
     return (
         <OphDsPage header={L['JARJESTELMATUNNUKSEN_HALLINTA']}>
             <JarjestelmatunnusPerustiedot />
             <hr />
-            <HenkiloViewOrganisationContent />
+            <HenkiloViewOrganisationContent henkiloOid={params.oid} />
             <hr />
             <HenkiloViewExistingKayttooikeus
                 existingKayttooikeusRef={existingKayttooikeusRef}

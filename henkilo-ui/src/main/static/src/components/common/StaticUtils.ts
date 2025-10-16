@@ -105,8 +105,8 @@ class StaticUtils {
         };
     }
 
-    static isVahvastiYksiloity(henkilo: Henkilo | HenkiloDuplicate) {
-        return henkilo.yksiloityVTJ || henkilo.yksiloityEidas;
+    static isVahvastiYksiloity(henkilo?: Henkilo | HenkiloDuplicate) {
+        return henkilo?.yksiloityVTJ || henkilo?.yksiloityEidas;
     }
 
     static getOrganisaatiotyypitFlat(tyypit: Array<string>, L: Localisations, uppercase?: boolean) {

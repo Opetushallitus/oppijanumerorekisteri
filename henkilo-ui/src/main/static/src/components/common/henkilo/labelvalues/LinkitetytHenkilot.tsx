@@ -1,31 +1,26 @@
 import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { Link } from 'react-router';
 
-import { useAppDispatch, type RootState } from '../../../../store';
 import LabelValueGroup from './LabelValueGroup';
 import TextButton from '../../button/TextButton';
-import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
 import HenkiloVarmentajaSuhde from './HenkiloVarmentajaSuhde';
 import { useLocalisations } from '../../../../selectors';
 import { useGetHenkiloSlavesQuery, useUnlinkHenkiloMutation } from '../../../../api/oppijanumerorekisteri';
-import { fetchHenkilo } from '../../../../actions/henkilo.actions';
 import { useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
 
 type OwnProps = {
+    henkiloOid: string;
     oppija?: boolean;
 };
 
 /**
  * Henkilön linkitykset (duplikaattislave- ja varmentaja-suhteet)
  */
-const LinkitetytHenkilot = ({ oppija }: OwnProps) => {
-    const dispatch = useAppDispatch();
+const LinkitetytHenkilot = ({ henkiloOid, oppija }: OwnProps) => {
     const { L } = useLocalisations();
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const { data: omattiedot } = useGetOmattiedotQuery();
-    const { data: slaves } = useGetHenkiloSlavesQuery(henkilo.henkilo.oidHenkilo);
+    const { data: slaves } = useGetHenkiloSlavesQuery(henkiloOid);
     const [unlinkHenkilo] = useUnlinkHenkiloMutation();
 
     const hasPermission = useMemo(() => {
@@ -46,7 +41,9 @@ const LinkitetytHenkilot = ({ oppija }: OwnProps) => {
                         {hasPermission && (
                             <span>
                                 <span> | </span>
-                                <TextButton action={() => removeLink(henkilo.henkilo.oidHenkilo, slave.oidHenkilo)}>
+                                <TextButton
+                                    action={() => unlinkHenkilo({ masterOid: henkiloOid, slaveOid: slave.oidHenkilo })}
+                                >
                                     {L['HENKILO_POISTA_LINKITYS']}
                                 </TextButton>
                             </span>
@@ -62,21 +59,13 @@ const LinkitetytHenkilot = ({ oppija }: OwnProps) => {
         return `/${url}/${oid}`;
     }
 
-    async function removeLink(masterOid: string, slaveOid: string) {
-        await unlinkHenkilo({ masterOid, slaveOid })
-            .unwrap()
-            .then(() => {
-                dispatch<any>(fetchHenkilo(henkilo.henkilo.oidHenkilo));
-            });
-    }
-
     return (
         <div>
             <React.Fragment>
                 {!!slaves?.length && <LabelValueGroup valueGroup={valueGroup()} label={'HENKILO_LINKITETYT'} />}
             </React.Fragment>
-            <HenkiloVarmentajaSuhde oidHenkilo={henkilo.henkilo.oidHenkilo} type="henkiloVarmentajas" />
-            <HenkiloVarmentajaSuhde oidHenkilo={henkilo.henkilo.oidHenkilo} type="henkiloVarmennettavas" />
+            <HenkiloVarmentajaSuhde oidHenkilo={henkiloOid} type="henkiloVarmentajas" />
+            <HenkiloVarmentajaSuhde oidHenkilo={henkiloOid} type="henkiloVarmennettavas" />
         </div>
     );
 };

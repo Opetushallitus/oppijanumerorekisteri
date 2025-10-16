@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { useReactTable, getCoreRowModel, ColumnDef } from '@tanstack/react-table';
 
 import './VtjVertailuListaus.css';
-import { HenkiloState } from '../../../reducers/henkilo.reducer';
 import { useLocalisations } from '../../../selectors';
 import OphTable from '../../OphTable';
 import { YhteystietoRyhma } from '../../../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
@@ -10,7 +9,7 @@ import { useGetYksilointitiedotQuery } from '../../../api/oppijanumerorekisteri'
 import { Henkilo } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
 
 type Props = {
-    henkilo: HenkiloState;
+    henkilo: Henkilo;
 };
 
 type HenkiloData = {
@@ -26,7 +25,7 @@ const emptyArray = [];
 
 const VtjVertailuListaus = ({ henkilo }: Props) => {
     const { L } = useLocalisations();
-    const yksilointitiedotQuery = useGetYksilointitiedotQuery(henkilo.henkilo.oidHenkilo);
+    const yksilointitiedotQuery = useGetYksilointitiedotQuery(henkilo.oidHenkilo);
 
     function renderSukupuoli(henkilo: HenkiloData) {
         if (henkilo.sukupuoli === '1') {
@@ -95,7 +94,7 @@ const VtjVertailuListaus = ({ henkilo }: Props) => {
     );
 
     const memoizedData = useMemo(() => {
-        const renderedData = [{ ...henkilo?.henkilo, palvelu: 'HENKILO_VTJ_HENKILOPALVELU' }];
+        const renderedData = [{ ...henkilo, palvelu: 'HENKILO_VTJ_HENKILOPALVELU' }];
         if (yksilointitiedotQuery.isSuccess) {
             renderedData.push({ ...(yksilointitiedotQuery.data as Henkilo), palvelu: 'HENKILO_VTJ_VRKPALVELU' });
         }
@@ -103,7 +102,7 @@ const VtjVertailuListaus = ({ henkilo }: Props) => {
             return undefined;
         }
         return renderedData;
-    }, [henkilo?.henkilo, yksilointitiedotQuery.data]);
+    }, [henkilo, yksilointitiedotQuery.data]);
 
     const table = useReactTable({
         data: memoizedData ?? emptyArray,

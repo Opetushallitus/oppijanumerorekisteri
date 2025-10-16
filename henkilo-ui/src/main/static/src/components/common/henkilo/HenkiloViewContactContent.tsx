@@ -1,6 +1,5 @@
 import './HenkiloViewContactContent.css';
 import React, { useEffect, useId, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
 
 import Field from '../field/Field';
 import Button from '../button/Button';
@@ -10,7 +9,6 @@ import PropertySingleton from '../../../globals/PropertySingleton';
 import AddIcon from '../icons/AddIcon';
 import IconButton from '../button/IconButton';
 import CrossIcon from '../icons/CrossIcon';
-import type { HenkiloState } from '../../../reducers/henkilo.reducer';
 import type { Henkilo } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { validateEmail } from '../../../validation/EmailValidator';
@@ -19,16 +17,17 @@ import { Yhteystieto } from '../../../types/domain/oppijanumerorekisteri/yhteyst
 import { YhteystietoRyhma } from '../../../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
 import { copy } from '../../../utilities/copy';
 import { KoodistoStateKoodi, useGetYhteystietotyypitQuery } from '../../../api/koodisto';
-import { RootState, useAppDispatch } from '../../../store';
+import { useAppDispatch } from '../../../store';
 import { useLocalisations } from '../../../selectors';
 import { useGetKayttajatiedotQuery, useGetOmattiedotQuery } from '../../../api/kayttooikeus';
 import { KayttajatiedotRead } from '../../../types/domain/kayttooikeus/KayttajatiedotRead';
-import { useUpdateHenkiloMutation } from '../../../api/oppijanumerorekisteri';
-import { fetchHenkilo } from '../../../actions/henkilo.actions';
+import { useGetHenkiloQuery, useUpdateHenkiloMutation } from '../../../api/oppijanumerorekisteri';
 import { add } from '../../../slices/toastSlice';
+import Loader from '../icons/Loader';
 
 type OwnProps = {
     readOnly: boolean;
+    henkiloOid: string;
     view: View;
 };
 
@@ -124,16 +123,16 @@ function createFlatYhteystieto(
 }
 
 const _initialiseYhteystiedot = (
-    henkiloUpdate: Henkilo,
     contactInfoTemplate: Array<{
         label: string;
         value?: string;
         inputValue?: string;
     }>,
     yhteystietotyypit: KoodistoStateKoodi[],
-    locale: string
+    locale: string,
+    henkiloUpdate?: Henkilo
 ) =>
-    henkiloUpdate.yhteystiedotRyhma?.map((yhteystiedotRyhma, idx) => {
+    henkiloUpdate?.yhteystiedotRyhma?.map((yhteystiedotRyhma, idx) => {
         const yhteystietoFlatList = createFlatYhteystieto(
             contactInfoTemplate,
             yhteystiedotRyhma.yhteystieto,
@@ -166,19 +165,19 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
     const yhteystietotyypitQuery = useGetYhteystietotyypitQuery();
     const dispatch = useAppDispatch();
     const { locale, L } = useLocalisations();
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data: henkilo, isLoading: isHenkiloLoading } = useGetHenkiloQuery(props.henkiloOid);
     const [putHenkilo] = useUpdateHenkiloMutation();
     const { data: omattiedot } = useGetOmattiedotQuery();
-    const { data: kayttajatiedot } = useGetKayttajatiedotQuery(henkilo.henkilo.oidHenkilo);
-    const [henkiloUpdate, setHenkiloUpdate] = useState(copy(henkilo.henkilo));
+    const { data: kayttajatiedot } = useGetKayttajatiedotQuery(props.henkiloOid);
+    const [henkiloUpdate, setHenkiloUpdate] = useState<Henkilo>();
     const [state, setState] = useState<State>({
         readOnly: props.readOnly,
         showPassive: false,
         contactInfo: _initialiseYhteystiedot(
-            henkiloUpdate,
             contactInfoTemplate,
             yhteystietotyypitQuery.data ?? [],
-            locale
+            locale,
+            henkiloUpdate
         ),
         yhteystietoRemoveList: [],
         isContactInfoValid: true,
@@ -196,16 +195,22 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
     }, [props.view, omattiedot]);
 
     useEffect(() => {
+        if (henkilo) {
+            setHenkiloUpdate(copy(henkilo));
+        }
+    }, [henkilo]);
+
+    useEffect(() => {
         setState({
             ...state,
             contactInfo: _initialiseYhteystiedot(
-                henkiloUpdate,
                 contactInfoTemplate,
                 yhteystietotyypitQuery.data ?? [],
-                locale
+                locale,
+                henkiloUpdate
             ),
         });
-    }, [yhteystietotyypitQuery.data]);
+    }, [yhteystietotyypitQuery.data, henkilo]);
 
     function _edit() {
         setState({ ...state, readOnly: false });
@@ -225,7 +230,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
     }
 
     function _discard() {
-        setHenkiloUpdate(copy(henkilo.henkilo));
+        setHenkiloUpdate(copy(henkilo));
         setState({
             ...state,
             readOnly: true,
@@ -270,7 +275,16 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
 
         putHenkilo(henkiloUpdate)
             .unwrap()
-            .then(() => fetchHenkilo(henkilo.henkilo.oidHenkilo)(dispatch))
+            .then(() => {
+                setState({ ...state, readOnly: true });
+                dispatch(
+                    add({
+                        id: `henkilo-update-ok-${Math.random()}`,
+                        type: 'ok',
+                        header: L['HENKILO_YHTEYSTIEDOT_OTSIKKO'],
+                    })
+                );
+            })
             .catch(() =>
                 dispatch(
                     add({
@@ -315,15 +329,17 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
     }
 
     const defaultWorkAddress = resolveDefaultWorkAddress(state.contactInfo, state.yhteystietoRemoveList);
-    const passivoitu = henkilo.henkilo.passivoitu;
-    const duplicate = henkilo.henkilo.duplicate;
     const sectionLabelId = useId();
+
+    if (isHenkiloLoading) {
+        return <Loader />;
+    }
 
     return (
         <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper contact-content">
             <div>
                 <h2 id={sectionLabelId}>{L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</h2>
-                {henkilo.henkilo.turvakielto ? (
+                {henkilo?.turvakielto ? (
                     <div className="oph-h3 oph-bold midHeader">{L['YHTEYSTIETO_TURVAKIELTO']}</div>
                 ) : null}
 
@@ -401,7 +417,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
             {state.readOnly ? (
                 <div className="henkiloViewButtons">
                     {hasHenkiloReadUpdateRights ? (
-                        <Button disabled={passivoitu || duplicate} key="contactEdit" action={_edit}>
+                        <Button disabled={henkilo.passivoitu || henkilo.duplicate} key="contactEdit" action={_edit}>
                             {L['MUOKKAA_LINKKI']}
                         </Button>
                     ) : null}

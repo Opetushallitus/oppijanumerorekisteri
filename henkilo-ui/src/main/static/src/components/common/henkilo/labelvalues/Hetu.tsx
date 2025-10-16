@@ -1,26 +1,26 @@
 import React, { SyntheticEvent } from 'react';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../../../store';
+
 import LabelValue from './LabelValue';
 import StaticUtils from '../../StaticUtils';
-import { HenkiloState } from '../../../../reducers/henkilo.reducer';
+import { useGetHenkiloQuery } from '../../../../api/oppijanumerorekisteri';
 
 type OwnProps = {
+    henkiloOid: string;
     readOnly: boolean;
     updateModelFieldAction: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
 };
 
 const Hetu = (props: OwnProps) => {
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data: henkilo } = useGetHenkiloQuery(props.henkiloOid);
     return (
         <LabelValue
             readOnly={props.readOnly}
             updateModelFieldAction={props.updateModelFieldAction}
             values={{
                 label: 'HENKILO_HETU',
-                value: henkilo.henkilo.hetu,
+                value: henkilo?.hetu,
                 inputValue: 'hetu',
-                disabled: StaticUtils.isVahvastiYksiloity(henkilo.henkilo),
+                disabled: StaticUtils.isVahvastiYksiloity(henkilo),
             }}
         />
     );

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import moment from 'moment';
 
-import { useAppDispatch, type RootState } from '../../../../store';
+import { useAppDispatch } from '../../../../store';
 import StaticUtils from '../../StaticUtils';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import OppijaUserContent from './OppijaUserContent';
@@ -18,7 +17,6 @@ import PropertySingleton from '../../../../globals/PropertySingleton';
 import { View } from '../../../../types/constants';
 import { copy } from '../../../../utilities/copy';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
-import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { useLocalisations } from '../../../../selectors';
 import {
     useGetKayttajatiedotQuery,
@@ -27,8 +25,7 @@ import {
     usePutKayttajatiedotMutation,
 } from '../../../../api/kayttooikeus';
 import { add } from '../../../../slices/toastSlice';
-import { useUpdateHenkiloMutation } from '../../../../api/oppijanumerorekisteri';
-import { fetchHenkilo } from '../../../../actions/henkilo.actions';
+import { useGetHenkiloQuery, useUpdateHenkiloMutation } from '../../../../api/oppijanumerorekisteri';
 
 type OwnProps = {
     oidHenkilo: string;
@@ -39,7 +36,7 @@ type OwnProps = {
 export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) => {
     const { L } = useLocalisations();
     const dispatch = useAppDispatch();
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data: henkilo } = useGetHenkiloQuery(oidHenkilo);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: kayttajatiedot } = useGetKayttajatiedotQuery(oidHenkilo, { skip: isOppija });
     const [putKayttajatiedot] = usePutKayttajatiedotMutation();
@@ -47,15 +44,15 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
     const [putHenkilo] = useUpdateHenkiloMutation();
     const [readOnly, setReadOnly] = useState(true);
     const [henkiloUpdate, setHenkiloUpdate] = useState<any>({
-        ...(henkilo.henkilo
-            ? { ...copy(henkilo.henkilo), anomusilmoitus: omattiedot?.anomusilmoitus }
+        ...(henkilo
+            ? { ...copy(henkilo), anomusilmoitus: omattiedot?.anomusilmoitus }
             : { anomusilmoitus: omattiedot?.anomusilmoitus }),
     });
 
     useEffect(() => {
         setHenkiloUpdate({
-            ...(henkilo.henkilo
-                ? { ...copy(henkilo.henkilo), anomusilmoitus: omattiedot?.anomusilmoitus }
+            ...(henkilo
+                ? { ...copy(henkilo), anomusilmoitus: omattiedot?.anomusilmoitus }
                 : { anomusilmoitus: omattiedot?.anomusilmoitus }),
         });
     }, [henkilo, omattiedot]);
@@ -69,30 +66,30 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
         if (kayttajatiedot?.kayttajaTyyppi === 'PALVELU') {
             info.push(L['HENKILO_ADDITIOINALINFO_PALVELU']);
         } else {
-            if (henkilo.henkilo.yksiloity) {
+            if (henkilo?.yksiloity) {
                 info.push(L['HENKILO_ADDITIONALINFO_YKSILOITY']);
             }
-            if (henkilo.henkilo.yksiloityEidas) {
+            if (henkilo?.yksiloityEidas) {
                 info.push(L['HENKILO_ADDITIONALINFO_YKSILOITYEIDAS']);
             }
-            if (henkilo.henkilo.yksiloityVTJ) {
+            if (henkilo?.yksiloityVTJ) {
                 info.push(L['HENKILO_ADDITIONALINFO_YKSILOITYVTJ']);
             }
-            if (!henkilo.henkilo.yksiloity && !henkilo.henkilo.yksiloityVTJ && !henkilo.henkilo.yksiloityEidas) {
+            if (!henkilo?.yksiloity && !henkilo?.yksiloityVTJ && !henkilo?.yksiloityEidas) {
                 info.push(L['HENKILO_ADDITIOINALINFO_EIYKSILOITY']);
             }
         }
-        if (henkilo.henkilo.duplicate) {
+        if (henkilo?.duplicate) {
             info.push(L['HENKILO_ADDITIONALINFO_DUPLIKAATTI']);
         }
-        if (henkilo.henkilo.passivoitu) {
+        if (henkilo?.passivoitu) {
             info.push(L['PASSIVOI_PASSIVOITU']);
         }
         return info.length ? ' (' + info.join(', ') + ')' : '';
     }
 
     function _discard() {
-        const henkiloUpdate = copy(henkilo.henkilo);
+        const henkiloUpdate = copy(henkilo);
         henkiloUpdate.anomusilmoitus = omattiedot?.anomusilmoitus;
         setHenkiloUpdate(henkiloUpdate);
         setReadOnly(true);
@@ -111,7 +108,6 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
     async function updateHenkilo(henkiloUpdate: Henkilo) {
         return putHenkilo(henkiloUpdate)
             .unwrap()
-            .then(() => fetchHenkilo(oidHenkilo)(dispatch))
             .catch((error) => {
                 const errorMessages = [];
                 if (error.status === 400 && error.data?.message && error.data?.message.indexOf('invalid.hetu') !== -1) {
@@ -199,11 +195,11 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
     };
 
     function _validYksilointi() {
-        return !(henkilo.henkilo.yksilointivirheet && henkilo.henkilo.yksilointivirheet.length);
+        return !(henkilo?.yksilointivirheet && henkilo?.yksilointivirheet.length);
     }
 
     function _getYksilointivirhe() {
-        const yksilointivirheet = henkilo.henkilo.yksilointivirheet;
+        const yksilointivirheet = henkilo?.yksilointivirheet;
         const virhe = yksilointivirheet[0];
         const yksilointivirheMap = {
             HETU_EI_OIKEA: 'HENKILO_YKSILOINTIVIRHE_HETU_EI_OIKEA',

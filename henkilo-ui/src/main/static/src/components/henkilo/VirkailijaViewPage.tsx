@@ -1,11 +1,7 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router';
 
-import { useAppDispatch, type RootState } from '../../store';
 import Loader from '../common/icons/Loader';
-import { clearHenkilo, fetchHenkilo } from '../../actions/henkilo.actions';
-import { HenkiloState, isHenkiloStateLoading } from '../../reducers/henkilo.reducer';
 import { useLocalisations } from '../../selectors';
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
 import {
@@ -16,7 +12,11 @@ import {
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { henkiloViewTabs } from '../navigation/NavigationTabs';
-import { useGetHenkiloMasterQuery, useGetYksilointitiedotQuery } from '../../api/oppijanumerorekisteri';
+import {
+    useGetHenkiloMasterQuery,
+    useGetHenkiloQuery,
+    useGetYksilointitiedotQuery,
+} from '../../api/oppijanumerorekisteri';
 import { UserContentContainer } from '../common/henkilo/usercontent/UserContentContainer';
 import { Identifications } from './Identifications';
 import Mfa from './Mfa';
@@ -36,13 +36,12 @@ const titles = {
 
 export const VirkailijaViewPage = () => {
     const { data: omattiedot } = useGetOmattiedotQuery();
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
     const [view, setView] = useState<View>('virkailija');
     const { L } = useLocalisations();
     const { oid } = useParams();
+    const { data: henkilo, isLoading: isHenkiloLoading } = useGetHenkiloQuery(oid);
     const { data: master } = useGetHenkiloMasterQuery(oid);
     const { data: kayttajatiedot } = useGetKayttajatiedotQuery(oid);
-    const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const isRekisterinpitaja = omattiedot ? isOnrRekisterinpitaja(omattiedot.organisaatiot) : false;
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
@@ -50,7 +49,10 @@ export const VirkailijaViewPage = () => {
     const { data: anomukset, isLoading: isAnomuksetLoading } = useGetKayttooikeusAnomuksetForHenkiloQuery(oid);
 
     useTitle(L[titles[view]]);
-    useNavigation(henkiloViewTabs(oid, henkilo, 'virkailija', master?.oidHenkilo, yksilointitiedotQuery.data), true);
+    useNavigation(
+        henkiloViewTabs(oid, isHenkiloLoading, henkilo, 'virkailija', master?.oidHenkilo, yksilointitiedotQuery.data),
+        true
+    );
 
     useEffect(() => {
         if (oid && omattiedot.oidHenkilo === oid) {
@@ -59,17 +61,14 @@ export const VirkailijaViewPage = () => {
         if (omattiedot.isAdmin) {
             setView('admin');
         }
-
-        dispatch(clearHenkilo());
-        dispatch<any>(fetchHenkilo(oid));
     }, [omattiedot, oid]);
 
     const henkilotunnisteetSectionLabel = useId();
     const mfaSectionLabelId = useId();
 
-    if (isHenkiloStateLoading(henkilo) || isAnomuksetLoading) {
+    if (isHenkiloLoading || isAnomuksetLoading) {
         return <Loader />;
-    } else if (henkilo.henkiloKayttoEstetty) {
+    } else if (henkilo?.henkiloKayttoEstetty) {
         return <VirheKayttoEstetty L={L} />;
     } else {
         return (
@@ -88,10 +87,10 @@ export const VirkailijaViewPage = () => {
                     <Mfa henkiloOid={oid} view={view} />
                 </section>
                 <div className="wrapper">
-                    <HenkiloViewContactContent view={view} readOnly={true} />
+                    <HenkiloViewContactContent henkiloOid={oid} view={view} readOnly={true} />
                 </div>
                 <div className="wrapper">
-                    <HenkiloViewOrganisationContent />
+                    <HenkiloViewOrganisationContent henkiloOid={oid} />
                 </div>
                 <div className="wrapper" ref={existingKayttooikeusRef}>
                     <HenkiloViewExistingKayttooikeus
@@ -105,7 +104,7 @@ export const VirkailijaViewPage = () => {
                     <HenkiloViewOpenKayttooikeusanomus anomukset={anomukset ?? []} isOmattiedot={false} />
                 </div>
                 <div className="wrapper">
-                    <HenkiloViewExpiredKayttooikeus oidHenkilo={henkilo.henkilo.oidHenkilo} isOmattiedot={false} />
+                    <HenkiloViewExpiredKayttooikeus oidHenkilo={oid} isOmattiedot={false} />
                 </div>
                 <div className="wrapper">
                     <HenkiloViewCreateKayttooikeus

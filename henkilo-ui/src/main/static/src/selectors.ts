@@ -38,14 +38,15 @@ export const useLocalisations = (): {
     getLocalisations: (l: string) => Localisations;
 } => {
     const { data: locale } = useGetLocaleQuery();
+    const supportedLocale = toSupportedLocale(locale);
     const { data: localisations } = useGetLocalisationsQuery('henkilo-ui');
     const { L, allLocalisations, getLocalisations } = useMemo(() => {
         const allLocalisations = mapLocalisationsByLocale(localisations);
-        const L = allLocalisations?.[toSupportedLocale(locale)];
+        const L = allLocalisations?.[supportedLocale];
         const getLocalisations = (l: string) => allLocalisations?.[toSupportedLocale(l)];
         return { L, allLocalisations, getLocalisations };
-    }, [localisations, locale]);
-    return { L, locale, allLocalisations, getLocalisations };
+    }, [localisations, supportedLocale]);
+    return { L, locale: supportedLocale, allLocalisations, getLocalisations };
 };
 
 export const useOmatOrganisaatiot = () => {

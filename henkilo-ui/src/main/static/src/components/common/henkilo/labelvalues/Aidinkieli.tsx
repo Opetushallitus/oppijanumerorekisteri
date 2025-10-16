@@ -1,15 +1,13 @@
 import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import Select from 'react-select';
 
-import type { RootState } from '../../../../store';
 import StaticUtils from '../../StaticUtils';
-import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { FieldlessLabelValue } from './FieldlessLabelValue';
 import { NamedSelectOption } from '../../../../utilities/select';
 import { useLocalisations } from '../../../../selectors';
 import { useGetKieletQuery } from '../../../../api/koodisto';
+import { useGetHenkiloQuery } from '../../../../api/oppijanumerorekisteri';
 
 type OwnProps = {
     henkiloUpdate: Henkilo;
@@ -19,7 +17,7 @@ type OwnProps = {
 
 const Aidinkieli = (props: OwnProps) => {
     const { locale } = useLocalisations();
-    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const { data: henkilo } = useGetHenkiloQuery(props.henkiloUpdate.oidHenkilo);
     const { data } = useGetKieletQuery();
     const options = useMemo(() => {
         return (
@@ -39,7 +37,7 @@ const Aidinkieli = (props: OwnProps) => {
                     options={options}
                     value={options.find((o) => o.value === props.henkiloUpdate.aidinkieli?.kieliKoodi)}
                     onChange={props.updateModelSelectAction}
-                    isDisabled={StaticUtils.isVahvastiYksiloity(henkilo.henkilo)}
+                    isDisabled={StaticUtils.isVahvastiYksiloity(henkilo)}
                 />
             )}
         </FieldlessLabelValue>
