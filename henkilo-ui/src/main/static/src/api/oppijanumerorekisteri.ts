@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery, FetchBaseQueryMeta, retry } from '@reduxjs/toolkit/query/react';
 
-import { getCommonOptions } from './common';
+import { getCommonOptions, isApiError } from './common';
 import { Localisations } from '../types/localisation.type';
 import { Locale } from '../types/locale.type';
 import { TuontiKooste, TuontiKoosteCriteria } from '../types/tuontikooste.types';
@@ -354,13 +354,15 @@ export const oppijanumerorekisteriApi = createApi({
                     await queryFulfilled;
                 } catch (error) {
                     let errorMessage = L['NOTIFICATION_DUPLIKAATIT_VIRHE'] + ' ' + oid;
-                    if (
-                        error.data?.message?.startsWith('Failed to read response from ataru') ||
-                        error.data?.message?.startsWith('Failed to fetch applications from ataru')
-                    ) {
-                        errorMessage = L['NOTIFICATION_DUPLIKAATIT_HAKEMUKSET_ATARU_VIRHE'] + ' ' + oid;
-                    } else if (error.data?.message?.startsWith('Failed fetching hakemuksetDto for henkilos')) {
-                        errorMessage = L['NOTIFICATION_DUPLIKAATIT_HAKEMUKSET_HAKUAPP_VIRHE'] + ' ' + oid;
+                    if (isApiError(error)) {
+                        if (
+                            error.data.message.startsWith('Failed to read response from ataru') ||
+                            error.data.message.startsWith('Failed to fetch applications from ataru')
+                        ) {
+                            errorMessage = L['NOTIFICATION_DUPLIKAATIT_HAKEMUKSET_ATARU_VIRHE'] + ' ' + oid;
+                        } else if (error.data.message.startsWith('Failed fetching hakemuksetDto for henkilos')) {
+                            errorMessage = L['NOTIFICATION_DUPLIKAATIT_HAKEMUKSET_HAKUAPP_VIRHE'] + ' ' + oid;
+                        }
                     }
                     dispatch(
                         add({
@@ -394,13 +396,15 @@ export const oppijanumerorekisteriApi = createApi({
                     await queryFulfilled;
                 } catch (error) {
                     let errorMessage = L['NOTIFICATION_HENKILO_HAKEMUKSET_VIRHE'] + ' ' + oid;
-                    if (
-                        error.data?.message?.startsWith('Failed to read response from ataru') ||
-                        error.data?.message?.startsWith('Failed to fetch applications from ataru')
-                    ) {
-                        errorMessage = L['NOTIFICATION_HENKILO_HAKEMUKSET_ATARU_VIRHE'] + ' ' + oid;
-                    } else if (error.data?.message?.startsWith('Failed fetching hakemuksetDto for henkilos')) {
-                        errorMessage = L['NOTIFICATION_HENKILO_HAKEMUKSET_HAKUAPP_VIRHE'] + ' ' + oid;
+                    if (isApiError(error)) {
+                        if (
+                            error.data.message.startsWith('Failed to read response from ataru') ||
+                            error.data.message.startsWith('Failed to fetch applications from ataru')
+                        ) {
+                            errorMessage = L['NOTIFICATION_HENKILO_HAKEMUKSET_ATARU_VIRHE'] + ' ' + oid;
+                        } else if (error.data.message.startsWith('Failed fetching hakemuksetDto for henkilos')) {
+                            errorMessage = L['NOTIFICATION_HENKILO_HAKEMUKSET_HAKUAPP_VIRHE'] + ' ' + oid;
+                        }
                     }
                     dispatch(
                         add({

@@ -17,3 +17,17 @@ export const getCommonOptions: () => RequestInit = () => ({
     },
     credentials: 'include',
 });
+
+export function isApiError(error: unknown): error is { status: number; data: { message: string } } {
+    return (
+        typeof error === 'object' &&
+        error != null &&
+        'status' in error &&
+        typeof error.status === 'number' &&
+        'data' in error &&
+        typeof error.data === 'object' &&
+        error.data != null &&
+        'message' in error.data &&
+        typeof error.data.message === 'string'
+    );
+}

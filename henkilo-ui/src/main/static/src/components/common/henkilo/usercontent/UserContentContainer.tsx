@@ -26,6 +26,7 @@ import {
 } from '../../../../api/kayttooikeus';
 import { add } from '../../../../slices/toastSlice';
 import { useGetHenkiloQuery, useUpdateHenkiloMutation } from '../../../../api/oppijanumerorekisteri';
+import { isApiError } from '../../../../api/common';
 
 type OwnProps = {
     oidHenkilo: string;
@@ -101,7 +102,7 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
         if (newHenkiloUpdate.kayttajanimi !== undefined) {
             await updateKayttajatiedot(newHenkiloUpdate);
         }
-        updateHenkilo(newHenkiloUpdate);
+        await updateHenkilo(newHenkiloUpdate);
         setReadOnly(true);
     }
 
@@ -110,11 +111,13 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
             .unwrap()
             .catch((error) => {
                 const errorMessages = [];
-                if (error.status === 400 && error.data?.message && error.data?.message.indexOf('invalid.hetu') !== -1) {
-                    errorMessages.push(L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU']);
-                }
-                if (error.status === 400 && JSON.stringify(error).includes('socialsecuritynr.already.exists')) {
-                    errorMessages.push(L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU_KAYTOSSA']);
+                if (isApiError(error)) {
+                    if (error.status === 400 && error.data.message?.indexOf('invalid.hetu') !== -1) {
+                        errorMessages.push(L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU']);
+                    }
+                    if (error.status === 400 && JSON.stringify(error).includes('socialsecuritynr.already.exists')) {
+                        errorMessages.push(L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU_KAYTOSSA']);
+                    }
                 }
                 if (errorMessages.length > 0) {
                     errorMessages.forEach((errorMessage) =>
@@ -155,10 +158,11 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
     async function updateKayttajatiedot(henkiloUpdate: Henkilo) {
         return putKayttajatiedot({ oid: henkiloUpdate.oidHenkilo, username: henkiloUpdate.kayttajanimi })
             .unwrap()
-            .catch((err) => {
-                const errorKey = err.data?.message?.includes('username_unique')
-                    ? 'NOTIFICATION_HENKILOTIEDOT_KAYTTAJANIMI_EXISTS'
-                    : 'NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE';
+            .catch((error) => {
+                const errorKey =
+                    isApiError(error) && error.data.message.includes('username_unique')
+                        ? 'NOTIFICATION_HENKILOTIEDOT_KAYTTAJANIMI_EXISTS'
+                        : 'NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE';
                 dispatch(
                     add({
                         id: `put-kayttajatiedot-${Math.random()}`,
