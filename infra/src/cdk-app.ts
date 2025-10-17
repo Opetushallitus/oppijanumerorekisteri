@@ -128,6 +128,21 @@ class AlarmStack extends cdk.Stack {
     this.alarmTopic.addSubscription(
       new sns_subscriptions.LambdaSubscription(this.alarmsToSlackLambda),
     );
+
+    const pagerDutyIntegrationUrlSecret =
+      secretsmanager.Secret.fromSecretNameV2(
+        this,
+        "PagerDutyIntegrationUrlSecret",
+        "/oppijanumero/PagerDutyIntegrationUrl"
+      );
+
+    this.alarmTopic.addSubscription(
+      new sns_subscriptions.UrlSubscription(
+        pagerDutyIntegrationUrlSecret.secretValue.toString(),
+        { protocol: sns.SubscriptionProtocol.HTTPS }
+      )
+    );
+
     this.exportValue(this.alarmTopic.topicArn);
   }
 
