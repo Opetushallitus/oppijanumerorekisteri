@@ -133,14 +133,14 @@ class AlarmStack extends cdk.Stack {
       secretsmanager.Secret.fromSecretNameV2(
         this,
         "PagerDutyIntegrationUrlSecret",
-        "/oppijanumero/PagerDutyIntegrationUrl"
+        "/oppijanumero/PagerDutyIntegrationUrl",
       );
 
     this.alarmTopic.addSubscription(
       new sns_subscriptions.UrlSubscription(
         pagerDutyIntegrationUrlSecret.secretValue.toString(),
-        { protocol: sns.SubscriptionProtocol.HTTPS }
-      )
+        { protocol: sns.SubscriptionProtocol.HTTPS },
+      ),
     );
 
     this.exportValue(this.alarmTopic.topicArn);
