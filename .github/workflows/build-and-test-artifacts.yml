@@ -5,6 +5,11 @@ on:
   pull_request:
 
 jobs:
+  run-prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: ./scripts/ci/run-prettier-check.sh
   run-henkilo-ui-tests:
     runs-on: ubuntu-latest
     steps:
