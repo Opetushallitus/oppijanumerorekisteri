@@ -1,6 +1,6 @@
 import './HenkilohakuFilters.css';
 import React, { useMemo, useState } from 'react';
-import Select, { createFilter } from 'react-select';
+import Select, { createFilter, SingleValue } from 'react-select';
 
 import OphCheckboxInline from '../common/forms/OphCheckboxInline';
 import SubOrganisationCheckbox from './criterias/SubOrganisationCheckbox';
@@ -23,7 +23,7 @@ import { OrganisaatioWithChildren } from '../../types/domain/organisaatio/organi
 import { FastMenuList, SelectOption } from '../../utilities/select';
 
 type OwnProps = {
-    ryhmaSelectionAction: (o: SelectOption) => void;
+    ryhmaSelectionAction: (o: SingleValue<SelectOption>) => void;
     selectedRyhma: string | undefined;
     selectedOrganisation?: Array<string> | string;
     selectedKayttooikeus: string | undefined;
@@ -33,7 +33,7 @@ type OwnProps = {
     noOrganisationAction: () => void;
     organisaatioSelectAction: (arg0: OrganisaatioSelectObject) => void;
     clearOrganisaatioSelection: () => void;
-    kayttooikeusSelectionAction: (o: SelectOption) => void;
+    kayttooikeusSelectionAction: (o: SingleValue<SelectOption>) => void;
     initialValues: HenkilohakuCriteria;
 };
 
@@ -42,7 +42,8 @@ const HenkilohakuFilters = (props: OwnProps) => {
     const { L, locale } = useLocalisations();
     const { data: allKayttooikeusryhmas } = useGetKayttooikeusryhmasQuery({ passiiviset: false });
     const { data: omattiedot } = useGetOmattiedotQuery();
-    const { data: henkilohakuOrganisaatiot, isLoading } = useGetHenkiloHakuOrganisaatiotQuery(omattiedot?.oidHenkilo, {
+    const oidHenkilo = omattiedot?.oidHenkilo;
+    const { data: henkilohakuOrganisaatiot, isLoading } = useGetHenkiloHakuOrganisaatiotQuery(oidHenkilo!, {
         skip: !omattiedot,
     });
 
@@ -54,9 +55,9 @@ const HenkilohakuFilters = (props: OwnProps) => {
         return (allKayttooikeusryhmas ?? [])
             .map((kayttooikeusryhma) => ({
                 value: `${kayttooikeusryhma.id}`,
-                label: StaticUtils.getLocalisedText(kayttooikeusryhma.description, locale),
+                label: StaticUtils.getLocalisedText(kayttooikeusryhma.description, locale) ?? '',
             }))
-            .sort((a, b) => a.label.localeCompare(b.label));
+            .sort((a, b) => (a.label && b.label ? a.label.localeCompare(b.label) : 1));
     }, [allKayttooikeusryhmas]);
 
     const clearOrganisaatioSelection = () => {
@@ -85,7 +86,7 @@ const HenkilohakuFilters = (props: OwnProps) => {
 
     return (
         <div className="henkilohakufilters-wrapper">
-            <OphCheckboxInline text={L['HENKILOHAKU_FILTERS_HAEMYOS']}>
+            <OphCheckboxInline text={L['HENKILOHAKU_FILTERS_HAEMYOS']!}>
                 {omattiedot?.isAdmin ? (
                     <div className="flex-inline">
                         <SubOrganisationCheckbox

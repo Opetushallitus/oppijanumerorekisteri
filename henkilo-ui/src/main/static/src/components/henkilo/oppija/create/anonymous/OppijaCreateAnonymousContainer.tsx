@@ -87,8 +87,8 @@ export const OppijaCreateAnonymousContainer = ({ goBack }: OwnProps) => {
                 <OppijaCreateDuplikaatit
                     tallenna={luoOppijaJaNavigoi}
                     peruuta={peruuta}
-                    oppija={oppija}
-                    duplikaatit={duplicates}
+                    oppija={{ ...oppija, passinumerot: null, yhteystiedotRyhma: null }}
+                    duplikaatit={duplicates ?? []}
                 />
             )}
         </div>

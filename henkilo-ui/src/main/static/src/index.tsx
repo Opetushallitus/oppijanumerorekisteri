@@ -15,10 +15,12 @@ import './flex.css';
 import './oph-design-system.css';
 
 const root = document.getElementById('root');
-ReactDOM.createRoot(root).render(
-    <BrowserRouter basename="/henkilo-ui">
-        <Provider store={store}>
-            <AppRoutes />
-        </Provider>
-    </BrowserRouter>
-);
+if (root) {
+    ReactDOM.createRoot(root).render(
+        <BrowserRouter basename="/henkilo-ui">
+            <Provider store={store}>
+                <AppRoutes />
+            </Provider>
+        </BrowserRouter>
+    );
+}

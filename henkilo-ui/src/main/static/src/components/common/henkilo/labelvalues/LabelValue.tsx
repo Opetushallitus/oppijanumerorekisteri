@@ -53,9 +53,9 @@ const LabelValue = ({
                     autofocus={autofocus}
                     disabled={values.disabled}
                     changeAction={!values.date ? updateModelFieldAction : updateDateFieldAction}
-                    readOnly={values.readOnly || readOnly}
+                    readOnly={!!values.readOnly || !!readOnly}
                 >
-                    {values.value}
+                    {values.value ?? ''}
                 </Field>
             </div>
         </div>

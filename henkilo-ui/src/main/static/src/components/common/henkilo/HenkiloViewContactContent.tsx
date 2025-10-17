@@ -32,7 +32,7 @@ type OwnProps = {
 };
 
 export type ContactInfo = {
-    id?: number;
+    id?: number | null;
     type: string;
     henkiloUiId?: string;
     name: string;
@@ -40,6 +40,12 @@ export type ContactInfo = {
     alkupera: string;
     value: Array<{ label: string; value: string; inputValue: string }>;
 };
+
+type ContactInfoTemplate = {
+    label: string;
+    value?: string | null;
+    inputValue?: string | null;
+}[];
 
 type State = {
     readOnly: boolean;
@@ -57,19 +63,22 @@ const containsEmail = (infoGroup: ContactInfo): boolean =>
     !!infoGroup.value.filter((info) => isEmail(info)).filter((info) => info.value).length;
 
 const isWorkEmail = (infoGroup: ContactInfo): boolean =>
-    infoGroup.id && infoGroup.type === WORK_ADDRESS && containsEmail(infoGroup);
+    !!infoGroup.id && infoGroup.type === WORK_ADDRESS && containsEmail(infoGroup);
 
 const excludeRemovedItems =
     (removeList: Array<number | string>) =>
     (infoGroup: ContactInfo): boolean =>
-        !removeList.includes(infoGroup.id) && !removeList.includes(infoGroup.henkiloUiId);
+        !!infoGroup.id &&
+        !removeList.includes(infoGroup.id) &&
+        !!infoGroup.henkiloUiId &&
+        !removeList.includes(infoGroup.henkiloUiId);
 
 const resolveWorkAddresses = (contactInfo: Array<ContactInfo>, removeList: Array<number | string>) =>
     (contactInfo || []).filter((infoGroup) => isWorkEmail(infoGroup)).filter(excludeRemovedItems(removeList));
 
 export const resolveDefaultWorkAddress = (contactInfo: Array<ContactInfo>, removeList: Array<number | string>) =>
     resolveWorkAddresses(contactInfo, removeList).reduce(
-        (acc, infoGroup) => (infoGroup.id > acc ? infoGroup.id : acc),
+        (acc, infoGroup) => (infoGroup.id && infoGroup.id > acc ? infoGroup.id : acc),
         0
     );
 
@@ -90,11 +99,7 @@ function validateContactInfo(contactInfoLabel: string, contactInfoValue: string)
 }
 
 function createFlatYhteystieto(
-    contactInfoTemplate: Array<{
-        label: string;
-        value?: string;
-        inputValue?: string;
-    }>,
+    contactInfoTemplate: ContactInfoTemplate,
     yhteystietoList: Array<Yhteystieto>,
     idx: number,
     yhteystiedotRyhma: YhteystietoRyhma,
@@ -106,31 +111,27 @@ function createFlatYhteystieto(
         value: contactInfoTemplate.map((template, idx2) => ({
             label: template.label,
             value:
-                yhteystietoList.filter((yhteystieto) => yhteystieto.yhteystietoTyyppi === template.label)[0] &&
                 yhteystietoList.filter((yhteystieto) => yhteystieto.yhteystietoTyyppi === template.label)[0]
-                    .yhteystietoArvo,
+                    ?.yhteystietoArvo ?? '',
             inputValue: 'yhteystiedotRyhma.' + idx + '.yhteystieto.' + idx2 + '.yhteystietoArvo',
         })),
         name:
-            yhteystiedotRyhma.ryhmaKuvaus &&
-            yhteystietotyypit?.filter((kieli) => kieli.value === yhteystiedotRyhma.ryhmaKuvaus)?.[0]?.[locale],
-        readOnly: yhteystiedotRyhma.readOnly,
+            (yhteystiedotRyhma.ryhmaKuvaus &&
+                yhteystietotyypit?.filter((kieli) => kieli.value === yhteystiedotRyhma.ryhmaKuvaus)?.[0]?.[locale]) ||
+            '',
+        readOnly: !!yhteystiedotRyhma.readOnly,
         id: yhteystiedotRyhma.id,
         henkiloUiId: henkiloUiId,
         type: yhteystiedotRyhma.ryhmaKuvaus,
-        alkupera: yhteystiedotRyhma.ryhmaAlkuperaTieto,
+        alkupera: yhteystiedotRyhma.ryhmaAlkuperaTieto ?? '',
     };
 }
 
 const _initialiseYhteystiedot = (
-    contactInfoTemplate: Array<{
-        label: string;
-        value?: string;
-        inputValue?: string;
-    }>,
+    contactInfoTemplate: ContactInfoTemplate,
     yhteystietotyypit: KoodistoStateKoodi[],
     locale: string,
-    henkiloUpdate?: Henkilo
+    henkiloUpdate?: Partial<Henkilo>
 ) =>
     henkiloUpdate?.yhteystiedotRyhma?.map((yhteystiedotRyhma, idx) => {
         const yhteystietoFlatList = createFlatYhteystieto(
@@ -146,13 +147,9 @@ const _initialiseYhteystiedot = (
             yhteystietoArvo: yhteystietoFlat.value,
         }));
         return yhteystietoFlatList;
-    });
+    }) ?? [];
 
-const contactInfoTemplate: {
-    label: string;
-    value?: string | null;
-    inputValue?: string | null;
-}[] = [
+const contactInfoTemplate: ContactInfoTemplate = [
     { label: 'YHTEYSTIETO_SAHKOPOSTI', value: null, inputValue: null },
     { label: 'YHTEYSTIETO_PUHELINNUMERO', value: null, inputValue: null },
     {
@@ -173,7 +170,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
     const [putHenkilo] = useUpdateHenkiloMutation();
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: kayttajatiedot } = useGetKayttajatiedotQuery(props.henkiloOid);
-    const [henkiloUpdate, setHenkiloUpdate] = useState<Henkilo>();
+    const [henkiloUpdate, setHenkiloUpdate] = useState<Partial<Henkilo>>({});
     const [state, setState] = useState<State>({
         readOnly: props.readOnly,
         showPassive: false,
@@ -234,11 +231,13 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
     }
 
     function _discard() {
-        setHenkiloUpdate(copy(henkilo));
+        if (henkilo) {
+            setHenkiloUpdate(copy(henkilo));
+        }
         setState({
             ...state,
             readOnly: true,
-            contactInfo: _preEditData.contactInfo,
+            contactInfo: _preEditData?.contactInfo ?? [],
             yhteystietoRemoveList: [],
             modified: false,
         });
@@ -268,7 +267,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
 
     async function _update() {
         state.yhteystietoRemoveList.forEach((yhteystietoId) =>
-            henkiloUpdate.yhteystiedotRyhma.splice(
+            henkiloUpdate.yhteystiedotRyhma?.splice(
                 henkiloUpdate.yhteystiedotRyhma.findIndex(
                     (yhteystieto) => yhteystieto.id === yhteystietoId || yhteystieto.henkiloUiId === yhteystietoId
                 ),
@@ -307,18 +306,19 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
             ryhmaAlkuperaTieto: PropertySingleton.state.YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI,
             ryhmaKuvaus: yhteystietoryhmaTyyppi,
             yhteystieto: contactInfoTemplate.map((template) => ({
+                yhteystietoArvo: '',
                 yhteystietoTyyppi: template.label,
             })),
             henkiloUiId: henkiloUiId,
             id: null,
         };
-        henkiloUpdate.yhteystiedotRyhma.push(newYhteystiedotRyhma);
+        henkiloUpdate?.yhteystiedotRyhma?.push(newYhteystiedotRyhma);
         const contactInfo = [
             ...state.contactInfo,
             createFlatYhteystieto(
                 contactInfoTemplate,
                 [],
-                henkiloUpdate.yhteystiedotRyhma.length - 1,
+                henkiloUpdate.yhteystiedotRyhma?.length ?? 1 - 1,
                 newYhteystiedotRyhma,
                 yhteystietotyypitQuery.data ?? [],
                 locale,
@@ -421,7 +421,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
             {state.readOnly ? (
                 <div className="henkiloViewButtons">
                     {hasHenkiloReadUpdateRights ? (
-                        <Button disabled={henkilo.passivoitu || henkilo.duplicate} key="contactEdit" action={_edit}>
+                        <Button disabled={henkilo?.passivoitu || henkilo?.duplicate} key="contactEdit" action={_edit}>
                             {L['MUOKKAA_LINKKI']}
                         </Button>
                     ) : null}

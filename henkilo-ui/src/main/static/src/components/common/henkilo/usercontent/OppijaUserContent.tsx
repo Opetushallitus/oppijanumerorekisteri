@@ -1,4 +1,5 @@
 import React, { SyntheticEvent, useMemo } from 'react';
+import { SingleValue } from 'react-select';
 
 import AbstractUserContent from './AbstractUserContent';
 import Sukunimi from '../labelvalues/Sukunimi';
@@ -28,7 +29,7 @@ type OwnProps = {
     discardAction: () => void;
     updateAction: () => void;
     updateModelAction: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
-    updateModelSelectAction: (o: NamedSelectOption | NamedMultiSelectOption) => void;
+    updateModelSelectAction: (o: SingleValue<NamedSelectOption> | NamedMultiSelectOption) => void;
     updateDateAction: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
     edit: () => void;
     henkiloUpdate: Henkilo;

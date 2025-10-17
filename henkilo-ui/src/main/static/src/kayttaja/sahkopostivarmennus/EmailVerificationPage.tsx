@@ -26,7 +26,7 @@ type Props = {
     locale: string;
     henkilo: Partial<Henkilo>;
     loginToken: string;
-    errorNotification: (title: string) => void;
+    errorNotification: (title?: string) => void;
 };
 
 /*
@@ -61,17 +61,21 @@ export const EmailVerificationPage = ({
 
             // Jos käyttäjällä ei ole yhteystietoryhmiä ollenkaan, tai jos käyttäjällä on vain muita kuin sähköpostiyhteystietoja
             // niin lisätään uusi tyhjä yhteystietoryhmä ja tyhjä sähköposti-yhteystieto
-            if (henkilo.yhteystiedotRyhma.length === 0 || henkilo.yhteystiedotRyhma[0].yhteystieto.length >= 1) {
+            if (
+                henkilo.yhteystiedotRyhma?.length === 0 ||
+                !henkilo.yhteystiedotRyhma?.[0]?.yhteystieto ||
+                henkilo.yhteystiedotRyhma?.[0]?.yhteystieto?.length >= 1
+            ) {
                 const yhteystietoRyhma: YhteystietoRyhma = {
                     ryhmaAlkuperaTieto: PropertySingleton.state.YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI,
                     ryhmaKuvaus: WORK_ADDRESS,
                     yhteystieto: [emptyEmailYhteystieto],
                 };
 
-                yhteystiedotRyhma.push(yhteystietoRyhma);
-            } else if (henkilo.yhteystiedotRyhma[0].yhteystieto.length === 0) {
+                yhteystiedotRyhma?.push(yhteystietoRyhma);
+            } else if (henkilo.yhteystiedotRyhma?.[0]?.yhteystieto.length === 0) {
                 // Jos käyttäjällä on tyhjä yhteystietoryhmä, lisätään tyhjä sähköpostiosoite
-                yhteystiedotRyhma[0].yhteystieto.push(emptyEmailYhteystieto);
+                yhteystiedotRyhma?.[0]?.yhteystieto.push(emptyEmailYhteystieto);
             }
 
             setHenkilo({ ...henkilo, yhteystiedotRyhma });
@@ -94,8 +98,10 @@ export const EmailVerificationPage = ({
     }
 
     function emailChangeEvent(yhteystiedotRyhmaIndex: number, yhteystietoIndex: number, value: string): void {
-        const yhteystiedotRyhma: Array<YhteystietoRyhma> = henkilo.yhteystiedotRyhma;
-        yhteystiedotRyhma[yhteystiedotRyhmaIndex].yhteystieto[yhteystietoIndex].yhteystietoArvo = value;
+        const yhteystiedotRyhma = henkilo.yhteystiedotRyhma;
+        if (yhteystiedotRyhma?.[yhteystiedotRyhmaIndex]?.yhteystieto?.[yhteystietoIndex]?.yhteystietoArvo) {
+            yhteystiedotRyhma[yhteystiedotRyhmaIndex].yhteystieto[yhteystietoIndex].yhteystietoArvo = value;
+        }
         const newValidForm = validateYhteystiedotRyhmaEmails(yhteystiedotRyhma);
         setHenkilo({ ...henkilo, yhteystiedotRyhma });
         setValidForm(newValidForm);
@@ -103,7 +109,7 @@ export const EmailVerificationPage = ({
 
     function onEmailRemove(yhteystiedotRyhmaIndex: number, yhteystietoIndex: number): void {
         let yhteystiedotRyhma = henkilo.yhteystiedotRyhma;
-        const emailNotOnlyYhteystietoInYhteystietoryhma = yhteystiedotRyhma[yhteystiedotRyhmaIndex].yhteystieto
+        const emailNotOnlyYhteystietoInYhteystietoryhma = yhteystiedotRyhma?.[yhteystiedotRyhmaIndex]?.yhteystieto
             .filter((yhteystieto: Yhteystieto) => yhteystieto.yhteystietoTyyppi !== EMAIL)
             .some(
                 (yhteystieto: Yhteystieto) =>
@@ -113,10 +119,14 @@ export const EmailVerificationPage = ({
             );
 
         if (emailNotOnlyYhteystietoInYhteystietoryhma) {
-            const yhteystietoRyhma = yhteystiedotRyhma[yhteystiedotRyhmaIndex];
-            yhteystietoRyhma.yhteystieto = remove(yhteystietoIndex, 1, yhteystietoRyhma.yhteystieto);
+            const yhteystietoRyhma = yhteystiedotRyhma?.[yhteystiedotRyhmaIndex];
+            if (yhteystietoRyhma) {
+                yhteystietoRyhma.yhteystieto = remove(yhteystietoIndex, 1, yhteystietoRyhma.yhteystieto);
+            }
         } else {
-            yhteystiedotRyhma = remove(yhteystiedotRyhmaIndex, 1, yhteystiedotRyhma);
+            if (yhteystiedotRyhma) {
+                yhteystiedotRyhma = remove(yhteystiedotRyhmaIndex, 1, yhteystiedotRyhma);
+            }
         }
 
         setHenkilo({ ...henkilo, yhteystiedotRyhma });
@@ -135,7 +145,7 @@ export const EmailVerificationPage = ({
                 onEmailRemove={onEmailRemove}
                 L={L}
                 emailFieldCount={emailFieldCount}
-            ></EmailVerificationList>
+            />
 
             <div style={{ textAlign: 'center' }}>
                 <Button action={verifyEmailAddresses} isButton disabled={!validForm} big>

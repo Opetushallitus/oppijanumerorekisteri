@@ -10,13 +10,15 @@ type Props = {
     kutsu?: Kutsu;
 };
 
-const emptyData: { organisaatio: string; ryhma: string }[] = [];
-const emptyColumns: ColumnDef<{ organisaatio: string; ryhma: string }>[] = [];
+type Detail = { organisaatio?: string; ryhma?: string };
+
+const emptyData: Detail[] = [];
+const emptyColumns: ColumnDef<Detail>[] = [];
 
 export const resolveInvitationRights = (
     kutsu: Kutsu | null | undefined,
     locale: Locale
-): Array<{ organisaatio: string; ryhma: string }> =>
+): Array<{ organisaatio?: string; ryhma?: string }> =>
     kutsu
         ? kutsu.organisaatiot.flatMap((organisaatio) =>
               organisaatio.kayttoOikeusRyhmat.map((ryhma) => ({
@@ -28,7 +30,7 @@ export const resolveInvitationRights = (
 
 const KutsuDetails = ({ kutsu }: Props) => {
     const { L, locale } = useLocalisations();
-    const columns = useMemo<ColumnDef<{ organisaatio: string; ryhma: string }>[]>(
+    const columns = useMemo<ColumnDef<Detail>[]>(
         () => [
             {
                 header: () => L['KUTSU_KAYTTOOIKEUSRYHMAT_MAIN_HEADER'],

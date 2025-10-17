@@ -15,13 +15,13 @@ import { useGetHenkiloQuery } from '../../api/oppijanumerorekisteri';
 
 export const OmattiedotPage = () => {
     const { data: omattiedot, isSuccess: isOmattiedotSuccess } = useGetOmattiedotQuery();
-    const { isSuccess: isHenkiloSuccess } = useGetHenkiloQuery(omattiedot?.oidHenkilo, { skip: !omattiedot });
+    const oid = omattiedot?.oidHenkilo;
+    const { isSuccess: isHenkiloSuccess } = useGetHenkiloQuery(oid!, { skip: !omattiedot });
     const { L } = useLocalisations();
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
-    const { data: anomukset, isSuccess: isAnomusetSuccess } = useGetKayttooikeusAnomuksetForHenkiloQuery(
-        omattiedot.oidHenkilo,
-        { skip: !omattiedot }
-    );
+    const { data: anomukset, isSuccess: isAnomusetSuccess } = useGetKayttooikeusAnomuksetForHenkiloQuery(oid!, {
+        skip: !omattiedot,
+    });
 
     useTitle(L['TITLE_OMAT_TIEDOT']);
 

@@ -58,7 +58,7 @@ const StepThreeIcon = () => (
     </svg>
 );
 
-const isMfaSetupEnabled = (idpEntityId: string) => {
+const isMfaSetupEnabled = (idpEntityId?: string) => {
     return (
         idpEntityId === 'vetuma' ||
         window?.location.hostname.includes('hahtuvaopintopolku') ||
@@ -68,7 +68,7 @@ const isMfaSetupEnabled = (idpEntityId: string) => {
 
 type MfaRegisteredProps = {
     L: Localisations;
-    idpEntityId: string;
+    idpEntityId?: string;
 };
 
 const MfaRegistered = ({ L, idpEntityId }: MfaRegisteredProps) => {
@@ -143,7 +143,7 @@ const MfaRegistered = ({ L, idpEntityId }: MfaRegisteredProps) => {
 type MfaUnregisteredProps = {
     setMfaSetup: (b: boolean) => void;
     L: Localisations;
-    idpEntityId: string;
+    idpEntityId?: string;
 };
 
 const MfaUnregistered = ({ setMfaSetup, L, idpEntityId }: MfaUnregisteredProps) => {
@@ -210,7 +210,7 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
     const dispatch = useAppDispatch();
     const { data, isLoading: isGetLoading, isSuccess } = useGetMfaSetupQuery();
     const [postMfaEnable, { isLoading: isPostLoading }] = usePostMfaEnableMutation();
-    const pinInput = useRef(null);
+    const pinInput = useRef<PinInput>(null);
 
     if (isGetLoading) {
         return <Loader />;
@@ -259,8 +259,8 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
                             header: L.MFA_VAARA_KOODI,
                         })
                     );
-                    pinInput.current.clear();
-                    pinInput.current.focus();
+                    pinInput.current?.clear();
+                    pinInput.current?.focus();
                 } else {
                     dispatch(
                         add({
@@ -276,7 +276,7 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
     return (
         <div>
             <div className={styles.setupContainer}>
-                <MfaSetupStep icon={<StepOneIcon />} info={L.MFA_LATAA_APP_INFO}>
+                <MfaSetupStep icon={<StepOneIcon />} info={L.MFA_LATAA_APP_INFO!}>
                     <a
                         href="https://apps.apple.com/us/app/google-authenticator/id388497605"
                         target="_blank"
@@ -293,10 +293,10 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
                         <img src={googlePlay} alt="GooglePlay" width="180" height="53" />
                     </a>
                 </MfaSetupStep>
-                <MfaSetupStep icon={<StepTwoIcon />} info={L.MFA_LUE_QR_KOODI_INFO}>
+                <MfaSetupStep icon={<StepTwoIcon />} info={L.MFA_LUE_QR_KOODI_INFO!}>
                     <img src={data.qrCodeDataUri} alt={data.secretKey} width="180" height="180" />
                 </MfaSetupStep>
-                <MfaSetupStep icon={<StepThreeIcon />} info={L.MFA_SYOTA_KOODI_INFO}>
+                <MfaSetupStep icon={<StepThreeIcon />} info={L.MFA_SYOTA_KOODI_INFO!}>
                     <PinInput
                         length={6}
                         initialValue=""
@@ -331,7 +331,7 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
             <div className={styles.greyInfo}>
                 {L.MFA_KOODI_VAIHTOEHTO_INFO}{' '}
                 <span className={styles.secretKey} data-test-id="secret-key" onClick={copySecretKey}>
-                    {data.secretKey?.match(/.{1,4}/g).map((chunk, idx) => (
+                    {data.secretKey?.match(/.{1,4}/g)?.map((chunk, idx) => (
                         <span className={styles.secretKeyChunk} key={`secret-key-${idx}`}>
                             {chunk}
                         </span>
@@ -348,20 +348,22 @@ type MfaProps = {
 };
 
 const Mfa = ({ view, henkiloOid }: MfaProps) => {
-    const {
-        data: { mfaProvider, idpEntityId },
-    } = useGetOmattiedotQuery();
+    const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: kayttajatiedot } = useGetKayttajatiedotQuery(henkiloOid);
-    const userMfaProvider = view === 'omattiedot' ? mfaProvider : kayttajatiedot?.mfaProvider;
+    const userMfaProvider = view === 'omattiedot' ? omattiedot?.mfaProvider : kayttajatiedot?.mfaProvider;
     const { L } = useLocalisations();
     const [isMfaSetup, setMfaSetup] = useState(false);
 
     const mfaSetupComponent = isMfaSetup ? (
         <MfaSetup setMfaSetup={setMfaSetup} L={L} />
     ) : (
-        <MfaUnregistered setMfaSetup={setMfaSetup} L={L} idpEntityId={idpEntityId} />
+        <MfaUnregistered setMfaSetup={setMfaSetup} L={L} idpEntityId={omattiedot?.idpEntityId} />
     );
-    const mfaStateComponent = mfaProvider ? <MfaRegistered L={L} idpEntityId={idpEntityId} /> : mfaSetupComponent;
+    const mfaStateComponent = omattiedot?.mfaProvider ? (
+        <MfaRegistered L={L} idpEntityId={omattiedot?.idpEntityId} />
+    ) : (
+        mfaSetupComponent
+    );
     return (
         <div>
             <div className={styles.infoTitle}>

@@ -124,7 +124,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
         hylkaysperuste?: string
     ) {
         const date = dates[id];
-        const alkupvm = date?.alkupvm?.format(PropertySingleton.state.PVM_DBFORMAATTI);
+        const alkupvm = (date?.alkupvm ?? moment()).format(PropertySingleton.state.PVM_DBFORMAATTI);
         const loppupvm = date?.loppupvm?.format(PropertySingleton.state.PVM_DBFORMAATTI);
         await putHaettuKayttooikeusryhma({
             henkiloOid: henkilo.oid,
@@ -251,7 +251,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                         nimi={
                             getValue().kayttoOikeusRyhma.nimi.texts.filter(
                                 (text) => text.lang === locale.toUpperCase()
-                            )[0].text
+                            )[0]?.text ?? ''
                         }
                         kayttooikeusRyhma={getValue().kayttoOikeusRyhma}
                         clickHandler={(kayttooikeusRyhma) => showAccessRightGroupDetails(kayttooikeusRyhma)}

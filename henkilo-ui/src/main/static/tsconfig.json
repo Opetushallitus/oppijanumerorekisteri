@@ -13,7 +13,6 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "strictNullChecks": false,
     "noImplicitReturns": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

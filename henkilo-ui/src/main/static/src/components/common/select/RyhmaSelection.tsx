@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
-import Select from 'react-select';
+import Select, { SingleValue } from 'react-select';
 
 import { useLocalisations, useOmatOrganisaatiot } from '../../../selectors';
 import { getOrganisaatioOptions } from '../../../utilities/organisaatio.util';
 import { SelectOption, selectProps } from '../../../utilities/select';
 
 type OwnProps = {
-    selectOrganisaatio: (o: SelectOption) => void;
-    selectedOrganisaatioOid: string;
+    selectOrganisaatio: (o: SingleValue<SelectOption>) => void;
+    selectedOrganisaatioOid?: string;
     placeholder?: string;
     disabled?: boolean;
 };

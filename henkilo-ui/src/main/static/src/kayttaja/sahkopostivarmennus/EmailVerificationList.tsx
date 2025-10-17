@@ -6,7 +6,7 @@ import { validateEmail } from '../../validation/EmailValidator';
 import { Localisations } from '../../types/localisation.type';
 
 type Props = {
-    yhteystiedotRyhma: Array<YhteystietoRyhma>;
+    yhteystiedotRyhma?: Array<YhteystietoRyhma>;
     onEmailChange: (arg0: number, arg1: number, arg2: string) => void;
     onEmailRemove: (arg0: number, arg1: number) => void;
     L: Localisations;
@@ -19,7 +19,7 @@ type Props = {
 export const EmailVerificationList = (props: Props) => {
     return (
         <React.Fragment>
-            {props.yhteystiedotRyhma.map((yhteystietoryhma, ryhmaIndex) => {
+            {props.yhteystiedotRyhma?.map((yhteystietoryhma, ryhmaIndex) => {
                 return yhteystietoryhma.yhteystieto.map((yhteystieto, yhteystietoIndex) => {
                     if (yhteystieto.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI') {
                         const validEmail = yhteystieto.yhteystietoArvo

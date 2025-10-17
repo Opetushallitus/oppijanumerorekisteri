@@ -50,7 +50,7 @@ const AnomusHylkaysPopup = ({ kayttooikeusryhma, updateHaettuKayttooikeusryhma }
                             {
                                 kayttooikeusryhma.kayttoOikeusRyhma.nimi.texts.filter(
                                     (text) => text.lang === locale.toUpperCase()
-                                )[0].text
+                                )[0]?.text
                             }
                         </td>
                     </tr>

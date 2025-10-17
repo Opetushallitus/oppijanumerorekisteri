@@ -68,7 +68,7 @@ const TuontiDetails = ({ tuontiId, onClose }: OwnProps) => {
                 value="errors"
                 idName="filter"
                 checked={!showAll}
-                label={L['TUONTIDATA_VAIN_VIRHEET']}
+                label={L['TUONTIDATA_VAIN_VIRHEET']!}
                 action={() => setShowAll(!showAll)}
             />
             <OphTable<Tuontidata>

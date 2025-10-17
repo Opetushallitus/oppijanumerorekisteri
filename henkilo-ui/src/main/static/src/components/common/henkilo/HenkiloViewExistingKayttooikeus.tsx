@@ -32,7 +32,7 @@ type OwnProps = {
     oidHenkilo: string;
     isOmattiedot: boolean;
     isPalvelukayttaja: boolean;
-    existingKayttooikeusRef: MutableRefObject<HTMLDivElement>;
+    existingKayttooikeusRef: MutableRefObject<HTMLDivElement | null>;
 };
 
 const emptyData: MyonnettyKayttooikeusryhma[] = [];
@@ -84,7 +84,9 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
 
     function loppupvmAction(value: moment.Moment, ryhmaId: number) {
         const newDates = { ...dates };
-        newDates[ryhmaId].loppupvm = value;
+        if (newDates[ryhmaId]) {
+            newDates[ryhmaId].loppupvm = value;
+        }
         setDates(newDates);
     }
 
@@ -135,9 +137,13 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
 
     async function _createKayttooikeusAnomus(uusittavaKayttooikeusRyhma: MyonnettyKayttooikeusryhma) {
         const kayttooikeusRyhmaIds = [uusittavaKayttooikeusRyhma.ryhmaId];
+        const email = emailOptions.emailSelection[uusittavaKayttooikeusRyhma.ryhmaId]?.value;
+        if (!email) {
+            return;
+        }
         const anomusData = {
             organisaatioOrRyhmaOid: uusittavaKayttooikeusRyhma.organisaatioOid,
-            email: emailOptions.emailSelection[uusittavaKayttooikeusRyhma.ryhmaId]?.value,
+            email,
             perustelut: 'Uusiminen',
             kayttooikeusRyhmaIds,
             anojaOid: props.oidHenkilo,
@@ -196,10 +202,10 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                                     {
                                         id: kayttooikeus.ryhmaId,
                                         kayttoOikeudenTila: KAYTTOOIKEUDENTILA.MYONNETTY,
-                                        alkupvm: moment(dates[kayttooikeus.ryhmaId].alkupvm).format(
+                                        alkupvm: moment(dates[kayttooikeus.ryhmaId]?.alkupvm).format(
                                             PropertySingleton.state.PVM_DBFORMAATTI
                                         ),
-                                        loppupvm: moment(dates[kayttooikeus.ryhmaId].loppupvm).format(
+                                        loppupvm: moment(dates[kayttooikeus.ryhmaId]?.loppupvm).format(
                                             PropertySingleton.state.PVM_DBFORMAATTI
                                         ),
                                     },
@@ -255,7 +261,8 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                 cell: ({ getValue }) => (
                     <AccessRightDetaisLink<MyonnettyKayttooikeusryhma>
                         nimi={
-                            getValue().ryhmaNames?.texts.filter((text) => text.lang === locale.toUpperCase())[0]?.text
+                            getValue().ryhmaNames?.texts.filter((text) => text.lang === locale.toUpperCase())[0]
+                                ?.text ?? ''
                         }
                         kayttooikeusRyhma={getValue()}
                         clickHandler={(kayttooikeusRyhma) => showAccessRightGroupDetails(kayttooikeusRyhma)}

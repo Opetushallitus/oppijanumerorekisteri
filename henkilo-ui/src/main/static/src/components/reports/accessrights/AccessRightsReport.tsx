@@ -11,13 +11,13 @@ import { useNavigation } from '../../../useNavigation';
 import { mainNavigation } from '../../navigation/navigationconfigurations';
 
 export const AccessRightsReport = () => {
-    const [oid, setOid] = useState<string>(undefined);
-    const [filter, setFilter] = useState<string>(undefined);
+    const [oid, setOid] = useState<string | undefined>(undefined);
+    const [filter, setFilter] = useState<string | undefined>(undefined);
     const [filterValues, setFilterValues] = useState<string[]>([]);
     const { L } = useLocalisations();
     useTitle(L['KAYTTOOIKEUSRAPORTTI_TITLE']);
     useNavigation(mainNavigation, false);
-    const { data, isFetching } = useGetAccessRightReportQuery(oid, { skip: !oid });
+    const { data, isFetching } = useGetAccessRightReportQuery(oid!, { skip: !oid });
 
     useEffect(() => {
         setFilter(undefined);

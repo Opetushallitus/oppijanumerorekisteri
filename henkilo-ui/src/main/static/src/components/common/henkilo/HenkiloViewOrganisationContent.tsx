@@ -13,10 +13,10 @@ import Loader from '../icons/Loader';
 import './HenkiloViewOrganisationContent.css';
 
 type OrganisaatioFlat = {
-    name: string;
+    name?: string;
     typesFlat: string;
     passive: boolean;
-    id: string;
+    id?: string;
 };
 
 export const HenkiloViewOrganisationContent = (props: { henkiloOid: string }) => {
@@ -30,7 +30,10 @@ export const HenkiloViewOrganisationContent = (props: { henkiloOid: string }) =>
     const { data: henkiloOrgs, isLoading, isSuccess } = useGetHenkiloOrganisaatiotQuery(props.henkiloOid);
     const [deleteHenkiloOrganisation] = useDeleteHenkiloOrganisationMutation();
 
-    function passivoiHenkiloOrganisation(organisationOid: string) {
+    function passivoiHenkiloOrganisation(organisationOid?: string) {
+        if (!organisationOid) {
+            return;
+        }
         deleteHenkiloOrganisation({ henkiloOid: props.henkiloOid, organisationOid });
     }
 

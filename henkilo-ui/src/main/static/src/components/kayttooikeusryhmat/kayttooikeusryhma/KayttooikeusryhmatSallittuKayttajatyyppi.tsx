@@ -5,7 +5,7 @@ import { SallitutKayttajatyypit } from './KayttooikeusryhmaPage';
 import { useLocalisations } from '../../../selectors';
 
 type OwnProps = {
-    kayttajaTyyppi?: SallitutKayttajatyypit;
+    kayttajaTyyppi: SallitutKayttajatyypit | null;
     setSallittuKayttajatyyppi: () => void;
 };
 

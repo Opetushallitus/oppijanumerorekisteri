@@ -40,24 +40,28 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, duplicates, oi
     const { L } = useLocalisations();
     const [linkObj, setLink] = useState<LinkRelation>();
     const [postLinkHenkilos] = usePostLinkHenkilosMutation();
-    const { data: masterHenkilo } = useGetHenkiloMasterQuery(oidHenkilo, { skip: !oidHenkilo });
-    const { data: hakemukset } = useGetHakemuksetQuery({ oid: oidHenkilo, L }, { skip: !oidHenkilo });
-    const canForceLink = hasAnyPalveluRooli(omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_YKSILOINNIN_PURKU']);
-    const emails = (henkilo.yhteystiedotRyhma || [])
+    const { data: masterHenkilo } = useGetHenkiloMasterQuery(oidHenkilo!, { skip: !oidHenkilo });
+    const { data: hakemukset } = useGetHakemuksetQuery({ oid: oidHenkilo!, L }, { skip: !oidHenkilo });
+    const canForceLink = hasAnyPalveluRooli(omattiedot?.organisaatiot, ['OPPIJANUMEROREKISTERI_YKSILOINNIN_PURKU']);
+    const emails: string[] = (henkilo.yhteystiedotRyhma || [])
         .flatMap((ryhma) => ryhma.yhteystieto)
         .filter((yhteysTieto) => yhteysTieto.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI')
         .map((yhteysTieto) => yhteysTieto.yhteystietoArvo);
     const master: HenkiloDuplicate = { ...henkilo, emails };
     const linkingEnabled =
-        enabledDuplikaattiView(oidHenkilo, masterHenkilo?.oidHenkilo) || oidHenkilo !== omattiedot.oidHenkilo;
+        enabledDuplikaattiView(oidHenkilo, masterHenkilo?.oidHenkilo) || oidHenkilo !== omattiedot?.oidHenkilo;
     const navigate = useNavigate();
 
-    const link = async () =>
+    const link = async () => {
+        if (!linkObj) {
+            return;
+        }
+
         await postLinkHenkilos({
-            masterOid: linkObj.master.oidHenkilo,
-            duplicateOids: [linkObj.duplicate.oidHenkilo],
+            masterOid: linkObj.master.oidHenkilo!,
+            duplicateOids: [linkObj.duplicate.oidHenkilo!],
             L,
-            force: linkObj.duplicate.yksiloity,
+            force: !!linkObj.duplicate.yksiloity,
         })
             .unwrap()
             .then(() => {
@@ -67,6 +71,7 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, duplicates, oi
             .catch(() => {
                 setLink(undefined);
             });
+    };
 
     return (
         <div className="duplicates-view">

@@ -1,4 +1,5 @@
 import React, { SyntheticEvent, useMemo } from 'react';
+import { SingleValue } from 'react-select';
 
 import AbstractUserContent from './AbstractUserContent';
 import Sukunimi from '../labelvalues/Sukunimi';
@@ -29,7 +30,7 @@ type OwnProps = {
     discardAction: () => void;
     updateAction: () => void;
     updateModelAction: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
-    updateModelSelectAction: (o: NamedSelectOption | NamedMultiSelectOption) => void;
+    updateModelSelectAction: (o: SingleValue<NamedSelectOption> | NamedMultiSelectOption) => void;
     updateDateAction: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
     edit: () => void;
     henkiloUpdate: Henkilo;
@@ -136,12 +137,12 @@ const OmattiedotUserContent = (props: OwnProps) => {
                 ) : null,
                 <HenkiloVarmentajaSuhde
                     key="omattiedot-henkiloVarmentajas"
-                    oidHenkilo={omattiedot?.oidHenkilo}
+                    oidHenkilo={omattiedot?.oidHenkilo ?? ''}
                     type="henkiloVarmentajas"
                 />,
                 <HenkiloVarmentajaSuhde
                     key="omattiedot-henkiloVarmennettavas"
-                    oidHenkilo={omattiedot?.oidHenkilo}
+                    oidHenkilo={omattiedot?.oidHenkilo ?? ''}
                     type="henkiloVarmennettavas"
                 />,
             ],
@@ -153,7 +154,7 @@ const OmattiedotUserContent = (props: OwnProps) => {
             <EditButton key="editbutton" editAction={props.edit} disabled={false} />,
             <PasswordButton
                 key="passwordbutton"
-                oidHenkilo={omattiedot?.oidHenkilo}
+                oidHenkilo={omattiedot?.oidHenkilo ?? ''}
                 styles={{ top: '3rem', left: '0', width: '18rem' }}
                 disabled={false}
             />,

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import Select, { createFilter } from 'react-select';
+import Select, { createFilter, SingleValue } from 'react-select';
 
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup';
 import CloseButton from '../common/button/CloseButton';
@@ -64,7 +64,7 @@ const HaetutKayttooikeusRyhmatHakuForm = ({ onSubmit }: OwnProps) => {
         onSubmit({ organisaatioOids: organisaatio.oid });
     };
 
-    const onRyhmaChange = (ryhma?: SelectOption) => {
+    const onRyhmaChange = (ryhma: SingleValue<SelectOption>) => {
         const ryhmaOid = ryhma ? ryhma.value : undefined;
         setSelectedOrganisaatio(undefined);
         setSelectedRyhma(ryhmaOid);
@@ -105,8 +105,8 @@ const HaetutKayttooikeusRyhmatHakuForm = ({ onSubmit }: OwnProps) => {
                     <BooleanRadioButtonGroup
                         value={naytaKaikki}
                         onChange={onNaytaKaikkiChange}
-                        trueLabel={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_KAIKKI']}
-                        falseLabel={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_OPH']}
+                        trueLabel={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_KAIKKI']!}
+                        falseLabel={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_OPH']!}
                         className={styles.viewButtons}
                     />
                 )}

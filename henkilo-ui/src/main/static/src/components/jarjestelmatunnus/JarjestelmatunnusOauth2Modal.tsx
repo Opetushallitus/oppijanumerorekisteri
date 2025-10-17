@@ -49,10 +49,10 @@ export const JarjestelmatunnusOauth2Modal = ({ closeModal, oid }: Props) => {
             <p>{L['TALLENNA_UUSI_OAUTH2_TEKSTI']}</p>
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 2fr 1fr', gap: '24px', margin: '24px' }}>
                 <div>client_id</div>
-                <div>{data.kayttajatunnus}</div>
+                <div>{data?.kayttajatunnus}</div>
                 <button
                     className="oph-ds-button oph-ds-button-icon oph-ds-button-icon-copy"
-                    onClick={() => navigator?.clipboard?.writeText(data.kayttajatunnus)}
+                    onClick={() => navigator?.clipboard?.writeText(data?.kayttajatunnus ?? '')}
                     data-test-id="kopioiid"
                 >
                     {L['KOPIOI_NAPPI']}

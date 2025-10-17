@@ -59,8 +59,8 @@ const OppijoidenTuontiContainer = () => {
                     <BooleanRadioButtonGroup
                         value={tuontikooste}
                         onChange={() => setTuontikooste(!tuontikooste)}
-                        trueLabel={L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE']}
-                        falseLabel={L['OPPIJOIDEN_TUONTI_NAYTA_VIRHEET']}
+                        trueLabel={L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE']!}
+                        falseLabel={L['OPPIJOIDEN_TUONTI_NAYTA_VIRHEET']!}
                     />
                 </div>
             </div>

@@ -50,8 +50,8 @@ export type HenkiloCreate = {
     kansalaisuus?: Array<Kansalaisuus>;
     syntymaaika?: string;
     sukupuoli?: '1' | '2';
-    passinumerot?: Array<string>;
-    yhteystiedotRyhma?: Array<YhteystietoRyhma>;
+    passinumerot: Array<string> | null;
+    yhteystiedotRyhma: Array<YhteystietoRyhma> | null;
     yksiloity?: boolean;
 };
 

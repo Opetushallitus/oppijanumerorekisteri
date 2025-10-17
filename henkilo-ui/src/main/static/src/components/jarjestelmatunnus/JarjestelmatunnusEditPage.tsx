@@ -16,13 +16,17 @@ import './JarjestelmatunnusEditPage.css';
 
 export const JarjestelmatunnusEditPage = () => {
     const params = useParams();
+    if (!params.oid) {
+        return;
+    }
+
     const { L } = useLocalisations();
     useTitle(L['JARJESTELMATUNNUKSEN_HALLINTA']);
     useNavigation(jarjestelmatunnusNavigation(params.oid), false);
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
 
     return (
-        <OphDsPage header={L['JARJESTELMATUNNUKSEN_HALLINTA']}>
+        <OphDsPage header={L['JARJESTELMATUNNUKSEN_HALLINTA']!}>
             <JarjestelmatunnusPerustiedot />
             <hr />
             <HenkiloViewOrganisationContent henkiloOid={params.oid} />

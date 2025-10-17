@@ -37,10 +37,14 @@ const titles: Record<View, string> = {
 };
 
 export const VirkailijaViewPage = () => {
+    const { oid } = useParams();
+    if (!oid) {
+        return;
+    }
+
     const { data: omattiedot } = useGetOmattiedotQuery();
     const [view, setView] = useState<View>('virkailija');
     const { L } = useLocalisations();
-    const { oid } = useParams();
     const { data: henkilo, isLoading: isHenkiloLoading } = useGetHenkiloQuery(oid);
     const { data: master } = useGetHenkiloMasterQuery(oid);
     const { data: kayttajatiedot } = useGetKayttajatiedotQuery(oid);
@@ -57,10 +61,10 @@ export const VirkailijaViewPage = () => {
     );
 
     useEffect(() => {
-        if (oid && omattiedot.oidHenkilo === oid) {
+        if (oid && omattiedot?.oidHenkilo === oid) {
             navigate('/omattiedot', { replace: true });
         }
-        if (omattiedot.isAdmin) {
+        if (omattiedot?.isAdmin) {
             setView('admin');
         }
     }, [omattiedot, oid]);

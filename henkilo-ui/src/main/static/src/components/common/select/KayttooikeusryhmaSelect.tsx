@@ -36,7 +36,7 @@ const KayttooikeusryhmaSelect = (props: Props) => {
 
     const [valittu, setValittu] = useState<KielistettyKayttooikeusryhma>();
     const [hakutermi, setHakutermi] = useState('');
-    const [naytettavat, setNaytettavat] = useState([]);
+    const [naytettavat, setNaytettavat] = useState<{ id: number; nimi: string; kuvaus: string }[]>([]);
 
     useEffect(() => {
         const kayttooikeusryhmat = sallitut

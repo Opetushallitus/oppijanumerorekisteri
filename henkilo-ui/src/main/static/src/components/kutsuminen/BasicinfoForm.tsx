@@ -1,5 +1,5 @@
 import React from 'react';
-import Select from 'react-select';
+import Select, { SingleValue } from 'react-select';
 
 import { Localisations } from '../../types/localisation.type';
 import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
@@ -47,9 +47,11 @@ const BasicinfoForm = (props: Props) => {
         props.setBasicInfo(basicInfo);
     }
 
-    function selectLanguage(selection: SelectOption) {
+    function selectLanguage(selection: SingleValue<SelectOption>) {
         const { basicInfo } = props;
-        basicInfo.languageCode = selection.value;
+        if (selection) {
+            basicInfo.languageCode = selection.value;
+        }
         props.setBasicInfo(basicInfo);
     }
 

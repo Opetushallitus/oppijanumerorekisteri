@@ -18,7 +18,7 @@ type Props = {
 };
 
 const KayttooikeusryhmaTiedot = ({ item, L, locale, muokkausoikeus, show }: Props) => {
-    const { data: palveluRoolit } = useGetKayttooikeusryhmaRoolisQuery(item?.id && String(item.id), {
+    const { data: palveluRoolit } = useGetKayttooikeusryhmaRoolisQuery(String(item.id), {
         skip: !item?.id || !show,
     });
     const kuvaus = item?.kuvaus?.texts;
@@ -30,7 +30,7 @@ const KayttooikeusryhmaTiedot = ({ item, L, locale, muokkausoikeus, show }: Prop
                 <div className="kayttooikeusryhma-tiedot-otsikko">{L['KAYTTOOIKEUSRYHMAT_LISAA_PALVELU']}</div>
                 <div className="kayttooikeusryhma-tiedot-otsikko">{L['KAYTTOOIKEUSRYHMAT_LISAA_KAYTTOOIKEUS']}</div>
                 {(palveluRoolit ?? []).map((item, index) => (
-                    <React.Fragment key={index + item.palveluTexts[0].text}>
+                    <React.Fragment key={index + (item.palveluTexts[0]?.text ?? '')}>
                         <div className="kayttooikeusryhma-tiedot-palvelu">
                             <span>{localizeTextGroup(item.palveluTexts, locale)}</span>
                         </div>

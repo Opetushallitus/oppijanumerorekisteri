@@ -70,13 +70,13 @@ const PalveluUserContent = (props: OwnProps) => {
             omattiedot?.isAdmin ? (
                 <PassivoiButton
                     henkiloOid={props.oidHenkilo}
-                    passivoitu={henkilo?.passivoitu}
+                    passivoitu={!!henkilo?.passivoitu}
                     disabled={duplicate || passivoitu}
                 />
             ) : null,
             omattiedot?.isAdmin && henkilo?.passivoitu ? <AktivoiButton oidHenkilo={henkilo?.oidHenkilo} /> : null,
-            !kayttajatunnukseton && omattiedot.isAdmin ? (
-                <PoistaKayttajatunnusButton henkiloOid={henkilo?.oidHenkilo} />
+            !kayttajatunnukseton && omattiedot?.isAdmin && henkilo ? (
+                <PoistaKayttajatunnusButton henkiloOid={henkilo.oidHenkilo} />
             ) : null,
             <PasswordButton
                 key="passwordbutton"

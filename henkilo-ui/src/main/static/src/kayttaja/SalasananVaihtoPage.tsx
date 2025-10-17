@@ -25,7 +25,7 @@ export const SalasananVaihtoPage = () => {
     useTitle(L['TITLE_SALASANANVAIHTO']);
 
     const submit = () => {
-        postPasswordChange({ loginToken: params.loginToken, newPassword, currentPassword })
+        postPasswordChange({ loginToken: params.loginToken!, newPassword, currentPassword })
             .unwrap()
             .then(() => setPasswordChanged(true))
             .catch(() =>

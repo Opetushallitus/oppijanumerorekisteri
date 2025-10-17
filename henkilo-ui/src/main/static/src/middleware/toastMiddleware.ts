@@ -6,7 +6,7 @@ import { ToastProps } from '../components/design-system/OphDsToast';
 const listenerMiddleware = createListenerMiddleware();
 
 const getDelayMs = (toast: ToastProps) => {
-    const wordCount = toast.header.split(' ').length + (toast.body?.split(' ').length ?? 0);
+    const wordCount = toast.header?.split(' ').length ?? 0 + (toast.body?.split(' ').length ?? 0);
     const wordLengthDelay = Math.round((wordCount / 150) * 60 * 1000);
     return 5000 + wordLengthDelay;
 };

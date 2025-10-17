@@ -33,8 +33,8 @@ const PostPrequelApp = () => {
     const { data: omattiedot, isSuccess: isOmattiedotSuccess } = useGetOmattiedotQuery();
     const { isSuccess: isLocalisationsSuccess } = useGetLocalisationsQuery('henkilo-ui');
     const { L } = useLocalisations();
-
-    useGetOmatOrganisaatiotQuery({ oid: omattiedot?.oidHenkilo, locale }, { skip: !omattiedot?.oidHenkilo || !locale });
+    const oid = omattiedot?.oidHenkilo;
+    useGetOmatOrganisaatiotQuery({ oid: oid!, locale: locale! }, { skip: !omattiedot?.oidHenkilo || !locale });
 
     useEffect(() => {
         if (isOmattiedotSuccess && isLocaleSuccess && isLocalisationsSuccess && !!locale && !!L) {

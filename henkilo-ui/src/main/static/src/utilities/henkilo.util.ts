@@ -66,5 +66,5 @@ export const parseEmailOptions = (yhteystiedot?: Array<YhteystietoRyhma>): Array
         .filter((yhteystieto) => yhteystieto.yhteystietoTyyppi === EMAIL)
         .map((yhteystieto) => yhteystieto.yhteystietoArvo)
         .filter((value) => !!value)
-        .sort((a, b) => a.localeCompare(b))
+        .sort((a, b) => (a && b ? a.localeCompare(b) : 1))
         .map((email) => ({ value: email, label: email }));

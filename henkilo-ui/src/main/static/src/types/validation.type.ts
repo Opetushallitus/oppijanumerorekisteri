@@ -1,5 +1,5 @@
 export type ValidationMessage = {
     id: string;
-    labelLocalised: string;
+    labelLocalised?: string;
     isValid: boolean;
 };

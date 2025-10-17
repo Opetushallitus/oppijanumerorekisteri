@@ -19,10 +19,14 @@ import { isOnrRekisterinpitaja } from '../../utilities/palvelurooli.util';
 import Loader from '../common/icons/Loader';
 
 export const OppijaViewPage = () => {
+    const { oid } = useParams();
+    if (!oid) {
+        return;
+    }
+
     const { data: omattiedot, isLoading } = useGetOmattiedotQuery();
     const isRekisterinpitaja = omattiedot ? isOnrRekisterinpitaja(omattiedot.organisaatiot) : false;
     const { L } = useLocalisations();
-    const { oid } = useParams();
     const { data: henkilo, isLoading: isHenkiloLoading } = useGetHenkiloQuery(oid);
     const { data: master } = useGetHenkiloMasterQuery(oid);
     const navigate = useNavigate();
@@ -35,7 +39,7 @@ export const OppijaViewPage = () => {
     );
 
     useEffect(() => {
-        if (oid && omattiedot.oidHenkilo === oid) {
+        if (oid && omattiedot?.oidHenkilo === oid) {
             navigate('/omattiedot', { replace: true });
         }
     }, [omattiedot, oid]);
@@ -51,7 +55,7 @@ export const OppijaViewPage = () => {
                 <div className="wrapper">
                     <UserContentContainer
                         oidHenkilo={oid}
-                        view={omattiedot.isAdmin ? 'admin' : 'oppija'}
+                        view={omattiedot?.isAdmin ? 'admin' : 'oppija'}
                         isOppija={true}
                     />
                 </div>
@@ -64,7 +68,7 @@ export const OppijaViewPage = () => {
                 <div className="wrapper">
                     <HenkiloViewContactContent
                         henkiloOid={oid}
-                        view={omattiedot.isAdmin ? 'admin' : 'oppija'}
+                        view={omattiedot?.isAdmin ? 'admin' : 'oppija'}
                         readOnly={true}
                     />
                 </div>

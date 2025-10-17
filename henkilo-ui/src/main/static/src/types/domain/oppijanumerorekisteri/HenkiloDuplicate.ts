@@ -19,6 +19,6 @@ export type HenkiloDuplicate = {
     aidinkieli?: Kielisyys;
     asiointiKieli?: Kielisyys;
     hakemukset?: Hakemus[];
-    passinumerot?: string[];
-    kansalaisuus?: Kansalaisuus[];
+    passinumerot?: string[] | null;
+    kansalaisuus?: Kansalaisuus[] | null;
 };

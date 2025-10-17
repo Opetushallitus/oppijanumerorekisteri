@@ -10,7 +10,7 @@ type PageProps = {
 };
 
 export const OphDsAccordion = ({ items }: PageProps) => {
-    const [showItems, setShowItems] = React.useState([]);
+    const [showItems, setShowItems] = React.useState<number[]>([]);
 
     useEffect(() => {
         setShowItems([]);

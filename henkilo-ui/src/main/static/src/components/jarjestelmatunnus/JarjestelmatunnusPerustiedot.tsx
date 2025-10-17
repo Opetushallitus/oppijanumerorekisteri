@@ -15,9 +15,13 @@ import { useAppDispatch } from '../../store';
 import { useLocalisations } from '../../selectors';
 
 export const JarjestelmatunnusPerustiedot = () => {
+    const params = useParams();
+    if (!params.oid) {
+        return;
+    }
+
     const dispatch = useAppDispatch();
     const { L } = useLocalisations();
-    const params = useParams();
     const [muokkaa, setMuokkaa] = useState(false);
     const [oauth2Modal, setOauth2Modal] = useState(false);
     const [casModal, setCasModal] = useState(false);
@@ -66,7 +70,7 @@ export const JarjestelmatunnusPerustiedot = () => {
                             <OphDsInput
                                 id="palvelunnimi"
                                 defaultValue={henkilo?.sukunimi}
-                                label={L['HENKILO_PALVELUN_NIMI']}
+                                label={L['HENKILO_PALVELUN_NIMI']!}
                                 onChange={setPalvelunNimi}
                             />
                             <div className="jarjestelmatunnus-edit-buttons">

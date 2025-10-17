@@ -19,7 +19,7 @@ type SimpleDatePickerProps = {
  * Päivämäärävalitsin, jossa arvona käytetään merkkijonoa, esim. "2017-10-25".
  */
 const SimpleDatePicker = (props: SimpleDatePickerProps) => {
-    const getMomentValue = (): Date | undefined => {
+    const getMomentValue = (): Date | null => {
         return props.value ? Moment(props.value, getModelFormat()).toDate() : null;
     };
 
@@ -27,7 +27,7 @@ const SimpleDatePicker = (props: SimpleDatePickerProps) => {
         return props.format ? props.format : DEFAULT_MODEL_FORMAT;
     };
 
-    const onChange = (value?: Date) => {
+    const onChange = (value: Date | null) => {
         props.onChange(value ? Moment(value).format(getModelFormat()) : null);
     };
 

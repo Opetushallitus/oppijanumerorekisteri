@@ -5,11 +5,11 @@ export type OrganisaatioSelectObject = {
     name: string;
     parentNames: Array<string>;
     organisaatiotyypit: Array<string>;
-    oidPath: string;
-    status: string;
+    oidPath?: string;
+    status?: string;
 };
 
-export type RyhmaSelectObject = SelectOption;
+type RyhmaSelectObject = SelectOption;
 
 export function isOrganisaatioSelection(
     selection: OrganisaatioSelectObject | RyhmaSelectObject

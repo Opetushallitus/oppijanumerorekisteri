@@ -40,7 +40,7 @@ const sukupuolet = {
     2: 'HENKILO_YHTEISET_NAINEN',
 };
 
-const renderHakemusData = (hakemus: DuplikaatitHakemus, henkiloType: string) => (
+const renderHakemusData = (hakemus: DuplikaatitHakemus | undefined, henkiloType: string) => (
     <>
         <DataCell hakemus>{hakemus?.kansalaisuus}</DataCell>
         <DataCell hakemus>{hakemus?.aidinkieli}</DataCell>
@@ -94,7 +94,7 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
             <DataCell>{henkilo.etunimet}</DataCell>
             <DataCell>{henkilo.sukunimi}</DataCell>
 
-            <DataCell>{L[sukupuolet[henkilo.sukupuoli]]}</DataCell>
+            <DataCell>{L[sukupuolet[henkilo?.sukupuoli ?? 1]]}</DataCell>
             <DataCell>{henkilo.syntymaaika}</DataCell>
             <DataCell>
                 <Link className="oph-link" to={`/${henkiloType}/${henkilo.oidHenkilo}`}>
@@ -114,7 +114,7 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
             {renderHakemusData(hakemus, henkiloType)}
             <DataCell hakemus>
                 {!!hakemukset.length && (
-                    <DuplikaatitApplicationsPopup title={L['DUPLIKAATIT_MUUTHAKEMUKSET']}>
+                    <DuplikaatitApplicationsPopup title={L['DUPLIKAATIT_MUUTHAKEMUKSET']!}>
                         {hakemukset.map((h) => (
                             <div className="application" key={h.oid}>
                                 {renderHakemusData(h, henkiloType)}
@@ -151,18 +151,18 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
 const isAtaruHakemus = (h: AtaruHakemus | HakuAppHakemus): h is AtaruHakemus => h.service === 'ataru';
 
 const _parseHakemus =
-    (kansalaisuudet: Koodi[], kielet: Koodi[], locale: Locale) =>
+    (kansalaisuudet: Koodi[] | undefined, kielet: Koodi[] | undefined, locale: Locale) =>
     (hakemus: Hakemus): DuplikaatitHakemus => {
         const hakemusData = hakemus.hakemusData;
         return isAtaruHakemus(hakemusData)
-            ? _parseAtaruHakemus(hakemusData, kansalaisuudet, kielet, locale)
-            : _parseHakuappHakemus(hakemusData, kansalaisuudet, kielet, locale);
+            ? _parseAtaruHakemus(kansalaisuudet, hakemusData, kielet, locale)
+            : _parseHakuappHakemus(kansalaisuudet, hakemusData, kielet, locale);
     };
 
 function _parseAtaruHakemus(
+    kansalaisuudet: Koodi[] | undefined,
     hakemus: AtaruHakemus,
-    kansalaisuudet: Koodi[],
-    kielet: Koodi[],
+    kielet: Koodi[] | undefined,
     locale: Locale
 ): DuplikaatitHakemus {
     const href = hakemus.haku
@@ -191,9 +191,9 @@ function _parseAtaruHakemus(
 }
 
 function _parseHakuappHakemus(
+    kansalaisuudet: Koodi[] | undefined,
     hakemus: HakuAppHakemus,
-    kansalaisuudet: Koodi[],
-    kielet: Koodi[],
+    kielet: Koodi[] | undefined,
     locale: Locale
 ): DuplikaatitHakemus {
     const henkilotiedot = hakemus.answers?.henkilotiedot;
@@ -206,21 +206,23 @@ function _parseHakuappHakemus(
         hakijaOid: hakemus.personOid,
         kansalaisuus,
         aidinkieli,
-        matkapuhelinnumero: henkilotiedot.matkapuhelinnumero1,
-        sahkoposti: henkilotiedot['Sähköposti'],
-        lahiosoite: henkilotiedot.lahiosoite,
-        postinumero: henkilotiedot.Postinumero,
-        passinumero: henkilotiedot.passinumero,
-        kansallinenIdTunnus: henkilotiedot.kansallinenIdTunnus,
+        matkapuhelinnumero: henkilotiedot?.matkapuhelinnumero1,
+        sahkoposti: henkilotiedot?.['Sähköposti'],
+        lahiosoite: henkilotiedot?.lahiosoite,
+        postinumero: henkilotiedot?.Postinumero,
+        passinumero: henkilotiedot?.passinumero,
+        kansallinenIdTunnus: henkilotiedot?.kansallinenIdTunnus,
         href: `/haku-app/virkailija/hakemus/${hakemus.oid}`,
         state: hakemus.state,
     };
 }
 
-const _koodistoLabel = (koodi: string, koodisto: Koodi[] | undefined, locale: Locale): string | undefined =>
-    koodiLabel(
-        koodisto?.find((koodistoItem) => koodistoItem.koodiArvo === koodi),
-        locale
-    );
+const _koodistoLabel = (koodi: string | undefined, koodisto: Koodi[] | undefined, locale: Locale): string | undefined =>
+    koodi
+        ? koodiLabel(
+              koodisto?.find((koodistoItem) => koodistoItem.koodiArvo === koodi),
+              locale
+          )
+        : '';
 
 export default DuplikaatitPerson;

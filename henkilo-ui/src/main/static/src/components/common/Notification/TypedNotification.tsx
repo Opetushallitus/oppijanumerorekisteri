@@ -3,7 +3,7 @@ import { NotificationType } from '../../../types/notification.types';
 
 type Props = {
     closeAction: () => void;
-    title: string;
+    title?: string;
     type: NotificationType;
     children?: React.ReactNode;
     dataTestId?: string;

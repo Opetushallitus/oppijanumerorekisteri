@@ -15,11 +15,15 @@ import HenkiloViewDuplikaatit from './HenkiloViewDuplikaatit';
 import Loader from '../../common/icons/Loader';
 
 type OwnProps = {
-    henkiloType?: string;
+    henkiloType: string;
 };
 
 export const DuplikaatitContainer = (props: OwnProps) => {
     const { oid } = useParams();
+    if (!oid) {
+        return;
+    }
+
     const { L } = useLocalisations();
     const { data: henkilo, isLoading: isHenkiloLoading } = useGetHenkiloQuery(oid);
     const { data: master } = useGetHenkiloMasterQuery(oid);
@@ -39,12 +43,12 @@ export const DuplikaatitContainer = (props: OwnProps) => {
                     {L['DUPLIKAATIT_OHJELINKKI_TEKSTI']}
                 </a>
             </p>
-            {isHenkiloLoading || isLoading ? (
+            {isHenkiloLoading || isLoading || !henkilo || !duplicates ? (
                 <Loader />
             ) : (
                 <HenkiloViewDuplikaatit
                     vainLuku={false}
-                    henkilo={henkilo}
+                    henkilo={{ ...henkilo, passinumerot: null }}
                     henkiloType={props.henkiloType}
                     duplicates={duplicates}
                     oidHenkilo={henkilo?.oidHenkilo}

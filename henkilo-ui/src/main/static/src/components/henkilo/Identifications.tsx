@@ -19,7 +19,7 @@ import Loader from '../common/icons/Loader';
 import { add } from '../../slices/toastSlice';
 
 type Props = {
-    oid?: string;
+    oid: string;
 };
 
 const emptyData: Identification[] = [];
@@ -131,7 +131,7 @@ export const Identifications = ({ oid }: Props) => {
 
     return (
         <div id="identifications" style={{ wordBreak: 'break-word' }}>
-            {data?.length > 0 && <OphTable table={table} isLoading={isLoading} />}
+            {data && data.length > 0 && <OphTable table={table} isLoading={isLoading} />}
             {(isPostLoading || isDeleteLoading || isFetching || isLoading) && <Loader />}
             <Button
                 action={() => setShowAddModal(true)}
@@ -158,7 +158,7 @@ export const Identifications = ({ oid }: Props) => {
                             <Select
                                 inputId="newIdpEntityId"
                                 options={idpEntityIdOptions}
-                                onChange={(option) => setNewIdpEntityId(option.value)}
+                                onChange={(option) => setNewIdpEntityId(option?.value ?? '')}
                                 value={idpEntityIdOptions.find((o) => o.value === newIdpEntityId)}
                             />
                         </div>

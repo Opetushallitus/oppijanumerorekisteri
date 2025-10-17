@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import Select from 'react-select';
+import Select, { SingleValue } from 'react-select';
 
 import StaticUtils from '../../StaticUtils';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
@@ -12,7 +12,7 @@ import { useGetHenkiloQuery } from '../../../../api/oppijanumerorekisteri';
 type OwnProps = {
     henkiloUpdate: Henkilo;
     readOnly: boolean;
-    updateModelSelectAction: (o: NamedSelectOption) => void;
+    updateModelSelectAction: (o: SingleValue<NamedSelectOption>) => void;
 };
 
 const Aidinkieli = (props: OwnProps) => {

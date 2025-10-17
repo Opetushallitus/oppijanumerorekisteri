@@ -25,6 +25,10 @@ type OwnProps = {
 
 export const VtjVertailuPage = (props: OwnProps) => {
     const { oid } = useParams();
+    if (!oid) {
+        return;
+    }
+
     const dispatch = useAppDispatch();
     const { data: henkilo, isLoading: isHenkiloLoading } = useGetHenkiloQuery(oid);
     const { data: omattiedot } = useGetOmattiedotQuery();
@@ -46,7 +50,7 @@ export const VtjVertailuPage = (props: OwnProps) => {
         true
     );
 
-    async function overrideHenkiloInformation(): Promise<void> {
+    async function overrideHenkiloInformation(oid: string): Promise<void> {
         await yliajaYksiloimaton(oid)
             .unwrap()
             .then(() => {
@@ -81,13 +85,13 @@ export const VtjVertailuPage = (props: OwnProps) => {
         return !isEnabledVtjVertailuView || currentUserIsViewedHenkilo || !hasAccess;
     }
 
-    return yksilointitiedotQuery.isLoading || isHenkiloLoading ? (
+    return yksilointitiedotQuery.isLoading || isHenkiloLoading || !henkilo ? (
         <Loader />
     ) : (
         <div className="mainContent wrapper">
             <h2>{L['HENKILO_VTJ_VERTAILU']}</h2>
             <VtjVertailuListaus henkilo={henkilo} />
-            <Button action={overrideHenkiloInformation} disabled={isDisabled()}>
+            <Button action={() => overrideHenkiloInformation(oid)} disabled={isDisabled()}>
                 {L['HENKILO_VTJ_YLIAJA']}
             </Button>
         </div>

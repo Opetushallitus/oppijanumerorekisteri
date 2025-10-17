@@ -5,7 +5,7 @@ import { useLocalisations } from '../../../selectors';
 
 import './NotificationButton.css';
 
-export type ButtonNotification = { notL10nMessage: string; notL10nText?: string };
+export type ButtonNotification = { notL10nMessage: string; notL10nText: string };
 
 type OwnProps = {
     action?: () => void;

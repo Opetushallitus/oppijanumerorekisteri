@@ -12,7 +12,7 @@ type OwnProps = {
 };
 
 const Kutsumanimi = (props: OwnProps) => {
-    const { data: henkilo } = useGetHenkiloQuery(props.henkiloOid, { skip: !props.henkiloOid });
+    const { data: henkilo } = useGetHenkiloQuery(props.henkiloOid!, { skip: !props.henkiloOid });
     return (
         <LabelValue
             readOnly={props.readOnly}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
+import { SingleValue } from 'react-select';
 
 import { useAppDispatch } from '../../../../store';
 import StaticUtils from '../../StaticUtils';
@@ -91,7 +92,9 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
 
     function _discard() {
         const henkiloUpdate = copy(henkilo);
-        henkiloUpdate.anomusilmoitus = omattiedot?.anomusilmoitus;
+        if (henkiloUpdate) {
+            henkiloUpdate.anomusilmoitus = omattiedot?.anomusilmoitus;
+        }
         setHenkiloUpdate(henkiloUpdate);
         setReadOnly(true);
     }
@@ -142,9 +145,12 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
     }
 
     async function updateAnomusilmoitus(henkiloUpdate: Henkilo) {
-        if (view === 'omattiedot' && omattiedot.isAdmin) {
+        if (view === 'omattiedot' && omattiedot?.isAdmin) {
             const initialAnomusilmoitusValue = omattiedot.anomusilmoitus;
-            return putAnomusilmoitus({ oid: henkiloUpdate.oidHenkilo, anomusilmoitus: henkiloUpdate.anomusilmoitus })
+            return putAnomusilmoitus({
+                oid: henkiloUpdate.oidHenkilo,
+                anomusilmoitus: henkiloUpdate.anomusilmoitus ?? [],
+            })
                 .unwrap()
                 .catch(() => {
                     setHenkiloUpdate({
@@ -156,7 +162,7 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
     }
 
     async function updateKayttajatiedot(henkiloUpdate: Henkilo) {
-        return putKayttajatiedot({ oid: henkiloUpdate.oidHenkilo, username: henkiloUpdate.kayttajanimi })
+        return putKayttajatiedot({ oid: henkiloUpdate.oidHenkilo, username: henkiloUpdate.kayttajanimi! })
             .unwrap()
             .catch((error) => {
                 const errorKey =
@@ -178,7 +184,7 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
         setHenkiloUpdate(newHenkiloUpdate);
     }
 
-    function _updateModelSelectValue(event: NamedSelectOption | NamedMultiSelectOption) {
+    function _updateModelSelectValue(event: SingleValue<NamedSelectOption> | NamedMultiSelectOption) {
         const newHenkiloUpdate = { ...StaticUtils.updateSelectValueByDotAnnotation(henkiloUpdate, event) };
         setHenkiloUpdate(newHenkiloUpdate);
     }
@@ -204,7 +210,7 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
 
     function _getYksilointivirhe() {
         const yksilointivirheet = henkilo?.yksilointivirheet;
-        const virhe = yksilointivirheet[0];
+        const virhe = yksilointivirheet?.[0];
         const yksilointivirheMap = {
             HETU_EI_OIKEA: 'HENKILO_YKSILOINTIVIRHE_HETU_EI_OIKEA',
             HETU_EI_VTJ: 'HENKILO_YKSILOINTIVIRHE_HETU_EI_VTJ',
@@ -212,10 +218,10 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
             MUU_UUDELLEENYRITETTAVA: 'HENKILO_YKSILOINTIVIRHE_MUU_UUDELLEENYRITETTAVA',
             MUU: 'HENKILO_YKSILOINTIVIRHE_MUU',
         };
-        const virheKey = yksilointivirheMap[virhe.yksilointivirheTila] || 'HENKILO_YKSILOINTIVIRHE_OLETUS';
-        return virhe.uudelleenyritysAikaleima
+        const virheKey = (virhe && yksilointivirheMap[virhe.yksilointivirheTila]) || 'HENKILO_YKSILOINTIVIRHE_OLETUS';
+        return virhe?.uudelleenyritysAikaleima
             ? `${L[virheKey]} ${L['HENKILO_YKSILOINTIVIRHE_UUDELLEENYRITYS']} ${moment(
-                  virhe.uudelleenyritysAikaleima
+                  virhe?.uudelleenyritysAikaleima
               ).format(PropertySingleton.getState().PVM_DATE_TIME_FORMAATTI)}`
             : L[virheKey];
     }

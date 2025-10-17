@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import moment from 'moment';
-import Select, { createFilter } from 'react-select';
+import Select, { createFilter, SingleValue } from 'react-select';
 
 import Button from '../common/button/Button';
 import KutsututTable from './KutsututTable';
@@ -56,7 +56,7 @@ export const KutsututPage = () => {
     });
     const delayedParams = useDebounce(params, 500);
     const [organisaatioSelection, setOrganisaatioSelection] = useState('');
-    const [ryhmaSelection, setRyhmaSelection] = useState('');
+    const [ryhmaSelection, setRyhmaSelection] = useState<string | undefined>('');
     const [confirmDelete, setConfirmDelete] = useState<KutsuRead>();
     const [deleteKutsu] = useDeleteKutsuMutation();
     const { data: kayttooikeusryhmat } = useGetKayttooikeusryhmasQuery({ passiiviset: false });
@@ -66,9 +66,11 @@ export const KutsututPage = () => {
             kayttooikeusryhmat
                 ?.map((kayttooikeusryhma) => ({
                     value: '' + kayttooikeusryhma.id,
-                    label: StaticUtils.getLocalisedText(kayttooikeusryhma.description, locale),
+                    label:
+                        StaticUtils.getLocalisedText(kayttooikeusryhma.description, locale) ??
+                        String(kayttooikeusryhma.id),
                 }))
-                .sort((a, b) => a.label.localeCompare(b.label)) ?? []
+                .sort((a, b) => (a.label && b.label ? a.label.localeCompare(b.label) : 1)) ?? []
         );
     }, [kayttooikeusryhmat]);
 
@@ -90,14 +92,14 @@ export const KutsututPage = () => {
         setRyhmaSelection(undefined);
     }
 
-    function onRyhmaChange(ryhma?: SelectOption) {
+    function onRyhmaChange(ryhma?: SingleValue<SelectOption>) {
         const ryhmaOid = ryhma ? ryhma.value : '';
         setParams({ ...params, organisaatioOids: ryhmaOid });
         setOrganisaatioSelection('');
         setRyhmaSelection(ryhmaOid);
     }
 
-    function onKayttooikeusryhmaChange(kayttooikeusOption: SelectOption) {
+    function onKayttooikeusryhmaChange(kayttooikeusOption?: SingleValue<SelectOption>) {
         setParams({ ...params, kayttooikeusryhmaIds: kayttooikeusOption?.value });
     }
 

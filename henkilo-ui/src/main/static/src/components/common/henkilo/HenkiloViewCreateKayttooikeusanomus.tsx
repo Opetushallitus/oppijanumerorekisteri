@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import Select, { createFilter } from 'react-select';
+import Select, { createFilter, SingleValue } from 'react-select';
 
 import { useAppDispatch } from '../../../store';
 import Button from '../button/Button';
@@ -43,10 +43,10 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
     const { data: omattiedot } = useGetOmattiedotQuery();
     const [showInstructions, setShowInstructions] = useState(false);
     const [organisationSelection, setOrganisationSelection] = useState<OrganisaatioSelectObject>();
-    const [ryhmaSelection, setRyhmaSelection] = useState<SelectOption>();
+    const [ryhmaSelection, setRyhmaSelection] = useState<SingleValue<SelectOption>>();
     const [activeSelection, setActiveSelection] = useState<string>();
     const { data: organisaatioKayttooikeusryhmat, isFetching } = useGetKayttooikeusryhmaOrganisaatiotQuery(
-        activeSelection,
+        activeSelection!,
         {
             skip: !activeSelection,
         }
@@ -77,7 +77,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
         setEmailOptions(createEmailOptions(henkilo));
     }, [henkilo]);
 
-    function createEmailOptions(henkilo: Henkilo) {
+    function createEmailOptions(henkilo?: Henkilo) {
         const emailOptions = _parseEmailOptions(henkilo);
         if (emailOptions.length === 1) {
             return {
@@ -102,7 +102,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
         setActiveSelection(organisaatioSelection.oid);
     }
 
-    function _changeRyhmaSelection(ryhmaSelection: SelectOption) {
+    function _changeRyhmaSelection(ryhmaSelection: SingleValue<SelectOption>) {
         setOrganisationSelection(undefined);
         setRyhmaSelection(ryhmaSelection);
         setActiveSelection(ryhmaSelection?.value);
@@ -120,7 +120,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
         return emailOptions && emailOptions.emailSelection !== '' && !emailOptions.missingEmail;
     }
 
-    function flatten(root: OrganisaatioWithChildren): OrganisaatioHenkilo[] {
+    function flatten(root?: OrganisaatioWithChildren): OrganisaatioHenkilo[] {
         return root ? [{ organisaatio: root }, ...root.children.flatMap((node) => flatten(node))] : [];
     }
 
@@ -133,7 +133,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
         setEmailOptions(createEmailOptions(henkilo));
     }
 
-    function _parseEmailOptions(henkilo: Henkilo): { value: string; label: string }[] {
+    function _parseEmailOptions(henkilo?: Henkilo): { value: string; label: string }[] {
         const emails: string[] = [];
         if (henkilo?.yhteystiedotRyhma) {
             henkilo.yhteystiedotRyhma.forEach((yhteystietoRyhma) => {
@@ -153,8 +153,8 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
             ...kayttooikeusryhmaSelections,
             {
                 value: kayttooikeusryhma.id,
-                label: kayttooikeusryhma.nimi.texts?.find((t) => t.lang === l)?.text,
-                description: kayttooikeusryhma.kuvaus?.texts?.find((t) => t.lang === l)?.text,
+                label: kayttooikeusryhma.nimi.texts?.find((t) => t.lang === l)?.text ?? '',
+                description: kayttooikeusryhma.kuvaus?.texts?.find((t) => t.lang === l)?.text ?? '',
             },
         ]);
     }
@@ -166,12 +166,16 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
     }
 
     async function _createKayttooikeusAnomus() {
+        if (!activeSelection || !emailOptions.emailSelection || !perustelut || !omattiedot) {
+            return;
+        }
+
         postKayttooikeusAnomus({
             organisaatioOrRyhmaOid: activeSelection,
             email: emailOptions.emailSelection,
             perustelut: perustelut,
             kayttooikeusRyhmaIds: kayttooikeusryhmaSelections.map((selection) => selection.value),
-            anojaOid: omattiedot.oidHenkilo,
+            anojaOid: omattiedot?.oidHenkilo,
         })
             .unwrap()
             .then(() => {
@@ -202,7 +206,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
             <h2>{L['OMATTIEDOT_OTSIKKO']}</h2>
             {emailOptions.showMissingEmailNotification ? (
                 <WideBlueNotification
-                    message={L['OMATTIEDOT_PUUTTUVA_SAHKOPOSTI_UUSI_ANOMUS']}
+                    message={L['OMATTIEDOT_PUUTTUVA_SAHKOPOSTI_UUSI_ANOMUS']!}
                     closeAction={() => {
                         setEmailOptions({ ...emailOptions, showMissingEmailNotification: false });
                     }}
@@ -262,9 +266,11 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
                                 placeholder={L['OMATTIEDOT_SAHKOPOSTI_VALINTA']}
                                 options={emailOptions.options}
                                 value={emailOptions.options.find((o) => o.value === emailOptions.emailSelection)}
-                                onChange={(selection) =>
-                                    setEmailOptions({ ...emailOptions, emailSelection: selection.value })
-                                }
+                                onChange={(selection) => {
+                                    if (selection) {
+                                        setEmailOptions({ ...emailOptions, emailSelection: selection?.value });
+                                    }
+                                }}
                             />
                         </div>
                     </div>

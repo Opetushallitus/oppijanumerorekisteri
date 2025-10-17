@@ -107,7 +107,9 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
             .then(({ oid, status }) => {
                 setExistingOid(oid);
                 setExistingStatus(status);
-                setExistingMessage(statusToMessage[status]);
+                if (status) {
+                    setExistingMessage(statusToMessage[status]);
+                }
             })
             .catch(({ status }) => {
                 setExistingStatus(status);
@@ -141,7 +143,7 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
                 {createOid && (
                     <>
                         <div className="create-result oph-alert-success">
-                            <ReactMarkdown>{L['CREATE_PERSON_SUCCESS']}</ReactMarkdown>
+                            <ReactMarkdown>{L['CREATE_PERSON_SUCCESS'] ?? ''}</ReactMarkdown>
                             <CopyToClipboard text={createOid} L={L} />
                         </div>
                         <Button action={resetState}>{L['HENKILO_LUOYHTEYSTIETO']}</Button>
@@ -149,7 +151,7 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
                 )}
                 {createError && (
                     <div className="create-result oph-alert-error">
-                        <ReactMarkdown>{L['CREATE_PERSON_FAILURE']}</ReactMarkdown>
+                        <ReactMarkdown>{L['CREATE_PERSON_FAILURE'] ?? ''}</ReactMarkdown>
                     </div>
                 )}
                 {existingMessage && (
@@ -157,11 +159,11 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
                         className={classNames('check-result', {
                             'oph-alert-success': existingStatus === 200,
                             'oph-alert-info': existingStatus === 204,
-                            'oph-alert-error': existingStatus >= 400,
+                            'oph-alert-error': existingStatus && existingStatus >= 400,
                         })}
                     >
-                        <ReactMarkdown>{L[existingMessage]}</ReactMarkdown>
-                        {existingStatus === 200 && <CopyToClipboard text={existingOid} L={L} />}
+                        <ReactMarkdown>{L[existingMessage] ?? ''}</ReactMarkdown>
+                        {existingStatus === 200 && <CopyToClipboard text={existingOid ?? ''} L={L} />}
                         {existingStatus === 204 && <Button action={handleCreate}>{L['HENKILO_LUOYHTEYSTIETO']}</Button>}
                     </div>
                 )}
@@ -180,7 +182,7 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
                                 />
                                 {!!errors[field.name] && (
                                     <div className="oph-field-text oph-error">
-                                        {L[resolveErrorKey(errors[field.name].type)]}
+                                        {L[resolveErrorKey(errors[field.name]?.type ?? '')]}
                                     </div>
                                 )}
                             </div>

@@ -15,7 +15,7 @@ const VtjOverrideButton = ({ henkiloOid, disabled }: OwnProps) => {
     const { L } = useLocalisations();
     const [notification, setNotification] = useState<ButtonNotification>();
     const [yliajaTiedotVtj] = usePutYliajaTiedotVtjMutation();
-    return henkilo.yksiloityVTJ && henkilo.hetu ? (
+    return henkilo?.yksiloityVTJ && henkilo.hetu ? (
         <ConfirmButton
             key="vtjOverride"
             action={() =>

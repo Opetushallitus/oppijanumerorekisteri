@@ -21,7 +21,7 @@ export type Metadata = {
 };
 export type Error = {
     name: string;
-    text: string;
+    text?: string;
 };
 export type Errors = Array<Error>;
 export type Form = {
@@ -56,7 +56,7 @@ const VahvaTunnistusLisatiedotInputs = (props: Props) => {
                     <Salasana
                         disabled={props.form.metadata.password.disabled}
                         isError={hasError('password')}
-                        updateModelFieldAction={onInputChange.bind(this)}
+                        updateModelFieldAction={onInputChange}
                     />
                     <LocalNotification
                         type="error"

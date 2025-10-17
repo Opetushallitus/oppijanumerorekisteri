@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router';
-import Select, { SelectInstance } from 'react-select';
+import Select, { SelectInstance, SingleValue } from 'react-select';
 
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { useLocalisations } from '../../../selectors';
@@ -61,22 +61,23 @@ export const KayttooikeusryhmatPage = () => {
     const [passiiviset, setPassiiviset] = useState(false);
     const [showType, setShowType] = useState<Kayttajatyyppi>('virkailija');
     const [filter, setFilter] = useState('');
-    const [palvelu, setPalvelu] = useState<SelectOption>();
-    const [kayttooikeus, setKayttooikeus] = useState<SelectOption>();
+    const [palvelu, setPalvelu] = useState<SingleValue<SelectOption>>();
+    const [kayttooikeus, setKayttooikeus] = useState<SingleValue<SelectOption>>();
     const { data: kayttooikeusryhmat } = useGetKayttooikeusryhmasQuery({
         passiiviset,
         palvelu: palvelu?.value,
         kayttooikeus: kayttooikeus?.value,
     });
     const { data: palvelut } = useGetPalvelutQuery();
-    const { data: kayttooikeudet } = useGetPalveluKayttooikeudetQuery(palvelu?.value, {
-        skip: !palvelu,
+    const palveluValue = palvelu?.value;
+    const { data: kayttooikeudet } = useGetPalveluKayttooikeudetQuery(palveluValue!, {
+        skip: !palvelu?.value,
     });
     const kayttooikeusSelectRef = useRef<SelectInstance<SelectOption>>(null);
 
-    const setPalveluAndKayttooikeus = (p: SelectOption) => {
+    const setPalveluAndKayttooikeus = (p: SingleValue<SelectOption>) => {
         if (!p) {
-            kayttooikeusSelectRef.current.clearValue();
+            kayttooikeusSelectRef.current?.clearValue();
             setKayttooikeus(undefined);
         }
         setPalvelu(p);
@@ -86,7 +87,7 @@ export const KayttooikeusryhmatPage = () => {
         () =>
             (palvelut ?? []).map((p) => ({
                 value: p.name,
-                label: p.description.texts?.find((t) => t.lang === locale.toUpperCase())?.text,
+                label: p.description.texts?.find((t) => t.lang === locale.toUpperCase())?.text ?? '',
             })),
         [palvelut]
     );
@@ -94,7 +95,7 @@ export const KayttooikeusryhmatPage = () => {
         () =>
             (kayttooikeudet ?? []).map((k) => ({
                 value: k.rooli,
-                label: k.oikeusLangs.find((o) => o.lang === locale.toUpperCase())?.text,
+                label: k.oikeusLangs.find((o) => o.lang === locale.toUpperCase())?.text ?? '',
             })),
         [kayttooikeudet]
     );
@@ -130,10 +131,10 @@ export const KayttooikeusryhmatPage = () => {
     }, [kayttooikeusryhmat, showType, filter]);
 
     return (
-        <OphDsPage header={L['KAYTTOOIKEUSRYHMAT_OTSIKKO_LISTA']}>
+        <OphDsPage header={L['KAYTTOOIKEUSRYHMAT_OTSIKKO_LISTA']!}>
             <section className="kayttoikeusryhmat-form">
                 <div className="kayttoikeusryhmat-row">
-                    <OphDsInput id="filter" label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_SUODATA']} onChange={setFilter} />
+                    <OphDsInput id="filter" label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_SUODATA']!} onChange={setFilter} />
                     <div className="kayttoikeusryhmat-form-cell">
                         <OphDsRadioGroup
                             checked={showType}
@@ -141,8 +142,8 @@ export const KayttooikeusryhmatPage = () => {
                             legend={L['KAYTTOOIKEUSRYHMAT_SUODATA_TYYPILLA']}
                             onChange={setShowType}
                             radios={[
-                                { id: 'virkailija', label: L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_VIRKAILIJA'] },
-                                { id: 'palvelu', label: L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PALVELU'] },
+                                { id: 'virkailija', label: L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_VIRKAILIJA']! },
+                                { id: 'palvelu', label: L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PALVELU']! },
                             ]}
                         />
                     </div>
@@ -150,7 +151,7 @@ export const KayttooikeusryhmatPage = () => {
                         <div>
                             <OphDsChechbox
                                 id="kayttooikeusryhmaNaytaPassivoidut"
-                                label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PASSIVOIDUT']}
+                                label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PASSIVOIDUT']!}
                                 checked={passiiviset}
                                 onChange={() => setPassiiviset(!passiiviset)}
                             />

@@ -54,7 +54,7 @@ const staggeredBaseQuery = retry(
     { maxRetries: 5 }
 );
 
-const isKayttoEstetty = (meta: FetchBaseQueryMeta) => meta.response?.status === 403 || meta.response?.status === 401;
+const isKayttoEstetty = (meta?: FetchBaseQueryMeta) => meta?.response?.status === 403 || meta?.response?.status === 401;
 
 export const oppijanumerorekisteriApi = createApi({
     reducerPath: 'oppijanumerorekisteriApi',
@@ -311,17 +311,17 @@ export const oppijanumerorekisteriApi = createApi({
             }),
             invalidatesTags: ['henkilo'],
         }),
-        henkiloExists: builder.mutation<{ oid: string; status: number }, CreateHenkiloRequest>({
+        henkiloExists: builder.mutation<{ oid: string; status?: number }, CreateHenkiloRequest>({
             query: (request) => ({
                 url: 'henkilo/exists',
                 method: 'POST',
                 body: request,
             }),
             transformResponse: (data: { oid: string }, meta) => {
-                return { ...data, status: meta.response?.status };
+                return { ...data, status: meta?.response?.status };
             },
             transformErrorResponse: (_data, meta) => {
-                return { status: meta.response?.status };
+                return { status: meta?.response?.status };
             },
             extraOptions: { maxRetries: 0 }, // valid api responses include status codes 400 and 409
         }),

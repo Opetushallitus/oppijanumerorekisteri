@@ -13,7 +13,7 @@ import {
 import { add } from '../../../slices/toastSlice';
 
 type OwnProps = {
-    kayttooikeusryhmaId?: string;
+    kayttooikeusryhmaId: string;
 };
 
 /**
@@ -33,7 +33,7 @@ const ToggleKayttooikeusryhmaStateModal = (props: OwnProps) => {
     const [passivoiKayttooikeusryhma, passivoiProps] = usePutPassivoiKayttooikeusryhmaMutation();
 
     useEffect(() => {
-        setIsPassivoitu(kayttooikeusryhma?.passivoitu);
+        setIsPassivoitu(kayttooikeusryhma?.passivoitu ?? false);
     }, [props, kayttooikeusryhma]);
 
     useEffect(() => {

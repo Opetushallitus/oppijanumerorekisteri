@@ -4,7 +4,7 @@ import { NotificationType } from '../../../types/notification.types';
 
 type LocalNotificationProps = {
     type: NotificationType;
-    title: string;
+    title?: string;
     toggle?: boolean;
     onClose?: () => void;
     children?: React.ReactElement | Array<React.ReactElement> | string;
@@ -34,7 +34,7 @@ export class LocalNotification extends React.Component<LocalNotificationProps, S
             toggle:
                 this.props.toggle === true || this.props.toggle === false
                     ? () => this.props.toggle === true
-                    : () => this._childrenIsValid(),
+                    : () => !!this._childrenIsValid(),
         };
     }
 
@@ -54,7 +54,7 @@ export class LocalNotification extends React.Component<LocalNotificationProps, S
     };
 
     _childrenIsValid() {
-        return React.Children.map(this.props.children, this._childIsValid).every(Boolean);
+        return React.Children.map(this.props.children, this._childIsValid)?.every(Boolean);
     }
 
     _childIsValid(child?: React.ReactNode) {

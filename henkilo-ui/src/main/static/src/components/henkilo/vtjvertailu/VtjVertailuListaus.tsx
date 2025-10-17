@@ -7,6 +7,7 @@ import OphTable from '../../OphTable';
 import { YhteystietoRyhma } from '../../../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
 import { useGetYksilointitiedotQuery } from '../../../api/oppijanumerorekisteri';
 import { Henkilo } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
+import { Yhteystieto } from '../../../types/domain/oppijanumerorekisteri/yhteystieto.types';
 
 type Props = {
     henkilo: Henkilo;
@@ -41,7 +42,7 @@ const VtjVertailuListaus = ({ henkilo }: Props) => {
     function renderYhteystiedotRyhma(henkilo: HenkiloData) {
         const yhteystiedot = henkilo.yhteystiedotRyhma
             ? henkilo.yhteystiedotRyhma
-                  .reduce((accumulator, current) => accumulator.concat(current.yhteystieto), [])
+                  .reduce<Yhteystieto[]>((accumulator, current) => accumulator.concat(current.yhteystieto), [])
                   .filter((yhteystieto) => yhteystieto.yhteystietoArvo)
             : [];
         return (

@@ -2,7 +2,7 @@ import React, { useId, useState } from 'react';
 import moment from 'moment';
 import ReactDatePicker from 'react-datepicker';
 
-import CKKayttooikeudet, { ValittuKayttooikeusryhma } from './createkayttooikeus/CKKayttooikeudet';
+import CKKayttooikeudet, { ValittuKayttooikeusryhma } from './createkayttooikeus/CreateKayttooikeusSection';
 import PropertySingleton from '../../../globals/PropertySingleton';
 import { useLocalisations } from '../../../selectors';
 import { SelectOption } from '../../../utilities/select';
@@ -15,9 +15,10 @@ import { add } from '../../../slices/toastSlice';
 import { useAppDispatch } from '../../../store';
 
 import './HenkiloViewCreateKayttooikeus.css';
+import { SingleValue } from 'react-select';
 
 type OwnProps = {
-    existingKayttooikeusRef: React.MutableRefObject<HTMLDivElement>;
+    existingKayttooikeusRef: React.RefObject<HTMLDivElement>;
     oidHenkilo: string;
     isPalvelukayttaja: boolean;
 };
@@ -32,35 +33,39 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
     const dispatch = useAppDispatch();
     const [putKayttooikeusryhma] = usePutKayttooikeusryhmaForHenkiloMutation();
     const [selectedList, setSelectedList] = useState<ValittuKayttooikeusryhma[]>([]);
-    const [organisationSelection, setOrganisationSelection] = useState<OrganisaatioSelectObject>();
-    const [ryhmaSelection, setRyhmaSelection] = useState<SelectOption>();
+    const [organisationSelection, setOrganisationSelection] = useState<SingleValue<OrganisaatioSelectObject>>();
+    const [ryhmaSelection, setRyhmaSelection] = useState<SingleValue<SelectOption>>(null);
     const [alkupvm, setAlkupvm] = useState<moment.Moment>(moment());
     const defaultLoppupvm = isPalvelukayttaja ? moment('2099-12-31', 'YYYY-MM-DD') : moment().add(1, 'years');
     const [loppupvmInput, setLoppupvmInput] = useState<moment.Moment>();
     const loppupvm = loppupvmInput ?? defaultLoppupvm;
 
-    const selectRyhma = (selection: SelectOption) => {
+    const selectRyhma = (selection: SingleValue<SelectOption>) => {
         setOrganisationSelection(undefined);
         setRyhmaSelection(selection);
     };
 
-    const selectOrganisation = (selection: OrganisaatioSelectObject) => {
+    const selectOrganisation = (selection: SingleValue<OrganisaatioSelectObject>) => {
         setOrganisationSelection(selection);
-        setRyhmaSelection(undefined);
+        setRyhmaSelection(null);
     };
 
     const resetValues = () => {
         setSelectedList([]);
         setOrganisationSelection(undefined);
-        setRyhmaSelection(undefined);
+        setRyhmaSelection(null);
         setAlkupvm(moment());
         setLoppupvmInput(undefined);
     };
 
     const createKayttooikeusAction = async () => {
+        const organisationOid = organisationSelection?.oid ?? ryhmaSelection?.value;
+        if (!organisationOid) {
+            return;
+        }
         await putKayttooikeusryhma({
             henkiloOid: oidHenkilo,
-            organisationOid: organisationSelection?.oid ?? ryhmaSelection?.value,
+            organisationOid: organisationOid,
             body: selectedList.map((selected) => ({
                 id: selected.value,
                 kayttoOikeudenTila: 'MYONNA',

@@ -13,7 +13,11 @@ const RekisteroidyContainer = () => {
     const { getLocalisations } = useLocalisations();
     const search = new URLSearchParams(location.search);
     const temporaryToken = search.get('temporaryKutsuToken');
-    const { data: kutsu, isLoading: isKutsuLoading, isError } = useGetKutsuByTokenQuery(temporaryToken);
+    const {
+        data: kutsu,
+        isLoading: isKutsuLoading,
+        isError,
+    } = useGetKutsuByTokenQuery(temporaryToken!, { skip: !temporaryToken });
     const locale = toSupportedLocale(kutsu?.asiointikieli);
     const L = getLocalisations(kutsu?.asiointikieli);
 
@@ -21,7 +25,7 @@ const RekisteroidyContainer = () => {
 
     if (isKutsuLoading) {
         return <Loader />;
-    } else if (isError) {
+    } else if (isError || !kutsu || temporaryToken === null) {
         return <VirhePage text={'REKISTEROIDY_TEMP_TOKEN_INVALID'} />;
     }
     return <RekisteroidyPage kutsu={{ ...kutsu, temporaryToken }} L={L} locale={locale} />;

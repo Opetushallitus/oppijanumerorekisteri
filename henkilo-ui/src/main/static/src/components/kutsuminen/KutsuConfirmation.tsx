@@ -41,7 +41,7 @@ export const KutsuConfirmation = (props: Props) => {
             saate: props.basicInfo.saate ? props.basicInfo.saate : undefined,
             organisaatiot: props.addedOrgs.map((addedOrg) => ({
                 organisaatioOid: addedOrg.organisation.oid,
-                voimassaLoppuPvm: addedOrg.voimassaLoppuPvm,
+                voimassaLoppuPvm: addedOrg.voimassaLoppuPvm!,
                 kayttoOikeusRyhmat: addedOrg.selectedPermissions.map((selectedPermission) => ({
                     id: selectedPermission.ryhmaId,
                 })),

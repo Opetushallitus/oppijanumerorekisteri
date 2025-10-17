@@ -44,23 +44,23 @@ export const VirkailijaCreateContainer = () => {
     };
 
     const validate = (virkailija: VirkailijaCreate): Array<string> => {
-        const virheet = [];
+        const virheet: string[] = [];
         if (virkailija.kutsumanimi) {
             if (!isValidKutsumanimi(virkailija.etunimet, virkailija.kutsumanimi)) {
-                virheet.push(L['REKISTEROIDY_ERROR_KUTSUMANIMI']);
+                virheet.push(L['REKISTEROIDY_ERROR_KUTSUMANIMI']!);
             }
         }
         if (virkailija.kayttajatunnus) {
             if (!isValidKayttajatunnus(virkailija.kayttajatunnus)) {
-                virheet.push(L['NOTIFICATION_HENKILOTIEDOT_KAYTTAJATUNNUS_VIRHE']);
+                virheet.push(L['NOTIFICATION_HENKILOTIEDOT_KAYTTAJATUNNUS_VIRHE']!);
             }
         }
         if (virkailija.salasana) {
             if (!isValidPassword(virkailija.salasana)) {
-                virheet.push(L['REKISTEROIDY_ERROR_PASSWORD_INVALID']);
+                virheet.push(L['REKISTEROIDY_ERROR_PASSWORD_INVALID']!);
             }
             if (virkailija.salasana !== virkailija.salasanaUudestaan) {
-                virheet.push(L['REKISTEROIDY_ERROR_PASSWORD_MATCH']);
+                virheet.push(L['REKISTEROIDY_ERROR_PASSWORD_MATCH']!);
             }
         }
         return virheet;
@@ -75,11 +75,11 @@ export const VirkailijaCreateContainer = () => {
 
     const handleError = (error: { data?: { errorType?: string } }): void => {
         if (error.data?.errorType === 'AccessDeniedException') {
-            setVirheet([...virheet, L['VIRKAILIJAN_LUONTI_EI_OIKEUKSIA']]);
+            setVirheet([...virheet, L['VIRKAILIJAN_LUONTI_EI_OIKEUKSIA']!]);
         } else if (error.data?.errorType === 'UsernameAlreadyExistsException') {
-            setVirheet([...virheet, L['REKISTEROIDY_USERNAMEEXISTS_OTSIKKO']]);
+            setVirheet([...virheet, L['REKISTEROIDY_USERNAMEEXISTS_OTSIKKO']!]);
         } else {
-            setVirheet([...virheet, L['HENKILON_LUONTI_EPAONNISTUI']]);
+            setVirheet([...virheet, L['HENKILON_LUONTI_EPAONNISTUI']!]);
         }
     };
 

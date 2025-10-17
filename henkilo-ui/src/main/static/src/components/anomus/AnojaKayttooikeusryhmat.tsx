@@ -14,8 +14,8 @@ import { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayt
 import { localizeTextGroup } from '../../utilities/localisation.util';
 
 type KayttooikeusryhmaData = {
-    voimassaPvm: string;
-    organisaatioNimi: string;
+    voimassaPvm?: string;
+    organisaatioNimi?: string;
     kayttooikeusryhmaNimi: string;
 };
 
@@ -48,7 +48,7 @@ export const AnojaKayttooikeusryhmat = ({ henkiloOid }: Props) => {
         };
     };
 
-    const _parseOrganisaatioNimi = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): string => {
+    const _parseOrganisaatioNimi = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): string | undefined => {
         const organisaatio =
             isSuccess && organisations.find((o) => o.oid === myonnettyKayttooikeusryhma.organisaatioOid);
         return organisaatio && organisaatio.nimi
@@ -60,7 +60,7 @@ export const AnojaKayttooikeusryhmat = ({ henkiloOid }: Props) => {
             : L['HENKILO_AVOIMET_KAYTTOOIKEUDET_ORGANISAATIOTA_EI_LOYDY'];
     };
 
-    const _parseVoimassaPvm = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): string => {
+    const _parseVoimassaPvm = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): string | undefined => {
         const noLoppupvm = L['HENKILO_AVOIMET_KAYTTOOIKEUDET_EI_LOPPUPVM'];
         if (!myonnettyKayttooikeusryhma.voimassaPvm) {
             return noLoppupvm;
@@ -131,7 +131,7 @@ export const AnojaKayttooikeusryhmat = ({ henkiloOid }: Props) => {
                 toggle={true}
             />
         );
-    } else if (memoizedData?.length > 0) {
+    } else if (memoizedData && memoizedData.length > 0) {
         return <OphTable table={table} isLoading={false} />;
     }
     return (

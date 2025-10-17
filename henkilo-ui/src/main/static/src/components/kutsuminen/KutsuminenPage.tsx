@@ -39,7 +39,8 @@ const KutsuminenPage = () => {
     useTitle(L['TITLE_KUTSULOMAKE']);
     useNavigation(mainNavigation, false);
     const { data: omattiedot } = useGetOmattiedotQuery();
-    const { data: henkilo, isLoading } = useGetHenkiloQuery(omattiedot.oidHenkilo);
+    const oid = omattiedot?.oidHenkilo;
+    const { data: henkilo, isLoading } = useGetHenkiloQuery(oid!, { skip: !omattiedot });
     const { isLoading: ryhmatLoading } = useGetOrganisaatioRyhmatQuery();
     const initialValidationMessages: ValidationMessages = {
         organisaatioKayttooikeus: {
@@ -74,7 +75,7 @@ const KutsuminenPage = () => {
                     kutsuOrganisaatios.every((org) => org.organisation.oid && org.selectedPermissions.length > 0),
             },
         });
-    }, [omattiedot.oidHenkilo, kutsuOrganisaatios]);
+    }, [oid, kutsuOrganisaatios]);
 
     function isValid(basicInfo: KutsuBasicInfo): boolean {
         const { email, etunimi, sukunimi, languageCode } = basicInfo;
@@ -156,7 +157,7 @@ const KutsuminenPage = () => {
                         basicInfo={basicInfo}
                         setBasicInfo={setBasicAndValidateInfo}
                         locale={locale}
-                    ></BasicInfoForm>
+                    />
 
                     <fieldset className="add-to-organisation">
                         <span className="oph-h2 oph-strong">{L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_OTSIKKO']}</span>
@@ -164,7 +165,7 @@ const KutsuminenPage = () => {
                             {kutsuOrganisaatios.map((selection, i) => (
                                 <AddedOrganization
                                     key={selection.organisation.oid + i}
-                                    addedOrg={kutsuOrganisaatios[i]}
+                                    addedOrg={selection}
                                     updateOrganisation={(newOrg) => updateOrganisation(newOrg, i)}
                                     removeOrganisation={() => removeOrganisation(i)}
                                 />

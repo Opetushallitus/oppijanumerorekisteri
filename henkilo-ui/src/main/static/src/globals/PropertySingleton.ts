@@ -48,7 +48,7 @@ class PropertySingleton {
 
     getNewId() {
         this.state = Object.assign({}, this.state, {
-            idRunner: this.state.idRunner + 1,
+            idRunner: this.state.idRunner ?? 0 + 1,
         });
         return this.state.idRunner;
     }

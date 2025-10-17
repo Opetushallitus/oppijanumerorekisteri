@@ -23,6 +23,7 @@ import { SelectOption } from '../../utilities/select';
 import { localizeTextGroup } from '../../utilities/localisation.util';
 
 import './AddedOrganization.css';
+import { SingleValue } from 'react-select';
 
 type OwnProps = {
     addedOrg: KutsuOrganisaatio;
@@ -33,14 +34,12 @@ type OwnProps = {
 const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }: OwnProps) => {
     const { L, locale } = useLocalisations();
     const { data: omattiedot } = useGetOmattiedotQuery();
-    const { data: omatOrganisaatios } = useGetOmatOrganisaatiotQuery(
-        { oid: omattiedot?.oidHenkilo, locale },
-        { skip: !omattiedot }
-    );
+    const oid = omattiedot?.oidHenkilo;
+    const { data: omatOrganisaatios } = useGetOmatOrganisaatiotQuery({ oid: oid!, locale }, { skip: !omattiedot });
     const { data: organisationNames } = useGetOrganisationNamesQuery();
     const selectedOrganisaatioOid = addedOrg.organisation?.oid;
     const { data: allPermissions, isLoading } = useGetAllowedKayttooikeusryhmasForOrganisationQuery(
-        { oidHenkilo: omattiedot?.oidHenkilo, oidOrganisaatio: selectedOrganisaatioOid },
+        { oidHenkilo: oid!, oidOrganisaatio: selectedOrganisaatioOid },
         {
             skip: !omattiedot || !selectedOrganisaatioOid,
         }
@@ -54,8 +53,10 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
 
     function addPermission(kayttooikeusryhma: Kayttooikeusryhma) {
         const selectedPermission = selectablePermissions.find((s) => s.ryhmaId === kayttooikeusryhma.id);
-        const newOrg = { ...addedOrg, selectedPermissions: [...addedOrg.selectedPermissions, selectedPermission] };
-        updateOrganisation(newOrg);
+        if (selectedPermission) {
+            const newOrg = { ...addedOrg, selectedPermissions: [...addedOrg.selectedPermissions, selectedPermission] };
+            updateOrganisation(newOrg);
+        }
     }
 
     function removePermission(permission: MyonnettyKayttooikeusryhma, e: React.SyntheticEvent<EventTarget>) {
@@ -64,18 +65,18 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
         updateOrganisation({ ...addedOrg, selectedPermissions });
     }
 
-    function selectOrganisaatio(selection: OrganisaatioSelectObject | SelectOption) {
+    function selectOrganisaatio(selection: OrganisaatioSelectObject | SingleValue<SelectOption>) {
         if (!selection) {
             return;
         }
         const isOrganisaatio = isOrganisaatioSelection(selection);
         const selectedOrganisaatioOid = isOrganisaatio ? selection.oid : selection.value;
-        const organisaatio: OrganisaatioSelectObject = isOrganisaatio
+        const organisaatio = isOrganisaatio
             ? selection
             : findOmattiedotOrganisatioOrRyhmaByOid(
                   selectedOrganisaatioOid,
-                  omatOrganisaatios,
-                  organisationNames,
+                  omatOrganisaatios!,
+                  organisationNames!,
                   locale
               );
         if (organisaatio) {

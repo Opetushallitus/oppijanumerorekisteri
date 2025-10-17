@@ -10,7 +10,7 @@ import { Localisation, useGetLocalisationsQuery } from './api/lokalisointi';
 import { useGetLocaleQuery } from './api/oppijanumerorekisteri';
 import { useMemo } from 'react';
 
-export function toSupportedLocale(anyLocale: string): Locale {
+export function toSupportedLocale(anyLocale?: string): Locale {
     const locale = anyLocale?.toLocaleLowerCase();
     if (locale === 'fi' || locale === 'sv') {
         return locale;
@@ -19,7 +19,7 @@ export function toSupportedLocale(anyLocale: string): Locale {
     }
 }
 
-const mapLocalisationsByLocale = (localisations: Localisation[]): L10n => {
+const mapLocalisationsByLocale = (localisations?: Localisation[]): L10n => {
     const result: L10n = { fi: {}, sv: {}, en: {} };
     localisations?.forEach((localisation) => {
         try {
@@ -35,7 +35,7 @@ export const useLocalisations = (): {
     L: Localisations;
     locale: Locale;
     allLocalisations: L10n;
-    getLocalisations: (l: string) => Localisations;
+    getLocalisations: (l?: string) => Localisations;
 } => {
     const { data: locale } = useGetLocaleQuery();
     const supportedLocale = toSupportedLocale(locale);
@@ -43,7 +43,7 @@ export const useLocalisations = (): {
     const { L, allLocalisations, getLocalisations } = useMemo(() => {
         const allLocalisations = mapLocalisationsByLocale(localisations);
         const L = allLocalisations?.[supportedLocale];
-        const getLocalisations = (l: string) => allLocalisations?.[toSupportedLocale(l)];
+        const getLocalisations = (l?: string) => allLocalisations?.[toSupportedLocale(l)];
         return { L, allLocalisations, getLocalisations };
     }, [localisations, supportedLocale]);
     return { L, locale: supportedLocale, allLocalisations, getLocalisations };
@@ -52,12 +52,15 @@ export const useLocalisations = (): {
 export const useOmatOrganisaatiot = () => {
     const { locale } = useLocalisations();
     const { data: omattiedot } = useGetOmattiedotQuery();
-    const { data: omatOrganisaatiot } = useGetOmatOrganisaatiotQuery({ oid: omattiedot.oidHenkilo, locale });
+    const { data: omatOrganisaatiot } = useGetOmatOrganisaatiotQuery(
+        { oid: omattiedot!.oidHenkilo, locale },
+        { skip: !omattiedot }
+    );
     return omatOrganisaatiot;
 };
 
 export const useKayttooikeusryhmas = (isOmattiedot: boolean, henkiloOid?: string) => {
-    const kayttooikeusryhmas = useGetKayttooikeusryhmasForHenkiloQuery(henkiloOid, { skip: isOmattiedot });
+    const kayttooikeusryhmas = useGetKayttooikeusryhmasForHenkiloQuery(henkiloOid!, { skip: isOmattiedot });
     const omatKayttooikeusryhma = useGetOmatKayttooikeusryhmasQuery(undefined, { skip: !isOmattiedot });
     return isOmattiedot ? omatKayttooikeusryhma : kayttooikeusryhmas;
 };

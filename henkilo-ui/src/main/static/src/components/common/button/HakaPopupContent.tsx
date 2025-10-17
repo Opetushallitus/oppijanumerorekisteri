@@ -19,15 +19,17 @@ const HakatunnistePopupContent = ({ henkiloOid }: OwnProps) => {
     const [newTunniste, setNewTunniste] = useState('');
 
     async function addHakatunniste() {
-        if (newTunniste.length > 0) {
+        if (newTunniste.length > 0 && hakatunnisteet) {
             await saveHakatunnisteet([...hakatunnisteet, newTunniste]);
             setNewTunniste('');
         }
     }
 
     async function removeHakatunniste(tunniste: string) {
-        const filteredTunnisteet = hakatunnisteet?.filter((t) => t !== tunniste);
-        await saveHakatunnisteet(filteredTunnisteet);
+        if (hakatunnisteet) {
+            const filteredTunnisteet = hakatunnisteet?.filter((t) => t !== tunniste);
+            await saveHakatunnisteet(filteredTunnisteet);
+        }
     }
 
     async function saveHakatunnisteet(tunnisteet: Array<string>) {
@@ -49,7 +51,7 @@ const HakatunnistePopupContent = ({ henkiloOid }: OwnProps) => {
     return (
         <div className="hakapopupcontent">
             <ul>
-                {hakatunnisteet?.length > 0 ? (
+                {hakatunnisteet && hakatunnisteet?.length > 0 ? (
                     hakatunnisteet.map((hakatunniste) => (
                         <li className="tag" key={hakatunniste}>
                             <span>{hakatunniste}</span>{' '}

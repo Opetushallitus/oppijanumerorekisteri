@@ -14,11 +14,13 @@ export const getCommonOptions: () => RequestInit = () => ({
         'Caller-Id': '1.2.246.562.10.00000000001.henkilo-ui',
         CSRF: cookies.get('CSRF'),
         ...permissionServiceHeaders,
-    },
+    } as HeadersInit,
     credentials: 'include',
 });
 
-export function isApiError(error: unknown): error is { status: number; data: { message: string } } {
+type ApiError = { status: number; data: { message: string; errorType?: string } };
+
+export function isApiError(error: unknown): error is ApiError {
     return (
         typeof error === 'object' &&
         error != null &&

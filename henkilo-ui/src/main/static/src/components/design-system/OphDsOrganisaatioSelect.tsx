@@ -1,6 +1,6 @@
 import React, { Children, useMemo, useState } from 'react';
 import { FixedSizeList } from 'react-window';
-import Select, { components, MenuListProps, OptionProps, SingleValueProps } from 'react-select';
+import Select, { components, MenuListProps, OptionProps, SingleValue, SingleValueProps } from 'react-select';
 
 import type { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import { useLocalisations, useOmatOrganisaatiot } from '../../selectors';
@@ -10,7 +10,7 @@ import { selectStyles } from '../../utilities/select';
 import { containsSearchword, filterAndSortOrganisaatios } from '../common/select/OrganisaatioSelectModal';
 
 type OwnProps = {
-    onChange: (organisaatio: OrganisaatioSelectObject) => void;
+    onChange: (organisaatio: SingleValue<OrganisaatioSelectObject>) => void;
     disabled?: boolean;
 };
 
@@ -32,7 +32,7 @@ export const OphDsOrganisaatioSelect = ({ disabled, onChange }: OwnProps) => {
     const { L, locale } = useLocalisations();
     const { data: organisationNames } = useGetOrganisationNamesQuery();
     const omattiedotOrganisations = useOmatOrganisaatiot();
-    const [selection, setSelection] = useState<OrganisaatioSelectObject>();
+    const [selection, setSelection] = useState<SingleValue<OrganisaatioSelectObject>>();
     const [searchWord, setSearchWord] = useState<string>('');
 
     const allOrganisations = useMemo(() => {
@@ -48,7 +48,7 @@ export const OphDsOrganisaatioSelect = ({ disabled, onChange }: OwnProps) => {
         }
     }, [omattiedotOrganisations, organisationNames, locale, searchWord]);
 
-    const onSelect = (o: OrganisaatioSelectObject) => {
+    const onSelect = (o: SingleValue<OrganisaatioSelectObject>) => {
         setSelection(o);
         onChange(o);
     };

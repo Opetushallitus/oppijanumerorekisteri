@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import Select from 'react-select';
+import Select, { SingleValue } from 'react-select';
 
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { FieldlessLabelValue } from './FieldlessLabelValue';
@@ -11,7 +11,7 @@ import { useLocalisations } from '../../../../selectors';
 type OwnProps = {
     henkiloUpdate: Henkilo;
     readOnly: boolean;
-    updateModelSelectAction: (o: NamedSelectOption | NamedMultiSelectOption) => void;
+    updateModelSelectAction: (o: SingleValue<NamedSelectOption> | NamedMultiSelectOption) => void;
 };
 
 const Sukupuoli = (props: OwnProps) => {

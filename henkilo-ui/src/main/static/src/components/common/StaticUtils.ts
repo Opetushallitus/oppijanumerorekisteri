@@ -1,3 +1,5 @@
+import { SingleValue } from 'react-select';
+
 import { Localisations, L10n } from '../../types/localisation.type';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { Locale } from '../../types/locale.type';
@@ -11,8 +13,8 @@ class StaticUtils {
     // Example fieldpath: organisaatio.nimet.0.nimiValue
     static updateFieldByDotAnnotation<T extends Record<string, any>>(
         obj: T,
-        event: React.SyntheticEvent<HTMLInputElement>
-    ): T {
+        event: React.SyntheticEvent<HTMLInputElement> | null
+    ): T | null {
         if (event === null) {
             return null;
         }
@@ -21,7 +23,10 @@ class StaticUtils {
         return this.updateByDotAnnotation(obj, value, fieldpath);
     }
 
-    static updateSelectValueByDotAnnotation<T>(obj: T, event: NamedSelectOption | NamedMultiSelectOption): T {
+    static updateSelectValueByDotAnnotation<T extends Record<string, any>>(
+        obj: T,
+        event: SingleValue<NamedSelectOption> | NamedMultiSelectOption
+    ): T | null {
         if (event === null) {
             return null;
         }
@@ -34,19 +39,19 @@ class StaticUtils {
         obj: T,
         value: string | unknown[],
         fieldpath: string
-    ): T {
+    ): T | null {
         let schema: Record<string, any> = obj; // a moving reference to internal objects within obj
         const pList = fieldpath.split('.');
         const len = pList.length;
         for (let i = 0; i < len - 1; i++) {
-            const elem = pList[i];
+            const elem = pList[i] ?? '';
             if (!schema[elem]) {
                 schema[elem] = {};
             }
             schema = schema[elem];
         }
 
-        schema[pList[len - 1]] = value;
+        schema[pList[len - 1] ?? ''] = value;
 
         return obj;
     }
@@ -57,8 +62,8 @@ class StaticUtils {
         yhteystietotyyppi: string,
         label: string
     ) {
-        let yhteystiedotRyhmaIndex: number = null;
-        let yhteystietoIndex: number = null;
+        let yhteystiedotRyhmaIndex: number | null = null;
+        let yhteystietoIndex: number | null = null;
         let yhteystietoRyhma = henkiloUpdate.yhteystiedotRyhma.filter((yhteystiedotRyhma, idx) => {
             const yhteystietoByTyyppi = yhteystiedotRyhma.yhteystieto.filter(
                 (yhteystieto) => yhteystieto.yhteystietoTyyppi === yhteystietotyyppi
@@ -96,16 +101,16 @@ class StaticUtils {
         }
 
         if (yhteystietoIndex === null) {
-            yhteystietoIndex = henkiloUpdate.yhteystiedotRyhma[yhteystiedotRyhmaIndex].yhteystieto.length;
+            yhteystietoIndex = henkiloUpdate.yhteystiedotRyhma[yhteystiedotRyhmaIndex]?.yhteystieto.length ?? 0;
             yhteystieto = {
                 yhteystietoTyyppi: yhteystietotyyppi,
                 yhteystietoArvo: '',
             };
-            henkiloUpdate.yhteystiedotRyhma[yhteystiedotRyhmaIndex].yhteystieto.push(yhteystieto);
+            henkiloUpdate.yhteystiedotRyhma[yhteystiedotRyhmaIndex]?.yhteystieto.push(yhteystieto);
         }
         return {
             label: label,
-            value: yhteystieto && yhteystieto.yhteystietoArvo,
+            value: yhteystieto?.yhteystietoArvo,
             inputValue:
                 'yhteystiedotRyhma.' + yhteystiedotRyhmaIndex + '.yhteystieto.' + yhteystietoIndex + '.yhteystietoArvo',
         };
@@ -115,8 +120,8 @@ class StaticUtils {
         return henkilo?.yksiloityVTJ || henkilo?.yksiloityEidas;
     }
 
-    static getOrganisaatiotyypitFlat(tyypit: Array<string>, L: Localisations, uppercase?: boolean) {
-        return tyypit && tyypit.length
+    static getOrganisaatiotyypitFlat(L: Localisations, uppercase: boolean, tyypit?: Array<string>) {
+        return tyypit?.length
             ? '(' +
                   tyypit
                       .map((tyyppi) => L[tyyppi.toUpperCase() + (uppercase ? '_ISO' : '')] || tyyppi)
@@ -126,7 +131,7 @@ class StaticUtils {
     }
 
     static getOrganisationNameWithType(org: Organisaatio | undefined, L: Localisations, locale: Locale) {
-        return org?.nimi?.[locale] + ' ' + StaticUtils.getOrganisaatiotyypitFlat(org?.tyypit, L);
+        return org?.nimi?.[locale] + ' ' + StaticUtils.getOrganisaatiotyypitFlat(L, false, org?.tyypit);
     }
 
     static defaultOrganisaatio = (organisaatioOid: string, l10n?: L10n): Organisaatio => ({
@@ -142,7 +147,7 @@ class StaticUtils {
     });
 
     static getLocalisedText(description: TextGroup | null | undefined, locale: Locale) {
-        return description ? description.texts.filter((text) => text.lang.toLowerCase() === locale)[0].text : '';
+        return description ? description.texts.filter((text) => text.lang.toLowerCase() === locale)[0]?.text : '';
     }
 
     static getKoodiNimi(koodiArvo: string, koodisto: Koodisto, locale: Locale) {

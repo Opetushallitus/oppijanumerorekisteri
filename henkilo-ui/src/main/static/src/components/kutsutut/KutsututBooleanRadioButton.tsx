@@ -13,8 +13,8 @@ type OwnProps = {
 const KutsututBooleanRadioButton = (props: OwnProps) => {
     const { L } = useLocalisations();
     const { data: omattiedot } = useGetOmattiedotQuery();
-    const [trueLabel, setTrueLabel] = useState('');
-    const [falseLabel, setFalseLabel] = useState('');
+    const [trueLabel, setTrueLabel] = useState<string | undefined>('');
+    const [falseLabel, setFalseLabel] = useState<string | undefined>('');
     const [radioButtonValue, setRadioButtonValue] = useState(false);
 
     useEffect(() => {
@@ -34,9 +34,9 @@ const KutsututBooleanRadioButton = (props: OwnProps) => {
     function _toggleView() {
         let newView;
         const currentView = props.view;
-        if (omattiedot.isAdmin) {
+        if (omattiedot?.isAdmin) {
             newView = currentView === KutsuViews.OPH ? KutsuViews.DEFAULT : KutsuViews.OPH;
-        } else if (omattiedot.isMiniAdmin) {
+        } else if (omattiedot?.isMiniAdmin) {
             newView = currentView === KutsuViews.KAYTTOOIKEUSRYHMA ? KutsuViews.DEFAULT : KutsuViews.KAYTTOOIKEUSRYHMA;
         } else {
             newView = KutsuViews.DEFAULT;
@@ -49,9 +49,9 @@ const KutsututBooleanRadioButton = (props: OwnProps) => {
     return omattiedot?.isAdmin || omattiedot?.isMiniAdmin ? (
         <BooleanRadioButtonGroup
             value={radioButtonValue}
-            onChange={_toggleView.bind(this)}
-            trueLabel={trueLabel}
-            falseLabel={falseLabel}
+            onChange={_toggleView}
+            trueLabel={trueLabel!}
+            falseLabel={falseLabel!}
             className="kutsutut-toggle"
         />
     ) : null;

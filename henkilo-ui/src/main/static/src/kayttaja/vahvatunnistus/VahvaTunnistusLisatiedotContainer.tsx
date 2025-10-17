@@ -9,6 +9,7 @@ import { useTitle } from '../../useTitle';
 import { usePostUudelleenRekisterointiMutation } from '../../api/kayttooikeus';
 
 import './VahvaTunnistusLisatiedotPage.css';
+import { isApiError } from '../../api/common';
 
 const getInitialValues = (): Values => ({
     password: '',
@@ -91,36 +92,32 @@ export const VahvaTunnistusLisatiedotContainer = () => {
 
     const onSubmit = async () => {
         refreshForm({ ...form.values });
-
-        try {
-            const newForm = { ...form, submitted: true };
-            setForm(newForm);
-            if (form.errors.length === 0) {
-                await postUudelleenRekisterointi({
-                    kielisyys: locale,
-                    loginToken: params.loginToken,
-                    body: { ...form.values, salasana: form.values.password },
+        const newForm = { ...form, submitted: true };
+        setForm(newForm);
+        if (form.errors.length === 0) {
+            await postUudelleenRekisterointi({
+                kielisyys: locale,
+                loginToken: params.loginToken!,
+                body: { ...form.values, salasana: form.values.password },
+            })
+                .unwrap()
+                .then(() => {
+                    navigate(`/kayttaja/vahvatunnistusinfo/valmis/${locale}`);
                 })
-                    .unwrap()
-                    .then(() => {
-                        navigate(`/kayttaja/vahvatunnistusinfo/valmis/${locale}`);
-                    });
-            }
-        } catch (error) {
-            onServerError(error);
-        }
-    };
-
-    const onServerError = (error: { errorType?: string }) => {
-        if (error?.errorType === 'PasswordException') {
-            refreshForm({ ...form.values }, [
-                {
-                    name: 'password',
-                    text: L['SALASANA_VANHA_UUDELLEENREKISTEROINTI'],
-                },
-            ]);
-        } else {
-            navigate(`/kayttaja/vahvatunnistusinfo/virhe/${locale}/${params.loginToken}`);
+                .catch((error) => {
+                    if (isApiError(error)) {
+                        if (error?.data?.errorType === 'PasswordException') {
+                            refreshForm({ ...form.values }, [
+                                {
+                                    name: 'password',
+                                    text: L['SALASANA_VANHA_UUDELLEENREKISTEROINTI'],
+                                },
+                            ]);
+                        } else {
+                            navigate(`/kayttaja/vahvatunnistusinfo/virhe/${locale}/${params.loginToken}`);
+                        }
+                    }
+                });
         }
     };
 

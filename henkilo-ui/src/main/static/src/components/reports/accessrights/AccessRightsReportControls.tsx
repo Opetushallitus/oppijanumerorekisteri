@@ -13,9 +13,9 @@ import './AccessRightsReportControls.css';
 type Props = {
     disabled: boolean;
     filterValues: string[];
-    filter: string;
-    setFilter: (name: string) => void;
-    setOid: (oid: string) => void;
+    filter: string | undefined;
+    setFilter: (name?: string) => void;
+    setOid: (oid?: string) => void;
     dataExport?: () => void;
 };
 
@@ -32,7 +32,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
     const { L } = useLocalisations();
 
     React.useEffect(() => {
-        setOid(selectedOrganisation[0] && selectedOrganisation[0].oid);
+        setOid(selectedOrganisation[0]?.oid);
     }, [setOid, selectedOrganisation]);
 
     const filterOptions = filterValues.map((name) => ({ label: name, value: name }));
@@ -56,7 +56,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
                             options={filterOptions}
                             placeholder={L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
                             value={filterOptions.find((o) => o.value === filter)}
-                            onChange={(option) => setFilter(option.value)}
+                            onChange={(option) => option && setFilter(option.value)}
                             isClearable
                         />
                     </div>

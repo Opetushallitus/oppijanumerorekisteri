@@ -25,7 +25,7 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
     const omattiedotOrganisations = useOmatOrganisaatiot();
     const [isModalVisible, setModalVisible] = useState(false);
     const [searchWord, setSearchWord] = useState('');
-    const [organisations, setOrganisations] = useState([]);
+    const [organisations, setOrganisations] = useState<OrganisaatioSelectObject[]>([]);
     const allOrganisations = useMemo(() => {
         const orgs = props.organisaatiot ?? omattiedotOrganisations;
         if (orgs?.length && organisationNames) {
@@ -40,7 +40,7 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
     const isDisabled = props.disabled || !(props.organisaatiot ?? omattiedotOrganisations)?.length;
 
     const _renderRow = (renderParams: ListChildComponentProps) => {
-        const organisaatio: OrganisaatioSelectObject = organisations[renderParams.index];
+        const organisaatio = organisations[renderParams.index]!;
         return (
             <div
                 className="organisaatio"

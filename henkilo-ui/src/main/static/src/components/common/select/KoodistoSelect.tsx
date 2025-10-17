@@ -10,15 +10,15 @@ import './KoodistoSelect.css';
 type OwnProps = {
     className?: string;
     placeholder: string;
-    koodisto: Koodisto;
-    value?: string;
-    onChange: (arg0: string) => void;
+    koodisto?: Koodisto;
+    value?: string | null;
+    onChange: (arg0: string | undefined) => void;
 };
 
-const getInitialValue = (koodisto: Koodisto, value: string, locale: Locale) => {
+const getInitialValue = (value: string, locale: Locale, koodisto?: Koodisto) => {
     const koodi = koodisto?.find((k) => k.koodiArvo === value);
     return {
-        value: koodi.koodiArvo,
+        value: koodi?.koodiArvo,
         label: koodiLabel(koodi, locale),
     };
 };
@@ -36,9 +36,9 @@ export const KoodistoSelect = ({ className, placeholder, koodisto, value, onChan
                     label: koodiLabel(koodi, locale),
                 };
             })
-            .sort((a, b) => a.label.localeCompare(b.label));
+            .sort((a, b) => (a.label && b.label ? a.label.localeCompare(b.label) : 1));
     }, [koodisto]);
-    const [selectedOption, setSelectedOption] = useState(value ? getInitialValue(koodisto, value, locale) : null);
+    const [selectedOption, setSelectedOption] = useState(value ? getInitialValue(value, locale, koodisto) : null);
 
     return (
         <Select
@@ -48,7 +48,7 @@ export const KoodistoSelect = ({ className, placeholder, koodisto, value, onChan
             value={selectedOption}
             onChange={(o) => {
                 setSelectedOption(o);
-                onChange(o.value);
+                onChange(o?.value);
             }}
         />
     );

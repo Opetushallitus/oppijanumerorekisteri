@@ -105,7 +105,7 @@ export const findOmattiedotOrganisatioOrRyhmaByOid = (
 
 const organisaatioHierarchyRoots = (orgs: OrganisaatioHenkilo[], locale: Locale): Array<OrganisaatioWithChildren> => {
     // First sort by name:
-    orgs = sortBy((org: OrganisaatioHenkilo) => org.organisaatio?.nimi?.[locale], orgs);
+    orgs = sortBy((org: OrganisaatioHenkilo) => org.organisaatio?.nimi?.[locale] ?? '', orgs);
     const byOid: Record<string, OrganisaatioWithChildren> = {};
     // Determine direct parent oid and map by oid:
     const mapOrg = (oldOrg: OrganisaatioWithChildren) => {
@@ -131,7 +131,7 @@ const organisaatioHierarchyRoots = (orgs: OrganisaatioHenkilo[], locale: Locale)
                 // do not add duplicates:
                 if (findIndex(pathEq(org.oid, ['oid']), parent.children) < 0) {
                     parent.children.push(org);
-                    parent.children = sortBy((o: OrganisaatioWithChildren) => o.nimi?.[locale])(parent.children);
+                    parent.children = sortBy((o: OrganisaatioWithChildren) => o.nimi?.[locale] ?? '')(parent.children);
                 }
             } else {
                 // not the root org but root can not be found (=> makes this lowest accessable)

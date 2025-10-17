@@ -5,8 +5,8 @@ import NotificationButton, { ButtonNotification } from './NotificationButton';
 
 type OwnProps = {
     action: () => void;
-    normalLabel: string;
-    confirmLabel: string;
+    normalLabel?: string;
+    confirmLabel?: string;
     disabled?: boolean;
     className?: string;
     notification?: ButtonNotification;

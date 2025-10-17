@@ -21,17 +21,17 @@ type Error = {
 };
 
 type Form = {
-    passinumero: string | null | undefined;
-    sahkoposti: string | null | undefined;
+    passinumero: string | undefined;
+    sahkoposti: string | undefined;
 };
 
 type OppijaCreateFormProps = {
     tallenna: (arg0: HenkiloCreate) => Promise<void>;
     locale: Locale;
     L: Localisations;
-    sukupuoliKoodisto: Koodisto;
-    kieliKoodisto: Koodisto;
-    kansalaisuusKoodisto: Koodisto;
+    sukupuoliKoodisto?: Koodisto;
+    kieliKoodisto?: Koodisto;
+    kansalaisuusKoodisto?: Koodisto;
 };
 
 type State = {
@@ -48,7 +48,7 @@ const initialState: State = {
     loading: false,
     submitted: false,
     errors: [],
-    henkilo: { etunimet: '', kutsumanimi: '', sukunimi: '' },
+    henkilo: { etunimet: '', kutsumanimi: '', sukunimi: '', passinumerot: null, yhteystiedotRyhma: null },
     form: { passinumero: '', sahkoposti: '' },
 };
 
@@ -135,7 +135,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
                         className={classNames({
                             'oph-input-has-error': this.isSubmittedAndHasError('sukupuoli'),
                         })}
-                        placeholder={this.props.L['HENKILO_SUKUPUOLI']}
+                        placeholder={this.props.L['HENKILO_SUKUPUOLI']!}
                         koodisto={this.props.sukupuoliKoodisto}
                         value={this.state.henkilo.sukupuoli}
                         onChange={(value) =>
@@ -153,7 +153,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
                         className={classNames({
                             'oph-input-has-error': this.isSubmittedAndHasError('aidinkieli'),
                         })}
-                        placeholder={this.props.L['HENKILO_AIDINKIELI']}
+                        placeholder={this.props.L['HENKILO_AIDINKIELI']!}
                         koodisto={kieliKoodisto}
                         value={this.state.henkilo.aidinkieli}
                         onChange={(value) =>
@@ -173,7 +173,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
                                 value: k.koodiArvo,
                                 label: koodiLabel(k, this.props.locale),
                             }))
-                            .sort((a, b) => a.label.localeCompare(b.label))}
+                            .sort((a, b) => (a.label && b.label ? a.label.localeCompare(b.label) : 1))}
                         onChange={(values) =>
                             this.onHenkiloChange({
                                 name: 'kansalaisuus',
@@ -247,7 +247,10 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
         });
     };
 
-    onHenkiloChange = (event: { name: string; value: string | Kielisyys | { kansalaisuusKoodi: string }[] }) => {
+    onHenkiloChange = (event: {
+        name: string;
+        value: string | Kielisyys | { kansalaisuusKoodi: string }[] | null | undefined;
+    }) => {
         const henkilo = { ...this.state.henkilo, [event.name]: event.value };
         const state: State = {
             ...this.state,
@@ -260,7 +263,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
             if (!this.hasError('kutsumanimi') && !isValidKutsumanimi(henkilo.etunimet, henkilo.kutsumanimi)) {
                 errors.push({
                     name: 'kutsumanimi',
-                    value: this.props.L['HENKILO_KUTSUMANIMI_VALIDOINTI'],
+                    value: this.props.L['HENKILO_KUTSUMANIMI_VALIDOINTI']!,
                 });
                 state.errors = errors;
             } else if (this.hasError('kutsumanimi') && isValidKutsumanimi(henkilo.etunimet, henkilo.kutsumanimi)) {
@@ -288,49 +291,49 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
         if (!henkilo.etunimet) {
             errors.push({
                 name: 'etunimet',
-                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO'],
+                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO']!,
             });
         }
         if (!henkilo.kutsumanimi) {
             errors.push({
                 name: 'kutsumanimi',
-                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO'],
+                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO']!,
             });
         }
         if (!isValidKutsumanimi(henkilo.etunimet, henkilo.kutsumanimi)) {
             errors.push({
                 name: 'kutsumanimi',
-                value: this.props.L['HENKILO_KUTSUMANIMI_VALIDOINTI'],
+                value: this.props.L['HENKILO_KUTSUMANIMI_VALIDOINTI']!,
             });
         }
         if (!henkilo.sukunimi) {
             errors.push({
                 name: 'sukunimi',
-                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO'],
+                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO']!,
             });
         }
         if (!henkilo.syntymaaika) {
             errors.push({
                 name: 'syntymaaika',
-                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO'],
+                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO']!,
             });
         }
         if (!henkilo.sukupuoli) {
             errors.push({
                 name: 'sukupuoli',
-                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO'],
+                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO']!,
             });
         }
         if (!henkilo.aidinkieli) {
             errors.push({
                 name: 'aidinkieli',
-                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO'],
+                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO']!,
             });
         }
         if (!henkilo.kansalaisuus || henkilo.kansalaisuus.length === 0) {
             errors.push({
                 name: 'kansalaisuus',
-                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO'],
+                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO']!,
             });
         }
 
@@ -380,7 +383,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
             yhteystiedotRyhma: this.state.form.sahkoposti
                 ? [
                       {
-                          ryhmaKuvaus: properties.KOTIOSOITE,
+                          ryhmaKuvaus: properties.KOTIOSOITE ?? '',
                           ryhmaAlkuperaTieto: properties.YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI,
                           yhteystieto: [
                               {

@@ -18,7 +18,7 @@ const HenkilohakuContainer = () => {
     const { isLoading } = useGetKayttooikeusryhmasQuery({ passiiviset: true });
     const navigate = useNavigate();
     const vainOppijoidenTuonti = useMemo(() => {
-        const kayttooikeudet = parsePalveluRoolit(omattiedot.organisaatiot);
+        const kayttooikeudet = parsePalveluRoolit(omattiedot?.organisaatiot);
         return (
             kayttooikeudet.every(
                 (kayttooikeus) =>
@@ -26,7 +26,7 @@ const HenkilohakuContainer = () => {
                     (!kayttooikeus.startsWith('OPPIJANUMEROREKISTERI') &&
                         !kayttooikeus.startsWith('KAYTTOOIKEUS') &&
                         !kayttooikeus.startsWith('HENKILONHALLINTA'))
-            ) && hasAnyPalveluRooli(omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI'])
+            ) && hasAnyPalveluRooli(omattiedot?.organisaatiot, ['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI'])
         );
     }, [omattiedot]);
     if (vainOppijoidenTuonti) {

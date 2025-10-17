@@ -5,7 +5,7 @@ import { validateEmail } from '../validation/EmailValidator';
 /*
  * Palauttaa true jos kaikki sähköpostikentät YhteystiedotRyhma-listassa ovat valideja sähköpostiosoitteita
  */
-export const validateYhteystiedotRyhmaEmails = (yhteystiedotRyhma: YhteystietoRyhma[]): boolean =>
+export const validateYhteystiedotRyhmaEmails = (yhteystiedotRyhma?: YhteystietoRyhma[]): boolean =>
     !!yhteystiedotRyhma?.length &&
     yhteystiedotRyhma.map(validYhteystietoRyhma).reduce((prev: boolean, curr: boolean) => prev && curr, true);
 
@@ -30,10 +30,12 @@ export const validEmailYhteystieto = (yhteystieto: Yhteystieto): boolean => {
 /*
  * Palauttaa Yhteystiedot-listasta sähköpostiosoitekenttien lukumäärän, jotka eivät ole tyhjiä
  */
-export const notEmptyYhteystiedotRyhmaEmailCount = (yhteystiedotRyhma: Array<YhteystietoRyhma>): number => {
-    return yhteystiedotRyhma
-        .map(notEmptyYhteystietoRyhmaEmailCount)
-        .reduce((prev: number, curr: number) => prev + curr, 0);
+export const notEmptyYhteystiedotRyhmaEmailCount = (yhteystiedotRyhma?: Array<YhteystietoRyhma>): number => {
+    return (
+        yhteystiedotRyhma
+            ?.map(notEmptyYhteystietoRyhmaEmailCount)
+            .reduce((prev: number, curr: number) => prev + curr, 0) ?? 0
+    );
 };
 
 /*

@@ -26,13 +26,13 @@ const TuontiKoosteTable = () => {
         sort: 'DESC',
     });
     const debouncedCriteria = useDebounce(criteria, 500);
-    const [showDetails, setShowDetails] = useState<number>(undefined);
+    const [showDetails, setShowDetails] = useState<number | undefined>(undefined);
     const onClose = () => setShowDetails(undefined);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { L } = useLocalisations();
     const { data, isFetching } = useGetTuontikoosteQuery({ L, criteria: debouncedCriteria });
 
-    const canViewDetails = hasAnyPalveluRooli(omattiedot.organisaatiot, [
+    const canViewDetails = hasAnyPalveluRooli(omattiedot?.organisaatiot, [
         'OPPIJANUMEROREKISTERI_TUONTIDATA_READ',
         'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
     ]);
@@ -124,8 +124,8 @@ const TuontiKoosteTable = () => {
         onPaginationChange: (updater) => {
             if (typeof updater === 'function') {
                 const nextState = updater({
-                    pageIndex: data?.pageable.pageNumber,
-                    pageSize: data?.pageable.pageSize,
+                    pageIndex: data?.pageable.pageNumber ?? 0,
+                    pageSize: data?.pageable.pageSize ?? 20,
                 });
                 setCriteria({
                     ...criteria,
@@ -139,8 +139,8 @@ const TuontiKoosteTable = () => {
                 const nextState = updater([{ id: criteria.field, desc: criteria.sort === 'DESC' }]);
                 setCriteria({
                     ...criteria,
-                    field: nextState[0].id as TuontiKoosteCriteria['field'],
-                    sort: nextState[0].desc ? 'DESC' : 'ASC',
+                    field: nextState[0]?.id as TuontiKoosteCriteria['field'],
+                    sort: nextState[0]?.desc ? 'DESC' : 'ASC',
                 });
             }
         },

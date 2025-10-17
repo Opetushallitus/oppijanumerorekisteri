@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import Select from 'react-select';
+import Select, { SingleValue } from 'react-select';
 
 import { NamedSelectOption } from '../../../../utilities/select';
 import { FieldlessLabelValue } from './FieldlessLabelValue';
@@ -10,7 +10,7 @@ import StaticUtils from '../../StaticUtils';
 type OwnProps = {
     henkiloUpdate: { asiointiKieli?: { kieliKoodi?: string } };
     readOnly?: boolean;
-    updateModelSelectAction: (arg0: NamedSelectOption) => void;
+    updateModelSelectAction: (arg0: SingleValue<NamedSelectOption>) => void;
 };
 
 const VALID_KIELI_URI_FOR_ASIOINTIKIELI = ['kieli_fi', 'kieli_sv', 'kieli_en'];

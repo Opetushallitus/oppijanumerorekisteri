@@ -25,7 +25,7 @@ export const PalvelukayttajaCreatePage = () => {
                 navigate(`/virkailija/${data.oid}`);
             })
             .catch(() => {
-                setError(L['HENKILON_LUONTI_EPAONNISTUI']);
+                setError(L['HENKILON_LUONTI_EPAONNISTUI'] ?? '');
                 throw error;
             });
     };

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import Select from 'react-select';
+import Select, { SingleValue } from 'react-select';
 
 import { PalveluJaKayttooikeusSelection } from './KayttooikeusryhmaPage';
 import PalveluJaKayttooikeusSelections from './PalveluJaKayttooikeusSelections';
@@ -10,10 +10,10 @@ import './KayttooikeusryhmatPalvelutJaKayttooikeudet.css';
 import { SelectOption } from '../../../utilities/select';
 
 type Props = {
-    palvelutSelectAction: (selection: SelectOption) => void;
-    palvelutSelection: SelectOption;
-    palveluKayttooikeusSelectAction: (selection: SelectOption) => void;
-    palveluKayttooikeusSelection: SelectOption;
+    palvelutSelectAction: (selection: SingleValue<SelectOption>) => void;
+    palvelutSelection: SingleValue<SelectOption>;
+    palveluKayttooikeusSelectAction: (selection: SingleValue<SelectOption>) => void;
+    palveluKayttooikeusSelection: SingleValue<SelectOption>;
     lisaaPalveluJaKayttooikeusAction: () => void;
     palveluJaKayttooikeusSelections: Array<PalveluJaKayttooikeusSelection>;
     removePalveluJaKayttooikeus: (arg0: PalveluJaKayttooikeusSelection) => void;
@@ -22,14 +22,15 @@ type Props = {
 const KayttooikeusryhmatPalvelutJaKayttooikeudet = (props: Props) => {
     const { L, locale } = useLocalisations();
     const { data: palvelut } = useGetPalvelutQuery();
-    const { data: palveluKayttooikeudet } = useGetPalveluKayttooikeudetQuery(props.palvelutSelection?.value, {
+    const value = props.palvelutSelection?.value;
+    const { data: palveluKayttooikeudet } = useGetPalveluKayttooikeudetQuery(value!, {
         skip: !props.palvelutSelection?.value,
     });
-    const [palveluKayttooikeusOptions, setPalveluKayttooikeusOptions] = useState([]);
+    const [palveluKayttooikeusOptions, setPalveluKayttooikeusOptions] = useState<SelectOption[]>([]);
     const palvelutOptions = useMemo(
         () =>
             palvelut?.map((palvelu) => ({
-                label: palvelu.description.texts?.find((t) => t.lang === locale.toUpperCase())?.text,
+                label: palvelu.description.texts?.find((t) => t.lang === locale.toUpperCase())?.text ?? '',
                 value: palvelu.name,
             })) ?? [],
         [palvelut]
@@ -38,7 +39,7 @@ const KayttooikeusryhmatPalvelutJaKayttooikeudet = (props: Props) => {
     useEffect(() => {
         setPalveluKayttooikeusOptions(
             palveluKayttooikeudet?.map((palveluKayttooikeus) => ({
-                label: palveluKayttooikeus.oikeusLangs.find((o) => o.lang === locale.toLocaleUpperCase())?.text,
+                label: palveluKayttooikeus.oikeusLangs.find((o) => o.lang === locale.toLocaleUpperCase())?.text ?? '',
                 value: palveluKayttooikeus.rooli,
             })) ?? []
         );

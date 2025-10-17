@@ -30,7 +30,7 @@ const MasterHenkilo = ({ oidHenkilo, oppija }: OwnProps) => {
             'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
         ]);
     }, [omattiedot]);
-    const renderLinkitetyt = !isFetching && master.oidHenkilo && oidHenkilo !== master.oidHenkilo;
+    const renderLinkitetyt = !isFetching && master?.oidHenkilo && oidHenkilo !== master.oidHenkilo;
 
     return renderLinkitetyt ? (
         <FieldlessLabelValue label="HENKILO_LINKITETYT_MASTER" readOnly>

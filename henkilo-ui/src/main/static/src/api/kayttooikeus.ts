@@ -139,7 +139,7 @@ export type KayttooikeusryhmaRequest = {
     ryhmaRestriction: boolean;
     organisaatioTyypit: string[];
     slaveIds: number[];
-    sallittuKayttajatyyppi: SallitutKayttajatyypit;
+    sallittuKayttajatyyppi: SallitutKayttajatyypit | null;
 };
 
 type CasLoginRedirectParams = Record<string, string>;

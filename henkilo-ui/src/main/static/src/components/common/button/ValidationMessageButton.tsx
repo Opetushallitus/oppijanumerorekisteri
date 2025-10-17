@@ -20,7 +20,7 @@ const ValidationMessageButton = (props: Props) => {
                 <Button
                     disabled={
                         !!props.disabled ||
-                        Object.keys(props.validationMessages).some((key) => !props.validationMessages[key].isValid)
+                        Object.keys(props.validationMessages).some((key) => !props.validationMessages[key]?.isValid)
                     }
                     action={props.buttonAction}
                 >
@@ -31,10 +31,10 @@ const ValidationMessageButton = (props: Props) => {
                 <div className="haeButtonWrapper">
                     <ul>
                         {Object.keys(props.validationMessages)
-                            .filter((key) => !props.validationMessages[key].isValid)
+                            .filter((key) => !props.validationMessages[key]?.isValid)
                             .map((key, idx) => (
                                 <li key={idx} className="oph-h5">
-                                    ! {props.validationMessages[key].labelLocalised}
+                                    ! {props.validationMessages[key]?.labelLocalised}
                                 </li>
                             ))}
                     </ul>

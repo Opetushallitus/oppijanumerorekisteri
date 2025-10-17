@@ -14,10 +14,12 @@ import 'react-datepicker/dist/react-datepicker.css';
 import '../flex.css';
 
 const root = document.getElementById('root');
-ReactDOM.createRoot(root).render(
-    <BrowserRouter basename="/henkilo-ui">
-        <Provider store={store}>
-            <KayttajaAppRoutes />
-        </Provider>
-    </BrowserRouter>
-);
+if (root) {
+    ReactDOM.createRoot(root).render(
+        <BrowserRouter basename="/henkilo-ui">
+            <Provider store={store}>
+                <KayttajaAppRoutes />
+            </Provider>
+        </BrowserRouter>
+    );
+}

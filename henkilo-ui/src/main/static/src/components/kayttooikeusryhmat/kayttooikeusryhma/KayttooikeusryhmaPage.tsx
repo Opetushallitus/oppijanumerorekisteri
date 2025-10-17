@@ -34,14 +34,15 @@ import {
 import { useAppDispatch } from '../../../store';
 import { useGetOppilaitostyypitQuery, useGetOrganisaatiotyypitQuery } from '../../../api/koodisto';
 import { add } from '../../../slices/toastSlice';
+import { SingleValue } from 'react-select';
 
 type Locales = 'FI' | 'SV' | 'EN';
 
 export type LocalizableField = Record<Locales, string>;
 
 export type PalveluJaKayttooikeusSelection = {
-    palvelu: SelectOption;
-    kayttooikeus: SelectOption;
+    palvelu: SingleValue<SelectOption>;
+    kayttooikeus: SingleValue<SelectOption>;
 };
 
 export type SallitutKayttajatyypit = 'PALVELU' | 'VIRKAILIJA';
@@ -55,7 +56,7 @@ export type KayttooikeusryhmaForm = {
     organisaatiotyypitSelections: Array<string>;
     kayttooikeusryhmaSelections: SelectOption[];
     palveluJaKayttooikeusSelections: Array<PalveluJaKayttooikeusSelection>;
-    sallittuKayttajatyyppi: SallitutKayttajatyypit | null | undefined;
+    sallittuKayttajatyyppi: SallitutKayttajatyypit | null;
 };
 
 const initialKayttooikeusryhmaForm: KayttooikeusryhmaForm = {
@@ -70,7 +71,7 @@ const initialKayttooikeusryhmaForm: KayttooikeusryhmaForm = {
     sallittuKayttajatyyppi: null,
 };
 
-export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId?: string }) => {
+export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { L, locale } = useLocalisations();
@@ -90,8 +91,8 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId?: string }) =
     const [putKayttooikeusryhma] = usePutKayttooikeusryhmaMutation();
     const [kayttooikeusryhmaForm, setKayttooikeusryhmaForm] =
         useState<KayttooikeusryhmaForm>(initialKayttooikeusryhmaForm);
-    const [palvelutSelection, setPalvelutSelection] = useState<SelectOption>();
-    const [palveluKayttooikeusSelection, setPalveluKayttooikeusSelection] = useState<SelectOption>();
+    const [palvelutSelection, setPalvelutSelection] = useState<SingleValue<SelectOption>>(null);
+    const [palveluKayttooikeusSelection, setPalveluKayttooikeusSelection] = useState<SingleValue<SelectOption>>(null);
     const [isPassivoitu, setIsPassivoitu] = useState(false);
     const [ryhmaRestrictionViite, setRyhmaRestrictionViite] = useState<OrganisaatioViite>();
     const [toggleTallenna, setToggleTallenna] = useState(false);
@@ -120,7 +121,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId?: string }) =
             ryhmaRestriction: _parseExistingRyhmaRestriction(),
             kayttooikeusryhmaSelections: _parseExistingKayttooikeusryhmaSelections(),
             palveluJaKayttooikeusSelections: _parseExistingPalvelutRoolitData(),
-            sallittuKayttajatyyppi: kayttooikeusryhma?.sallittuKayttajatyyppi,
+            sallittuKayttajatyyppi: kayttooikeusryhma?.sallittuKayttajatyyppi ?? null,
         };
     };
 
@@ -131,20 +132,22 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId?: string }) =
                 ? organisaatioViitteet.some((organisaatioviite) => _isRyhmaOid(organisaatioviite.organisaatioTyyppi))
                 : false;
         const ryhmaRestriction = kayttooikeusryhma?.ryhmaRestriction;
-        return organisaatioViiteRyhmaRestriction || ryhmaRestriction;
+        return !!(organisaatioViiteRyhmaRestriction || ryhmaRestriction);
     };
 
     const _parseExistingKayttooikeusryhmaSelections = (): SelectOption[] => {
-        return kayttooikeusryhmaMyontoviite.map((viite) => {
-            const text = viite.nimi.texts?.find((text) => text.lang.toLowerCase() === locale);
-            return {
-                value: viite.id.toString(),
-                label: text.text,
-            };
-        });
+        return (
+            kayttooikeusryhmaMyontoviite?.map((viite) => {
+                const text = viite.nimi.texts?.find((text) => text.lang.toLowerCase() === locale);
+                return {
+                    value: viite.id.toString(),
+                    label: text?.text ?? '',
+                };
+            }) ?? []
+        );
     };
 
-    const _parseExistingTextsData = (texts: Text[]) => {
+    const _parseExistingTextsData = (texts?: Text[]) => {
         const result = { FI: '', SV: '', EN: '' };
         if (texts === undefined) {
             return result;
@@ -166,16 +169,16 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId?: string }) =
         return organisaatioOids
             .map((oid) => organisations.find((o) => o.oid === oid))
             .map((organisaatio) => {
-                const localizedName = getLocalization(organisaatio.nimi, locale);
+                const localizedName = getLocalization(organisaatio?.nimi, locale);
                 const name =
-                    organisaatio.status === 'AKTIIVINEN'
+                    organisaatio?.status === 'AKTIIVINEN'
                         ? localizedName
                         : `${localizedName} (${L['KAYTTOOIKEUSRYHMAT_PASSIVOITU']})`;
                 const orgData: OrganisaatioSelectObject = {
-                    oid: organisaatio.oid,
+                    oid: organisaatio?.oid ?? '',
                     name,
                     parentNames: [],
-                    organisaatiotyypit: undefined,
+                    organisaatiotyypit: [],
                     oidPath: undefined,
                     status: undefined,
                 };
@@ -228,11 +231,11 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId?: string }) =
                 return {
                     palvelu: {
                         value: palveluRooli.palveluName,
-                        label: palveluLabel.text,
+                        label: palveluLabel?.text ?? '',
                     },
                     kayttooikeus: {
                         value: palveluRooli.rooli,
-                        label: kayttooikeusLabel.text,
+                        label: kayttooikeusLabel?.text ?? '',
                     },
                 };
             }) ?? []
@@ -341,7 +344,10 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId?: string }) =
         });
     };
 
-    const _onKayttooikeusryhmaSelection = (selection: SelectOption): void => {
+    const _onKayttooikeusryhmaSelection = (selection: SingleValue<SelectOption>): void => {
+        if (!selection) {
+            return;
+        }
         const currentKayttooikeusryhmaSelections = kayttooikeusryhmaForm.kayttooikeusryhmaSelections;
         if (!currentKayttooikeusryhmaSelections.some((k) => k.value === selection.value)) {
             setKayttooikeusryhmaForm({
@@ -361,9 +367,9 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId?: string }) =
         });
     };
 
-    const _onPalvelutSelection = (selection: SelectOption): void => {
+    const _onPalvelutSelection = (selection: SingleValue<SelectOption>): void => {
         setPalvelutSelection(selection);
-        setPalveluKayttooikeusSelection(undefined);
+        setPalveluKayttooikeusSelection(null);
     };
 
     const _onLisaaPalveluJaKayttooikeus = (): void => {
@@ -375,15 +381,15 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId?: string }) =
         if (
             !currentKayttooikeusSelections.some(
                 (k) =>
-                    k.palvelu.value === newKayttoikeusSelection.palvelu.value &&
-                    k.kayttooikeus.value === newKayttoikeusSelection.kayttooikeus.value
+                    k.palvelu?.value === newKayttoikeusSelection.palvelu?.value &&
+                    k.kayttooikeus?.value === newKayttoikeusSelection.kayttooikeus?.value
             )
         ) {
             setKayttooikeusryhmaForm({
                 ...kayttooikeusryhmaForm,
                 palveluJaKayttooikeusSelections: [...currentKayttooikeusSelections, newKayttoikeusSelection],
             });
-            setPalveluKayttooikeusSelection(undefined);
+            setPalveluKayttooikeusSelection(null);
         }
     };
 
@@ -391,8 +397,8 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId?: string }) =
         const newPalveluJaKayttooikeusSelections = kayttooikeusryhmaForm.palveluJaKayttooikeusSelections.filter(
             (currentItem) =>
                 !(
-                    removeItem.kayttooikeus.value === currentItem.kayttooikeus.value &&
-                    removeItem.palvelu.value === currentItem.palvelu.value
+                    removeItem.kayttooikeus?.value === currentItem.kayttooikeus?.value &&
+                    removeItem.palvelu?.value === currentItem.palvelu?.value
                 )
         );
         setKayttooikeusryhmaForm({
@@ -442,9 +448,9 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId?: string }) =
     };
 
     const _parsePalvelutRoolit = (): Array<PalveluRooliModify> => {
-        return kayttooikeusryhmaForm.palveluJaKayttooikeusSelections.map((item: PalveluJaKayttooikeusSelection) => ({
-            palveluName: item.palvelu.value,
-            rooli: item.kayttooikeus.value,
+        return kayttooikeusryhmaForm.palveluJaKayttooikeusSelections.map((item) => ({
+            palveluName: item.palvelu?.value ?? '',
+            rooli: item.kayttooikeus?.value ?? '',
         }));
     };
 
@@ -452,9 +458,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId?: string }) =
         const oppilaitostyypit = kayttooikeusryhmaForm.oppilaitostyypitSelections;
         const organisaatiotyypit = kayttooikeusryhmaForm.organisaatiotyypitSelections;
         const tyypit = oppilaitostyypit.concat(organisaatiotyypit);
-        const organisaatiot = kayttooikeusryhmaForm.organisaatioSelections.map(
-            (item: OrganisaatioSelectObject) => item.oid
-        );
+        const organisaatiot = kayttooikeusryhmaForm.organisaatioSelections.map((item) => item.oid);
         const ryhmaRestrictionviite = ryhmaRestrictionViite ? [ryhmaRestrictionViite.organisaatioTyyppi] : [];
         return ryhmaRestrictionViite
             ? tyypit.concat(organisaatiot).concat(ryhmaRestrictionviite)
@@ -464,10 +468,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId?: string }) =
     const _hasPassiveOrganisaatioRajoite = (): boolean => {
         const passivoitu = L['KAYTTOOIKEUSRYHMAT_PASSIVOITU'];
         const organisaatioSelections = kayttooikeusryhmaForm.organisaatioSelections;
-        return (
-            organisaatioSelections &&
-            organisaatioSelections.some((selection: OrganisaatioSelectObject) => selection.name.includes(passivoitu))
-        );
+        return !!organisaatioSelections?.some((selection) => selection.name.includes(passivoitu!));
     };
 
     const parsePayload = (): KayttooikeusryhmaRequest => ({

@@ -6,8 +6,8 @@ import { NaviTab } from '../../types/navigation.type';
 export const enabledDuplikaattiView = (oidHenkilo: string | null | undefined, masterHenkiloOid?: string): boolean =>
     masterHenkiloOid === undefined || masterHenkiloOid === oidHenkilo;
 
-export const enabledVtjVertailuView = (henkilo: Henkilo): boolean =>
-    henkilo?.yksilointiYritetty && !henkilo?.yksiloityVTJ && !henkilo?.duplicate;
+export const enabledVtjVertailuView = (henkilo?: Henkilo): boolean =>
+    !!henkilo?.yksilointiYritetty && !henkilo?.yksiloityVTJ && !henkilo?.duplicate;
 
 export const vtjDataAvailable = (yksilointitieto: Yksilointitieto | null | undefined): boolean =>
     !!yksilointitieto?.etunimet ||

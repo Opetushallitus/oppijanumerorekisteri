@@ -13,6 +13,7 @@ import { localizeTextGroup } from '../../../utilities/localisation.util';
 import { useKayttooikeusryhmas, useLocalisations } from '../../../selectors';
 import OphTable from '../../OphTable';
 import {
+    PostKayttooikeusAnomusRequest,
     useGetKayttooikeusAnomuksetForHenkiloQuery,
     useGetOrganisationsQuery,
     usePostKayttooikeusAnomusMutation,
@@ -86,12 +87,16 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
     }
 
     async function _createKayttooikeusAnomus(kayttooikeusryhma: MyonnettyKayttooikeusryhma) {
-        const kayttooikeusRyhmaIds = [kayttooikeusryhma.ryhmaId];
-        const anomusData = {
+        const email = emailOptions.emailSelection[kayttooikeusryhma.ryhmaId]?.value;
+        if (!email) {
+            return;
+        }
+
+        const anomusData: PostKayttooikeusAnomusRequest = {
             organisaatioOrRyhmaOid: kayttooikeusryhma.organisaatioOid,
-            email: emailOptions.emailSelection[kayttooikeusryhma.ryhmaId]?.value,
+            email: email,
             perustelut: 'Uusiminen',
-            kayttooikeusRyhmaIds,
+            kayttooikeusRyhmaIds: [kayttooikeusryhma.ryhmaId],
             anojaOid: props.oidHenkilo,
         };
         postKayttooikeusAnomus(anomusData)
@@ -171,7 +176,8 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
                 cell: ({ getValue }) => (
                     <AccessRightDetaisLink<MyonnettyKayttooikeusryhma>
                         nimi={
-                            getValue().ryhmaNames?.texts.filter((text) => text.lang === locale.toUpperCase())[0]?.text
+                            getValue().ryhmaNames?.texts.filter((text) => text.lang === locale.toUpperCase())[0]
+                                ?.text ?? ''
                         }
                         kayttooikeusRyhma={getValue()}
                         clickHandler={(kayttooikeusRyhma) => showAccessRightGroupDetails(kayttooikeusRyhma)}

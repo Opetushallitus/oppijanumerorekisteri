@@ -13,17 +13,17 @@ const OppijoidenTuontiYhteenveto = () => {
                     <tr>
                         <td>{L['OPPIJOIDEN_TUONTI_YHTEENVETO_ONNISTUNEET']}</td>
                         <td style={{ paddingLeft: '1rem', fontWeight: 600 }}>
-                            {isFetching ? '...' : data.onnistuneet}
+                            {isFetching ? '...' : data?.onnistuneet}
                         </td>
                     </tr>
                     <tr>
                         <td>{L['OPPIJOIDEN_TUONTI_YHTEENVETO_VIRHEET']}</td>
-                        <td style={{ paddingLeft: '1rem', fontWeight: 600 }}>{isFetching ? '...' : data.virheet}</td>
+                        <td style={{ paddingLeft: '1rem', fontWeight: 600 }}>{isFetching ? '...' : data?.virheet}</td>
                     </tr>
                     <tr>
                         <td>{L['OPPIJOIDEN_TUONTI_YHTEENVETO_KESKENERAISET']}</td>
                         <td style={{ paddingLeft: '1rem', fontWeight: 600 }}>
-                            {isFetching ? '...' : data.keskeneraiset}
+                            {isFetching ? '...' : data?.keskeneraiset}
                         </td>
                     </tr>
                 </tbody>

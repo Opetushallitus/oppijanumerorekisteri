@@ -20,6 +20,7 @@ import { RekisteroidyRequest, usePostRekisteroidyMutation } from '../../api/kayt
 import LabelValue from '../../components/common/henkilo/labelvalues/LabelValue';
 
 import './RekisteroidyPage.css';
+import { SingleValue } from 'react-select';
 
 type OwnProps = {
     L: Localisations;
@@ -120,7 +121,7 @@ export const RekisteroidyPage = (props: OwnProps) => {
         setHenkilo(newHenkilo);
     }
 
-    function updatePayloadModelSelect(event: NamedSelectOption) {
+    function updatePayloadModelSelect(event: SingleValue<NamedSelectOption>) {
         const newHenkilo = StaticUtils.updateSelectValueByDotAnnotation({ ...henkilo }, event) || henkilo;
         setHenkilo(newHenkilo);
     }
@@ -267,7 +268,7 @@ export const RekisteroidyPage = (props: OwnProps) => {
                 <div className="wrapper notranslate">
                     <div className="rekisteroidy-organisaatiot-wrapper" style={{ marginBottom: '2em' }}>
                         <ReactMarkdown linkTarget="_blank" className="privacy-policy">
-                            {L['REKISTEROIDY_PRIVACY_POLICY']}
+                            {L['REKISTEROIDY_PRIVACY_POLICY'] ?? ''}
                         </ReactMarkdown>
                     </div>
                     <NotificationButton action={() => setPrivacyPolicySeen(true)}>

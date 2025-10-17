@@ -11,8 +11,8 @@ import { useGetKayttooikeusryhmaMyontoviiteQuery, useGetKayttooikeusryhmaQuery }
 export const KayttooikeusryhmaPageContainer = () => {
     const params = useParams();
     const { L } = useLocalisations();
-    const { isLoading: isKayttooikeusryhmaLoading } = useGetKayttooikeusryhmaQuery(params.id, { skip: !params.id });
-    const { isLoading: isKayttooikeusryhmaMyontoviiteLoading } = useGetKayttooikeusryhmaMyontoviiteQuery(params.id, {
+    const { isLoading: isKayttooikeusryhmaLoading } = useGetKayttooikeusryhmaQuery(params.id!, { skip: !params.id });
+    const { isLoading: isKayttooikeusryhmaMyontoviiteLoading } = useGetKayttooikeusryhmaMyontoviiteQuery(params.id!, {
         skip: !params.id,
     });
 
@@ -22,6 +22,6 @@ export const KayttooikeusryhmaPageContainer = () => {
     return isKayttooikeusryhmaLoading || isKayttooikeusryhmaMyontoviiteLoading ? (
         <Loader />
     ) : (
-        <KayttooikeusryhmaPage kayttooikeusryhmaId={params.id} />
+        <KayttooikeusryhmaPage kayttooikeusryhmaId={params.id!} />
     );
 };

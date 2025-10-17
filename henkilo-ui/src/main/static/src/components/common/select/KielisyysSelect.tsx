@@ -6,7 +6,7 @@ import { Koodisto } from '../../../api/koodisto';
 type KielisyysSelectProps = {
     className?: string;
     placeholder: string;
-    koodisto: Koodisto;
+    koodisto?: Koodisto;
     value: Kielisyys | null | undefined;
     onChange: (arg0: Kielisyys | null | undefined) => void;
 };

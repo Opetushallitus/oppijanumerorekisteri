@@ -14,9 +14,9 @@ const PalveluJaKayttooikeusSelections = (props: Props) => (
         <ul>
             {props.items.map((item: PalveluJaKayttooikeusSelection, index: number) => (
                 <li className="palvelu-ja-kayttooikeus flex-horizontal" key={index}>
-                    <span className="flex-item-1 palvelu-element">{item.palvelu.label}</span>
+                    <span className="flex-item-1 palvelu-element">{item.palvelu?.label}</span>
                     <span className="flex-item-1 kayttooikeus-element">
-                        {item.kayttooikeus.label}{' '}
+                        {item.kayttooikeus?.label}{' '}
                         <button className="oph-button oph-button-cancel" onClick={() => props.removeAction(item)}>
                             {props.L['POISTA']}
                         </button>

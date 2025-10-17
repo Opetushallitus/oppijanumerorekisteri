@@ -8,7 +8,7 @@ export interface NavigationState {
     backButton: boolean;
 }
 
-const initialState: NavigationState = {
+export const initialState: NavigationState = {
     tabs: [],
     backButton: false,
 };

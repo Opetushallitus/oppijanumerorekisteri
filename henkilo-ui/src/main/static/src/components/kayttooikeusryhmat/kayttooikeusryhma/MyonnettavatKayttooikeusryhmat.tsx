@@ -1,5 +1,5 @@
 import React from 'react';
-import Select from 'react-select';
+import Select, { SingleValue } from 'react-select';
 
 import ItemList from './ItemList';
 import { useLocalisations } from '../../../selectors';
@@ -9,7 +9,7 @@ import { SelectOption } from '../../../utilities/select';
 import './MyonnettavatKayttooikeusryhmat.css';
 
 type Props = {
-    kayttooikeusryhmaSelectAction: (selection: SelectOption) => void;
+    kayttooikeusryhmaSelectAction: (selection: SingleValue<SelectOption>) => void;
     kayttooikeusryhmaSelections: SelectOption[];
     removeKayttooikeusryhmaSelectAction: (selection: SelectOption) => void;
 };
@@ -20,7 +20,7 @@ const MyonnettavatKayttooikeusryhmat = (props: Props) => {
     const kayttooikeusryhmaOptions = (allKayttooikeusryhmas ?? []).map((kayttooikeusryhma) => {
         const textObject = kayttooikeusryhma?.description?.texts?.find((t) => t.lang === locale.toUpperCase());
         return {
-            label: textObject?.text,
+            label: textObject?.text ?? '',
             value: kayttooikeusryhma.id?.toString(),
         };
     });

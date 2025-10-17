@@ -62,7 +62,7 @@ const KayttooikeusryhmanOrganisaatiorajoite = (props: Props) => {
                 </div>
                 <div className="flex-item-1 oppilaitostyyppi-wrapper">
                     <OphCheckboxFieldset
-                        legendText={L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_OPPILAITOSTYYPPI']}
+                        legendText={L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_OPPILAITOSTYYPPI']!}
                         options={oppilaitostyypitOptions.map((option) => ({
                             label: option.label,
                             value: option.value,
@@ -75,7 +75,7 @@ const KayttooikeusryhmanOrganisaatiorajoite = (props: Props) => {
                 </div>
                 <div className="flex-item-1 organisaatiotyyppi-wrapper">
                     <OphCheckboxFieldset
-                        legendText={L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_ORGANISAATIOTYYPPI']}
+                        legendText={L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_ORGANISAATIOTYYPPI']!}
                         options={organisaatiotyypitOptions.map((option) => ({
                             label: option.label,
                             value: option.value,

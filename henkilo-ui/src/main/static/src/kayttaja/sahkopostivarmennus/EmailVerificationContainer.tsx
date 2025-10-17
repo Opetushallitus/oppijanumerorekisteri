@@ -13,7 +13,7 @@ const EmailVerificationContainer = () => {
     const dispatch = useAppDispatch();
     const params = useParams();
     const { getLocalisations } = useLocalisations();
-    const { data: henkilo, isLoading, isError } = useGetHenkiloByLoginTokenQuery(params.loginToken);
+    const { data: henkilo, isLoading, isError } = useGetHenkiloByLoginTokenQuery(params.loginToken!);
     const L = getLocalisations(params.locale);
 
     useTitle(L['TITLE_SAHKOPOSTI_VARMISTAMINEN']);
@@ -24,7 +24,7 @@ const EmailVerificationContainer = () => {
         }
     }, [isError]);
 
-    const errorNotification = (header: string) => {
+    const errorNotification = (header?: string) => {
         dispatch(
             add({
                 id: `KAYTTOOIKEUSRAPORTTI_ERROR-${Math.random()}`,
@@ -38,11 +38,11 @@ const EmailVerificationContainer = () => {
         <Loader />
     ) : (
         <EmailVerificationPage
-            henkilo={henkilo}
-            loginToken={params.loginToken}
+            henkilo={henkilo!}
+            loginToken={params.loginToken!}
             errorNotification={errorNotification}
             L={L}
-            locale={params.locale}
+            locale={params.locale!}
         />
     );
 };

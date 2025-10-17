@@ -38,9 +38,9 @@ const AnomusPage = () => {
     function onSubmit(criteria: Partial<GetHaetutKayttooikeusryhmatRequest>) {
         const newParameters = { ...parameters, ...criteria };
         newParameters.orderBy = sorted.length
-            ? sorted[0].desc
-                ? sorted[0].id + '_DESC'
-                : sorted[0].id + '_ASC'
+            ? sorted[0]?.desc
+                ? sorted[0]?.id + '_DESC'
+                : sorted[0]?.id + '_ASC'
             : newParameters.orderBy;
         setParameters(newParameters);
     }
@@ -92,7 +92,7 @@ const AnomusPage = () => {
                         isActive: !isLoading && hasNextPage,
                         fetchMoreAction: () => fetchNextPage(),
                     }}
-                    onSortingChange={(s) => s.length && setSorted([s[0]])}
+                    onSortingChange={(s) => s.length && setSorted([s[0]!])}
                     tableLoading={isLoading}
                     piilotaOtsikko={true}
                 />

@@ -1,4 +1,4 @@
-import React, { useRef, ReactElement, Fragment } from 'react';
+import React, { useRef, ReactElement, Fragment, LegacyRef } from 'react';
 import { Table, flexRender, Row, ColumnDef } from '@tanstack/react-table';
 
 import { useLocalisations } from '../selectors';
@@ -151,7 +151,9 @@ const OphTable = <T,>({ table, isLoading, renderSubComponent }: OphTableProps<T>
                         <button
                             className="button"
                             onClick={() => {
-                                pageRef.current.value = String(table.getState().pagination.pageIndex);
+                                if (pageRef.current) {
+                                    pageRef.current.value = String(table.getState().pagination.pageIndex);
+                                }
                                 table.previousPage();
                             }}
                             disabled={isLoading || !table.getCanPreviousPage()}
@@ -164,7 +166,7 @@ const OphTable = <T,>({ table, isLoading, renderSubComponent }: OphTableProps<T>
                             {L['TAULUKKO_SIVU']}
                             <div className="page-jump">
                                 <input
-                                    ref={pageRef}
+                                    ref={pageRef as LegacyRef<HTMLInputElement> | undefined}
                                     type="number"
                                     defaultValue={table.getState().pagination.pageIndex || 0 + 1}
                                     onChange={(e) => {
@@ -194,7 +196,9 @@ const OphTable = <T,>({ table, isLoading, renderSubComponent }: OphTableProps<T>
                         <button
                             className="border rounded p-1"
                             onClick={() => {
-                                pageRef.current.value = String(table.getState().pagination.pageIndex + 2);
+                                if (pageRef.current) {
+                                    pageRef.current.value = String(table.getState().pagination.pageIndex + 2);
+                                }
                                 table.nextPage();
                             }}
                             disabled={isLoading || !table.getCanNextPage()}

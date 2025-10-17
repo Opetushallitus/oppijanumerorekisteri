@@ -7,7 +7,7 @@ import { validateEmail } from '../../../validation/EmailValidator';
 
 type Props = {
     readOnly: boolean;
-    changeAction: (arg0: any) => void;
+    changeAction?: (arg0: any) => void;
     inputValue?: string;
     password?: boolean;
     isEmail?: boolean;
@@ -67,14 +67,16 @@ class Field extends React.Component<Props, State> {
             return (
                 <SimpleDatePicker
                     className="oph-input"
-                    onChange={(value) =>
-                        this.props.changeAction({
-                            target: {
-                                value: value,
-                                name: this.props.inputValue,
-                            },
-                        })
-                    }
+                    onChange={(value) => {
+                        if (this.props.changeAction) {
+                            this.props.changeAction({
+                                target: {
+                                    value: value,
+                                    name: this.props.inputValue,
+                                },
+                            });
+                        }
+                    }}
                     value={this.props.children}
                     disabled={this.props.disabled}
                 />
@@ -89,7 +91,9 @@ class Field extends React.Component<Props, State> {
                     this.setState({
                         inputError: this.isValidEmailInputEvent(type, event),
                     });
-                    this.props.changeAction(event);
+                    if (this.props.changeAction) {
+                        this.props.changeAction(event);
+                    }
                 }}
                 defaultValue={this.props.children}
                 autoFocus={this.props.autofocus}

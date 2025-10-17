@@ -44,13 +44,13 @@ export const AnomusIlmoitus = (props: OwnProps) => {
     return (
         <FieldlessLabelValue label="HENKILO_ANOMUSILMOITUKSET">
             {props.readOnly ? (
-                renderOptions(options, omattiedot?.anomusilmoitus)
+                renderOptions(options, omattiedot?.anomusilmoitus ?? [])
             ) : (
                 <Select
                     options={options}
                     isMulti={true}
                     isDisabled={props.readOnly}
-                    value={options.filter((o) => !!props.henkiloUpdate.anomusilmoitus.find((a) => a === o.value))}
+                    value={options.filter((o) => !!props.henkiloUpdate.anomusilmoitus?.find((a) => a === o.value))}
                     onChange={(tilaukset) => {
                         return (
                             tilaukset &&

@@ -2,6 +2,7 @@ import './HenkilohakuPage.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, Row, SortingState } from '@tanstack/react-table';
 import { Link } from 'react-router';
+import { SingleValue } from 'react-select';
 
 import HenkilohakuFilters from './HenkilohakuFilters';
 import StaticUtils from '../common/StaticUtils';
@@ -50,14 +51,14 @@ const HenkilohakuPage = () => {
     useEffect(() => {
         setParameters({
             orderBy: sorting.length
-                ? sorting[0].desc
-                    ? sorting[0].id + '_DESC'
-                    : sorting[0].id + '_ASC'
+                ? sorting[0]?.desc
+                    ? sorting[0]?.id + '_DESC'
+                    : sorting[0]?.id + '_ASC'
                 : 'HENKILO_NIMI_ASC',
         });
     }, [sorting]);
 
-    const selectRyhmaOid = (option?: SelectOption) => {
+    const selectRyhmaOid = (option?: SingleValue<SelectOption>) => {
         setRyhmaOid(option?.value);
         setCriteria({ ...criteria, organisaatioOids: option?.value ? [option.value] : undefined });
     };
@@ -89,7 +90,7 @@ const HenkilohakuPage = () => {
                             <li key={idx2}>
                                 {(organisaatio.localisedLabels[locale] ?? organisaatio.identifier) +
                                     ' ' +
-                                    StaticUtils.getOrganisaatiotyypitFlat(organisaatio.tyypit, L, true)}
+                                    StaticUtils.getOrganisaatiotyypitFlat(L, true, organisaatio.tyypit)}
                             </li>
                         ))}
                     </ul>
@@ -140,7 +141,7 @@ const HenkilohakuPage = () => {
                 selectedRyhma={ryhmaOid}
                 ryhmaSelectionAction={selectRyhmaOid}
                 selectedKayttooikeus={criteria.kayttooikeusryhmaId}
-                kayttooikeusSelectionAction={(option: SelectOption) =>
+                kayttooikeusSelectionAction={(option) =>
                     setCriteria({ ...criteria, kayttooikeusryhmaId: option?.value })
                 }
             />

@@ -61,7 +61,7 @@ const PalvelukayttajaHakuPage = () => {
                     L={L}
                     subOrganisationValue={criteria.subOrganisation === 'true'}
                     subOrganisationAction={(elem) =>
-                        setCriteria({ ...criteria, subOrganisation: String(elem.currentTarget.checked) })
+                        setCriteria({ ...criteria, subOrganisation: String(elem?.currentTarget.checked ?? '') })
                     }
                 />
             </div>

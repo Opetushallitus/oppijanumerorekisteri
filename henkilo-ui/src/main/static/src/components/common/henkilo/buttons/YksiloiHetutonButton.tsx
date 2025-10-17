@@ -17,7 +17,7 @@ const YksiloiHetutonButton = (props: OwnProps) => {
     const { data: henkilo } = useGetHenkiloQuery(props.henkiloOid);
     const [yksiloiHetuton] = useYksiloiHetutonMutation();
     const [notification, setNotification] = useState<ButtonNotification>();
-    if (StaticUtils.isVahvastiYksiloity(henkilo) || henkilo.yksiloity || henkilo.hetu) {
+    if (StaticUtils.isVahvastiYksiloity(henkilo) || henkilo?.yksiloity || henkilo?.hetu) {
         return null;
     }
 
@@ -25,8 +25,8 @@ const YksiloiHetutonButton = (props: OwnProps) => {
         <ConfirmButton
             key="yksilointi"
             action={() =>
-                isHenkiloValidForYksilointi(henkilo)
-                    ? yksiloiHetuton(henkilo?.oidHenkilo)
+                henkilo && isHenkiloValidForYksilointi(henkilo)
+                    ? yksiloiHetuton(henkilo.oidHenkilo)
                           .unwrap()
                           .catch(() =>
                               setNotification({

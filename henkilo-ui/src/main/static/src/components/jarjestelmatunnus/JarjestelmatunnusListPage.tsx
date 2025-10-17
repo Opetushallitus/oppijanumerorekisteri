@@ -17,6 +17,7 @@ import { useNavigation } from '../../useNavigation';
 import { jarjestelmatunnusNavigation } from '../navigation/navigationconfigurations';
 
 import './JarjestelmatunnusListPage.css';
+import { SingleValue } from 'react-select';
 
 const defaultCriteria = {
     subOrganisation: 'true',
@@ -33,15 +34,15 @@ export const JarjestelmatunnusListPage = () => {
         skip: !debouncedCriteria.nameQuery && !debouncedCriteria.organisaatioOid,
     });
 
-    const setOrganisationCriteria = (selection?: OrganisaatioSelectObject) =>
+    const setOrganisationCriteria = (selection: SingleValue<OrganisaatioSelectObject>) =>
         setCriteria({ ...criteria, organisaatioOid: selection?.oid });
 
     return (
-        <OphDsPage header={L['JARJESTELMATUNNUSTEN_HAKU']}>
+        <OphDsPage header={L['JARJESTELMATUNNUSTEN_HAKU']!}>
             <div className="jarjestelmatunnus-haku-form">
                 <OphDsInput
                     id="filter"
-                    label={L['SUODATA_PALVELUN_NIMELLA']}
+                    label={L['SUODATA_PALVELUN_NIMELLA']!}
                     onChange={(nameQuery) => setCriteria({ ...criteria, nameQuery })}
                 />
                 <div>
@@ -55,7 +56,7 @@ export const JarjestelmatunnusListPage = () => {
                 <OphDsChechbox
                     checked={criteria.subOrganisation === 'true'}
                     id="subOrganisations"
-                    label={L['HENKILOHAKU_FILTERS_ALIORGANISAATIOISTA']}
+                    label={L['HENKILOHAKU_FILTERS_ALIORGANISAATIOISTA']!}
                     onChange={() =>
                         setCriteria({
                             ...criteria,
@@ -65,7 +66,7 @@ export const JarjestelmatunnusListPage = () => {
                 />
             </div>
             <OphDsTable
-                headers={[L['HENKILO_PALVELUN_NIMI'], L['HENKILO_KAYTTAJANIMI']]}
+                headers={[L['HENKILO_PALVELUN_NIMI']!, L['HENKILO_KAYTTAJANIMI']!]}
                 rows={(data ?? []).map((d) => [
                     <Link key={`link-${d.kayttajatunnus}`} to={`/jarjestelmatunnus/${d.oid}`} className="oph-ds-link">
                         {d.nimi}

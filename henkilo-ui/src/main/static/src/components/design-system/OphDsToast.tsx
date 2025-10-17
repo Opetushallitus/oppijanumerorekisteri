@@ -10,7 +10,7 @@ type ToastType = 'ok' | 'error';
 export type ToastProps = {
     id: string;
     body?: string;
-    header: string;
+    header?: string;
     type: ToastType;
 };
 

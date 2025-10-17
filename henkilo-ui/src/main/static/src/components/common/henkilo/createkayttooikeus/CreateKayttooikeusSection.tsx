@@ -18,11 +18,11 @@ type Props = {
     selectedList: Array<ValittuKayttooikeusryhma>;
     addKayttooikeus: (arg0: ValittuKayttooikeusryhma) => void;
     removeKayttooikeus: (kayttooikeusryhmaId: number) => void;
-    selectedOrganisationOid: string;
+    selectedOrganisationOid?: string;
     isPalvelukayttaja: boolean;
 };
 
-const CKKayttooikeudet = ({
+const CreateKayttooikeusSection = ({
     selectedList,
     addKayttooikeus,
     removeKayttooikeus,
@@ -31,8 +31,9 @@ const CKKayttooikeudet = ({
 }: Props) => {
     const { L, locale } = useLocalisations();
     const { data: omattiedot } = useGetOmattiedotQuery();
+    const oidHenkilo = omattiedot?.oidHenkilo;
     const { data, isLoading } = useGetAllowedKayttooikeusryhmasForOrganisationQuery(
-        { oidHenkilo: omattiedot.oidHenkilo, oidOrganisaatio: selectedOrganisationOid },
+        { oidHenkilo: oidHenkilo!, oidOrganisaatio: selectedOrganisationOid! },
         {
             skip: !omattiedot || !selectedOrganisationOid,
         }
@@ -47,13 +48,12 @@ const CKKayttooikeudet = ({
                 <KayttooikeusryhmaSelectModal
                     kayttooikeusryhmat={kayttooikeusryhmat}
                     kayttooikeusryhmaValittu={selectedList.length > 0}
-                    onSelect={(kayttooikeusryhma) => {
-                        console.log(kayttooikeusryhma);
+                    onSelect={(kayttooikeusryhma) =>
                         addKayttooikeus({
                             value: kayttooikeusryhma.id,
                             label: localizeTextGroup(kayttooikeusryhma.nimi.texts, locale),
-                        });
-                    }}
+                        })
+                    }
                     loading={isLoading}
                     isOrganisaatioSelected={!!selectedOrganisationOid}
                     sallittuKayttajatyyppi={isPalvelukayttaja ? 'PALVELU' : 'VIRKAILIJA'}
@@ -83,4 +83,4 @@ const CKKayttooikeudet = ({
     );
 };
 
-export default CKKayttooikeudet;
+export default CreateKayttooikeusSection;
