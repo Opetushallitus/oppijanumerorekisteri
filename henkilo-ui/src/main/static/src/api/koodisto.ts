@@ -47,25 +47,11 @@ export const koodistoApi = createApi({
         getSukupuolet: builder.query<Koodisto, void>({
             query: () => 'rest/json/sukupuoli/koodi',
         }),
-        getYhteystietotyypit: builder.query<KoodistoStateKoodi[], void, Koodisto>({
+        getYhteystietotyypit: builder.query<Koodisto, void, Koodisto>({
             query: () => 'rest/json/yhteystietotyypit/koodi',
-            async transformResponse(baseQueryReturnValue: Koodisto) {
-                // Jäi kyllä vähän epäselväksi miksi tälle koodistolle tehdään näin toisin kuin muille
-                return baseQueryReturnValue.map((koodi: Koodi) => ({
-                    koodiUri: koodi.koodiUri,
-                    value: koodi.koodiArvo.toLowerCase(),
-                    ...Object.fromEntries(koodi.metadata.map((k) => [k.kieli.toLowerCase(), k.nimi])),
-                }));
-            },
         }),
     }),
 });
-
-export type KoodistoStateKoodi = {
-    koodiUri: string;
-    value: string;
-    [kieli: string]: string;
-};
 
 export const {
     useGetHenkilontunnistetyypitQuery,
