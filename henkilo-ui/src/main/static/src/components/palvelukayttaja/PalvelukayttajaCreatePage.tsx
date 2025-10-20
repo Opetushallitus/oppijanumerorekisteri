@@ -1,6 +1,5 @@
 import React, { FormEvent, useState } from 'react';
 
-import WideRedNotification from '../common/notifications/WideRedNotification';
 import { useLocalisations } from '../../selectors';
 import { usePostPalvelukayttajaMutation } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
@@ -32,7 +31,22 @@ export const PalvelukayttajaCreatePage = () => {
 
     return (
         <div className="mainContent wrapper">
-            {error && <WideRedNotification message={error} closeAction={() => setError('')} />}
+            {error && (
+                <div className="oph-alert oph-alert-error">
+                    <div className="oph-alert-container">
+                        <div className="oph-alert-title">{error}</div>
+                        <button
+                            className="oph-button oph-button-close"
+                            type="button"
+                            title="Close"
+                            aria-label="Close"
+                            onClick={() => setError('')}
+                        >
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            )}
             <span className="oph-h2 oph-bold">{L['PALVELUKAYTTAJAN_LUONTI_OTSIKKO']}</span>
             <form onSubmit={onSubmit}>
                 <div className="oph-field oph-field-is-required">

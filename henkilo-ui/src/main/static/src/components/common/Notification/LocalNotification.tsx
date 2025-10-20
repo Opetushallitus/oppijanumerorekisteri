@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { TypedNotification } from './TypedNotification';
-import { NotificationType } from '../../../types/notification.types';
+
+export type NotificationType = 'success' | 'warning' | 'error' | 'info';
 
 type LocalNotificationProps = {
     type: NotificationType;
@@ -40,9 +40,21 @@ export class LocalNotification extends React.Component<LocalNotificationProps, S
 
     render() {
         return this.state.show && this.state.toggle() ? (
-            <TypedNotification type={this.props.type} title={this.props.title} closeAction={() => this.closeAction()}>
-                {this.props.children}
-            </TypedNotification>
+            <div className={`oph-alert oph-alert-${this.props.type}`}>
+                <div className="oph-alert-container">
+                    <div className="oph-alert-title">{this.props.title}</div>
+                    <div className="oph-alert-text">{this.props.children}</div>
+                    <button
+                        className="oph-button oph-button-close"
+                        type="button"
+                        title="Close"
+                        aria-label="Close"
+                        onClick={() => this.closeAction()}
+                    >
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+            </div>
         ) : null;
     }
 

@@ -12,7 +12,6 @@ import OmattiedotUserContent from './OmattiedotUserContent';
 import PalveluUserContent from './PalveluUserContent';
 import { isValidKutsumanimi } from '../../../../validation/KutsumanimiValidator';
 import { LocalNotification } from '../../Notification/LocalNotification';
-import { NOTIFICATIONTYPES } from '../../Notification/notificationtypes';
 import { isValidKayttajatunnus } from '../../../../validation/KayttajatunnusValidator';
 import PropertySingleton from '../../../../globals/PropertySingleton';
 import { View } from '../../../../types/constants';
@@ -312,7 +311,7 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
 
             <LocalNotification
                 title={L['NOTIFICATION_HENKILOTIEDOT_VIRHE_OTSIKKO']}
-                type={NOTIFICATIONTYPES.WARNING}
+                type="warning"
                 toggle={!readOnly && !_validForm()}
             >
                 <ul>{_validKutsumanimi() ? null : <li>{L['NOTIFICATION_HENKILOTIEDOT_KUTSUMANIMI_VIRHE']}</li>}</ul>
@@ -320,7 +319,7 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
                     {_validKayttajatunnus() ? null : <li>{L['NOTIFICATION_HENKILOTIEDOT_KAYTTAJATUNNUS_VIRHE']}</li>}
                 </ul>
             </LocalNotification>
-            <LocalNotification title={L['HENKILO_YKSILOINTIVIRHE_OTSIKKO']} type={NOTIFICATIONTYPES.ERROR}>
+            <LocalNotification title={L['HENKILO_YKSILOINTIVIRHE_OTSIKKO']} type="error">
                 <ul>{_validYksilointi() ? null : <li>{_getYksilointivirhe()}</li>}</ul>
             </LocalNotification>
         </section>

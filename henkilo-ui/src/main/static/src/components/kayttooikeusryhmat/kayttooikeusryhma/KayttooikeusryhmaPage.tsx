@@ -15,7 +15,6 @@ import { SpinnerInButton } from '../../common/icons/SpinnerInButton';
 import { LocalNotification } from '../../common/Notification/LocalNotification';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import { getLocalization } from '../../../utilities/localisation.util';
-import { NOTIFICATIONTYPES } from '../../common/Notification/notificationtypes';
 import KayttooikeusryhmatSallittuKayttajatyyppi from './KayttooikeusryhmatSallittuKayttajatyyppi';
 import ToggleKayttooikeusryhmaStateModal from './ToggleKayttooikeusryhmaStateModal';
 import PropertySingleton from '../../../globals/PropertySingleton';
@@ -627,7 +626,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
 
             <LocalNotification
                 toggle={_hasPassiveOrganisaatioRajoite.call(this)}
-                type={NOTIFICATIONTYPES.WARNING}
+                type="warning"
                 title={L['KAYTTOOIKEUSRYHMAT_PASSIVOITU_VAROITUS']}
             />
         </div>

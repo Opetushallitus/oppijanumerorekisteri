@@ -5,7 +5,6 @@ import moment from 'moment';
 import Loader from '../common/icons/Loader';
 import './AnojaKayttoooikeusryhma.css';
 import { LocalNotification } from '../common/Notification/LocalNotification';
-import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
 import { useLocalisations } from '../../selectors';
 import OphTable from '../OphTable';
 import { useGetKayttooikeusryhmasForHenkiloQuery, useGetOrganisationsQuery } from '../../api/kayttooikeus';
@@ -126,7 +125,7 @@ export const AnojaKayttooikeusryhmat = ({ henkiloOid }: Props) => {
     } else if (isError) {
         return (
             <LocalNotification
-                type={NOTIFICATIONTYPES.ERROR}
+                type="error"
                 title={L['NOTIFICATION_ANOMUKSEN_ANOJAN_OIKEUKSIEN_HAKU_VIRHE']}
                 toggle={true}
             />
@@ -135,10 +134,6 @@ export const AnojaKayttooikeusryhmat = ({ henkiloOid }: Props) => {
         return <OphTable table={table} isLoading={false} />;
     }
     return (
-        <LocalNotification
-            type={NOTIFICATIONTYPES.INFO}
-            title={L['NOTIFICATION_ANOMUKSEN_ANOJAN_KAYTTOOIKEUDET_TYHJA']}
-            toggle={true}
-        />
+        <LocalNotification type="info" title={L['NOTIFICATION_ANOMUKSEN_ANOJAN_KAYTTOOIKEUDET_TYHJA']} toggle={true} />
     );
 };

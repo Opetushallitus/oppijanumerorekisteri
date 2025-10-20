@@ -5,13 +5,11 @@ import { useAppDispatch } from '../../../store';
 import Button from '../button/Button';
 import IconButton from '../button/IconButton';
 import CrossCircleIcon from '../icons/CrossCircleIcon';
-import WideBlueNotification from '../../common/notifications/WideBlueNotification';
 import KayttooikeusryhmaSelectModal from '../select/KayttooikeusryhmaSelectModal';
 import Loader from '../icons/Loader';
 import OrganisaatioSelectModal from '../select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import { LocalNotification } from '../Notification/LocalNotification';
-import { NOTIFICATIONTYPES } from '../Notification/notificationtypes';
 import { OrganisaatioWithChildren } from '../../../types/domain/organisaatio/organisaatio.types';
 import type { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
@@ -212,12 +210,20 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
         <div className="kayttooikeus-anomus-wrapper">
             <h2>{L['OMATTIEDOT_OTSIKKO']}</h2>
             {emailOptions.showMissingEmailNotification ? (
-                <WideBlueNotification
-                    message={L['OMATTIEDOT_PUUTTUVA_SAHKOPOSTI_UUSI_ANOMUS']!}
-                    closeAction={() => {
-                        setEmailOptions({ ...emailOptions, showMissingEmailNotification: false });
-                    }}
-                />
+                <div className="oph-alert oph-alert-info">
+                    <div className="oph-alert-container">
+                        <div className="oph-alert-title">{L['OMATTIEDOT_PUUTTUVA_SAHKOPOSTI_UUSI_ANOMUS']}</div>
+                        <button
+                            className="oph-button oph-button-close"
+                            type="button"
+                            title="Close"
+                            aria-label="Close"
+                            onClick={() => setEmailOptions({ ...emailOptions, showMissingEmailNotification: false })}
+                        >
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
             ) : null}
 
             <div>
@@ -376,7 +382,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
                                     <LocalNotification
                                         title={L['OMATTIEDOT_ANOMINEN_VIRHEET']}
                                         toggle={!validAnomusForm()}
-                                        type={NOTIFICATIONTYPES.WARNING}
+                                        type="warning"
                                     >
                                         <ul>
                                             {!activeSelection ? <li>{L['OMATTIEDOT_VAATIMUS_ORGANISAATIO']}</li> : null}

@@ -6,7 +6,6 @@ import DuplikaatitPerson from './DuplikaatitPerson';
 import Loader from '../../common/icons/Loader';
 import { enabledDuplikaattiView } from '../../navigation/NavigationTabs';
 import { LocalNotification } from '../../common/Notification/LocalNotification';
-import { NOTIFICATIONTYPES } from '../../common/Notification/notificationtypes';
 import type { HenkiloDuplicate } from '../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import OphModal from '../../common/modal/OphModal';
@@ -130,7 +129,7 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, duplicates, oi
             ))}
             <LocalNotification
                 title={L['DUPLIKAATIT_NOTIFICATION_EI_LOYTYNYT']}
-                type={NOTIFICATIONTYPES.INFO}
+                type="info"
                 toggle={duplicates?.length === 0}
             />
             {linkObj && linkingEnabled && (
