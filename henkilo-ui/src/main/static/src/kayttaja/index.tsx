@@ -7,7 +7,6 @@ import { KayttajaAppRoutes } from './routes';
 import { store } from './store';
 
 import '../reset.css';
-import '../general-style.css';
 import 'oph-virkailija-style-guide/oph-styles.css';
 import '../index.css';
 import 'react-datepicker/dist/react-datepicker.css';

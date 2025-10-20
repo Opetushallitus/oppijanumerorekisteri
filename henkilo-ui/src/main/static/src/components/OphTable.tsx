@@ -4,7 +4,7 @@ import { Table, flexRender, Row, ColumnDef } from '@tanstack/react-table';
 import { useLocalisations } from '../selectors';
 import Loader from './common/icons/Loader';
 
-import '../oph-table.css';
+import '../react-table.css';
 
 export type OphTableProps<T> = {
     table: Table<T>;

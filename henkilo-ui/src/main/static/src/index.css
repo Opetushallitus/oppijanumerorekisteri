@@ -1,7 +1,79 @@
+body {
+    background-color: #f6f4f0;
+}
 
-/* Allow react-datepicker dimensions to be affected */
-.react-datepicker-wrapper, .react-datepicker__input-container {
-    display: block !important;
+.error-txt {
+    font-size: 15px;
+    color: #E44E4E;
+}
+
+a {
+    color: #159ECB;
+    line-height: 16px;
+    text-decoration: none;
+}
+
+select {
+    border: 1px solid #AEAEAE;
+    box-shadow: inset 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+    font-size: 15px;
+    color: #2B2B2B;
+    height: 40px;
+    padding-left: 10px;
+    padding-right: 30px;
+    background: #FFFFFF url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='13px' width='20px'><polyline stroke-width='1' fill='none' style='stroke: rgb(43, 43, 43);' points='0,6 6,12 12,6'/></svg>") no-repeat right;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+select option {
+    font-size: 15px;
+    color: #2B2B2B;
+    height: 30px;
+    border-radius: 2px;
+    padding: 10px 10px 0 10px;
+}
+
+.labelValue {
+    padding: 5px 0;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.header {
+    margin-bottom: 20px;
+}
+
+.header-borderless {
+    margin-bottom: 20px;
+    padding-left: 30px;
+}
+
+.midHeader {
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.oph-label-short {
+    width: 50px;
+}
+
+.infoPageWrapper {
+    padding: 40px;
+    background-color: white;
+    border: #d5d5d5 solid 1px;
+    border-radius: 2px;
+    max-width: 700px;
+    margin: 120px auto 0;
+}
+
+.infoPageWrapper > p {
+    text-align: center;
+    padding-bottom: 15px;
 }
 
 fieldset {
@@ -30,11 +102,6 @@ fieldset input, fieldset select {
     -webkit-box-shadow:inset 0 0 3px #AEAEAE;
 }
 
-fieldset .fieldContainer {
-    float: left;
-    min-width: 250px;
-}
-
 .row label{
     font-weight: bold;
     padding-top: 20px;
@@ -42,15 +109,6 @@ fieldset .fieldContainer {
 
 label.required::after{
     content: '*';
-}
-
-.select-row{
-    padding-top: 10px;
-}
-
-.select-row label{
-    font-weight: bold;
-    padding-top: 10px;
 }
 
 .mainContainer {
@@ -73,31 +131,14 @@ label.required::after{
     margin-bottom: 40px;
 }
 
-.borderless-wrapper {
-    padding: 30px;
-    background-color: white;
-    margin-bottom: 40px;
-}
-
 .borderless-colored-wrapper {
     padding: 30px;
     background-color: #f6f4f0;
     margin-bottom: 40px;
 }
 
-.clickable {
-    cursor: pointer;
-}
-
 .clear {
     clear: both;
-}
-
-.is-error {
-    font-size: 15px;
-    color: #E44E4E;
-    letter-spacing: 0;
-    line-height: 16px;
 }
 
 .error {
@@ -106,30 +147,6 @@ label.required::after{
     border-radius: 2px;
     clear:both;
     margin: 10px;
-}
-
-.success.topError {
-    clear: both;
-    position: relative;
-    top: 80px;
-    padding: 10px;
-    background: #E6FFC1;
-    border: 1px solid #99D740;
-    border-radius: 2px;
-    margin: 10px;
-    margin-bottom: 50px;
-    color: #2B2B2B;
-}
-
-.error.topError {
-    clear: both;
-    position: relative;
-    top: 80px;
-    background: #FFE9E9;
-    border: 1px solid #E09191;
-    border-radius: 2px;
-    color: #2B2B2B;
-    margin: 10px 10px 50px;
 }
 
 h1 {
