@@ -113,14 +113,9 @@ const BasicinfoForm = (props: Props) => {
                         style={{ marginTop: '10px' }}
                         placeholder="Valinnainen saate"
                         onChange={updateSaate}
-                    ></textarea>
+                    />
                 </li>
-                <li>
-                    <label htmlFor="tarkenne">&nbsp;</label>
-                    <div id="tarkenne" className="oph-field-text">
-                        {props.L['VIRKAILIJAN_LISAYS_ASIOINTIKIELI_TARKENNE']}
-                    </div>
-                </li>
+                <div className="oph-field-text">{props.L['VIRKAILIJAN_LISAYS_ASIOINTIKIELI_TARKENNE']}</div>
             </ul>
         </fieldset>
     );

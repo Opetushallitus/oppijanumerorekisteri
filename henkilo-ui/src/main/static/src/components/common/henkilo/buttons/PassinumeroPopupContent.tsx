@@ -58,7 +58,12 @@ const PassinumeroPopupContent = ({ oid }: Props) => {
             <ul>
                 {passinumerot.map((passinumero) => (
                     <li key={passinumero}>
-                        <i className="fa fa-trash passinumero-trash" onClick={() => remove(passinumero)}></i>
+                        <i
+                            role="button"
+                            tabIndex={0}
+                            className="fa fa-trash passinumero-trash"
+                            onClick={() => remove(passinumero)}
+                        ></i>
                         {passinumero}
                     </li>
                 ))}

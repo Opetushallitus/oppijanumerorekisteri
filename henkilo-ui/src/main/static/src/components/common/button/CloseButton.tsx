@@ -7,7 +7,7 @@ type Props = {
 };
 
 const CloseButton = ({ closeAction }: Props) => (
-    <span className="close-button" onClick={closeAction}>
+    <span role="button" tabIndex={0} className="close-button" onClick={closeAction}>
         <CloseIcon />
     </span>
 );

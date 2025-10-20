@@ -93,7 +93,12 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
             <div className="row">
                 <div className="flex-horizontal" style={{ justifyContent: 'space-between' }}>
                     <label htmlFor="org">{L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_ORGANISAATIO']}</label>
-                    <div style={{ paddingTop: '20px', fontSize: '1.5em' }} onClick={() => removeOrganisation()}>
+                    <div
+                        role="button"
+                        tabIndex={0}
+                        style={{ paddingTop: '20px', fontSize: '1.5em' }}
+                        onClick={() => removeOrganisation()}
+                    >
                         <CrossCircleIcon />
                     </div>
                 </div>

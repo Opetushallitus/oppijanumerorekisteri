@@ -330,7 +330,13 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
             <hr className={styles.hr} />
             <div className={styles.greyInfo}>
                 {L.MFA_KOODI_VAIHTOEHTO_INFO}{' '}
-                <span className={styles.secretKey} data-test-id="secret-key" onClick={copySecretKey}>
+                <span
+                    className={styles.secretKey}
+                    data-test-id="secret-key"
+                    onClick={copySecretKey}
+                    role="button"
+                    tabIndex={0}
+                >
                     {data.secretKey?.match(/.{1,4}/g)?.map((chunk, idx) => (
                         <span className={styles.secretKeyChunk} key={`secret-key-${idx}`}>
                             {chunk}

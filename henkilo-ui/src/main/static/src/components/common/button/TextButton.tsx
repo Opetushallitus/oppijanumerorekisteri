@@ -7,7 +7,7 @@ type Props = {
 };
 
 const TextButton = ({ children, action }: Props) => (
-    <span className="text-button" onClick={action}>
+    <span role="button" tabIndex={0} className="text-button" onClick={action}>
         {children}
     </span>
 );

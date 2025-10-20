@@ -77,6 +77,13 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
         setEmailOptions(createEmailOptions(henkilo));
     }, [henkilo]);
 
+    useEffect(() => {
+        const isDirty = activeSelection || kayttooikeusryhmaSelections?.length;
+        if (isDirty && !validAnomusForm()) {
+            setShowInstructions(true);
+        }
+    }, [activeSelection, kayttooikeusryhmaSelections, emailOptions]);
+
     function createEmailOptions(henkilo?: Henkilo) {
         const emailOptions = _parseEmailOptions(henkilo);
         if (emailOptions.length === 1) {
@@ -213,7 +220,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
                 />
             ) : null}
 
-            <div onClick={() => setShowInstructions(!showInstructions)}>
+            <div>
                 <div className="oph-field oph-field-inline">
                     <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
                         {L['OMATTIEDOT_ORGANISAATIO_TAI_RYHMA']}*
@@ -236,7 +243,9 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
                 </div>
 
                 <div className="oph-field oph-field-inline">
-                    <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text" />
+                    <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text">
+                        {''}
+                    </label>
                     <div className="oph-input-container">
                         <Select
                             onChange={_changeRyhmaSelection}
@@ -295,7 +304,9 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
                 </div>
 
                 <div className="oph-field oph-field-inline">
-                    <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text"></label>
+                    <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
+                        {''}
+                    </label>
                     <div className="oph-input-container">
                         <ul className="selected-permissions">
                             {kayttooikeusryhmaSelections.map((kayttooikeusRyhmaSelection, index) => {
@@ -349,7 +360,9 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
                 </div>
 
                 <div className="oph-field oph-field-inline">
-                    <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text" />
+                    <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text">
+                        {''}
+                    </label>
                     <div className="oph-input-container">
                         <div className="anomus-button">
                             <Button action={_createKayttooikeusAnomus} disabled={!validAnomusForm()}>

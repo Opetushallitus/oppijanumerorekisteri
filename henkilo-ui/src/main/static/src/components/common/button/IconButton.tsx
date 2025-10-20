@@ -9,7 +9,7 @@ type Props = {
 
 const IconButton = ({ onClick, href, children }: Props) =>
     onClick ? (
-        <span className="icon-button" onClick={onClick}>
+        <span role="button" tabIndex={0} className="icon-button" onClick={onClick}>
             {children}
         </span>
     ) : (

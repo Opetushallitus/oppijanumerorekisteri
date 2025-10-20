@@ -50,6 +50,8 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
                 }}
                 style={renderParams.style}
                 key={organisaatio.oid}
+                role="button"
+                tabIndex={0}
             >
                 {organisaatio.parentNames.map((name, i) => (
                     <span className="parent" key={i}>

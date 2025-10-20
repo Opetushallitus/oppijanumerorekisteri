@@ -39,13 +39,10 @@ export default [
         },
 
         rules: {
-            '@typescript-eslint/no-explicit-any': 1,
-            'react/no-deprecated': 1,
             'jsx-a11y/click-events-have-key-events': 1,
-            'jsx-a11y/no-static-element-interactions': 1,
             'jsx-a11y/no-autofocus': 1,
-            'jsx-a11y/label-has-associated-control': 1,
             'jsx-a11y/no-noninteractive-element-interactions': 1,
+            '@typescript-eslint/no-explicit-any': 1,
             '@typescript-eslint/no-unused-vars': [
                 'error',
                 {

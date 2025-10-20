@@ -86,6 +86,8 @@ const KayttooikeusryhmaSelect = (props: Props) => {
                         {naytettavat.map((n) => (
                             <div
                                 key={n.id}
+                                role="button"
+                                tabIndex={0}
                                 className={classNames({
                                     valittu: valittu === n,
                                     valittava: true,

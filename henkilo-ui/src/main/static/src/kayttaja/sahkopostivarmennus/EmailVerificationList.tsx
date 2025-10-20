@@ -41,9 +41,11 @@ export const EmailVerificationList = (props: Props) => {
                                 />
                                 {props.emailFieldCount > 1 ? (
                                     <i
+                                        role="button"
+                                        tabIndex={0}
                                         className="fa fa-times-circle oph-blue email-verification-remove"
                                         onClick={() => props.onEmailRemove(ryhmaIndex, yhteystietoIndex)}
-                                    ></i>
+                                    />
                                 ) : null}
                             </span>
                         );

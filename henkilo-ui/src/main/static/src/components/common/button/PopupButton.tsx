@@ -42,7 +42,7 @@ const PopupButton = (props: Props) => {
             >
                 <div className="oph-popup-arrow" style={props.popupArrowStyles}></div>
                 <div style={closeButtonStyles}>
-                    <i className="fa fa-times" onClick={() => setShow(false)}></i>
+                    <i role="button" tabIndex={0} className="fa fa-times" onClick={() => setShow(false)}></i>
                 </div>
                 <div className="oph-popup-title">{props.popupTitle}</div>
                 <div className="oph-popup-content">{props.popupContent}</div>

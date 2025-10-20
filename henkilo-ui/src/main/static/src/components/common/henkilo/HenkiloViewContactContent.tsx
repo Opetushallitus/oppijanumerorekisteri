@@ -409,6 +409,8 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
                                 className="contact-content-add-new"
                                 onClick={() => _createYhteystiedotRyhma(WORK_ADDRESS)}
                                 key="add-new"
+                                role="button"
+                                tabIndex={0}
                             >
                                 <span className="oph-bold oph-blue-lighten-1">
                                     <AddIcon /> {L['HENKILO_LUOYHTEYSTIETO']}
