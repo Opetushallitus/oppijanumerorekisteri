@@ -46,8 +46,8 @@ export const selectStyles = {
             state.isFocused
                 ? 'oph-ds-select-control-focused'
                 : state.isDisabled
-                ? 'oph-ds-select-control-disabled'
-                : 'oph-ds-select-control',
+                  ? 'oph-ds-select-control-disabled'
+                  : 'oph-ds-select-control',
         placeholder: (state: SelectState) =>
             state.isDisabled ? 'oph-ds-select-placeholder-disabled' : 'oph-ds-select-placeholder',
         dropdownIndicator: (state: SelectState) =>

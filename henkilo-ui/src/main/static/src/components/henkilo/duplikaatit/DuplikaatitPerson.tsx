@@ -217,7 +217,11 @@ function _parseHakuappHakemus(
     };
 }
 
-const _koodistoLabel = (koodi: string | undefined, koodisto: Koodi[] | undefined, locale: Locale): string | undefined =>
+const _koodistoLabel = (
+    koodi: string | undefined,
+    koodisto: Koodi[] | undefined,
+    locale: Locale
+): string | undefined =>
     koodi
         ? koodiLabel(
               koodisto?.find((koodistoItem) => koodistoItem.koodiArvo === koodi),

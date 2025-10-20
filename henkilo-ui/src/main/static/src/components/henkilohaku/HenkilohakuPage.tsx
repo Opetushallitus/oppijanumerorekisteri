@@ -150,8 +150,8 @@ const HenkilohakuPage = () => {
                 {isFetching
                     ? '...'
                     : !resultCount || resultCount === '0'
-                    ? L['HENKILOHAKU_EI_TULOKSIA']
-                    : `${resultCount} ${L['HENKILOHAKU_OSUMA']}`}
+                      ? L['HENKILOHAKU_EI_TULOKSIA']
+                      : `${resultCount} ${L['HENKILOHAKU_OSUMA']}`}
                 )
             </div>
             {!!memoizedData?.length && (
