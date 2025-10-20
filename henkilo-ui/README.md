@@ -4,11 +4,11 @@ Spring-boot backend that just serves html files and static assets. The frontend 
 
 ## Frontend app
 
-React with Redux (with an ongoing Redux Toolkit refactoring project). The React app has two separate bundles `main` and `kayttaja` as it servers both users with a CAS session (`main`) and users without a session (`kayttaja`). The sessionful SPA fetches a lot of stuff regarding the user and access rights on page load while the sessionless mostly needs just translations.
+React with Redux Toolkit. The React app has two separate bundles `main` and `kayttaja` as it servers both users with a CAS session (`main`) and users without a session (`kayttaja`). The sessionful SPA fetches a lot of stuff regarding the user and access rights on page load while the sessionless mostly needs just translations.
 
 ## Local env
 
-Don't bother with the Java backend. Run Webpack dev server with the script mentioned below. The script starts the webapp as well as an nginx server to proxy requests outside of the React app to a real Opintopolku test environment (testiopintopolku.fi by default).
+Run Webpack dev server with the script mentioned below. The script starts the webapp as well as an nginx server to proxy requests outside of the React app to a real Opintopolku test environment (testiopintopolku.fi by default).
 
 ### Prerequisites
 
