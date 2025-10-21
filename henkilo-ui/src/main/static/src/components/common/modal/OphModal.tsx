@@ -1,5 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
+import { useId } from 'react';
 
 type OphModalProps = {
     children: React.ReactNode;
@@ -13,16 +14,17 @@ type OphModalProps = {
  * Tyylioppaan mukainen modal.
  */
 const OphModal = ({ big, children, onClose, onOverlayClick, title }: OphModalProps) => {
+    const labelId = useId();
     return (
         <div
             className="oph-overlay oph-overlay-bg oph-overlay-is-visible"
-            role="dialog"
             tabIndex={-1}
             onClick={(e) => (onOverlayClick ? onOverlayClick(e) : onClose(e))}
         >
             <div
                 className={classNames('oph-modal', { 'oph-modal-big': big })}
-                role="document"
+                role="dialog"
+                aria-labelledby={labelId}
                 onClick={(e) => {
                     e.stopPropagation();
                 }}
@@ -38,7 +40,11 @@ const OphModal = ({ big, children, onClose, onOverlayClick, title }: OphModalPro
                 </button>
 
                 <div className="oph-modal-content">
-                    {title && <h1 className="oph-modal-title">{title}</h1>}
+                    {title && (
+                        <h1 id={labelId} className="oph-modal-title">
+                            {title}
+                        </h1>
+                    )}
                     {children}
                 </div>
 
