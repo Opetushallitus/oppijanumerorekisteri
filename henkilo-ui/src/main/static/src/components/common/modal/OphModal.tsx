@@ -16,6 +16,7 @@ type OphModalProps = {
 const OphModal = ({ big, children, onClose, onOverlayClick, title }: OphModalProps) => {
     const labelId = useId();
     return (
+        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
         <div
             className="oph-overlay oph-overlay-bg oph-overlay-is-visible"
             tabIndex={-1}
