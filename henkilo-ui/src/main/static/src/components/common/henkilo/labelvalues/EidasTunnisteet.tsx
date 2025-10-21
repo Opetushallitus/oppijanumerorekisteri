@@ -18,6 +18,7 @@ const EidasTunnisteet = (props: OwnProps) => {
             readOnly={props.readOnly}
             updateModelFieldAction={props.updateModelFieldAction}
             values={{
+                className: 'eidasTruncated',
                 label: 'HENKILO_EIDASTUNNISTEET',
                 value: tunnisteet.length > 0 ? tunnisteet.join(', ') : '-',
                 inputValue: 'eidasTunnisteet',

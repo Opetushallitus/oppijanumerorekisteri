@@ -40,6 +40,14 @@ select option {
     padding: 5px 0;
 }
 
+.eidasTruncated {
+    display: inline-block;
+    max-width: 213px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 .nowrap {
     white-space: nowrap;
 }
