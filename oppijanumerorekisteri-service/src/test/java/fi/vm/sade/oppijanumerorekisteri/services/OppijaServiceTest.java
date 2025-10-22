@@ -12,8 +12,6 @@ import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.Sort;
-import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
@@ -537,115 +535,6 @@ public class OppijaServiceTest {
                 .containsExactly(tuple("tunniste1", "oid1"));
         assertThat(henkiloRepository.findAll()).hasSize(1);
         assertPublished(objectMapper, snsClient, 1, henkilo.getOidHenkilo());
-    }
-
-    @Test
-    public void shouldFindByNameAsAdmin() {
-        given(this.permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
-        given(this.permissionChecker.getOrganisaatioOidsByKayttaja(any(), any(), any())).willReturn(Set.of("1.2.3.4"));
-
-        Henkilo henkilo = Henkilo.builder()
-                .oidHenkilo("oid1")
-                .passinumerot(Collections.singleton("passi123"))
-                .identifications(Stream.of(Identification.builder()
-                                .idpEntityId(IdpEntityId.email)
-                                .identifier("example@example.com")
-                                .build())
-                        .collect(toSet()))
-                .etunimet("Arpa Noppa")
-                .kutsumanimi("Noppa")
-                .sukunimi("Kuutio")
-                .created(new Date())
-                .modified(new Date())
-                .build();
-        henkiloRepository.save(henkilo);
-
-        OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
-                .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
-                                .tunniste("tunniste1")
-                                .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
-                                        .passinumero("passi123")
-                                        .etunimet("Arpa Noppa")
-                                        .kutsumanimi("Noppa")
-                                        .sukunimi("Kuutio")
-                                        .build())
-                                .build())
-                        .collect(toList()))
-                .build();
-        create(createDto);
-
-        OppijaTuontiCriteria criteria = OppijaTuontiCriteria.builder()
-                .nimiHaku("arpa")
-                .build();
-        Page<OppijaListDto> result = this.oppijaService
-                .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
-        assertThat(result).extracting(OppijaListDto::getOid).containsExactly("oid1");
-
-        criteria = OppijaTuontiCriteria.builder()
-                .nimiHaku("ar")
-                .build();
-        result = this.oppijaService
-                .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
-        assertThat(result).extracting(OppijaListDto::getOid).containsExactly("oid1");
-
-        criteria = OppijaTuontiCriteria.builder()
-                .nimiHaku("noppa")
-                .build();
-        result = this.oppijaService
-                .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
-        assertThat(result).extracting(OppijaListDto::getOid).containsExactly("oid1");
-
-        criteria = OppijaTuontiCriteria.builder()
-                .nimiHaku("nop")
-                .build();
-        result = this.oppijaService
-                .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
-        assertThat(result).extracting(OppijaListDto::getOid).containsExactly("oid1");
-
-        criteria = OppijaTuontiCriteria.builder()
-                .nimiHaku("kuutio")
-                .build();
-        result = this.oppijaService
-                .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
-        assertThat(result).extracting(OppijaListDto::getOid).containsExactly("oid1");
-
-        criteria = OppijaTuontiCriteria.builder()
-                .nimiHaku("kuu")
-                .build();
-        result = this.oppijaService
-                .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
-        assertThat(result).extracting(OppijaListDto::getOid).containsExactly("oid1");
-
-        criteria = OppijaTuontiCriteria.builder()
-                .nimiHaku("arpa noppa kuutio")
-                .build();
-        result = this.oppijaService
-                .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
-        assertThat(result).extracting(OppijaListDto::getOid).containsExactly("oid1");
-
-        criteria = OppijaTuontiCriteria.builder()
-                .nimiHaku("noppa kuutio")
-                .build();
-        result = this.oppijaService
-                .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
-        assertThat(result).extracting(OppijaListDto::getOid).containsExactly("oid1");
-
-        criteria = OppijaTuontiCriteria.builder()
-                .nimiHaku("siansaksaa")
-                .build();
-        result = this.oppijaService
-                .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
-        assertThat(result).extracting(OppijaListDto::getOid).isEmpty();
-
-    }
-
-    @Test
-    public void passiivisetAliorganisaatiotTarkistetaan() {
-        given(this.permissionChecker.isSuperUserOrCanReadAll()).willReturn(false);
-        given(this.permissionChecker.getAllOrganisaatioOids(any(), any(), any(), any())).willReturn(Set.of("1.2.3.4"));
-        given(this.userDetailsHelper.getCurrentUserOid()).willReturn("1.2.3.4.5");
-
-        this.oppijaService.list(OppijaTuontiCriteria.builder().build(), 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
     }
 
     @Test(expected = UnprocessableEntityException.class)

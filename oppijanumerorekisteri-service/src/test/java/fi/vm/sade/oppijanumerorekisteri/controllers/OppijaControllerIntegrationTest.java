@@ -37,12 +37,8 @@ class OppijaControllerIntegrationTest {
 
     private static final String ACCESS_RIGHT = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA";
 
-    private static final String BASE_PATH = "/oppija";
     private static final String KOOSTE = "/oppija/tuontikooste";
     private static final String TUONTIDATA = "/oppija/tuontidata/";
-    private final JSONComparator listComparator = new CustomComparator(JSONCompareMode.STRICT,
-            new Customization("results[*].luotu", (o1, o2) -> true),
-            new Customization("results[*].muokattu", (o1, o2) -> true));
     private final JSONComparator koosteComparator = new CustomComparator(JSONCompareMode.STRICT,
             new Customization("content[*].timestamp", (o1, o2) -> true));
     @MockitoBean
@@ -59,28 +55,6 @@ class OppijaControllerIntegrationTest {
     private String username;
     @Value("${dev.password}")
     private String password;
-
-    @Test
-    void listAdminSeesAll() throws Exception {
-        given(permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
-
-        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/list-superuser.json"), fetch(BASE_PATH), listComparator);
-    }
-
-    @Test
-    void listNormalUsersSeesOnlyOwn() throws Exception {
-        given(permissionChecker.getAllOrganisaatioOids(any(), any(), any(), any())).willReturn(Set.of("tuonti1"));
-
-        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/list-tuonti1.json"), fetch(BASE_PATH), listComparator);
-    }
-
-    @Test
-    void listEmpty() throws Exception {
-        given(permissionChecker.getOrganisaatioOids(any(), any())).willReturn(Set.of("makkara"));
-        given(permissionChecker.getAllOrganisaatioOids(any(), any(), any(), any())).willReturn(Set.of("makkara"));
-
-        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/list-empty.json"), fetch(BASE_PATH), listComparator);
-    }
 
     @Test
     void koosteAdminSeesAll() throws Exception {

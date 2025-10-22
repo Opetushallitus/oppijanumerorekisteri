@@ -282,19 +282,6 @@ public class OppijaControllerTest {
 
     @Test
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
-    public void getOppijaShouldValidatePageParameter() throws Exception {
-        mvc.perform(get("/oppija?page=1")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-        mvc.perform(get("/oppija?page=0")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void getOppijatByTuontiId() throws Exception {
         OppijaTuontiReadDto result = new OppijaTuontiReadDto(37337L, 2, 2, true,
                 List.of(new OppijaTuontiRiviReadDto("tunniste1", new OppijaReadDto(), null),

@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
-import fi.vm.sade.oppijanumerorekisteri.repositories.Sort;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import org.springframework.data.domain.Pageable;
@@ -67,16 +66,6 @@ public interface OppijaService {
      * @return yhteenveto
      */
     OppijaTuontiYhteenvetoDto getYhteenveto(OppijaTuontiCriteria criteria);
-
-    /**
-     * Palauttaa annettujen hakukriteerien mukaiset henkilöt.
-     *
-     * @param criteria hakukriteerit
-     * @param page sivunumero
-     * @param count sivun koko
-     * @return henkilöt
-     */
-    Page<OppijaListDto> list(OppijaTuontiCriteria criteria, int page, int count, OppijaTuontiSortKey sortKey, Sort.Direction sortDirection);
 
     Page<OppijaListDto> oppijoidenTuontienVirheet(OppijaTuontiCriteria criteria, int page, int count);
 
