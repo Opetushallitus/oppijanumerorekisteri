@@ -7,14 +7,10 @@ import { OppijaList } from '../../types/domain/oppijanumerorekisteri/oppijalist.
 import { Page } from '../../types/Page.types';
 import { useLocalisations } from '../../selectors';
 import OphTable from '../OphTable';
-import { SortDirection, SortKey } from './OppijoidenTuontiContainer';
 
 type Props = {
     data: Page<OppijaList>;
     onPageChange: (pageNumber: number, pageSize: number) => void;
-    onSortingChange: (sortKey: SortKey, sortDirection: SortDirection) => void;
-    sortKey: SortKey;
-    sortDirection: SortDirection;
     loading: boolean;
 };
 
@@ -24,7 +20,7 @@ const emptyColumns: ColumnDef<OppijaList>[] = [];
 /**
  * Oppijoiden tuonnin listausnäkymä.
  */
-const OppijoidenTuontiListaus = ({ data, onPageChange, onSortingChange, sortKey, sortDirection, loading }: Props) => {
+const OppijoidenTuontiListaus = ({ data, onPageChange, loading }: Props) => {
     const { L } = useLocalisations();
 
     const YKSILOINTI_TILAT = {
@@ -46,6 +42,7 @@ const OppijoidenTuontiListaus = ({ data, onPageChange, onSortingChange, sortKey,
                 header: () => L['OPPIJOIDEN_TUONTI_LUONTIAIKA'],
                 accessorFn: (henkilo: OppijaList) => moment(henkilo.luotu).format('l LT'),
                 id: 'CREATED',
+                enableSorting: false,
             },
             {
                 header: () => L['OPPIJOIDEN_TUONTI_KASITTELIJA'],
@@ -75,6 +72,7 @@ const OppijoidenTuontiListaus = ({ data, onPageChange, onSortingChange, sortKey,
                 accessorFn: (henkilo: OppijaList) => henkilo,
                 cell: ({ getValue }) => renderOppijaLinkki(getValue()),
                 id: 'NAME',
+                enableSorting: false,
             },
             {
                 header: () => L['OPPIJOIDEN_TUONTI_VIRHEET'],
@@ -107,7 +105,6 @@ const OppijoidenTuontiListaus = ({ data, onPageChange, onSortingChange, sortKey,
         pageCount: data?.totalPages ?? 0,
         state: {
             pagination,
-            sorting: [{ id: sortKey, desc: sortDirection === 'DESC' }],
         },
         onPaginationChange: (updater) => {
             if (typeof updater === 'function') {
@@ -116,13 +113,6 @@ const OppijoidenTuontiListaus = ({ data, onPageChange, onSortingChange, sortKey,
                     pageSize: data?.size,
                 });
                 onPageChange(nextState.pageIndex + 1, nextState.pageSize);
-            }
-        },
-        onSortingChange: (updater) => {
-            if (typeof updater === 'function') {
-                const nextState = updater([{ id: sortKey, desc: sortDirection === 'DESC' }]);
-                const newSortKey = nextState[0]?.id ?? 'CREATED';
-                onSortingChange(newSortKey as SortKey, nextState[0]?.desc ? 'DESC' : 'ASC');
             }
         },
         getCoreRowModel: getCoreRowModel(),

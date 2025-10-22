@@ -11,21 +11,15 @@ import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { mainNavigation } from '../navigation/navigationconfigurations';
 
-export type SortKey = 'CREATED' | 'NAME' | 'MODIFIED';
-export type SortDirection = 'DESC' | 'ASC';
 export type OppijoidenTuontiCriteria = {
     page: string;
     count: string;
-    sortDirection: 'DESC' | 'ASC';
-    sortKey: SortKey;
     nimiHaku?: string;
 };
 
 const defaultCriteria = {
     page: '1',
     count: '20',
-    sortDirection: 'DESC' as const,
-    sortKey: 'CREATED' as const,
 };
 
 const OppijoidenTuontiContainer = () => {
@@ -35,10 +29,6 @@ const OppijoidenTuontiContainer = () => {
     const [criteria, setCriteria] = useState<OppijoidenTuontiCriteria>(defaultCriteria);
     const [tuontikooste, setTuontikooste] = useState(false);
     const { data, isFetching } = useGetOppijoidenTuontiListausQuery(criteria);
-
-    const onSortingChange = (sortKey: SortKey, sortDirection: SortDirection) => {
-        setCriteria({ ...criteria, sortKey, sortDirection });
-    };
 
     const onChangeNimiHaku = (nimiHaku: string) => {
         setCriteria({ ...criteria, nimiHaku });
@@ -74,16 +64,7 @@ const OppijoidenTuontiContainer = () => {
                         minSearchValueLength={2}
                         placeholder={L['OPPIJOIDEN_TUONTI_HAE_HENKILOITA']}
                     />
-                    {data && (
-                        <OppijoidenTuontiListaus
-                            loading={isFetching}
-                            data={data}
-                            onPageChange={onPageChange}
-                            onSortingChange={onSortingChange}
-                            sortDirection={criteria.sortDirection}
-                            sortKey={criteria.sortKey}
-                        ></OppijoidenTuontiListaus>
-                    )}
+                    {data && <OppijoidenTuontiListaus loading={isFetching} data={data} onPageChange={onPageChange} />}
                 </>
             )}
         </div>

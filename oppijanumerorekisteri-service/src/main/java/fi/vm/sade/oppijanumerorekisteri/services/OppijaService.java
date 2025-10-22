@@ -78,7 +78,7 @@ public interface OppijaService {
      */
     Page<OppijaListDto> list(OppijaTuontiCriteria criteria, int page, int count, OppijaTuontiSortKey sortKey, Sort.Direction sortDirection);
 
-    Page<OppijaListDto> oppijoidenTuontienVirheet(OppijaTuontiCriteria criteria, int page, int count, OppijaTuontiSortKey sortKey, Sort.Direction sortDirection);
+    Page<OppijaListDto> oppijoidenTuontienVirheet(OppijaTuontiCriteria criteria, int page, int count);
 
     org.springframework.data.domain.Page<TuontiRepository.TuontiKooste> tuontiKooste(Pageable pagination, Long tuontiId, String author);
 

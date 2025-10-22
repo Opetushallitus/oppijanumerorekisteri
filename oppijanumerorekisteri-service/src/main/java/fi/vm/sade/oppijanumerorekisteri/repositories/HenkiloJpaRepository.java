@@ -46,7 +46,7 @@ public interface HenkiloJpaRepository {
      */
     List<Henkilo> findBy(OppijaTuontiCriteria criteria, int limit, int offset, OppijaTuontiSort sort);
 
-    List<Henkilo> findOppijoidenTuontiVirheetBy(OppijaTuontiCriteria criteria, int limit, int offset, OppijaTuontiSort sort);
+    List<Henkilo> findOppijoidenTuontiVirheetBy(OppijaTuontiCriteria criteria, int limit, int offset);
 
     /**
      * Laskee annettujen hakukriteerien mukaiset henkilöt.

@@ -1,5 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.SubQueryExpression;
@@ -100,15 +102,14 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     }
 
     @Override
-    public List<Henkilo> findOppijoidenTuontiVirheetBy(OppijaTuontiCriteria criteria, int limit, int offset, OppijaTuontiSort sort) {
+    public List<Henkilo> findOppijoidenTuontiVirheetBy(OppijaTuontiCriteria criteria, int limit, int offset) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
+        QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
         JPAQuery<Henkilo> query = criteria.getQuery(this.entityManager, qHenkilo)
                 .limit(limit)
                 .offset(offset)
-                .select(qHenkilo);
-        if (sort != null) {
-            sort.apply(query, qHenkilo);
-        }
+                .select(qHenkilo)
+                .orderBy(new OrderSpecifier<>(Order.DESC, qTuontiRivi.id));
         return query.fetch();
     }
 

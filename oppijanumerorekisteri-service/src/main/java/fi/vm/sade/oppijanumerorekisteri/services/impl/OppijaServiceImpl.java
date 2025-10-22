@@ -171,15 +171,14 @@ public class OppijaServiceImpl implements OppijaService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<OppijaListDto> oppijoidenTuontienVirheet(OppijaTuontiCriteria criteria, int page, int count, OppijaTuontiSortKey sortKey, Sort.Direction sortDirection) {
+    public Page<OppijaListDto> oppijoidenTuontienVirheet(OppijaTuontiCriteria criteria, int page, int count) {
         criteria.setVainVirheet(true);
         prepare(criteria);
 
-        OppijaTuontiSort sort = OppijaTuontiSortFactory.getOppijaTuontiSort(sortDirection, sortKey);
-        log.info("Haetaan oppijat {}, {} (sivu: {}, määrä: {})", criteria, sort, page, count);
+        log.info("Haetaan oppijat {}, (sivu: {}, määrä: {})", criteria, page, count);
         int limit = count;
         int offset = (page - 1) * count;
-        List<Henkilo> henkilot = henkiloRepository.findOppijoidenTuontiVirheetBy(criteria, limit, offset, sort);
+        List<Henkilo> henkilot = henkiloRepository.findOppijoidenTuontiVirheetBy(criteria, limit, offset);
         long total = henkiloRepository.countOppijoidenTuontiVirheetBy(criteria);
         return Page.of(page, count, mapper.mapAsList(henkilot, OppijaListDto.class), total);
     }
