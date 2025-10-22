@@ -22,6 +22,9 @@ public class TuontiRivi extends IdentifiableAndVersionedEntity {
     @JoinColumn(name = "henkilo_id", nullable = false, foreignKey = @ForeignKey(name = "fk_tuonti_rivi_henkilo"))
     private Henkilo henkilo;
 
+    @Column(name = "henkilo_id", insertable = false, updatable = false)
+    private Long henkiloId;
+
     /**
      * Lähdejärjestelmän käyttämä rivin tunniste (jos sellainen on).
      */

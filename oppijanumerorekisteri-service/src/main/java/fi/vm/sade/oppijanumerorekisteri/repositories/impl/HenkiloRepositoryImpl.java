@@ -105,12 +105,16 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     public List<Henkilo> findOppijoidenTuontiVirheetBy(OppijaTuontiCriteria criteria, int limit, int offset) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
         QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
-        JPAQuery<Henkilo> query = criteria.getQuery(this.entityManager, qHenkilo)
+        JPAQuery<?> query = new JPAQuery<>(entityManager)
+                .from(qHenkilo)
+                .where(qHenkilo.id.in(JPAExpressions.select(qTuontiRivi.henkiloId).from(qTuontiRivi)));
+
+        return criteria.addCriteria(query, qHenkilo)
                 .limit(limit)
                 .offset(offset)
                 .select(qHenkilo)
-                .orderBy(new OrderSpecifier<>(Order.DESC, qTuontiRivi.id));
-        return query.fetch();
+                .orderBy(new OrderSpecifier<>(Order.DESC, qHenkilo.id))
+                .fetch();
     }
 
     @Override
@@ -135,15 +139,12 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     public long countOppijoidenTuontiVirheetBy(OppijaTuontiCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
         QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
-        if (criteria.hasConditions()) {
-            return criteria.getQuery(this.entityManager, qHenkilo)
-                    .select(qTuontiRivi.henkilo.id)
-                    .fetchCount();
-        }
-        // Joining two large tables is expensive (tuonti_rivi and henkilo) without proper conditions
-        return new JPAQuery<>(this.entityManager)
-                .from(qTuontiRivi)
-                .select(qTuontiRivi.henkilo.id)
+        JPAQuery<?> query = new JPAQuery<>(entityManager)
+                .from(qHenkilo)
+                .where(qHenkilo.id.in(JPAExpressions.select(qTuontiRivi.henkiloId).from(qTuontiRivi)));
+        return criteria.addCriteria(query, qHenkilo)
+                .select(qHenkilo.id)
+                .distinct()
                 .fetchCount();
     }
 

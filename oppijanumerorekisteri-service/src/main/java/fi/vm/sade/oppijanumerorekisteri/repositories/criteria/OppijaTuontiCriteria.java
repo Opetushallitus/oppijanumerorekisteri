@@ -74,6 +74,11 @@ public class OppijaTuontiCriteria {
         if (tuontiId != null) {
             query.where(qTuonti.id.eq(tuontiId));
         }
+
+        return addCriteria(query, qHenkilo);
+    }
+
+    public JPAQuery<?> addCriteria(JPAQuery<?> query, QHenkilo qHenkilo) {
         if (muokattuJalkeen != null) {
             query.where(qHenkilo.modified.goe(muokattuJalkeen.toDate()));
         }
@@ -138,7 +143,6 @@ public class OppijaTuontiCriteria {
                 );
             }
         }
-
         return query;
     }
 }
