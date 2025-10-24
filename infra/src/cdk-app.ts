@@ -424,7 +424,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       certificates: [albCertificate],
     });
 
-    listener.addTargets("ServiceTarget", {
+    const target = listener.addTargets("ServiceTarget", {
       port: apiService.appPort,
       targets: [apiService.service],
       healthCheck: {
@@ -434,9 +434,16 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         port: apiService.appPort.toString(),
       },
     });
+    this.createResponseAlarms(sharedAccount.prefix(""), alb, target);
+  }
 
+  createResponseAlarms(
+    prefix: string,
+    alb: elasticloadbalancingv2.ApplicationLoadBalancer,
+    target: elasticloadbalancingv2.ApplicationTargetGroup,
+  ) {
     this.createAlarm("LoadBalancer5XXResponsesAlarm", {
-      alarmName: sharedAccount.prefix("5XXResponsesAlarm"),
+      alarmName: `${prefix}5XXResponsesAlarm`,
       metric: alb.metrics.httpCodeElb(
         elasticloadbalancingv2.HttpCodeElb.ELB_5XX_COUNT,
         {
@@ -447,6 +454,22 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       comparisonOperator:
         cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
       threshold: 10,
+      evaluationPeriods: 2,
+      datapointsToAlarm: 1,
+      treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+    });
+    this.createAlarm("Target5XXResponsesAlarm", {
+      alarmName: `${prefix}Target5XXResponsesAlarm`,
+      metric: target.metrics.httpCodeTarget(
+        elasticloadbalancingv2.HttpCodeTarget.TARGET_5XX_COUNT,
+        {
+          statistic: "Sum",
+          period: cdk.Duration.minutes(5),
+        },
+      ),
+      comparisonOperator:
+        cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      threshold: 6,
       evaluationPeriods: 2,
       datapointsToAlarm: 1,
       treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
