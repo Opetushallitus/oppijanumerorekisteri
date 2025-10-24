@@ -161,7 +161,6 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                         qHenkilo.sukunimi,
                         qHenkilo.yksiloityVTJ,
                         qHenkilo.yksiloityEidas,
-                        qHenkilo.eidasTunnisteet,
                         qHenkilo.yksiloity,
                         qHenkilo.passivoitu,
                         qHenkilo.duplicate
