@@ -25,8 +25,7 @@ import { createHealthCheckStacks } from "./health-check";
 import { DatabaseBackupToS3 } from "./DatabaseBackupToS3";
 import * as datantuonti from "./datantuonti";
 import * as alarms from "./alarms";
-import * as cloudwatch from "aws-cdk-lib/aws-cloudwatch";
-import * as cloudwatch_actions from "aws-cdk-lib/aws-cloudwatch-actions";
+import { ResponseAlarms } from "./response-alarms";
 
 const config = getConfig();
 
@@ -434,53 +433,14 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
         port: apiService.appPort.toString(),
       },
     });
-    this.createResponseAlarms(sharedAccount.prefix(""), alb, target);
-  }
-
-  createResponseAlarms(
-    prefix: string,
-    alb: elasticloadbalancingv2.ApplicationLoadBalancer,
-    target: elasticloadbalancingv2.ApplicationTargetGroup,
-  ) {
-    this.createAlarm("LoadBalancer5XXResponsesAlarm", {
-      alarmName: `${prefix}5XXResponsesAlarm`,
-      metric: alb.metrics.httpCodeElb(
-        elasticloadbalancingv2.HttpCodeElb.ELB_5XX_COUNT,
-        {
-          statistic: "Sum",
-          period: cdk.Duration.minutes(5),
-        },
-      ),
-      comparisonOperator:
-        cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-      threshold: 10,
-      evaluationPeriods: 2,
-      datapointsToAlarm: 1,
-      treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+    new ResponseAlarms(this, "ResponseAlarms", {
+      prefix: sharedAccount.prefix(""),
+      alarmTopic: this.alarmTopic,
+      alb,
+      albThreshold: 10,
+      target,
+      targetThreshold: 6,
     });
-    this.createAlarm("Target5XXResponsesAlarm", {
-      alarmName: `${prefix}Target5XXResponsesAlarm`,
-      metric: target.metrics.httpCodeTarget(
-        elasticloadbalancingv2.HttpCodeTarget.TARGET_5XX_COUNT,
-        {
-          statistic: "Sum",
-          period: cdk.Duration.minutes(5),
-        },
-      ),
-      comparisonOperator:
-        cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-      threshold: 6,
-      evaluationPeriods: 2,
-      datapointsToAlarm: 1,
-      treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
-    });
-  }
-
-  createAlarm(id: string, alarmProps: cloudwatch.AlarmProps): cloudwatch.Alarm {
-    const alarm = new cloudwatch.Alarm(this, id, alarmProps);
-    alarm.addOkAction(new cloudwatch_actions.SnsAction(this.alarmTopic));
-    alarm.addAlarmAction(new cloudwatch_actions.SnsAction(this.alarmTopic));
-    return alarm;
   }
 
   exportFailureAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
