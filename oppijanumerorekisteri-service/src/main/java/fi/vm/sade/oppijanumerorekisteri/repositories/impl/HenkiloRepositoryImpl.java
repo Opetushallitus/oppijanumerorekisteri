@@ -153,7 +153,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
         QHenkilo qHenkilo = QHenkilo.henkilo;
 
         JPAQuery<HenkiloHakuPerustietoDto> query = jpa().from(qHenkilo)
-                .select(Projections.constructor(HenkiloHakuPerustietoDto.class,
+                .select(Projections.bean(HenkiloHakuPerustietoDto.class,
                         qHenkilo.oidHenkilo,
                         qHenkilo.hetu,
                         qHenkilo.etunimet,
