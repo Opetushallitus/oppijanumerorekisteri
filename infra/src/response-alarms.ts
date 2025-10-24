@@ -14,7 +14,7 @@ type ResponseAlarmsProps = cdk.StackProps & {
   targetThreshold: number;
 };
 
-export class ResponseAlarms extends cdk.Stack {
+export class ResponseAlarms extends constructs.Construct {
   readonly props: ResponseAlarmsProps;
 
   constructor(
@@ -22,7 +22,7 @@ export class ResponseAlarms extends cdk.Stack {
     id: string,
     props: ResponseAlarmsProps,
   ) {
-    super(scope, id, props);
+    super(scope, id);
     this.props = props;
 
     this.createAlarm("LoadBalancer5XXAlarm", {
