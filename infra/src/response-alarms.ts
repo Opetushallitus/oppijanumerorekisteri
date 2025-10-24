@@ -5,7 +5,7 @@ import * as constructs from "constructs";
 import * as elasticloadbalancingv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import * as sns from "aws-cdk-lib/aws-sns";
 
-type ResponseAlarmsProps = cdk.StackProps & {
+type ResponseAlarmsProps = {
   prefix: string;
   alarmTopic: sns.ITopic;
   alb: elasticloadbalancingv2.IApplicationLoadBalancer;
