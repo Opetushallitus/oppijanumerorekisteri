@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
+import fi.vm.sade.oppijanumerorekisteri.clients.impl.NoContentOrNotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.*;
@@ -658,6 +659,14 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     private boolean isOppija(String oid) {
-        return kayttooikeusClient.getKayttajaByOid(oid).map(KayttajaReadDto::isOppija).orElse(true);
+        try {
+            return kayttooikeusClient.getKayttajaByOid(oid).map(KayttajaReadDto::isOppija).orElse(true);
+        } catch (NoContentOrNotFoundException e) {
+            log.warn(oid + " not found in Otuva, handling as oppija");
+            return true;
+        } catch (Exception e) {
+            log.error("Otuva failed to respond for " + oid + ", handling as virkailija", e);
+            return false;
+        }
     }
 }
