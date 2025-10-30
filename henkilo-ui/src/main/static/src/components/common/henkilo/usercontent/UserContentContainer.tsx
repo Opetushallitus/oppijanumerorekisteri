@@ -113,13 +113,11 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
             .unwrap()
             .catch((error) => {
                 const errorMessages = [];
-                if (isApiError(error)) {
-                    if (error.status === 400 && error.data.message?.indexOf('invalid.hetu') !== -1) {
-                        errorMessages.push(L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU']);
-                    }
-                    if (error.status === 400 && JSON.stringify(error).includes('socialsecuritynr.already.exists')) {
-                        errorMessages.push(L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU_KAYTOSSA']);
-                    }
+                if (error.status === 400 && error.data.includes('invalid.hetu')) {
+                    errorMessages.push(L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU']);
+                }
+                if (error.status === 400 && error.data.includes('socialsecuritynr.already.exists')) {
+                    errorMessages.push(L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU_KAYTOSSA']);
                 }
                 if (errorMessages.length > 0) {
                     errorMessages.forEach((errorMessage) =>
