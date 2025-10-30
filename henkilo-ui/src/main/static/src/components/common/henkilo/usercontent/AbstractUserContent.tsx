@@ -7,7 +7,7 @@ type Props = {
     readOnlyButtons: Array<ReactNode>;
     readOnly: boolean;
     discardAction: () => void;
-    updateAction: () => void;
+    updateAction: () => Promise<void>;
     isValidForm: boolean;
 };
 

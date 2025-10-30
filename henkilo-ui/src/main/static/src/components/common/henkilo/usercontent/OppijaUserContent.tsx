@@ -27,7 +27,7 @@ import { useGetHenkiloQuery } from '../../../../api/oppijanumerorekisteri';
 type OwnProps = {
     readOnly: boolean;
     discardAction: () => void;
-    updateAction: () => void;
+    updateAction: () => Promise<void>;
     updateModelAction: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
     updateModelSelectAction: (o: SingleValue<NamedSelectOption> | NamedMultiSelectOption) => void;
     updateDateAction: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
