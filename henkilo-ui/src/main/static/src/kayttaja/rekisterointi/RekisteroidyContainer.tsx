@@ -10,7 +10,7 @@ import { useTitle } from '../../useTitle';
 
 const RekisteroidyContainer = () => {
     const location = useLocation();
-    const { getLocalisations } = useLocalisations();
+    const { getLocalisations } = useLocalisations(true);
     const search = new URLSearchParams(location.search);
     const temporaryToken = search.get('temporaryKutsuToken');
     const {

@@ -1,26 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useNavigate } from 'react-router';
+import Select from 'react-select';
 
-import StaticUtils from '../../components/common/StaticUtils';
 import { isValidPassword } from '../../validation/PasswordValidator';
 import type { KutsuByToken, KutsuOrganisaatio } from '../../types/domain/kayttooikeus/Kutsu.types';
 import NotificationButton, { ButtonNotification } from '../../components/common/button/NotificationButton';
 import { Locale } from '../../types/locale.type';
 import { Localisations } from '../../types/localisation.type';
-import Asiointikieli from '../../components/common/henkilo/labelvalues/Asiointikieli';
 import IconButton from '../../components/common/button/IconButton';
 import HakaIcon from '../../components/common/icons/HakaIcon';
-import Salasana from '../../components/common/henkilo/labelvalues/Salasana';
-import Kayttajanimi from '../../components/common/henkilo/labelvalues/Kayttajanimi';
-import Kutsumanimi from '../../components/common/henkilo/labelvalues/Kutsumanimi';
-import { toSupportedLocale } from '../../selectors';
-import { NamedSelectOption } from '../../utilities/select';
+import { toSupportedLocale, useAsiointikielet } from '../../selectors';
 import { RekisteroidyRequest, usePostRekisteroidyMutation } from '../../api/kayttooikeus';
-import LabelValue from '../../components/common/henkilo/labelvalues/LabelValue';
 
 import './RekisteroidyPage.css';
-import { SingleValue } from 'react-select';
 
 type OwnProps = {
     L: Localisations;
@@ -28,12 +21,7 @@ type OwnProps = {
     kutsu: KutsuByToken;
 };
 
-type ErrorMessage = {
-    notL10nMessage: string;
-    notL10nText: string;
-};
-
-const rekisteroidyErrors: Record<string, ErrorMessage> = {
+const rekisteroidyErrors: Record<string, ButtonNotification> = {
     NotFoundException: {
         notL10nMessage: '',
         notL10nText: 'REKISTEROIDY_TEMP_TOKEN_INVALID',
@@ -91,6 +79,17 @@ function validate(henkilo: RekisteroidyRequest) {
     );
 }
 
+function isKayttajanimiError(notification?: ButtonNotification) {
+    return (
+        notification?.notL10nMessage === 'REKISTEROIDY_USERNAMEEXISTS_OTSIKKO' ||
+        notification?.notL10nMessage === 'REKISTEROIDY_ILLEGALARGUMENT_OTSIKKO'
+    );
+}
+
+function isSalasanaError(notification?: ButtonNotification) {
+    return notification?.notL10nMessage === 'REKISTEROIDY_PASSWORDEXCEPTION_OTSIKKO';
+}
+
 export const RekisteroidyPage = (props: OwnProps) => {
     const navigate = useNavigate();
     const { kutsu, L, locale: anyLocale } = props;
@@ -98,6 +97,7 @@ export const RekisteroidyPage = (props: OwnProps) => {
     const [privacyPolicySeen, setPrivacyPolicySeen] = useState(false);
     const [notification, setNotification] = useState<ButtonNotification>();
     const [rekisteroidy] = usePostRekisteroidyMutation();
+    const asiointikielet = useAsiointikielet(locale);
     const [henkilo, setHenkilo] = useState<RekisteroidyRequest>({
         etunimet: kutsu.etunimi,
         sukunimi: kutsu.sukunimi,
@@ -115,16 +115,6 @@ export const RekisteroidyPage = (props: OwnProps) => {
             createHenkilo();
         }
     }, []);
-
-    function updatePayloadModelInput(event: React.SyntheticEvent<HTMLInputElement>) {
-        const newHenkilo = StaticUtils.updateFieldByDotAnnotation({ ...henkilo }, event) || henkilo;
-        setHenkilo(newHenkilo);
-    }
-
-    function updatePayloadModelSelect(event: SingleValue<NamedSelectOption>) {
-        const newHenkilo = StaticUtils.updateSelectValueByDotAnnotation({ ...henkilo }, event) || henkilo;
-        setHenkilo(newHenkilo);
-    }
 
     async function createHenkilo() {
         setNotification(undefined);
@@ -150,17 +140,6 @@ export const RekisteroidyPage = (props: OwnProps) => {
                 </li>
             ) : null;
         });
-    }
-
-    function isKayttajanimiError() {
-        return (
-            notification?.notL10nMessage === 'REKISTEROIDY_USERNAMEEXISTS_OTSIKKO' ||
-            notification?.notL10nMessage === 'REKISTEROIDY_ILLEGALARGUMENT_OTSIKKO'
-        );
-    }
-
-    function isSalasanaError() {
-        return notification?.notL10nMessage === 'REKISTEROIDY_PASSWORDEXCEPTION_OTSIKKO';
     }
 
     const renderKutsuOrganisaatio = (organisaatio: KutsuOrganisaatio) => {
@@ -193,45 +172,82 @@ export const RekisteroidyPage = (props: OwnProps) => {
                         <div className="wrapper flex-item-1">
                             <div>
                                 <p className="oph-h3 oph-bold">{props.L['REKISTEROIDY_PERUSTIEDOT']}</p>
-                                <LabelValue
-                                    readOnly={true}
-                                    values={{
-                                        label: 'HENKILO_ETUNIMET',
-                                        value: kutsu.etunimi,
-                                        inputValue: 'etunimet',
-                                        disabled: false,
-                                    }}
-                                />
-                                <LabelValue
-                                    readOnly={true}
-                                    values={{
-                                        label: 'HENKILO_SUKUNIMI',
-                                        value: kutsu?.sukunimi,
-                                        inputValue: 'sukunimi',
-                                        disabled: false,
-                                    }}
-                                />
-                                <Kutsumanimi
-                                    readOnly={false}
-                                    defaultValue={henkilo.kutsumanimi}
-                                    updateModelFieldAction={updatePayloadModelInput}
-                                    isError={!etunimetContainsKutsumanimi(henkilo)}
-                                />
-                                <Kayttajanimi
-                                    disabled={false}
-                                    defaultValue={henkilo.kayttajanimi}
-                                    updateModelFieldAction={updatePayloadModelInput}
-                                    isError={isKayttajanimiError() || !kayttajanimiIsNotEmpty(henkilo)}
-                                />
-                                <Salasana
-                                    disabled={false}
-                                    updateModelFieldAction={updatePayloadModelInput}
-                                    isError={isSalasanaError() || isPasswordError(henkilo)}
-                                />
-                                <Asiointikieli
-                                    henkiloUpdate={henkilo}
-                                    updateModelSelectAction={updatePayloadModelSelect}
-                                />
+                                <div className="labelValue label-row">
+                                    <div className="oph-bold">{L['HENKILO_ETUNIMET']}</div>
+                                    <div>{kutsu.etunimi}</div>
+                                </div>
+                                <div className="labelValue label-row">
+                                    <div className="oph-bold">{L['HENKILO_SUKUNIMI']}</div>
+                                    <div>{kutsu.sukunimi}</div>
+                                </div>
+                                <div className="labelValue">
+                                    <span className="oph-bold">{L['HENKILO_KUTSUMANIMI']}</span>
+                                    <input
+                                        id="kutsumanimi"
+                                        className={`oph-input ${
+                                            !etunimetContainsKutsumanimi(henkilo) ? 'oph-input-has-error' : ''
+                                        }`}
+                                        defaultValue={henkilo.kutsumanimi}
+                                        onChange={(e) => setHenkilo({ ...henkilo, kutsumanimi: e.target.value })}
+                                    />
+                                </div>
+                                <div className="labelValue">
+                                    <span className="oph-bold">{L['HENKILO_KAYTTAJANIMI']}</span>
+                                    <input
+                                        id="kayttajanimi"
+                                        className={`oph-input ${
+                                            isKayttajanimiError(notification) || !kayttajanimiIsNotEmpty(henkilo)
+                                                ? 'oph-input-has-error'
+                                                : ''
+                                        }`}
+                                        defaultValue={henkilo.kayttajanimi}
+                                        onChange={(e) => setHenkilo({ ...henkilo, kayttajanimi: e.target.value })}
+                                    />
+                                </div>
+                                <div className="labelValue">
+                                    <span className="oph-bold">{L['HENKILO_PASSWORD']}</span>
+                                    <input
+                                        id="password"
+                                        type="password"
+                                        className={`oph-input ${
+                                            isSalasanaError(notification) || !isValidPassword(henkilo.password)
+                                                ? 'oph-input-has-error'
+                                                : ''
+                                        }`}
+                                        defaultValue={henkilo.password}
+                                        onChange={(e) => setHenkilo({ ...henkilo, password: e.target.value })}
+                                    />
+                                </div>
+                                <div className="labelValue">
+                                    <span className="oph-bold">{L['HENKILO_PASSWORDAGAIN']}</span>
+                                    <input
+                                        id="passwordAgain"
+                                        type="password"
+                                        className={`oph-input ${
+                                            isSalasanaError(notification) || isPasswordError(henkilo)
+                                                ? 'oph-input-has-error'
+                                                : ''
+                                        }`}
+                                        defaultValue={henkilo.passwordAgain}
+                                        onChange={(e) => setHenkilo({ ...henkilo, passwordAgain: e.target.value })}
+                                    />
+                                    <span>{L['REKISTEROIDY_PASSWORD_TEXT']}</span>
+                                </div>
+                                <div className="labelValue">
+                                    <span className="oph-bold">{L['HENKILO_ASIOINTIKIELI'] + '*'}</span>
+                                    <Select
+                                        options={asiointikielet}
+                                        value={asiointikielet.find(
+                                            (o) => o.value === henkilo.asiointiKieli?.kieliKoodi
+                                        )}
+                                        onChange={(o) =>
+                                            setHenkilo({
+                                                ...henkilo,
+                                                asiointiKieli: { kieliKoodi: o?.value ?? 'kieli_fi' },
+                                            })
+                                        }
+                                    />
+                                </div>
                             </div>
                             <NotificationButton
                                 action={createHenkilo}
@@ -249,9 +265,15 @@ export const RekisteroidyPage = (props: OwnProps) => {
                         <div className="wrapper flex-item-1">
                             <div>
                                 <p className="oph-h3 oph-bold">{L['REKISTEROIDY_HAKA_OTSIKKO']}</p>
-                                <Asiointikieli
-                                    henkiloUpdate={henkilo}
-                                    updateModelSelectAction={updatePayloadModelSelect}
+                                <Select
+                                    options={asiointikielet}
+                                    value={asiointikielet.find((o) => o.value === henkilo.asiointiKieli?.kieliKoodi)}
+                                    onChange={(o) =>
+                                        setHenkilo({
+                                            ...henkilo,
+                                            asiointiKieli: { kieliKoodi: o?.value ?? 'kieli_fi' },
+                                        })
+                                    }
                                 />
                                 <IconButton
                                     href={`/service-provider-app/saml/login/alias/hakasp?${new URLSearchParams({

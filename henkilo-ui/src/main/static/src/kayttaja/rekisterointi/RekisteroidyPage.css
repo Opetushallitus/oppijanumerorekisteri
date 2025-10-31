@@ -21,3 +21,8 @@
 .rekisteroidy-organisaatiot-wrapper ul {
     margin-top: 5px;
 }
+
+.label-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}

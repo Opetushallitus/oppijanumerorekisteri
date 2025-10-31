@@ -14,7 +14,7 @@ type OwnProps = {
 };
 
 const VirhePage = (props: OwnProps) => {
-    const { getLocalisations } = useLocalisations();
+    const { getLocalisations } = useLocalisations(true);
     const L = getLocalisations('fi');
 
     useTitle(L['TITLE_VIRHESIVU']);
