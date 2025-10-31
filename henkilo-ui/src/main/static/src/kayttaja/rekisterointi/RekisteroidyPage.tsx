@@ -21,23 +21,35 @@ type OwnProps = {
     kutsu: KutsuByToken;
 };
 
-const rekisteroidyErrors: Record<string, ButtonNotification> = {
-    NotFoundException: {
+const getNotification = (errorData: string): ButtonNotification => {
+    if (errorData.includes('NotFoundException')) {
+        return {
+            notL10nMessage: '',
+            notL10nText: 'REKISTEROIDY_TEMP_TOKEN_INVALID',
+        };
+    }
+    if (errorData.includes('UsernameAlreadyExistsException')) {
+        return {
+            notL10nMessage: 'REKISTEROIDY_USERNAMEEXISTS_OTSIKKO',
+            notL10nText: 'REKISTEROIDY_USERNAMEEXISTS_TEKSTI',
+        };
+    }
+    if (errorData.includes('PasswordException')) {
+        return {
+            notL10nMessage: 'REKISTEROIDY_PASSWORDEXCEPTION_OTSIKKO',
+            notL10nText: 'REKISTEROIDY_PASSWORDEXCEPTION_TEKSTI',
+        };
+    }
+    if (errorData.includes('IllegalArgumentException')) {
+        return {
+            notL10nMessage: 'REKISTEROIDY_ILLEGALARGUMENT_OTSIKKO',
+            notL10nText: 'REKISTEROIDY_ILLEGALARGUMENT_TEKSTI',
+        };
+    }
+    return {
         notL10nMessage: '',
-        notL10nText: 'REKISTEROIDY_TEMP_TOKEN_INVALID',
-    },
-    UsernameAlreadyExistsException: {
-        notL10nMessage: 'REKISTEROIDY_USERNAMEEXISTS_OTSIKKO',
-        notL10nText: 'REKISTEROIDY_USERNAMEEXISTS_TEKSTI',
-    },
-    PasswordException: {
-        notL10nMessage: 'REKISTEROIDY_PASSWORDEXCEPTION_OTSIKKO',
-        notL10nText: 'REKISTEROIDY_PASSWORDEXCEPTION_TEKSTI',
-    },
-    IllegalArgumentException: {
-        notL10nMessage: 'REKISTEROIDY_ILLEGALARGUMENT_OTSIKKO',
-        notL10nText: 'REKISTEROIDY_ILLEGALARGUMENT_TEKSTI',
-    },
+        notL10nText: 'KUTSU_LUONTI_EPAONNISTUI_TUNTEMATON_VIRHE',
+    };
 };
 
 function etunimetContainsKutsumanimi(henkilo: RekisteroidyRequest) {
@@ -122,12 +134,7 @@ export const RekisteroidyPage = (props: OwnProps) => {
             .unwrap()
             .then(() => navigate(`/kayttaja/rekisteroidy/valmis/${locale}`))
             .catch((error) => {
-                setNotification(
-                    rekisteroidyErrors[error.data?.errorType] ?? {
-                        notL10nMessage: '',
-                        notL10nText: 'KUTSU_LUONTI_EPAONNISTUI_TUNTEMATON_VIRHE',
-                    }
-                );
+                setNotification(getNotification(error.data));
             });
     }
 
