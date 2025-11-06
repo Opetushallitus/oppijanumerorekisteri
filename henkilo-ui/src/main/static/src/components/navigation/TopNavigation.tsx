@@ -65,6 +65,7 @@ export const TopNavigation = () => {
                                     })
                                 }
                                 to={tab.path}
+                                end
                             >
                                 {({ isActive }) => (
                                     <span>
