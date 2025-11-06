@@ -24,6 +24,8 @@ import { JarjestelmatunnusEditPage } from './components/jarjestelmatunnus/Jarjes
 import { OppijaViewPage } from './components/henkilo/OppijaViewPage';
 import { VirkailijaViewPage } from './components/henkilo/VirkailijaViewPage';
 
+const isProd = window.location.hostname.includes('virkailija.opintopolku.fi');
+
 export const AppRoutes = () => (
     <Routes>
         <Route element={<App />}>
@@ -47,8 +49,17 @@ export const AppRoutes = () => (
             <Route path="/kayttooikeusryhmat" element={<KayttooikeusryhmatPage />} />
             <Route path="/kayttooikeusryhmat/lisaa" element={<KayttooikeusryhmaPageContainer />} />
             <Route path="/kayttooikeusryhmat/:id" element={<KayttooikeusryhmaPageContainer />} />
-            <Route path="/palvelukayttaja/luonti" element={<PalvelukayttajaCreatePage />} />
-            <Route path="/palvelukayttaja" element={<PalvelukayttajaHakuPage />} />
+            {isProd ? (
+                <>
+                    <Route path="/palvelukayttaja/luonti" element={<PalvelukayttajaCreatePage />} />
+                    <Route path="/palvelukayttaja" element={<PalvelukayttajaHakuPage />} />
+                </>
+            ) : (
+                <>
+                    <Route path="/palvelukayttaja/luonti" element={<JarjestelmatunnusCreatePage />} />
+                    <Route path="/palvelukayttaja" element={<JarjestelmatunnusListPage />} />
+                </>
+            )}
             <Route path="/jarjestelmatunnus" element={<JarjestelmatunnusListPage />} />
             <Route path="/jarjestelmatunnus/luonti" element={<JarjestelmatunnusCreatePage />} />
             <Route path="/jarjestelmatunnus/:oid" element={<JarjestelmatunnusEditPage />} />
