@@ -23,6 +23,7 @@ import Sukupuoli from '../labelvalues/Sukupuoli';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
 import { useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
 import { useGetHenkiloQuery } from '../../../../api/oppijanumerorekisteri';
+import EidasTunnisteet from '../labelvalues/EidasTunnisteet';
 
 type OwnProps = {
     readOnly: boolean;
@@ -72,7 +73,11 @@ function OppijaUserContent(props: OwnProps) {
                 <Sukunimi key={`sukunimi_${oid}`} autofocus {...basicInfoProps} />,
                 <Etunimet key={`etunimet_${oid}`} {...basicInfoProps} />,
                 <Syntymaaika key={`syntymaaika_${oid}`} {...basicInfoProps} />,
-                <Hetu key={`hetu_${oid}`} {...basicInfoProps} />,
+                henkilo?.yksiloityEidas ? (
+                    <EidasTunnisteet key="admin-eidas" {...basicInfoProps} />
+                ) : (
+                    <Hetu key="admin-hetu" {...basicInfoProps} />
+                ),
                 <Kutsumanimi key={`kutsumanimi_${oid}`} {...basicInfoProps} />,
             ],
             [

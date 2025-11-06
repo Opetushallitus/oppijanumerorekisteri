@@ -79,7 +79,7 @@ function AdminUserContent(props: OwnProps) {
                 <Sukunimi key="admin-sukunimi" {...infoProps} autofocus={true} />,
                 <Etunimet key="admin-etunimi" {...infoProps} />,
                 <Syntymaaika key="admin-syntymaaika" {...infoProps} />,
-                props.henkiloUpdate.yksiloityEidas ? (
+                henkilo?.yksiloityEidas ? (
                     <EidasTunnisteet key="admin-eidas" {...infoProps} />
                 ) : (
                     <Hetu key="admin-hetu" {...infoProps} />
