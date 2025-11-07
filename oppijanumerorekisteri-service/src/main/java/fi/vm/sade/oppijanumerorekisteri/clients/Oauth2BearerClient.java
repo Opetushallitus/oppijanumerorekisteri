@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @CacheConfig(cacheNames = CACHE_NAME_OAUTH2_BEARER)
 @RequiredArgsConstructor
-public class Oauth2BearerClient {
+public class Oauth2BearerClient implements HttpFormEncoding {
     private final ObjectMapper objectMapper;
     private final OppijanumerorekisteriProperties properties;
 
@@ -38,14 +38,14 @@ public class Oauth2BearerClient {
     public String getOauth2Bearer() throws IOException, InterruptedException {
         String tokenUrl = oauth2IssuerUri + "/oauth2/token";
         log.info("refetching oauth2 bearer from " + tokenUrl);
-        String body = "grant_type=client_credentials&client_id="
-                + properties.getOauth2().getClientId()
-                + "&client_secret="
-                + properties.getOauth2().getClientSecret();
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(tokenUrl))
                 .header("Content-Type", "application/x-www-form-urlencoded")
-                .POST(BodyPublishers.ofString(body))
+                .POST(encodeFormBody(Map.of(
+                        "grant_type", "client_credentials",
+                        "client_id", properties.getOauth2().getClientId(),
+                        "client_secret", properties.getOauth2().getClientSecret()
+                )))
                 .build();
         var client = HttpClient.newHttpClient();
         HttpResponse<String> res = client.send(request, BodyHandlers.ofString());

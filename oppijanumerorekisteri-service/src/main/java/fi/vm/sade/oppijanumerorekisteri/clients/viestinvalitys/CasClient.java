@@ -10,10 +10,11 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Map;
 
+import fi.vm.sade.oppijanumerorekisteri.clients.HttpFormEncoding;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class CasClient {
+public class CasClient implements HttpFormEncoding {
     public static final String CAS_SECURITY_TICKET = "CasSecurityTicket";
     private final HttpClient httpClient;
     private final String baseUrl;
@@ -36,7 +37,7 @@ public class CasClient {
         log.info("Fetching service ticket for service {}...", service);
         var ticketGrantingTicket = getTicketGrantingTicket(username, password);
         var request = HttpRequest.newBuilder(URI.create(baseUrl + "/v1/tickets/" + ticketGrantingTicket))
-                .POST(formBody(Map.of("service", service + "/j_spring_cas_security_check")))
+                .POST(encodeFormBody(Map.of("service", service + "/j_spring_cas_security_check")))
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .timeout(Duration.ofSeconds(10))
                 .build();
@@ -56,7 +57,7 @@ public class CasClient {
     private String getTicketGrantingTicket(String username, String password) throws IOException, InterruptedException {
         log.info("Fetching TGT (Ticket Granting Ticket) from CAS server...", baseUrl);
         var request = HttpRequest.newBuilder(URI.create(baseUrl + "/v1/tickets"))
-                .POST(formBody(Map.of("username", username, "password", password)))
+                .POST(encodeFormBody(Map.of("username", username, "password", password)))
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .build();
         var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -70,16 +71,5 @@ public class CasClient {
             log.error(msg);
             throw new RuntimeException(msg);
         }
-    }
-
-    private HttpRequest.BodyPublisher formBody(Map<String, String> params) {
-        var body = new StringBuilder();
-        for (var entry : params.entrySet()) {
-            if (body.length() > 0) body.append("&");
-            body.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8));
-            body.append("=");
-            body.append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8));
-        }
-        return HttpRequest.BodyPublishers.ofString(body.toString());
     }
 }
