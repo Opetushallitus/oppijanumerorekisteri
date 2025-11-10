@@ -87,8 +87,6 @@ public interface HenkiloJpaRepository {
 
     List<YhteystietoHakuDto> findYhteystiedot(YhteystietoCriteria criteria);
 
-    List<HenkiloPerustietoDto> findByOidIn(List<String> oidList);
-
     /**
      * Palauttaa henkilön master datan
      * {@link fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite#slaveOid}:n
@@ -188,8 +186,6 @@ public interface HenkiloJpaRepository {
      * @return keskeneräisten lukumäärä
      */
     long countByYksilointiKeskeneraiset(OppijaTuontiCriteria criteria);
-
-    List<HenkiloPerustietoDto> findPerustiedotByHetuIn(List<String> hetut);
 
     /**
      * Etsii henkilön kaikista hetuista.

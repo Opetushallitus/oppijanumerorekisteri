@@ -1,0 +1,39 @@
+[
+  {
+    "oidHenkilo": "1.2.3.4.6",
+    "externalIds": [],
+    "identifications": [],
+    "hetu": "111111-1234",
+    "etunimet": "Teppo",
+    "kutsumanimi": "Teppo",
+    "sukunimi": "Testaaja",
+    "syntymaaika": null,
+    "turvakielto": false,
+    "aidinkieli": { "kieliKoodi": "sv", "kieliTyyppi": "svenska" },
+    "asiointiKieli": { "kieliKoodi": "sv", "kieliTyyppi": "svenska" },
+    "kansalaisuus": [{ "kansalaisuusKoodi": "246" }],
+    "sukupuoli": null,
+    "modified": 1762768205237,
+    "modifiedAt": "2025-11-10T11:50:05.237+02:00"
+  },
+  {
+    "oidHenkilo": "1.2.3.4.5",
+    "externalIds": [],
+    "identifications": [],
+    "hetu": "111111-985K",
+    "etunimet": "Teppo Taneli",
+    "kutsumanimi": "Teppo",
+    "sukunimi": "Testaaja",
+    "syntymaaika": null,
+    "turvakielto": false,
+    "aidinkieli": { "kieliKoodi": "fi", "kieliTyyppi": "suomi" },
+    "asiointiKieli": { "kieliKoodi": "fi", "kieliTyyppi": "suomi" },
+    "kansalaisuus": [
+      { "kansalaisuusKoodi": "504" },
+      { "kansalaisuusKoodi": "246" }
+    ],
+    "sukupuoli": null,
+    "modified": 1762764605237,
+    "modifiedAt": "2025-11-10T10:50:05.237+02:00"
+  }
+]

@@ -19,7 +19,6 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteri
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.HenkiloServiceImpl;
-import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.junit.Before;
@@ -37,7 +36,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -283,22 +281,6 @@ public class HenkiloServiceTest {
                 .willReturn(testYhteystiedot("1.2.3.4.5"));
         Optional<YhteystiedotDto> tiedot = this.service.getHenkiloYhteystiedot("1.2.3.4.5", "yhteystietotyyppi1");
         assertThat(tiedot.map(YhteystiedotDto::getKatuosoite)).hasValue("Siilikuja 6");
-    }
-
-    @Test
-    public void getHenkiloPerustietoByOidsTest() {
-        Date modified = new Date();
-        HenkiloPerustietoDto henkiloMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), emptyList(), null, modified);
-        HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), emptyList(), null, modified);
-        given(this.henkiloDataRepositoryMock.findByOidIn(Collections.singletonList("1.2.3.4.5")))
-                .willReturn(Collections.singletonList(henkiloMock));
-
-        List<HenkiloPerustietoDto> henkiloPerustietoDtoList = this.service.getHenkiloPerustietoByOids(Collections.singletonList("1.2.3.4.5"));
-        assertThat(henkiloPerustietoDtoList.size()).isEqualTo(1);
-        HenkiloPerustietoDto henkiloPerustietoDto = henkiloPerustietoDtoList.get(0);
-        assertThat(henkiloPerustietoDto).usingRecursiveComparison().isEqualTo(henkiloPerustietoDtoMock);
     }
 
     @Test(expected = NotFoundException.class)

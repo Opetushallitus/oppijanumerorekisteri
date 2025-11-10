@@ -134,38 +134,6 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
-    public void findHenkilotByOidList() throws Exception {
-        HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "081296-967T",
-                "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), emptyList(), null, new Date());
-        String inputOidList = "[\"1.2.3.4.5\"]";
-        String returnContent = "[" +
-                "  {" +
-                "    \"aidinkieli\": {" +
-                "      \"kieliKoodi\": \"fi\"," +
-                "      \"kieliTyyppi\": \"suomi\"" +
-                "    }," +
-                "    \"asiointiKieli\": {" +
-                "      \"kieliKoodi\": \"fi\"," +
-                "      \"kieliTyyppi\": \"suomi\"" +
-                "    }," +
-                "    \"etunimet\": \"arpa\"," +
-                "    \"hetu\": \"081296-967T\"," +
-                "    \"kutsumanimi\": \"arpa\"," +
-                "    \"oidHenkilo\": \"1.2.3.4.5\"," +
-                "    \"sukunimi\": \"kuutio\"" +
-                "  }" +
-                "]";
-        given(this.henkiloService.getHenkiloPerustietoByOids(Collections.singletonList("1.2.3.4.5")))
-                .willReturn(Collections.singletonList(henkiloPerustietoDto));
-        this.mvc.perform(post("/henkilo/henkiloPerustietosByHenkiloOidList").content(inputOidList)
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andExpect(content().json(returnContent));
-        verifyReadAudit("1.2.3.4.5");
-    }
-
-    @Test
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void getHenkiloYhteystiedot() throws Exception {
         String content = "{" +

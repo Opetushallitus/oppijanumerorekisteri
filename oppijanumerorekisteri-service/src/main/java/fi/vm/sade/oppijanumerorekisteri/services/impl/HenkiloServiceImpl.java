@@ -226,7 +226,11 @@ public class HenkiloServiceImpl implements HenkiloService {
             throw new IllegalArgumentException("Maximum amount of henkilös to be fetched is " + MAX_FETCH_PERSONS + ". Tried to fetch:" + oids.size());
         }
 
-        return this.henkiloDataRepository.findByOidIn(oids);
+        return henkiloDataRepository
+                .eagerFindByOidHenkiloIn(new HashSet<>(oids))
+                .stream()
+                .map(h -> mapper.map(h, HenkiloPerustietoDto.class))
+                .toList();
     }
 
     @Override
@@ -377,7 +381,11 @@ public class HenkiloServiceImpl implements HenkiloService {
         if (hetus.size() > MAX_FETCH_PERSONS) {
             throw new IllegalArgumentException("Maximum amount of henkilös to be fetched is " + MAX_FETCH_PERSONS + ". Tried to fetch:" + hetus.size());
         }
-        return this.henkiloDataRepository.findPerustiedotByHetuIn(hetus);
+        return henkiloDataRepository
+                .eagerFindByHetuIn(new HashSet<>(hetus))
+                .stream()
+                .map(h -> mapper.map(h, HenkiloPerustietoDto.class))
+                .toList();
     }
 
     @Override

@@ -38,11 +38,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.ExpressionUtils.anyOf;
 import static com.querydsl.core.types.dsl.Expressions.allOf;
 import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
-import static fi.vm.sade.oppijanumerorekisteri.models.QKansalaisuus.kansalaisuus;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteystiedotRyhma;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
 import static java.util.stream.Collectors.joining;
@@ -253,42 +251,6 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                         yhteystieto.yhteystietoTyyppi.as("yhteystietoTyyppi"),
                         yhteystieto.yhteystietoArvo.as("arvo")
                 )).fetch();
-    }
-
-    @Override
-    public List<HenkiloPerustietoDto> findByOidIn(List<String> oidList) {
-        List<HenkiloPerustietoDto> henkiloDtoList = jpa().from(henkilo)
-                .select(Projections.bean(HenkiloPerustietoDto.class, henkilo.oidHenkilo, henkilo.hetu, henkilo.etunimet,
-                        henkilo.kutsumanimi, henkilo.sukunimi, henkilo.syntymaaika, henkilo.turvakielto, henkilo.kasittelijaOid, henkilo.sukupuoli, henkilo.modified))
-                .where(henkilo.oidHenkilo.in(oidList)).fetch();
-
-        Map<String, KielisyysDto> stringAsiointikieliMap = jpa().from(henkilo)
-                .select(henkilo.oidHenkilo, Projections.bean(KielisyysDto.class,
-                        henkilo.asiointiKieli.kieliKoodi, henkilo.asiointiKieli.kieliTyyppi))
-                .where(henkilo.oidHenkilo.in(oidList))
-                .fetch().stream().collect(Collectors.toMap(tuple ->
-                        tuple.get(0, String.class), tuple -> tuple.get(1, KielisyysDto.class)));
-
-        Map<String, KielisyysDto> stringAidinkieliMap = jpa().from(henkilo)
-                .select(henkilo.oidHenkilo, Projections.bean(KielisyysDto.class,
-                        henkilo.aidinkieli.kieliKoodi, henkilo.aidinkieli.kieliTyyppi))
-                .where(henkilo.oidHenkilo.in(oidList))
-                .fetch().stream().collect(Collectors.toMap(tuple ->
-                        tuple.get(0, String.class), tuple -> tuple.get(1, KielisyysDto.class)));
-
-        Map<String, List<KansalaisuusDto>> stringKansalaisuusMap = jpa().from(henkilo)
-                .innerJoin(henkilo.kansalaisuus, kansalaisuus)
-                .where(henkilo.oidHenkilo.in(oidList))
-                .transform(groupBy(henkilo.oidHenkilo).as(list(Projections.bean(KansalaisuusDto.class, kansalaisuus.kansalaisuusKoodi))));
-
-        henkiloDtoList.forEach(henkiloDto -> {
-            henkiloDto.setAsiointiKieli(stringAsiointikieliMap.get(henkiloDto.getOidHenkilo()));
-            henkiloDto.setAidinkieli(stringAidinkieliMap.get(henkiloDto.getOidHenkilo()));
-            if (stringKansalaisuusMap.get(henkiloDto.getOidHenkilo()) != null) {
-                henkiloDto.setKansalaisuus(new HashSet<>(stringKansalaisuusMap.get(henkiloDto.getOidHenkilo())));
-            }
-        });
-        return henkiloDtoList;
     }
 
     @Override
@@ -670,42 +632,6 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                         qHenkilo.yksiloityEidas.isFalse(),
                         qHenkilo.yksilointiYritetty.isFalse()
                 )).select(qTuontiRivi.henkilo.id).distinct().fetchCount();
-    }
-
-    @Override
-    public List<HenkiloPerustietoDto> findPerustiedotByHetuIn(List<String> hetuList) {
-        List<HenkiloPerustietoDto> henkiloDtoList = jpa().from(henkilo)
-                .select(Projections.bean(HenkiloPerustietoDto.class, henkilo.oidHenkilo, henkilo.hetu, henkilo.etunimet,
-                        henkilo.kutsumanimi, henkilo.sukunimi, henkilo.syntymaaika, henkilo.turvakielto, henkilo.kasittelijaOid, henkilo.sukupuoli, henkilo.modified))
-                .where(henkilo.hetu.in(hetuList)).fetch();
-
-        Map<String, KielisyysDto> stringAsiointikieliMap = jpa().from(henkilo)
-                .select(henkilo.hetu, Projections.bean(KielisyysDto.class,
-                        henkilo.asiointiKieli.kieliKoodi, henkilo.asiointiKieli.kieliTyyppi))
-                .where(henkilo.hetu.in(hetuList))
-                .fetch().stream().collect(Collectors.toMap(tuple ->
-                        tuple.get(0, String.class), tuple -> tuple.get(1, KielisyysDto.class)));
-
-        Map<String, KielisyysDto> stringAidinkieliMap = jpa().from(henkilo)
-                .select(henkilo.hetu, Projections.bean(KielisyysDto.class,
-                        henkilo.aidinkieli.kieliKoodi, henkilo.aidinkieli.kieliTyyppi))
-                .where(henkilo.hetu.in(hetuList))
-                .fetch().stream().collect(Collectors.toMap(tuple ->
-                        tuple.get(0, String.class), tuple -> tuple.get(1, KielisyysDto.class)));
-
-        Map<String, List<KansalaisuusDto>> stringKansalaisuusMap = jpa().from(henkilo)
-                .innerJoin(henkilo.kansalaisuus, kansalaisuus)
-                .where(henkilo.hetu.in(hetuList))
-                .transform(groupBy(henkilo.hetu).as(list(Projections.bean(KansalaisuusDto.class, kansalaisuus.kansalaisuusKoodi))));
-
-        henkiloDtoList.forEach(henkiloDto -> {
-            henkiloDto.setAsiointiKieli(stringAsiointikieliMap.get(henkiloDto.getHetu()));
-            henkiloDto.setAidinkieli(stringAidinkieliMap.get(henkiloDto.getHetu()));
-            if (stringKansalaisuusMap.get(henkiloDto.getHetu()) != null) {
-                henkiloDto.setKansalaisuus(new HashSet<>(stringKansalaisuusMap.get(henkiloDto.getHetu())));
-            }
-        });
-        return henkiloDtoList;
     }
 
     @Override
