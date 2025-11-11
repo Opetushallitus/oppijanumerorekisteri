@@ -100,7 +100,7 @@ public class Service2ServiceController {
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
     @PostMapping(value = "/findOrCreateHenkiloPerustieto")
     public ResponseEntity<HenkiloPerustietoDto> createNewHenkilo(@Validated @RequestBody HenkiloPerustietoCreateDto dto, Authentication auth) {
-        if (dto.getEidasTunniste() != null && hasRole(auth)) {
+        if (dto.getEidasTunniste() != null && hasEidasHenkilonLuontiRole(auth)) {
             throw new UnauthorizedException("missing.eidas.role");
         }
         FindOrCreateWrapper<HenkiloPerustietoDto> wrapper = henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(dto);
@@ -113,7 +113,7 @@ public class Service2ServiceController {
         }
     }
 
-    private boolean hasRole(Authentication auth) {
+    private boolean hasEidasHenkilonLuontiRole(Authentication auth) {
         return !auth.getAuthorities().stream().anyMatch(a -> {
             return "ROLE_APP_OPPIJANUMEROREKISTERI_EIDAS_HENKILON_LUONTI".equals(a.getAuthority());
         });
