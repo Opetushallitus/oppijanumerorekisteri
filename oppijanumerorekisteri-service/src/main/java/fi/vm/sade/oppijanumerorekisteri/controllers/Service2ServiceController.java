@@ -86,10 +86,11 @@ public class Service2ServiceController {
     }
 
     @Operation(summary ="Hakee tai luo uuden henkilön annetuista henkilön perustiedoista",
-                description = "Henkilöllä on neljä erilaista tunnistetietoa: OID, hetu, external id ja identification."
-                    + " Jos OID on annettu ja henkilöä ei löydy sillä, palautetaan 404."
-                    + " Muussa tapauksessa henkilöä yritetään etsiä muilla tunnistetiedoilla."
-                    + " Jos henkilöä ei löydy, luodaan uusi henkilö annetuista tiedoista (ml. kaikki tunnistetiedot).")
+                description = "Henkilöllä on tunnisteet OID, hetu, eIDAS, external id ja identification.\n"
+                    + "Jos OID on annettu ja henkilöä ei löydy sillä, palautetaan 404\n."
+                    + "Muussa tapauksessa henkilöä yritetään etsiä muilla tunnistetiedoilla.\n"
+                    + "Jos henkilöä ei löydy, luodaan uusi henkilö annetuista tiedoista (ml. kaikki tunnistetiedot).\n"
+                    + "eIDAS-tunnistetta ja hetua ei voi lähettää samassa pyynnössä. Tällaiset pyynnöt palauttavat aina HTTP 400.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Henkilö löytyi jollakin annetuista tunnisteista"),
             @ApiResponse(responseCode = "201", description = "Henkilö luotiin annetuista perustiedoista"),
