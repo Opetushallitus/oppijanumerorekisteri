@@ -90,10 +90,10 @@ public class HenkiloMapperTest {
     }
 
     @Test
-    public void henkiloToHenkiloOidHetuNimiDto() {
+    public void henkiloToHenkiloOHakuDto() {
         Henkilo henkilo = createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi", LocalDate.of(1970, Month.OCTOBER, 10));
-        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = modelmapper.map(henkilo, HenkiloOidHetuNimiDto.class);
+        HenkiloHakuDto henkiloOidHetuNimiDto = modelmapper.map(henkilo, HenkiloHakuDto.class);
         assertThat(henkiloOidHetuNimiDto.getEtunimet()).isEqualTo("arpa");
         assertThat(henkiloOidHetuNimiDto.getKutsumanimi()).isEqualTo("arpa");
         assertThat(henkiloOidHetuNimiDto.getSukunimi()).isEqualTo("kuutio");
@@ -102,8 +102,8 @@ public class HenkiloMapperTest {
     }
 
     @Test
-    public void henkiloOidHetuNimiDtoToHenkilo() {
-        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = new HenkiloOidHetuNimiDto("1.2.3.4.5", "123456-9999", "arpa", "arpa", "kuutio");
+    public void henkiloHakuDtoToHenkilo() {
+        HenkiloHakuDto henkiloOidHetuNimiDto = new HenkiloHakuDto("1.2.3.4.5", "123456-9999", "arpa", "arpa", "kuutio");
         Henkilo henkilo = modelmapper.map(henkiloOidHetuNimiDto, Henkilo.class);
         assertThat(henkilo.getEtunimet()).isEqualTo("arpa");
         assertThat(henkilo.getKutsumanimi()).isEqualTo("arpa");

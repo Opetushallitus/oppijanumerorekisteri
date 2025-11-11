@@ -286,12 +286,6 @@ public class HenkiloServiceTest {
         assertThat(tiedot.map(YhteystiedotDto::getKatuosoite)).hasValue("Siilikuja 6");
     }
 
-    @Test(expected = NotFoundException.class)
-    public void getHenkiloOidHetuNimiByHetuNotFound() {
-        given(this.henkiloDataRepositoryMock.findOidHetuNimiByHetu("123456-9999")).willReturn(Optional.empty());
-        this.service.getHenkiloOidHetuNimiByHetu("123456-9999");
-    }
-
     @Test
     public void findHenkiloViitteesTest() {
         given(this.oppijanumerorekisteriProperties.getHenkiloViiteSplitSize()).willReturn(5000);

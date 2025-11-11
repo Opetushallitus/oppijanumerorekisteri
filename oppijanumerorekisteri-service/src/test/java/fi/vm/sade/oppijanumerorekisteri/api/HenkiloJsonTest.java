@@ -26,25 +26,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(classes = OppijanumerorekisteriServiceApplication.class)
 public class HenkiloJsonTest {
     @Autowired
-    private JacksonTester<HenkiloOidHetuNimiDto> oidNimiHetuJson;
-
-    @Autowired
     private JacksonTester<HenkiloDto> henkiloDtoJson;
 
     @Autowired
     private JacksonTester<HenkilonYhteystiedotViewDto> yhteystiedotJson;
-
-    @Test
-    public void testHenkiloOidHetuNimiDtoSerialize() throws Exception {
-        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = new HenkiloOidHetuNimiDto("1.2.3.4.5", "123456-9999", "arpa", "arpa", "kuutio");
-        assertThat(this.oidNimiHetuJson.write(henkiloOidHetuNimiDto)).isEqualToJson("/henkilo/testHenkiloOidHetuNimiDto.json");
-    }
-
-    @Test
-    public void testHenkiloOidHetuNimiDtoDeserialize() throws Exception {
-        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = new HenkiloOidHetuNimiDto("1.2.3.4.5", "123456-9999", "arpa", "arpa", "kuutio");
-        assertThat(this.oidNimiHetuJson.read("/henkilo/testHenkiloOidHetuNimiDto.json").getObject()).usingRecursiveComparison().isEqualTo(henkiloOidHetuNimiDto);
-    }
 
     @Test
     public void testHenkiloDtoSerialize() throws Exception {

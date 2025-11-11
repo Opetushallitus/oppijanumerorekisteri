@@ -39,7 +39,7 @@ public interface HenkiloService {
 
     List<HenkiloDto> getHenkilosByOids(List<String> oids);
 
-    HenkiloOidHetuNimiDto getHenkiloOidHetuNimiByHetu(String hetu);
+    HenkiloHakuDto getHenkiloOidHetuNimiByHetu(String hetu);
 
     HenkilonYhteystiedotViewDto getHenkiloYhteystiedot(String henkiloOid);
 

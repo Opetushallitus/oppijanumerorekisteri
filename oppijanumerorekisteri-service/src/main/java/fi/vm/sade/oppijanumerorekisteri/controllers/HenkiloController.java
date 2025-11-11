@@ -115,10 +115,10 @@ public class HenkiloController {
     @Operation(summary = "Hakee henkilön OID:n, HeTu:n ja nimet henkilötunnuksen perusteella")
     @ApiResponses(value = { @ApiResponse(responseCode = "404", description = "Not Found") })
     @PostAuthorize("@permissionChecker.isAllowedToReadPerson(returnObject.oidHenkilo, {'OPPIJANUMEROREKISTERI': {'HENKILON_RU'}}, #permissionService)")
-    @RequestMapping(value = "/henkiloPerusByHetu/{hetu}", method = RequestMethod.GET)
+    @GetMapping(value = "/henkiloPerusByHetu/{hetu}")
     @AuditLogRead(jsonPath = "$..oidHenkilo")
-    public HenkiloOidHetuNimiDto henkiloOidHetuNimiByHetu(@PathVariable String hetu) {
-        return this.henkiloService.getHenkiloOidHetuNimiByHetu(hetu);
+    public HenkiloHakuDto henkiloOidHetuNimiByHetu(@PathVariable String hetu) {
+        return henkiloService.getHenkiloOidHetuNimiByHetu(hetu);
     }
 
     @Operation(summary = "Hakee annetun henkilö OID listaa vastaavien henkilöiden perustiedot. Rajapinnasta saa hakea enintään 5000 henkilön tietoja kerralla.")

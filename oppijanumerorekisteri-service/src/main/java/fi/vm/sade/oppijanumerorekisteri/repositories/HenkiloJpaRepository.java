@@ -130,10 +130,6 @@ public interface HenkiloJpaRepository {
 
     Collection<Henkilo> findByIdentifications(Collection<IdentificationDto> identifications);
 
-    Optional<HenkiloOidHetuNimiDto> findOidHetuNimiByHetu(String hetu);
-
-    Optional<HenkiloOidHetuNimiDto> findOidHetuNimiByKaikkiHetut(String hetu);
-
     List<Henkilo> findSlavesByMasterOid(String henkiloOid);
 
     int findDuplikaatitCount(HenkiloDuplikaattiCriteria criteria, String masterOid);

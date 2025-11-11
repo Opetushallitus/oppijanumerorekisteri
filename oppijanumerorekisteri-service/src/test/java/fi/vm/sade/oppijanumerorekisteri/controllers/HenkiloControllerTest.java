@@ -111,30 +111,6 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
-    public void henkiloOidHetuNimiByHetu() throws Exception {
-        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = new HenkiloOidHetuNimiDto("1.2.3.4.5", "081296-967T", "arpa", "arpa", "kuutio");
-        String content = "{\"etunimet\": \"arpa\"," +
-                "\"kutsumanimi\": \"arpa\"," +
-                "\"sukunimi\": \"kuutio\"," +
-                "\"hetu\": \"081296-967T\"," +
-                "\"oidHenkilo\": \"1.2.3.4.5\"}";
-        given(this.henkiloService.getHenkiloOidHetuNimiByHetu("081296-967T")).willReturn(henkiloOidHetuNimiDto);
-        this.mvc.perform(get("/henkilo/henkiloPerusByHetu/081296-967T").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andExpect(content().json(content));
-        verifyReadAudit("1.2.3.4.5");
-    }
-
-    @Test
-    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
-    public void henkiloOidHetuNimiByHetuNotFound() throws Exception {
-        given(this.henkiloService.getHenkiloOidHetuNimiByHetu("081296-967T")).willThrow(new NotFoundException());
-        this.mvc.perform(get("/henkilo/henkiloPerusByHetu/081296-967T").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-        verifyReadNoAudit();
-    }
-
-    @Test
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void getHenkiloYhteystiedot() throws Exception {
         String content = "{" +

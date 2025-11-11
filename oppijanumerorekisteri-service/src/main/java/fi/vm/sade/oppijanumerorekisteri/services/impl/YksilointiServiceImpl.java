@@ -612,7 +612,7 @@ public class YksilointiServiceImpl implements YksilointiService {
 
     private YksilointiVertailuDto yksilointietoToVertailuDto(Yksilointitieto yksilointitieto) {
         YksilointiVertailuDto dto = new YksilointiVertailuDto();
-        dto.setOppijanumerorekisteri(mapper.map(yksilointitieto.getHenkilo(), HenkiloOidHetuNimiDto.class));
+        dto.setOppijanumerorekisteri(mapper.map(yksilointitieto.getHenkilo(), HenkiloHakuDto.class));
         dto.setVaestotietojarjestelma(mapper.map(yksilointitieto, NimiDto.class));
         return dto;
     }

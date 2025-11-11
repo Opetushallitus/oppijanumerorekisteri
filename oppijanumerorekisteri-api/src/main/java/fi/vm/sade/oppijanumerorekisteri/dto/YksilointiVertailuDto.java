@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class YksilointiVertailuDto {
 
-    private HenkiloOidHetuNimiDto oppijanumerorekisteri;
+    private HenkiloHakuDto oppijanumerorekisteri;
     private NimiDto vaestotietojarjestelma;
 
 }

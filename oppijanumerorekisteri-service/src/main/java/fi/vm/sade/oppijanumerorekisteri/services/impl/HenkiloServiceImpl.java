@@ -246,9 +246,10 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public HenkiloOidHetuNimiDto getHenkiloOidHetuNimiByHetu(String hetu) {
-        return henkiloDataRepository.findOidHetuNimiByHetu(hetu)
-                .or(() -> henkiloDataRepository.findOidHetuNimiByKaikkiHetut(hetu))
+    public HenkiloHakuDto getHenkiloOidHetuNimiByHetu(String hetu) {
+        return henkiloDataRepository.findByHetu(hetu)
+                .or(() -> henkiloDataRepository.findByKaikkiHetut(hetu))
+                .map(h -> mapper.map(h, HenkiloHakuDto.class))
                 .orElseThrow(NotFoundException::new);
     }
 

@@ -401,36 +401,6 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     }
 
     @Override
-    public Optional<HenkiloOidHetuNimiDto> findOidHetuNimiByHetu(String hetu) {
-        QHenkilo qHenkilo = QHenkilo.henkilo;
-
-        return Optional.ofNullable(jpa().from(qHenkilo).where(qHenkilo.hetu.eq(hetu))
-                .select(Projections.bean(HenkiloOidHetuNimiDto.class,
-                        qHenkilo.oidHenkilo,
-                        qHenkilo.hetu,
-                        qHenkilo.etunimet,
-                        qHenkilo.kutsumanimi,
-                        qHenkilo.sukunimi))
-                .fetchOne());
-    }
-
-    @Override
-    public Optional<HenkiloOidHetuNimiDto> findOidHetuNimiByKaikkiHetut(String hetu) {
-        QHenkilo qHenkilo = QHenkilo.henkilo;
-        StringPath qHetu = Expressions.stringPath("kaikkiHetut");
-
-        return Optional.ofNullable(jpa().from(qHenkilo)
-                .join(qHenkilo.kaikkiHetut, qHetu).where(qHetu.eq(hetu))
-                .select(Projections.bean(HenkiloOidHetuNimiDto.class,
-                        qHenkilo.oidHenkilo,
-                        qHenkilo.hetu,
-                        qHenkilo.etunimet,
-                        qHenkilo.kutsumanimi,
-                        qHenkilo.sukunimi))
-                .fetchOne());
-    }
-
-    @Override
     public List<Henkilo> findSlavesByMasterOid(String henkiloOid) {
         QHenkilo qMaster = new QHenkilo("master");
         QHenkilo qSlave = new QHenkilo("slave");

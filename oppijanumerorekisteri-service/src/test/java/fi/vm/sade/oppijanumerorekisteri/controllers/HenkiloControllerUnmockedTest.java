@@ -1,9 +1,14 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
+import fi.vm.sade.auditlog.Target;
 import fi.vm.sade.oppijanumerorekisteri.FilesystemHelper;
+import fi.vm.sade.oppijanumerorekisteri.audit.OnrOperation;
+import fi.vm.sade.oppijanumerorekisteri.audit.VirkailijaAuditLogger;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -21,10 +26,17 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("dev")
 @Sql("/sql/truncate_data.sql")
@@ -37,6 +49,10 @@ public class HenkiloControllerUnmockedTest {
 
     @MockitoBean
     PermissionChecker permissionChecker;
+    @Captor
+    ArgumentCaptor<Target> auditCaptor;
+    @MockitoBean
+    private VirkailijaAuditLogger auditLogger;
 
     private final JSONComparator comparator = new CustomComparator(JSONCompareMode.NON_EXTENSIBLE,
             new Customization("*.modified", (o1, o2) -> true),
@@ -70,5 +86,41 @@ public class HenkiloControllerUnmockedTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/henkilo/henkilot.json"), result, comparator);
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
+    public void henkiloOidHetuNimiByHetu() throws Exception {
+        String content = """
+{
+        "etunimet": "Teppo Taneli",
+        "kutsumanimi": "Teppo",
+        "sukunimi": "Testaaja",
+        "hetu": "111111-985K",
+        "oidHenkilo": "1.2.3.4.5"
+}""";
+        mvc.perform(get("/henkilo/henkiloPerusByHetu/111111-985K")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(content));
+        verifyReadAudit("1.2.3.4.5");
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void henkiloOidHetuNimiByHetuNotFound() throws Exception {
+        this.mvc.perform(get("/henkilo/henkiloPerusByHetu/081296-967T")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+        verifyReadNoAudit();
+    }
+
+    private void verifyReadAudit(String expected) {
+        verify(auditLogger).log(eq(OnrOperation.READ), auditCaptor.capture(), any());
+        assertThat(auditCaptor.getValue().asJson().toString()).contains(expected);
+    }
+
+    private void verifyReadNoAudit() {
+        verify(auditLogger, never()).log(eq(OnrOperation.READ), any(), any());
     }
 }
