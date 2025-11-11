@@ -57,19 +57,6 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public Iterable<HenkiloHakuDto> list(HenkiloHakuCriteria criteria, Long offset, Long limit) {
-        KayttooikeudetDto kayttooikeudet = getKayttooikeudet(criteria);
-        if (kayttooikeudet.getOids().map(Collection::isEmpty).orElse(false)) {
-            // käyttäjällä ei ole oikeuksia yhdenkään henkilön tietoihin
-            return emptyList();
-        }
-        HenkiloCriteria henkiloCriteria = createHenkiloCriteria(criteria, kayttooikeudet);
-
-        return henkiloDataRepository.findBy(henkiloCriteria, limit, offset);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Slice<HenkiloMunicipalDobDto> findByMunicipalAndBirthdate(final String municipal, final LocalDate dob, final int page) {
         Long limit = MAX_FETCH_PERSONS + 1L;
         Long offset = (page - 1L) * MAX_FETCH_PERSONS;
@@ -113,21 +100,6 @@ public class HenkiloServiceImpl implements HenkiloService {
         Long limit = count + 1L;
         Long offset = (page - 1L) * count;
         return Slice.of(page, count, henkiloDataRepository.findBy(henkiloCriteria, limit, offset));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Iterable<HenkiloYhteystiedotDto> listWithYhteystiedot(HenkiloHakuCriteria criteria) {
-        KayttooikeudetDto kayttooikeudet = getKayttooikeudet(criteria);
-        if (kayttooikeudet.getOids().map(Collection::isEmpty).orElse(false)) {
-            // käyttäjällä ei ole oikeuksia yhdenkään henkilön tietoihin
-            return emptyList();
-        }
-        HenkiloCriteria henkiloCriteria = createHenkiloCriteria(criteria, kayttooikeudet);
-
-        return mapper.map(henkiloDataRepository.findWithYhteystiedotBy(henkiloCriteria),
-                new TypeBuilder<List<HenkiloYhteystietoDto>>() {}.build(),
-                new TypeBuilder<List<HenkiloYhteystiedotDto>>() {}.build());
     }
 
     @Override

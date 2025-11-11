@@ -13,13 +13,9 @@ import java.util.Set;
 
 public interface HenkiloService {
 
-    Iterable<HenkiloHakuDto> list(HenkiloHakuCriteria criteria, Long offset, Long limit);
-
     Iterable<HenkiloHakuPerustietoDto> list(HenkiloHakuCriteriaDto criteria, Long offset, Long amount);
 
     Slice<HenkiloHakuDto> list(HenkiloHakuCriteria criteria, int page, int count);
-
-    Iterable<HenkiloYhteystiedotDto> listWithYhteystiedot(HenkiloHakuCriteria criteria);
 
     Iterable<HenkiloYhteystiedotDto> listWithYhteystiedotAsAdmin(HenkiloCriteria criteria);
 

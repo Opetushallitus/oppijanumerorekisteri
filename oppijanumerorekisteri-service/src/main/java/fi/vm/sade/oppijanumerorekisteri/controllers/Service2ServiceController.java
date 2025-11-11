@@ -6,7 +6,6 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.HenkiloServiceImpl;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -119,17 +118,6 @@ public class Service2ServiceController {
         });
     }
 
-    @Hidden
-    @Operation(summary ="Hakee henkilöiden perustiedot annetuilla hakukriteereillä",
-            description = "Korvaava rajapinta: POST /kayttooikeus-service/virkailija/haku")
-    @PostMapping("/henkilo/perustiedot")
-    @Deprecated // riippuvuus käyttöoikeuspalveluun
-    public Iterable<HenkiloHakuDto> list(@Validated @RequestBody HenkiloHakuCriteria criteria,
-                                         @RequestParam(required = false) Long offset,
-                                         @RequestParam(required = false) Long amount) {
-        return henkiloService.list(criteria, offset, amount);
-    }
-
     @Operation(summary ="Hakee henkilöiden perustiedot kunnan ja syntymäajan mukaan",
             description = "Tulosjoukko on sivutettu " + HenkiloServiceImpl.MAX_FETCH_PERSONS + " henkilön kokoisiin paloihin.")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
@@ -139,15 +127,6 @@ public class Service2ServiceController {
             @Parameter(description = "Syntymäaika ISO pvm (YYYY-MM-DD)") @PathVariable("birthdate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate birthdate,
             @Parameter(description = "Tulosjoukon sivutus [1..N)") @RequestParam(defaultValue = "1") @Min(1) final int page) {
         return henkiloService.findByMunicipalAndBirthdate(municipal, birthdate, page);
-    }
-
-    @Hidden
-    @Operation(summary ="Hakee henkilöiden perustiedot sekä yhteystiedot annetuilla hakukriteereillä",
-            description = "Korvaava rajapinta: POST /kayttooikeus-service/virkailija/haku")
-    @PostMapping("/henkilo/yhteystiedot")
-    @Deprecated // riippuvuus käyttöoikeuspalveluun
-    public Iterable<HenkiloYhteystiedotDto> listWithYhteystiedot(@RequestBody HenkiloHakuCriteria criteria) {
-        return henkiloService.listWithYhteystiedot(criteria);
     }
 
     @Operation(summary ="Hakee annetun henkilön kaikki yhteystiedot")
