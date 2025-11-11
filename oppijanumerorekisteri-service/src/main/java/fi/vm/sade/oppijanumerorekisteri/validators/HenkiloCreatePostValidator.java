@@ -37,8 +37,25 @@ public class HenkiloCreatePostValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Henkilo henkilo = (Henkilo) o;
 
-        if (henkilo.isYksiloityEidas()) {
-            errors.rejectValue("yksiloityEidas", "eidasyksilointi.not.allowed", "eIDAS-yksilöityjen henkilöiden luonti ei ole sallittu");
+        if (henkilo.isYksiloityEidas() || henkilo.getEidasTunnisteet() != null && henkilo.getEidasTunnisteet().size() > 0) {
+            if (henkilo.getHetu() != null) {
+                errors.rejectValue("hetu", "eidas.and.hetu.not.allowed", "Henkilöllä on hetu, eIDAS-yksilöintiä ei voida tehdä");
+            }
+            if (henkilo.isDuplicate()) {
+                errors.rejectValue("duplicate", "eidas.and.duplicate.not.allowed", "Henkilö on duplikaatti, eIDAS-yksilöintiä ei voida tehdä");
+            }
+        }
+
+        if (henkilo.isYksiloity()) {
+            if (henkilo.getHetu() != null) {
+                errors.rejectValue("yksiloity", "yksiloity.and.hetu.not.allowed", "Henkilöllä on hetu, yksilöintiä ei voida tehdä");
+            }
+            if (henkilo.getEidasTunnisteet() != null && henkilo.getEidasTunnisteet().size() > 0) {
+                errors.rejectValue("yksiloity", "yksiloity.and.eidas.not.allowed", "Henkilöllä on eidas-tunniste, yksilöintiä ei voida tehdä");
+            }
+            if (henkilo.isDuplicate()) {
+                errors.rejectValue("yksiloity", "yksiloity.and.duplicate.not.allowed", "Henkilö on duplikaatti, yksilöintiä ei voida tehdä");
+            }
         }
 
         String hetu = henkilo.getHetu();

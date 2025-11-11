@@ -648,6 +648,18 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     }
 
     @Override
+    public Optional<Henkilo> findByEidasTunniste(String eidasTunniste) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        QEidasTunniste qEidasTunniste = QEidasTunniste.eidasTunniste;
+        return Optional.ofNullable(jpa()
+                .from(qHenkilo)
+                .join(qHenkilo.eidasTunnisteet, qEidasTunniste)
+                .where(qEidasTunniste.tunniste.eq(eidasTunniste))
+                .select(qHenkilo)
+                .fetchOne());
+    }
+
+    @Override
     public List<HenkiloMunicipalDobDto> findByMunicipalAndBirthdate(final String municipal, final LocalDate dob, final long limit, final long offset) {
         JPAQuery<HenkiloMunicipalDobDto> query = jpa().from(henkilo)
                 .select(Projections.constructor(HenkiloMunicipalDobDto.class,

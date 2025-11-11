@@ -1,9 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.mappers;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.models.EidasTunniste;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
-import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
@@ -31,6 +36,10 @@ public class HenkiloMapperTest {
     public void henkiloToHenkiloPerustietoDto() {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+        henkilo.setEidasTunnisteet(List.of(
+                EidasTunniste.builder().tunniste("FOO/BAR/XYZ").created(ZonedDateTime.now()).createdBy("1.2.3.4.5").build(),
+                EidasTunniste.builder().tunniste("FOO/BAR/123").created(ZonedDateTime.now()).createdBy("1.2.3.4.6").build()
+        ));
         HenkiloPerustietoDto henkiloPerustietoDto = modelmapper.map(henkilo, HenkiloPerustietoDto.class);
 
         assertThat(henkiloPerustietoDto.getEtunimet()).isEqualTo("arpa");
@@ -40,13 +49,31 @@ public class HenkiloMapperTest {
         assertThat(henkiloPerustietoDto.getOidHenkilo()).isEqualTo("1.2.3.4.5");
         assertThat(henkiloPerustietoDto.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
         assertThat(henkiloPerustietoDto.getAidinkieli().getKieliTyyppi()).isEqualTo("suomi");
+        assertThat(henkiloPerustietoDto.getEidasTunnisteet())
+                .extracting("tunniste")
+                .containsExactlyInAnyOrder("FOO/BAR/XYZ", "FOO/BAR/123");
     }
 
     @Test
     public void henkiloPerustietoDtoToHenkilo() {
         LocalDate syntymaaika = LocalDate.of(2016, Month.DECEMBER, 20);
-        HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), emptyList(), syntymaaika, new Date());
+        HenkiloPerustietoDto henkiloPerustietoDto = new HenkiloPerustietoDto(
+                "1.2.3.4.5",
+                singletonList("externalid1"),
+                emptyList(),
+                "123456-9999",
+                null,
+                "arpa",
+                "arpa",
+                "kuutio",
+                syntymaaika,
+                false,
+                new KielisyysDto("fi", "suomi"),
+                null,
+                Set.of(new KansalaisuusDto("246")),
+                null,
+                new Date()
+        );
         Henkilo henkilo = modelmapper.map(henkiloPerustietoDto, Henkilo.class);
         assertThat(henkilo.getEtunimet()).isEqualTo("arpa");
         assertThat(henkilo.getKutsumanimi()).isEqualTo("arpa");
@@ -71,7 +98,7 @@ public class HenkiloMapperTest {
 
     @Test
     public void henkiloOidHetuNimiDtoToHenkilo() {
-        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = DtoUtils.createHenkiloOidHetuNimiDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5");
+        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = new HenkiloOidHetuNimiDto("1.2.3.4.5", "123456-9999", "arpa", "arpa", "kuutio");
         Henkilo henkilo = modelmapper.map(henkiloOidHetuNimiDto, Henkilo.class);
         assertThat(henkilo.getEtunimet()).isEqualTo("arpa");
         assertThat(henkilo.getKutsumanimi()).isEqualTo("arpa");
@@ -115,7 +142,7 @@ public class HenkiloMapperTest {
 
     @Test
     public void henkiloDtoToHenkilo() {
-        HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
+        HenkiloDto henkiloDto = createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
         Henkilo henkilo = modelmapper.map(henkiloDto, Henkilo.class);
         assertThat(henkilo).usingRecursiveComparison()
@@ -144,9 +171,9 @@ public class HenkiloMapperTest {
 
     @Test
     public void henkiloDtoNullFieldsAreNotMapped() {
-        HenkiloDto henkiloDtosour = DtoUtils.createHenkiloDto(null, "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
+        HenkiloDto henkiloDtosour = createHenkiloDto(null, "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
-        HenkiloDto henkiloDtodest = DtoUtils.createHenkiloDto("arpa", null, "kuutio", "123456-9999", "1.2.3.4.5", false,
+        HenkiloDto henkiloDtodest = createHenkiloDto("arpa", null, "kuutio", "123456-9999", "1.2.3.4.5", false,
                 "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
         this.modelmapper.map(henkiloDtosour, henkiloDtodest);
         assertThat(henkiloDtodest.getEtunimet()).isNotNull();
@@ -185,5 +212,48 @@ public class HenkiloMapperTest {
     public void henkiloReadDto() {
         assertThat(modelmapper.map(Henkilo.builder().build(), HenkiloReadDto.class).getYksiloityVTJ()).isFalse();
         assertThat(modelmapper.map(Henkilo.builder().yksiloityVTJ(true).build(), HenkiloReadDto.class).getYksiloityVTJ()).isTrue();
+    }
+
+    private HenkiloDto createHenkiloDto(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
+                                    boolean passivoitu, String kielikoodi, String kielityyppi,
+                                    String kansalaisuuskoodi, String kasittelija, String yhteystietoArvo) {
+        return HenkiloDto.builder()
+                .oidHenkilo(oidHenkilo)
+                .hetu(hetu)
+                .kaikkiHetut(null)
+                .passivoitu(passivoitu)
+                .etunimet(etunimet)
+                .kutsumanimi(kutsumanimi)
+                .sukunimi(sukunimi)
+                .aidinkieli(new KielisyysDto(kielikoodi, kielityyppi))
+                .asiointiKieli(new KielisyysDto(kielikoodi, kielityyppi))
+                .kansalaisuus(Collections.singleton(new KansalaisuusDto(kansalaisuuskoodi)))
+                .kasittelijaOid(kasittelija)
+                .syntymaaika(LocalDate.of(1970, Month.OCTOBER, 10))
+                .sukupuoli("1")
+                .kotikunta(null)
+                .oppijanumero("1.2.3.4.5")
+                .turvakielto(null)
+                .eiSuomalaistaHetua(false)
+                .yksiloity(false)
+                .yksiloityVTJ(false)
+                .yksilointiYritetty(false)
+                .yksiloityEidas(false)
+                .eidasTunnisteet(new ArrayList<>())
+                .duplicate(false)
+                .created(new Date(29364800000L))
+                .modified(new Date(29364800000L))
+                .vtjsynced(null)
+                .yhteystiedotRyhma(Collections.singleton(
+                        new YhteystiedotRyhmaDto(
+                            1L,
+                            "yhteystietotyyppi7",
+                            "alkupera2",
+                            true,
+                            Collections.singleton(
+                                new YhteystietoDto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo)))))
+                .yksilointivirheet(new HashSet<>())
+                .passinumerot(null)
+                .build();
     }
 }

@@ -11,13 +11,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-// Note: can return only Henkilo objects
 public interface HenkiloRepository extends QuerydslPredicateExecutor<Henkilo>, JpaRepository<Henkilo, Long>, HenkiloJpaRepository {
     String eagerHenkiloSelect = "select distinct h from Henkilo h " +
            "left join fetch h.aidinkieli " +
            "left join fetch h.asiointiKieli " +
            "left join fetch h.kansalaisuus " +
-           "left join fetch h.eidasTunnisteet " +
            "left join fetch h.identifications " +
            "left join fetch h.externalIds ";
 

@@ -12,6 +12,7 @@
     "aidinkieli": { "kieliKoodi": "sv", "kieliTyyppi": "svenska" },
     "asiointiKieli": { "kieliKoodi": "sv", "kieliTyyppi": "svenska" },
     "kansalaisuus": [{ "kansalaisuusKoodi": "246" }],
+    "eidasTunnisteet": [],
     "sukupuoli": null,
     "modified": 1762768205237,
     "modifiedAt": "2025-11-10T11:50:05.237+02:00"
@@ -31,6 +32,10 @@
     "kansalaisuus": [
       { "kansalaisuusKoodi": "504" },
       { "kansalaisuusKoodi": "246" }
+    ],
+    "eidasTunnisteet": [
+      { "tunniste": "FOO/BAR/QUUX" },
+      { "tunniste": "FOO/BAR/BAZ" }
     ],
     "sukupuoli": null,
     "modified": 1762764605237,

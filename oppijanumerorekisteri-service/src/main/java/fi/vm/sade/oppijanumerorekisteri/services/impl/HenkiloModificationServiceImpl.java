@@ -10,6 +10,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
+import fi.vm.sade.oppijanumerorekisteri.models.EidasTunniste;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
@@ -39,6 +40,8 @@ import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.found;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+
+import java.time.ZonedDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -383,14 +386,14 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     @Override
     @Transactional
     public FindOrCreateWrapper<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(
-            HenkiloPerustietoDto henkiloPerustietoDto) {
+            HenkiloPerustietoCreateDto henkiloPerustietoDto) {
         return findHenkilo(henkiloPerustietoDto)
-                .map(entity -> found(this.mapper.map(entity, HenkiloPerustietoDto.class)))
-                .orElseGet(() -> created(this.createHenkilo(henkiloPerustietoDto)));
+                .map(entity -> found(mapper.map(entity, HenkiloPerustietoDto.class)))
+                .orElseGet(() -> created(createHenkilo(henkiloPerustietoDto)));
     }
 
-    private Optional<Henkilo> findHenkilo(HenkiloPerustietoDto henkiloPerustietoDto) {
-        return Stream.<Function<HenkiloPerustietoDto, Optional<Henkilo>>>of(
+    private Optional<Henkilo> findHenkilo(HenkiloPerustietoCreateDto henkiloPerustietoDto) {
+        return Stream.<Function<HenkiloPerustietoCreateDto, Optional<Henkilo>>>of(
                 dto -> Optional.ofNullable(dto.getOidHenkilo())
                         .flatMap(oid -> Optional.of(this.henkiloService.getEntityByOid(oid))),
                 dto -> Optional.ofNullable(dto.getExternalIds())
@@ -402,11 +405,13 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
                                 henkiloDataRepository.findByIdentifications(identifications))),
                 dto -> Optional.ofNullable(dto.getHetu())
                         .flatMap(hetu -> henkiloDataRepository.findByHetu(hetu)
-                                .or(() -> henkiloDataRepository.findByKaikkiHetut(hetu))))
-                .map(transformer -> transformer.apply(henkiloPerustietoDto))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .findFirst();
+                                .or(() -> henkiloDataRepository.findByKaikkiHetut(hetu))),
+                dto -> Optional.ofNullable(dto.getEidasTunniste())
+                        .flatMap(eidasTunniste -> henkiloDataRepository.findByEidasTunniste(eidasTunniste)))
+            .map(transformer -> transformer.apply(henkiloPerustietoDto))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .findFirst();
     }
 
     private Optional<Henkilo> findUnique(Collection<Henkilo> henkilot) {
@@ -421,24 +426,18 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         return Optional.of(henkilo);
     }
 
-    private HenkiloPerustietoDto createHenkilo(HenkiloPerustietoDto dto) {
-        Henkilo entity = this.mapper.map(dto, Henkilo.class);
-        entity = this.createHenkilo(entity);
-        return this.mapper.map(entity, HenkiloPerustietoDto.class);
-    }
-
-    @Override
-    @Transactional
-    public List<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(List<HenkiloPerustietoDto> henkilot) {
-        // Suorituskyvyn kannalta olisi järkevämpää hakea henkilöt ensin
-        // tunnisteiden avulla ja vasta sitten luoda uudet henkilöt. Tässä
-        // tapauksessa tunnisteita on kuitenkin useita (oid, externalid,
-        // identification, hetu), jolloin toteutuksesta tulisi tarpeettoman
-        // monimutkainen ylläpidon kannalta.
-        return henkilot.stream()
-                .map(this::findOrCreateHenkiloFromPerustietoDto)
-                .map(FindOrCreateWrapper::getDto)
-                .collect(toList());
+    private HenkiloPerustietoDto createHenkilo(HenkiloPerustietoCreateDto dto) {
+        Henkilo entity = mapper.map(dto, Henkilo.class);
+        if (dto.getEidasTunniste() != null) {
+            EidasTunniste eidasTunniste = EidasTunniste.builder()
+                .tunniste(dto.getEidasTunniste())
+                .created(ZonedDateTime.now())
+                .createdBy(userDetailsHelper.getCurrentUserOid())
+                .build();
+            entity.setEidasTunnisteet(List.of(eidasTunniste));
+        }
+        entity = createHenkilo(entity);
+        return mapper.map(entity, HenkiloPerustietoDto.class);
     }
 
     @Override
@@ -514,7 +513,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     public Henkilo createHenkilo(Henkilo henkiloCreate, String kasittelijaOid, boolean validate, String oidHenkilo) {
         if (validate) {
             BindException errors = new BindException(henkiloCreate, "henkiloCreate");
-            this.henkiloCreatePostValidator.validate(henkiloCreate, errors);
+            henkiloCreatePostValidator.validate(henkiloCreate, errors);
             if (errors.hasErrors()) {
                 throw new UnprocessableEntityException(errors);
             }
@@ -529,25 +528,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         henkiloCreate.setCreated(new Date());
         henkiloCreate.setModified(henkiloCreate.getCreated());
         henkiloCreate.setKasittelijaOid(kasittelijaOid);
-
-        if (henkiloCreate.isYksiloityEidas()) {
-            if (henkiloCreate.getHetu() != null) {
-                throw new ValidationException("Henkilöllä on hetu, eIDAS-yyksilöintiä ei voida tehdä");
-            }
-            if (henkiloCreate.isDuplicate()) {
-                throw new ValidationException("Henkilö on duplikaatti, eIDAS-yyksilöintiä ei voida tehdä");
-            }
-        }
-
-        if (henkiloCreate.isYksiloity()) {
-            // yksilöidään hetuton luonnin yhteydessä
-            if (henkiloCreate.getHetu() != null) {
-                throw new ValidationException("Henkilöllä on hetu, yksilöintiä ei voida tehdä");
-            }
-            if (henkiloCreate.isDuplicate()) {
-                throw new ValidationException("Henkilö on duplikaatti, yksilöintiä ei voida tehdä");
-            }
-        }
+        henkiloCreate.setYksiloityEidas(henkiloCreate.getEidasTunnisteet() != null && henkiloCreate.getEidasTunnisteet().size() > 0);
 
         // hylätään tyhjät passinumerot
         if (henkiloCreate.getPassinumerot() != null) {

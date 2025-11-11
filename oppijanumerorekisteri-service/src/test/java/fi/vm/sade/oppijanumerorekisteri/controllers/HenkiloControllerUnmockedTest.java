@@ -38,7 +38,7 @@ public class HenkiloControllerUnmockedTest {
     @MockitoBean
     PermissionChecker permissionChecker;
 
-    private final JSONComparator comparator = new CustomComparator(JSONCompareMode.LENIENT,
+    private final JSONComparator comparator = new CustomComparator(JSONCompareMode.NON_EXTENSIBLE,
             new Customization("*.modified", (o1, o2) -> true),
             new Customization("*.modifiedAt", (o1, o2) -> true));
 
@@ -54,7 +54,6 @@ public class HenkiloControllerUnmockedTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        System.out.println(result);
         JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/henkilo/henkilot.json"), result, comparator);
     }
 
@@ -70,7 +69,6 @@ public class HenkiloControllerUnmockedTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        System.out.println(result);
         JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/henkilo/henkilot.json"), result, comparator);
     }
 }

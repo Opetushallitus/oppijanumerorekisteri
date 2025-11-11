@@ -1,11 +1,16 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
+import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAsiointikieli;
+import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHenkiloPerustietoCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
 import lombok.Setter;
 import lombok.*;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -16,14 +21,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import static org.springframework.util.StringUtils.hasLength;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-// If you do changes to lazy loaded stuff update henkiloWithPerustiedot entity graph from Henkilo.java
-public class HenkiloPerustietoDto implements Serializable {
-    private static final long serialVersionUID = -1263854768854256588L;
+@ValidateHenkiloPerustietoCreateDto
+public class HenkiloPerustietoCreateDto implements Serializable {
+    private static final long serialVersionUID = -1263854768854256587L;
 
     @Size(min = 1)
     private String oidHenkilo;
@@ -32,14 +39,18 @@ public class HenkiloPerustietoDto implements Serializable {
 
     private List<@NotNull @Valid IdentificationDto> identifications;
 
+    @ValidateHetu
     private String hetu;
 
-    private List<EidasTunnisteDto> eidasTunnisteet;
+    private String eidasTunniste;
 
+    @Size(min = 1)
     private String etunimet;
 
+    @Size(min = 1)
     private String kutsumanimi;
 
+    @Size(min = 1)
     private String sukunimi;
 
     private LocalDate syntymaaika;
@@ -48,6 +59,7 @@ public class HenkiloPerustietoDto implements Serializable {
 
     private KielisyysDto aidinkieli;
 
+    @ValidateAsiointikieli
     private KielisyysDto asiointiKieli;
 
     private Set<KansalaisuusDto> kansalaisuus;
@@ -55,6 +67,28 @@ public class HenkiloPerustietoDto implements Serializable {
     private String sukupuoli;
 
     private Date modified;
+
+    private boolean isFind() {
+        return hasLength(getOidHenkilo());
+    }
+
+    @JsonIgnore
+    @AssertTrue(message = "invalid.etunimet.empty")
+    public boolean isEtunimetValidIfCreate() {
+        return isFind() || hasLength(getEtunimet());
+    }
+
+    @JsonIgnore
+    @AssertTrue(message = "invalid.kutsumanimi.empty")
+    public boolean isKutsumanimiValidIfCreate() {
+        return isFind() || hasLength(getKutsumanimi());
+    }
+
+    @JsonIgnore
+    @AssertTrue(message = "invalid.sukunimi.empty")
+    public boolean isSukunimiValidIfCreate() {
+        return isFind() || hasLength(getSukunimi());
+    }
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "Europe/Helsinki", pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     public ZonedDateTime getModifiedAt() {

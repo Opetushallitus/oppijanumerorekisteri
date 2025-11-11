@@ -64,15 +64,8 @@ class OppijaCreateDtoTest {
                 .sukunimi("testi")
                 .syntymaaika(LocalDate.EPOCH)
                 .sukupuoli("1")
-                .aidinkieli(KielisyysDto.builder()
-                        .kieliKoodi("fi")
-                        .kieliTyyppi("?")
-                        .build())
-                .kansalaisuus(of(
-                        KansalaisuusDto.builder()
-                                .kansalaisuusKoodi("FI")
-                                .build()
-                ))
+                .aidinkieli(new KielisyysDto("fi", "suomi"))
+                .kansalaisuus(of(new KansalaisuusDto("246")))
                 .build();
     }
 

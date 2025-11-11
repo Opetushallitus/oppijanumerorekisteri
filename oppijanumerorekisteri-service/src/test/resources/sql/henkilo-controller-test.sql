@@ -36,3 +36,8 @@ INSERT INTO henkilo_kansalaisuus (henkilo_id, kansalaisuus_id) VALUES
 (-1, -2),
 (-2, -1)
 ;
+
+INSERT INTO eidastunniste (id, version, henkilo_id, tunniste, createdby) VALUES
+(-1, 0, -1, 'FOO/BAR/BAZ', '1.2.3.4.5'),
+(-2, 0, -1, 'FOO/BAR/QUUX', '1.2.3.4.6')
+;

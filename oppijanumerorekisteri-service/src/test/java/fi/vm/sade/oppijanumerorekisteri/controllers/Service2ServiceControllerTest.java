@@ -1,7 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
@@ -18,7 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -27,20 +24,16 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import jakarta.validation.ConstraintViolationException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
 
-import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
 import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.ROLE_OPPIJANUMEROREKISTERI_PREFIX;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -54,8 +47,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class Service2ServiceControllerTest  {
     @Autowired
     private MockMvc mvc;
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockitoBean
     private HenkiloService henkiloService;
@@ -150,164 +141,6 @@ public class Service2ServiceControllerTest  {
                 .andExpect(status().isOk()).andExpect(content()
                 .json("[\"1.2.3\"]"));
         verify(this.henkiloService).findHenkiloOidsModifiedSince(criteria, new DateTime(2015,10,12,10,10,10), null, null);
-    }
-
-    @Test
-    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
-    public void findOrCreateNewHenkilo() throws Exception {
-        this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder().etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
-                .hetu("081296-967T").oidHenkilo("1.2.3.4.5").build();
-        String inputContent = "{\"etunimet\": \"arpa\"," +
-                "\"kutsumanimi\": \"arpa\"," +
-                "\"sukunimi\": \"kuutio\"," +
-                "\"hetu\": \"081296-967T\"," +
-                "\"henkiloTyyppi\": \"VIRKAILIJA\"}";
-        given(this.henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(created(henkiloPerustietoDto));
-        this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto")
-                .with(csrf())
-                .content(inputContent)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(content().json(this.objectMapper.writeValueAsString(henkiloPerustietoDto)));
-    }
-
-    @Test
-    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
-    public void findOrCreateHenkiloConstraintViolationExceptionBadHenkiloTyyppi() throws Exception {
-        String content = "{\"etunimet\": \"arpa\"," +
-                "\"kutsumanimi\": \"arpa\"," +
-                "\"sukunimi\": \"kuutio\"," +
-                "\"hetu\": \"081296-967T\"}";
-        given(this.henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willThrow(new ConstraintViolationException("message", null));
-        this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto")
-                .with(csrf())
-                .content(content)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
-    public void findOrCreateHenkiloDataIntegrityViolationException() throws Exception {
-        String content = "{\"etunimet\": \"arpa\"," +
-                "\"kutsumanimi\": \"arpa\"," +
-                "\"sukunimi\": \"kuutio\"," +
-                "\"hetu\": \"081296-967T\"," +
-                "\"henkiloTyyppi\": \"VIRKAILIJA\"}";
-        given(this.henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willThrow(new DataIntegrityViolationException("message"));
-        this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto")
-                .with(csrf())
-                .content(content)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
-    public void findOrCreateHenkiloShouldWorkWithoutHetu() throws Exception {
-        this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder()
-                .etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
-                .build();
-        String inputContent = "{\"etunimet\": \"arpa\"," +
-                "\"kutsumanimi\": \"arpa\"," +
-                "\"sukunimi\": \"kuutio\"," +
-                "\"henkiloTyyppi\": \"VIRKAILIJA\"}";
-        given(this.henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(created(henkiloPerustietoDto));
-        this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto")
-                .with(csrf())
-                .content(inputContent)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(content().json(this.objectMapper.writeValueAsString(henkiloPerustietoDto)));
-    }
-
-    @Test
-    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
-    public void findOrCreateMultipleValid() throws Exception {
-        String inputContent = "[{\"etunimet\": \"arpa\"," +
-                "\"kutsumanimi\": \"arpa\"," +
-                "\"sukunimi\": \"kuutio\"," +
-                "\"hetu\": \"081296-967T\"}]";
-        this.mvc.perform(post("/s2s/henkilo/findOrCreateMultiple")
-                .with(csrf())
-                .content(inputContent)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-        verify(henkiloModificationService).findOrCreateHenkiloFromPerustietoDto(anyList());
-    }
-
-    @Test
-    @WithMockUser
-    public void findOrCreateMultipleInvalid() throws Exception {
-        String inputContent = "[{\"etunimet\": \"arpa\"," +
-                "\"kutsumanimi\": \"arpa\"," +
-                "\"sukunimi\": \"kuutio\"," +
-                "\"hetu\": \"olematon_hetu\"}]";
-        this.mvc.perform(post("/s2s/henkilo/findOrCreateMultiple")
-                .with(csrf())
-                .content(inputContent)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-        verifyNoInteractions(henkiloModificationService);
-    }
-
-    @Test
-    @WithMockUser
-    public void findOrCreateMultipleExternalIdsInvalid() throws Exception {
-        String inputContent = "[{\"etunimet\": \"arpa\"," +
-                "\"kutsumanimi\": \"arpa\"," +
-                "\"sukunimi\": \"kuutio\"," +
-                "\"externalIds\": [\" \"]," +
-                "\"hetu\": \"081296-967T\"}]";
-        this.mvc.perform(post("/s2s/henkilo/findOrCreateMultiple")
-                .with(csrf())
-                .content(inputContent)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-        verifyNoInteractions(henkiloModificationService);
-    }
-
-    @Test
-    @WithMockUser
-    public void findOrCreateMultipleIdenfiticationNull() throws Exception {
-        String inputContent = "[{\"etunimet\": \"arpa\"," +
-                "\"kutsumanimi\": \"arpa\"," +
-                "\"sukunimi\": \"kuutio\"," +
-                "\"identifications\": [null]," +
-                "\"hetu\": \"081296-967T\"}]";
-        this.mvc.perform(post("/s2s/henkilo/findOrCreateMultiple")
-                .with(csrf())
-                .content(inputContent)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-        verifyNoInteractions(henkiloModificationService);
-    }
-
-    @Test
-    @WithMockUser
-    public void findOrCreateMultipleIdenfiticationEmpty() throws Exception {
-        String inputContent = "[{\"etunimet\": \"arpa\"," +
-                "\"kutsumanimi\": \"arpa\"," +
-                "\"sukunimi\": \"kuutio\"," +
-                "\"identifications\": [{}]," +
-                "\"hetu\": \"081296-967T\"}]";
-        this.mvc.perform(post("/s2s/henkilo/findOrCreateMultiple")
-                .with(csrf())
-                .content(inputContent)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-        verifyNoInteractions(henkiloModificationService);
     }
 
     @Test

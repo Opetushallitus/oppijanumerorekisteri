@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.UnauthorizedException;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
@@ -17,6 +18,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -96,16 +98,25 @@ public class Service2ServiceController {
             @ApiResponse(responseCode = "404", description = "Henkilöä ei löydy annetulla OID:lla"),
     })
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
-    @RequestMapping(value = "/findOrCreateHenkiloPerustieto", method = RequestMethod.POST)
-    public ResponseEntity<HenkiloPerustietoDto> createNewHenkilo(@Validated @RequestBody HenkiloPerustietoDto henkiloPerustietoDto) {
-        FindOrCreateWrapper<HenkiloPerustietoDto> wrapper = this.henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDto);
+    @PostMapping(value = "/findOrCreateHenkiloPerustieto")
+    public ResponseEntity<HenkiloPerustietoDto> createNewHenkilo(@Validated @RequestBody HenkiloPerustietoCreateDto dto, Authentication auth) {
+        if (dto.getEidasTunniste() != null && hasRole(auth)) {
+            throw new UnauthorizedException("missing.eidas.role");
+        }
+        FindOrCreateWrapper<HenkiloPerustietoDto> wrapper = henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(dto);
         HenkiloPerustietoDto returnDto = wrapper.getDto();
         if (wrapper.isCreated()) {
-            return ResponseEntity.created(URI.create(this.environment.getProperty("server.contextPath") + "/henkilo/"
+            return ResponseEntity.created(URI.create(environment.getProperty("server.contextPath") + "/henkilo/"
                     + returnDto.getOidHenkilo())).body(returnDto);
         } else {
             return ResponseEntity.ok(returnDto);
         }
+    }
+
+    private boolean hasRole(Authentication auth) {
+        return !auth.getAuthorities().stream().anyMatch(a -> {
+            return "ROLE_APP_OPPIJANUMEROREKISTERI_EIDAS_HENKILON_LUONTI".equals(a.getAuthority());
+        });
     }
 
     @Hidden
@@ -137,13 +148,6 @@ public class Service2ServiceController {
     @Deprecated // riippuvuus käyttöoikeuspalveluun
     public Iterable<HenkiloYhteystiedotDto> listWithYhteystiedot(@RequestBody HenkiloHakuCriteria criteria) {
         return henkiloService.listWithYhteystiedot(criteria);
-    }
-
-    @Operation(summary ="Hakee tai luo uudet henkilöt annetuista henkilöiden perustiedoista")
-    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
-    @RequestMapping(value = "/henkilo/findOrCreateMultiple", method = RequestMethod.POST)
-    public List<HenkiloPerustietoDto> findOrCreate(@Validated @RequestBody ValidList<HenkiloPerustietoDto> henkilot) {
-        return henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(henkilot);
     }
 
     @Operation(summary ="Hakee annetun henkilön kaikki yhteystiedot")
