@@ -7,6 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.Oppijanumerore
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.UnauthorizedException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
@@ -386,10 +387,15 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     @Override
     @Transactional
     public FindOrCreateWrapper<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(
-            HenkiloPerustietoCreateDto henkiloPerustietoDto) {
+            HenkiloPerustietoCreateDto henkiloPerustietoDto, boolean hasEidasLuontiRole) {
         return findHenkilo(henkiloPerustietoDto)
                 .map(entity -> found(mapper.map(entity, HenkiloPerustietoDto.class)))
-                .orElseGet(() -> created(createHenkilo(henkiloPerustietoDto)));
+                .orElseGet(() -> {
+                    if (henkiloPerustietoDto.getEidasTunniste() != null && !hasEidasLuontiRole) {
+                        throw new UnauthorizedException("missing.eidas.authorization");
+                    }
+                    return created(createHenkilo(henkiloPerustietoDto));
+                });
     }
 
     private Optional<Henkilo> findHenkilo(HenkiloPerustietoCreateDto henkiloPerustietoDto) {

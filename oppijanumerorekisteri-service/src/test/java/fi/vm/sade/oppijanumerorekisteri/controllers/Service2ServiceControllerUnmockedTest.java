@@ -67,7 +67,7 @@ public class Service2ServiceControllerUnmockedTest {
     @Test
     @WithMockUser(
         username = "1.2.3.4.5",
-        roles = {"APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA", "APP_OPPIJANUMEROREKISTERI_EIDAS_HENKILON_LUONTI"}
+        roles = {"APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA"}
     )
     public void findOrCreateHenkiloFindsByEidasTunniste() throws Exception {
         String content = """

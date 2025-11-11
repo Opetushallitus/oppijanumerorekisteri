@@ -349,7 +349,7 @@ public class HenkiloModificationServiceImplTest {
         when(henkiloDataRepositoryMock.findByOidHenkilo(any())).thenReturn(Optional.of(henkilo));
         given(this.henkiloService.getEntityByOid(eq("oid1"))).willReturn(henkilo);
 
-        service.findOrCreateHenkiloFromPerustietoDto(input);
+        service.findOrCreateHenkiloFromPerustietoDto(input, false);
 
         verify(this.henkiloService).getEntityByOid(eq("oid1"));
         verify(henkiloDataRepositoryMock, never()).save(any(Henkilo.class));
@@ -361,7 +361,7 @@ public class HenkiloModificationServiceImplTest {
         when(henkiloDataRepositoryMock.findByOidHenkilo(any())).thenReturn(Optional.empty());
         given(this.henkiloService.getEntityByOid(eq("oid1"))).willThrow(new NotFoundException());
 
-        Throwable throwable = catchThrowable(() -> service.findOrCreateHenkiloFromPerustietoDto(input));
+        Throwable throwable = catchThrowable(() -> service.findOrCreateHenkiloFromPerustietoDto(input, false));
 
         assertThat(throwable).isInstanceOf(NotFoundException.class);
         verify(henkiloService).getEntityByOid(eq("oid1"));
@@ -374,7 +374,7 @@ public class HenkiloModificationServiceImplTest {
         Henkilo henkilo = new Henkilo();
         when(henkiloDataRepositoryMock.findByExternalIds(any())).thenReturn(singleton(henkilo));
 
-        service.findOrCreateHenkiloFromPerustietoDto(input);
+        service.findOrCreateHenkiloFromPerustietoDto(input, false);
 
         verify(henkiloDataRepositoryMock).findByExternalIds(eq(singletonList("externalid1")));
         verify(henkiloDataRepositoryMock, never()).save(any(Henkilo.class));
@@ -389,7 +389,7 @@ public class HenkiloModificationServiceImplTest {
         Henkilo henkilo = new Henkilo();
         when(henkiloDataRepositoryMock.findByIdentifications(any())).thenReturn(singleton(henkilo));
 
-        service.findOrCreateHenkiloFromPerustietoDto(input);
+        service.findOrCreateHenkiloFromPerustietoDto(input, false);
 
         verify(henkiloDataRepositoryMock).findByIdentifications(eq(singletonList(identification)));
         verify(henkiloDataRepositoryMock, never()).save(any(Henkilo.class));

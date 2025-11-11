@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.UnauthorizedException;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
@@ -90,7 +89,8 @@ public class Service2ServiceController {
                     + "Jos OID on annettu ja henkilöä ei löydy sillä, palautetaan 404\n."
                     + "Muussa tapauksessa henkilöä yritetään etsiä muilla tunnistetiedoilla.\n"
                     + "Jos henkilöä ei löydy, luodaan uusi henkilö annetuista tiedoista (ml. kaikki tunnistetiedot).\n"
-                    + "eIDAS-tunnistetta ja hetua ei voi lähettää samassa pyynnössä. Tällaiset pyynnöt palauttavat aina HTTP 400.")
+                    + "eIDAS-tunnistetta ja hetua ei voi lähettää samassa pyynnössä. Tällaiset pyynnöt palauttavat aina HTTP 400.\n"
+                    + "Henkilön luonti eIDAS-tunnisteella vaatii erillisen käyttöoikeuden.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Henkilö löytyi jollakin annetuista tunnisteista"),
             @ApiResponse(responseCode = "201", description = "Henkilö luotiin annetuista perustiedoista"),
@@ -100,10 +100,7 @@ public class Service2ServiceController {
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
     @PostMapping(value = "/findOrCreateHenkiloPerustieto")
     public ResponseEntity<HenkiloPerustietoDto> createNewHenkilo(@Validated @RequestBody HenkiloPerustietoCreateDto dto, Authentication auth) {
-        if (dto.getEidasTunniste() != null && hasEidasHenkilonLuontiRole(auth)) {
-            throw new UnauthorizedException("missing.eidas.role");
-        }
-        FindOrCreateWrapper<HenkiloPerustietoDto> wrapper = henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(dto);
+        FindOrCreateWrapper<HenkiloPerustietoDto> wrapper = henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(dto, hasEidasLuontiRole(auth));
         HenkiloPerustietoDto returnDto = wrapper.getDto();
         if (wrapper.isCreated()) {
             return ResponseEntity.created(URI.create(environment.getProperty("server.contextPath") + "/henkilo/"
@@ -113,8 +110,8 @@ public class Service2ServiceController {
         }
     }
 
-    private boolean hasEidasHenkilonLuontiRole(Authentication auth) {
-        return !auth.getAuthorities().stream().anyMatch(a -> {
+    private boolean hasEidasLuontiRole(Authentication auth) {
+        return auth.getAuthorities().stream().anyMatch(a -> {
             return "ROLE_APP_OPPIJANUMEROREKISTERI_EIDAS_HENKILON_LUONTI".equals(a.getAuthority());
         });
     }
