@@ -8,12 +8,16 @@ import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HakemusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDuplicateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
-import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
+import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
+import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
+import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
 import fi.vm.sade.oppijanumerorekisteri.models.KotikuntaHistoria;
+import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
+import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
@@ -30,7 +34,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.google.common.collect.Sets;
+
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -78,9 +85,9 @@ public class DuplicateServiceImplTest {
 
     @Test
     public void getHenkiloDuplicateDtoListShouldReturnApplicationsFromAtaruAndHakuApp() {
-        Henkilo henkilo1 = EntityUtils.createHenkilo("arpa noppa", "arpa", "kuutio", "hetu", "1.2.3.4.5", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo");
-        Henkilo henkilo2 = EntityUtils.createHenkilo("arpa2 noppa2", "arpa2", "kuutio2", "hetu2", "1.2.3.4.6", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo");
-        Henkilo henkilo3 = EntityUtils.createHenkilo("arpa3 noppa3", "arpa3", "kuutio3", "hetu3", "1.3.3.4.7", false, "fi", "FI", "2.3.34.56", new Date(), new Date(), "2.3.34.5", "arvo");
+        Henkilo henkilo1 = createHenkilo("arpa noppa", "arpa", "kuutio", "hetu", "1.2.3.4.5", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo", LocalDate.of(1970, Month.OCTOBER, 10));
+        Henkilo henkilo2 = createHenkilo("arpa2 noppa2", "arpa2", "kuutio2", "hetu2", "1.2.3.4.6", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo", LocalDate.of(1970, Month.OCTOBER, 10));
+        Henkilo henkilo3 = createHenkilo("arpa3 noppa3", "arpa3", "kuutio3", "hetu3", "1.3.3.4.7", false, "fi", "FI", "2.3.34.56", new Date(), new Date(), "2.3.34.5", "arvo", LocalDate.of(1970, Month.OCTOBER, 10));
         List<Henkilo> henkilos = Arrays.asList(henkilo1, henkilo2, henkilo3);
         given(this.userDetailsHelper.getCurrentUserOid()).willReturn("1.2.3.4.5");
         HashMap<String, Object> hakemus1 = new HashMap<>();
@@ -114,24 +121,24 @@ public class DuplicateServiceImplTest {
 
     @Test
     public void linkHenkilosShouldMoveAllIdentificationsToNewMaster() {
-        Henkilo henkilo1 = EntityUtils.createHenkilo("arpa noppa", "arpa", "kuutio", null, "1.2.3.4.5", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo");
-        Identification arpaIdentification1 = EntityUtils.createIdentification(IdpEntityId.email, "arpa@noppa.com");
-        Identification arpaIdentification2 = EntityUtils.createIdentification(IdpEntityId.google, "arpahaka");
+        Henkilo henkilo1 = createHenkilo("arpa noppa", "arpa", "kuutio", null, "1.2.3.4.5", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo", LocalDate.of(1970, Month.OCTOBER, 10));
+        Identification arpaIdentification1 = new Identification(IdpEntityId.email, "arpa@noppa.com");
+        Identification arpaIdentification2 = new Identification(IdpEntityId.google, "arpahaka");
         HashSet<Identification> identification1 = new HashSet<>();
         identification1.add(arpaIdentification1);
         identification1.add(arpaIdentification2);
         henkilo1.setIdentifications(identification1);
 
-        Henkilo henkilo2 = EntityUtils.createHenkilo("arpa2 noppa2", "arpa2", "kuutio2", null, "1.2.3.4.6", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo");
-        Identification arpa2Identification1 = EntityUtils.createIdentification(IdpEntityId.email, "arpa2@noppa2.com");
-        Identification arpa2Identification2 = EntityUtils.createIdentification(IdpEntityId.eidas, "eidas");
+        Henkilo henkilo2 = createHenkilo("arpa2 noppa2", "arpa2", "kuutio2", null, "1.2.3.4.6", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo", LocalDate.of(1970, Month.OCTOBER, 10));
+        Identification arpa2Identification1 = new Identification(IdpEntityId.email, "arpa2@noppa2.com");
+        Identification arpa2Identification2 = new Identification(IdpEntityId.eidas, "eidas");
         HashSet<Identification> identification2 = new HashSet<>();
         identification2.add(arpa2Identification1);
         identification2.add(arpa2Identification2);
         henkilo2.setIdentifications(identification2);
 
-        Henkilo henkilo3 = EntityUtils.createHenkilo("arpa3 noppa3", "arpa3", "kuutio3", null, "1.3.3.4.7", false, "fi", "FI", "2.3.34.56", new Date(), new Date(), "2.3.34.5", "arvo");
-        Identification arpa3Identification1 = EntityUtils.createIdentification(IdpEntityId.email, "arpa3@noppa3.com");
+        Henkilo henkilo3 = createHenkilo("arpa3 noppa3", "arpa3", "kuutio3", null, "1.3.3.4.7", false, "fi", "FI", "2.3.34.56", new Date(), new Date(), "2.3.34.5", "arvo", LocalDate.of(1970, Month.OCTOBER, 10));
+        Identification arpa3Identification1 = new Identification(IdpEntityId.email, "arpa3@noppa3.com");
         HashSet<Identification> identification3 = new HashSet<>();
         identification3.add(arpa3Identification1);
         henkilo3.setIdentifications(identification3);
@@ -162,11 +169,11 @@ public class DuplicateServiceImplTest {
 
     @Test
     public void removeDuplicateHetuAndLinkShouldMoveHetusToNewMasterAndRemoveThemFromNewSlave() {
-        Henkilo existingDuplicateHenkilo = EntityUtils.createHenkilo("Testi Henkilö", "Testi", "Sukunimi1", "hetu", "1.2.3.4.5", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo");
+        Henkilo existingDuplicateHenkilo = createHenkilo("Testi Henkilö", "Testi", "Sukunimi1", "hetu", "1.2.3.4.5", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo", LocalDate.of(1970, Month.OCTOBER, 10));
         existingDuplicateHenkilo.addHetu("hetu1", "hetu2");
         existingDuplicateHenkilo.setYksiloityVTJ(true);
 
-        Henkilo newStronglyIdentifiedHenkilo = EntityUtils.createHenkilo("Testi2 Henkilö2", "Testi2", "Sukunimi2", "hetu", "2.3.4.5.6", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo");
+        Henkilo newStronglyIdentifiedHenkilo = createHenkilo("Testi2 Henkilö2", "Testi2", "Sukunimi2", "hetu", "2.3.4.5.6", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo", LocalDate.of(1970, Month.OCTOBER, 10));
 
         given(this.henkiloRepository.findByHetu("hetu")).willReturn(Optional.of(existingDuplicateHenkilo));
         given(this.henkiloRepository.findByOidHenkilo("1.2.3.4.5")).willReturn(Optional.of(existingDuplicateHenkilo));
@@ -183,12 +190,12 @@ public class DuplicateServiceImplTest {
     public void removeDuplicateHetuAndLinkShouldRemoveKotikuntaHistorias() {
         Long duplicateId = 12345l;
         List<KotikuntaHistoria> kotikuntaHistoria = List.of(new KotikuntaHistoria(duplicateId, "091", LocalDate.now(), null));
-        Henkilo existingDuplicateHenkilo = EntityUtils.createHenkilo("Testi Henkilö", "Testi", "Sukunimi1", "hetu", "1.2.3.4.5", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo");
+        Henkilo existingDuplicateHenkilo = createHenkilo("Testi Henkilö", "Testi", "Sukunimi1", "hetu", "1.2.3.4.5", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo", LocalDate.of(1970, Month.OCTOBER, 10));
         existingDuplicateHenkilo.addHetu("hetu1", "hetu2");
         existingDuplicateHenkilo.setYksiloityVTJ(true);
         existingDuplicateHenkilo.setId(duplicateId);
 
-        Henkilo newStronglyIdentifiedHenkilo = EntityUtils.createHenkilo("Testi2 Henkilö2", "Testi2", "Sukunimi2", "hetu", "2.3.4.5.6", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo");
+        Henkilo newStronglyIdentifiedHenkilo = createHenkilo("Testi2 Henkilö2", "Testi2", "Sukunimi2", "hetu", "2.3.4.5.6", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo", LocalDate.of(1970, Month.OCTOBER, 10));
 
         given(henkiloRepository.findByHetu("hetu")).willReturn(Optional.of(existingDuplicateHenkilo));
         given(henkiloRepository.findByOidHenkilo("1.2.3.4.5")).willReturn(Optional.of(existingDuplicateHenkilo));
@@ -232,5 +239,31 @@ public class DuplicateServiceImplTest {
         List<HenkiloDuplicateDto> result = duplicateService.findDuplicates(subject.getOidHenkilo());
 
         assertThat(result).isEmpty();
+    }
+
+    private Henkilo createHenkilo(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
+                                       boolean passivoitu, String kielikoodi, String kielityyppi,
+                                       String kansalaisuuskoodi, Date luontiMuokkausSyncedPvm, Date lastVtjSynced, String kasittelija, String yhteystietoArvo, LocalDate syntymaAika) {
+        return Henkilo.builder()
+                .oidHenkilo(oidHenkilo)
+                .hetu(hetu)
+                .etunimet(etunimet)
+                .kutsumanimi(kutsumanimi)
+                .sukunimi(sukunimi)
+                .aidinkieli(kielikoodi != null ? new Kielisyys(kielikoodi, kielityyppi) : null)
+                .asiointiKieli(kielikoodi != null ? new Kielisyys(kielikoodi, kielityyppi) : null)
+                .created(luontiMuokkausSyncedPvm)
+                .modified(luontiMuokkausSyncedPvm)
+                .vtjsynced(lastVtjSynced)
+                .passivoitu(passivoitu)
+                .kansalaisuus(Sets.newHashSet(kansalaisuuskoodi != null ? new Kansalaisuus(kansalaisuuskoodi) : null))
+                .yhteystiedotRyhma(Sets.newHashSet(new YhteystiedotRyhma(
+                        "yhteystietotyyppi2",
+                        "alkupera2",
+                        false,
+                        Collections.singleton(new Yhteystieto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo)))))
+                .kasittelijaOid(kasittelija)
+                .syntymaaika(syntymaAika)
+                .build();
     }
 }

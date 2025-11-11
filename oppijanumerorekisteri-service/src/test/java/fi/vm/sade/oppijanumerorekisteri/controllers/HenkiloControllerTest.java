@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Sets;
 
 import fi.vm.sade.auditlog.Target;
 import fi.vm.sade.oppijanumerorekisteri.FilesystemHelper;
@@ -12,15 +13,15 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ConflictException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
-import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
+import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
+import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.UserDetailsHelperImpl;
-import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,12 +41,13 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.validation.BindException;
 
 import jakarta.validation.ValidationException;
+
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
 
 import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.ROLE_OPPIJANUMEROREKISTERI_PREFIX;
 import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.ROOT_ORGANISATION_SUFFIX;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -111,8 +113,7 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
     public void henkiloOidHetuNimiByHetu() throws Exception {
-        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = DtoUtils.createHenkiloOidHetuNimiDto("arpa", "arpa", "kuutio", "081296-967T",
-                "1.2.3.4.5");
+        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = new HenkiloOidHetuNimiDto("1.2.3.4.5", "081296-967T", "arpa", "arpa", "kuutio");
         String content = "{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
@@ -186,7 +187,7 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void updateHenkilo() throws Exception {
-        HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
+        HenkiloUpdateDto henkiloUpdateDto = createHenkiloUpdateDto("arpa", "arpa", "kuutio",
                 "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
                 "+358 50 555 7463");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
@@ -201,7 +202,7 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void updateHenkiloBadRequest() throws Exception {
-        HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
+        HenkiloUpdateDto henkiloUpdateDto = createHenkiloUpdateDto("arpa", "arpa", "kuutio",
                 "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
                 "This should be valid email address");
         henkiloUpdateDto.getYhteystiedotRyhma().stream().findAny()
@@ -219,7 +220,7 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void updateHenkiloONRValidationException() throws Exception {
-        HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
+        HenkiloUpdateDto henkiloUpdateDto = createHenkiloUpdateDto("arpa", "arpa", "kuutio",
                 "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
                 "+358 50 555 7463");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
@@ -236,7 +237,7 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void updateHenkiloNotFoundException() throws Exception {
-        HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
+        HenkiloUpdateDto henkiloUpdateDto = createHenkiloUpdateDto("arpa", "arpa", "kuutio",
                 "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
                 "+358 50 555 7463");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
@@ -253,7 +254,7 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void updateHenkiloValidationException() throws Exception {
-        HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
+        HenkiloUpdateDto henkiloUpdateDto = createHenkiloUpdateDto("arpa", "arpa", "kuutio",
                 "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
                 "arpa@kuutio.fi");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
@@ -270,7 +271,7 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void findByOid() throws Exception {
-        HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "081296-967T", "1.2.3.4.5",
+        HenkiloDto henkiloDto = createHenkiloDto("arpa", "arpa", "kuutio", "081296-967T", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
         String returnContent = this.objectMapper.writeValueAsString(henkiloDto);
         given(this.henkiloService.getHenkilosByOids(Collections.singletonList("1.2.3.4.5")))
@@ -293,7 +294,7 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void createHenkiloFromHenkiloCreateDto() throws Exception {
-        HenkiloCreateDto henkiloDtoInput = DtoUtils.createHenkiloCreateDto("arpa", "arpa", "kuutio", "081296-967T", null,
+        HenkiloCreateDto henkiloDtoInput = createHenkiloCreateDto("arpa", "arpa", "kuutio", "081296-967T", null,
                 false, "fi", "suomi", "246", "arpa@kuutio.fi");
         henkiloDtoInput.setYhteystiedotRyhma(Collections.singleton(YhteystiedotRyhmaDto.builder()
                 .ryhmaAlkuperaTieto("alkupera1")
@@ -314,7 +315,11 @@ public class HenkiloControllerTest {
                 .asiointiKieli(new Kielisyys("fi", "suomi"))
                 .passivoitu(false)
                 .kansalaisuus(Set.of(new Kansalaisuus("246")))
-                .yhteystiedotRyhma(Set.of(EntityUtils.createYhteystiedotRyhma("arpa@kuutio.fi")))
+                .yhteystiedotRyhma(Sets.newHashSet(new YhteystiedotRyhma(
+                        "yhteystietotyyppi2",
+                        "alkupera2",
+                        false,
+                        Collections.singleton(new Yhteystieto(YhteystietoTyyppi.YHTEYSTIETO_SAHKOPOSTI, "arpa@kuutio.fi")))))
                 .build();
         given(this.henkiloModificationService.createAndYksiloiHenkilo(any(HenkiloCreateDto.class))).willReturn(henkiloDtoOutput);
         this.mvc.perform(post("/henkilo").content(this.objectMapper.writeValueAsString(henkiloDtoInput))
@@ -327,7 +332,7 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void createHenkiloFromHenkiloCreateDtoInvalidInputHetu() throws Exception {
-        HenkiloCreateDto henkiloDtoInput = DtoUtils.createHenkiloCreateDto("arpa", "arpa", "kuutio", "bad_hetu", null,
+        HenkiloCreateDto henkiloDtoInput = createHenkiloCreateDto("arpa", "arpa", "kuutio", "bad_hetu", null,
                 false, "fi", "suomi", "246", "arpa@kuutio.fi");
         this.mvc.perform(post("/henkilo").content(this.objectMapper.writeValueAsString(henkiloDtoInput))
                         .with(csrf())
@@ -339,7 +344,7 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void createHenkiloShouldValidateYhteystietoTyyppi() throws Exception {
-        HenkiloCreateDto henkiloDtoInput = DtoUtils.createHenkiloCreateDto("arpa", "arpa", "kuutio", "081296-967T", null,
+        HenkiloCreateDto henkiloDtoInput = createHenkiloCreateDto("arpa", "arpa", "kuutio", "081296-967T", null,
                 false, "fi", "suomi", "246", "arpa@kuutio.fi");
         henkiloDtoInput.setYhteystiedotRyhma(Collections.singleton(YhteystiedotRyhmaDto.builder()
                 .ryhmaAlkuperaTieto("alkupera1")
@@ -360,7 +365,7 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void findByIdpAndIdentifier() throws Exception {
-        HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "081296-967T", "1.2.3.4.5",
+        HenkiloDto henkiloDto = createHenkiloDto("arpa", "arpa", "kuutio", "081296-967T", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
         given(this.henkiloService.getHenkiloByIDPAndIdentifier(IdpEntityId.email, "arpa@kuutio.fi")).willReturn(henkiloDto);
         this.mvc.perform(get("/henkilo/identification").param("idp", "email").param("id", "arpa@kuutio.fi"))
@@ -441,39 +446,6 @@ public class HenkiloControllerTest {
                 .andExpect(status().isNotFound());
         verifyReadNoAudit();
     }
-
-    @Test
-    @WithMockUser(username = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
-    public void findHenkilotByHetusList() throws Exception {
-        HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "081296-967T",
-                "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), emptyList(), null, new Date());
-        String hetuList = "[\"081296-967T\"]";
-        String returnContent = "[" +
-                "  {" +
-                "    \"aidinkieli\": {" +
-                "      \"kieliKoodi\": \"fi\"," +
-                "      \"kieliTyyppi\": \"suomi\"" +
-                "    }," +
-                "    \"asiointiKieli\": {" +
-                "      \"kieliKoodi\": \"fi\"," +
-                "      \"kieliTyyppi\": \"suomi\"" +
-                "    }," +
-                "    \"etunimet\": \"arpa\"," +
-                "    \"hetu\": \"081296-967T\"," +
-                "    \"kutsumanimi\": \"arpa\"," +
-                "    \"oidHenkilo\": \"1.2.3.4.5\"," +
-                "    \"sukunimi\": \"kuutio\"" +
-                "  }" +
-                "]";
-        given(this.henkiloService.getHenkiloPerustietoByHetus(Collections.singletonList("081296-967T")))
-                .willReturn(Collections.singletonList(henkiloPerustietoDto));
-        this.mvc.perform(post("/henkilo/henkiloPerustietosByHenkiloHetuList").content(hetuList)
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andExpect(content().json(returnContent));
-        verifyReadAudit("1.2.3.4.5");
-    }
-
 
     @WithMockUser(username = "1.2.3.4.5")
     public void removeAccessRightsNoAccess() throws Exception {
@@ -634,5 +606,81 @@ public class HenkiloControllerTest {
 
     private void verifyReadNoAudit() {
         verify(auditLogger, never()).log(eq(OnrOperation.READ), any(), any());
+    }
+
+    private HenkiloCreateDto createHenkiloCreateDto(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
+                                       boolean passivoitu, String kielikoodi, String kielityyppi,
+                                       String kansalaisuuskoodi, String yhteystietoArvo) {
+        KielisyysDto aidinkieli = new KielisyysDto(kielikoodi, kielityyppi);
+
+        KansalaisuusDto kansalaisuus = new KansalaisuusDto(kansalaisuuskoodi);
+        LocalDate syntymaAika = LocalDate.of(1970, 10, 14);
+
+        YhteystiedotRyhmaDto yhteystiedotRyhmaDto = new YhteystiedotRyhmaDto(1L, "yhteystietotyyppi7", "alkupera2",
+                true, Collections.singleton(new YhteystietoDto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo)));
+
+        return new HenkiloCreateDto(hetu, passivoitu, etunimet, kutsumanimi, sukunimi, aidinkieli,
+                aidinkieli, Collections.singleton(kansalaisuus), syntymaAika, "1",
+                null, "1.2.3.4.5", null, false, false,
+                false, false, false, null, Collections.singleton(yhteystiedotRyhmaDto), Set.of());
+    }
+
+    private HenkiloUpdateDto createHenkiloUpdateDto(String etunimet, String kutsumanimi, String sukunimi, String hetu,
+                                                          String oidHenkilo, String kielikoodi, String kielityyppi,
+                                                          String kansalaisuuskoodi, String yhteystietoArvo) {
+        KielisyysDto aidinkieli = new KielisyysDto(kielikoodi, kielityyppi);
+        KielisyysDto asiointikieli = new KielisyysDto(kielikoodi, kielityyppi);
+        KansalaisuusDto kansalaisuus = new KansalaisuusDto(kansalaisuuskoodi);
+        YhteystiedotRyhmaDto yhteystiedotRyhma = new YhteystiedotRyhmaDto(1L, "yhteystietotyyppi7", "alkupera2",
+                true, Collections.singleton(new YhteystietoDto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo)));
+
+        LocalDate syntymaAika = LocalDate.of(1970, Month.OCTOBER, 10);
+
+        return new HenkiloUpdateDto(oidHenkilo, null, etunimet, kutsumanimi, sukunimi, hetu,
+                syntymaAika, null, "1", null, asiointikieli, aidinkieli,
+                Collections.singleton(kansalaisuus), Set.of(yhteystiedotRyhma));
+    }
+
+    private HenkiloDto createHenkiloDto(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
+                                    boolean passivoitu, String kielikoodi, String kielityyppi,
+                                    String kansalaisuuskoodi, String kasittelija, String yhteystietoArvo) {
+        return HenkiloDto.builder()
+                .oidHenkilo(oidHenkilo)
+                .hetu(hetu)
+                .kaikkiHetut(null)
+                .passivoitu(passivoitu)
+                .etunimet(etunimet)
+                .kutsumanimi(kutsumanimi)
+                .sukunimi(sukunimi)
+                .aidinkieli(new KielisyysDto(kielikoodi, kielityyppi))
+                .asiointiKieli(new KielisyysDto(kielikoodi, kielityyppi))
+                .kansalaisuus(Collections.singleton(new KansalaisuusDto(kansalaisuuskoodi)))
+                .kasittelijaOid(kasittelija)
+                .syntymaaika(LocalDate.of(1970, Month.OCTOBER, 10))
+                .sukupuoli("1")
+                .kotikunta(null)
+                .oppijanumero("1.2.3.4.5")
+                .turvakielto(null)
+                .eiSuomalaistaHetua(false)
+                .yksiloity(false)
+                .yksiloityVTJ(false)
+                .yksilointiYritetty(false)
+                .yksiloityEidas(false)
+                .eidasTunnisteet(new ArrayList<>())
+                .duplicate(false)
+                .created(new Date(29364800000L))
+                .modified(new Date(29364800000L))
+                .vtjsynced(null)
+                .yhteystiedotRyhma(Collections.singleton(
+                        new YhteystiedotRyhmaDto(
+                            1L,
+                            "yhteystietotyyppi7",
+                            "alkupera2",
+                            true,
+                            Collections.singleton(
+                                new YhteystietoDto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo)))))
+                .yksilointivirheet(new HashSet<>())
+                .passinumerot(null)
+                .build();
     }
 }

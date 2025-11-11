@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.mappers;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
-import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +18,14 @@ public class KansalaisuusMapperTest {
 
     @Test
     public void KansalaisuusToKansalaisuusDto() {
-        Kansalaisuus kansalaisuus = EntityUtils.createKansalaisuus("246");
+        Kansalaisuus kansalaisuus = new Kansalaisuus("246");
         KansalaisuusDto kansalaisuusDto = modelmapper.map(kansalaisuus, KansalaisuusDto.class);
         assertThat(kansalaisuusDto.getKansalaisuusKoodi()).isEqualTo("246");
     }
 
     @Test
     public void KansalaisuusDtoToKansalaisuus() {
-        KansalaisuusDto kansalaisuusDto = DtoUtils.createKansalaisuusDto("246");
+        KansalaisuusDto kansalaisuusDto = new KansalaisuusDto("246");
         Kansalaisuus kansalaisuus = modelmapper.map(kansalaisuusDto, Kansalaisuus.class);
         assertThat(kansalaisuus.getKansalaisuusKoodi()).isEqualTo("246");
     }

@@ -3,12 +3,17 @@ package fi.vm.sade.oppijanumerorekisteri.mappers;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.EidasTunniste;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
+import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
+import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import com.google.common.collect.Sets;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -34,8 +39,8 @@ public class HenkiloMapperTest {
 
     @Test
     public void henkiloToHenkiloPerustietoDto() {
-        Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+        Henkilo henkilo = createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
+                "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi", LocalDate.of(1970, Month.OCTOBER, 10));
         henkilo.setEidasTunnisteet(List.of(
                 EidasTunniste.builder().tunniste("FOO/BAR/XYZ").created(ZonedDateTime.now()).createdBy("1.2.3.4.5").build(),
                 EidasTunniste.builder().tunniste("FOO/BAR/123").created(ZonedDateTime.now()).createdBy("1.2.3.4.6").build()
@@ -86,8 +91,8 @@ public class HenkiloMapperTest {
 
     @Test
     public void henkiloToHenkiloOidHetuNimiDto() {
-        Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+        Henkilo henkilo = createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
+                "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi", LocalDate.of(1970, Month.OCTOBER, 10));
         HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = modelmapper.map(henkilo, HenkiloOidHetuNimiDto.class);
         assertThat(henkiloOidHetuNimiDto.getEtunimet()).isEqualTo("arpa");
         assertThat(henkiloOidHetuNimiDto.getKutsumanimi()).isEqualTo("arpa");
@@ -109,8 +114,8 @@ public class HenkiloMapperTest {
 
     @Test
     public void henkiloToHenkiloDto() {
-        Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+        Henkilo henkilo = createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
+                "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi", LocalDate.of(1970, Month.OCTOBER, 10));
         henkilo.setPassinumerot(Set.of("passinumero"));
         HenkiloDto henkiloDto = modelmapper.map(henkilo, HenkiloDto.class);
         assertThat(henkiloDto).usingRecursiveComparison()
@@ -254,6 +259,32 @@ public class HenkiloMapperTest {
                                 new YhteystietoDto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo)))))
                 .yksilointivirheet(new HashSet<>())
                 .passinumerot(null)
+                .build();
+    }
+
+    private Henkilo createHenkilo(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
+                                       boolean passivoitu, String kielikoodi, String kielityyppi,
+                                       String kansalaisuuskoodi, Date luontiMuokkausSyncedPvm, Date lastVtjSynced, String kasittelija, String yhteystietoArvo, LocalDate syntymaAika) {
+        return Henkilo.builder()
+                .oidHenkilo(oidHenkilo)
+                .hetu(hetu)
+                .etunimet(etunimet)
+                .kutsumanimi(kutsumanimi)
+                .sukunimi(sukunimi)
+                .aidinkieli(kielikoodi != null ? new Kielisyys(kielikoodi, kielityyppi) : null)
+                .asiointiKieli(kielikoodi != null ? new Kielisyys(kielikoodi, kielityyppi) : null)
+                .created(luontiMuokkausSyncedPvm)
+                .modified(luontiMuokkausSyncedPvm)
+                .vtjsynced(lastVtjSynced)
+                .passivoitu(passivoitu)
+                .kansalaisuus(Sets.newHashSet(kansalaisuuskoodi != null ? new Kansalaisuus(kansalaisuuskoodi) : null))
+                .yhteystiedotRyhma(Sets.newHashSet(new YhteystiedotRyhma(
+                        "yhteystietotyyppi2",
+                        "alkupera2",
+                        false,
+                        Collections.singleton(new Yhteystieto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo)))))
+                .kasittelijaOid(kasittelija)
+                .syntymaaika(syntymaAika)
                 .build();
     }
 }

@@ -8,12 +8,12 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.EidasTunniste;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
-import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,8 +44,8 @@ public class HenkiloApiTest extends OppijanumerorekisteriApiTest {
                         .tunniste(eidasTunniste)
                         .createdBy(oidGenerator.generateOID())
                         .build()))
-                .created(DtoUtils.toDate(now))
-                .modified(DtoUtils.toDate(now))
+                .created(Date.from(now.toInstant()))
+                .modified(Date.from(now.toInstant()))
                 .build());
     }
 

@@ -2,9 +2,11 @@ package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.enums.CleanupStep;
-import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
+import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
 import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
+import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
@@ -21,8 +23,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import com.google.common.collect.Sets;
+
 import jakarta.persistence.PersistenceException;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.ZoneId;
 import java.util.*;
 
@@ -70,8 +75,8 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
     @Test
     public void findHetuByOid() {
-        Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+        Henkilo henkilo = createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
+                "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi", LocalDate.of(1970, Month.OCTOBER, 10));
         this.persistHenkilo(henkilo);
         Optional<String> hetu = this.dataRepository.findHetuByOid("1.2.3.4.5");
         assertThat(hetu).hasValue("123456-9999");
@@ -79,8 +84,8 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
     @Test
     public void findHetuByOidNoHetu() {
-        Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "", "1.2.3.4.5", false,
-                "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+        Henkilo henkilo = createHenkilo("arpa", "arpa", "kuutio", "", "1.2.3.4.5", false,
+                "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi", LocalDate.of(1970, Month.OCTOBER, 10));
         this.persistHenkilo(henkilo);
         Optional<String> hetu = this.dataRepository.findHetuByOid("1.2.3.4.5");
         assertThat(hetu).hasValue("");
@@ -88,8 +93,8 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
     @Test
     public void findOidByHetu() {
-        Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+        Henkilo henkilo = createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
+                "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi", LocalDate.of(1970, Month.OCTOBER, 10));
         this.persistHenkilo(henkilo);
         Optional<String> oid = this.dataRepository.findOidByHetu("123456-9999");
         assertThat(oid).hasValue("1.2.3.4.5");
@@ -103,18 +108,18 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
     @Test(expected = PersistenceException.class)
     public void createUserWithNullOid() {
-        Henkilo henkiloWithNullOid = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", null, false,
-                "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+        Henkilo henkiloWithNullOid = createHenkilo("arpa", "arpa", "kuutio", "123456-9999", null, false,
+                "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi", LocalDate.of(1970, Month.OCTOBER, 10));
         this.persistHenkilo(henkiloWithNullOid);
     }
 
     @Test
     public void findByOidhenkiloIsIn() {
         Date luontiMuokkausPvm = new Date();
-        Henkilo assertHenkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
-        Henkilo persistedHenkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+        Henkilo assertHenkilo = createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
+                "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi", LocalDate.of(1970, Month.OCTOBER, 10));
+        Henkilo persistedHenkilo = createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
+                "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi", LocalDate.of(1970, Month.OCTOBER, 10));
         this.persistHenkilo(persistedHenkilo);
         List<Henkilo> resultHenkiloList = this.dataRepository.findByOidHenkiloIsIn(Collections.singletonList("1.2.3.4.5"));
         persistedHenkilo = resultHenkiloList.get(0);
@@ -136,10 +141,10 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
     @Test
     public void findByHetu() {
         Date luontiMuokkausPvm = new Date();
-        Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
-        Henkilo persistedHenkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+        Henkilo henkilo = createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
+                "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi", LocalDate.of(1970, Month.OCTOBER, 10));
+        Henkilo persistedHenkilo = createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
+                "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi", LocalDate.of(1970, Month.OCTOBER, 10));
         this.persistHenkilo(persistedHenkilo);
         persistedHenkilo = this.dataRepository.findByHetu("123456-9999").orElse(null);
         assertThat(persistedHenkilo).usingRecursiveComparison()
@@ -346,8 +351,10 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
     }
 
     private void persistHenkilo(Henkilo henkilo) {
-        this.testEntityManager.persist(henkilo.getAidinkieli());
-        this.testEntityManager.flush();
+        if (henkilo.getAidinkieli() != null) {
+                this.testEntityManager.persist(henkilo.getAidinkieli());
+                this.testEntityManager.flush();
+        }
         if (!CollectionUtils.isEmpty(henkilo.getKansalaisuus())) {
             henkilo.getKansalaisuus().forEach(kansalaisuus -> {
                 this.testEntityManager.persist(kansalaisuus);
@@ -501,6 +508,33 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
                 .hetu(hetu)
                 .created(now)
                 .modified(now)
+                .build();
+    }
+
+    private Henkilo createHenkilo(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
+                                       boolean passivoitu, String kielikoodi, String kielityyppi,
+                                       String kansalaisuuskoodi, Date luontiMuokkausSyncedPvm, Date lastVtjSynced, String kasittelija, String yhteystietoArvo, LocalDate syntymaAika) {
+        Kielisyys kielisyys = kielikoodi != null ? new Kielisyys(kielikoodi, kielityyppi) : null;
+        return Henkilo.builder()
+                .oidHenkilo(oidHenkilo)
+                .hetu(hetu)
+                .etunimet(etunimet)
+                .kutsumanimi(kutsumanimi)
+                .sukunimi(sukunimi)
+                .aidinkieli(kielisyys)
+                .asiointiKieli(kielisyys)
+                .created(luontiMuokkausSyncedPvm)
+                .modified(luontiMuokkausSyncedPvm)
+                .vtjsynced(lastVtjSynced)
+                .passivoitu(passivoitu)
+                .kansalaisuus(Sets.newHashSet(kansalaisuuskoodi != null ? new Kansalaisuus(kansalaisuuskoodi) : null))
+                .yhteystiedotRyhma(Sets.newHashSet(new YhteystiedotRyhma(
+                        "yhteystietotyyppi2",
+                        "alkupera2",
+                        false,
+                        Collections.singleton(new Yhteystieto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo)))))
+                .kasittelijaOid(kasittelija)
+                .syntymaaika(syntymaAika)
                 .build();
     }
 }

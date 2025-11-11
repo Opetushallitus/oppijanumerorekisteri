@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
@@ -7,10 +8,10 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.Oppijanumerore
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloExistenceCheckDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HuoltajaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KayttajaReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ConflictException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.SuspendableIdentificationException;
-import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
@@ -85,7 +86,7 @@ public class YksilointiServiceImplTest {
                 .thenAnswer(invocation -> new Kielisyys(invocation.getArgument(0)));
         doAnswer(AdditionalAnswers.returnsFirstArg()).when(kielisyysRepository).save(any(Kielisyys.class));
         when(kansalaisuusRepository.findOrCreate(anyString()))
-                .thenReturn(EntityUtils.createKansalaisuus("246"));
+                .thenReturn(new Kansalaisuus("246"));
         when(duplicateService.linkWithHetu(any(), any()))
                 .thenAnswer(invocation -> {
                     Henkilo henkilo = invocation.getArgument(0);
@@ -93,7 +94,7 @@ public class YksilointiServiceImplTest {
                 });
 
         String hetu = "010101-123N";
-        this.henkilo = EntityUtils.createHenkilo("Teppo Taneli", "Teppo", "Testaaja", hetu, this.henkiloOid,
+        this.henkilo = createHenkilo("Teppo Taneli", "Teppo", "Testaaja", hetu, this.henkiloOid,
                 false, "fi", "suomi", "246", new Date(), new Date(),
                 "1.2.3.4.1", "arpa@kuutio.fi", LocalDate.of(1990, 3, 23));
         when(henkiloRepository.findByOidHenkilo(anyString())).thenReturn(Optional.of(this.henkilo));
@@ -569,6 +570,32 @@ public class YksilointiServiceImplTest {
                 .etunimet("a b c")
                 .kutsumanimi("b")
                 .sukunimi("d")
+                .build();
+    }
+
+    private Henkilo createHenkilo(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
+                                       boolean passivoitu, String kielikoodi, String kielityyppi,
+                                       String kansalaisuuskoodi, Date luontiMuokkausSyncedPvm, Date lastVtjSynced, String kasittelija, String yhteystietoArvo, LocalDate syntymaAika) {
+        return Henkilo.builder()
+                .oidHenkilo(oidHenkilo)
+                .hetu(hetu)
+                .etunimet(etunimet)
+                .kutsumanimi(kutsumanimi)
+                .sukunimi(sukunimi)
+                .aidinkieli(kielikoodi != null ? new Kielisyys(kielikoodi, kielityyppi) : null)
+                .asiointiKieli(kielikoodi != null ? new Kielisyys(kielikoodi, kielityyppi) : null)
+                .created(luontiMuokkausSyncedPvm)
+                .modified(luontiMuokkausSyncedPvm)
+                .vtjsynced(lastVtjSynced)
+                .passivoitu(passivoitu)
+                .kansalaisuus(Sets.newHashSet(kansalaisuuskoodi != null ? new Kansalaisuus(kansalaisuuskoodi) : null))
+                .yhteystiedotRyhma(Sets.newHashSet(new YhteystiedotRyhma(
+                        "yhteystietotyyppi2",
+                        "alkupera2",
+                        false,
+                        Collections.singleton(new Yhteystieto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo)))))
+                .kasittelijaOid(kasittelija)
+                .syntymaaika(syntymaAika)
                 .build();
     }
 }

@@ -7,7 +7,6 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
-import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -41,8 +41,8 @@ public class ServiceToServiceApiTest extends OppijanumerorekisteriApiTest {
             .etunimet("Leon")
             .kutsumanimi("Leon")
             .sukunimi("Germany")
-            .created(DtoUtils.toDate(now))
-            .modified(DtoUtils.toDate(now))
+            .created(Date.from(now.toInstant()))
+            .modified(Date.from(now.toInstant()))
             .build());
 
     henkiloRepository.save(
@@ -51,8 +51,8 @@ public class ServiceToServiceApiTest extends OppijanumerorekisteriApiTest {
             .etunimet("Schmeon")
             .kutsumanimi("Schmeon")
             .sukunimi("Schmermany")
-            .created(DtoUtils.toDate(now))
-            .modified(DtoUtils.toDate(now))
+            .created(Date.from(now.toInstant()))
+            .modified(Date.from(now.toInstant()))
             .build());
   }
 

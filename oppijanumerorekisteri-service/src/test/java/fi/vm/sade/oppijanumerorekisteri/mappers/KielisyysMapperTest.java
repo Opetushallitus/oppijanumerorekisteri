@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.mappers;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.KielisyysDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
-import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ public class KielisyysMapperTest {
 
     @Test
     public void KielisyysToKielisyysDto() {
-        Kielisyys kielisyys = EntityUtils.createKielisyys("fi", "suomi");
+        Kielisyys kielisyys = new Kielisyys("fi", "suomi");
         KielisyysDto kielisyysDto = modelmapper.map(kielisyys, KielisyysDto.class);
         assertThat(kielisyysDto.getKieliKoodi()).isEqualTo("fi");
         assertThat(kielisyysDto.getKieliTyyppi()).isEqualTo("suomi");
@@ -27,7 +26,7 @@ public class KielisyysMapperTest {
 
     @Test
     public void KielisyysDtoToKielisyys() {
-        KielisyysDto kielisyysDto = DtoUtils.createKielisyysDto("fi", "suomi");
+        KielisyysDto kielisyysDto = new KielisyysDto("fi", "suomi");
         Kielisyys kielisyys = modelmapper.map(kielisyysDto, Kielisyys.class);
         assertThat(kielisyys.getKieliKoodi()).isEqualTo("fi");
         assertThat(kielisyys.getKieliTyyppi()).isEqualTo("suomi");

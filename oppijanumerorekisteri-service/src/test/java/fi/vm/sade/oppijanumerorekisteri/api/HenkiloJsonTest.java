@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.api;
 
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
-import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +13,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -28,9 +29,6 @@ public class HenkiloJsonTest {
     private JacksonTester<HenkiloOidHetuNimiDto> oidNimiHetuJson;
 
     @Autowired
-    private JacksonTester<HenkiloPerustietoDto> perustietoJson;
-
-    @Autowired
     private JacksonTester<HenkiloDto> henkiloDtoJson;
 
     @Autowired
@@ -38,44 +36,26 @@ public class HenkiloJsonTest {
 
     @Test
     public void testHenkiloOidHetuNimiDtoSerialize() throws Exception {
-        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = DtoUtils.createHenkiloOidHetuNimiDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5");
+        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = new HenkiloOidHetuNimiDto("1.2.3.4.5", "123456-9999", "arpa", "arpa", "kuutio");
         assertThat(this.oidNimiHetuJson.write(henkiloOidHetuNimiDto)).isEqualToJson("/henkilo/testHenkiloOidHetuNimiDto.json");
     }
 
     @Test
     public void testHenkiloOidHetuNimiDtoDeserialize() throws Exception {
-        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = DtoUtils.createHenkiloOidHetuNimiDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5");
+        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = new HenkiloOidHetuNimiDto("1.2.3.4.5", "123456-9999", "arpa", "arpa", "kuutio");
         assertThat(this.oidNimiHetuJson.read("/henkilo/testHenkiloOidHetuNimiDto.json").getObject()).usingRecursiveComparison().isEqualTo(henkiloOidHetuNimiDto);
     }
 
     @Test
-    public void testHenkiloPerustietoDtoSerialize() throws Exception {
-        LocalDate syntymaaika = LocalDate.of(2016, Month.DECEMBER, 20);
-        HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), singletonList(IdentificationDto.of(IdpEntityId.oppijaToken, "value1")), syntymaaika, new Date(29364800000L));
-        assertThat(this.perustietoJson.write(henkiloPerustietoDto)).isEqualToJson("/henkilo/testHenkiloPerustietoDto.json");
-    }
-
-    @Test
-    public void testHenkiloPerustietoDtoDeserialize() throws Exception {
-        LocalDate syntymaaika = LocalDate.of(2016, Month.DECEMBER, 20);
-        HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), singletonList(IdentificationDto.of(IdpEntityId.oppijaToken, "value1")), syntymaaika, new Date(29364800000L));
-        assertThat(this.perustietoJson.read("/henkilo/testHenkiloPerustietoDto.json").getObject()).usingRecursiveComparison().isEqualTo(henkiloPerustietoDto);
-    }
-
-    @Test
     public void testHenkiloDtoSerialize() throws Exception {
-        HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
+        HenkiloDto henkiloDto = createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
         assertThat(this.henkiloDtoJson.write(henkiloDto)).isEqualToJson("/henkilo/testHenkiloDto.json");
     }
 
     @Test
     public void testHenkiloDtoDeserialize() throws Exception {
-        HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
+        HenkiloDto henkiloDto = createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
         assertThat(this.henkiloDtoJson.read("/henkilo/testHenkiloDto.json").getObject())
                 .usingRecursiveComparison().isEqualTo(henkiloDto);
@@ -83,7 +63,7 @@ public class HenkiloJsonTest {
 
     @Test
     public void testHenkiloDtoDeserializeEidas() throws Exception {
-        HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("Leon Elias", "Leon Elias", "Germany", null, "1.2.3.4.5",
+        HenkiloDto henkiloDto = createHenkiloDto("Leon Elias", "Leon Elias", "Germany", null, "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "+49 69 1234 5678");
         henkiloDto.setYksiloityEidas(true);
         henkiloDto.setEidasTunnisteet(List.of(EidasTunnisteDto.builder().tunniste("DE/FI/366193B0E55D436B494769486A9284D04E0A1DCFDBF8B9EDA63E5BF4C3CFE6F5").build()));
@@ -95,7 +75,7 @@ public class HenkiloJsonTest {
 
     @Test
     public void testHenkiloDtoDeserializePreEidas() throws Exception {
-        HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
+        HenkiloDto henkiloDto = createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
         var parsed = this.henkiloDtoJson.read("/henkilo/testHenkiloDto-noeidas.json").getObject();
         assertThat(parsed).usingRecursiveComparison().isEqualTo(henkiloDto);
@@ -126,5 +106,48 @@ public class HenkiloJsonTest {
                     .build());
         assertThat(this.yhteystiedotJson.write(dto))
                 .isEqualToJson("/henkilo/testYhteystiedotViewDto.json");
+    }
+
+    private HenkiloDto createHenkiloDto(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
+                                    boolean passivoitu, String kielikoodi, String kielityyppi,
+                                    String kansalaisuuskoodi, String kasittelija, String yhteystietoArvo) {
+        return HenkiloDto.builder()
+                .oidHenkilo(oidHenkilo)
+                .hetu(hetu)
+                .kaikkiHetut(null)
+                .passivoitu(passivoitu)
+                .etunimet(etunimet)
+                .kutsumanimi(kutsumanimi)
+                .sukunimi(sukunimi)
+                .aidinkieli(new KielisyysDto(kielikoodi, kielityyppi))
+                .asiointiKieli(new KielisyysDto(kielikoodi, kielityyppi))
+                .kansalaisuus(Collections.singleton(new KansalaisuusDto(kansalaisuuskoodi)))
+                .kasittelijaOid(kasittelija)
+                .syntymaaika(LocalDate.of(1970, Month.OCTOBER, 10))
+                .sukupuoli("1")
+                .kotikunta(null)
+                .oppijanumero("1.2.3.4.5")
+                .turvakielto(null)
+                .eiSuomalaistaHetua(false)
+                .yksiloity(false)
+                .yksiloityVTJ(false)
+                .yksilointiYritetty(false)
+                .yksiloityEidas(false)
+                .eidasTunnisteet(new ArrayList<>())
+                .duplicate(false)
+                .created(new Date(29364800000L))
+                .modified(new Date(29364800000L))
+                .vtjsynced(null)
+                .yhteystiedotRyhma(Collections.singleton(
+                        new YhteystiedotRyhmaDto(
+                            1L,
+                            "yhteystietotyyppi7",
+                            "alkupera2",
+                            true,
+                            Collections.singleton(
+                                new YhteystietoDto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo)))))
+                .yksilointivirheet(new HashSet<>())
+                .passinumerot(null)
+                .build();
     }
 }
