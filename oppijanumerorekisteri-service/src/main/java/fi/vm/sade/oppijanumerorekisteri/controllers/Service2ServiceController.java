@@ -45,13 +45,13 @@ public class Service2ServiceController {
         return this.henkiloService.getOidByHetu(hetu);
     }
 
-    @Operation(summary ="Hakee annettua eIDAS id:tä vastaavan henkilö OID:n")
+    @Operation(summary ="Hakee annettua eIDAS-tunnistetta vastaavan henkilö OID:n")
     @ApiResponses(value = {@ApiResponse(responseCode = "404", description = "Not Found")})
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @PostMapping(value = "/oidByEidas")
-    public String oidByEidasId(@RequestBody OidByEidasRequest body) {
-        return this.henkiloService.getOidByEidasId(body.eidasId);
+    public String oidByEidasTunniste(@RequestBody OidByEidasRequest body) {
+        return henkiloService.getOidByEidasTunniste(body.eidasTunniste);
     }
 
     @Operation(summary = "Hakee henkilöviittaukset oid-listalla ja/tai muokkausaikaleimalla")

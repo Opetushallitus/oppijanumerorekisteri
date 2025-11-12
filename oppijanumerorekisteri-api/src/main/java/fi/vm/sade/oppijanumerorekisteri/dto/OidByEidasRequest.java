@@ -10,5 +10,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OidByEidasRequest {
-    public String eidasId;
+    public String eidasTunniste;
 }

@@ -28,7 +28,7 @@ public interface HenkiloService {
 
     String getOidByHetu(String hetu);
 
-    String getOidByEidasId(String eidasId);
+    String getOidByEidasTunniste(String eidasTunniste);
 
     List<HenkiloPerustietoDto> getHenkiloPerustietoByOids(List<String> oids);
 

@@ -187,8 +187,6 @@ public interface HenkiloJpaRepository {
      */
     Optional<Henkilo> findByKaikkiHetut(String hetu);
 
-    Optional<Henkilo> findByEidasTunniste(String eidasTunniste);
-
     List<HenkiloMunicipalDobDto> findByMunicipalAndBirthdate(String municipal, LocalDate dob, long limit, long offset);
 
     Collection<Henkilo> findDeadWithIncompleteCleanup(CleanupStep step);

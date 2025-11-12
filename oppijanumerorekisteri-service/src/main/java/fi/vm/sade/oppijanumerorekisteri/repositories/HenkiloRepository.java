@@ -33,4 +33,7 @@ public interface HenkiloRepository extends QuerydslPredicateExecutor<Henkilo>, J
 
     @Query(eagerHenkiloSelect + "where (h.oidHenkilo in :oids)")
     List<Henkilo> eagerFindByOidHenkiloIn(Set<String> oids);
+
+    @Query("select h from Henkilo h left join h.eidasTunnisteet e where e.tunniste = :eidasTunniste")
+    Optional<Henkilo> findByEidasTunniste(String eidasTunniste);
 }

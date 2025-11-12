@@ -180,9 +180,8 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public String getOidByEidasId(String eidasId) {
-        return this.henkiloDataRepository
-                .findByIdentification(IdentificationDto.of(IdpEntityId.eidas, eidasId))
+    public String getOidByEidasTunniste(String eidasTunniste) {
+        return henkiloDataRepository.findByEidasTunniste(eidasTunniste)
                 .orElseThrow(NotFoundException::new)
                 .getOidHenkilo();
     }

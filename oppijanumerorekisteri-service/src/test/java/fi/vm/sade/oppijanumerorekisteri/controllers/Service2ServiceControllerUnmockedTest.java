@@ -30,6 +30,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("dev")
@@ -62,6 +63,29 @@ public class Service2ServiceControllerUnmockedTest {
     @BeforeEach
     public void beforeEach() {
         doNothing().when(henkiloModifiedTopic).publish(any());
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void oidByEidasFindsExistingOid() throws Exception {
+        mvc.perform(post("/s2s/oidByEidas")
+                .content("""
+{"eidasTunniste":"FOO/BAR/QUUX"}""")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string("1.2.3.4.5"));
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void oidByEidasReturnsNotFound() throws Exception {
+        mvc.perform(post("/s2s/oidByEidas")
+                .content("""
+{"eidasTunniste":"FOO/BAR/BAD"}""")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     @Test
