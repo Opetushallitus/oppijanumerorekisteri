@@ -6,8 +6,6 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijanumerorekisteriCriteria;
-import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
-import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSort;
 import org.joda.time.DateTime;
 
@@ -84,8 +82,6 @@ public interface HenkiloJpaRepository {
     Optional<String> findOidByHetu(String hetu);
 
     Optional<String> findOidByKaikkiHetut(String hetu);
-
-    List<YhteystietoHakuDto> findYhteystiedot(YhteystietoCriteria criteria);
 
     /**
      * Palauttaa henkilön master datan

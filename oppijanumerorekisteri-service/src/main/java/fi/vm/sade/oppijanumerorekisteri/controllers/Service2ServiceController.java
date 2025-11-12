@@ -127,14 +127,6 @@ public class Service2ServiceController {
         return henkiloService.findByMunicipalAndBirthdate(municipal, birthdate, page);
     }
 
-    @Operation(summary ="Hakee annetun henkilön kaikki yhteystiedot")
-    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
-            "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
-    @RequestMapping(value = "/yhteystiedot/{oid}", method = RequestMethod.GET)
-    public HenkilonYhteystiedotViewDto getAllHenkiloYhteystiedot(@PathVariable("oid") String oid) {
-        return henkiloService.getHenkiloYhteystiedot(oid);
-    }
-
     @Operation(summary ="Hakee henkilöiden perustiedot annetuilla hakukriteereillä")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")

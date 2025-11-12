@@ -10,8 +10,6 @@ import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
-import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
-import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import jakarta.persistence.EntityManager;
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -31,10 +29,8 @@ import java.time.Month;
 import java.time.ZoneId;
 import java.util.*;
 
-import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi.*;
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.HenkiloPopulator.henkilo;
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.TuontiPopulator.tuonti;
-import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.YhteystiedotRyhmaPopulator.ryhma;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -160,39 +156,6 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         assertThat(persistedYhteystieto.iterator().next()).usingRecursiveComparison()
                 .ignoringFields("id", "version", "yhteystiedotRyhma")
                 .isEqualTo(yhteystieto.iterator().next());
-    }
-
-    @Test
-    public void findYhteystiedot() {
-        populate(henkilo("1.2.3.4.5")
-                .withYhteystieto(ryhma("yhteystietotyyppi1")
-                        .alkupera("alkuperä")
-                        .tieto(YHTEYSTIETO_KATUOSOITE, "Kotikatu 3")
-                        .tieto(YHTEYSTIETO_POSTINUMERO, "12345")
-                        .tieto(YHTEYSTIETO_KAUPUNKI, "Toijala")
-                )
-                .withYhteystieto(ryhma("yhteystietotyyppi2").alkupera("alkuperä")
-                        .tieto(YHTEYSTIETO_SAHKOPOSTI, "tyo@osoite.com")
-                )
-        );
-
-        List<YhteystietoHakuDto> tiedot = this.dataRepository.findYhteystiedot(new YhteystietoCriteria());
-        assertThat(tiedot.size()).isEqualTo(4);
-
-        tiedot = this.dataRepository.findYhteystiedot(new YhteystietoCriteria().withHenkiloOid("non-existing"));
-        assertThat(tiedot.size()).isEqualTo(0);
-
-        tiedot = this.dataRepository.findYhteystiedot(new YhteystietoCriteria().withHenkiloOid("1.2.3.4.5"));
-        assertThat(tiedot.size()).isEqualTo(4);
-
-        tiedot = this.dataRepository.findYhteystiedot(new YhteystietoCriteria().withHenkiloOid("1.2.3.4.5")
-                .withRyhma("yhteystietotyyppi2"));
-        assertThat(tiedot.size()).isEqualTo(1);
-        assertThat(tiedot.get(0).getArvo()).isEqualTo("tyo@osoite.com");
-        assertThat(tiedot.get(0).getHenkiloOid()).isEqualTo("1.2.3.4.5");
-        assertThat(tiedot.get(0).getRyhmaAlkuperaTieto()).isEqualTo("alkuperä");
-        assertThat(tiedot.get(0).getRyhmaKuvaus()).isEqualTo("yhteystietotyyppi2");
-        assertThat(tiedot.get(0).getHenkiloOid()).isEqualTo("1.2.3.4.5");
     }
 
     @Test

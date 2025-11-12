@@ -19,8 +19,6 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijanumerorekisteriCriteria;
-import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
-import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSort;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -41,8 +39,6 @@ import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.types.ExpressionUtils.anyOf;
 import static com.querydsl.core.types.dsl.Expressions.allOf;
 import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
-import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteystiedotRyhma;
-import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
@@ -235,22 +231,6 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                 .join(qHenkilo.kaikkiHetut, qHetu)
                 .where(qHetu.eq(hetu))
                 .fetchOne());
-    }
-
-    @Override
-    public List<YhteystietoHakuDto> findYhteystiedot(YhteystietoCriteria criteria) {
-        return jpa().from(henkilo)
-                .innerJoin(henkilo.yhteystiedotRyhma, yhteystiedotRyhma)
-                .innerJoin(yhteystiedotRyhma.yhteystieto, yhteystieto)
-                .where(criteria.condition(henkilo, yhteystiedotRyhma, yhteystieto))
-                .select(Projections.bean(YhteystietoHakuDto.class,
-                        henkilo.oidHenkilo.as("henkiloOid"),
-                        yhteystiedotRyhma.ryhmaKuvaus.as("ryhmaKuvaus"),
-                        yhteystiedotRyhma.ryhmaAlkuperaTieto.as("ryhmaAlkuperaTieto"),
-                        yhteystiedotRyhma.readOnly.as("readOnly"),
-                        yhteystieto.yhteystietoTyyppi.as("yhteystietoTyyppi"),
-                        yhteystieto.yhteystietoArvo.as("arvo")
-                )).fetch();
     }
 
     @Override

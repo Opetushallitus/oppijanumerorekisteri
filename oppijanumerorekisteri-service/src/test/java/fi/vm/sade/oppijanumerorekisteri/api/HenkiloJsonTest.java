@@ -10,7 +10,6 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
@@ -27,9 +26,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class HenkiloJsonTest {
     @Autowired
     private JacksonTester<HenkiloDto> henkiloDtoJson;
-
-    @Autowired
-    private JacksonTester<HenkilonYhteystiedotViewDto> yhteystiedotJson;
 
     @Test
     public void testHenkiloDtoSerialize() throws Exception {
@@ -66,31 +62,6 @@ public class HenkiloJsonTest {
         assertThat(parsed).usingRecursiveComparison().isEqualTo(henkiloDto);
         assertThat(parsed.isYksiloityEidas()).isFalse();
         assertThat(parsed.getEidasTunnisteet()).isEmpty();
-    }
-
-    @Test
-    public void testSerializeYhteystiedot() throws IOException {
-        HenkilonYhteystiedotViewDto dto = new HenkilonYhteystiedotViewDto()
-                .put("yhteystietotyyppi1", YhteystiedotDto.builder()
-                        .sahkoposti("testi@test.com")
-                        .matkapuhelinnumero("+358451234567")
-                        .katuosoite("Testikatu 2")
-                        .kunta("Toijala")
-                        .postinumero("12345")
-                        .kaupunki("Toijala")
-                        .maa("Suomi")
-                    .build())
-                .put("yhteystietotyyppi2", YhteystiedotDto.builder()
-                        .sahkoposti("tyo@osoite.fi")
-                        .puhelinnumero("01234567")
-                        .matkapuhelinnumero("+3584040404")
-                        .katuosoite("Työkatu 6")
-                        .kunta("Vilppula")
-                        .postinumero("54321")
-                        .kaupunki("Vilppula")
-                    .build());
-        assertThat(this.yhteystiedotJson.write(dto))
-                .isEqualToJson("/henkilo/testYhteystiedotViewDto.json");
     }
 
     private HenkiloDto createHenkiloDto(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,

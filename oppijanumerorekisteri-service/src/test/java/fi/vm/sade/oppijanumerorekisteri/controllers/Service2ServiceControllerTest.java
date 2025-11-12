@@ -144,27 +144,6 @@ public class Service2ServiceControllerTest  {
     }
 
     @Test
-    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
-    public void getHenkiloYhteystiedot() throws Exception {
-        String content = "{\"yhteystietotyyppi2\":" +
-                "{\"sahkoposti\":\"testi@tyo.com\"}," +
-                "\"yhteystietotyyppi7\":{\"katuosoite\":\"katu 134\"}, " + "" +
-                "\"yhteystietotyyppi1\":{\"sahkoposti\":\"testi@test.com\"}}";
-
-        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.5")).willReturn(new HenkilonYhteystiedotViewDto()
-                .put("yhteystietotyyppi7", YhteystiedotDto.builder().katuosoite("katu 134").build())
-                .put("yhteystietotyyppi2", YhteystiedotDto.builder().sahkoposti("testi@tyo.com").build())
-                .put("yhteystietotyyppi1", YhteystiedotDto.builder().sahkoposti("testi@test.com").build()));
-        this.mvc.perform(get("/s2s/yhteystiedot/1.2.3.4.5").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json(content));
-
-        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.6")).willReturn(new HenkilonYhteystiedotViewDto());
-        this.mvc.perform(get("/s2s/yhteystiedot/1.2.3.4.6").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andExpect(content().json("{}"));
-    }
-
-    @Test
     public void findByMunicipalAndDobNoAuth() throws Exception {
         this.mvc.perform(get("/s2s/henkilo/list/foo/2021-11-05").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());

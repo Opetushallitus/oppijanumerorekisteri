@@ -17,7 +17,6 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
-import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.joda.time.DateTime;
@@ -54,8 +53,6 @@ public class HenkiloServiceImplTest {
     private KansalaisuusRepository kansalaisuusRepository;
     @Mock
     private OrikaConfiguration orikaConfiguration;
-    @Mock
-    private YhteystietoConverter yhteystietoConverter;
     @Mock
     private OidGenerator oidGenerator;
     @Mock

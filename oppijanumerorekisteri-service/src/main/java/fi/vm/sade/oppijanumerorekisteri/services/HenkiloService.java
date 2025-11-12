@@ -8,7 +8,6 @@ import org.joda.time.DateTime;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 public interface HenkiloService {
@@ -36,10 +35,6 @@ public interface HenkiloService {
     List<HenkiloDto> getHenkilosByOids(List<String> oids);
 
     HenkiloHakuDto getHenkiloOidHetuNimiByHetu(String hetu);
-
-    HenkilonYhteystiedotViewDto getHenkiloYhteystiedot(String henkiloOid);
-
-    Optional<YhteystiedotDto> getHenkiloYhteystiedot(String henkiloOid, String ryhma);
 
     HenkiloDto getHenkiloByIDPAndIdentifier(IdpEntityId idp, String identifier);
 

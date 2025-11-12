@@ -145,25 +145,6 @@ public class HenkiloController {
         return this.henkiloModificationService.updateHenkilo(henkiloUpdateDto).getOidHenkilo();
     }
 
-    @Operation(summary = "Hakee annetun henkilön kaikki yhteystiedot")
-    @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'HENKILON_RU'}}, #permissionService)")
-    @RequestMapping(value = "/{oid}/yhteystiedot", method = RequestMethod.GET)
-    public HenkilonYhteystiedotViewDto getAllHenkiloYhteystiedot(
-            @PathVariable("oid") String oid,
-            @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
-        return henkiloService.getHenkiloYhteystiedot(oid);
-    }
-
-    @Operation(summary = "Hakee annetun henkilön yhteystietoryhmän yhteystiedot")
-    @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'HENKILON_RU'}}, #permissionService)")
-    @RequestMapping(value = "/{oid}/yhteystiedot/{tyyppi}", method = RequestMethod.GET)
-    public YhteystiedotDto getHenkiloYhteystiedot(@Parameter(description = "Henkilön OID") @PathVariable("oid") String oid,
-            @Parameter(description = "Koodisto \"yhteystietotyypit\"") @PathVariable("tyyppi") String tyyppi,
-            @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
-        return henkiloService.getHenkiloYhteystiedot(oid, tyyppi)
-                .orElseThrow(() -> new NotFoundException("Yhteystiedot not found by tyyppi=" + tyyppi));
-    }
-
     @Operation(summary = "Henkilön haku OID:n perusteella.", description = "Hakee henkilön tiedot annetun OID:n pohjalta, sisältään kaikki henkilön tiedot.")
     @ApiResponses(value = { @ApiResponse(responseCode = "404", description = "Not Found") })
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")

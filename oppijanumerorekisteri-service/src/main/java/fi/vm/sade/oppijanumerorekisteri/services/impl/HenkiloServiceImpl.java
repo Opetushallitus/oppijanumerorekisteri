@@ -17,10 +17,8 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HuoltajasuhdeRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaCriteria;
-import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
-import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.util.batchprocessing.BatchProcessor;
 import fi.vm.sade.oppijanumerorekisteri.util.batchprocessing.BatchingProcess;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +27,6 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,7 +42,6 @@ public class HenkiloServiceImpl implements HenkiloService {
     private final HenkiloRepository henkiloDataRepository;
     private final HenkiloViiteRepository henkiloViiteRepository;
 
-    private final YhteystietoConverter yhteystietoConverter;
     private final OrikaConfiguration mapper;
     private final UserDetailsHelper userDetailsHelper;
 
@@ -223,24 +219,6 @@ public class HenkiloServiceImpl implements HenkiloService {
                 .or(() -> henkiloDataRepository.findByKaikkiHetut(hetu))
                 .map(h -> mapper.map(h, HenkiloHakuDto.class))
                 .orElseThrow(NotFoundException::new);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public HenkilonYhteystiedotViewDto getHenkiloYhteystiedot(@NotNull String henkiloOid) {
-        return new HenkilonYhteystiedotViewDto(yhteystietoConverter.toHenkiloYhteystiedot(
-                this.henkiloDataRepository.findYhteystiedot(new YhteystietoCriteria().withHenkiloOid(henkiloOid))
-        ));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<YhteystiedotDto> getHenkiloYhteystiedot(@NotNull String henkiloOid, @NotNull String ryhma) {
-        return Optional.ofNullable(yhteystietoConverter.toHenkiloYhteystiedot(
-                this.henkiloDataRepository.findYhteystiedot(new YhteystietoCriteria()
-                        .withHenkiloOid(henkiloOid)
-                        .withRyhma(ryhma))
-        ).get(ryhma));
     }
 
     @Override
