@@ -157,12 +157,12 @@ export const JarjestelmatunnusPerustiedot = () => {
                 </div>
             </div>
             {oauth2Modal && (
-                <OphModal onClose={() => setOauth2Modal(false)}>
+                <OphModal onClose={() => setOauth2Modal(false)} onOverlayClick={() => true}>
                     <JarjestelmatunnusOauth2Modal oid={params.oid} closeModal={() => setOauth2Modal(false)} />
                 </OphModal>
             )}
             {casModal && (
-                <OphModal onClose={() => setCasModal(false)}>
+                <OphModal onClose={() => setCasModal(false)} onOverlayClick={() => true}>
                     <JarjestelmatunnusCasModal oid={params.oid} closeModal={() => setCasModal(false)} />
                 </OphModal>
             )}

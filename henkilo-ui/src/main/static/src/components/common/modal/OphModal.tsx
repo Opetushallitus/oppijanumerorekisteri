@@ -1,30 +1,30 @@
 import * as React from 'react';
-import classNames from 'classnames';
 import { useId } from 'react';
 
 type OphModalProps = {
     children: React.ReactNode;
     title?: string;
     onClose: (arg0: React.SyntheticEvent) => void;
-    big?: boolean;
     onOverlayClick?: (arg0: React.SyntheticEvent) => void;
 };
 
 /**
  * Tyylioppaan mukainen modal.
  */
-const OphModal = ({ big, children, onClose, onOverlayClick, title }: OphModalProps) => {
+const OphModal = ({ children, onClose, onOverlayClick, title }: OphModalProps) => {
     const labelId = useId();
+
     return (
-        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
         <div
             className="oph-overlay oph-overlay-bg oph-overlay-is-visible"
+            aria-hidden="true"
             tabIndex={-1}
             onClick={(e) => (onOverlayClick ? onOverlayClick(e) : onClose(e))}
         >
             <div
-                className={classNames('oph-modal', { 'oph-modal-big': big })}
+                className="oph-modal"
                 role="dialog"
+                aria-modal="true"
                 aria-labelledby={labelId}
                 onClick={(e) => {
                     e.stopPropagation();
