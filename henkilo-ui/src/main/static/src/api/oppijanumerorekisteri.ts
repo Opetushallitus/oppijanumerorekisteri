@@ -216,7 +216,7 @@ export const oppijanumerorekisteriApi = createApi({
                 method: 'POST',
             }),
             extraOptions: { maxRetries: 0 },
-            invalidatesTags: ['henkilo'],
+            invalidatesTags: ['henkilo', 'master', 'slaves'],
         }),
         puraYksilointi: builder.mutation<void, string>({
             query: (oid: string) => ({
