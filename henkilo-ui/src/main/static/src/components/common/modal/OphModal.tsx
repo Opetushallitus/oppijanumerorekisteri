@@ -17,7 +17,7 @@ const OphModal = ({ children, onClose, onOverlayClick, title }: OphModalProps) =
     return (
         <div
             className="oph-overlay oph-overlay-bg oph-overlay-is-visible"
-            aria-hidden="true"
+            role="presentation"
             tabIndex={-1}
             onClick={(e) => (onOverlayClick ? onOverlayClick(e) : onClose(e))}
         >
