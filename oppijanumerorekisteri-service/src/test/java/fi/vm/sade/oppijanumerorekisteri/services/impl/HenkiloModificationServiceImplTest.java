@@ -369,18 +369,6 @@ public class HenkiloModificationServiceImplTest {
     }
 
     @Test
-    public void findOrCreateHenkiloFromPerustietoDtoShouldFindByExternalId() {
-        HenkiloPerustietoCreateDto input = HenkiloPerustietoCreateDto.builder().externalIds(singletonList("externalid1")).build();
-        Henkilo henkilo = new Henkilo();
-        when(henkiloDataRepositoryMock.findByExternalIds(any())).thenReturn(singleton(henkilo));
-
-        service.findOrCreateHenkiloFromPerustietoDto(input, false);
-
-        verify(henkiloDataRepositoryMock).findByExternalIds(eq(singletonList("externalid1")));
-        verify(henkiloDataRepositoryMock, never()).save(any(Henkilo.class));
-    }
-
-    @Test
     public void findOrCreateHenkiloFromPerustietoDtoShouldFindByIdentification() {
         IdentificationDto identification = new IdentificationDto();
         identification.setIdpEntityId(IdpEntityId.email);

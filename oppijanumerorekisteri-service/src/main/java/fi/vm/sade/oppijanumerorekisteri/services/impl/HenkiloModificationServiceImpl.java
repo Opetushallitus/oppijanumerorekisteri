@@ -402,9 +402,6 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         return Stream.<Function<HenkiloPerustietoCreateDto, Optional<Henkilo>>>of(
                 dto -> Optional.ofNullable(dto.getOidHenkilo())
                         .flatMap(oid -> Optional.of(this.henkiloService.getEntityByOid(oid))),
-                dto -> Optional.ofNullable(dto.getExternalIds())
-                        .filter(externalIds -> !externalIds.isEmpty())
-                        .flatMap(externalIds -> findUnique(henkiloDataRepository.findByExternalIds(externalIds))),
                 dto -> Optional.ofNullable(dto.getIdentifications())
                         .filter(identifications -> !identifications.isEmpty())
                         .flatMap(identifications -> findUnique(

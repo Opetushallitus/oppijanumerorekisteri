@@ -16,8 +16,7 @@ public interface HenkiloRepository extends QuerydslPredicateExecutor<Henkilo>, J
            "left join fetch h.aidinkieli " +
            "left join fetch h.asiointiKieli " +
            "left join fetch h.kansalaisuus " +
-           "left join fetch h.identifications " +
-           "left join fetch h.externalIds ";
+           "left join fetch h.identifications ";
 
     @EntityGraph("henkiloDto")
     List<Henkilo> findByOidHenkiloIsIn(Collection<String> oidHenkilo);

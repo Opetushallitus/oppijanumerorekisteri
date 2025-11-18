@@ -111,7 +111,6 @@ public class Service2ServiceControllerUnmockedTest {
         JSONAssert.assertEquals("""
 {
         "oidHenkilo": "1.2.3.4.5",
-        "externalIds": [],
         "identifications": [],
         "hetu": "111111-985K",
         "eidasTunnisteet": [{"tunniste":"FOO/BAR/BAZ"},{"tunniste":"FOO/BAR/QUUX"}],

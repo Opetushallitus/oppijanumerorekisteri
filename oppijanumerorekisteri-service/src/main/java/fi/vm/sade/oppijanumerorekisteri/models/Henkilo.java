@@ -191,11 +191,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @NotAudited
     private List<EidasTunniste> eidasTunnisteet;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinColumn(name = "henkilo_id", nullable = false)
-    @NotAudited
-    private Set<ExternalId> externalIds = new HashSet<>();
-
     @Column(nullable = false)
     private Boolean turvakielto = Boolean.FALSE;
 

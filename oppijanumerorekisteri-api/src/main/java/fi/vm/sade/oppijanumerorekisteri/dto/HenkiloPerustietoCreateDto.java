@@ -11,7 +11,6 @@ import lombok.*;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
@@ -34,8 +33,6 @@ public class HenkiloPerustietoCreateDto implements Serializable {
 
     @Size(min = 1)
     private String oidHenkilo;
-
-    private List<@NotBlank String> externalIds;
 
     private List<@NotNull @Valid IdentificationDto> identifications;
 

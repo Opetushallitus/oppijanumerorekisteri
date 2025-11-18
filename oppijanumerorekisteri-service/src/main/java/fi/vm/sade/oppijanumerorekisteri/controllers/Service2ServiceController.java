@@ -85,12 +85,12 @@ public class Service2ServiceController {
     }
 
     @Operation(summary ="Hakee tai luo uuden henkilön annetuista henkilön perustiedoista",
-                description = "Henkilöllä on tunnisteet OID, hetu, eIDAS, external id ja identification.\n"
-                    + "Jos OID on annettu ja henkilöä ei löydy sillä, palautetaan 404\n."
-                    + "Muussa tapauksessa henkilöä yritetään etsiä muilla tunnistetiedoilla.\n"
-                    + "Jos henkilöä ei löydy, luodaan uusi henkilö annetuista tiedoista (ml. kaikki tunnistetiedot).\n"
-                    + "eIDAS-tunnistetta ja hetua ei voi lähettää samassa pyynnössä. Tällaiset pyynnöt palauttavat aina HTTP 400.\n"
-                    + "Henkilön luonti eIDAS-tunnisteella vaatii erillisen käyttöoikeuden.")
+                description = "Henkilöllä on tunnisteet OID, hetu, eIDAS ja identification. "
+                    + "Jos OID on annettu ja henkilöä ei löydy sillä, palautetaan 404. "
+                    + "Muussa tapauksessa henkilöä yritetään etsiä muilla tunnistetiedoilla. "
+                    + "Jos henkilöä ei löydy, luodaan uusi henkilö annetuista tiedoista (ml. kaikki tunnistetiedot). "
+                    + "eIDAS-tunnistetta ja hetua ei voi lähettää samassa pyynnössä. Tällaiset pyynnöt palauttavat aina HTTP 400. "
+                    + "Henkilön luonti eIDAS-tunnisteella vaatii erillisen käyttöoikeuden. ")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Henkilö löytyi jollakin annetuista tunnisteista"),
             @ApiResponse(responseCode = "201", description = "Henkilö luotiin annetuista perustiedoista"),

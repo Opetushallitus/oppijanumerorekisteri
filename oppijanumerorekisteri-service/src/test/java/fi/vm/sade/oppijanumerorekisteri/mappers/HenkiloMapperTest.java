@@ -27,7 +27,6 @@ import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
@@ -64,7 +63,6 @@ public class HenkiloMapperTest {
         LocalDate syntymaaika = LocalDate.of(2016, Month.DECEMBER, 20);
         HenkiloPerustietoDto henkiloPerustietoDto = new HenkiloPerustietoDto(
                 "1.2.3.4.5",
-                singletonList("externalid1"),
                 emptyList(),
                 "123456-9999",
                 null,
@@ -183,18 +181,6 @@ public class HenkiloMapperTest {
         this.modelmapper.map(henkiloDtosour, henkiloDtodest);
         assertThat(henkiloDtodest.getEtunimet()).isNotNull();
         assertThat(henkiloDtodest.getKutsumanimi()).isNotNull();
-    }
-
-    @Test
-    public void henkiloPerustietoDtoExternalIdShouldMapToEntity() {
-        HenkiloPerustietoDto dto = HenkiloPerustietoDto.builder()
-                .externalIds(asList("eka", "toka"))
-                .build();
-
-        Henkilo entity = this.modelmapper.map(dto, Henkilo.class);
-        dto = this.modelmapper.map(entity, HenkiloPerustietoDto.class);
-
-        assertThat(dto.getExternalIds()).containsExactlyInAnyOrder("eka", "toka");
     }
 
     @Test

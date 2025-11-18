@@ -319,30 +319,6 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     }
 
     @Override
-    public Optional<Henkilo> findByExternalId(String externalId) {
-        QHenkilo qHenkilo = QHenkilo.henkilo;
-        QExternalId qExternalId = QExternalId.externalId;
-
-        return Optional.ofNullable(jpa()
-                .from(qHenkilo)
-                .join(qHenkilo.externalIds, qExternalId)
-                .where(qExternalId.externalid.eq(externalId))
-                .select(qHenkilo).fetchOne());
-    }
-
-    @Override
-    public Collection<Henkilo> findByExternalIds(Collection<String> externalIds) {
-        QHenkilo qHenkilo = QHenkilo.henkilo;
-        QExternalId qExternalId = QExternalId.externalId;
-
-        return jpa()
-                .from(qHenkilo)
-                .join(qHenkilo.externalIds, qExternalId)
-                .where(qExternalId.externalid.in(externalIds))
-                .select(qHenkilo).distinct().fetch();
-    }
-
-    @Override
     public Optional<Henkilo> findByIdentification(IdentificationDto identification) {
         return this.findByIdentification(null, identification);
     }

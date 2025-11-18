@@ -105,10 +105,6 @@ public interface HenkiloJpaRepository {
 
     List<String> findOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince, Integer offset, Integer amount);
 
-    Optional<Henkilo> findByExternalId(String externalId);
-
-    Collection<Henkilo> findByExternalIds(Collection<String> externalIds);
-
     /**
      * Hakee ensimmäisen tunnisteeseen liitetyn henkilön
      * @param identification Tunnisteen tiedot
