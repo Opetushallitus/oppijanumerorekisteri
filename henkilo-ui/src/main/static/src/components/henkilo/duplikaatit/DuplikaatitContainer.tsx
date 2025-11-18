@@ -15,7 +15,7 @@ import HenkiloViewDuplikaatit from './HenkiloViewDuplikaatit';
 import Loader from '../../common/icons/Loader';
 
 type OwnProps = {
-    henkiloType: string;
+    henkiloType: 'virkailija' | 'oppija';
 };
 
 export const DuplikaatitContainer = (props: OwnProps) => {
@@ -31,7 +31,7 @@ export const DuplikaatitContainer = (props: OwnProps) => {
     const { isLoading } = useGetHakemuksetQuery({ L, oid });
 
     useTitle(L['TITLE_DUPLIKAATTIHAKU']);
-    useNavigation(henkiloViewTabs(oid, isHenkiloLoading, henkilo, props.henkiloType, master?.oidHenkilo), true);
+    useNavigation(henkiloViewTabs(oid, henkilo, props.henkiloType, master?.oidHenkilo), true);
 
     return (
         <div className="mainContent wrapper">

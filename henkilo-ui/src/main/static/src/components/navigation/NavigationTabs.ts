@@ -23,19 +23,15 @@ export const vtjDataAvailable = (yksilointitieto: Yksilointitieto | null | undef
  */
 export const henkiloViewTabs = (
     oidHenkilo: string,
-    isHenkiloLoading: boolean,
     henkilo: Henkilo | undefined,
-    henkiloType: string,
+    henkiloType: 'virkailija' | 'oppija',
     masterHenkiloOid?: string,
     yksilointitiedot?: Yksilointitieto
 ): Array<NaviTab> => {
-    if (!henkiloType) {
-        henkiloType = 'virkailija';
-    }
     const tabs = henkiloType === 'virkailija' ? virkailijaNavi(oidHenkilo) : oppijaNavi(oidHenkilo);
 
     // Wait until all needed and correct data has been fetched before enabling tabs to prevent them switching on/off
-    if (isHenkiloLoading || henkilo?.oidHenkilo !== oidHenkilo) {
+    if (!henkilo || henkilo?.oidHenkilo !== oidHenkilo) {
         return tabs;
     }
 

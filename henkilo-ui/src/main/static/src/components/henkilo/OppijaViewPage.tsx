@@ -33,10 +33,7 @@ export const OppijaViewPage = () => {
     const yksilointitiedotQuery = useGetYksilointitiedotQuery(oid);
 
     useTitle(L['TITLE_OPPIJA']);
-    useNavigation(
-        henkiloViewTabs(oid, isHenkiloLoading, henkilo, 'oppija', master?.oidHenkilo, yksilointitiedotQuery.data),
-        true
-    );
+    useNavigation(henkiloViewTabs(oid, henkilo, 'oppija', master?.oidHenkilo, yksilointitiedotQuery.data), true);
 
     useEffect(() => {
         if (oid && omattiedot?.oidHenkilo === oid) {

@@ -55,10 +55,7 @@ export const VirkailijaViewPage = () => {
     const { data: anomukset, isLoading: isAnomuksetLoading } = useGetKayttooikeusAnomuksetForHenkiloQuery(oid);
 
     useTitle(L[titles[view]]);
-    useNavigation(
-        henkiloViewTabs(oid, isHenkiloLoading, henkilo, 'virkailija', master?.oidHenkilo, yksilointitiedotQuery.data),
-        true
-    );
+    useNavigation(henkiloViewTabs(oid, henkilo, 'virkailija', master?.oidHenkilo, yksilointitiedotQuery.data), true);
 
     useEffect(() => {
         if (oid && omattiedot?.oidHenkilo === oid) {

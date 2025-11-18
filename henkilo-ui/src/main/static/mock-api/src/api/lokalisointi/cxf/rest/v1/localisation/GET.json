@@ -34,6 +34,22 @@
     {
         "id": null,
         "namespace": "henkilo-ui",
+        "key": "HENKILO_YKSILOINTIVIRHE_NIMITIEDOT",
+        "locale": "fi",
+        "value": "Henkilön nimitiedot eivät täsmää. Tee henkilölle VTJ-vertailu.",
+        "accesscount": null,
+        "modifiedBy": null,
+        "category": "henkilo-ui",
+        "accessed": null,
+        "created": null,
+        "modified": null,
+        "force": null,
+        "createdBy": null,
+        "description": null
+    },
+    {
+        "id": null,
+        "namespace": "henkilo-ui",
         "key": "AKTIVOI_LINKKI_CONFIRM",
         "locale": "fi",
         "value": "Vahvista aktivointi",

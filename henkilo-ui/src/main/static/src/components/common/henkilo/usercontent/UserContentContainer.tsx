@@ -25,13 +25,26 @@ import {
     usePutKayttajatiedotMutation,
 } from '../../../../api/kayttooikeus';
 import { add } from '../../../../slices/toastSlice';
-import { useGetHenkiloQuery, useUpdateHenkiloMutation } from '../../../../api/oppijanumerorekisteri';
+import {
+    useGetHenkiloQuery,
+    useGetYksilointitiedotQuery,
+    useUpdateHenkiloMutation,
+} from '../../../../api/oppijanumerorekisteri';
 import { isApiError } from '../../../../api/common';
+import { enabledVtjVertailuView, vtjDataAvailable } from '../../../navigation/NavigationTabs';
 
 type OwnProps = {
     oidHenkilo: string;
     view: View;
     isOppija?: boolean;
+};
+
+const yksilointivirheMap = {
+    HETU_EI_OIKEA: 'HENKILO_YKSILOINTIVIRHE_HETU_EI_OIKEA',
+    HETU_EI_VTJ: 'HENKILO_YKSILOINTIVIRHE_HETU_EI_VTJ',
+    HETU_PASSIVOITU: 'HENKILO_YKSILOINTIVIRHE_HETU_PASSIVOITU',
+    MUU_UUDELLEENYRITETTAVA: 'HENKILO_YKSILOINTIVIRHE_MUU_UUDELLEENYRITETTAVA',
+    MUU: 'HENKILO_YKSILOINTIVIRHE_MUU',
 };
 
 export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) => {
@@ -40,6 +53,8 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
     const { data: henkilo } = useGetHenkiloQuery(oidHenkilo);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: kayttajatiedot } = useGetKayttajatiedotQuery(oidHenkilo, { skip: isOppija });
+    const vtjVertailuEnabled = enabledVtjVertailuView(henkilo);
+    const { data: yksilointitiedot } = useGetYksilointitiedotQuery(oidHenkilo, { skip: !vtjVertailuEnabled });
     const [putKayttajatiedot] = usePutKayttajatiedotMutation();
     const [putAnomusilmoitus] = usePutAnomusilmoitusMutation();
     const [putHenkilo] = useUpdateHenkiloMutation();
@@ -202,19 +217,11 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
     };
 
     function _validYksilointi() {
-        return !(henkilo?.yksilointivirheet && henkilo?.yksilointivirheet.length);
+        return !henkilo?.yksilointivirheet?.length;
     }
 
     function _getYksilointivirhe() {
-        const yksilointivirheet = henkilo?.yksilointivirheet;
-        const virhe = yksilointivirheet?.[0];
-        const yksilointivirheMap = {
-            HETU_EI_OIKEA: 'HENKILO_YKSILOINTIVIRHE_HETU_EI_OIKEA',
-            HETU_EI_VTJ: 'HENKILO_YKSILOINTIVIRHE_HETU_EI_VTJ',
-            HETU_PASSIVOITU: 'HENKILO_YKSILOINTIVIRHE_HETU_PASSIVOITU',
-            MUU_UUDELLEENYRITETTAVA: 'HENKILO_YKSILOINTIVIRHE_MUU_UUDELLEENYRITETTAVA',
-            MUU: 'HENKILO_YKSILOINTIVIRHE_MUU',
-        };
+        const virhe = henkilo?.yksilointivirheet?.[0];
         const virheKey = (virhe && yksilointivirheMap[virhe.yksilointivirheTila]) || 'HENKILO_YKSILOINTIVIRHE_OLETUS';
         return virhe?.uudelleenyritysAikaleima
             ? `${L[virheKey]} ${L['HENKILO_YKSILOINTIVIRHE_UUDELLEENYRITYS']} ${moment(
@@ -320,6 +327,13 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
             <LocalNotification title={L['HENKILO_YKSILOINTIVIRHE_OTSIKKO']} type="error">
                 <ul>{_validYksilointi() ? null : <li>{_getYksilointivirhe()}</li>}</ul>
             </LocalNotification>
+            {vtjVertailuEnabled && vtjDataAvailable(yksilointitiedot) && (
+                <LocalNotification title={L['HENKILO_YKSILOINTIVIRHE_OTSIKKO']} type="error">
+                    <ul>
+                        <li>{L['HENKILO_YKSILOINTIVIRHE_NIMITIEDOT']}</li>
+                    </ul>
+                </LocalNotification>
+            )}
         </section>
     );
 };

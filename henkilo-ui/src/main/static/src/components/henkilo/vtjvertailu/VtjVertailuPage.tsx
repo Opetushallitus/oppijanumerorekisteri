@@ -20,7 +20,7 @@ import {
 import { add } from '../../../slices/toastSlice';
 
 type OwnProps = {
-    henkiloType: string;
+    henkiloType: 'virkailija' | 'oppija';
 };
 
 export const VtjVertailuPage = (props: OwnProps) => {
@@ -39,14 +39,7 @@ export const VtjVertailuPage = (props: OwnProps) => {
 
     useTitle(L['TITLE_VTJ_VERTAILU']);
     useNavigation(
-        henkiloViewTabs(
-            oid,
-            isHenkiloLoading,
-            henkilo,
-            props.henkiloType,
-            master?.oidHenkilo,
-            yksilointitiedotQuery.data
-        ),
+        henkiloViewTabs(oid, henkilo, props.henkiloType, master?.oidHenkilo, yksilointitiedotQuery.data),
         true
     );
 

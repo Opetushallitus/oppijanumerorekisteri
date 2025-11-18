@@ -1,6 +1,8 @@
 import { expect, Page, Route, test } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
+import greta from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/1.2.246.562.98.24707445854/GET.json';
+
 const CURRENT_USER_OID = '1.2.246.562.24.00000000007';
 const TESTIAINEISTO_GRETA_OID = '1.2.246.562.98.24707445854';
 const EIDAS_LEON_ELIAS_GERMANY_OID = '1.2.246.562.24.92212175391';
@@ -167,6 +169,40 @@ test.describe('henkilönäkymä', () => {
         await expect(henkiloPage.perustiedot.eidas).toHaveText(
             'DE/FI/366193B0E55D436B494769486A9284D04E0A1DCFDBF8B9EDA63E5BF4C3CFE6F5'
         );
+    });
+
+    test('shows VTJ-vertailu link and error', async ({ page }) => {
+        await overrideOmattiedot(page, JSON.parse(readFileSync('./e2e/app/omattiedot-kehittaja.json', 'utf8')));
+        const henkiloWithVtjVertailu = {
+            ...greta,
+            yksilointiYritetty: true,
+            yksiloityVTJ: false,
+            duplicate: false,
+        };
+        await mockRoute(page, '/oppijanumerorekisteri-service/henkilo/1.2.246.562.98.24707445854', {
+            json: henkiloWithVtjVertailu,
+        });
+        const yksilointitiedot = {
+            etunimet: 'Greta',
+            sukunimi: 'Sukunimetön',
+            kutsumanimi: '',
+            sukupuoli: '2',
+            yhteystiedot: null,
+        };
+        await mockRoute(page, '/oppijanumerorekisteri-service/henkilo/1.2.246.562.98.24707445854/yksilointitiedot', {
+            json: yksilointitiedot,
+        });
+
+        const henkiloPage = await gotoHenkiloView(page, TESTIAINEISTO_GRETA_OID);
+        await expect(henkiloPage.perustiedot.etunimet).toHaveText('Greta');
+        await expect(henkiloPage.perustiedot.sukunimi).toHaveText('Denimman');
+        await expect(page.locator('div.oph-alert-title')).toHaveText('Henkilön yksilöinnissä tapahtui virhe');
+        await expect(page.locator('div.oph-alert-text')).toHaveText(
+            'Henkilön nimitiedot eivät täsmää. Tee henkilölle VTJ-vertailu.'
+        );
+        await expect(
+            page.locator('a[href="/henkilo-ui/virkailija/1.2.246.562.98.24707445854/vtjvertailu"]')
+        ).not.toHaveClass('disabled-link');
     });
 });
 
