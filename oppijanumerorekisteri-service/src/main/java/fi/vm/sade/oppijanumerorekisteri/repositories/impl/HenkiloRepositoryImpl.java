@@ -436,7 +436,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     }
 
     @Override
-    public Iterable<String> findOidByYhteystieto(String arvo) {
+    public List<String> findOidByYhteystieto(String arvo) {
         QYhteystieto qYhteystieto = QYhteystieto.yhteystieto;
         QYhteystiedotRyhma qYhteystiedotRyhma = QYhteystiedotRyhma.yhteystiedotRyhma;
         QHenkilo qHenkilo = QHenkilo.henkilo;

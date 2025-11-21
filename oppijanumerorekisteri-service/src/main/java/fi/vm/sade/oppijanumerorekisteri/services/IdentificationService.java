@@ -14,7 +14,7 @@ public interface IdentificationService {
      * @param oid henkilön oid
      * @return tunnistetiedot
      */
-    Iterable<IdentificationDto> listByHenkiloOid(String oid);
+    List<IdentificationDto> listByHenkiloOid(String oid);
 
     /**
      * Luo henkilölle tunnistetiedon.
@@ -23,9 +23,9 @@ public interface IdentificationService {
      * @param identification tunnistetieto
      * @return kaikki nykyiset henkilön tunnistetiedot
      */
-    Iterable<IdentificationDto> create(String oid, IdentificationDto identification);
+    List<IdentificationDto> create(String oid, IdentificationDto identification);
 
-    Iterable<IdentificationDto> remove(String oid, IdpEntityId idpEntityId, String identifier);
+    List<IdentificationDto> remove(String oid, IdpEntityId idpEntityId, String identifier);
 
     /**
      * Käsittelee tunnistamattomat henkilöt liittämälle ne oikeisiin oideihin.

@@ -78,7 +78,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public Iterable<HenkiloHakuPerustietoDto> list(HenkiloHakuCriteriaDto criteria, Long offset, Long limit) {
+    public List<HenkiloHakuPerustietoDto> list(HenkiloHakuCriteriaDto criteria, Long offset, Long limit) {
         return this.henkiloDataRepository.findPerustietoBy(this.createHenkiloCriteria(criteria), limit, offset);
     }
 
@@ -100,7 +100,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public Iterable<HenkiloYhteystiedotDto> listWithYhteystiedotAsAdmin(HenkiloCriteria criteria) {
+    public List<HenkiloYhteystiedotDto> listWithYhteystiedotAsAdmin(HenkiloCriteria criteria) {
         if (criteria.getHenkiloOids() == null) {
             throw new ValidationException("Pakollinen hakuehto 'henkiloOids' puuttuu");
         }
@@ -129,7 +129,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public Iterable<String> listOidByYhteystieto(String arvo) {
+    public List<String> listOidByYhteystieto(String arvo) {
         return henkiloDataRepository.findOidByYhteystieto(arvo);
     }
 

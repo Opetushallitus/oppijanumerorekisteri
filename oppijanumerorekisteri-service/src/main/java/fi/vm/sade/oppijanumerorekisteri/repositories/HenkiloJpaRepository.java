@@ -130,7 +130,7 @@ public interface HenkiloJpaRepository {
 
     List<String> findUnidentified(long limit, long offset);
 
-    Iterable<String> findOidByYhteystieto(String arvo);
+    List<String> findOidByYhteystieto(String arvo);
 
     Iterable<String> findPassinumerotByOid(String oid);
 

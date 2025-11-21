@@ -131,10 +131,10 @@ public class Service2ServiceController {
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @PostMapping("/henkilo/perustiedotAsAdmin")
-    public Iterable<HenkiloHakuPerustietoDto> listAsAdmin(@RequestParam(required = false) Long offset,
+    public List<HenkiloHakuPerustietoDto> listAsAdmin(@RequestParam(required = false) Long offset,
                                                           @RequestParam(required = false) Long limit,
                                                           @Validated @RequestBody HenkiloHakuCriteriaDto criteria) {
-        return this.henkiloService.list(criteria, offset, limit);
+        return henkiloService.list(criteria, offset, limit);
     }
 
     @GetMapping("/henkilo/hetu={hetu}")

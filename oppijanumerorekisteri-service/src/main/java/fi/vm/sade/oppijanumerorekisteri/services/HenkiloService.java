@@ -12,15 +12,15 @@ import java.util.Set;
 
 public interface HenkiloService {
 
-    Iterable<HenkiloHakuPerustietoDto> list(HenkiloHakuCriteriaDto criteria, Long offset, Long amount);
+    List<HenkiloHakuPerustietoDto> list(HenkiloHakuCriteriaDto criteria, Long offset, Long amount);
 
     Slice<HenkiloHakuDto> list(HenkiloHakuCriteria criteria, int page, int count);
 
-    Iterable<HenkiloYhteystiedotDto> listWithYhteystiedotAsAdmin(HenkiloCriteria criteria);
+    List<HenkiloYhteystiedotDto> listWithYhteystiedotAsAdmin(HenkiloCriteria criteria);
 
     HenkiloHakuDto getByHakutermi(String hakutermi);
 
-    Iterable<String> listOidByYhteystieto(String arvo);
+    List<String> listOidByYhteystieto(String arvo);
 
     Boolean getHasHetu();
 

@@ -53,14 +53,14 @@ public class IdentificationServiceImpl implements IdentificationService {
 
     @Override
     @Transactional(readOnly = true)
-    public Iterable<IdentificationDto> listByHenkiloOid(String oid) {
+    public List<IdentificationDto> listByHenkiloOid(String oid) {
         Henkilo henkilo = getHenkiloByOid(oid);
         return mapper.mapAsList(henkilo.getIdentifications(), IdentificationDto.class);
     }
 
     @Override
     @Transactional
-    public Iterable<IdentificationDto> create(String oid, IdentificationDto dto) {
+    public List<IdentificationDto> create(String oid, IdentificationDto dto) {
         boolean isValidIdp = KoodiValidator.isValid(koodistoService, Koodisto.HENKILON_TUNNISTETYYPIT, dto.getIdpEntityId().getIdpEntityId());
         if (!isValidIdp) {
             throw new ValidationException("Tuntematon koodiston 'henkilontunnistetyypit' koodi " + dto.getIdpEntityId().getIdpEntityId());
@@ -80,7 +80,7 @@ public class IdentificationServiceImpl implements IdentificationService {
 
     @Override
     @Transactional
-    public Iterable<IdentificationDto> remove(String oid, IdpEntityId idpEntityId, String identifier) {
+    public List<IdentificationDto> remove(String oid, IdpEntityId idpEntityId, String identifier) {
         Henkilo henkilo = getHenkiloByOid(oid);
         henkilo.getIdentifications().removeIf(i ->
                 idpEntityId.equals(i.getIdpEntityId()) && identifier.equals(i.getIdentifier()));

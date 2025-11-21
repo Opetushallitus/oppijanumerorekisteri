@@ -91,7 +91,7 @@ public class HenkiloController {
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @Operation(summary = "Hakee henkilöiden OID:t yhteystiedon perusteella.")
-    public Iterable<String> getByYhteystieto(@PathVariable String arvo) {
+    public List<String> getByYhteystieto(@PathVariable String arvo) {
         return henkiloService.listOidByYhteystieto(arvo);
     }
 
@@ -100,7 +100,7 @@ public class HenkiloController {
             "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @Operation(summary = "Hakee henkilöiden perustiedot sekä yhteystiedot annetuilla hakukriteereillä")
     @AuditLogRead(jsonPath = "$..oidHenkilo")
-    public Iterable<HenkiloYhteystiedotDto> getYhteystiedot(@RequestBody HenkiloCriteria criteria) {
+    public List<HenkiloYhteystiedotDto> getYhteystiedot(@RequestBody HenkiloCriteria criteria) {
         return henkiloService.listWithYhteystiedotAsAdmin(criteria);
     }
 
@@ -295,14 +295,14 @@ public class HenkiloController {
     @Operation(summary = "Henkilön tunnistetietojen haku.")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
-    public Iterable<IdentificationDto> getIdentifications(@PathVariable String oid) {
+    public List<IdentificationDto> getIdentifications(@PathVariable String oid) {
         return identificationService.listByHenkiloOid(oid);
     }
 
     @PostMapping("/{oid}/identification")
     @Operation(summary = "Henkilön tunnistetietojen lisääminen.")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
-    public Iterable<IdentificationDto> addIdentification(@PathVariable String oid,
+    public List<IdentificationDto> addIdentification(@PathVariable String oid,
             @RequestBody @Validated IdentificationDto identification) {
         return identificationService.create(oid, identification);
     }
@@ -310,7 +310,7 @@ public class HenkiloController {
     @DeleteMapping("/{oid}/identification/{idpEntityId}/**")
     @Operation(summary = "Henkilön tunnistetietojen poistaminen")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
-    public Iterable<IdentificationDto> removeIdentification(@PathVariable String oid,
+    public List<IdentificationDto> removeIdentification(@PathVariable String oid,
             @PathVariable IdpEntityId idpEntityId,
             HttpServletRequest request) {
         String requestUrl = request.getRequestURL().toString();
