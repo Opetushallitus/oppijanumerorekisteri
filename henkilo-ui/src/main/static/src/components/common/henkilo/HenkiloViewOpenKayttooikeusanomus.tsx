@@ -41,8 +41,6 @@ type OwnProps = {
     onSortingChange?: (sorting: SortingState) => void;
     tableLoading?: boolean;
     piilotaOtsikko?: boolean;
-    updateSuccessHandler?: (id: number, henkilo: HenkilonNimi, kayttooikeudenTila: KayttooikeudenTila) => void;
-    updateErrorHandler?: (id: number, henkilo: HenkilonNimi, kayttooikeudenTila: KayttooikeudenTila) => void;
 };
 
 const emptyData: HaettuKayttooikeusryhma[] = [];
@@ -53,7 +51,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
     const { data: organisations, isSuccess } = useGetOrganisationsQuery();
-    const [putHaettuKayttooikeusryhma] = usePutHaettuKayttooikeusryhmaMutation();
+    const [putHaettuKayttooikeusryhma, { isLoading }] = usePutHaettuKayttooikeusryhmaMutation();
     const [peruKayttooikeusAnomus] = usePutPeruKayttooikeusAnomusMutation();
     const [dates, setDates] = useState<{ [anomusId: string]: { alkupvm: Moment; loppupvm?: Moment } }>(
         props.anomukset.reduce(
@@ -67,7 +65,6 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
             {}
         ) ?? {}
     );
-    const [handledAnomusIds, setHandledAnomusIds] = useState<number[]>([]);
     const [accessRight, setAccessRight] = useState<AccessRight>();
     const [hylkaaAnomus, setHylkaaAnomus] = useState<number>();
 
@@ -117,6 +114,15 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
         );
     }
 
+    function createNotificationMessage(henkilo: HenkilonNimi, messageKey: string): string {
+        const message = L[messageKey];
+        const henkiloLocalized = L['HENKILO_KAYTTOOIKEUSANOMUS_NOTIFICATIONS_HENKILON'];
+        const etunimet = henkilo.etunimet;
+        const sukunimi = henkilo.sukunimi;
+        const oid = henkilo.oid;
+        return `${henkiloLocalized} ${etunimet} ${sukunimi} (${oid}): ${message}`;
+    }
+
     async function handleAnomus(
         id: number,
         kayttoOikeudenTila: KayttooikeudenTila,
@@ -131,9 +137,44 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
             body: { id, kayttoOikeudenTila, alkupvm, loppupvm, hylkaysperuste },
         })
             .unwrap()
-            .then(() => props.updateSuccessHandler && props.updateSuccessHandler(id, henkilo, kayttoOikeudenTila))
-            .catch(() => props.updateErrorHandler && props.updateErrorHandler(id, henkilo, kayttoOikeudenTila));
-        setHandledAnomusIds([...handledAnomusIds, id]);
+            .then(() =>
+                dispatch(
+                    add({
+                        id: `anomus_${henkilo.oid}_${id}`,
+                        type: 'ok',
+                        header: createNotificationMessage(
+                            henkilo,
+                            kayttoOikeudenTila === KAYTTOOIKEUDENTILA.HYLATTY
+                                ? 'HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'
+                                : 'HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_SUCCESS'
+                        ),
+                    })
+                )
+            )
+            .catch((err) => {
+                if (err.status === 403) {
+                    dispatch(
+                        add({
+                            id: `anomus_${henkilo.oid}_${id}`,
+                            type: 'error',
+                            header: L['HENKILO_KAYTTOIKEUSANOMUS_OIKEUS_FAILURE'],
+                        })
+                    );
+                } else {
+                    dispatch(
+                        add({
+                            id: `anomus_${henkilo.oid}_${id}`,
+                            type: 'error',
+                            header: createNotificationMessage(
+                                henkilo,
+                                kayttoOikeudenTila === KAYTTOOIKEUDENTILA.HYLATTY
+                                    ? 'HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_FAILURE'
+                                    : 'HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_FAILURE'
+                            ),
+                        })
+                    );
+                }
+            });
         setHylkaaAnomus(undefined);
     }
 
@@ -146,16 +187,12 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                         action={() => handleAnomus(haettuKayttooikeusRyhma.id, KAYTTOOIKEUDENTILA.MYONNETTY, henkilo)}
                         normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA']}
                         confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA_CONFIRM']}
-                        disabled={
-                            !!handledAnomusIds.find((id) => id === haettuKayttooikeusRyhma.id) ||
-                            !dates?.[haettuKayttooikeusRyhma.id]?.loppupvm
-                        }
+                        disabled={!dates?.[haettuKayttooikeusRyhma.id]?.loppupvm || isLoading}
                     />
                 </div>
                 <div style={{ display: 'table-cell' }}>
                     <button
                         className="oph-button oph-button-cancel oph-button-small"
-                        disabled={!!handledAnomusIds.find((id) => id === haettuKayttooikeusRyhma.id)}
                         onClick={() => setHylkaaAnomus(haettuKayttooikeusRyhma.id)}
                     >
                         {L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA']}
@@ -195,10 +232,6 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
         setAccessRight(accessRight);
     }
 
-    const getHandledClassName = (h: HaettuKayttooikeusryhma) => {
-        return handledAnomusIds.find((id) => id === h.id) ? 'handled' : undefined;
-    };
-
     const columns = useMemo<ColumnDef<HaettuKayttooikeusryhma, HaettuKayttooikeusryhma>[]>(
         () => [
             expanderColumn(),
@@ -206,11 +239,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 id: 'ANOTTU_PVM',
                 header: () => L['ANOTTU_PVM'],
                 accessorFn: (row) => row,
-                cell: ({ getValue }) => (
-                    <span className={getHandledClassName(getValue())}>
-                        {moment(getValue().anomus.anottuPvm).format()}
-                    </span>
-                ),
+                cell: ({ getValue }) => moment(getValue().anomus.anottuPvm).format(),
                 sortingFn: (a, b) =>
                     moment(a.original.anomus.anottuPvm).isBefore(moment(b.original.anomus.anottuPvm)) ? -1 : 1,
             },
@@ -218,28 +247,21 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 id: 'HENKILO_KAYTTOOIKEUS_NIMI',
                 header: () => L['HENKILO_KAYTTOOIKEUS_NIMI'],
                 accessorFn: (row) => row,
-                cell: ({ getValue }) => (
-                    <span className={getHandledClassName(getValue())}>
-                        {getValue().anomus.henkilo.etunimet + ' ' + getValue().anomus.henkilo.sukunimi}
-                    </span>
-                ),
+                cell: ({ getValue }) => getValue().anomus.henkilo.etunimet + ' ' + getValue().anomus.henkilo.sukunimi,
                 enableSorting: false,
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO',
                 header: () => L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO'],
                 accessorFn: (row) => row,
-                cell: ({ getValue }) => (
-                    <span className={getHandledClassName(getValue())}>
-                        {isSuccess
-                            ? StaticUtils.getOrganisationNameWithType(
-                                  organisations.find((o) => o.oid === getValue().anomus.organisaatioOid),
-                                  L,
-                                  locale
-                              )
-                            : '...'}
-                    </span>
-                ),
+                cell: ({ getValue }) =>
+                    isSuccess
+                        ? StaticUtils.getOrganisationNameWithType(
+                              organisations.find((o) => o.oid === getValue().anomus.organisaatioOid),
+                              L,
+                              locale
+                          )
+                        : '...',
                 enableSorting: false,
             },
             {
@@ -271,11 +293,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 id: 'HENKILO_KAYTTOOIKEUS_ALKUPVM',
                 header: () => L['HENKILO_KAYTTOOIKEUS_ALKUPVM'],
                 accessorFn: (row) => row,
-                cell: ({ getValue }) => (
-                    <span className={getHandledClassName(getValue())}>
-                        {dates[getValue().id]?.alkupvm.format() ?? ''}
-                    </span>
-                ),
+                cell: ({ getValue }) => dates[getValue().id]?.alkupvm.format() ?? '',
                 enableSorting: false,
             },
             {
@@ -305,7 +323,6 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                         selected={dates[getValue().id]?.loppupvm?.toDate()}
                         showYearDropdown
                         showWeekNumbers
-                        disabled={!!handledAnomusIds.find((i) => i === getValue().id)}
                         filterDate={(date) => moment(date).isBefore(moment().add(1, 'years'))}
                         dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
                     />
@@ -315,9 +332,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 id: 'HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI',
                 header: () => L['HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI'],
                 accessorFn: (row) => row,
-                cell: ({ getValue }) => (
-                    <span className={getHandledClassName(getValue())}>{L[getValue().anomus.anomusTyyppi]}</span>
-                ),
+                cell: ({ getValue }) => L[getValue().anomus.anomusTyyppi],
                 enableSorting: false,
             },
             {

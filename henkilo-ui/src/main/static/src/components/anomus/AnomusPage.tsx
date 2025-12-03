@@ -4,9 +4,7 @@ import { SortingState } from '@tanstack/react-table';
 import HaetutKayttooikeusRyhmatHakuForm from './HaetutKayttooikeusRyhmatHakuForm';
 import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
 import { KAYTTOOIKEUDENTILA } from '../../globals/KayttooikeudenTila';
-import { HenkilonNimi } from '../../types/domain/kayttooikeus/HenkilonNimi';
 import { useLocalisations } from '../../selectors';
-import { useAppDispatch } from '../../store';
 import {
     GetHaetutKayttooikeusryhmatRequest,
     useGetHaetutKayttooikeusryhmatInfiniteQuery,
@@ -15,10 +13,8 @@ import {
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { mainNavigation } from '../navigation/navigationconfigurations';
-import { add } from '../../slices/toastSlice';
 
 const AnomusPage = () => {
-    const dispatch = useAppDispatch();
     const { L } = useLocalisations();
     useTitle(L['TITLE_ANOMUKSET']);
     useNavigation(mainNavigation, false);
@@ -44,15 +40,6 @@ const AnomusPage = () => {
         setParameters(newParameters);
     }
 
-    function createNotificationMessage(henkilo: HenkilonNimi, messageKey: string): string {
-        const message = L[messageKey];
-        const henkiloLocalized = L['HENKILO_KAYTTOOIKEUSANOMUS_NOTIFICATIONS_HENKILON'];
-        const etunimet = henkilo.etunimet;
-        const sukunimi = henkilo.sukunimi;
-        const oid = henkilo.oid;
-        return `${henkiloLocalized} ${etunimet} ${sukunimi} (${oid}) ${message}`;
-    }
-
     return (
         <div className="mainContent wrapper">
             <h2 className="oph-h2 oph-bold">{L['HENKILO_AVOIMET_KAYTTOOIKEUDET_OTSIKKO']}</h2>
@@ -61,32 +48,6 @@ const AnomusPage = () => {
                 <HenkiloViewOpenKayttooikeusanomus
                     isOmattiedot={false}
                     anomukset={data?.pages.flat() ?? []}
-                    updateSuccessHandler={(id, henkilo, kayttoOikeudenTila) => {
-                        const notificationMessageKey =
-                            kayttoOikeudenTila === KAYTTOOIKEUDENTILA.HYLATTY
-                                ? 'HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'
-                                : 'HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_SUCCESS';
-                        dispatch(
-                            add({
-                                id: `${henkilo.oid}_${id}_${notificationMessageKey}`,
-                                type: 'ok',
-                                header: createNotificationMessage(henkilo, notificationMessageKey),
-                            })
-                        );
-                    }}
-                    updateErrorHandler={(id, henkilo, kayttoOikeudenTila) => {
-                        const notificationMessageKey =
-                            kayttoOikeudenTila === KAYTTOOIKEUDENTILA.HYLATTY
-                                ? 'HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_FAILURE'
-                                : 'HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_FAILURE';
-                        dispatch(
-                            add({
-                                id: `${henkilo.oid}_${id}_${notificationMessageKey}`,
-                                type: 'error',
-                                header: createNotificationMessage(henkilo, notificationMessageKey),
-                            })
-                        );
-                    }}
                     fetchMoreSettings={{
                         isActive: !isLoading && hasNextPage,
                         fetchMoreAction: () => fetchNextPage(),
