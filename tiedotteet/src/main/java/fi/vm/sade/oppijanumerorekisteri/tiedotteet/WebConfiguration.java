@@ -8,9 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/omat-viestit")
-                .setViewName("forward:/static/tiedotteet.html");
-        registry.addViewController("/omat-viestit/*")
+        registry.addViewController("/")
                 .setViewName("forward:/static/tiedotteet.html");
     }
 
