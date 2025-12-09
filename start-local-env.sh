@@ -30,6 +30,10 @@ function main {
   tmux splitw -v
   tmux send-keys "$repo/scripts/run-mocks.sh" C-m
 
+  tmux select-pane -t 0
+  tmux splitw -v
+  tmux send-keys "$repo/scripts/run-tiedotuspalvelu.sh" C-m
+
   tmux attach-session -t "$session"
 }
 
