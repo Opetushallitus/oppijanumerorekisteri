@@ -1,10 +1,8 @@
-package fi.vm.sade.oppijanumerorekisteri.tiedotteet.cas;
+package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas;
 
 import org.apereo.cas.client.session.SingleSignOutFilter;
 import org.apereo.cas.client.validation.Cas30ServiceTicketValidator;
-import org.apereo.cas.client.validation.TicketValidator;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -19,16 +17,15 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
 @Configuration
 @EnableWebSecurity
 public class CasConfiguration {
     static final String SPRING_CAS_SECURITY_CHECK_PATH = "/j_spring_cas_security_check";
 
-    @Value("${tiedotteet.cas.server-url}")
+    @Value("${tiedotuspalvelu.cas.server-url}")
     private String casServerUrl;
-    @Value("${tiedotteet.cas.service-base-url}")
+    @Value("${tiedotuspalvelu.cas.service-base-url}")
     private String serviceBaseUrl;
 
     @Bean
@@ -63,7 +60,7 @@ public class CasConfiguration {
         provider.setAuthenticationUserDetailsService(new CasUserDetailsService());
         provider.setServiceProperties(serviceProperties);
         provider.setTicketValidator(new Cas30ServiceTicketValidator(casServerUrl));
-        provider.setKey("tiedotteet");
+        provider.setKey("tiedotuspalvelu");
         return provider;
     }
 

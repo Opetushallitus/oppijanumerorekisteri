@@ -7,7 +7,7 @@ RUN mvn --batch-mode clean package -DskipTests
 FROM amazoncorretto:21
 WORKDIR /app
 
-COPY --from=build /app/target/tiedotteet-1.0.0.jar application.jar
+COPY --from=build /app/target/tiedotuspalvelu-1.0.0.jar application.jar
 COPY --chmod=755 <<"EOF" /app/entrypoint.sh
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail

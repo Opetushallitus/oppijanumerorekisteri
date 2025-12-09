@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.tiedotteet;
+package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

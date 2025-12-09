@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.tiedotteet.cas;
+package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas;
 
 import java.io.Serial;
 import java.util.Collection;

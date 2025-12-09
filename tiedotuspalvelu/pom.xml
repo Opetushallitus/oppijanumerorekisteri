@@ -10,7 +10,7 @@
         <version>3.4.9</version>
     </parent>
     <groupId>fi.vm.sade.oppijanumerorekisteri</groupId>
-    <artifactId>tiedotteet</artifactId>
+    <artifactId>tiedotuspalvelu</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
