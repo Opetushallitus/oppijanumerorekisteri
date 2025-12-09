@@ -39,11 +39,7 @@ class CdkApp extends cdk.App {
       },
     };
 
-    const { oauthHostedZone } = new DnsStack(
-      this,
-      prefix("DnsStack"),
-      stackProps,
-    );
+    const dnsStack = new DnsStack(this, prefix("DnsStack"), stackProps);
     const { alarmsToSlackLambda, alarmTopic } = new AlarmStack(
       this,
       sharedAccount.prefix("AlarmStack"),
@@ -87,7 +83,7 @@ class CdkApp extends cdk.App {
         ecsCluster: ecsStack.cluster,
         datantuontiExportBucket: datantuontiExportStack.bucket,
         datantuontiExportEncryptionKey: datantuontiExportStack.encryptionKey,
-        oauthHostedZone,
+        oauthHostedZone: dnsStack.oppijanumerorekisteriHostedZone,
         ...stackProps,
       },
     );
@@ -95,6 +91,7 @@ class CdkApp extends cdk.App {
     new TiedotuspalveluStack(this, sharedAccount.prefix("Tiedotuspalvelu"), {
       ...stackProps,
       ecsCluster: ecsStack.cluster,
+      hostedZone: dnsStack.tiedotuspalveluHostedZone,
     });
 
     new HenkiloUiApplicationStack(
@@ -110,13 +107,25 @@ class CdkApp extends cdk.App {
 }
 
 class DnsStack extends cdk.Stack {
-  readonly oauthHostedZone: route53.IHostedZone;
+  readonly oppijanumerorekisteriHostedZone: route53.IHostedZone;
+  readonly tiedotuspalveluHostedZone: route53.IHostedZone;
   constructor(scope: constructs.Construct, id: string, props: cdk.StackProps) {
     super(scope, id, props);
 
-    this.oauthHostedZone = new route53.HostedZone(this, "HostedZone", {
-      zoneName: config.oauthDomainName,
-    });
+    this.oppijanumerorekisteriHostedZone = new route53.HostedZone(
+      this,
+      "HostedZone",
+      {
+        zoneName: config.oauthDomainName,
+      },
+    );
+    this.tiedotuspalveluHostedZone = new route53.HostedZone(
+      this,
+      "TiedotuspalveluHostedZone",
+      {
+        zoneName: config.tiedotuspalveluDomain,
+      },
+    );
   }
 }
 
@@ -806,6 +815,7 @@ class OppijanumerorekisteriService extends constructs.Construct {
 
 type TiedotuspalveluStackProps = cdk.StackProps & {
   ecsCluster: ecs.Cluster;
+  hostedZone: route53.IHostedZone;
 };
 
 class TiedotuspalveluStack extends cdk.Stack {

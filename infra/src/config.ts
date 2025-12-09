@@ -7,6 +7,7 @@ export type AutoScalingLimits = {
 };
 export type Config = {
   oauthDomainName: string;
+  tiedotuspalveluDomain: string;
   virkailijaHost: string;
   apiCapacity: AutoScalingLimits;
   batchCapacity: AutoScalingLimits;
@@ -56,6 +57,7 @@ export function getConfig(): Config {
 export const hahtuva: Config = {
   ...defaultConfig,
   oauthDomainName: "hahtuva.oppijanumerorekisteri.opintopolku.fi",
+  tiedotuspalveluDomain: "hahtuva.tiedotuspalvelu.opintopolku.fi",
   virkailijaHost: "virkailija.hahtuvaopintopolku.fi",
   apiCapacity: { min: 1, max: 2 },
   features: {
@@ -69,6 +71,7 @@ export const hahtuva: Config = {
 export const dev: Config = {
   ...defaultConfig,
   oauthDomainName: "dev.oppijanumerorekisteri.opintopolku.fi",
+  tiedotuspalveluDomain: "dev.tiedotuspalvelu.opintopolku.fi",
   virkailijaHost: "virkailija.untuvaopintopolku.fi",
   apiCapacity: { min: 1, max: 2 },
   features: {
@@ -86,6 +89,7 @@ export const dev: Config = {
 export const qa: Config = {
   ...defaultConfig,
   oauthDomainName: "qa.oppijanumerorekisteri.opintopolku.fi",
+  tiedotuspalveluDomain: "qa.tiedotuspalvelu.opintopolku.fi",
   virkailijaHost: "virkailija.testiopintopolku.fi",
   apiCapacity: { min: 1, max: 2 },
   features: {
@@ -103,6 +107,7 @@ export const qa: Config = {
 export const prod: Config = {
   ...defaultConfig,
   oauthDomainName: "prod.oppijanumerorekisteri.opintopolku.fi",
+  tiedotuspalveluDomain: "prod.tiedotuspalvelu.opintopolku.fi",
   virkailijaHost: "virkailija.opintopolku.fi",
   apiCapacity: { min: 2, max: 8 },
   features: {
