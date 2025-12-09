@@ -826,7 +826,7 @@ class TiedotuspalveluStack extends cdk.Stack {
   ) {
     super(scope, id, props);
     const dockerImage = new ecr_assets.DockerImageAsset(this, "AppImage", {
-      directory: path.join(__dirname, "../../tiedotteet"),
+      directory: path.join(__dirname, "../../tiedotuspalvelu"),
       file: "Dockerfile",
       platform: ecr_assets.Platform.LINUX_ARM64,
     });
