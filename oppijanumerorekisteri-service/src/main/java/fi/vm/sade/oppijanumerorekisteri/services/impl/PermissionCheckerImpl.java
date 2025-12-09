@@ -71,7 +71,7 @@ public class PermissionCheckerImpl implements PermissionChecker {
     }
 
     @Override
-    public Map<String, HenkiloDto> filterUnpermittedHenkilo(Map<String, HenkiloDto> persons, Map<String, List<String>> allowedRoles,
+    public Map<String, HenkiloDto> filterUnpermittedHenkiloMap(Map<String, HenkiloDto> persons, Map<String, List<String>> allowedRoles,
                                                             ExternalPermissionService permissionCheckService) {
         if (persons == null || persons.isEmpty()) {
             return new HashMap<>();

@@ -55,8 +55,10 @@ public class HenkiloControllerUnmockedTest {
     private VirkailijaAuditLogger auditLogger;
 
     private final JSONComparator comparator = new CustomComparator(JSONCompareMode.NON_EXTENSIBLE,
-            new Customization("*.modified", (o1, o2) -> true),
-            new Customization("*.modifiedAt", (o1, o2) -> true));
+            new Customization("**.modified", (o1, o2) -> true),
+            new Customization("**.modifiedAt", (o1, o2) -> true),
+            new Customization("**.created", (o1, o2) -> true),
+            new Customization("**.createdAt", (o1, o2) -> true));
 
     @Test
     @WithMockUser(username = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
@@ -104,6 +106,21 @@ public class HenkiloControllerUnmockedTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json(content));
         verifyReadAudit("1.2.3.4.5");
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
+    public void masterHenkilosByOidList() throws Exception {
+        given(permissionChecker.filterUnpermittedHenkiloMap(any(), any(), any())).will(i -> i.getArguments()[0]);
+
+        String result = mvc.perform(post("/henkilo/masterHenkilosByOidList")
+                .content("""
+["1.2.3.4.6", "1.2.3.4.5"]""")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/henkilo/masterHenkilosByOidList.json"), result, comparator);
     }
 
     @Test

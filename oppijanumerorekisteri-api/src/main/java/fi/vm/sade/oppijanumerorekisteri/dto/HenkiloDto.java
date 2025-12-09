@@ -42,6 +42,8 @@ public class HenkiloDto implements Serializable {
 
     private LocalDate syntymaaika;
 
+    private LocalDate kuolinpaiva;
+
     private String sukupuoli;
 
     private String kotikunta;

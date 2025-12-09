@@ -17,7 +17,7 @@ public interface PermissionChecker {
     List<HenkiloPerustietoDto> filterUnpermittedHenkiloPerustieto(Collection<HenkiloPerustietoDto> persons, Map<String, List<String>> allowedRoles,
                                                                   ExternalPermissionService permissionCheckService);
 
-    Map<String, HenkiloDto> filterUnpermittedHenkilo(Map<String, HenkiloDto> persons, Map<String, List<String>> allowedRoles,
+    Map<String, HenkiloDto> filterUnpermittedHenkiloMap(Map<String, HenkiloDto> persons, Map<String, List<String>> allowedRoles,
                                                      ExternalPermissionService permissionCheckService) throws IOException;
 
     boolean isAllowedToModifyPerson(String userOid, Map<String, List<String>> allowedPalveluRooli, ExternalPermissionService externalPermissionService) throws IOException;
