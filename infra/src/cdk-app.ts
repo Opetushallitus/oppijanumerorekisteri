@@ -825,11 +825,114 @@ class TiedotuspalveluStack extends cdk.Stack {
     props: TiedotuspalveluStackProps,
   ) {
     super(scope, id, props);
+    const vpc = ec2.Vpc.fromLookup(this, "Vpc", {
+      vpcName: sharedAccount.VPC_NAME,
+    });
+
+    const logGroup = new logs.LogGroup(this, "AppLogGroup", {
+      logGroupName: sharedAccount.prefix("/tiedotuspalvelu"),
+      retention: logs.RetentionDays.INFINITE,
+    });
+
     const dockerImage = new ecr_assets.DockerImageAsset(this, "AppImage", {
       directory: path.join(__dirname, "../../tiedotuspalvelu"),
       file: "Dockerfile",
       platform: ecr_assets.Platform.LINUX_ARM64,
     });
+
+    const taskDefinition = new ecs.FargateTaskDefinition(
+      this,
+      "TaskDefinition",
+      {
+        cpu: 2048,
+        memoryLimitMiB: 5120,
+        runtimePlatform: {
+          operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
+          cpuArchitecture: ecs.CpuArchitecture.ARM64,
+        },
+      },
+    );
+
+    const appPort = 8080;
+    taskDefinition.addContainer("AppContainer", {
+      image: ecs.ContainerImage.fromDockerImageAsset(dockerImage),
+      logging: new ecs.AwsLogDriver({ logGroup, streamPrefix: "app" }),
+      environment: {
+        ENV: getEnvironment(),
+        "server.port": appPort.toString(),
+        "tiedotuspalvelu.base-url": `https://${config.tiedotuspalveluDomain}/`,
+        "tiedotuspalvelu.opintopolku-host": config.opintopolkuHost,
+      },
+      portMappings: [
+        {
+          name: "app",
+          containerPort: appPort,
+          appProtocol: ecs.AppProtocol.http,
+        },
+      ],
+    });
+
+    const service = new ecs.FargateService(this, "Service", {
+      cluster: props.ecsCluster,
+      taskDefinition,
+      desiredCount: 0,
+      minHealthyPercent: 100,
+      maxHealthyPercent: 200,
+      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
+      healthCheckGracePeriod: cdk.Duration.minutes(5),
+    });
+
+    const alb = new elasticloadbalancingv2.ApplicationLoadBalancer(
+      this,
+      "LoadBalancer",
+      {
+        vpc,
+        internetFacing: true,
+      },
+    );
+
+    const domainForNginxForwarding = `nginx.${config.tiedotuspalveluDomain}`;
+
+    new route53.ARecord(this, "NginxARecord", {
+      zone: props.hostedZone,
+      recordName: domainForNginxForwarding,
+      target: route53.RecordTarget.fromAlias(
+        new route53_targets.LoadBalancerTarget(alb),
+      ),
+    });
+
+    const tiedotuspalveluDnsDelegationDone = false;
+
+    if (tiedotuspalveluDnsDelegationDone) {
+      const nginxCertificate = new certificatemanager.Certificate(
+        this,
+        "AlbNginxCertificate",
+        {
+          domainName: domainForNginxForwarding,
+          validation: certificatemanager.CertificateValidation.fromDns(
+            props.hostedZone,
+          ),
+        },
+      );
+
+      const listener = alb.addListener("Listener", {
+        protocol: elasticloadbalancingv2.ApplicationProtocol.HTTPS,
+        port: 443,
+        open: true,
+        certificates: [nginxCertificate],
+      });
+
+      listener.addTargets("ServiceTarget", {
+        port: appPort,
+        targets: [service],
+        healthCheck: {
+          enabled: true,
+          interval: cdk.Duration.seconds(10),
+          path: "/omat-viestit/actuator/health",
+          port: appPort.toString(),
+        },
+      });
+    }
   }
 }
 
