@@ -901,38 +901,34 @@ class TiedotuspalveluStack extends cdk.Stack {
       ),
     });
 
-    const tiedotuspalveluDnsDelegationDone = false;
+    const nginxCertificate = new certificatemanager.Certificate(
+      this,
+      "AlbNginxCertificate",
+      {
+        domainName: domainForNginxForwarding,
+        validation: certificatemanager.CertificateValidation.fromDns(
+          props.hostedZone,
+        ),
+      },
+    );
 
-    if (tiedotuspalveluDnsDelegationDone) {
-      const nginxCertificate = new certificatemanager.Certificate(
-        this,
-        "AlbNginxCertificate",
-        {
-          domainName: domainForNginxForwarding,
-          validation: certificatemanager.CertificateValidation.fromDns(
-            props.hostedZone,
-          ),
-        },
-      );
+    const listener = alb.addListener("Listener", {
+      protocol: elasticloadbalancingv2.ApplicationProtocol.HTTPS,
+      port: 443,
+      open: true,
+      certificates: [nginxCertificate],
+    });
 
-      const listener = alb.addListener("Listener", {
-        protocol: elasticloadbalancingv2.ApplicationProtocol.HTTPS,
-        port: 443,
-        open: true,
-        certificates: [nginxCertificate],
-      });
-
-      listener.addTargets("ServiceTarget", {
-        port: appPort,
-        targets: [service],
-        healthCheck: {
-          enabled: true,
-          interval: cdk.Duration.seconds(10),
-          path: "/omat-viestit/actuator/health",
-          port: appPort.toString(),
-        },
-      });
-    }
+    listener.addTargets("ServiceTarget", {
+      port: appPort,
+      targets: [service],
+      healthCheck: {
+        enabled: true,
+        interval: cdk.Duration.seconds(30),
+        path: "/omat-viestit/actuator/health",
+        port: appPort.toString(),
+      },
+    });
   }
 }
 
