@@ -825,6 +825,9 @@ class TiedotuspalveluStack extends cdk.Stack {
     props: TiedotuspalveluStackProps,
   ) {
     super(scope, id, props);
+
+    const domainForNginxForwarding = `nginx.${config.tiedotuspalveluDomain}`;
+
     const vpc = ec2.Vpc.fromLookup(this, "Vpc", {
       vpcName: sharedAccount.VPC_NAME,
     });
@@ -860,7 +863,7 @@ class TiedotuspalveluStack extends cdk.Stack {
       environment: {
         ENV: getEnvironment(),
         "server.port": appPort.toString(),
-        "tiedotuspalvelu.base-url": `https://${config.tiedotuspalveluDomain}/`,
+        "tiedotuspalvelu.base-url": `https://${domainForNginxForwarding}`,
         "tiedotuspalvelu.opintopolku-host": config.opintopolkuHost,
       },
       portMappings: [
@@ -890,8 +893,6 @@ class TiedotuspalveluStack extends cdk.Stack {
         internetFacing: true,
       },
     );
-
-    const domainForNginxForwarding = `nginx.${config.tiedotuspalveluDomain}`;
 
     new route53.ARecord(this, "NginxARecord", {
       zone: props.hostedZone,
