@@ -77,15 +77,6 @@ public class OppijaMappersTest {
         assertThat(dto.getPassinumerot()).contains("passinumero");
     }
 
-    @Test
-    public void duplicateMasterMapper() {
-        Henkilo henkilo = getHenkilo();
-
-        HenkiloReadDto dto = mapper.map(henkilo, HenkiloReadDto.class);
-
-        assertThat(dto.getPassinumerot()).contains("passinumero");
-    }
-
     private Henkilo getHenkilo() {
         return Henkilo.builder()
                 .oidHenkilo("oid")

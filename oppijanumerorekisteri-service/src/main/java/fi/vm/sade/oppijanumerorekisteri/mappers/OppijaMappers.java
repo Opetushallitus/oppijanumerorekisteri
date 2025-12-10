@@ -47,18 +47,6 @@ public class OppijaMappers {
     }
 
     @Bean
-    public ClassMap<Henkilo, HenkiloReadDto> henkiloReadDtoClassMap(MapperFactory mapperFactory) {
-        return mapperFactory.classMap(Henkilo.class, HenkiloReadDto.class)
-                .byDefault()
-                .customize(customMapper((Henkilo henkilo, HenkiloReadDto dto) -> {
-                    if (henkilo.getTurvakielto()) {
-                        dto.setKotikunta(null);
-                    }
-                }))
-                .toClassMap();
-    }
-
-    @Bean
     public ClassMap<Henkilo, HenkiloDto> henkiloDtoClassMap(MapperFactory mapperFactory) {
         return mapperFactory.classMap(Henkilo.class, HenkiloDto.class)
                 .byDefault()

@@ -199,12 +199,6 @@ public class HenkiloMapperTest {
                 .containsExactlyInAnyOrder(tuple(IdpEntityId.email, "value1"), tuple(IdpEntityId.google, "value2"));
     }
 
-    @Test
-    public void henkiloReadDto() {
-        assertThat(modelmapper.map(Henkilo.builder().build(), HenkiloReadDto.class).getYksiloityVTJ()).isFalse();
-        assertThat(modelmapper.map(Henkilo.builder().yksiloityVTJ(true).build(), HenkiloReadDto.class).getYksiloityVTJ()).isTrue();
-    }
-
     private HenkiloDto createHenkiloDto(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
                                     boolean passivoitu, String kielikoodi, String kielityyppi,
                                     String kansalaisuuskoodi, String kasittelija, String yhteystietoArvo) {

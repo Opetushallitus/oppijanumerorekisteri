@@ -2,8 +2,8 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriApiTest;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuCriteriaDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
@@ -60,7 +60,7 @@ public class ServiceToServiceApiTest extends OppijanumerorekisteriApiTest {
   @UserRekisterinpitaja
   public void henkiloPerustiedotAsAdmin() throws Exception {
     var arrayType =
-        TypeFactory.defaultInstance().constructCollectionType(List.class, HenkiloReadDto.class);
+        TypeFactory.defaultInstance().constructCollectionType(List.class, HenkiloDto.class);
     var criteria = new HenkiloHakuCriteriaDto();
     criteria.setHenkiloOids(Set.of(oid));
 
@@ -71,7 +71,7 @@ public class ServiceToServiceApiTest extends OppijanumerorekisteriApiTest {
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn();
-    List<HenkiloReadDto> perustiedotList =
+    List<HenkiloDto> perustiedotList =
         objectMapper.readValue(result.getResponse().getContentAsString(), arrayType);
     assertThat(perustiedotList).hasSize(1);
     perustiedotList.stream()

@@ -3,7 +3,6 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloExistenceCheckDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ConflictException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -66,7 +65,7 @@ class YleistunnisteServiceImplTest {
 
     @Test
     void testFoundFromOnr() {
-        HenkiloReadDto henkilo = mock(HenkiloReadDto.class);
+        HenkiloDto henkilo = mock(HenkiloDto.class);
         when(henkilo.getOppijanumero()).thenReturn(OID);
         given(yksilointiService.exists(any(HenkiloExistenceCheckDto.class))).willReturn(Optional.of(OID));
         given(henkiloService.getMasterByOid(OID)).willReturn(henkilo);

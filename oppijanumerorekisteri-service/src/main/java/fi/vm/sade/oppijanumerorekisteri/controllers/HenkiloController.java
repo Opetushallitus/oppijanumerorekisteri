@@ -189,7 +189,7 @@ public class HenkiloController {
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
     @RequestMapping(value = "/{oid}/master", method = RequestMethod.GET)
     @AuditLogRead(jsonPath = "$..oidHenkilo")
-    public HenkiloReadDto getMasterByOid(@PathVariable String oid,
+    public HenkiloDto getMasterByOid(@PathVariable String oid,
             @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         return henkiloService.getMasterByOid(oid);
     }
@@ -198,7 +198,7 @@ public class HenkiloController {
     @PostAuthorize("@permissionChecker.isAllowedToReadPerson(returnObject.oidHenkilo, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}}, #permissionService)")
     @RequestMapping(value = "/hetu={hetu}", method = RequestMethod.GET)
     @AuditLogRead(jsonPath = "$..oidHenkilo")
-    public HenkiloReadDto getByHetu(@PathVariable String hetu,
+    public HenkiloDto getByHetu(@PathVariable String hetu,
             @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         return henkiloService.getByHetu(hetu);
     }
@@ -389,7 +389,7 @@ public class HenkiloController {
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}}, #permissionService)")
     @Operation(summary = "Hakee henkilön duplikaatit oidin perusteella")
     @AuditLogRead(jsonPath = "$..oidHenkilo")
-    public List<HenkiloReadDto> findSlavesByMasterOid(
+    public List<HenkiloDto> findSlavesByMasterOid(
             @PathVariable String oid,
             @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         return this.henkiloService.findSlavesByMasterOid(oid);

@@ -251,11 +251,11 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public HenkiloReadDto getMasterByOid(String henkiloOid) {
+    public HenkiloDto getMasterByOid(String henkiloOid) {
         Henkilo henkilo = henkiloDataRepository
                 .findMasterBySlaveOid(henkiloOid)
                 .orElseGet(() -> getEntityByOid(henkiloOid));
-        return mapper.map(henkilo, HenkiloReadDto.class);
+        return mapper.map(henkilo, HenkiloDto.class);
     }
 
     @Override
@@ -282,17 +282,17 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public HenkiloReadDto getByHetu(String hetu) {
+    public HenkiloDto getByHetu(String hetu) {
         Henkilo henkilo = findByHetu(hetu)
                 .orElseThrow(() -> new NotFoundException("Henkilöä ei löytynyt henkilötunnuksella " + hetu));
-        return mapper.map(henkilo, HenkiloReadDto.class);
+        return mapper.map(henkilo, HenkiloDto.class);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<HenkiloReadDto> findSlavesByMasterOid(String masterOid) {
+    public List<HenkiloDto> findSlavesByMasterOid(String masterOid) {
         List<Henkilo> henkilos = this.henkiloDataRepository.findSlavesByMasterOid(masterOid);
-        return henkilos.stream().map( h -> mapper.map(h, HenkiloReadDto.class)).collect(Collectors.toList());
+        return henkilos.stream().map( h -> mapper.map(h, HenkiloDto.class)).collect(Collectors.toList());
     }
 
     @Override

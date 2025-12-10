@@ -82,9 +82,9 @@ public class HenkiloModificationServiceIntegrationTest {
         henkiloForceUpdateDto.setHetu("111111-1234");
         henkiloForceUpdateDto.setKaikkiHetut(Stream.of("111111-1234", "111111-1233").collect(toSet()));
 
-        HenkiloForceReadDto henkiloReadDto = this.henkiloModificationService.forceUpdateHenkilo(henkiloForceUpdateDto);
+        HenkiloForceReadDto henkiloForceReadDto = this.henkiloModificationService.forceUpdateHenkilo(henkiloForceUpdateDto);
 
-        assertThat(henkiloReadDto)
+        assertThat(henkiloForceReadDto)
                 .extracting(HenkiloForceReadDto::getOidHenkilo, HenkiloForceReadDto::getHetu, HenkiloForceReadDto::isYksiloityVTJ, HenkiloForceReadDto::getKaikkiHetut)
                 .containsExactly("VTJYKSILOITY1", "111111-1234", true, Stream.of("111111-1234", "111111-1233").collect(toSet()));
 
@@ -110,7 +110,7 @@ public class HenkiloModificationServiceIntegrationTest {
         updateDto.setKutsumanimi("Taneli");
 
         henkiloModificationService.updateHenkilo(updateDto);
-        HenkiloReadDto readDto = henkiloService.getMasterByOid("VTJYKSILOITY1");
+        HenkiloDto readDto = henkiloService.getMasterByOid("VTJYKSILOITY1");
 
         assertThat(readDto.getEtunimet()).isEqualTo("Teppo Taneli");
         assertThat(readDto.getKutsumanimi()).isEqualTo("Taneli");

@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriApiTest;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.EidasTunniste;
@@ -78,15 +77,5 @@ public class HenkiloApiTest extends OppijanumerorekisteriApiTest {
 
         var identifications = getJsonArray(IdentificationDto.class, "/henkilo/%s/identification", oid);
         assertThat(identifications).isEmpty();
-    }
-
-    @Test
-    @UserRekisterinpitaja
-    public void eidasHenkiloReadDto() throws Exception {
-        var henkilo = getJson(HenkiloReadDto.class, "/henkilo/%s/master", oid);
-        assertThat(henkilo.getOidHenkilo()).isEqualTo(oid);
-        assertThat(henkilo.getYksiloityEidas()).isTrue();
-        assertThat(henkilo.getEidasTunnisteet()).hasSize(1);
-        assertThat(henkilo.getEidasTunnisteet().get(0).getTunniste()).isEqualTo(eidasTunniste);
     }
 }

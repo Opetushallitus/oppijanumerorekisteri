@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -227,7 +228,7 @@ public class YksilointiITest {
         henkiloCreateDto.setKutsumanimi("teppo");
         henkiloCreateDto.setEtunimet("teppo");
         henkiloCreateDto.setSukunimi("testaaja");
-        HenkiloDto henkiloReadDto = henkiloModificationService.createHenkilo(henkiloCreateDto);
+        HenkiloDto henkiloDto = henkiloModificationService.createHenkilo(henkiloCreateDto);
         YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
         yksiloityHenkilo.setHetu(hetu);
         yksiloityHenkilo.setKutsumanimi("Teppo");
@@ -239,19 +240,19 @@ public class YksilointiITest {
         identificationService.yksilointiTask();
 
         assertThat(henkiloService.getByHetu(hetu))
-                .returns("Teppo", from(HenkiloReadDto::getEtunimet))
-                .returns(true, from(HenkiloReadDto::getYksiloityVTJ));
+                .returns("Teppo", from(HenkiloDto::getEtunimet))
+                .returns(true, from(HenkiloDto::isYksiloityVTJ));
         assertThat(henkiloService.findHenkiloOidsModifiedSince(new HenkiloCriteria(), modifiedSince, 0, 2))
-                .containsExactly(henkiloReadDto.getOidHenkilo());
+                .containsExactly(henkiloDto.getOidHenkilo());
 
         reset(snsClient);
 
         modifiedSince = DateTime.now();
-        yksilointiService.paivitaYksilointitiedot(henkiloReadDto.getOidHenkilo());
+        yksilointiService.paivitaYksilointitiedot(henkiloDto.getOidHenkilo());
 
         assertThat(henkiloService.findHenkiloOidsModifiedSince(new HenkiloCriteria(), modifiedSince, 0, 2))
-                .containsExactly(henkiloReadDto.getOidHenkilo());
-        assertPublished(objectMapper, snsClient, 1, henkiloReadDto.getOidHenkilo());
+                .containsExactly(henkiloDto.getOidHenkilo());
+        assertPublished(objectMapper, snsClient, 1, henkiloDto.getOidHenkilo());
     }
 
     @Test
@@ -263,7 +264,7 @@ public class YksilointiITest {
         henkiloCreateDto.setKutsumanimi("teppo");
         henkiloCreateDto.setEtunimet("teppo");
         henkiloCreateDto.setSukunimi("testaaja");
-        HenkiloDto henkiloReadDto = henkiloModificationService.createHenkilo(henkiloCreateDto);
+        HenkiloDto henkiloDto = henkiloModificationService.createHenkilo(henkiloCreateDto);
         YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
         yksiloityHenkilo.setHetu(hetu);
         yksiloityHenkilo.setKutsumanimi("Esa");
@@ -275,22 +276,22 @@ public class YksilointiITest {
         identificationService.yksilointiTask();
 
         assertThat(henkiloService.getByHetu(hetu))
-                .returns("teppo", from(HenkiloReadDto::getEtunimet))
-                .returns(false, from(HenkiloReadDto::getYksiloityVTJ));
+                .returns("teppo", from(HenkiloDto::getEtunimet))
+                .returns(false, from(HenkiloDto::isYksiloityVTJ));
         assertThat(henkiloService.findHenkiloOidsModifiedSince(new HenkiloCriteria(), modifiedSince, 0, 2))
-                .containsExactly(henkiloReadDto.getOidHenkilo());
+                .containsExactly(henkiloDto.getOidHenkilo());
 
         reset(snsClient);
 
         modifiedSince = DateTime.now();
-        yksilointiService.yliajaHenkilonTiedot(henkiloReadDto.getOidHenkilo());
+        yksilointiService.yliajaHenkilonTiedot(henkiloDto.getOidHenkilo());
 
         assertThat(henkiloService.getByHetu(hetu))
-                .returns("Esa", from(HenkiloReadDto::getEtunimet))
-                .returns(true, from(HenkiloReadDto::getYksiloityVTJ));
+                .returns("Esa", from(HenkiloDto::getEtunimet))
+                .returns(true, from(HenkiloDto::isYksiloityVTJ));
         assertThat(henkiloService.findHenkiloOidsModifiedSince(new HenkiloCriteria(), modifiedSince, 0, 2))
-                .containsExactly(henkiloReadDto.getOidHenkilo());
-        assertPublished(objectMapper, snsClient, 1, henkiloReadDto.getOidHenkilo());
+                .containsExactly(henkiloDto.getOidHenkilo());
+        assertPublished(objectMapper, snsClient, 1, henkiloDto.getOidHenkilo());
     }
 
     @Test
@@ -302,7 +303,7 @@ public class YksilointiITest {
         henkiloCreateDto.setSukunimi("testaaja");
         henkiloModificationService.createHenkilo(henkiloCreateDto);
         henkiloCreateDto.setHetu("190198-727T");
-        HenkiloDto henkiloReadDto = henkiloModificationService.createHenkilo(henkiloCreateDto);
+        HenkiloDto henkiloDto = henkiloModificationService.createHenkilo(henkiloCreateDto);
         YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
         yksiloityHenkilo.setHetu(null);
         yksiloityHenkilo.setKutsumanimi("Esa");
@@ -310,17 +311,17 @@ public class YksilointiITest {
         yksiloityHenkilo.setSukunimi("Testaaja");
         when(vtjService.teeHenkiloKysely(any())).thenReturn(Optional.of(yksiloityHenkilo));
 
-        yksilointiService.yksiloiAutomaattisesti(henkiloReadDto.getOidHenkilo());
+        yksilointiService.yksiloiAutomaattisesti(henkiloDto.getOidHenkilo());
 
-        assertThat(henkiloService.getByHetu(henkiloReadDto.getHetu()))
-                .returns("teppo", from(HenkiloReadDto::getEtunimet))
-                .returns(false, from(HenkiloReadDto::getYksiloityVTJ));
+        assertThat(henkiloService.getByHetu(henkiloDto.getHetu()))
+                .returns("teppo", from(HenkiloDto::getEtunimet))
+                .returns(false, from(HenkiloDto::isYksiloityVTJ));
 
-        yksilointiService.yliajaHenkilonTiedot(henkiloReadDto.getOidHenkilo());
+        yksilointiService.yliajaHenkilonTiedot(henkiloDto.getOidHenkilo());
 
-        assertThat(henkiloService.getByHetu(henkiloReadDto.getHetu()))
-                .returns("Esa", from(HenkiloReadDto::getEtunimet))
-                .returns(true, from(HenkiloReadDto::getYksiloityVTJ));
+        assertThat(henkiloService.getByHetu(henkiloDto.getHetu()))
+                .returns("Esa", from(HenkiloDto::getEtunimet))
+                .returns(true, from(HenkiloDto::isYksiloityVTJ));
     }
 
     @Test
@@ -511,31 +512,31 @@ public class YksilointiITest {
         henkiloCreateDto.setKutsumanimi("teppo");
         henkiloCreateDto.setEtunimet("teppo");
         henkiloCreateDto.setSukunimi("testaaja");
-        HenkiloDto henkiloReadDto = henkiloModificationService.createHenkilo(henkiloCreateDto);
+        HenkiloDto henkiloDto = henkiloModificationService.createHenkilo(henkiloCreateDto);
 
         reset(snsClient);
 
         DateTime modifiedSince = DateTime.now();
-        yksilointiService.hetuttomanYksilointi(henkiloReadDto.getOidHenkilo());
+        yksilointiService.hetuttomanYksilointi(henkiloDto.getOidHenkilo());
 
-        assertThat(henkiloService.getHenkilosByOids(singletonList(henkiloReadDto.getOidHenkilo())).get(0))
+        assertThat(henkiloService.getHenkilosByOids(singletonList(henkiloDto.getOidHenkilo())).get(0))
                 .returns(true, from(HenkiloDto::isYksiloity))
                 .returns(false, from(HenkiloDto::isYksiloityVTJ));
         assertThat(henkiloService.findHenkiloOidsModifiedSince(new HenkiloCriteria(), modifiedSince, 0, 2))
-                .containsExactly(henkiloReadDto.getOidHenkilo());
-        assertPublished(objectMapper, snsClient, 1, henkiloReadDto.getOidHenkilo());
+                .containsExactly(henkiloDto.getOidHenkilo());
+        assertPublished(objectMapper, snsClient, 1, henkiloDto.getOidHenkilo());
 
         reset(snsClient);
 
         modifiedSince = DateTime.now();
-        yksilointiService.puraHeikkoYksilointi(henkiloReadDto.getOidHenkilo());
+        yksilointiService.puraHeikkoYksilointi(henkiloDto.getOidHenkilo());
 
-        assertThat(henkiloService.getHenkilosByOids(singletonList(henkiloReadDto.getOidHenkilo())).get(0))
+        assertThat(henkiloService.getHenkilosByOids(singletonList(henkiloDto.getOidHenkilo())).get(0))
                 .returns(false, from(HenkiloDto::isYksiloity))
                 .returns(false, from(HenkiloDto::isYksiloityVTJ));
         assertThat(henkiloService.findHenkiloOidsModifiedSince(new HenkiloCriteria(), modifiedSince, 0, 2))
-                .containsExactly(henkiloReadDto.getOidHenkilo());
-        assertPublished(objectMapper, snsClient, 1, henkiloReadDto.getOidHenkilo());
+                .containsExactly(henkiloDto.getOidHenkilo());
+        assertPublished(objectMapper, snsClient, 1, henkiloDto.getOidHenkilo());
     }
 
     @Test
@@ -602,7 +603,7 @@ public class YksilointiITest {
                 .isEqualTo(tuple(null, false));
         assertThat(henkiloService.findSlavesByMasterOid(duplikaattiOid))
                 .hasSize(1)
-                .extracting(HenkiloReadDto::getHetu)
+                .extracting(HenkiloDto::getHetu)
                 .containsNull();
         assertThat(henkiloService.findSlavesByMasterOid(yksiloitavaOid)).isEmpty();
         verify(kayttooikeusClientMock).passivoiHenkilo(anyString(), eq("1.2.3.4.5"));
@@ -649,7 +650,7 @@ public class YksilointiITest {
                 .isEqualTo(tuple(null, false));
         assertThat(henkiloService.findSlavesByMasterOid(duplikaattiOid))
                 .hasSize(1)
-                .extracting(HenkiloReadDto::getHetu)
+                .extracting(HenkiloDto::getHetu)
                 .containsNull();
         assertThat(henkiloService.findSlavesByMasterOid(yksiloitavaOid)).isEmpty();
         verify(kayttooikeusClientMock).passivoiHenkilo(anyString(), isNull());

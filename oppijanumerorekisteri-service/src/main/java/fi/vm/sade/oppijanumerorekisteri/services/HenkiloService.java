@@ -38,19 +38,19 @@ public interface HenkiloService {
 
     HenkiloDto getHenkiloByIDPAndIdentifier(IdpEntityId idp, String identifier);
 
-    HenkiloReadDto getMasterByOid(String henkiloOid);
+    HenkiloDto getMasterByOid(String henkiloOid);
 
     Map<String, HenkiloDto> getMastersByOids(Set<String> henkiloOids);
 
     Henkilo getEntityByOid(String henkiloOid);
 
-    HenkiloReadDto getByHetu(String hetu);
+    HenkiloDto getByHetu(String hetu);
 
     List<HenkiloViiteDto> findHenkiloViittees(Set<String> oids);
 
     List<String> findHenkiloOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince, Integer offset, Integer amount);
 
-    List<HenkiloReadDto> findSlavesByMasterOid(String masterOid);
+    List<HenkiloDto> findSlavesByMasterOid(String masterOid);
 
     List<HuoltajaDto> getHenkiloHuoltajat(String oidHenkilo);
 

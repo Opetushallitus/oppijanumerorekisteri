@@ -3,7 +3,6 @@ package fi.vm.sade.oppijanumerorekisteri.repositories;
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriApiTest;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
@@ -11,21 +10,16 @@ import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
-import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -55,16 +49,15 @@ class TurvaKieltoTest {
     void testSetTurvakielto() {
         when(koodistoService.list(Koodisto.SUKUPUOLI))
                 .thenReturn(new KoodiTypeListBuilder(Koodisto.SUKUPUOLI).koodi("1").koodi("2").build());
-        var petteri = getHenkiloReadDto();
+        var petteri = getHenkiloDto();
         Assertions.assertEquals(1, getYtjYhteystietoCount(petteri));
         Assertions.assertEquals("493", petteri.getKotikunta());
 
         var petteriAfter = modify(h -> h.setTurvakielto(true));
         Assertions.assertEquals("493", petteriAfter.getKotikunta());
-        Assertions.assertEquals(0, getYtjYhteystietoCount(getHenkiloReadDto()));
+        Assertions.assertEquals(0, getYtjYhteystietoCount(getHenkiloDto()));
         // API response DTOs
         Assertions.assertEquals(null, getHenkiloDto().getKotikunta());
-        Assertions.assertEquals(null, getHenkiloReadDto().getKotikunta());
         Assertions.assertEquals(null, getOppijaReadDto().getKotikunta());
     }
 
@@ -73,11 +66,11 @@ class TurvaKieltoTest {
     @Sql("/turvakielto/test_data_turvakielto.sql")
     @Transactional
     void testSetTurvakieltoFalse() {
-        var petteri = getHenkiloReadDto();
+        var petteri = getHenkiloDto();
         Assertions.assertEquals(1, getYtjYhteystietoCount(petteri));
 
         var petteriAfter = modify(h -> h.setEtunimet("Niko-Petteri Testi2"));
-        Assertions.assertEquals(1, getYtjYhteystietoCount(getHenkiloReadDto()));
+        Assertions.assertEquals(1, getYtjYhteystietoCount(getHenkiloDto()));
         Assertions.assertEquals("Niko-Petteri Testi2", petteriAfter.getEtunimet());
     }
 
@@ -85,13 +78,8 @@ class TurvaKieltoTest {
         return modifyByHetu("260626-9554", consumer);
     }
 
-    private HenkiloReadDto getHenkiloReadDto() {
-        return henkiloService.getByHetu("260626-9554");
-    }
-
     private HenkiloDto getHenkiloDto() {
-        var readDto = getHenkiloReadDto();
-        return henkiloService.getHenkilosByOids(List.of(readDto.getOidHenkilo())).get(0);
+        return henkiloService.getByHetu("260626-9554");
     }
 
     private OppijaReadDto getOppijaReadDto() {
@@ -106,7 +94,7 @@ class TurvaKieltoTest {
         return henkilo;
     }
 
-    private static int getYtjYhteystietoCount(HenkiloReadDto petteriAfter) {
+    private static int getYtjYhteystietoCount(HenkiloDto petteriAfter) {
         return petteriAfter.getYhteystiedotRyhma().stream()
                 .filter(a -> a.getRyhmaAlkuperaTieto().equals("alkupera1")).collect(Collectors.toSet()).size();
     }
