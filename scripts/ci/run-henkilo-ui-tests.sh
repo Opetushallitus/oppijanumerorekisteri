@@ -5,10 +5,8 @@ repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd ../.. && pwd )"
 source "${repo}/scripts/lib/common-functions.sh"
 
 function main {
-  init_nodejs
-
   cd "${repo}/henkilo-ui/src/main/static"
-
+  init_nodejs
   npm_ci_if_needed
 
   npm run lint
