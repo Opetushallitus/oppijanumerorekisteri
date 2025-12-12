@@ -167,7 +167,7 @@ class AlarmStack extends cdk.Stack {
     const alarmsToSlack = new lambda.Function(this, "AlarmsToSlack", {
       code: lambda.Code.fromAsset("../alarms-to-slack"),
       handler: "alarms-to-slack.handler",
-      runtime: lambda.Runtime.NODEJS_20_X,
+      runtime: new lambda.Runtime("nodejs24.x"),
       architecture: lambda.Architecture.ARM_64,
       timeout: cdk.Duration.seconds(30),
     });
