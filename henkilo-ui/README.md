@@ -13,11 +13,11 @@ Run Webpack dev server with the script mentioned below. The script starts the we
 ### Prerequisites
 
 Install
-- node 20
+- nodejs
 - docker
 - tmux
 
-Install npm dependencies e.g. `cd src/main/static; nvm use 20; npm install`
+Install npm dependencies e.g. `cd src/main/static; nvm install; npm install`
 
 ### Setup
 
