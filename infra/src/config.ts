@@ -12,6 +12,7 @@ export type Config = {
   virkailijaHost: string;
   apiCapacity: AutoScalingLimits;
   batchCapacity: AutoScalingLimits;
+  tiedotuspalveluCapacity: AutoScalingLimits;
   features: {
     vtj: boolean;
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": boolean;
@@ -27,6 +28,7 @@ export type Config = {
 const defaultConfig = {
   apiCapacity: { min: 2, max: 8 },
   batchCapacity: { min: 1, max: 1 },
+  tiedotuspalveluCapacity: { min: 1, max: 1 },
   features: {
     vtj: true,
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": false,
@@ -115,6 +117,7 @@ export const prod: Config = {
   opintopolkuHost: "opintopolku.fi",
   virkailijaHost: "virkailija.opintopolku.fi",
   apiCapacity: { min: 2, max: 8 },
+  tiedotuspalveluCapacity: { min: 0, max: 0 },
   features: {
     ...defaultConfig.features,
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
