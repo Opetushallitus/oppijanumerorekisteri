@@ -863,7 +863,7 @@ class TiedotuspalveluStack extends cdk.Stack {
       environment: {
         ENV: getEnvironment(),
         "server.port": appPort.toString(),
-        "tiedotuspalvelu.base-url": `https://${domainForNginxForwarding}`,
+        "tiedotuspalvelu.base-url": `https://${config.opintopolkuHost}`,
         "tiedotuspalvelu.opintopolku-host": config.opintopolkuHost,
       },
       portMappings: [
