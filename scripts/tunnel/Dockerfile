@@ -1,4 +1,4 @@
-FROM amazon/aws-cli:2.32.18@sha256:fac97100ccbe85fccd2cb2cc1dd85d959eacfcedd86d95929d137fd3a926addd
+FROM amazon/aws-cli:2.32.19@sha256:519cf546fd545e2825f1fea3e325e44055c0eb860f9c877d314b101e54cf4782
 
 RUN curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_arm64/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
 RUN yum install -y session-manager-plugin.rpm openssh-clients nc jq socat
