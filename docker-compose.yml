@@ -29,6 +29,36 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  oph-tiedotuspalvelu-db:
+    container_name: oph-tiedotuspalvelu-db
+    image: postgres:16.4@sha256:e62fbf9d3e2b49816a32c400ed2dba83e3b361e6833e624024309c35d334b412
+    environment:
+      - POSTGRES_USER=tiedotuspalvelu
+      - POSTGRES_DB=tiedotuspalvelu
+      - POSTGRES_PASSWORD=tiedotuspalvelu
+    ports:
+      - 5436:5432
+    command: ["postgres", "-c", "log_statement=all"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U oph -d tiedotuspalvelu"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  oph-tiedotuspalvelu-test-db:
+    container_name: oph-tiedotuspalvelu-test-db
+    image: postgres:16.4@sha256:e62fbf9d3e2b49816a32c400ed2dba83e3b361e6833e624024309c35d334b412
+    environment:
+      - POSTGRES_USER=tiedotuspalvelu
+      - POSTGRES_DB=tiedotuspalvelu
+      - POSTGRES_PASSWORD=tiedotuspalvelu
+    ports:
+      - 5437:5432
+    command: ["postgres", "-c", "log_statement=all"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U oph -d tiedotuspalvelu"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   nginx:
     image: nginx:1.29.4-alpine@sha256:fd9f8ce722ab13edb2e47ebdd16b843939280457bf1567a6cd155203f9ce98d8
     ports:
