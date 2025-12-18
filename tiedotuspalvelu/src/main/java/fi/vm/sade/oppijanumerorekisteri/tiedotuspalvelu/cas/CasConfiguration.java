@@ -15,8 +15,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -35,7 +39,8 @@ public class CasConfiguration {
             CasAuthenticationFilter casAuthenticationFilter,
             SingleSignOutFilter singleSignOutFilter,
             AuthenticationEntryPoint authenticationEntryPoint,
-            SecurityContextRepository securityContextRepository
+            SecurityContextRepository securityContextRepository,
+            LogoutSuccessHandler logoutSuccessHandler
     ) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
@@ -49,7 +54,8 @@ public class CasConfiguration {
                 .securityContext(context -> context
                         .requireExplicitSave(true)
                         .securityContextRepository(securityContextRepository))
-                .exceptionHandling(handler -> handler.authenticationEntryPoint(authenticationEntryPoint));
+                .exceptionHandling(handler -> handler.authenticationEntryPoint(authenticationEntryPoint))
+                .logout(logout -> logout.logoutSuccessHandler(logoutSuccessHandler));
 
         return http.build();
     }
@@ -93,12 +99,14 @@ public class CasConfiguration {
     CasAuthenticationFilter casAuthenticationFilter(
             AuthenticationConfiguration authenticationConfiguration,
             ServiceProperties serviceProperties,
-            SecurityContextRepository securityContextRepository) throws Exception {
+            SecurityContextRepository securityContextRepository,
+            AuthenticationSuccessHandler authenticationSuccessHandler) throws Exception {
         var filter = new CasAuthenticationFilter();
         filter.setAuthenticationManager(authenticationConfiguration.getAuthenticationManager());
         filter.setServiceProperties(serviceProperties);
         filter.setFilterProcessesUrl(SPRING_CAS_SECURITY_CHECK_PATH);
         filter.setSecurityContextRepository(securityContextRepository);
+        filter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
         return filter;
     }
 
@@ -106,5 +114,20 @@ public class CasConfiguration {
     @Bean
     SecurityContextRepository securityContextRepository() {
         return new HttpSessionSecurityContextRepository();
+    }
+
+    @Bean
+    AuthenticationSuccessHandler authenticationSuccessHandler() {
+        var handler = new SimpleUrlAuthenticationSuccessHandler("/");
+        handler.setAlwaysUseDefaultTargetUrl(true);
+        return handler;
+    }
+
+    @Bean
+    LogoutSuccessHandler logoutSuccessHandler() {
+        var handler = new SimpleUrlLogoutSuccessHandler();
+        handler.setDefaultTargetUrl("/");
+        handler.setAlwaysUseDefaultTargetUrl(true);
+        return handler;
     }
 }
