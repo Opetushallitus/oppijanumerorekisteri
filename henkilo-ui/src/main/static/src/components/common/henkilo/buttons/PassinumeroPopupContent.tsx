@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+
 import Button from '../../../common/button/Button';
 import Loader from '../../../common/icons/Loader';
 import { useGetPassinumerotQuery, useSetPassinumerotMutation } from '../../../../api/oppijanumerorekisteri';
-import './PassinumeroPopupContent.css';
 import { useAppDispatch } from '../../../../store';
 import { useLocalisations } from '../../../../selectors';
 import { add } from '../../../../slices/toastSlice';
+
+import './PassinumeroPopupContent.css';
 
 type Props = {
     oid: string;
@@ -22,6 +23,7 @@ const PassinumeroPopupContent = ({ oid }: Props) => {
     } = useGetPassinumerotQuery(oid, {
         refetchOnMountOrArgChange: true,
     });
+    const [newPassinumero, setNewPassinumero] = useState('');
     const [setPassinumerot, { isLoading: isUpdating, isError: writeError }] = useSetPassinumerotMutation();
 
     useEffect(() => {
@@ -36,16 +38,10 @@ const PassinumeroPopupContent = ({ oid }: Props) => {
         }
     }, [readError, writeError]);
 
-    const {
-        register,
-        handleSubmit,
-        reset,
-        formState: { isValid },
-    } = useForm<{ passinumero: string }>({ mode: 'onChange' });
-
-    const onSubmit = ({ passinumero }: { passinumero: string }): void => {
-        setPassinumerot({ oid, passinumerot: [...passinumerot, passinumero] });
-        reset();
+    const onSubmit = async (): Promise<void> => {
+        await setPassinumerot({ oid, passinumerot: [...passinumerot, newPassinumero] }).then(() =>
+            setNewPassinumero('')
+        );
     };
 
     const remove = (removed: string) =>
@@ -63,7 +59,7 @@ const PassinumeroPopupContent = ({ oid }: Props) => {
                             tabIndex={0}
                             className="fa fa-trash passinumero-trash"
                             onClick={() => remove(passinumero)}
-                        ></i>
+                        />
                         {passinumero}
                     </li>
                 ))}
@@ -74,9 +70,10 @@ const PassinumeroPopupContent = ({ oid }: Props) => {
                     className="oph-input passinumero-input"
                     aria-required="true"
                     placeholder={L['LISAA_PASSINUMERO_PLACEHOLDER']}
-                    {...register('passinumero', { required: true })}
+                    defaultValue={newPassinumero}
+                    onChange={(e) => setNewPassinumero(e.target.value)}
                 />
-                <Button action={handleSubmit(onSubmit)} disabled={!isValid || readError || writeError}>
+                <Button action={() => onSubmit()} disabled={!newPassinumero || readError || writeError}>
                     {L['LISAA_PASSINUMERO']}
                 </Button>
             </form>

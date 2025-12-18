@@ -1,8 +1,4 @@
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { joiResolver } from '@hookform/resolvers/joi';
-import Joi from 'joi';
-import classNames from 'classnames';
 import ReactMarkdown from 'react-markdown';
 
 import CloseButton from '../../../../common/button/CloseButton';
@@ -15,6 +11,7 @@ import {
     useHenkiloExistsMutation,
 } from '../../../../../api/oppijanumerorekisteri';
 import CopyToClipboard from './CopyToClipboard';
+import { isValidKutsumanimi } from '../../../../../validation/KutsumanimiValidator';
 
 import './DetailsForm.css';
 
@@ -22,54 +19,17 @@ type OwnProps = {
     goBack: () => void;
 };
 
-export const schema = Joi.object({
-    hetu: Joi.string()
-        .trim(true)
-        .regex(/^\d{6}[ABCDEFYXWVU+-]\d{3}[0123456789ABCDEFHJKLMNPRSTUVWXY]$/)
-        .required(),
-    etunimet: Joi.string().trim(true).required(),
-    kutsumanimi: Joi.string()
-        .trim(true)
-        .custom((kutsumanimi, { state }) => {
-            const firstnames = state.ancestors[0]['etunimet']
-                .split(/\s/)
-                .flatMap((s: string) => [s, ...s.split('-')])
-                .map((s: string) => s.toLowerCase())
-                .filter((value: string, index: number, arr: string[]) => arr.indexOf(value) === index);
-            if (firstnames.includes(kutsumanimi.toLowerCase())) return kutsumanimi;
-            throw new Error();
-        })
-        .required(),
-    sukunimi: Joi.string().trim(true).required(),
-});
-
-type FormField = {
-    name: keyof CreateHenkiloRequest;
-    localizationKey: string;
+const isValid = (form: CreateHenkiloRequest) => {
+    return (
+        isHetu(form) &&
+        !!form.etunimet.trim() &&
+        !!form.sukunimi.trim() &&
+        isValidKutsumanimi(form.etunimet, form.kutsumanimi)
+    );
 };
 
-const formFields: FormField[] = [
-    {
-        name: 'hetu',
-        localizationKey: 'HENKILO_HETU',
-    },
-    {
-        name: 'etunimet',
-        localizationKey: 'HENKILO_ETUNIMET',
-    },
-    {
-        name: 'kutsumanimi',
-        localizationKey: 'HENKILO_KUTSUMANIMI',
-    },
-    {
-        name: 'sukunimi',
-        localizationKey: 'HENKILO_SUKUNIMI',
-    },
-];
-
-const formFieldErrors: Record<string, string> = {
-    'string.empty': 'LOMAKE_PAKOLLINEN_TIETO',
-    'any.custom': 'HENKILO_KUTSUMANIMI_VALIDOINTI',
+const isHetu = (form: CreateHenkiloRequest) => {
+    return form.hetu?.match(/^\d{6}[ABCDEFYXWVU+-]\d{3}[0123456789ABCDEFHJKLMNPRSTUVWXY]$/);
 };
 
 export const statusToMessage: Record<number, string> = {
@@ -80,29 +40,37 @@ export const statusToMessage: Record<number, string> = {
     409: 'EXISTENCE_CHECK_CONFLICT',
 };
 
-const resolveErrorKey = (key: string): string => formFieldErrors[key] || 'LOMAKE_KENTTA_SISALTAA_VIRHEITA';
+const getMessageClass = (existingStatus?: number) => {
+    if (existingStatus === 200) {
+        return 'check-result oph-alert-success';
+    } else if (existingStatus === 204) {
+        return 'check-result oph-alert-info';
+    } else if (existingStatus && existingStatus >= 400) {
+        return 'check-result oph-alert-error';
+    }
+    return 'check-result';
+};
+
+const initialForm = {
+    hetu: '',
+    etunimet: '',
+    kutsumanimi: '',
+    sukunimi: '',
+};
 
 export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
     const { L } = useLocalisations();
     const [henkiloExists, { isLoading }] = useHenkiloExistsMutation({});
     const [createHenkilo] = useCreateHenkiloMutation();
-
+    const [form, setForm] = useState<CreateHenkiloRequest>(initialForm);
     const [existingOid, setExistingOid] = useState<string>();
     const [existingStatus, setExistingStatus] = useState<number>();
     const [existingMessage, setExistingMessage] = useState<string>();
     const [createOid, setCreateOid] = useState<string>();
     const [createError, setCreateError] = useState(false);
 
-    const {
-        register,
-        handleSubmit,
-        reset,
-        formState: { errors, isValid },
-        getValues,
-    } = useForm<CreateHenkiloRequest>({ resolver: joiResolver(schema), mode: 'onChange' });
-
-    const handleExists = async (data: CreateHenkiloRequest) => {
-        await henkiloExists(data)
+    const handleExists = async () => {
+        await henkiloExists(form)
             .unwrap()
             .then(({ oid, status }) => {
                 setExistingOid(oid);
@@ -118,7 +86,7 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
     };
 
     const handleCreate = async () => {
-        await createHenkilo(getValues())
+        await createHenkilo(form)
             .unwrap()
             .then(setCreateOid)
             .catch(() => setCreateError(true));
@@ -130,7 +98,7 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
         setExistingStatus(undefined);
         setCreateOid(undefined);
         setCreateError(false);
-        reset();
+        setForm(initialForm);
     };
 
     return (
@@ -155,13 +123,7 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
                     </div>
                 )}
                 {existingMessage && (
-                    <div
-                        className={classNames('check-result', {
-                            'oph-alert-success': existingStatus === 200,
-                            'oph-alert-info': existingStatus === 204,
-                            'oph-alert-error': existingStatus && existingStatus >= 400,
-                        })}
-                    >
+                    <div className={getMessageClass(existingStatus)}>
                         <ReactMarkdown>{L[existingMessage] ?? ''}</ReactMarkdown>
                         {existingStatus === 200 && <CopyToClipboard text={existingOid ?? ''} L={L} />}
                         {existingStatus === 204 && <Button action={handleCreate}>{L['HENKILO_LUOYHTEYSTIETO']}</Button>}
@@ -169,26 +131,56 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
                 )}
                 {!createOid && !createError && (
                     <form>
-                        {formFields.map((field) => (
-                            <div className="oph-field oph-field-is-required" key={field.name}>
-                                <label className="oph-label">{L[field.localizationKey]}</label>
-                                <input
-                                    className={classNames('oph-input', {
-                                        'oph-input-has-error': !!errors[field.name],
-                                    })}
-                                    placeholder={L[field.localizationKey]}
-                                    type="text"
-                                    {...register(field.name)}
-                                />
-                                {!!errors[field.name] && (
-                                    <div className="oph-field-text oph-error">
-                                        {L[resolveErrorKey(errors[field.name]?.type ?? '')]}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
+                        <div className="oph-field oph-field-is-required">
+                            <label className="oph-label">{L['HENKILO_HETU']}</label>
+                            <input
+                                className={`oph-input ${!isHetu(form) ? 'oph-input-has-error' : ''}`}
+                                placeholder={L['HENKILO_HETU']}
+                                type="text"
+                                onChange={(e) => setForm({ ...form, hetu: e.target.value })}
+                            />
+                            {!isHetu(form) && (
+                                <div className="oph-field-text oph-error">{L['LOMAKE_KENTTA_SISALTAA_VIRHEITA']}</div>
+                            )}
+                        </div>
+                        <div className="oph-field oph-field-is-required">
+                            <label className="oph-label">{L['HENKILO_ETUNIMET']}</label>
+                            <input
+                                className={`oph-input ${!form.etunimet.trim() ? 'oph-input-has-error' : ''}`}
+                                placeholder={L['HENKILO_ETUNIMET']}
+                                type="text"
+                                onChange={(e) => setForm({ ...form, etunimet: e.target.value })}
+                            />
+                            {!form.etunimet.trim() && (
+                                <div className="oph-field-text oph-error">{L['LOMAKE_PAKOLLINEN_TIETO']}</div>
+                            )}
+                        </div>
+                        <div className="oph-field oph-field-is-required">
+                            <label className="oph-label">{L['HENKILO_KUTSUMANIMI']}</label>
+                            <input
+                                className={`oph-input ${!isValidKutsumanimi(form.etunimet, form.kutsumanimi) ? 'oph-input-has-error' : ''}`}
+                                placeholder={L['HENKILO_KUTSUMANIMI']}
+                                type="text"
+                                onChange={(e) => setForm({ ...form, kutsumanimi: e.target.value })}
+                            />
+                            {!isValidKutsumanimi(form.etunimet, form.kutsumanimi) && (
+                                <div className="oph-field-text oph-error">{L['HENKILO_KUTSUMANIMI_VALIDOINTI']}</div>
+                            )}
+                        </div>
+                        <div className="oph-field oph-field-is-required">
+                            <label className="oph-label">{L['HENKILO_SUKUNIMI']}</label>
+                            <input
+                                className={`oph-input ${!form.sukunimi.trim() ? 'oph-input-has-error' : ''}`}
+                                placeholder={L['HENKILO_SUKUNIMI']}
+                                type="text"
+                                onChange={(e) => setForm({ ...form, sukunimi: e.target.value })}
+                            />
+                            {!form.sukunimi.trim() && (
+                                <div className="oph-field-text oph-error">{L['LOMAKE_PAKOLLINEN_TIETO']}</div>
+                            )}
+                        </div>
                         <div className="oph-field">
-                            <Button action={handleSubmit(handleExists)} disabled={!isValid || isLoading}>
+                            <Button action={() => handleExists()} disabled={!isValid(form) || isLoading}>
                                 <SpinnerInButton show={isLoading} />
                                 {L['KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO']}
                             </Button>
