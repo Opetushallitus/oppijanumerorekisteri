@@ -1,7 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,9 +23,8 @@ public class UiController {
 
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
-    public String me() throws JsonProcessingException {
-        var mapper =  new ObjectMapper();
+    public CasUserDetailsService.CasAuthenticatedUser me() throws JsonProcessingException {
         var auth = SecurityContextHolder.getContext().getAuthentication();
-        return mapper.writeValueAsString(auth.getPrincipal());
+        return (CasUserDetailsService.CasAuthenticatedUser) auth.getPrincipal();
     }
 }
