@@ -1,9 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
 import moment from 'moment';
+import ReactDatePicker from 'react-datepicker';
 
-import SimpleDatePicker from '../../henkilo/SimpleDatePicker';
 import { validateEmail } from '../../../validation/EmailValidator';
+import PropertySingleton from '../../../globals/PropertySingleton';
 
 type Props = {
     readOnly: boolean;
@@ -65,20 +66,23 @@ class Field extends React.Component<Props, State> {
         }
         if (this.props.date && this.props.children) {
             return (
-                <SimpleDatePicker
+                <ReactDatePicker
                     className="oph-input"
                     onChange={(value) => {
                         if (this.props.changeAction) {
                             this.props.changeAction({
                                 target: {
-                                    value: value,
+                                    value: moment(value).format('YYYY-MM-DD'),
                                     name: this.props.inputValue,
                                 },
                             });
                         }
                     }}
-                    value={this.props.children}
+                    selected={moment(this.props.children).toDate()}
+                    showYearDropdown
+                    showWeekNumbers
                     disabled={this.props.disabled}
+                    dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
                 />
             );
         }

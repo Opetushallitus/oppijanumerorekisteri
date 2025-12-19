@@ -1,6 +1,8 @@
 import React from 'react';
 import { difference } from 'ramda';
 import moment from 'moment';
+import { SingleValue } from 'react-select';
+import ReactDatePicker from 'react-datepicker';
 
 import RyhmaSelection from '../common/select/RyhmaSelection';
 import { findOmattiedotOrganisatioOrRyhmaByOid } from '../../utilities/organisaatio.util';
@@ -9,7 +11,6 @@ import KayttooikeusryhmaSelectModal from '../common/select/KayttooikeusryhmaSele
 import { myonnettyToKayttooikeusryhma } from '../../utils/KayttooikeusryhmaUtils';
 import { Kayttooikeusryhma, MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
-import SimpleDatePicker from '../henkilo/SimpleDatePicker';
 import CrossCircleIcon from '../common/icons/CrossCircleIcon';
 import { useLocalisations } from '../../selectors';
 import { isOrganisaatioSelection, OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
@@ -21,9 +22,9 @@ import {
 } from '../../api/kayttooikeus';
 import { SelectOption } from '../../utilities/select';
 import { localizeTextGroup } from '../../utilities/localisation.util';
+import PropertySingleton from '../../globals/PropertySingleton';
 
 import './AddedOrganization.css';
-import { SingleValue } from 'react-select';
 
 type OwnProps = {
     addedOrg: KutsuOrganisaatio;
@@ -47,7 +48,7 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
     const selectablePermissions = allPermissions ? difference(allPermissions, addedOrg.selectedPermissions) : [];
     const kayttooikeusryhmat = selectablePermissions.map(myonnettyToKayttooikeusryhma);
 
-    const selectVoimassaLoppuPvm = (voimassaLoppuPvm: string | null | undefined) => {
+    const selectVoimassaLoppuPvm = (voimassaLoppuPvm: string | null) => {
         updateOrganisation({ ...addedOrg, voimassaLoppuPvm });
     };
 
@@ -153,11 +154,18 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
 
                 <label>{L['HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY']}</label>
                 <div>
-                    <SimpleDatePicker
+                    <ReactDatePicker
                         className="oph-input"
-                        value={addedOrg.voimassaLoppuPvm}
-                        onChange={selectVoimassaLoppuPvm}
+                        onChange={(value) =>
+                            value
+                                ? selectVoimassaLoppuPvm(moment(value).format('YYYY-MM-DD'))
+                                : selectVoimassaLoppuPvm(null)
+                        }
+                        selected={moment(addedOrg.voimassaLoppuPvm).toDate()}
+                        showYearDropdown
+                        showWeekNumbers
                         filterDate={(date) => moment(date).isBetween(moment(), moment().add(1, 'years'), 'day', '[]')}
+                        dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
                     />
                 </div>
             </div>

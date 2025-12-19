@@ -439,6 +439,7 @@ export const kayttooikeusApi = createApi({
         }),
         putKutsu: builder.mutation<void, PutKutsuRequest>({
             query: (body) => ({ url: 'kutsu', method: 'POST', body }),
+            invalidatesTags: ['kutsutut'],
         }),
         putRenewKutsu: builder.mutation<void, number>({
             query: (id) => ({ url: `kutsu/${id}/renew`, method: 'PUT' }),

@@ -1,8 +1,9 @@
 import React from 'react';
 import Select from 'react-select';
+import moment from 'moment';
 import classNames from 'classnames';
+import ReactDatePicker from 'react-datepicker';
 
-import SimpleDatePicker from '../../../SimpleDatePicker';
 import { HenkiloCreate } from '../../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { Locale } from '../../../../../types/locale.type';
 import PropertySingleton from '../../../../../globals/PropertySingleton';
@@ -114,18 +115,18 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
                 <div className="oph-field oph-field-is-required">
                     <label className="oph-label">{this.props.L['HENKILO_SYNTYMAAIKA']}</label>
                     <div />
-                    <SimpleDatePicker
-                        className={classNames('oph-input', {
-                            'oph-input-has-error': this.isSubmittedAndHasError('syntymaaika'),
-                        })}
-                        placeholder={this.props.L['HENKILO_SYNTYMAAIKA']}
-                        value={this.state.henkilo.syntymaaika}
-                        onChange={(value) =>
+                    <ReactDatePicker
+                        className={`oph-input ${this.isSubmittedAndHasError('syntymaaika') ? 'oph-input-has-error' : ''}`}
+                        onChange={(date) =>
                             this.onHenkiloChange({
                                 name: 'syntymaaika',
-                                value: value,
+                                value: moment(date).format('YYYY-MM-DD'),
                             })
                         }
+                        selected={moment(this.state.henkilo.syntymaaika).toDate()}
+                        showYearDropdown
+                        showWeekNumbers
+                        dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
                     />
                     {this.renderErrors('syntymaaika')}
                 </div>
