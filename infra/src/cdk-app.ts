@@ -941,6 +941,8 @@ class TiedotuspalveluStack extends cdk.Stack {
       ],
     });
 
+    service.connections.allowToDefaultPort(props.database);
+
     const alb = new elasticloadbalancingv2.ApplicationLoadBalancer(
       this,
       "LoadBalancer",
