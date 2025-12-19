@@ -70,6 +70,12 @@ class CdkApp extends cdk.App {
           `https://${config.virkailijaHost}/oppijanumerorekisteri-service/actuator/health`,
         ),
       },
+      {
+        name: "Tiedotuspalvelu",
+        url: new URL(
+          `https://${config.opintopolkuHost}/omat-viestit/actuator/health`,
+        ),
+      },
     ]);
 
     new OppijanumerorekisteriApplicationStack(
