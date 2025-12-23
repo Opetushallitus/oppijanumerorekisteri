@@ -5,7 +5,7 @@ import { useLocalisations } from '../selectors';
 import Button from '../components/common/button/Button';
 import { isValidPassword } from '../validation/PasswordValidator';
 import { usePostSalasananVaihtoMutation } from '../api/kayttooikeus';
-import { useAppDispatch } from '../store';
+import { useAppDispatch } from './store';
 import Loader from '../components/common/icons/Loader';
 import { useTitle } from '../useTitle';
 import { add } from '../slices/toastSlice';
@@ -24,7 +24,7 @@ export const SalasananVaihtoPage = () => {
 
     useTitle(L['TITLE_SALASANANVAIHTO']);
 
-    const submit = () => {
+    const submit = async () => {
         postPasswordChange({ loginToken: params.loginToken!, newPassword, currentPassword })
             .unwrap()
             .then(() => setPasswordChanged(true))
