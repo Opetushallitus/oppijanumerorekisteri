@@ -99,7 +99,7 @@ export const EmailVerificationPage = ({
 
     function emailChangeEvent(yhteystiedotRyhmaIndex: number, yhteystietoIndex: number, value: string): void {
         const yhteystiedotRyhma = henkilo.yhteystiedotRyhma;
-        if (yhteystiedotRyhma?.[yhteystiedotRyhmaIndex]?.yhteystieto?.[yhteystietoIndex]) {
+        if (yhteystiedotRyhma?.[yhteystiedotRyhmaIndex]?.yhteystieto?.[yhteystietoIndex]?.yhteystietoArvo) {
             yhteystiedotRyhma[yhteystiedotRyhmaIndex].yhteystieto[yhteystietoIndex].yhteystietoArvo = value;
         }
         const newValidForm = validateYhteystiedotRyhmaEmails(yhteystiedotRyhma);
@@ -139,20 +139,13 @@ export const EmailVerificationPage = ({
             <p style={{ textAlign: 'left' }}>
                 {L[emailFieldCount > 0 ? 'SAHKOPOSTI_VARMENNUS_OHJE' : 'SAHKOPOSTI_VARMENNUS_EI_OSOITTEITA']}
             </p>
-            {henkilo.yhteystiedotRyhma?.flatMap((ryhma, ryhmaIndex) =>
-                ryhma.yhteystieto
-                    .filter((y) => y.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI')
-                    .map((y, idx) => (
-                        <EmailVerificationList
-                            key={`${ryhmaIndex}-${idx}`}
-                            yhteystieto={y}
-                            onEmailChange={(e) => emailChangeEvent(ryhmaIndex, idx, e)}
-                            onEmailRemove={() => onEmailRemove(ryhmaIndex, idx)}
-                            L={L}
-                            emailFieldCount={emailFieldCount}
-                        />
-                    ))
-            )}
+            <EmailVerificationList
+                yhteystiedotRyhma={henkilo.yhteystiedotRyhma}
+                onEmailChange={emailChangeEvent}
+                onEmailRemove={onEmailRemove}
+                L={L}
+                emailFieldCount={emailFieldCount}
+            />
 
             <div style={{ textAlign: 'center' }}>
                 <Button action={verifyEmailAddresses} isButton disabled={!validForm} big>
