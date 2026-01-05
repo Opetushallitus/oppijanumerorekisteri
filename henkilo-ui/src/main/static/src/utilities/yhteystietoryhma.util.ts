@@ -12,46 +12,9 @@ export const validateYhteystiedotRyhmaEmails = (yhteystiedotRyhma?: YhteystietoR
 /*
  * Palauttaa true jos kaikki sähköpostikentät yksittäisessä YhteystiedotRyhma:ssa ovat valideja sähköpostiosoitteita
  */
-export const validYhteystietoRyhma = (yhteystietoRyhma: YhteystietoRyhma): boolean => {
+const validYhteystietoRyhma = (yhteystietoRyhma: YhteystietoRyhma): boolean => {
     return yhteystietoRyhma.yhteystieto
         .filter((yhteystieto: Yhteystieto) => yhteystieto.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI')
-        .map(validEmailYhteystieto)
+        .map((y) => validateEmail(y.yhteystietoArvo ?? ''))
         .reduce((prev: boolean, curr: boolean) => prev && curr, true);
-};
-
-/*
- * Palauttaa true, jos YHTEYSTIETO_SAHKOPOSTI -tyyppinen Yhteystieto sisältää validin sähköpostin
- */
-export const validEmailYhteystieto = (yhteystieto: Yhteystieto): boolean => {
-    const email: string = yhteystieto.yhteystietoArvo ? yhteystieto.yhteystietoArvo : '';
-    return validateEmail(email);
-};
-
-/*
- * Palauttaa Yhteystiedot-listasta sähköpostiosoitekenttien lukumäärän, jotka eivät ole tyhjiä
- */
-export const notEmptyYhteystiedotRyhmaEmailCount = (yhteystiedotRyhma?: Array<YhteystietoRyhma>): number => {
-    return (
-        yhteystiedotRyhma
-            ?.map(notEmptyYhteystietoRyhmaEmailCount)
-            .reduce((prev: number, curr: number) => prev + curr, 0) ?? 0
-    );
-};
-
-/*
- * Palauttaa YhteystietoRyhman ei-tyhjien sähköpostitietueiden lukumäärän
- */
-export const notEmptyYhteystietoRyhmaEmailCount = (yhteystietoRyhma: YhteystietoRyhma): number => {
-    return yhteystietoRyhma.yhteystieto
-        .filter((yhteystieto: Yhteystieto) => yhteystieto.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI')
-        .map(isNotEmptyYhteystietoEmail)
-        .reduce((prev: number, curr: boolean) => (curr ? prev + 1 : prev), 0);
-};
-
-/*
- * Palauttaa true, jos YHTEYSTIETO_SAHKOPOSIT -tyyppinen Yhteystieto ei ole tyhjä
- */
-export const isNotEmptyYhteystietoEmail = (yhteystieto: Yhteystieto): boolean => {
-    const email: string = yhteystieto.yhteystietoArvo ? yhteystieto.yhteystietoArvo : '';
-    return email.length >= 1;
 };

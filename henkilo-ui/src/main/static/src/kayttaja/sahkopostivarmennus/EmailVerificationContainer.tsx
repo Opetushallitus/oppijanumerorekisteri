@@ -34,7 +34,7 @@ const EmailVerificationContainer = () => {
         );
     };
 
-    return isLoading ? (
+    return isLoading || isError ? (
         <Loader />
     ) : (
         <EmailVerificationPage
