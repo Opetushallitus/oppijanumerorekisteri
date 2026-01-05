@@ -11,28 +11,18 @@ type OwnProps = {
         disabled?: boolean;
         password?: boolean;
         isError?: boolean;
-        date?: string | boolean;
         showOnlyOnWrite?: boolean;
         readOnly?: boolean;
         className?: string;
     };
     readOnly?: boolean;
     updateModelFieldAction?: (arg0: React.SyntheticEvent<HTMLInputElement>) => void;
-    updateDateFieldAction?: (arg0: React.SyntheticEvent<HTMLInputElement>) => void;
     autofocus?: boolean;
     required?: boolean;
     hideLabel?: boolean;
 };
 
-const LabelValue = ({
-    values,
-    readOnly,
-    updateModelFieldAction,
-    updateDateFieldAction,
-    autofocus,
-    required,
-    hideLabel,
-}: OwnProps) => {
+const LabelValue = ({ values, readOnly, updateModelFieldAction, autofocus, required, hideLabel }: OwnProps) => {
     const { L } = useLocalisations();
     return !values.showOnlyOnWrite || !readOnly ? (
         <div id={values.label}>
@@ -52,7 +42,7 @@ const LabelValue = ({
                     {...values}
                     autofocus={autofocus}
                     disabled={values.disabled}
-                    changeAction={!values.date ? updateModelFieldAction : updateDateFieldAction}
+                    changeAction={updateModelFieldAction}
                     readOnly={!!values.readOnly || !!readOnly}
                 >
                     {values.value ?? ''}

@@ -1,10 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
-import moment from 'moment';
-import ReactDatePicker from 'react-datepicker';
 
 import { validateEmail } from '../../../validation/EmailValidator';
-import PropertySingleton from '../../../globals/PropertySingleton';
 
 type Props = {
     readOnly: boolean;
@@ -62,29 +59,7 @@ class Field extends React.Component<Props, State> {
         }
 
         if (this.props.readOnly) {
-            return <span className={className}>{this.getReadOnlyValue()}</span>;
-        }
-        if (this.props.date && this.props.children) {
-            return (
-                <ReactDatePicker
-                    className="oph-input"
-                    onChange={(value) => {
-                        if (this.props.changeAction) {
-                            this.props.changeAction({
-                                target: {
-                                    value: moment(value).format('YYYY-MM-DD'),
-                                    name: this.props.inputValue,
-                                },
-                            });
-                        }
-                    }}
-                    selected={moment(this.props.children).toDate()}
-                    showYearDropdown
-                    showWeekNumbers
-                    disabled={this.props.disabled}
-                    dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
-                />
-            );
+            return <span className={className}>{this.props.children}</span>;
         }
         return (
             <input
@@ -110,10 +85,6 @@ class Field extends React.Component<Props, State> {
 
     isValidEmailInputEvent(type: string, event: React.SyntheticEvent<HTMLInputElement>) {
         return type === 'email' && event.currentTarget.value !== '' && !validateEmail(event.currentTarget.value);
-    }
-
-    getReadOnlyValue() {
-        return this.props.date && this.props.children ? moment(this.props.children).format() : this.props.children;
     }
 }
 

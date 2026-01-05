@@ -1,7 +1,10 @@
 import React, { SyntheticEvent } from 'react';
+import ReactDatePicker from 'react-datepicker';
+import { format, parseISO } from 'date-fns';
 
 import type { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
-import LabelValue from './LabelValue';
+import { useLocalisations } from '../../../../selectors';
+import PropertySingleton from '../../../../globals/PropertySingleton';
 
 type OwnProps = {
     readOnly: boolean;
@@ -10,18 +13,48 @@ type OwnProps = {
 };
 
 const Syntymaaika = (props: OwnProps) => {
+    const { L } = useLocalisations();
     return (
-        <LabelValue
-            readOnly={props.readOnly}
-            updateDateFieldAction={props.updateDateFieldAction}
-            values={{
-                label: 'HENKILO_SYNTYMAAIKA',
-                inputValue: 'syntymaaika',
-                date: true,
-                value: props.henkiloUpdate.syntymaaika,
-                disabled: props.henkiloUpdate.yksiloityEidas || !!props.henkiloUpdate.hetu,
-            }}
-        />
+        <div id="HENKILO_SYNTYMAAIKA">
+            <div
+                className="labelValue"
+                style={{
+                    display: 'grid',
+                    gridTemplateColumns: props.readOnly ? '1fr 1fr' : '1fr',
+                }}
+            >
+                <span className="oph-bold">{L['HENKILO_SYNTYMAAIKA']}</span>
+                {props.readOnly ? (
+                    <span className="field">
+                        {props.henkiloUpdate.syntymaaika
+                            ? format(
+                                  props.henkiloUpdate.syntymaaika,
+                                  PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI
+                              )
+                            : ''}
+                    </span>
+                ) : (
+                    <ReactDatePicker
+                        className="oph-input"
+                        onChange={(value) => {
+                            props.updateDateFieldAction({
+                                target: {
+                                    value: value ? format(value, 'yyyy-MM-dd') : undefined,
+                                    name: 'syntymaaika',
+                                },
+                            } as unknown as SyntheticEvent<HTMLInputElement, Event>);
+                        }}
+                        selected={
+                            props.henkiloUpdate.syntymaaika ? parseISO(props.henkiloUpdate.syntymaaika) : undefined
+                        }
+                        showYearDropdown
+                        showWeekNumbers
+                        disabled={props.henkiloUpdate.yksiloityEidas || !!props.henkiloUpdate.hetu}
+                        dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
+                    />
+                )}
+            </div>
+        </div>
     );
 };
 
