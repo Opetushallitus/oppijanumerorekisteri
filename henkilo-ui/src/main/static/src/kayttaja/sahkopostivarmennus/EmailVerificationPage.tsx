@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { clone, remove } from 'ramda';
 import { useNavigate } from 'react-router';
 
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
@@ -53,7 +52,7 @@ export const EmailVerificationPage = ({
     useEffect(() => {
         // Lisätään käyttäjän yhteystietoihin tyhjä sähköpostiosoite, jos sellaista ei löydy
         if (emailFieldCount === 0) {
-            const yhteystiedotRyhma = clone(henkilo.yhteystiedotRyhma);
+            const yhteystiedotRyhma = henkilo.yhteystiedotRyhma?.map((y) => y);
             const emptyEmailYhteystieto: Yhteystieto = {
                 yhteystietoTyyppi: EMAIL,
                 yhteystietoArvo: '',
@@ -109,24 +108,25 @@ export const EmailVerificationPage = ({
 
     function onEmailRemove(yhteystiedotRyhmaIndex: number, yhteystietoIndex: number): void {
         let yhteystiedotRyhma = henkilo.yhteystiedotRyhma;
-        const emailNotOnlyYhteystietoInYhteystietoryhma = yhteystiedotRyhma?.[yhteystiedotRyhmaIndex]?.yhteystieto
-            .filter((yhteystieto: Yhteystieto) => yhteystieto.yhteystietoTyyppi !== EMAIL)
-            .some(
-                (yhteystieto: Yhteystieto) =>
-                    yhteystieto.yhteystietoArvo !== '' &&
-                    yhteystieto.yhteystietoArvo !== null &&
-                    yhteystieto.yhteystietoArvo !== undefined
-            );
+        if (!yhteystiedotRyhma) {
+            return;
+        }
+
+        const emailNotOnlyYhteystietoInYhteystietoryhma = yhteystiedotRyhma[yhteystiedotRyhmaIndex]?.yhteystieto
+            .filter((yhteystieto) => yhteystieto.yhteystietoTyyppi !== EMAIL)
+            .some((yhteystieto) => !!yhteystieto.yhteystietoArvo);
 
         if (emailNotOnlyYhteystietoInYhteystietoryhma) {
-            const yhteystietoRyhma = yhteystiedotRyhma?.[yhteystiedotRyhmaIndex];
+            const yhteystietoRyhma = yhteystiedotRyhma[yhteystiedotRyhmaIndex];
             if (yhteystietoRyhma) {
-                yhteystietoRyhma.yhteystieto = remove(yhteystietoIndex, 1, yhteystietoRyhma.yhteystieto);
+                const yhteystietoClone = [...yhteystietoRyhma.yhteystieto];
+                yhteystietoClone.splice(yhteystietoIndex, 1);
+                yhteystietoRyhma.yhteystieto = yhteystietoClone;
             }
         } else {
-            if (yhteystiedotRyhma) {
-                yhteystiedotRyhma = remove(yhteystiedotRyhmaIndex, 1, yhteystiedotRyhma);
-            }
+            const yhteystiedotRyhmaClone = [...yhteystiedotRyhma];
+            yhteystiedotRyhmaClone.splice(yhteystiedotRyhmaIndex, 1);
+            yhteystiedotRyhma = yhteystiedotRyhmaClone;
         }
 
         setHenkilo({ ...henkilo, yhteystiedotRyhma });
