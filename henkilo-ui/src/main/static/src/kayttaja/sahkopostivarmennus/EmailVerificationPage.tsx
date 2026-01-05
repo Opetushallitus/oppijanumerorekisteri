@@ -99,7 +99,7 @@ export const EmailVerificationPage = ({
 
     function emailChangeEvent(yhteystiedotRyhmaIndex: number, yhteystietoIndex: number, value: string): void {
         const yhteystiedotRyhma = henkilo.yhteystiedotRyhma;
-        if (yhteystiedotRyhma?.[yhteystiedotRyhmaIndex]?.yhteystieto?.[yhteystietoIndex]?.yhteystietoArvo) {
+        if (yhteystiedotRyhma?.[yhteystiedotRyhmaIndex]?.yhteystieto?.[yhteystietoIndex]) {
             yhteystiedotRyhma[yhteystiedotRyhmaIndex].yhteystieto[yhteystietoIndex].yhteystietoArvo = value;
         }
         const newValidForm = validateYhteystiedotRyhmaEmails(yhteystiedotRyhma);
