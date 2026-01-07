@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { Outlet } from 'react-router';
+import { registerLocale, setDefaultLocale } from 'react-datepicker';
+import { fi } from 'date-fns/locale/fi';
 
 import { useAppDispatch } from '../store';
 import { TopNavigation } from '../components/navigation/TopNavigation';
@@ -15,6 +17,8 @@ import { add } from '../slices/toastSlice';
 
 import 'moment/locale/fi';
 import 'moment/locale/sv';
+registerLocale('fi', fi);
+setDefaultLocale('fi');
 
 const App = () => {
     const { isSuccess: isOnrPrequelSuccess } = useGetOnrPrequelQuery(undefined, { pollingInterval: 30000 });
