@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router';
+import { SingleValue } from 'react-select';
 
 import { PalvelukayttajaCriteria } from '../../types/domain/kayttooikeus/palvelukayttaja.types';
 import { useLocalisations } from '../../selectors';
@@ -17,7 +18,6 @@ import { useNavigation } from '../../useNavigation';
 import { jarjestelmatunnusNavigation } from '../navigation/navigationconfigurations';
 
 import './JarjestelmatunnusListPage.css';
-import { SingleValue } from 'react-select';
 
 const defaultCriteria = {
     subOrganisation: 'true',

@@ -71,8 +71,8 @@ test.describe('jarjestelmatunnus', () => {
             await useGetPalvelukayttajaQuery(page, oid, nimi, kayttajatunnus, [
                 {
                     clientId: kayttajatunnus,
-                    created: `${new Date()}`,
-                    updated: `${new Date()}`,
+                    created: '2026-01-01T00:00:00',
+                    updated: '2026-01-01T00:00:00',
                     kasittelija: {
                         oid: '1.2.3.4.5',
                         etunimet: 'Kasi',
