@@ -1,20 +1,36 @@
 import { test, expect, Page } from '@playwright/test';
-import { groupBy } from 'ramda';
 
 import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/current/omattiedot/GET.json';
 import duplicates from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/duplicates/GET.json';
 import link from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/link/POST.json';
 import main from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/GET.json';
+import type { HenkiloDuplicate } from '../../src/types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 
-const groupedDuplicates = groupBy((h) => {
-    return h.yksiloityVTJ
-        ? 'yksiloityVtj'
-        : h.yksiloityEidas
-          ? 'yksiloityEidas'
-          : h.yksiloity
-            ? 'yksiloity'
-            : 'yksiloimaton';
-}, duplicates);
+type Grouped = {
+    yksiloityVtj: HenkiloDuplicate[];
+    yksiloityEidas: HenkiloDuplicate[];
+    yksiloity: HenkiloDuplicate[];
+    yksiloimaton: HenkiloDuplicate[];
+};
+
+const groupedDuplicates: Grouped = {
+    yksiloityVtj: [],
+    yksiloityEidas: [],
+    yksiloity: [],
+    yksiloimaton: [],
+};
+
+(duplicates as HenkiloDuplicate[]).forEach((d) => {
+    if (d.yksiloityVTJ) {
+        groupedDuplicates.yksiloityVtj.push(d);
+    } else if (d.yksiloityEidas) {
+        groupedDuplicates.yksiloityEidas.push(d);
+    } else if (d.yksiloity) {
+        groupedDuplicates.yksiloity.push(d);
+    } else {
+        groupedDuplicates.yksiloimaton.push(d);
+    }
+});
 
 const routeOmattiedotWithoutRoles = async (page: Page) => {
     await page.route('/kayttooikeus-service/henkilo/current/omattiedot', async (route) => {

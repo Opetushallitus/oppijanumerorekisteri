@@ -12,7 +12,7 @@ export type HenkiloDuplicate = {
     hetu?: string;
     syntymaaika?: string;
     passivoitu?: boolean;
-    email?: string;
+    email?: string | null;
     emails?: string[];
     yksiloity?: boolean;
     yksiloityVTJ?: boolean;
