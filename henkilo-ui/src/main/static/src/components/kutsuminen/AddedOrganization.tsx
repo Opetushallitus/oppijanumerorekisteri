@@ -1,5 +1,4 @@
 import React from 'react';
-import { difference } from 'ramda';
 import { SingleValue } from 'react-select';
 import ReactDatePicker from 'react-datepicker';
 import { addYears, format, isAfter, isBefore, parseISO } from 'date-fns';
@@ -44,7 +43,9 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
             skip: !omattiedot || !selectedOrganisaatioOid,
         }
     );
-    const selectablePermissions = allPermissions ? difference(allPermissions, addedOrg.selectedPermissions) : [];
+    const selectablePermissions = allPermissions
+        ? allPermissions.filter((p) => !addedOrg.selectedPermissions.find((s) => s.ryhmaId === p.ryhmaId))
+        : [];
     const kayttooikeusryhmat = selectablePermissions.map(myonnettyToKayttooikeusryhma);
 
     const selectVoimassaLoppuPvm = (voimassaLoppuPvm: string | null) => {

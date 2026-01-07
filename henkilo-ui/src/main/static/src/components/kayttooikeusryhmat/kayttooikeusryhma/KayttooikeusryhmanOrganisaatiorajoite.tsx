@@ -56,7 +56,7 @@ const KayttooikeusryhmanOrganisaatiorajoite = (props: Props) => {
                     <OrganisaatioSelectModal onSelect={props.organisaatioSelectAction} />
                     <ItemList
                         items={props.organisaatioSelections}
-                        labelPath={['name']}
+                        getItemName={(o) => o.name}
                         removeAction={props.removeOrganisaatioSelectAction}
                     />
                 </div>

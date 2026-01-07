@@ -44,7 +44,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
                     <OrganisaatioSelectModal onSelect={onSelect} disabled={disabled} />
                     <ItemList
                         items={selectedOrganisation}
-                        labelPath={['name']}
+                        getItemName={(o) => o.name}
                         removeAction={() => setSelectedOrganisation([])}
                     />
                 </div>

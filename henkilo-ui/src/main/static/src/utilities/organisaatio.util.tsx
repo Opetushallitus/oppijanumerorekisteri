@@ -1,5 +1,3 @@
-import { findIndex, pathEq, sortBy, uniqBy } from 'ramda';
-
 import type { OrganisaatioHenkilo } from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import type { OrganisaatioNameLookup, OrganisaatioWithChildren } from '../types/domain/organisaatio/organisaatio.types';
 import type { Locale } from '../types/locale.type';
@@ -24,6 +22,20 @@ export const omattiedotOrganisaatiotToOrganisaatioSelectObject = (
     );
     return uniqBy((o) => o.oid, organisaatioSelectObjects);
 };
+
+function uniqBy(iteratee: (org: OrganisaatioSelectObject) => string, array: OrganisaatioSelectObject[]) {
+    const transformedResults = new Set();
+    const result = [];
+    for (const element of array) {
+        const transformedElement = iteratee(element);
+        if (!transformedResults.has(transformedElement)) {
+            transformedResults.add(transformedElement);
+            result.push(element);
+        }
+    }
+
+    return result;
+}
 
 /*
  * Parsii organisaatiohierarkiasta arrayn OrganisaatioSelectObject:a
@@ -101,98 +113,4 @@ export const findOmattiedotOrganisatioOrRyhmaByOid = (
             ? organisaatioHierarkiaToOrganisaatioSelectObject(omatOrganisaatiot, orgNames, locale)
             : [];
     return allOrganisaatioSelectObjects.find((o) => o.oid === oid);
-};
-
-const organisaatioHierarchyRoots = (orgs: OrganisaatioHenkilo[], locale: Locale): Array<OrganisaatioWithChildren> => {
-    // First sort by name:
-    orgs = sortBy((org: OrganisaatioHenkilo) => org.organisaatio?.nimi?.[locale] ?? '', orgs);
-    const byOid: Record<string, OrganisaatioWithChildren> = {};
-    // Determine direct parent oid and map by oid:
-    const mapOrg = (oldOrg: OrganisaatioWithChildren) => {
-        const org = { ...oldOrg };
-        byOid[org.oid] = org;
-        if (!org.parentOidPath) {
-            org.parentOid = null;
-        } else {
-            const parents = org.parentOidPath.split('/');
-            org.parentOid = parents[1];
-        }
-        org.children = (org.children ?? []).map(mapOrg);
-        return org;
-    };
-    // clone organisaatios for now since rtk createApi responses have Object.preventExtensions and we're mutating here...
-    const organisaatios = orgs.map((o) => o.organisaatio).map(mapOrg);
-    // Map children by direct parent:
-    const roots: OrganisaatioWithChildren[] = [];
-    organisaatios.forEach((org: OrganisaatioWithChildren) => {
-        if (org.parentOid) {
-            const parent = byOid[org.parentOid];
-            if (parent) {
-                // do not add duplicates:
-                if (findIndex(pathEq(org.oid, ['oid']), parent.children) < 0) {
-                    parent.children.push(org);
-                    parent.children = sortBy((o: OrganisaatioWithChildren) => o.nimi?.[locale] ?? '')(parent.children);
-                }
-            } else {
-                // not the root org but root can not be found (=> makes this lowest accessable)
-                roots.push(org);
-            }
-        } else {
-            // root org:
-            roots.push(org);
-        }
-    });
-    return roots;
-};
-
-const organizationsFlatInHierarchyOrder = (organizationHierarchyRoots: OrganisaatioWithChildren[]) => {
-    const result: OrganisaatioWithChildren[] = [];
-    const flatten = (org: OrganisaatioWithChildren) => {
-        result.push(org);
-        if (org.children) {
-            org.children.forEach((child) => (child.parent = org));
-            org.children.forEach(flatten);
-        }
-    };
-    organizationHierarchyRoots.forEach(flatten);
-    return result;
-};
-
-const getOrganisaatios = (organisaatios: OrganisaatioHenkilo[], locale: Locale): OrganisaatioWithChildren[] => {
-    const hierarchyRoots = organisaatioHierarchyRoots(organisaatios, locale);
-    return organizationsFlatInHierarchyOrder(hierarchyRoots);
-};
-
-const mapOrganisaatio = (
-    organisaatio: OrganisaatioWithChildren,
-    locale: Locale,
-    sisallytaTyypit = true
-): { value: string; label: string } => {
-    const nimi = organisaatio.nimi?.[locale];
-    const tyypit = sisallytaTyypit ? ` (${organisaatio.tyypit.join(',')})` : '';
-    return {
-        value: organisaatio.oid,
-        label: `${nimi}${tyypit}`,
-    };
-};
-
-// Filter off organisations or ryhmas depending on isRyhma value.
-const getOrganisationsOrRyhmas = (
-    organisaatios: OrganisaatioWithChildren[],
-    isRyhma: boolean
-): OrganisaatioWithChildren[] => {
-    return isRyhma
-        ? organisaatios.filter((organisaatio) => organisaatio.tyypit.indexOf('Ryhma') !== -1)
-        : organisaatios.filter((organisaatio) => organisaatio.tyypit.indexOf('Ryhma') === -1);
-};
-
-export const getOrganisaatioOptions = (
-    newOrganisaatios: OrganisaatioHenkilo[],
-    locale: Locale,
-    isRyhma: boolean
-): { value: string; label: string }[] => {
-    const newOptions = getOrganisationsOrRyhmas(getOrganisaatios(newOrganisaatios, locale), isRyhma).map(
-        (organisaatio) => mapOrganisaatio(organisaatio, locale, !isRyhma)
-    );
-    return newOptions.sort((a, b) => a.label.localeCompare(b.label));
 };

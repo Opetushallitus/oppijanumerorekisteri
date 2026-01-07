@@ -9,7 +9,6 @@
         "date-fns": "4.1.0",
         "oph-virkailija-style-guide": "github:Opetushallitus/virkailija-styles#master",
         "papaparse": "^5.4.1",
-        "ramda": "^0.32.0",
         "react": "18.3.1",
         "react-datepicker": "9.0.0",
         "react-dom": "18.3.1",

@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import { compose, last, prop, sortBy, toLower } from 'ramda';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 
 import type { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
@@ -30,9 +29,9 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
         const orgs = props.organisaatiot ?? omattiedotOrganisations;
         if (orgs?.length && organisationNames) {
             const options = omattiedotOrganisaatiotToOrganisaatioSelectObject(orgs, organisationNames, locale);
-            const sortedOrganisations = sortBy<OrganisaatioSelectObject>(compose(toLower, prop('name')))(options);
-            setOrganisations([...sortedOrganisations]);
-            return sortedOrganisations;
+            options.sort((a, b) => (a.name.toLocaleLowerCase() < b.name.toLocaleLowerCase() ? -1 : 1));
+            setOrganisations([...options]);
+            return options;
         } else {
             return [];
         }
@@ -188,7 +187,7 @@ function hasParents(o: OrganisaatioSelectObject): boolean {
 
 function parentName(o: OrganisaatioSelectObject): string {
     if (hasParents(o)) {
-        return compose(toLower, last, prop('parentNames'))(o);
+        return o.parentNames[o.parentNames.length - 1]!.toLocaleLowerCase();
     } else {
         return o.name;
     }

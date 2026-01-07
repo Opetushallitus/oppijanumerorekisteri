@@ -38,7 +38,7 @@ const MyonnettavatKayttooikeusryhmat = (props: Props) => {
                     />
                     <ItemList
                         items={props.kayttooikeusryhmaSelections}
-                        labelPath={['label']}
+                        getItemName={(k) => k.label}
                         removeAction={props.removeKayttooikeusryhmaSelectAction}
                     />
                 </div>
