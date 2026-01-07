@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
-import moment from 'moment';
+import { format, parseISO } from 'date-fns';
 
 import { JarjestelmatunnusCasModal } from './JarjestelmatunnusCasModal';
-import PropertySingleton from '../../globals/PropertySingleton';
 import { JarjestelmatunnusOauth2Modal } from './JarjestelmatunnusOauth2Modal';
 import { OphDsInput } from '../design-system/OphDsInput';
 import { useGetHenkiloQuery, useUpdateHenkiloMutation } from '../../api/oppijanumerorekisteri';
@@ -126,9 +125,7 @@ export const JarjestelmatunnusPerustiedot = () => {
                             {jarjestelmatunnus.oauth2Credentials.map((o) => (
                                 <React.Fragment key={o.created}>
                                     <div data-test-id="oauth2clientid">{o.clientId}</div>
-                                    <div>
-                                        {moment(o.created).format(PropertySingleton.state.PVM_DATE_TIME_FORMAATTI)}
-                                    </div>
+                                    <div>{format(parseISO(o.created), 'd.M.yyyy H:mm')}</div>
                                     <div data-test-id="kasittelija">
                                         <Link to={`/virkailija/${o.kasittelija.oid}`} className="oph-ds-link">
                                             {o.kasittelija.kutsumanimi + ' ' + o.kasittelija.sukunimi}

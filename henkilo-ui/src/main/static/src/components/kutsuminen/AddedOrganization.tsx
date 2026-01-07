@@ -1,8 +1,8 @@
 import React from 'react';
 import { difference } from 'ramda';
-import moment from 'moment';
 import { SingleValue } from 'react-select';
 import ReactDatePicker from 'react-datepicker';
+import { addYears, format, isAfter, isBefore, parseISO } from 'date-fns';
 
 import RyhmaSelection from '../common/select/RyhmaSelection';
 import { findOmattiedotOrganisatioOrRyhmaByOid } from '../../utilities/organisaatio.util';
@@ -22,7 +22,6 @@ import {
 } from '../../api/kayttooikeus';
 import { SelectOption } from '../../utilities/select';
 import { localizeTextGroup } from '../../utilities/localisation.util';
-import PropertySingleton from '../../globals/PropertySingleton';
 
 import './AddedOrganization.css';
 
@@ -157,15 +156,13 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
                     <ReactDatePicker
                         className="oph-input"
                         onChange={(value) =>
-                            value
-                                ? selectVoimassaLoppuPvm(moment(value).format('YYYY-MM-DD'))
-                                : selectVoimassaLoppuPvm(null)
+                            value ? selectVoimassaLoppuPvm(format(value, 'yyyy-MM-dd')) : selectVoimassaLoppuPvm(null)
                         }
-                        selected={moment(addedOrg.voimassaLoppuPvm).toDate()}
+                        selected={addedOrg.voimassaLoppuPvm ? parseISO(addedOrg.voimassaLoppuPvm) : null}
                         showYearDropdown
                         showWeekNumbers
-                        filterDate={(date) => moment(date).isBetween(moment(), moment().add(1, 'years'), 'day', '[]')}
-                        dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
+                        filterDate={(date) => isAfter(date, new Date()) && isBefore(date, addYears(new Date(), 1))}
+                        dateFormat={'d.M.yyyy'}
                     />
                 </div>
             </div>

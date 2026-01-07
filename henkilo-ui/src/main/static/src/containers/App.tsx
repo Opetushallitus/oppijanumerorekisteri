@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import moment from 'moment';
 import { Outlet } from 'react-router';
 import { registerLocale, setDefaultLocale } from 'react-datepicker';
 import { fi } from 'date-fns/locale/fi';
@@ -7,7 +6,6 @@ import { fi } from 'date-fns/locale/fi';
 import { useAppDispatch } from '../store';
 import { TopNavigation } from '../components/navigation/TopNavigation';
 import Loader from '../components/common/icons/Loader';
-import PropertySingleton from '../globals/PropertySingleton';
 import { useLocalisations } from '../selectors';
 import { useGetOmatOrganisaatiotQuery, useGetOmattiedotQuery, useGetOtuvaPrequelQuery } from '../api/kayttooikeus';
 import { useGetLocaleQuery, useGetOnrPrequelQuery } from '../api/oppijanumerorekisteri';
@@ -15,8 +13,6 @@ import { useGetLocalisationsQuery } from '../api/lokalisointi';
 import { OphDsToasts } from '../components/design-system/OphDsToast';
 import { add } from '../slices/toastSlice';
 
-import 'moment/locale/fi';
-import 'moment/locale/sv';
 registerLocale('fi', fi);
 setDefaultLocale('fi');
 
@@ -42,9 +38,6 @@ const PostPrequelApp = () => {
 
     useEffect(() => {
         if (isOmattiedotSuccess && isLocaleSuccess && isLocalisationsSuccess && !!locale && !!L) {
-            moment.locale(locale);
-            moment.defaultFormat = PropertySingleton.getState().PVM_MOMENT_FORMAATTI;
-
             if (locale?.toLowerCase() !== 'fi' && locale?.toLowerCase() !== 'sv') {
                 dispatch(
                     add({

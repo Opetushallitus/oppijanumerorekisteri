@@ -1,10 +1,9 @@
 import { YhteystietoRyhma } from './yhteystietoryhma.types';
 import { Kansalaisuus } from './kansalaisuus.types';
 import { Kielisyys } from './kielisyys.types';
-import Moment from 'moment';
 
 export type Yksilointivirhe = {
-    uudelleenyritysAikaleima?: Moment.Moment;
+    uudelleenyritysAikaleima?: number;
     yksilointivirheTila: 'HETU_EI_OIKEA' | 'HETU_EI_VTJ' | 'MUU_UUDELLEENYRITETTAVA' | 'MUU';
 };
 

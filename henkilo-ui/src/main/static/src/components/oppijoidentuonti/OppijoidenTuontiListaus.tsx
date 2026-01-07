@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router';
 import { useReactTable, getCoreRowModel, PaginationState, ColumnDef } from '@tanstack/react-table';
-import moment from 'moment';
 
 import { OppijaList } from '../../types/domain/oppijanumerorekisteri/oppijalist.types';
 import { Page } from '../../types/Page.types';
 import { useLocalisations } from '../../selectors';
 import OphTable from '../OphTable';
+import { format, parseISO } from 'date-fns';
 
 type Props = {
     data: Page<OppijaList>;
@@ -40,7 +40,7 @@ const OppijoidenTuontiListaus = ({ data, onPageChange, loading }: Props) => {
         () => [
             {
                 header: () => L['OPPIJOIDEN_TUONTI_LUONTIAIKA'],
-                accessorFn: (henkilo: OppijaList) => moment(henkilo.luotu).format('l LT'),
+                accessorFn: (henkilo: OppijaList) => format(new Date(henkilo.luotu), 'd.M.yyyy HH:mm'),
                 id: 'CREATED',
                 enableSorting: false,
             },
@@ -63,7 +63,7 @@ const OppijoidenTuontiListaus = ({ data, onPageChange, loading }: Props) => {
             {
                 header: () => L['OPPIJOIDEN_TUONTI_HENKILOTUNNUS_SYNTYMAIKA'],
                 accessorFn: (henkilo: OppijaList) =>
-                    henkilo.syntymaaika ? moment(henkilo.syntymaaika).format('l') : '',
+                    henkilo.syntymaaika ? format(parseISO(henkilo.syntymaaika), 'd.M.yyyy') : '',
                 enableSorting: false,
                 id: 'hetu',
             },

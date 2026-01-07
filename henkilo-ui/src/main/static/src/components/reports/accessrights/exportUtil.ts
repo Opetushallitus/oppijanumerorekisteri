@@ -1,14 +1,13 @@
 import { unparse } from 'papaparse';
-import moment from 'moment';
+import { format, parseISO } from 'date-fns';
 
-import PropertySingleton from '../../../globals/PropertySingleton';
 import { Localisations } from '../../../types/localisation.type';
 import { AccessRightsReportRow } from '../../../api/kayttooikeus';
 
 const BOM = '\ufeff';
 const DELIMITER = ';';
 
-const formatDate = (date: string) => moment(date).format(PropertySingleton.state.PVM_MOMENT_FORMAATTI);
+const formatDate = (date: string) => format(parseISO(date), 'd.M.yyyy');
 
 export const createCSV = (data: AccessRightsReportRow[], L: Localisations) =>
     unparse(

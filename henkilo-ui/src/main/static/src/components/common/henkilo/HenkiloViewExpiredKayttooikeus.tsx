@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useMemo, useState } from 'react';
-import moment from 'moment';
+import { format, parseISO } from 'date-fns';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, SortingState } from '@tanstack/react-table';
 
 import { useAppDispatch } from '../../../store';
@@ -193,7 +193,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
                 id: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA',
                 header: () => L['HENKILO_KAYTTOOIKEUS_KASITTELIJA'],
                 accessorFn: (row) =>
-                    moment(row.kasitelty).format() + ' / ' + (row.kasittelijaNimi || row.kasittelijaOid),
+                    format(parseISO(row.kasitelty), 'd.M.yyyy') + ' / ' + (row.kasittelijaNimi || row.kasittelijaOid),
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUS_JATKOAIKA',

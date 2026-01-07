@@ -3,8 +3,8 @@ import { YksilointiTila } from './yksilointitila.types';
 export type OppijaList = {
     oid: string;
     oppijanumero: string;
-    luotu: string;
-    muokattu: string;
+    luotu: number;
+    muokattu: number;
     syntymaaika: string;
     etunimet: string;
     kutsumanimi: string;

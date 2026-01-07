@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import moment from 'moment';
 import Select, { createFilter, SingleValue } from 'react-select';
+import { format, parseISO } from 'date-fns';
 
 import Button from '../common/button/Button';
 import KutsututTable from './KutsututTable';
@@ -21,11 +21,11 @@ import { KutsuView } from './KutsuViews';
 import StaticUtils from '../common/StaticUtils';
 import { FastMenuList, SelectOption } from '../../utilities/select';
 import OphModal from '../common/modal/OphModal';
-
-import './KutsututPage.css';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { mainNavigation } from '../navigation/navigationconfigurations';
+
+import './KutsututPage.css';
 
 export type KutsututSearchParams = {
     searchTerm: string;
@@ -184,7 +184,7 @@ export const KutsututPage = () => {
                             ))}
                         </div>
                         <div>{L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO']}</div>
-                        <div>{moment(confirmDelete.aikaleima).format()}</div>
+                        <div>{format(parseISO(confirmDelete.aikaleima), 'd.M.yyyy')}</div>
                     </div>
                     <Button action={cancelInvitationConfirmed}>{L['PERUUTA_KUTSU']}</Button>
                 </OphModal>

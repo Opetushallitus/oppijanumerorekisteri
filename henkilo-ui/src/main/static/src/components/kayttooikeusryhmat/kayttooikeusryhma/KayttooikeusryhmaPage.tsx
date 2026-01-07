@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import moment from 'moment';
 import { useNavigate } from 'react-router';
+import { SingleValue } from 'react-select';
+import { format, parseISO } from 'date-fns';
 
 import './KayttooikeusryhmaPage.css';
 import KayttooikeusryhmanOrganisaatiorajoite from './KayttooikeusryhmanOrganisaatiorajoite';
@@ -17,7 +18,6 @@ import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobjec
 import { getLocalization } from '../../../utilities/localisation.util';
 import KayttooikeusryhmatSallittuKayttajatyyppi from './KayttooikeusryhmatSallittuKayttajatyyppi';
 import ToggleKayttooikeusryhmaStateModal from './ToggleKayttooikeusryhmaStateModal';
-import PropertySingleton from '../../../globals/PropertySingleton';
 import { OrganisaatioViite } from '../../../types/domain/kayttooikeus/organisaatioviite.types';
 import { SelectOption } from '../../../utilities/select';
 import { useLocalisations } from '../../../selectors';
@@ -33,7 +33,6 @@ import {
 import { useAppDispatch } from '../../../store';
 import { useGetOppilaitostyypitQuery, useGetOrganisaatiotyypitQuery } from '../../../api/koodisto';
 import { add } from '../../../slices/toastSlice';
-import { SingleValue } from 'react-select';
 
 type Locales = 'FI' | 'SV' | 'EN';
 
@@ -526,7 +525,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
     function renderKayttooikeusryhmaMuokattu() {
         if (kayttooikeusryhma) {
             const muokattu = kayttooikeusryhma.muokattu
-                ? moment(kayttooikeusryhma.muokattu).format(PropertySingleton.state.PVM_DATE_TIME_FORMAATTI)
+                ? format(parseISO(kayttooikeusryhma.muokattu), 'd.M.yyyy H:mm')
                 : null;
             const muokkaaja = kayttooikeusryhma.muokkaaja ? kayttooikeusryhma.muokkaaja : null;
             if (muokattu && muokkaaja) {

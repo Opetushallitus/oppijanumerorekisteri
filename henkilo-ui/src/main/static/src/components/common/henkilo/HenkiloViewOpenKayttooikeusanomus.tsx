@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState, useId } from 'react';
-import moment from 'moment';
-import type { Moment } from 'moment';
+import { addYears, format, isBefore, parseISO } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, Row, SortingState } from '@tanstack/react-table';
 
@@ -8,7 +7,6 @@ import StaticUtils from '../StaticUtils';
 import Button from '../button/Button';
 import PopupButton from '../button/PopupButton';
 import AnomusHylkaysPopup from '../../anomus/AnomusHylkaysPopup';
-import PropertySingleton from '../../../globals/PropertySingleton';
 import { AnojaKayttooikeusryhmat } from '../../anomus/AnojaKayttooikeusryhmat';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { localizeTextGroup } from '../../../utilities/localisation.util';
@@ -53,13 +51,13 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     const { data: organisations, isSuccess } = useGetOrganisationsQuery();
     const [putHaettuKayttooikeusryhma, { isLoading }] = usePutHaettuKayttooikeusryhmaMutation();
     const [peruKayttooikeusAnomus] = usePutPeruKayttooikeusAnomusMutation();
-    const [dates, setDates] = useState<{ [anomusId: string]: { alkupvm: Moment; loppupvm?: Moment } }>(
+    const [dates, setDates] = useState<{ [anomusId: string]: { alkupvm: Date; loppupvm?: Date } }>(
         props.anomukset.reduce(
             (acc, kayttooikeus) => ({
                 ...acc,
                 [String(kayttooikeus.id)]: {
-                    alkupvm: moment(),
-                    loppupvm: moment().add(1, 'years'),
+                    alkupvm: new Date(),
+                    loppupvm: addYears(new Date(), 1),
                 },
             }),
             {}
@@ -75,8 +73,8 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 (acc, kayttooikeus) => ({
                     ...acc,
                     [String(kayttooikeus.id)]: dates[String(kayttooikeus.id)] ?? {
-                        alkupvm: moment(),
-                        loppupvm: moment().add(1, 'years'),
+                        alkupvm: new Date(),
+                        loppupvm: addYears(new Date(), 1),
                     },
                 }),
                 currentDates
@@ -130,8 +128,8 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
         hylkaysperuste?: string
     ) {
         const date = dates[id];
-        const alkupvm = (date?.alkupvm ?? moment()).format(PropertySingleton.state.PVM_DBFORMAATTI);
-        const loppupvm = date?.loppupvm?.format(PropertySingleton.state.PVM_DBFORMAATTI);
+        const alkupvm = format(date?.alkupvm ?? new Date(), 'yyyy-MM-dd');
+        const loppupvm = date?.loppupvm && format(date?.loppupvm, 'yyyy-MM-dd');
         await putHaettuKayttooikeusryhma({
             henkiloOid: henkilo.oid,
             body: { id, kayttoOikeudenTila, alkupvm, loppupvm, hylkaysperuste },
@@ -239,9 +237,9 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 id: 'ANOTTU_PVM',
                 header: () => L['ANOTTU_PVM'],
                 accessorFn: (row) => row,
-                cell: ({ getValue }) => moment(getValue().anomus.anottuPvm).format(),
+                cell: ({ getValue }) => format(parseISO(getValue().anomus.anottuPvm), 'd.M.yyyy'),
                 sortingFn: (a, b) =>
-                    moment(a.original.anomus.anottuPvm).isBefore(moment(b.original.anomus.anottuPvm)) ? -1 : 1,
+                    isBefore(parseISO(a.original.anomus.anottuPvm), parseISO(b.original.anomus.anottuPvm)) ? -1 : 1,
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUS_NIMI',
@@ -293,14 +291,16 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 id: 'HENKILO_KAYTTOOIKEUS_ALKUPVM',
                 header: () => L['HENKILO_KAYTTOOIKEUS_ALKUPVM'],
                 accessorFn: (row) => row,
-                cell: ({ getValue }) => dates[getValue().id]?.alkupvm.format() ?? '',
+                cell: ({ getValue }) =>
+                    dates[getValue().id]?.alkupvm ? format(dates[getValue().id]!.alkupvm, 'd.M.yyyy') : '',
                 enableSorting: false,
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM',
                 header: () => L['HENKILO_KAYTTOOIKEUS_LOPPUPVM'],
                 accessorFn: (row) => row,
-                cell: ({ getValue }) => dates[getValue().id]?.loppupvm?.format() ?? '',
+                cell: ({ getValue }) =>
+                    dates[getValue().id]?.loppupvm ? format(dates[getValue().id]!.loppupvm!, 'd.M.yyyy') : '',
                 enableSorting: false,
             },
             {
@@ -316,15 +316,15 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                                 ...dates,
                                 [getValue().id]: {
                                     ...dates[getValue().id],
-                                    loppupvm: value ? moment(value) : undefined,
+                                    loppupvm: value,
                                 },
                             })
                         }
-                        selected={dates[getValue().id]?.loppupvm?.toDate()}
+                        selected={dates[getValue().id]?.loppupvm}
                         showYearDropdown
                         showWeekNumbers
-                        filterDate={(date) => moment(date).isBefore(moment().add(1, 'years'))}
-                        dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
+                        filterDate={(date) => isBefore(date, addYears(new Date(), 1))}
+                        dateFormat={'d.M.yyyy'}
                     />
                 ),
             },

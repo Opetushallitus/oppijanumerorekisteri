@@ -10,11 +10,6 @@ type State = {
     YHTEYSTIETO_ALKUPERA_VTJ?: string;
     YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI?: string;
     rootOrganisaatioOid: string;
-
-    PVM_MOMENT_FORMAATTI: string;
-    PVM_DATEPICKER_FORMAATTI: string;
-    PVM_DBFORMAATTI: string;
-    PVM_DATE_TIME_FORMAATTI: string;
 };
 
 class PropertySingleton {
@@ -31,10 +26,6 @@ class PropertySingleton {
             numberRegex: /\d/,
             characterRegex: /[a-zA-Z]/,
             minimunPasswordLength: 8,
-            PVM_MOMENT_FORMAATTI: 'D.M.YYYY',
-            PVM_DATEPICKER_FORMAATTI: 'd.M.yyyy',
-            PVM_DBFORMAATTI: 'YYYY-MM-DD',
-            PVM_DATE_TIME_FORMAATTI: 'D.M.YYYY H:mm',
         };
     }
 

@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import moment from 'moment';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, Row, SortingState } from '@tanstack/react-table';
+import { addMonths, format, isBefore, parseISO } from 'date-fns';
 
 import Button from '../common/button/Button';
 import PopupButton from '../common/button/PopupButton';
@@ -79,11 +79,11 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
                 header: () => L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO'],
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => {
-                    const sent = moment(new Date(getValue().aikaleima));
+                    const sent = parseISO(getValue().aikaleima);
                     return (
                         <span>
-                            {sent.format('DD/MM/YYYY H:mm')}{' '}
-                            {sent.add(1, 'months').isBefore(moment()) ? (
+                            {format(sent, 'd.M.yyyy HH:mm')}{' '}
+                            {isBefore(addMonths(sent, 1), new Date()) ? (
                                 <span className="oph-red">{L['KUTSUTUT_VIRKAILIJAT_KUTSU_VANHENTUNUT']}</span>
                             ) : null}
                         </span>

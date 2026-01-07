@@ -4,7 +4,6 @@ import { format, parseISO } from 'date-fns';
 
 import type { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { useLocalisations } from '../../../../selectors';
-import PropertySingleton from '../../../../globals/PropertySingleton';
 
 type OwnProps = {
     readOnly: boolean;
@@ -26,12 +25,7 @@ const Syntymaaika = (props: OwnProps) => {
                 <span className="oph-bold">{L['HENKILO_SYNTYMAAIKA']}</span>
                 {props.readOnly ? (
                     <span className="field">
-                        {props.henkiloUpdate.syntymaaika
-                            ? format(
-                                  props.henkiloUpdate.syntymaaika,
-                                  PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI
-                              )
-                            : ''}
+                        {props.henkiloUpdate.syntymaaika ? format(props.henkiloUpdate.syntymaaika, 'd.M.yyyy') : ''}
                     </span>
                 ) : (
                     <ReactDatePicker
@@ -50,7 +44,7 @@ const Syntymaaika = (props: OwnProps) => {
                         showYearDropdown
                         showWeekNumbers
                         disabled={props.henkiloUpdate.yksiloityEidas || !!props.henkiloUpdate.hetu}
-                        dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
+                        dateFormat={'d.M.yyyy'}
                     />
                 )}
             </div>

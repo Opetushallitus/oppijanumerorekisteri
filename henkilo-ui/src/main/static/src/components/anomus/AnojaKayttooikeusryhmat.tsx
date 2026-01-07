@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useReactTable, getCoreRowModel, ColumnDef } from '@tanstack/react-table';
-import moment from 'moment';
+import { format } from 'date-fns';
 
 import Loader from '../common/icons/Loader';
 import './AnojaKayttoooikeusryhma.css';
@@ -65,7 +65,7 @@ export const AnojaKayttooikeusryhmat = ({ henkiloOid }: Props) => {
             return noLoppupvm;
         } else if (myonnettyKayttooikeusryhma.tila !== KAYTTOOIKEUDENTILA.SULJETTU) {
             return myonnettyKayttooikeusryhma.voimassaPvm
-                ? moment(new Date(myonnettyKayttooikeusryhma.voimassaPvm)).format()
+                ? format(new Date(myonnettyKayttooikeusryhma.voimassaPvm), 'd.M.yyyy')
                 : noLoppupvm;
         }
         return new Date(myonnettyKayttooikeusryhma.kasitelty).toString();

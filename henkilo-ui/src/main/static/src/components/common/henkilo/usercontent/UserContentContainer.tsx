@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import moment from 'moment';
 import { SingleValue } from 'react-select';
+import { format } from 'date-fns';
 
 import { useAppDispatch } from '../../../../store';
 import StaticUtils from '../../StaticUtils';
@@ -13,7 +13,6 @@ import PalveluUserContent from './PalveluUserContent';
 import { isValidKutsumanimi } from '../../../../validation/KutsumanimiValidator';
 import { LocalNotification } from '../../Notification/LocalNotification';
 import { isValidKayttajatunnus } from '../../../../validation/KayttajatunnusValidator';
-import PropertySingleton from '../../../../globals/PropertySingleton';
 import { View } from '../../../../types/constants';
 import { copy } from '../../../../utilities/copy';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
@@ -224,9 +223,10 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
         const virhe = henkilo?.yksilointivirheet?.[0];
         const virheKey = (virhe && yksilointivirheMap[virhe.yksilointivirheTila]) || 'HENKILO_YKSILOINTIVIRHE_OLETUS';
         return virhe?.uudelleenyritysAikaleima
-            ? `${L[virheKey]} ${L['HENKILO_YKSILOINTIVIRHE_UUDELLEENYRITYS']} ${moment(
-                  virhe?.uudelleenyritysAikaleima
-              ).format(PropertySingleton.getState().PVM_DATE_TIME_FORMAATTI)}`
+            ? `${L[virheKey]} ${L['HENKILO_YKSILOINTIVIRHE_UUDELLEENYRITYS']} ${format(
+                  new Date(virhe?.uudelleenyritysAikaleima),
+                  'd.M.yyyy H:mm'
+              )}`
             : L[virheKey];
     }
 

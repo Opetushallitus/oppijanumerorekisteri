@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useReactTable, getCoreRowModel, PaginationState, ColumnDef } from '@tanstack/react-table';
 import { Link } from 'react-router';
-import moment from 'moment';
+import { format } from 'date-fns';
 
 import { TuontiKoosteRivi, TuontiKoosteCriteria } from '../../types/tuontikooste.types';
 import TextButton from '../common/button/TextButton';
@@ -52,7 +52,7 @@ const TuontiKoosteTable = () => {
             },
             {
                 header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_AIKALEIMA'],
-                accessorFn: (tuonti) => moment(tuonti.timestamp).format('l LT'),
+                accessorFn: (tuonti) => format(new Date(tuonti.timestamp), 'd.M.yyyy HH:mm'),
                 id: 'timestamp',
             },
             {

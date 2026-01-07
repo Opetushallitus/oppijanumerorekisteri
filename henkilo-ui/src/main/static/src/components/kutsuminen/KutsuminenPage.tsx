@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import moment from 'moment';
+import { addYears, format } from 'date-fns';
 
 import BasicInfoForm from './BasicinfoForm';
 import { KutsuConfirmation } from './KutsuConfirmation';
@@ -12,7 +12,6 @@ import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
 import { validateEmail } from '../../validation/EmailValidator';
 import { useLocalisations } from '../../selectors';
 import Button from '../common/button/Button';
-import PropertySingleton from '../../globals/PropertySingleton';
 import AddedOrganization from './AddedOrganization';
 import { useGetOmattiedotQuery, useGetOrganisaatioRyhmatQuery } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
@@ -118,7 +117,7 @@ const KutsuminenPage = () => {
             ...kutsuOrganisaatios,
             {
                 organisation: { oid: '', name: '', type: 'organisaatio' },
-                voimassaLoppuPvm: moment().add(1, 'years').format(PropertySingleton.state.PVM_DBFORMAATTI),
+                voimassaLoppuPvm: format(addYears(new Date(), 1), 'yyyy-MM-dd'),
                 selectedPermissions: [],
             },
         ]);

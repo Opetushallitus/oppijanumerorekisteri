@@ -1,5 +1,5 @@
 import React, { MutableRefObject, useEffect, useId, useMemo, useState } from 'react';
-import moment, { Moment } from 'moment';
+import { addYears, format, isBefore, parseISO } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, SortingState } from '@tanstack/react-table';
 
@@ -7,7 +7,6 @@ import { useAppDispatch } from '../../../store';
 import SuljeButton from './buttons/SuljeButton';
 import StaticUtils from '../StaticUtils';
 import HaeJatkoaikaaButton from '../../omattiedot/HaeJatkoaikaaButton';
-import PropertySingleton from '../../../globals/PropertySingleton';
 import { createEmailOptions } from '../../../utilities/henkilo.util';
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
@@ -53,7 +52,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     const { data: henkilo } = useGetHenkiloQuery(props.oidHenkilo);
     const { data: organisations, isSuccess } = useGetOrganisationsQuery();
     const { data: anomukset } = useGetKayttooikeusAnomuksetForHenkiloQuery(props.oidHenkilo);
-    const [dates, setDates] = useState<Record<number, { alkupvm: Moment; loppupvm: Moment }>>([]);
+    const [dates, setDates] = useState<Record<number, { alkupvm: Date; loppupvm: Date }>>([]);
     const [emailOptions, setEmailOptions] = useState(
         createEmailOptions(_filterExpiredKayttooikeus, kayttooikeusryhmas ?? [], henkilo)
     );
@@ -66,13 +65,11 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                     (acc, kayttooikeus) => ({
                         ...acc,
                         [kayttooikeus.ryhmaId]: {
-                            alkupvm: moment(),
-                            loppupvm: props.isPalvelukayttaja
-                                ? moment(kayttooikeus.voimassaPvm, PropertySingleton.state.PVM_DBFORMAATTI).add(
-                                      1,
-                                      'years'
-                                  )
-                                : moment().add(1, 'years'),
+                            alkupvm: new Date(),
+                            loppupvm:
+                                props.isPalvelukayttaja && kayttooikeus.voimassaPvm
+                                    ? addYears(parseISO(kayttooikeus.voimassaPvm), 1)
+                                    : addYears(new Date(), 1),
                         },
                     }),
                     {}
@@ -82,7 +79,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
         }
     }, [henkilo, kayttooikeusryhmas]);
 
-    function loppupvmAction(value: moment.Moment, ryhmaId: number) {
+    function loppupvmAction(value: Date, ryhmaId: number) {
         const newDates = { ...dates };
         if (newDates[ryhmaId]) {
             newDates[ryhmaId].loppupvm = value;
@@ -182,14 +179,14 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                 <div style={{ display: 'table-cell', paddingRight: '10px', minWidth: '96px' }}>
                     <DatePicker
                         className="oph-input"
-                        onChange={(date) => date && loppupvmAction(moment(date), kayttooikeus.ryhmaId)}
-                        selected={dates[kayttooikeus.ryhmaId]?.loppupvm.toDate()}
+                        onChange={(date) => date && loppupvmAction(date, kayttooikeus.ryhmaId)}
+                        selected={dates[kayttooikeus.ryhmaId]?.loppupvm}
                         showYearDropdown
                         showWeekNumbers
                         filterDate={(date) =>
-                            props.isPalvelukayttaja ? true : moment(date).isBefore(moment().add(1, 'years'))
+                            props.isPalvelukayttaja ? true : isBefore(date, addYears(new Date(), 1))
                         }
-                        dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
+                        dateFormat={'d.M.yyyy'}
                     />
                 </div>
                 <div style={{ display: 'table-cell' }}>
@@ -202,12 +199,12 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                                     {
                                         id: kayttooikeus.ryhmaId,
                                         kayttoOikeudenTila: KAYTTOOIKEUDENTILA.MYONNETTY,
-                                        alkupvm: moment(dates[kayttooikeus.ryhmaId]?.alkupvm).format(
-                                            PropertySingleton.state.PVM_DBFORMAATTI
-                                        ),
-                                        loppupvm: moment(dates[kayttooikeus.ryhmaId]?.loppupvm).format(
-                                            PropertySingleton.state.PVM_DBFORMAATTI
-                                        ),
+                                        alkupvm: dates[kayttooikeus.ryhmaId]?.alkupvm
+                                            ? format(dates[kayttooikeus.ryhmaId]!.alkupvm, 'yyyy-MM-dd')
+                                            : '',
+                                        loppupvm: dates[kayttooikeus.ryhmaId]?.loppupvm
+                                            ? format(dates[kayttooikeus.ryhmaId]!.loppupvm, 'yyyy-MM-dd')
+                                            : '',
                                     },
                                 ],
                             })
@@ -272,20 +269,18 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
             {
                 id: 'alkupvm',
                 header: () => L['HENKILO_KAYTTOOIKEUS_ALKUPVM'],
-                accessorFn: (row) => moment(row.alkuPvm, PropertySingleton.state.PVM_DBFORMAATTI).format(),
+                accessorFn: (row) => row.alkuPvm && format(parseISO(row.alkuPvm), 'd.M.yyyy'),
             },
             {
                 id: 'loppupvm',
                 header: () => L['HENKILO_KAYTTOOIKEUS_LOPPUPVM'],
-                accessorFn: (row) => moment(row.voimassaPvm, PropertySingleton.state.PVM_DBFORMAATTI).format(),
+                accessorFn: (row) => row.voimassaPvm && format(parseISO(row.voimassaPvm), 'd.M.yyyy'),
             },
             {
                 id: 'kasittelija',
                 header: () => L['HENKILO_KAYTTOOIKEUS_KASITTELIJA'],
                 accessorFn: (row) =>
-                    moment(row.kasitelty, PropertySingleton.state.PVM_DBFORMAATTI).format() +
-                    ' / ' +
-                    (row.kasittelijaNimi || row.kasittelijaOid),
+                    format(parseISO(row.kasitelty), 'd.M.yyyy') + ' / ' + (row.kasittelijaNimi || row.kasittelijaOid),
             },
             {
                 id: 'jatkoaika',

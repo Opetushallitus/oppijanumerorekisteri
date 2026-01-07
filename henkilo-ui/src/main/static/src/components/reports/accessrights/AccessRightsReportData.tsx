@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router';
-import moment from 'moment';
 import {
     useReactTable,
     getCoreRowModel,
@@ -8,8 +7,8 @@ import {
     ColumnDef,
     getSortedRowModel,
 } from '@tanstack/react-table';
+import { format, parseISO } from 'date-fns';
 
-import PropertySingleton from '../../../globals/PropertySingleton';
 import './AccessRightsReportData.css';
 import { useLocalisations } from '../../../selectors';
 import OphTable from '../../OphTable';
@@ -22,7 +21,7 @@ type Props = {
 const emptyData: AccessRightsReportRow[] = [];
 const emptyColumns: ColumnDef<AccessRightsReportRow>[] = [];
 
-const formatDate = (d: string) => moment(d).format(PropertySingleton.state.PVM_MOMENT_FORMAATTI);
+const formatDate = (d: string) => format(parseISO(d), 'd.M.yyyy');
 
 export const AccessRightsReport = ({ report }: Props) => {
     const { L } = useLocalisations();

@@ -1,6 +1,6 @@
 import React from 'react';
 import Select from 'react-select';
-import moment from 'moment';
+import { format, parseISO } from 'date-fns';
 import classNames from 'classnames';
 import ReactDatePicker from 'react-datepicker';
 
@@ -120,13 +120,13 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
                         onChange={(date) =>
                             this.onHenkiloChange({
                                 name: 'syntymaaika',
-                                value: moment(date).format('YYYY-MM-DD'),
+                                value: date ? format(date, 'yyyy-MM-dd') : null,
                             })
                         }
-                        selected={moment(this.state.henkilo.syntymaaika).toDate()}
+                        selected={this.state.henkilo.syntymaaika ? parseISO(this.state.henkilo.syntymaaika) : null}
                         showYearDropdown
                         showWeekNumbers
-                        dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
+                        dateFormat={'d.M.yyyy'}
                     />
                     {this.renderErrors('syntymaaika')}
                 </div>

@@ -1,9 +1,9 @@
 import React, { useId, useState } from 'react';
-import moment from 'moment';
+import { addDays, addYears, format, isAfter, isBefore, parseISO } from 'date-fns';
 import ReactDatePicker from 'react-datepicker';
+import { SingleValue } from 'react-select';
 
 import CKKayttooikeudet, { ValittuKayttooikeusryhma } from './createkayttooikeus/CreateKayttooikeusSection';
-import PropertySingleton from '../../../globals/PropertySingleton';
 import { useLocalisations } from '../../../selectors';
 import { SelectOption } from '../../../utilities/select';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
@@ -15,7 +15,6 @@ import { add } from '../../../slices/toastSlice';
 import { useAppDispatch } from '../../../store';
 
 import './HenkiloViewCreateKayttooikeus.css';
-import { SingleValue } from 'react-select';
 
 type OwnProps = {
     existingKayttooikeusRef: React.RefObject<HTMLDivElement>;
@@ -24,9 +23,7 @@ type OwnProps = {
 };
 
 const filterDate = (date: Date, isPalvelukayttaja: boolean) =>
-    isPalvelukayttaja
-        ? true
-        : moment(date).isBefore(moment().add(1, 'years')) && moment(date).isAfter(moment().add(-1, 'days'));
+    isPalvelukayttaja ? true : isBefore(date, addYears(new Date(), 1)) && isAfter(date, addDays(new Date(), -1));
 
 const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukayttaja, oidHenkilo }: OwnProps) => {
     const { L } = useLocalisations();
@@ -35,9 +32,9 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
     const [selectedList, setSelectedList] = useState<ValittuKayttooikeusryhma[]>([]);
     const [organisationSelection, setOrganisationSelection] = useState<SingleValue<OrganisaatioSelectObject>>();
     const [ryhmaSelection, setRyhmaSelection] = useState<SingleValue<SelectOption>>(null);
-    const [alkupvm, setAlkupvm] = useState<moment.Moment>(moment());
-    const defaultLoppupvm = isPalvelukayttaja ? moment('2099-12-31', 'YYYY-MM-DD') : moment().add(1, 'years');
-    const [loppupvmInput, setLoppupvmInput] = useState<moment.Moment>();
+    const [alkupvm, setAlkupvm] = useState<Date>(new Date());
+    const defaultLoppupvm = isPalvelukayttaja ? parseISO('2099-12-31') : addYears(new Date(), 1);
+    const [loppupvmInput, setLoppupvmInput] = useState<Date>();
     const loppupvm = loppupvmInput ?? defaultLoppupvm;
 
     const selectRyhma = (selection: SingleValue<SelectOption>) => {
@@ -54,7 +51,7 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
         setSelectedList([]);
         setOrganisationSelection(undefined);
         setRyhmaSelection(null);
-        setAlkupvm(moment());
+        setAlkupvm(new Date());
         setLoppupvmInput(undefined);
     };
 
@@ -69,8 +66,8 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
             body: selectedList.map((selected) => ({
                 id: selected.value,
                 kayttoOikeudenTila: 'MYONNA',
-                alkupvm: moment(alkupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
-                loppupvm: moment(loppupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
+                alkupvm: format(alkupvm, 'yyyy-MM-dd'),
+                loppupvm: format(loppupvm, 'yyyy-MM-dd'),
             })),
         })
             .unwrap()
@@ -119,24 +116,24 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                         <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_ALKAA']}</span>
                         <ReactDatePicker
                             className="oph-input"
-                            onChange={(date) => setAlkupvm(moment(date))}
-                            selected={alkupvm.toDate()}
+                            onChange={(date) => setAlkupvm(date ?? new Date())}
+                            selected={alkupvm}
                             showYearDropdown
                             showWeekNumbers
                             filterDate={(date) => filterDate(date, isPalvelukayttaja)}
-                            dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
+                            dateFormat={'d.M.yyyy'}
                         />
                     </div>
                     <div className="kayttooikeus-input-container">
                         <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY']}</span>
                         <ReactDatePicker
                             className="oph-input"
-                            onChange={(date) => setLoppupvmInput(moment(date))}
-                            selected={loppupvm.toDate()}
+                            onChange={(date) => date && setLoppupvmInput(date)}
+                            selected={loppupvm}
                             showYearDropdown
                             showWeekNumbers
                             filterDate={(date) => filterDate(date, isPalvelukayttaja)}
-                            dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
+                            dateFormat={'d.M.yyyy'}
                         />
                     </div>
                 </div>
