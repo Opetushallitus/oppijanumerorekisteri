@@ -5,6 +5,7 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/lib/common-functions.s
 function main {
   select_java_version "21"
   cd "${repo}/tiedotuspalvelu"
+  wait_for_container_to_be_healthy oph-tiedotuspalvelu-db
 
   local -r jvm_args=(
     "--add-opens=java.base/java.lang=ALL-UNNAMED"
