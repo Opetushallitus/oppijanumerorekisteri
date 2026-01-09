@@ -9,7 +9,7 @@ import {
 import { Localisation, useGetLocalisationsQuery } from './api/lokalisointi';
 import { useGetLocaleQuery } from './api/oppijanumerorekisteri';
 import { useMemo } from 'react';
-import { useGetKieletQuery } from './api/koodisto';
+import { useGetKansalaisuudetQuery, useGetKieletQuery, useGetSukupuoletQuery } from './api/koodisto';
 import StaticUtils from './components/common/StaticUtils';
 
 const VALID_KIELI_URI_FOR_ASIOINTIKIELI = ['kieli_fi', 'kieli_sv', 'kieli_en'];
@@ -82,6 +82,51 @@ export const useAsiointikielet = (locale: Locale) => {
                 optionsName: 'asiointiKieli.kieliKoodi',
             })) ?? []
         );
-    }, [kielet]);
+    }, [kielet, locale]);
+    return options;
+};
+
+export const useSukupuoliOptions = (locale: Locale) => {
+    const data = useGetSukupuoletQuery().data ?? [];
+    const options = useMemo(
+        () =>
+            data
+                .map((koodi) => ({
+                    value: koodi.koodiArvo.toLowerCase(),
+                    label: StaticUtils.localizeKoodiNimi(koodi, locale),
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)) ?? [],
+        [data, locale]
+    );
+    return options;
+};
+
+export const useKansalaisuusOptions = (locale: Locale) => {
+    const data = useGetKansalaisuudetQuery().data ?? [];
+    const options = useMemo(
+        () =>
+            data
+                .map((koodi) => ({
+                    value: koodi.koodiArvo.toLowerCase(),
+                    label: StaticUtils.localizeKoodiNimi(koodi, locale),
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)) ?? [],
+        [data, locale]
+    );
+    return options;
+};
+
+export const useKieliOptions = (locale: Locale) => {
+    const data = useGetKieletQuery().data ?? [];
+    const options = useMemo(
+        () =>
+            data
+                .map((koodi) => ({
+                    value: koodi.koodiArvo.toLowerCase(),
+                    label: StaticUtils.localizeKoodiNimi(koodi, locale),
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)) ?? [],
+        [data, locale]
+    );
     return options;
 };

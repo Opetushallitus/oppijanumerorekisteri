@@ -7,7 +7,6 @@ import OppijaCreateDuplikaatit from './OppijaCreateDuplikaatit';
 import CloseButton from '../../../../common/button/CloseButton';
 import { useAppDispatch } from '../../../../../store';
 import { useLocalisations } from '../../../../../selectors';
-import { useGetKansalaisuudetQuery, useGetKieletQuery, useGetSukupuoletQuery } from '../../../../../api/koodisto';
 import { add } from '../../../../../slices/toastSlice';
 import { useCreateOppijaMutation, useLazyGetDuplicatesQuery } from '../../../../../api/oppijanumerorekisteri';
 
@@ -21,12 +20,9 @@ type OwnProps = {
 export const OppijaCreateAnonymousContainer = ({ goBack }: OwnProps) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const { L, locale } = useLocalisations();
-    const [oppija, setOppija] = useState({});
+    const { L } = useLocalisations();
+    const [oppija, setOppija] = useState<HenkiloCreate>();
     const [naytaDuplikaatit, setNaytaDuplikaatit] = useState(false);
-    const { data: kielet } = useGetKieletQuery();
-    const { data: kansalaisuudet } = useGetKansalaisuudetQuery();
-    const { data: sukupuolet } = useGetSukupuoletQuery();
     const [putOppija] = useCreateOppijaMutation();
     const [getDuplicates, { data: duplicates }] = useLazyGetDuplicatesQuery();
 
@@ -75,19 +71,12 @@ export const OppijaCreateAnonymousContainer = ({ goBack }: OwnProps) => {
                 <CloseButton closeAction={goBack} />
             </span>
             {naytaDuplikaatit === false ? (
-                <OppijaCreateForm
-                    tallenna={tallenna}
-                    locale={locale}
-                    L={L}
-                    sukupuoliKoodisto={sukupuolet}
-                    kieliKoodisto={kielet}
-                    kansalaisuusKoodisto={kansalaisuudet}
-                />
+                <OppijaCreateForm tallenna={tallenna} />
             ) : (
                 <OppijaCreateDuplikaatit
                     tallenna={luoOppijaJaNavigoi}
                     peruuta={peruuta}
-                    oppija={{ ...oppija, passinumerot: null, yhteystiedotRyhma: null }}
+                    oppija={oppija!}
                     duplikaatit={duplicates ?? []}
                 />
             )}

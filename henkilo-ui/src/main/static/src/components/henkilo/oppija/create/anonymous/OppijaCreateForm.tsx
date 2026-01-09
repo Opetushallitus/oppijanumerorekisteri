@@ -1,20 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Select from 'react-select';
 import { format, parseISO } from 'date-fns';
 import classNames from 'classnames';
 import ReactDatePicker from 'react-datepicker';
 
 import { HenkiloCreate } from '../../../../../types/domain/oppijanumerorekisteri/henkilo.types';
-import { Locale } from '../../../../../types/locale.type';
 import PropertySingleton from '../../../../../globals/PropertySingleton';
-import { KoodistoSelect } from '../../../../common/select/KoodistoSelect';
-import KielisyysSelect from '../../../../common/select/KielisyysSelect';
 import { isValidKutsumanimi } from '../../../../../validation/KutsumanimiValidator';
-import { Localisations } from '../../../../../types/localisation.type';
 import LoaderWithText from '../../../../common/loadingbar/LoaderWithText';
 import { EMAIL } from '../../../../../types/constants';
 import { Kielisyys } from '../../../../../types/domain/oppijanumerorekisteri/kielisyys.types';
-import { koodiLabel, Koodisto } from '../../../../../api/koodisto';
+import {
+    useKansalaisuusOptions,
+    useKieliOptions,
+    useLocalisations,
+    useSukupuoliOptions,
+} from '../../../../../selectors';
+import { Kansalaisuus } from '../../../../../types/domain/oppijanumerorekisteri/kansalaisuus.types';
 
 type Error = {
     name: string;
@@ -28,11 +30,6 @@ type Form = {
 
 type OppijaCreateFormProps = {
     tallenna: (arg0: HenkiloCreate) => Promise<void>;
-    locale: Locale;
-    L: Localisations;
-    sukupuoliKoodisto?: Koodisto;
-    kieliKoodisto?: Koodisto;
-    kansalaisuusKoodisto?: Koodisto;
 };
 
 type State = {
@@ -56,302 +53,124 @@ const initialState: State = {
 /**
  * Oppijan luonti -lomake.
  */
-class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
-    constructor(props: OppijaCreateFormProps) {
-        super(props);
+const OppijaCreateForm = (props: OppijaCreateFormProps) => {
+    const { L, locale } = useLocalisations();
+    const kieliOptions = useKieliOptions(locale);
+    const kansalaisuusOptions = useKansalaisuusOptions(locale);
+    const sukupuoliOptions = useSukupuoliOptions(locale);
+    const [state, setState] = useState<State>(initialState);
 
-        this.state = initialState;
-    }
-
-    render() {
-        // oppijanumerorekisteri käyttää kielikoodiston koodeja pienillä kirjaimilla
-        const kieliKoodisto = this.props.kieliKoodisto?.map((koodi) => {
-            return { ...koodi, koodiArvo: koodi.koodiArvo.toLowerCase() };
-        });
-        return (
-            <form onSubmit={this.tallenna}>
-                <div className="oph-field oph-field-is-required">
-                    <label className="oph-label">{this.props.L['HENKILO_ETUNIMET']}</label>
-                    <input
-                        className={classNames('oph-input', {
-                            'oph-input-has-error': this.isSubmittedAndHasError('etunimet'),
-                        })}
-                        placeholder={this.props.L['HENKILO_ETUNIMET']}
-                        type="text"
-                        name="etunimet"
-                        value={this.state.henkilo.etunimet}
-                        onChange={this.onHenkiloInputChange}
-                    />
-                    {this.renderErrors('etunimet')}
-                </div>
-                <div className="oph-field oph-field-is-required">
-                    <label className="oph-label">{this.props.L['HENKILO_KUTSUMANIMI']}</label>
-                    <input
-                        className={classNames('oph-input', {
-                            'oph-input-has-error': this.hasError('kutsumanimi'),
-                        })}
-                        placeholder={this.props.L['HENKILO_KUTSUMANIMI']}
-                        type="text"
-                        name="kutsumanimi"
-                        value={this.state.henkilo.kutsumanimi}
-                        onChange={this.onHenkiloInputChange}
-                    />
-                    {this.renderErrors('kutsumanimi')}
-                </div>
-                <div className="oph-field oph-field-is-required">
-                    <label className="oph-label">{this.props.L['HENKILO_SUKUNIMI']}</label>
-                    <input
-                        className={classNames('oph-input', {
-                            'oph-input-has-error': this.isSubmittedAndHasError('sukunimi'),
-                        })}
-                        placeholder={this.props.L['HENKILO_SUKUNIMI']}
-                        type="text"
-                        name="sukunimi"
-                        value={this.state.henkilo.sukunimi}
-                        onChange={this.onHenkiloInputChange}
-                    />
-                    {this.renderErrors('sukunimi')}
-                </div>
-                <div className="oph-field oph-field-is-required">
-                    <label className="oph-label">{this.props.L['HENKILO_SYNTYMAAIKA']}</label>
-                    <div />
-                    <ReactDatePicker
-                        className={`oph-input ${this.isSubmittedAndHasError('syntymaaika') ? 'oph-input-has-error' : ''}`}
-                        onChange={(date) =>
-                            this.onHenkiloChange({
-                                name: 'syntymaaika',
-                                value: date ? format(date, 'yyyy-MM-dd') : null,
-                            })
-                        }
-                        selected={this.state.henkilo.syntymaaika ? parseISO(this.state.henkilo.syntymaaika) : null}
-                        showYearDropdown
-                        showWeekNumbers
-                        dateFormat={'d.M.yyyy'}
-                    />
-                    {this.renderErrors('syntymaaika')}
-                </div>
-                <div className="oph-field oph-field-is-required">
-                    <label className="oph-label">{this.props.L['HENKILO_SUKUPUOLI']}</label>
-                    <KoodistoSelect
-                        className={classNames({
-                            'oph-input-has-error': this.isSubmittedAndHasError('sukupuoli'),
-                        })}
-                        placeholder={this.props.L['HENKILO_SUKUPUOLI']!}
-                        koodisto={this.props.sukupuoliKoodisto}
-                        value={this.state.henkilo.sukupuoli}
-                        onChange={(value) =>
-                            this.onHenkiloChange({
-                                name: 'sukupuoli',
-                                value: value,
-                            })
-                        }
-                    />
-                    {this.renderErrors('sukupuoli')}
-                </div>
-                <div className="oph-field oph-field-is-required">
-                    <label className="oph-label">{this.props.L['HENKILO_AIDINKIELI']}</label>
-                    <KielisyysSelect
-                        className={classNames({
-                            'oph-input-has-error': this.isSubmittedAndHasError('aidinkieli'),
-                        })}
-                        placeholder={this.props.L['HENKILO_AIDINKIELI']!}
-                        koodisto={kieliKoodisto}
-                        value={this.state.henkilo.aidinkieli}
-                        onChange={(value) =>
-                            this.onHenkiloChange({
-                                name: 'aidinkieli',
-                                value: value,
-                            })
-                        }
-                    />
-                    {this.renderErrors('aidinkieli')}
-                </div>
-                <div className="oph-field oph-field-is-required">
-                    <label className="oph-label">{this.props.L['HENKILO_KANSALAISUUS']}</label>
-                    <Select
-                        options={this.props.kansalaisuusKoodisto
-                            ?.map((k) => ({
-                                value: k.koodiArvo,
-                                label: koodiLabel(k, this.props.locale),
-                            }))
-                            .sort((a, b) => (a.label && b.label ? a.label.localeCompare(b.label) : 1))}
-                        onChange={(values) =>
-                            this.onHenkiloChange({
-                                name: 'kansalaisuus',
-                                value: values.map((v) => ({ kansalaisuusKoodi: v.value })),
-                            })
-                        }
-                        value={this.props.kansalaisuusKoodisto
-                            ?.map((k) => ({
-                                value: k.koodiArvo,
-                                label: koodiLabel(k, this.props.locale),
-                            }))
-                            .filter((k) =>
-                                this.state.henkilo.kansalaisuus?.find((kans) => kans.kansalaisuusKoodi === k.value)
-                            )}
-                        isMulti={true}
-                        className={classNames({
-                            'oph-input-has-error': this.isSubmittedAndHasError('kansalaisuus'),
-                        })}
-                        placeholder={this.props.L['HENKILO_KANSALAISUUS']}
-                    />
-                    {this.renderErrors('kansalaisuus')}
-                </div>
-                <div className="oph-field">
-                    <label className="oph-label">{this.props.L['HENKILO_PASSINUMERO']}</label>
-                    <input
-                        className={classNames('oph-input', {
-                            'oph-input-has-error': this.isSubmittedAndHasError('passinumero'),
-                        })}
-                        placeholder={this.props.L['HENKILO_PASSINUMERO']}
-                        type="text"
-                        name="passinumero"
-                        value={this.state.form.passinumero}
-                        onChange={this.onFormInputChange}
-                    />
-                    {this.renderErrors('passinumero')}
-                </div>
-                <div className="oph-field">
-                    <label className="oph-label">{this.props.L['YHTEYSTIETO_SAHKOPOSTI']}</label>
-                    <input
-                        className={classNames('oph-input', {
-                            'oph-input-has-error': this.isSubmittedAndHasError('sahkoposti'),
-                        })}
-                        placeholder={this.props.L['YHTEYSTIETO_SAHKOPOSTI']}
-                        type="email"
-                        name="sahkoposti"
-                        value={this.state.form.sahkoposti}
-                        onChange={this.onFormInputChange}
-                    />
-                    {this.renderErrors('sahkoposti')}
-                </div>
-                <div className="oph-field">
-                    {!this.state.loading ? (
-                        <button type="submit" className="oph-button oph-button-primary" disabled={this.state.disabled}>
-                            {this.props.L['TALLENNA_LINKKI']}
-                        </button>
-                    ) : (
-                        <LoaderWithText labelkey="LOMAKE_LOADING" />
-                    )}
-                    {this.state.submitted && this.state.errors.length > 0 && (
-                        <span className="oph-field-text oph-error">{this.props.L['LOMAKE_SISALTAA_VIRHEITA']}</span>
-                    )}
-                </div>
-            </form>
-        );
-    }
-
-    onHenkiloInputChange = (event: React.SyntheticEvent<HTMLInputElement>) => {
-        this.onHenkiloChange({
+    const onHenkiloInputChange = (event: React.SyntheticEvent<HTMLInputElement>) => {
+        onHenkiloChange({
             name: event.currentTarget.name,
             value: event.currentTarget.value,
         });
     };
 
-    onHenkiloChange = (event: {
+    const onHenkiloChange = (event: {
         name: string;
-        value: string | Kielisyys | { kansalaisuusKoodi: string }[] | null | undefined;
+        value: string | Kielisyys | Kansalaisuus[] | null | undefined;
     }) => {
-        const henkilo = { ...this.state.henkilo, [event.name]: event.value };
-        const state: State = {
-            ...this.state,
+        const henkilo = { ...state.henkilo, [event.name]: event.value };
+        const newState: State = {
+            ...state,
             henkilo: henkilo,
         };
-        const errors = [...this.state.errors];
-        if (this.state.submitted) {
-            state.errors = this.validate(henkilo);
+        const errors = [...newState.errors];
+        if (newState.submitted) {
+            newState.errors = validate(henkilo);
         } else {
-            if (!this.hasError('kutsumanimi') && !isValidKutsumanimi(henkilo.etunimet, henkilo.kutsumanimi)) {
+            if (!hasError('kutsumanimi') && !isValidKutsumanimi(henkilo.etunimet, henkilo.kutsumanimi)) {
                 errors.push({
                     name: 'kutsumanimi',
-                    value: this.props.L['HENKILO_KUTSUMANIMI_VALIDOINTI']!,
+                    value: L['HENKILO_KUTSUMANIMI_VALIDOINTI']!,
                 });
-                state.errors = errors;
-            } else if (this.hasError('kutsumanimi') && isValidKutsumanimi(henkilo.etunimet, henkilo.kutsumanimi)) {
-                state.errors = errors.filter((error) => error.name !== 'kutsumanimi');
+                newState.errors = errors;
+            } else if (hasError('kutsumanimi') && isValidKutsumanimi(henkilo.etunimet, henkilo.kutsumanimi)) {
+                newState.errors = errors.filter((error) => error.name !== 'kutsumanimi');
             }
         }
-        this.setState(state);
+        setState(newState);
     };
 
-    onFormInputChange = (event: React.SyntheticEvent<HTMLInputElement>) => {
+    const onFormInputChange = (event: React.SyntheticEvent<HTMLInputElement>) => {
         const form = {
-            ...this.state.form,
+            ...state.form,
             [event.currentTarget.name]: event.currentTarget.value,
         };
-        const state: State = {
-            ...this.state,
+        const newState: State = {
+            ...state,
             form: form,
         };
-        this.setState(state);
+        setState(newState);
     };
 
-    validate = (henkilo: HenkiloCreate) => {
+    const validate = (henkilo: HenkiloCreate) => {
         const errors = [];
 
         if (!henkilo.etunimet) {
             errors.push({
                 name: 'etunimet',
-                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO']!,
+                value: L['LOMAKE_PAKOLLINEN_TIETO']!,
             });
         }
         if (!henkilo.kutsumanimi) {
             errors.push({
                 name: 'kutsumanimi',
-                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO']!,
+                value: L['LOMAKE_PAKOLLINEN_TIETO']!,
             });
         }
         if (!isValidKutsumanimi(henkilo.etunimet, henkilo.kutsumanimi)) {
             errors.push({
                 name: 'kutsumanimi',
-                value: this.props.L['HENKILO_KUTSUMANIMI_VALIDOINTI']!,
+                value: L['HENKILO_KUTSUMANIMI_VALIDOINTI']!,
             });
         }
         if (!henkilo.sukunimi) {
             errors.push({
                 name: 'sukunimi',
-                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO']!,
+                value: L['LOMAKE_PAKOLLINEN_TIETO']!,
             });
         }
         if (!henkilo.syntymaaika) {
             errors.push({
                 name: 'syntymaaika',
-                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO']!,
+                value: L['LOMAKE_PAKOLLINEN_TIETO']!,
             });
         }
         if (!henkilo.sukupuoli) {
             errors.push({
                 name: 'sukupuoli',
-                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO']!,
+                value: L['LOMAKE_PAKOLLINEN_TIETO']!,
             });
         }
         if (!henkilo.aidinkieli) {
             errors.push({
                 name: 'aidinkieli',
-                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO']!,
+                value: L['LOMAKE_PAKOLLINEN_TIETO']!,
             });
         }
         if (!henkilo.kansalaisuus || henkilo.kansalaisuus.length === 0) {
             errors.push({
                 name: 'kansalaisuus',
-                value: this.props.L['LOMAKE_PAKOLLINEN_TIETO']!,
+                value: L['LOMAKE_PAKOLLINEN_TIETO']!,
             });
         }
 
         return errors;
     };
 
-    isSubmittedAndHasError = (name: string): boolean => {
-        return this.state.submitted && this.state.errors.findIndex((error) => error.name === name) !== -1;
+    const isSubmittedAndHasError = (name: string): boolean => {
+        return state.submitted && state.errors.findIndex((error) => error.name === name) !== -1;
     };
 
-    hasError = (name: string): boolean => this.state.errors.findIndex((error) => error.name === name) !== -1;
+    const hasError = (name: string): boolean => state.errors.findIndex((error) => error.name === name) !== -1;
 
-    renderErrors = (name: string) => {
-        return this.state.errors.filter((error) => error.name === name).map(this.renderError);
+    const renderErrors = (name: string) => {
+        return state.errors.filter((error) => error.name === name).map(renderError);
     };
 
-    renderError = (error: Error, index: number) => {
+    const renderError = (error: Error, index: number) => {
         return (
             <div key={index} className="oph-field-text oph-error">
                 {error.value}
@@ -359,29 +178,29 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
         );
     };
 
-    tallenna = async (event: React.SyntheticEvent<HTMLFormElement>) => {
+    const tallenna = async (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        const errors = this.validate(this.state.henkilo);
+        const errors = validate(state.henkilo);
         if (errors.length > 0) {
-            this.setState({ submitted: true, errors: errors });
+            setState({ ...state, submitted: true, errors: errors });
         } else {
-            this.setState({ disabled: true, loading: true });
+            setState({ ...state, disabled: true, loading: true });
             try {
-                await this.props.tallenna(this.getHenkilo());
+                await props.tallenna(getHenkilo());
             } catch (_error) {
-                this.setState({ disabled: false, loading: true });
+                setState({ ...state, disabled: false, loading: true });
             }
         }
     };
 
     // palauttaa lomakkeelta henkilön kaikki tiedot valmiina lähetettäväksi
-    getHenkilo = (): HenkiloCreate => {
+    const getHenkilo = (): HenkiloCreate => {
         const properties = PropertySingleton.getState();
         return {
-            ...this.state.henkilo,
-            passinumerot: this.state.form.passinumero ? [this.state.form.passinumero] : null,
-            yhteystiedotRyhma: this.state.form.sahkoposti
+            ...state.henkilo,
+            passinumerot: state.form.passinumero ? [state.form.passinumero] : null,
+            yhteystiedotRyhma: state.form.sahkoposti
                 ? [
                       {
                           ryhmaKuvaus: properties.KOTIOSOITE ?? '',
@@ -389,7 +208,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
                           yhteystieto: [
                               {
                                   yhteystietoTyyppi: EMAIL,
-                                  yhteystietoArvo: this.state.form.sahkoposti,
+                                  yhteystietoArvo: state.form.sahkoposti,
                               },
                           ],
                       },
@@ -397,6 +216,163 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
                 : null,
         };
     };
-}
+
+    return (
+        <form onSubmit={tallenna}>
+            <div className="oph-field oph-field-is-required">
+                <label className="oph-label">{L['HENKILO_ETUNIMET']}</label>
+                <input
+                    className={classNames('oph-input', {
+                        'oph-input-has-error': isSubmittedAndHasError('etunimet'),
+                    })}
+                    placeholder={L['HENKILO_ETUNIMET']}
+                    type="text"
+                    name="etunimet"
+                    onChange={onHenkiloInputChange}
+                />
+                {renderErrors('etunimet')}
+            </div>
+            <div className="oph-field oph-field-is-required">
+                <label className="oph-label">{L['HENKILO_KUTSUMANIMI']}</label>
+                <input
+                    className={classNames('oph-input', {
+                        'oph-input-has-error': hasError('kutsumanimi'),
+                    })}
+                    placeholder={L['HENKILO_KUTSUMANIMI']}
+                    type="text"
+                    name="kutsumanimi"
+                    onChange={onHenkiloInputChange}
+                />
+                {renderErrors('kutsumanimi')}
+            </div>
+            <div className="oph-field oph-field-is-required">
+                <label className="oph-label">{L['HENKILO_SUKUNIMI']}</label>
+                <input
+                    className={classNames('oph-input', {
+                        'oph-input-has-error': isSubmittedAndHasError('sukunimi'),
+                    })}
+                    placeholder={L['HENKILO_SUKUNIMI']}
+                    type="text"
+                    name="sukunimi"
+                    onChange={onHenkiloInputChange}
+                />
+                {renderErrors('sukunimi')}
+            </div>
+            <div className="oph-field oph-field-is-required">
+                <label className="oph-label">{L['HENKILO_SYNTYMAAIKA']}</label>
+                <div />
+                <ReactDatePicker
+                    className={`oph-input ${isSubmittedAndHasError('syntymaaika') ? 'oph-input-has-error' : ''}`}
+                    onChange={(date) =>
+                        onHenkiloChange({
+                            name: 'syntymaaika',
+                            value: date ? format(date, 'yyyy-MM-dd') : null,
+                        })
+                    }
+                    selected={state.henkilo.syntymaaika ? parseISO(state.henkilo.syntymaaika) : null}
+                    showYearDropdown
+                    showWeekNumbers
+                    dateFormat={'d.M.yyyy'}
+                />
+                {renderErrors('syntymaaika')}
+            </div>
+            <div className="oph-field oph-field-is-required">
+                <label className="oph-label">{L['HENKILO_SUKUPUOLI']}</label>
+                <Select
+                    options={sukupuoliOptions}
+                    onChange={(value) =>
+                        onHenkiloChange({
+                            name: 'sukupuoli',
+                            value: value?.value,
+                        })
+                    }
+                    value={sukupuoliOptions.find((k) => state.henkilo.sukupuoli === k.value)}
+                    className={classNames({
+                        'oph-input-has-error': isSubmittedAndHasError('sukupuoli'),
+                    })}
+                    placeholder={L['HENKILO_SUKUPUOLI']}
+                />
+                {renderErrors('sukupuoli')}
+            </div>
+            <div className="oph-field oph-field-is-required">
+                <label className="oph-label">{L['HENKILO_AIDINKIELI']}</label>
+                <Select
+                    options={kieliOptions}
+                    onChange={(value) =>
+                        onHenkiloChange({
+                            name: 'aidinkieli',
+                            value: value ? { kieliKoodi: value.value } : null,
+                        })
+                    }
+                    value={kieliOptions.find((k) => state.henkilo.aidinkieli?.kieliKoodi === k.value)}
+                    className={classNames({
+                        'oph-input-has-error': isSubmittedAndHasError('aidinkieli'),
+                    })}
+                    placeholder={L['HENKILO_AIDINKIELI']}
+                />
+                {renderErrors('aidinkieli')}
+            </div>
+            <div className="oph-field oph-field-is-required">
+                <label className="oph-label">{L['HENKILO_KANSALAISUUS']}</label>
+                <Select
+                    options={kansalaisuusOptions}
+                    onChange={(values) =>
+                        onHenkiloChange({
+                            name: 'kansalaisuus',
+                            value: values.map((v) => ({ kansalaisuusKoodi: v.value })),
+                        })
+                    }
+                    value={kansalaisuusOptions.filter((k) =>
+                        state.henkilo.kansalaisuus?.find((kans) => kans.kansalaisuusKoodi === k.value)
+                    )}
+                    isMulti={true}
+                    className={classNames({
+                        'oph-input-has-error': isSubmittedAndHasError('kansalaisuus'),
+                    })}
+                    placeholder={L['HENKILO_KANSALAISUUS']}
+                />
+                {renderErrors('kansalaisuus')}
+            </div>
+            <div className="oph-field">
+                <label className="oph-label">{L['HENKILO_PASSINUMERO']}</label>
+                <input
+                    className={classNames('oph-input', {
+                        'oph-input-has-error': isSubmittedAndHasError('passinumero'),
+                    })}
+                    placeholder={L['HENKILO_PASSINUMERO']}
+                    type="text"
+                    name="passinumero"
+                    onChange={onFormInputChange}
+                />
+                {renderErrors('passinumero')}
+            </div>
+            <div className="oph-field">
+                <label className="oph-label">{L['YHTEYSTIETO_SAHKOPOSTI']}</label>
+                <input
+                    className={classNames('oph-input', {
+                        'oph-input-has-error': isSubmittedAndHasError('sahkoposti'),
+                    })}
+                    placeholder={L['YHTEYSTIETO_SAHKOPOSTI']}
+                    type="email"
+                    name="sahkoposti"
+                    onChange={onFormInputChange}
+                />
+                {renderErrors('sahkoposti')}
+            </div>
+            <div className="oph-field">
+                {!state.loading ? (
+                    <button type="submit" className="oph-button oph-button-primary" disabled={state.disabled}>
+                        {L['TALLENNA_LINKKI']}
+                    </button>
+                ) : (
+                    <LoaderWithText labelkey="LOMAKE_LOADING" />
+                )}
+                {state.submitted && state.errors.length > 0 && (
+                    <span className="oph-field-text oph-error">{L['LOMAKE_SISALTAA_VIRHEITA']}</span>
+                )}
+            </div>
+        </form>
+    );
+};
 
 export default OppijaCreateForm;
