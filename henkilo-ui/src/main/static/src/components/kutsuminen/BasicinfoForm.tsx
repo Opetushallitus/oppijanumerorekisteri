@@ -5,6 +5,7 @@ import { Localisations } from '../../types/localisation.type';
 import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
 import { SelectOption } from '../../utilities/select';
 import { Locale } from '../../types/locale.type';
+import { useAsiointikielet } from '../../selectors';
 
 import './BasicinfoForm.css';
 
@@ -16,18 +17,9 @@ type Props = {
     setBasicInfo: (arg0: KutsuBasicInfo) => void;
 };
 
-const languages = [
-    { code: 'fi', name: { fi: 'Suomi', en: 'Finnish', sv: 'Finska' } },
-    { code: 'sv', name: { fi: 'Ruotsi', en: 'Swedish', sv: 'Svenska' } },
-    { code: 'en', name: { fi: 'Englanti', en: 'English', sv: 'Engelska' } },
-];
-
 const BasicinfoForm = (props: Props) => {
     const { basicInfo } = props;
-    const languageOptions = languages.map((language) => ({
-        value: language.code,
-        label: language.name[props.locale],
-    }));
+    const asiointikielet = useAsiointikielet(props.locale);
 
     function updateEmail(event: React.ChangeEvent<HTMLInputElement>) {
         const { basicInfo } = props;
@@ -100,8 +92,8 @@ const BasicinfoForm = (props: Props) => {
                     <Select
                         name="languageSelection"
                         isDisabled={props.disabled}
-                        value={languageOptions.find((l) => l.value === basicInfo.languageCode)}
-                        options={languageOptions}
+                        value={asiointikielet.find((l) => l.value === basicInfo.languageCode)}
+                        options={asiointikielet}
                         onChange={selectLanguage}
                     />
                 </li>
