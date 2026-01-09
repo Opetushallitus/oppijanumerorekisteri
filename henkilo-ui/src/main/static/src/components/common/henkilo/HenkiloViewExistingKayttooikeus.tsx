@@ -6,7 +6,6 @@ import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, SortingSt
 import { useAppDispatch } from '../../../store';
 import SuljeButton from './buttons/SuljeButton';
 import StaticUtils from '../StaticUtils';
-import HaeJatkoaikaaButton from '../../omattiedot/HaeJatkoaikaaButton';
 import { createEmailOptions } from '../../../utilities/henkilo.util';
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
@@ -315,8 +314,10 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                 cell: ({ getValue }) => (
                     <div>
                         {createEmailSelectionIfMoreThanOne(getValue().ryhmaId)}
-                        <HaeJatkoaikaaButton
-                            haeJatkoaikaaAction={() => _createKayttooikeusAnomus(getValue())}
+                        <ConfirmButton
+                            action={() => _createKayttooikeusAnomus(getValue())}
+                            normalLabel={L['OMATTIEDOT_HAE_JATKOAIKAA']}
+                            confirmLabel={L['OMATTIEDOT_HAE_JATKOAIKAA_CONFIRM']}
                             disabled={isHaeJatkoaikaaButtonDisabled(getValue())}
                         />
                     </div>

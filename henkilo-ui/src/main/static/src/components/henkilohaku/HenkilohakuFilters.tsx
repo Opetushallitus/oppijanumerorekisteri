@@ -2,7 +2,6 @@ import './HenkilohakuFilters.css';
 import React, { useMemo, useState } from 'react';
 import Select, { createFilter, SingleValue } from 'react-select';
 
-import OphCheckboxInline from '../common/forms/OphCheckboxInline';
 import SubOrganisationCheckbox from './criterias/SubOrganisationCheckbox';
 import NoOrganisationCheckbox from './criterias/NoOrganisationCheckbox';
 import PassiivisetOrganisationCheckbox from './criterias/PassiivisetOrganisationCheckbox';
@@ -86,7 +85,10 @@ const HenkilohakuFilters = (props: OwnProps) => {
 
     return (
         <div className="henkilohakufilters-wrapper">
-            <OphCheckboxInline text={L['HENKILOHAKU_FILTERS_HAEMYOS']!}>
+            <div className="oph-field oph-field-inline">
+                <label className="oph-label oph-bold" aria-describedby="field-text">
+                    {L['HENKILOHAKU_FILTERS_HAEMYOS']}
+                </label>
                 {omattiedot?.isAdmin ? (
                     <div className="flex-inline">
                         <SubOrganisationCheckbox
@@ -119,7 +121,7 @@ const HenkilohakuFilters = (props: OwnProps) => {
                         />
                     </div>
                 )}
-            </OphCheckboxInline>
+            </div>
 
             <div className="flex-horizontal flex-align-center henkilohaku-suodata">
                 <div className="flex-item-1">

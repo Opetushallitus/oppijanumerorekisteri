@@ -9,7 +9,7 @@ import NotificationButton, { ButtonNotification } from '../../components/common/
 import { Locale } from '../../types/locale.type';
 import { Localisations } from '../../types/localisation.type';
 import IconButton from '../../components/common/button/IconButton';
-import HakaIcon from '../../components/common/icons/HakaIcon';
+import hakaImg from '../../img/haka_landscape_medium.gif';
 import { toSupportedLocale, useAsiointikielet } from '../../selectors';
 import { RekisteroidyRequest, usePostRekisteroidyMutation } from '../../api/kayttooikeus';
 
@@ -287,7 +287,7 @@ export const RekisteroidyPage = (props: OwnProps) => {
                                         temporaryToken: kutsu.temporaryToken,
                                     }).toString()}`}
                                 >
-                                    <HakaIcon />
+                                    <img src={hakaImg} alt="" />
                                 </IconButton>
                             </div>
                         </div>

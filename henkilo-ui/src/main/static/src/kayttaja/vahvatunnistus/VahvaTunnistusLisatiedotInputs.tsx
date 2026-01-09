@@ -1,6 +1,5 @@
 import React from 'react';
-import OphField from '../../components/common/forms/OphField';
-import OphInput from '../../components/common/forms/OphInput';
+
 import { LocalNotification } from '../../components/common/Notification/LocalNotification';
 import { Localisations } from '../../types/localisation.type';
 import Salasana from '../../components/common/henkilo/labelvalues/Salasana';
@@ -49,7 +48,7 @@ const VahvaTunnistusLisatiedotInputs = (props: Props) => {
     return (
         <div>
             {props.form.metadata.password.visible && (
-                <OphField required={props.form.metadata.password.required}>
+                <div className="oph-field oph-field-is-required">
                     <label className="oph-label" htmlFor="password">
                         {props.L['UUDELLEENREKISTEROINTI_UUSI_SALASANA']}
                     </label>
@@ -71,19 +70,19 @@ const VahvaTunnistusLisatiedotInputs = (props: Props) => {
                                 ))}
                         </ul>
                     </LocalNotification>
-                </OphField>
+                </div>
             )}
             {props.form.metadata.tyosahkopostiosoite.visible && (
-                <OphField required={props.form.metadata.tyosahkopostiosoite.required}>
+                <div className="oph-field oph-field-is-required">
                     <label className="oph-label" htmlFor="tyosahkopostiosoite">
                         {props.L['UUDELLEENREKISTEROINTI_SAHKOPOSTIOSOITE']}
                     </label>
-                    <OphInput
+                    <input
                         type="email"
                         name="tyosahkopostiosoite"
                         value={props.form.values.tyosahkopostiosoite}
                         onChange={onInputChange}
-                        hasError={hasError('tyosahkopostiosoite')}
+                        className={`oph-input ${hasError('tyosahkopostiosoite') ? 'oph-input-has-error' : ''}`}
                         disabled={props.form.metadata.tyosahkopostiosoite.disabled}
                     />
                     <LocalNotification
@@ -99,7 +98,7 @@ const VahvaTunnistusLisatiedotInputs = (props: Props) => {
                                 ))}
                         </ul>
                     </LocalNotification>
-                </OphField>
+                </div>
             )}
         </div>
     );

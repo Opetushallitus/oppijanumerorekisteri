@@ -3,7 +3,6 @@ import { useReactTable, getCoreRowModel, getPaginationRowModel, ColumnDef } from
 import { Link } from 'react-router';
 
 import OphModal from '../common/modal/OphModal';
-import OphCheckboxButtonInput from '../common/forms/OphCheckboxButtonInput';
 import { useLocalisations } from '../../selectors';
 import { useGetTuontidataQuery } from '../../api/oppijanumerorekisteri';
 import OphTable, { expanderColumn } from '../OphTable';
@@ -64,13 +63,18 @@ const TuontiDetails = ({ tuontiId, onClose }: OwnProps) => {
 
     return (
         <OphModal onClose={onClose}>
-            <OphCheckboxButtonInput
-                value="errors"
-                idName="filter"
-                checked={!showAll}
-                label={L['TUONTIDATA_VAIN_VIRHEET']!}
-                action={() => setShowAll(!showAll)}
-            />
+            <label htmlFor="filter">
+                <input
+                    id="filter"
+                    type="checkbox"
+                    value="errors"
+                    checked={!showAll}
+                    className="oph-checkbox-button-input"
+                    onClick={() => setShowAll(!showAll)}
+                    onChange={() => ({})}
+                />
+                <span className="oph-checkbox-button-text">{L['TUONTIDATA_VAIN_VIRHEET']}</span>
+            </label>
             <OphTable<Tuontidata>
                 table={table}
                 isLoading={isFetching}

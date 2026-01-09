@@ -4,7 +4,6 @@ import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, SortingSt
 
 import { useAppDispatch } from '../../../store';
 import StaticUtils from '../StaticUtils';
-import HaeJatkoaikaaButton from '../../omattiedot/HaeJatkoaikaaButton';
 import { createEmailOptions } from '../../../utilities/henkilo.util';
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
@@ -21,6 +20,7 @@ import {
 import Loader from '../icons/Loader';
 import { add } from '../../../slices/toastSlice';
 import { useGetHenkiloQuery } from '../../../api/oppijanumerorekisteri';
+import ConfirmButton from '../button/ConfirmButton';
 
 type OwnProps = {
     isOmattiedot: boolean;
@@ -205,8 +205,10 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
                     !hideVanhentunutKayttooikeusUusintaButton(getValue()) ? (
                         <div>
                             {createEmailSelectionIfMoreThanOne(getValue().ryhmaId)}
-                            <HaeJatkoaikaaButton
-                                haeJatkoaikaaAction={() => _createKayttooikeusAnomus(getValue())}
+                            <ConfirmButton
+                                action={() => _createKayttooikeusAnomus(getValue())}
+                                normalLabel={L['OMATTIEDOT_HAE_JATKOAIKAA']}
+                                confirmLabel={L['OMATTIEDOT_HAE_JATKOAIKAA_CONFIRM']}
                                 disabled={isHaeJatkoaikaaButtonDisabled(getValue().ryhmaId, getValue())}
                             />
                         </div>

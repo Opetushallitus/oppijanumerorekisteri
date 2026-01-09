@@ -7,7 +7,6 @@ import ReactDatePicker from 'react-datepicker';
 import { HenkiloCreate } from '../../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import PropertySingleton from '../../../../../globals/PropertySingleton';
 import { isValidKutsumanimi } from '../../../../../validation/KutsumanimiValidator';
-import LoaderWithText from '../../../../common/loadingbar/LoaderWithText';
 import { EMAIL } from '../../../../../types/constants';
 import { Kielisyys } from '../../../../../types/domain/oppijanumerorekisteri/kielisyys.types';
 import {
@@ -17,6 +16,7 @@ import {
     useSukupuoliOptions,
 } from '../../../../../selectors';
 import { Kansalaisuus } from '../../../../../types/domain/oppijanumerorekisteri/kansalaisuus.types';
+import Loader from '../../../../common/icons/Loader';
 
 type Error = {
     name: string;
@@ -365,7 +365,10 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
                         {L['TALLENNA_LINKKI']}
                     </button>
                 ) : (
-                    <LoaderWithText labelkey="LOMAKE_LOADING" />
+                    <div style={{ display: 'inline-block' }}>
+                        <Loader />
+                        <span>{L['LOMAKE_LOADING']}</span>
+                    </div>
                 )}
                 {state.submitted && state.errors.length > 0 && (
                     <span className="oph-field-text oph-error">{L['LOMAKE_SISALTAA_VIRHEITA']}</span>

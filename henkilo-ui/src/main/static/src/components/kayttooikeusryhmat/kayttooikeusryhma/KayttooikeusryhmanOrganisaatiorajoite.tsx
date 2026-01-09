@@ -4,7 +4,6 @@ import ItemList from './ItemList';
 import './KayttooikeusryhmanOrganisaatiorajoite.css';
 import OrganisaatioSelectModal from '../../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
-import OphCheckboxFieldset from '../../common/forms/OphCheckboxFieldset';
 import { useLocalisations } from '../../../selectors';
 import { koodiLabel, useGetOppilaitostyypitQuery, useGetOrganisaatiotyypitQuery } from '../../../api/koodisto';
 
@@ -15,9 +14,9 @@ type Props = {
     organisaatioSelectAction: (organisaatio: OrganisaatioSelectObject) => void;
     removeOrganisaatioSelectAction: (selection: OrganisaatioSelectObject) => void;
     oppilaitostyypitSelections: Array<string>;
-    oppilaitostyypitSelectAction: (selection: React.ChangeEvent<HTMLInputElement>) => void;
+    oppilaitostyypitSelectAction: React.ReactEventHandler<HTMLInputElement>;
     organisaatiotyypitSelections: Array<string>;
-    organisaatiotyypitSelectAction: (selection: React.ChangeEvent<HTMLInputElement>) => void;
+    organisaatiotyypitSelectAction: React.ReactEventHandler<HTMLInputElement>;
 };
 
 const KayttooikeusryhmanOrganisaatiorajoite = (props: Props) => {
@@ -61,30 +60,50 @@ const KayttooikeusryhmanOrganisaatiorajoite = (props: Props) => {
                     />
                 </div>
                 <div className="flex-item-1 oppilaitostyyppi-wrapper">
-                    <OphCheckboxFieldset
-                        legendText={L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_OPPILAITOSTYYPPI']!}
-                        options={oppilaitostyypitOptions.map((option) => ({
-                            label: option.label,
-                            value: option.value,
-                            checked:
-                                props.oppilaitostyypitSelections &&
-                                props.oppilaitostyypitSelections.indexOf(option.value) !== -1,
-                        }))}
-                        selectAction={props.oppilaitostyypitSelectAction}
-                    />
+                    <fieldset className="oph-fieldset">
+                        <legend className="oph-label">{L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_OPPILAITOSTYYPPI']}</legend>
+                        {oppilaitostyypitOptions.map((option, idx) => (
+                            <label key={'oppilaitostyypit' + idx} htmlFor={'oppilaitostyypit' + idx}>
+                                <input
+                                    id={'oppilaitostyypit' + idx}
+                                    type="checkbox"
+                                    value={option.value}
+                                    checked={
+                                        props.oppilaitostyypitSelections &&
+                                        props.oppilaitostyypitSelections.indexOf(option.value) !== -1
+                                    }
+                                    className="oph-checkbox-button-input"
+                                    onClick={props.oppilaitostyypitSelectAction}
+                                    onChange={() => ({})}
+                                />
+                                <span className="oph-checkbox-button-text">{option.label}</span>
+                            </label>
+                        ))}
+                    </fieldset>
                 </div>
                 <div className="flex-item-1 organisaatiotyyppi-wrapper">
-                    <OphCheckboxFieldset
-                        legendText={L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_ORGANISAATIOTYYPPI']!}
-                        options={organisaatiotyypitOptions.map((option) => ({
-                            label: option.label,
-                            value: option.value,
-                            checked:
-                                props.organisaatiotyypitSelections &&
-                                props.organisaatiotyypitSelections.indexOf(option.value) !== -1,
-                        }))}
-                        selectAction={props.organisaatiotyypitSelectAction}
-                    />
+                    <fieldset className="oph-fieldset">
+                        <legend className="oph-label">
+                            {L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_ORGANISAATIOTYYPPI']}
+                        </legend>
+                        {organisaatiotyypitOptions.map((option, idx) => (
+                            <label key={'organisaatiotyypit' + idx} htmlFor={'organisaatiotyypit' + idx}>
+                                <input
+                                    id={'organisaatiotyypit' + idx}
+                                    type="checkbox"
+                                    value={option.value}
+                                    checked={
+                                        props.organisaatiotyypitSelections &&
+                                        props.organisaatiotyypitSelections.indexOf(option.value) !== -1
+                                    }
+                                    className="oph-checkbox-button-input"
+                                    onClick={props.organisaatiotyypitSelectAction}
+                                    onChange={() => ({})}
+                                />
+                                <span className="oph-checkbox-button-text">{option.label}</span>
+                            </label>
+                        ))}
+                    </fieldset>
                 </div>
             </div>
         </div>
