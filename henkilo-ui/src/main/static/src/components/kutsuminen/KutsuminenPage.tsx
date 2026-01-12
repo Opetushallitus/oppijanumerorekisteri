@@ -144,9 +144,9 @@ const KutsuminenPage = () => {
     } else {
         const disabled = !henkilo?.hetu || !henkilo?.yksiloityVTJ;
         return (
-            <div>
-                <form className="mainContent wrapper">
-                    <p className="oph-h2 oph-bold">{L['VIRKAILIJAN_LISAYS_OTSIKKO']}</p>
+            <div className="mainContent wrapper">
+                <h1>{L['VIRKAILIJAN_LISAYS_OTSIKKO']}</h1>
+                <form style={{ padding: '0' }}>
                     <LocalNotification type="error" title={L['KUTSU_ESTETTY']} toggle={disabled}>
                         {L['KUTSU_ESTETTY_SYY']}
                     </LocalNotification>
@@ -159,7 +159,7 @@ const KutsuminenPage = () => {
                     />
 
                     <fieldset className="add-to-organisation">
-                        <span className="oph-h2 oph-strong">{L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_OTSIKKO']}</span>
+                        <h2>{L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_OTSIKKO']}</h2>
                         <div>
                             {kutsuOrganisaatios.map((selection, i) => (
                                 <AddedOrganization

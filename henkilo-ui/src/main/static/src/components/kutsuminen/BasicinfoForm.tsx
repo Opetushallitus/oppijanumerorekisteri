@@ -55,7 +55,7 @@ const BasicinfoForm = (props: Props) => {
 
     return (
         <fieldset id="basicinfo">
-            <span className="oph-h2">{props.L['VIRKAILIJAN_TIEDOT_OTSIKKO']}</span>
+            <h2>{props.L['VIRKAILIJAN_TIEDOT_OTSIKKO']}</h2>
             <ul className="flex-outer">
                 <li>
                     <label>{props.L['VIRKAILIJAN_TIEDOT_ETUNIMI']}</label>

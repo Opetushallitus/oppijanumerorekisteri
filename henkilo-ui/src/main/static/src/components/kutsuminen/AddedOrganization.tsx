@@ -10,7 +10,6 @@ import KayttooikeusryhmaSelectModal from '../common/select/KayttooikeusryhmaSele
 import { myonnettyToKayttooikeusryhma } from '../../utils/KayttooikeusryhmaUtils';
 import { Kayttooikeusryhma, MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
-import CrossCircleIcon from '../common/icons/CrossCircleIcon';
 import { useLocalisations } from '../../selectors';
 import { isOrganisaatioSelection, OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import {
@@ -92,16 +91,12 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
     return (
         <div className="added-org">
             <div className="row">
-                <div className="flex-horizontal" style={{ justifyContent: 'space-between' }}>
-                    <label htmlFor="org">{L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_ORGANISAATIO']}</label>
-                    <div
-                        role="button"
-                        tabIndex={0}
-                        style={{ paddingTop: '20px', fontSize: '1.5em' }}
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <h3>{L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_ORGANISAATIO']}</h3>
+                    <button
+                        className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
                         onClick={() => removeOrganisation()}
-                    >
-                        <CrossCircleIcon />
-                    </div>
+                    />
                 </div>
                 <div className="flex-horizontal">
                     <input

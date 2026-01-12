@@ -3,8 +3,6 @@ import Select, { createFilter, SingleValue } from 'react-select';
 
 import { useAppDispatch } from '../../../store';
 import Button from '../button/Button';
-import IconButton from '../button/IconButton';
-import CrossCircleIcon from '../icons/CrossCircleIcon';
 import KayttooikeusryhmaSelectModal from '../select/KayttooikeusryhmaSelectModal';
 import Loader from '../icons/Loader';
 import OrganisaatioSelectModal from '../select/OrganisaatioSelectModal';
@@ -320,13 +318,12 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
                                     <li key={index}>
                                         <div className="selected-permissions-name">
                                             {kayttooikeusRyhmaSelection.label}
-                                            <IconButton
+                                            <button
+                                                className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
                                                 onClick={() =>
                                                     _removeKayttooikeusryhmaSelection(kayttooikeusRyhmaSelection)
                                                 }
-                                            >
-                                                <CrossCircleIcon />
-                                            </IconButton>
+                                            />
                                         </div>
                                         {kayttooikeusRyhmaSelection.description && (
                                             <div className="selected-permissions-description">
