@@ -1,10 +1,6 @@
 import React, { useEffect, useId, useMemo, useState } from 'react';
 
-import Button from '../button/Button';
 import PropertySingleton from '../../../globals/PropertySingleton';
-import AddIcon from '../icons/AddIcon';
-import IconButton from '../button/IconButton';
-import CrossIcon from '../icons/CrossIcon';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { validateEmail } from '../../../validation/EmailValidator';
 import { WORK_ADDRESS, View, EMAIL } from '../../../types/constants';
@@ -18,18 +14,16 @@ import { useGetHenkiloQuery, useUpdateHenkiloMutation } from '../../../api/oppij
 import { add } from '../../../slices/toastSlice';
 import Loader from '../icons/Loader';
 
-import './HenkiloViewContactContent.css';
-
 type OwnProps = {
     readOnly: boolean;
     henkiloOid: string;
     view: View;
 };
 
-const isLastWorkEmail = (yhteystiedot: YhteystietoRyhma[]): boolean =>
-    yhteystiedot.filter(
-        (y) => !!y.id && y.ryhmaKuvaus === WORK_ADDRESS && !!y.yhteystieto.find((t) => t.yhteystietoTyyppi === EMAIL)
-    ).length < 2;
+const isWorkMail = (y?: YhteystietoRyhma) =>
+    y?.ryhmaKuvaus === WORK_ADDRESS && !!y.yhteystieto.find((t) => t.yhteystietoTyyppi === EMAIL);
+const isLastWorkEmail = (yhteystiedot: YhteystietoRyhma[], idx: number): boolean =>
+    isWorkMail(yhteystiedot[idx]) && yhteystiedot.filter((y) => !!y.id && isWorkMail(y)).length < 2;
 const isVirkailija = (kayttaja?: KayttajatiedotRead): boolean => kayttaja?.kayttajaTyyppi === 'VIRKAILIJA';
 const isFromVTJ = (group: YhteystietoRyhma): boolean =>
     group.ryhmaAlkuperaTieto === PropertySingleton.state.YHTEYSTIETO_ALKUPERA_VTJ;
@@ -152,21 +146,20 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
 
     const renderYhteystieto = (ryhma: YhteystietoRyhma, idx: number) => {
         return (
-            <>
-                <div>
-                    <span className="oph-h3 oph-bold midHeader">
+            <div key={`${ryhma.id}-${idx}`}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <h3>
                         {koodiLabel(
                             yhteystietotyypit?.find((t) => t.koodiArvo === ryhma.ryhmaKuvaus),
                             locale
                         )}
                         {isDefaultWorkAddress(ryhma) ? ' *' : ''}
-                    </span>
-                    {editing && !isFromVTJ(ryhma) && !isLastWorkEmail(yhteystiedot) ? (
-                        <span className="float-right">
-                            <IconButton onClick={() => removeYhteystieto(idx)}>
-                                <CrossIcon />
-                            </IconButton>
-                        </span>
+                    </h3>
+                    {editing && !isFromVTJ(ryhma) && !isLastWorkEmail(yhteystiedot, idx) ? (
+                        <button
+                            className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
+                            onClick={() => removeYhteystieto(idx)}
+                        />
                     ) : null}
                 </div>
                 {ryhma.yhteystieto.map((y, idx2) => (
@@ -182,7 +175,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
                             <span className="oph-bold">{L[y.yhteystietoTyyppi]}</span>
                             {editing && !isFromVTJ(ryhma) ? (
                                 <input
-                                    className="oph-input"
+                                    className="oph-ds-input"
                                     defaultValue={y.yhteystietoArvo}
                                     onChange={(e) =>
                                         setYhteystiedot(mapYhteystietoRyhmaArvo(e.target.value, idx, idx2))
@@ -194,7 +187,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
                         </div>
                     </div>
                 ))}
-            </>
+            </div>
         );
     };
 
@@ -202,48 +195,47 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
         return <Loader />;
     }
     return (
-        <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper contact-content">
+        <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
             <div>
                 <h2 id={sectionLabelId}>{L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</h2>
-                {henkilo?.turvakielto ? (
-                    <div className="oph-h3 oph-bold midHeader">{L['YHTEYSTIETO_TURVAKIELTO']}</div>
-                ) : null}
-
-                <div className="henkiloViewContent">
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
-                        {yhteystiedot
-                            .filter((c) => omattiedot?.isAdmin || !isVirkailija(kayttajatiedot) || !isFromVTJ(c))
-                            .map((ryhma, idx) => (
-                                <div key={idx}>{renderYhteystieto(ryhma, idx)}</div>
-                            ))}
-                    </div>
+                {henkilo?.turvakielto ? <h3>{L['YHTEYSTIETO_TURVAKIELTO']}</h3> : null}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
+                    {yhteystiedot
+                        .filter((c) => omattiedot?.isAdmin || !isVirkailija(kayttajatiedot) || !isFromVTJ(c))
+                        .map((ryhma, idx) => renderYhteystieto(ryhma, idx))}
                 </div>
             </div>
-            <div className="contactContentButtons">
+            <div>
                 {!editing && hasHenkiloReadUpdateRights && (
-                    <Button
+                    <button
+                        className="oph-ds-button"
                         disabled={henkilo?.passivoitu || henkilo?.duplicate}
-                        key="contactEdit"
-                        action={() => setEditing(true)}
+                        onClick={() => setEditing(true)}
                     >
                         {L['MUOKKAA_LINKKI']}
-                    </Button>
+                    </button>
                 )}
                 {editing && (
-                    <>
+                    <div>
                         <button
-                            className="oph-button oph-button-primary edit-button-update-button"
+                            className="oph-ds-button oph-ds-button-icon oph-ds-button-icon-plus"
+                            style={{ marginRight: '1rem' }}
                             onClick={() => createYhteystiedotRyhma()}
                         >
-                            <AddIcon /> {L['HENKILO_LUOYHTEYSTIETO']}
+                            {L['HENKILO_LUOYHTEYSTIETO']}
                         </button>
-                        <Button className="edit-button-update-button" disabled={errors} action={update}>
+                        <button
+                            className="oph-ds-button"
+                            style={{ marginRight: '1rem' }}
+                            disabled={errors}
+                            onClick={update}
+                        >
                             {L['TALLENNA_LINKKI']}
-                        </Button>
-                        <Button className="edit-button-discard-button" cancel action={discard}>
+                        </button>
+                        <button className="oph-ds-button oph-ds-button-bordered" onClick={discard}>
                             {L['PERUUTA_LINKKI']}
-                        </Button>
-                    </>
+                        </button>
+                    </div>
                 )}
             </div>
         </section>

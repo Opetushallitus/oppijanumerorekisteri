@@ -8,7 +8,6 @@ import type { KutsuByToken, KutsuOrganisaatio } from '../../types/domain/kayttoo
 import NotificationButton, { ButtonNotification } from '../../components/common/button/NotificationButton';
 import { Locale } from '../../types/locale.type';
 import { Localisations } from '../../types/localisation.type';
-import IconButton from '../../components/common/button/IconButton';
 import hakaImg from '../../img/haka_landscape_medium.gif';
 import { toSupportedLocale, useAsiointikielet } from '../../selectors';
 import { RekisteroidyRequest, usePostRekisteroidyMutation } from '../../api/kayttooikeus';
@@ -282,13 +281,13 @@ export const RekisteroidyPage = (props: OwnProps) => {
                                         })
                                     }
                                 />
-                                <IconButton
+                                <a
                                     href={`/service-provider-app/saml/login/alias/hakasp?${new URLSearchParams({
                                         temporaryToken: kutsu.temporaryToken,
                                     }).toString()}`}
                                 >
                                     <img src={hakaImg} alt="" />
-                                </IconButton>
+                                </a>
                             </div>
                         </div>
                     </div>
