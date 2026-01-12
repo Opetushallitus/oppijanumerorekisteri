@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react';
 import Select, { SingleValue } from 'react-select';
 
-import { useLocalisations, useOmatOrganisaatiot } from '../../../selectors';
+import { useLocalisations, useOmatRyhmat } from '../../../selectors';
 import { SelectOption, selectProps } from '../../../utilities/select';
-import PropertySingleton from '../../../globals/PropertySingleton';
 
 type OwnProps = {
     selectOrganisaatio: (o: SingleValue<SelectOption>) => void;
@@ -14,18 +13,12 @@ type OwnProps = {
 
 const RyhmaSelection = (props: OwnProps) => {
     const { L, locale } = useLocalisations();
-    const organisaatiot = useOmatOrganisaatiot();
+    const omatRyhmat = useOmatRyhmat();
     const options = useMemo(() => {
-        const ophOrg = organisaatiot?.find((o) => o.organisaatio.oid === PropertySingleton.state.rootOrganisaatioOid);
-        if (!ophOrg) {
-            return undefined;
-        }
-        const newOptions = ophOrg?.organisaatio.children
-            .filter((o) => o.tyypit.indexOf('Ryhma') !== -1)
-            .map((o) => ({ value: o.oid, label: o.nimi?.[locale] ?? '' }));
-        newOptions.sort((a, b) => a.label.localeCompare(b.label));
-        return newOptions;
-    }, [organisaatiot]);
+        return omatRyhmat
+            .map((_) => ({ value: _.oid, label: _.nimi?.[locale] ?? '' }))
+            .sort((a, b) => a.label.localeCompare(b.label));
+    }, [omatRyhmat, locale]);
     const placeholder = props.placeholder ? props.placeholder : L['HENKILO_LISAA_KAYTTOOIKEUDET_RYHMA'];
 
     return (

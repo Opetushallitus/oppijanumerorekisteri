@@ -11,6 +11,7 @@ import { useGetLocaleQuery } from './api/oppijanumerorekisteri';
 import { useMemo } from 'react';
 import { useGetKansalaisuudetQuery, useGetKieletQuery, useGetSukupuoletQuery } from './api/koodisto';
 import StaticUtils from './components/common/StaticUtils';
+import { OrganisaatioWithChildren } from './types/domain/organisaatio/organisaatio.types';
 
 const VALID_KIELI_URI_FOR_ASIOINTIKIELI = ['kieli_fi', 'kieli_sv', 'kieli_en'];
 
@@ -64,6 +65,16 @@ export const useOmatOrganisaatiot = () => {
     );
     return omatOrganisaatiot;
 };
+
+export function useOmatRyhmat(): OrganisaatioWithChildren[] {
+    const omatOrganisaatiot = useOmatOrganisaatiot() ?? [];
+    const flattened = omatOrganisaatiot.map((_) => _.organisaatio).flatMap(flattenOrganisaatioWithChildren);
+    return flattened.filter((_) => _.tyypit.includes('Ryhma'));
+}
+
+function flattenOrganisaatioWithChildren(org: OrganisaatioWithChildren): OrganisaatioWithChildren[] {
+    return [org, ...org.children.flatMap(flattenOrganisaatioWithChildren)];
+}
 
 export const useKayttooikeusryhmas = (isOmattiedot: boolean, henkiloOid?: string) => {
     const kayttooikeusryhmas = useGetKayttooikeusryhmasForHenkiloQuery(henkiloOid!, { skip: isOmattiedot });
