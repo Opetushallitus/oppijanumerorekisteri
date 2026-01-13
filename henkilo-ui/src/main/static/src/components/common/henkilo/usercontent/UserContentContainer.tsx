@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { SingleValue } from 'react-select';
 import { format } from 'date-fns';
+import { useNavigate } from 'react-router';
 
 import { useAppDispatch } from '../../../../store';
 import StaticUtils from '../../StaticUtils';
@@ -9,7 +10,6 @@ import OppijaUserContent from './OppijaUserContent';
 import AdminUserContent from './AdminUserContent';
 import VirkailijaUserContent from './VirkailijaUserContent';
 import OmattiedotUserContent from './OmattiedotUserContent';
-import PalveluUserContent from './PalveluUserContent';
 import { isValidKutsumanimi } from '../../../../validation/KutsumanimiValidator';
 import { LocalNotification } from '../../Notification/LocalNotification';
 import { isValidKayttajatunnus } from '../../../../validation/KayttajatunnusValidator';
@@ -49,6 +49,7 @@ const yksilointivirheMap = {
 export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) => {
     const { L } = useLocalisations();
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const { data: henkilo } = useGetHenkiloQuery(oidHenkilo);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: kayttajatiedot } = useGetKayttajatiedotQuery(oidHenkilo, { skip: isOppija });
@@ -71,6 +72,12 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
                 : { anomusilmoitus: omattiedot?.anomusilmoitus }),
         });
     }, [henkilo, omattiedot]);
+
+    useEffect(() => {
+        if (kayttajatiedot?.kayttajaTyyppi === 'PALVELU') {
+            navigate(`/jarjestelmatunnus/${oidHenkilo}`, { replace: true });
+        }
+    }, [kayttajatiedot]);
 
     function _edit() {
         setReadOnly(false);
@@ -231,21 +238,7 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
     }
 
     let content;
-    if (kayttajatiedot?.kayttajaTyyppi === 'PALVELU') {
-        content = (
-            <PalveluUserContent
-                readOnly={readOnly}
-                discardAction={_discard}
-                updateAction={_update}
-                updateModelAction={_updateModelField}
-                updateDateAction={_updateModelField}
-                henkiloUpdate={henkiloUpdate}
-                edit={_edit}
-                oidHenkilo={oidHenkilo}
-                isValidForm={_validForm()}
-            />
-        );
-    } else if (view === 'oppija') {
+    if (view === 'oppija') {
         content = (
             <OppijaUserContent
                 readOnly={readOnly}

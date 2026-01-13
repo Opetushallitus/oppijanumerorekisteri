@@ -19,10 +19,10 @@ import './HenkiloViewCreateKayttooikeus.css';
 type OwnProps = {
     existingKayttooikeusRef: React.RefObject<HTMLDivElement>;
     oidHenkilo: string;
-    isPalvelukayttaja: boolean;
+    isPalvelukayttaja?: boolean;
 };
 
-const filterDate = (date: Date, isPalvelukayttaja: boolean) =>
+const filterDate = (date: Date, isPalvelukayttaja?: boolean) =>
     isPalvelukayttaja ? true : isBefore(date, addYears(new Date(), 1)) && isAfter(date, addDays(new Date(), -1));
 
 const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukayttaja, oidHenkilo }: OwnProps) => {

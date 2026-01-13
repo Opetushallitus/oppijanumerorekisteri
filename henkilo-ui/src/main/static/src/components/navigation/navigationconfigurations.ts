@@ -51,11 +51,6 @@ export const mainNavigation: Array<NaviTab> = [
     },
 ];
 
-export const palvelukayttajaNavigation: Array<NaviTab> = [
-    { path: '/palvelukayttaja', label: 'NAVI_PALVELUKAYTTAJA_HAKU' },
-    { path: '/palvelukayttaja/luonti', label: 'NAVI_PALVELUKAYTTAJA_LUONTI' },
-];
-
 export const jarjestelmatunnusNavigation = (oid?: string) =>
     oid
         ? [

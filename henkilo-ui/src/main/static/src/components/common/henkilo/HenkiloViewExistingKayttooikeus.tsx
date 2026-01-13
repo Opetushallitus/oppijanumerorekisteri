@@ -29,7 +29,7 @@ import { useGetHenkiloQuery } from '../../../api/oppijanumerorekisteri';
 type OwnProps = {
     oidHenkilo: string;
     isOmattiedot: boolean;
-    isPalvelukayttaja: boolean;
+    isPalvelukayttaja?: boolean;
     existingKayttooikeusRef: MutableRefObject<HTMLDivElement | null>;
 };
 

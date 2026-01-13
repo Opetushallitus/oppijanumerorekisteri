@@ -42,7 +42,6 @@ export const OmattiedotPage = () => {
                 </div>
                 <div className="wrapper" ref={existingKayttooikeusRef}>
                     <HenkiloViewExistingKayttooikeus
-                        isPalvelukayttaja={false}
                         oidHenkilo={omattiedot.oidHenkilo}
                         isOmattiedot={true}
                         existingKayttooikeusRef={existingKayttooikeusRef}

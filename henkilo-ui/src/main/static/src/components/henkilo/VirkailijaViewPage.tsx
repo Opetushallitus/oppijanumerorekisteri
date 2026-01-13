@@ -4,11 +4,7 @@ import { useNavigate, useParams } from 'react-router';
 import Loader from '../common/icons/Loader';
 import { useLocalisations } from '../../selectors';
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
-import {
-    useGetKayttajatiedotQuery,
-    useGetKayttooikeusAnomuksetForHenkiloQuery,
-    useGetOmattiedotQuery,
-} from '../../api/kayttooikeus';
+import { useGetKayttooikeusAnomuksetForHenkiloQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { henkiloViewTabs } from '../navigation/NavigationTabs';
@@ -47,7 +43,6 @@ export const VirkailijaViewPage = () => {
     const { L } = useLocalisations();
     const { data: henkilo, isLoading: isHenkiloLoading } = useGetHenkiloQuery(oid);
     const { data: master } = useGetHenkiloMasterQuery(oid);
-    const { data: kayttajatiedot } = useGetKayttajatiedotQuery(oid);
     const navigate = useNavigate();
     const isRekisterinpitaja = omattiedot ? isOnrRekisterinpitaja(omattiedot.organisaatiot) : false;
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
@@ -97,7 +92,6 @@ export const VirkailijaViewPage = () => {
                 </div>
                 <div className="wrapper" ref={existingKayttooikeusRef}>
                     <HenkiloViewExistingKayttooikeus
-                        isPalvelukayttaja={kayttajatiedot?.kayttajaTyyppi === 'PALVELU'}
                         oidHenkilo={oid}
                         isOmattiedot={false}
                         existingKayttooikeusRef={existingKayttooikeusRef}
@@ -110,11 +104,7 @@ export const VirkailijaViewPage = () => {
                     <HenkiloViewExpiredKayttooikeus oidHenkilo={oid} isOmattiedot={false} />
                 </div>
                 <div className="wrapper">
-                    <HenkiloViewCreateKayttooikeus
-                        oidHenkilo={oid}
-                        existingKayttooikeusRef={existingKayttooikeusRef}
-                        isPalvelukayttaja={kayttajatiedot?.kayttajaTyyppi === 'PALVELU'}
-                    />
+                    <HenkiloViewCreateKayttooikeus oidHenkilo={oid} existingKayttooikeusRef={existingKayttooikeusRef} />
                 </div>
             </div>
         );

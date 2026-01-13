@@ -33,7 +33,7 @@ export const JarjestelmatunnusEditPage = () => {
             <hr />
             <HenkiloViewExistingKayttooikeus
                 existingKayttooikeusRef={existingKayttooikeusRef}
-                isPalvelukayttaja={true}
+                isPalvelukayttaja
                 oidHenkilo={params.oid}
                 isOmattiedot={false}
             />
@@ -43,7 +43,7 @@ export const JarjestelmatunnusEditPage = () => {
             <HenkiloViewCreateKayttooikeus
                 oidHenkilo={params.oid}
                 existingKayttooikeusRef={existingKayttooikeusRef}
-                isPalvelukayttaja={true}
+                isPalvelukayttaja
             />
         </OphDsPage>
     );

@@ -19,7 +19,7 @@ type Props = {
     addKayttooikeus: (arg0: ValittuKayttooikeusryhma) => void;
     removeKayttooikeus: (kayttooikeusryhmaId: number) => void;
     selectedOrganisationOid?: string;
-    isPalvelukayttaja: boolean;
+    isPalvelukayttaja?: boolean;
 };
 
 const CreateKayttooikeusSection = ({
