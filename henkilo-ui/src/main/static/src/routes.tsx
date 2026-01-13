@@ -14,17 +14,13 @@ import { KayttooikeusryhmaPageContainer } from './components/kayttooikeusryhmat/
 import { KayttooikeusryhmatPage } from './components/kayttooikeusryhmat/listaus/KayttooikeusryhmatPage';
 import FormSwitch from './components/henkilo/oppija/create/form/FormSwitch';
 import { VirkailijaCreateContainer } from './components/henkilo/VirkailijaCreateContainer';
-import { PalvelukayttajaCreatePage } from './components/palvelukayttaja/PalvelukayttajaCreatePage';
 import AdminRedirect from './components/henkilo/AdminRedirect';
-import PalvelukayttajaHakuPage from './components/palvelukayttaja/PalvelukayttajaHakuPage';
 import { PalvelukayttajaInfo } from './containers/PalvelukayttajaInfo';
 import { JarjestelmatunnusCreatePage } from './components/jarjestelmatunnus/JarjestelmatunnusCreatePage';
 import { JarjestelmatunnusListPage } from './components/jarjestelmatunnus/JarjestelmatunnusListPage';
 import { JarjestelmatunnusEditPage } from './components/jarjestelmatunnus/JarjestelmatunnusEditPage';
 import { OppijaViewPage } from './components/henkilo/OppijaViewPage';
 import { VirkailijaViewPage } from './components/henkilo/VirkailijaViewPage';
-
-const isProd = window.location.hostname.includes('virkailija.opintopolku.fi');
 
 export const AppRoutes = () => (
     <Routes>
@@ -49,17 +45,8 @@ export const AppRoutes = () => (
             <Route path="/kayttooikeusryhmat" element={<KayttooikeusryhmatPage />} />
             <Route path="/kayttooikeusryhmat/lisaa" element={<KayttooikeusryhmaPageContainer />} />
             <Route path="/kayttooikeusryhmat/:id" element={<KayttooikeusryhmaPageContainer />} />
-            {isProd ? (
-                <>
-                    <Route path="/palvelukayttaja/luonti" element={<PalvelukayttajaCreatePage />} />
-                    <Route path="/palvelukayttaja" element={<PalvelukayttajaHakuPage />} />
-                </>
-            ) : (
-                <>
-                    <Route path="/palvelukayttaja/luonti" element={<JarjestelmatunnusCreatePage />} />
-                    <Route path="/palvelukayttaja" element={<JarjestelmatunnusListPage />} />
-                </>
-            )}
+            <Route path="/palvelukayttaja/luonti" element={<JarjestelmatunnusCreatePage />} />
+            <Route path="/palvelukayttaja" element={<JarjestelmatunnusListPage />} />
             <Route path="/jarjestelmatunnus" element={<JarjestelmatunnusListPage />} />
             <Route path="/jarjestelmatunnus/luonti" element={<JarjestelmatunnusCreatePage />} />
             <Route path="/jarjestelmatunnus/:oid" element={<JarjestelmatunnusEditPage />} />
