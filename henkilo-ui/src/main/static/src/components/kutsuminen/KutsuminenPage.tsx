@@ -146,7 +146,7 @@ const KutsuminenPage = () => {
         return (
             <div className="mainContent wrapper">
                 <h1>{L['VIRKAILIJAN_LISAYS_OTSIKKO']}</h1>
-                <form style={{ padding: '0' }}>
+                <form>
                     <LocalNotification type="error" title={L['KUTSU_ESTETTY']} toggle={disabled}>
                         {L['KUTSU_ESTETTY_SYY']}
                     </LocalNotification>
