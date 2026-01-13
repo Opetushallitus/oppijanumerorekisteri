@@ -9,7 +9,6 @@ import { useGetHenkiloQuery, useUpdateHenkiloMutation } from '../../api/oppijanu
 import { add } from '../../slices/toastSlice';
 import OphModal from '../common/modal/OphModal';
 import { useGetPalvelukayttajaQuery } from '../../api/kayttooikeus';
-import { OphDsBanner } from '../design-system/OphDsBanner';
 import { useAppDispatch } from '../../store';
 import { useLocalisations } from '../../selectors';
 
@@ -141,7 +140,6 @@ export const JarjestelmatunnusPerustiedot = () => {
                 </div>
                 <div>
                     <h3>{L['CAS_TUNNUS_HALLINTA']}</h3>
-                    <OphDsBanner type="warning">{L['CAS_TUNNUS_HUOM']}</OphDsBanner>
                     <div className="jarjestelmatunnus-edit-info-grid">
                         <div>{L['CAS_TUNNUS']}</div>
                         <div data-test-id="castunnus">{jarjestelmatunnus?.kayttajatunnus}</div>
