@@ -166,8 +166,8 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
         new codepipeline_actions.CodeBuildAction({
           actionName: "Prettier",
           input: sourceOutput,
-          project: makeUbuntuTestProject(this, env, "Prettier", [
-            "scripts/ci/run-prettier-check.sh",
+          project: makeUbuntuTestProject(this, env, "CheckCodeFormat", [
+            "scripts/ci/run-code-format-checks.sh",
           ]),
         }),
       );
