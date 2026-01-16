@@ -45,13 +45,7 @@ public class CasConfiguration {
       throws Exception {
     http.csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(
-            auth ->
-                auth.requestMatchers("/actuator/**")
-                    .permitAll()
-                    .requestMatchers("/static/**", "/favicon.ico")
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated())
+            auth -> auth.requestMatchers("/actuator/**").permitAll().anyRequest().authenticated())
         .authenticationProvider(casAuthenticationProvider)
         .addFilterAt(casAuthenticationFilter, CasAuthenticationFilter.class)
         .addFilterBefore(singleSignOutFilter, CasAuthenticationFilter.class)
