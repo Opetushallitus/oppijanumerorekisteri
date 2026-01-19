@@ -13,7 +13,7 @@ function main {
     "-Dspring.profiles.active=local"
   )
 
-  ../mvnw install -DskipTests
+  ../mvnw clean install -DskipTests
   ../mvnw -Dspring-boot.run.jvmArguments="${jvm_args[*]}" spring-boot:run
 }
 

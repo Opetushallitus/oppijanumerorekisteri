@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsService;
 import java.util.List;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,8 +21,12 @@ public class UiController {
 
   @GetMapping("/me")
   @PreAuthorize("isAuthenticated()")
-  public CasUserDetailsService.CasAuthenticatedUser me() throws JsonProcessingException {
+  public MeResponse me() {
     var auth = SecurityContextHolder.getContext().getAuthentication();
-    return (CasUserDetailsService.CasAuthenticatedUser) auth.getPrincipal();
+    var principal = (CasUserDetailsService.CasAuthenticatedUser) auth.getPrincipal();
+    var authorities = principal.getAttributes();
+    return new MeResponse(authorities.get("firstName").get(0));
   }
+
+  public record MeResponse(String etunimi) {}
 }
