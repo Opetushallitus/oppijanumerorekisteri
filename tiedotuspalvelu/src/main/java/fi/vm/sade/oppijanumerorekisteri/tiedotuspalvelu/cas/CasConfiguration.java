@@ -5,6 +5,7 @@ import org.apereo.cas.client.validation.Cas30ServiceTicketValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;
@@ -13,6 +14,7 @@ import org.springframework.security.cas.web.CasAuthenticationFilter;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -34,7 +36,18 @@ public class CasConfiguration {
   private String serviceBaseUrl;
 
   @Bean
-  SecurityFilterChain securityFilterChain(
+  @Order(1)
+  SecurityFilterChain publicSecurityFilterChain(HttpSecurity http) throws Exception {
+    http.securityMatcher("/actuator/health")
+        .csrf(CsrfConfigurer::disable)
+        .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
+    return http.build();
+  }
+
+  @Bean
+  @Order(2)
+  SecurityFilterChain casSecurityFilterChain(
       HttpSecurity http,
       AuthenticationProvider casAuthenticationProvider,
       CasAuthenticationFilter casAuthenticationFilter,
@@ -44,8 +57,7 @@ public class CasConfiguration {
       LogoutSuccessHandler logoutSuccessHandler)
       throws Exception {
     http.csrf(csrf -> csrf.disable())
-        .authorizeHttpRequests(
-            auth -> auth.requestMatchers("/actuator/**").permitAll().anyRequest().authenticated())
+        .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
         .authenticationProvider(casAuthenticationProvider)
         .addFilterAt(casAuthenticationFilter, CasAuthenticationFilter.class)
         .addFilterBefore(singleSignOutFilter, CasAuthenticationFilter.class)
