@@ -1,5 +1,6 @@
-package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas;
+package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsService;
 import org.apereo.cas.client.session.SingleSignOutFilter;
 import org.apereo.cas.client.validation.Cas30ServiceTicketValidator;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +27,7 @@ import org.springframework.security.web.context.SecurityContextRepository;
 
 @Configuration
 @EnableWebSecurity
-public class CasConfiguration {
+public class SecurityConfiguration {
   static final String SPRING_CAS_SECURITY_CHECK_PATH = "/j_spring_cas_security_check";
 
   @Value("${tiedotuspalvelu.cas.server-url}")
