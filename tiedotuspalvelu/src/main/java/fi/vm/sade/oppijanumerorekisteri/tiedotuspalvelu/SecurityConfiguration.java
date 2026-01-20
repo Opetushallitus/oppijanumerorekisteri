@@ -1,21 +1,33 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsService;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.apereo.cas.client.session.SingleSignOutFilter;
 import org.apereo.cas.client.validation.Cas30ServiceTicketValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;
 import org.springframework.security.cas.web.CasAuthenticationEntryPoint;
 import org.springframework.security.cas.web.CasAuthenticationFilter;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -27,6 +39,7 @@ import org.springframework.security.web.context.SecurityContextRepository;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfiguration {
   static final String SPRING_CAS_SECURITY_CHECK_PATH = "/j_spring_cas_security_check";
 
@@ -48,6 +61,59 @@ public class SecurityConfiguration {
 
   @Bean
   @Order(2)
+  SecurityFilterChain oauth2SecurityFilterChain(HttpSecurity http) throws Exception {
+    return http.securityMatcher("/api/**")
+        .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+        .sessionManagement(
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .oauth2ResourceServer(
+            oauth2 ->
+                oauth2.jwt(
+                    jwt -> {
+                      jwt.jwtAuthenticationConverter(oauth2JwtConverter());
+                    }))
+        .csrf(CsrfConfigurer::disable)
+        .build();
+  }
+
+  Converter<Jwt, AbstractAuthenticationToken> oauth2JwtConverter() {
+    return new Converter<>() {
+      final JwtGrantedAuthoritiesConverter delegate = new JwtGrantedAuthoritiesConverter();
+
+      @Override
+      public AbstractAuthenticationToken convert(Jwt source) {
+        var authorityList = extractRoles(source);
+        var delegateAuthorities = delegate.convert(source);
+        authorityList.addAll(delegateAuthorities);
+        return new JwtAuthenticationToken(source, authorityList);
+      }
+
+      private List<GrantedAuthority> extractRoles(Jwt jwt) {
+        Map<String, List<String>> roleClaim =
+            jwt.getClaims().get("roles") != null
+                ? (Map<String, List<String>>) jwt.getClaims().get("roles")
+                : Map.of();
+        var roles =
+            roleClaim.keySet().stream()
+                .map(
+                    (oid) -> {
+                      var orgRoles = roleClaim.get(oid);
+                      return orgRoles.stream()
+                          .map(
+                              (role) -> List.of("ROLE_APP_" + role, "ROLE_APP_" + role + "_" + oid))
+                          .toList();
+                    })
+                .flatMap(List::stream)
+                .flatMap(List::stream)
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.<GrantedAuthority>toList());
+        return roles;
+      }
+    };
+  }
+
+  @Bean
+  @Order(3)
   SecurityFilterChain casSecurityFilterChain(
       HttpSecurity http,
       AuthenticationProvider casAuthenticationProvider,
