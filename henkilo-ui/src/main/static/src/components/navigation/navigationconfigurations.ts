@@ -51,6 +51,47 @@ export const mainNavigation: Array<NaviTab> = [
     },
 ];
 
+export const virkailijaNavigation = [
+    {
+        path: '/anomukset',
+        label: 'NAVI_KAYTTOOIKEUSANOMUKSET',
+        sallitutRoolit: [
+            'OPPIJANUMEROREKISTERI_READ',
+            'OPPIJANUMEROREKISTERI_HENKILON_RU',
+            'OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',
+            'KAYTTOOIKEUS_READ',
+            'KAYTTOOIKEUS_CRUD',
+        ],
+    },
+    {
+        path: '/kutsutut',
+        label: 'NAVI_KUTSUTUT',
+        sallitutRoolit: ['KAYTTOOIKEUS_READ', 'KAYTTOOIKEUS_CRUD'],
+    },
+    {
+        path: '/kutsulomake',
+        label: 'NAVI_VIRKAILIJAN_KUTSUMINEN',
+        sallitutRoolit: ['KAYTTOOIKEUS_READ', 'KAYTTOOIKEUS_CRUD'],
+    },
+    {
+        path: '/virkailijahaku',
+        label: 'VIRKAILIJAHAKU',
+        sallitutRoolit: [
+            'OPPIJANUMEROREKISTERI_READ',
+            'OPPIJANUMEROREKISTERI_HENKILON_RU',
+            'OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',
+            'KAYTTOOIKEUS_READ',
+            'KAYTTOOIKEUS_CRUD',
+            'KAYTTOOIKEUS_ACCESS_RIGHTS_REPORT',
+        ],
+    },
+    {
+        path: '/raportit/kayttooikeudet',
+        label: 'KAYTTOOIKEUSRAPORTTI_TITLE',
+        sallitutRoolit: ['KAYTTOOIKEUS_ACCESS_RIGHTS_REPORT'],
+    },
+];
+
 export const jarjestelmatunnusNavigation = (oid?: string) =>
     oid
         ? [

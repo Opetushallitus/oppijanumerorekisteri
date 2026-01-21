@@ -80,6 +80,13 @@ type PutKutsuRequest = {
     }[];
 };
 
+export type PostVirkailijahakuRequest = {
+    subOrganisation?: boolean;
+    nameQuery?: string;
+    organisaatioOids?: string[];
+    kayttooikeusryhmaId?: number;
+};
+
 export type AccessRightsReportRow = {
     id: number;
     personName: string;
@@ -215,6 +222,7 @@ export const kayttooikeusApi = createApi({
         'kayttooikeusryhmaroolit',
         'henkilonkayttooikeusryhmat',
         'henkiloByLoginToken',
+        'virkailijahaku',
     ],
     endpoints: (builder) => ({
         getOtuvaPrequel: builder.query<void, void>({
@@ -359,6 +367,14 @@ export const kayttooikeusApi = createApi({
                 method: 'PUT',
             }),
             invalidatesTags: ['palvelukayttaja', 'palvelukayttajat'],
+        }),
+        postVirkailijahaku: builder.query<HenkilohakuResult[], PostVirkailijahakuRequest>({
+            query: (body) => ({
+                url: 'internal/virkailijahaku',
+                method: 'POST',
+                body,
+            }),
+            providesTags: ['virkailijahaku'],
         }),
         getHenkiloHaku: builder.infiniteQuery<HenkilohakuResult[], Henkilohaku, number>({
             query: ({ queryArg: { criteria, parameters }, pageParam }) => ({
@@ -681,4 +697,5 @@ export const {
     useGetHenkiloByLoginTokenQuery,
     useLazyGetEmailVerificationLoginTokenValidationQuery,
     usePostEmailVerificationMutation,
+    usePostVirkailijahakuQuery,
 } = kayttooikeusApi;

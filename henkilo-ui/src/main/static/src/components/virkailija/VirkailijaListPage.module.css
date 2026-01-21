@@ -1,0 +1,7 @@
+.formGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items:center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}

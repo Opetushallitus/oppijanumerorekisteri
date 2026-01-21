@@ -19,8 +19,8 @@ export const OphDsTable = ({ headers, rows, rowDescriptionPartitive }: PageProps
             <table className="oph-ds-table">
                 <thead>
                     <tr>
-                        {headers.map((h) => (
-                            <th key={h}>{h}</th>
+                        {headers.map((h, i) => (
+                            <th key={`${h}-${i}`}>{h}</th>
                         ))}
                     </tr>
                 </thead>
