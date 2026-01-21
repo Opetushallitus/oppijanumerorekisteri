@@ -111,18 +111,22 @@
     border-radius: 1px;
 }
 
-.oph-ds-chechbox:active, .oph-ds-chechbox:focus, .oph-ds-radio:focus {
+.oph-ds-disabled {
+    color: var(--OPH-Input-Label, #B2B2B2);
+}
+
+.oph-ds-checkbox:active, .oph-ds-checkbox:focus, .oph-ds-radio:focus {
     outline: none;
     border: none;
 }
 
-.oph-ds-chechbox {
+.oph-ds-checkbox {
     position: absolute;
     opacity: 0;
     z-index: -1;
 }
 
-.oph-ds-chechbox + span:before {
+.oph-ds-checkbox + span:before {
     content: '';
     border: 2px solid var(--OPH-Input-Stroke, #454545);
     border-radius: 2px;
@@ -134,14 +138,19 @@
     box-sizing: border-box;
 }
 
-.oph-ds-chechbox:checked + span:before {
+.oph-ds-checkbox:disabled + span:before,
+.oph-ds-checkbox:hover:disabled + span:before {
+    border: 2px solid var(--OPH-Input-Label, #B2B2B2);
+}
+
+.oph-ds-checkbox:checked + span:before {
     background-image: url('data:image/svg+xml;base64,CiAgICA8c3ZnIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogICAgICAgIDxwYXRoCiAgICAgICAgICAgIGQ9Ik0xOSAzSDVDMy45IDMgMyAzLjkgMyA1VjE5QzMgMjAuMSAzLjkgMjEgNSAyMUgxOUMyMC4xIDIxIDIxIDIwLjEgMjEgMTlWNUMyMSAzLjkgMjAuMSAzIDE5IDNaTTE5IDE5SDVWNUgxOVYxOVpNMTcuOTkgOUwxNi41OCA3LjU4TDkuOTkgMTQuMTdMNy40MSAxMS42TDUuOTkgMTMuMDFMOS45OSAxN0wxNy45OSA5WiIKICAgICAgICAgICAgZmlsbD0iIzAwMzNDQyIKICAgICAgICAvPgogICAgPC9zdmc+');
     background-repeat: no-repeat;
     background-position: center;
     border: 2px solid var(--OPH-Input-Stroke, #0041DC);
 }
 
-.oph-ds-chechbox:hover + span:before {
+.oph-ds-checkbox:hover + span:before {
     border: 2px solid var(--OPH-Input-Stroke, #0041DC);
 }
 
@@ -520,9 +529,8 @@
     background-color: #F6F6F6;
 }
 
-.oph-ds-select-org {
-    max-width: 85vw;
-    width: 700px;
+.oph-ds-select-org, .oph-ds-ryhma-select {
+    width: 100%;
 }
 
 .oph-ds-select-org-option {
@@ -658,4 +666,12 @@
 
 .oph-ds-banner svg {
     flex-shrink: 0;
+}
+
+.oph-ds-ul {
+    padding-left: 1rem;
+}
+
+.oph-ds-ul > li {
+    list-style-type: disc;
 }

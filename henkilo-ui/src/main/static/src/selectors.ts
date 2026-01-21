@@ -68,8 +68,11 @@ export const useOmatOrganisaatiot = () => {
 
 export function useOmatRyhmat(): OrganisaatioWithChildren[] {
     const omatOrganisaatiot = useOmatOrganisaatiot() ?? [];
-    const flattened = omatOrganisaatiot.map((_) => _.organisaatio).flatMap(flattenOrganisaatioWithChildren);
-    return flattened.filter((_) => _.tyypit.includes('Ryhma'));
+    const ryhmat = useMemo(() => {
+        const flattened = omatOrganisaatiot.map((_) => _.organisaatio).flatMap(flattenOrganisaatioWithChildren);
+        return flattened.filter((_) => _.tyypit.includes('Ryhma'));
+    }, [omatOrganisaatiot]);
+    return ryhmat;
 }
 
 function flattenOrganisaatioWithChildren(org: OrganisaatioWithChildren): OrganisaatioWithChildren[] {

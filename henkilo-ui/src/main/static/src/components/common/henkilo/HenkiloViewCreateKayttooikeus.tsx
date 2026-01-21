@@ -8,7 +8,7 @@ import { useLocalisations } from '../../../selectors';
 import { SelectOption } from '../../../utilities/select';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import { OphDsOrganisaatioSelect } from '../../design-system/OphDsOrganisaatioSelect';
-import RyhmaSelection from '../select/RyhmaSelection';
+import { OphDsRyhmaSelect } from '../../design-system/OphDsRyhmaSelect';
 import ValidationMessageButton from '../button/ValidationMessageButton';
 import { usePutKayttooikeusryhmaForHenkiloMutation } from '../../../api/kayttooikeus';
 import { add } from '../../../slices/toastSlice';
@@ -104,7 +104,7 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                         disabled={!!ryhmaSelection || !!selectedList?.length}
                         onChange={selectOrganisation}
                     />
-                    <RyhmaSelection
+                    <OphDsRyhmaSelect
                         selectOrganisaatio={selectRyhma}
                         selectedOrganisaatioOid={ryhmaSelection?.value}
                         disabled={!!organisationSelection || !!selectedList?.length}

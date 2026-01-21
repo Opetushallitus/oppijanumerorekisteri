@@ -1,8 +1,10 @@
 .jarjestelmatunnus-haku-form {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    min-height: 64px;
+}
+
+.jarjestelmatunnus-haku-form > * {
     min-height: 64px;
 }

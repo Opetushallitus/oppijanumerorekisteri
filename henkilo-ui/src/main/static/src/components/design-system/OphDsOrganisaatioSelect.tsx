@@ -5,13 +5,20 @@ import Select, { components, MenuListProps, OptionProps, SingleValue, SingleValu
 import type { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import { useLocalisations, useOmatOrganisaatiot } from '../../selectors';
 import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../utilities/organisaatio.util';
-import { useGetOrganisationNamesQuery } from '../../api/kayttooikeus';
+import {
+    useGetHenkiloHakuOrganisaatiotQuery,
+    useGetOmattiedotQuery,
+    useGetOrganisationNamesQuery,
+} from '../../api/kayttooikeus';
 import { selectStyles } from '../../utilities/select';
 import { containsSearchword, filterAndSortOrganisaatios } from '../common/select/OrganisaatioSelectModal';
 
 type OwnProps = {
+    defaultValue?: string;
     onChange: (organisaatio: SingleValue<OrganisaatioSelectObject>) => void;
     disabled?: boolean;
+    type?: 'HENKILOHAKU';
+    placeholder?: string;
 };
 
 const OrganisationMenuList = (props: MenuListProps<OrganisaatioSelectObject, false>) => {
@@ -28,30 +35,30 @@ const OrganisationMenuList = (props: MenuListProps<OrganisaatioSelectObject, fal
     );
 };
 
-export const OphDsOrganisaatioSelect = ({ disabled, onChange }: OwnProps) => {
+export const OphDsOrganisaatioSelect = ({ defaultValue, disabled, onChange, type, placeholder }: OwnProps) => {
     const { L, locale } = useLocalisations();
     const { data: organisationNames } = useGetOrganisationNamesQuery();
     const omattiedotOrganisations = useOmatOrganisaatiot();
-    const [selection, setSelection] = useState<SingleValue<OrganisaatioSelectObject>>();
+    const { data: omattiedot } = useGetOmattiedotQuery();
+    const { data: henkilohakuOrganisaatiot } = useGetHenkiloHakuOrganisaatiotQuery(omattiedot!.oidHenkilo, {
+        skip: !omattiedot || type !== 'HENKILOHAKU',
+    });
     const [searchWord, setSearchWord] = useState<string>('');
 
     const allOrganisations = useMemo(() => {
-        if (omattiedotOrganisations?.length && organisationNames) {
+        if (organisationNames) {
+            const organisations = type === 'HENKILOHAKU' ? henkilohakuOrganisaatiot : omattiedotOrganisations;
             const options = omattiedotOrganisaatiotToOrganisaatioSelectObject(
-                omattiedotOrganisations,
+                organisations ?? [],
                 organisationNames,
                 locale
             );
-            return filterAndSortOrganisaatios(options, searchWord);
+            const filtered = filterAndSortOrganisaatios(options, searchWord);
+            return filtered;
         } else {
             return [];
         }
-    }, [omattiedotOrganisations, organisationNames, locale, searchWord]);
-
-    const onSelect = (o: SingleValue<OrganisaatioSelectObject>) => {
-        setSelection(o);
-        onChange(o);
-    };
+    }, [omattiedotOrganisations, henkilohakuOrganisaatiot, organisationNames, locale, searchWord, type]);
 
     const OrganisationOption = (o: OptionProps<OrganisaatioSelectObject>) => (
         <components.Option {...o}>
@@ -81,15 +88,15 @@ export const OphDsOrganisaatioSelect = ({ disabled, onChange }: OwnProps) => {
     return (
         <Select
             {...selectStyles}
+            defaultValue={allOrganisations.find((o) => o.oid === defaultValue)}
             inputId="organisaatio-select"
             className="oph-ds-select-org"
-            isDisabled={disabled || !omattiedotOrganisations?.length}
+            isDisabled={disabled}
             options={allOrganisations}
             onInputChange={setSearchWord}
             filterOption={(o, input) => containsSearchword(input.toLowerCase())(o.data)}
-            placeholder={L['OMATTIEDOT_VALITSE_ORGANISAATIO']}
-            onChange={onSelect}
-            value={selection}
+            placeholder={placeholder ?? L['OMATTIEDOT_VALITSE_ORGANISAATIO']}
+            onChange={onChange}
             components={{
                 MenuList: OrganisationMenuList,
                 Option: OrganisationOption,

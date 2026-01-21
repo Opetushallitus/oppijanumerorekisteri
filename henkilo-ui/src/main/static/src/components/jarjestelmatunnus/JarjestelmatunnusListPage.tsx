@@ -51,8 +51,6 @@ export const JarjestelmatunnusListPage = () => {
                     </label>
                     <OphDsOrganisaatioSelect onChange={setOrganisationCriteria} />
                 </div>
-            </div>
-            <div className="jarjestelmatunnus-haku-form">
                 <OphDsChechbox
                     checked={criteria.subOrganisation === 'true'}
                     id="subOrganisations"

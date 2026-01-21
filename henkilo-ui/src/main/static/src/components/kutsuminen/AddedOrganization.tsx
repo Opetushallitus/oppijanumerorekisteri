@@ -3,7 +3,7 @@ import { SingleValue } from 'react-select';
 import ReactDatePicker from 'react-datepicker';
 import { addYears, format, isAfter, isBefore, parseISO } from 'date-fns';
 
-import RyhmaSelection from '../common/select/RyhmaSelection';
+import { OphDsRyhmaSelect } from '../design-system/OphDsRyhmaSelect';
 import { findOmattiedotOrganisatioOrRyhmaByOid } from '../../utilities/organisaatio.util';
 import { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import KayttooikeusryhmaSelectModal from '../common/select/KayttooikeusryhmaSelectModal';
@@ -109,7 +109,7 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
                     <OrganisaatioSelectModal onSelect={selectOrganisaatio} />
                 </div>
                 <div>
-                    <RyhmaSelection
+                    <OphDsRyhmaSelect
                         selectedOrganisaatioOid={selectedOrganisaatioOid}
                         selectOrganisaatio={selectOrganisaatio}
                     />
