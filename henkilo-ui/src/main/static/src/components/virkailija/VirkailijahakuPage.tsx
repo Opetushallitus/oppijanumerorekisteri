@@ -27,7 +27,7 @@ import StaticUtils from '../common/StaticUtils';
 import PropertySingleton from '../../globals/PropertySingleton';
 import { Koodi, koodiLabel, useGetOrganisaatiotyypitQuery } from '../../api/koodisto';
 
-import styles from './VirkailijaListPage.module.css';
+import styles from './VirkailijahakuPage.module.css';
 
 const mapFilters = (filters: VirkailijahakuFilters): PostVirkailijahakuRequest => {
     return {
@@ -54,7 +54,7 @@ const DebouncedNameQuery = ({ defaultValue, onChange }: { defaultValue?: string;
     return <OphDsInput id="filter" label={L['HAKUTERMI']!} onChange={setNameQuery} defaultValue={defaultValue} />;
 };
 
-export const VirkailijaListPage = () => {
+export const VirkailijahakuPage = () => {
     const { L, locale } = useLocalisations();
     useTitle(L['VIRKAILIJAHAKU']);
     useNavigation(virkailijaNavigation, false);
@@ -85,7 +85,7 @@ export const VirkailijaListPage = () => {
     }, [kayttooikeusryhmas]);
 
     const renderedData = useMemo(() => {
-        return data && !skip && !isFetching ? data : [];
+        return data && !skip && !isFetching ? data.map((a) => a).sort((a, b) => a.nimi.localeCompare(b.nimi)) : [];
     }, [data, skip, isFetching]);
 
     return (
