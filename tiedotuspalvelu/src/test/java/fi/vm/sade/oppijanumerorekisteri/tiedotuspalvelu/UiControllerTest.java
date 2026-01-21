@@ -1,14 +1,19 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsService;
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
-import org.hamcrest.Matchers;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +31,8 @@ import org.springframework.test.web.servlet.MockMvc;
 public class UiControllerTest {
 
   @Autowired private MockMvc mockMvc;
+
+  @Autowired private ObjectMapper objectMapper;
 
   @Autowired private TiedoteRepository tiedoteRepository;
 
@@ -65,14 +72,27 @@ public class UiControllerTest {
             .url("https://c.example")
             .build());
 
-    mockMvc
-        .perform(get("/ui/tiedotteet"))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$", Matchers.hasSize(2)))
-        .andExpect(jsonPath("$[0].url").value("https://a.example"))
-        .andExpect(jsonPath("$[0].id").isNotEmpty())
-        .andExpect(jsonPath("$[1].url").value("https://b.example"))
-        .andExpect(jsonPath("$[1].id").isNotEmpty());
+    var response =
+        mockMvc
+            .perform(get("/ui/tiedotteet"))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+    UiController.TiedoteDto[] tiedotteet =
+        objectMapper.readValue(response, UiController.TiedoteDto[].class);
+
+    assertEquals(2, tiedotteet.length);
+
+    Set<String> urls =
+        Stream.of(tiedotteet).map(UiController.TiedoteDto::url).collect(Collectors.toSet());
+    assertEquals(Set.of("https://a.example", "https://b.example"), urls);
+
+    for (UiController.TiedoteDto tiedote : tiedotteet) {
+      assertNotNull(tiedote.id());
+      assertFalse(tiedote.id().toString().isEmpty());
+    }
   }
 
   private static CasUserDetailsService.CasAuthenticatedUser casPrincipal(
