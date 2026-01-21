@@ -15,11 +15,7 @@ function main {
 
   wait_for_container_to_be_healthy oph-tiedotuspalvelu-test-db
 
-  if is_running_on_codebuild; then
-    "${repo}"/mvnw --batch-mode clean install -s ./settings.xml
-  else
-    "${repo}"/mvnw --batch-mode clean install
-  fi
+  "${repo}"/mvnw --batch-mode clean install
 }
 
 function cleanup {
