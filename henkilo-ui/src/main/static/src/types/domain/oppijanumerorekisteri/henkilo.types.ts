@@ -62,9 +62,5 @@ export type HenkiloCreate = {
 export type HenkiloOrg = {
     id: number;
     organisaatioOid: string;
-    organisaatioHenkiloTyyppi: string | null;
-    tehtavanimike: string;
     passivoitu: boolean;
-    voimassaAlkuPvm: string | null;
-    voimassaLoppuPvm: string | null;
 };

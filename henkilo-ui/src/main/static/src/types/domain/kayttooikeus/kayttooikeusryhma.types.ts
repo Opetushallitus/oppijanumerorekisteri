@@ -43,7 +43,6 @@ export type MyonnettyKayttooikeusryhma = {
     kasitelty: string;
     kasittelijaOid: string;
     kasittelijaNimi: string;
-    tehtavanimike: string;
     tyyppi: string;
     removed: boolean;
     selected: boolean;
