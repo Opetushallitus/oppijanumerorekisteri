@@ -23,7 +23,7 @@ module.exports = function () {
       path: path.resolve(__dirname, "../src/main/resources/static/web-build"),
     },
     resolve: {
-      extensions: [".tsx", ".ts", ".js"],
+      extensions: [".tsx", ".ts", ".js", ".css"],
     },
     module: {
       rules: [
@@ -31,6 +31,18 @@ module.exports = function () {
           test: /\.tsx?$/,
           use: "ts-loader",
           exclude: /node_modules/,
+        },
+        {
+          test: /\.css$/,
+          use: [
+            "style-loader",
+            {
+              loader: "css-loader",
+              options: {
+                esModule: false,
+              },
+            },
+          ],
         },
       ],
     },

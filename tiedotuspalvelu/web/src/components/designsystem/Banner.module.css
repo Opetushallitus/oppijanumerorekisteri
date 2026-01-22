@@ -1,0 +1,28 @@
+.banner {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  padding: 13px 17px;
+  border-radius: 3px;
+  font-family: "Open Sans", Arial, sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 19px;
+  background-color: #fdf2f2;
+}
+.banner .icon {
+  width: 24px;
+  height: 24px;
+}
+.banner .title {
+  padding: 0;
+  margin: 0;
+  color: #cc3300;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+}
+.banner .content {
+  margin: 0;
+  padding: 0;
+}

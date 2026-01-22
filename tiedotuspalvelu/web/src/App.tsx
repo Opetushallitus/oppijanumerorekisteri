@@ -1,41 +1,47 @@
 import React from "react";
 
-import { useGetMeQuery, useGetTiedotteetQuery } from "./api";
+import { useGetTiedotteetQuery } from "./api";
+import { AppLayout } from "./components/AppLayout";
+import { TiedoteSection } from "./components/TiedoteSection";
+import { Banner } from "./components/designsystem/Banner";
 
 export function App() {
-  const meQuery = useGetMeQuery();
   const tiedotteetQuery = useGetTiedotteetQuery();
 
-  const isLoading = meQuery.isLoading || tiedotteetQuery.isLoading;
-  const isError = meQuery.isError || tiedotteetQuery.isError;
+  const isLoading = tiedotteetQuery.isLoading;
+  const isError = tiedotteetQuery.isError;
+
+  const tiedotteet = tiedotteetQuery.isSuccess ? tiedotteetQuery.data : [];
+  const uudet = tiedotteet.filter((t) => t.archived !== true);
+  const arkisto = tiedotteet.filter((t) => t.archived === true);
 
   return (
-    <div>
-      <h1>Tiedotteet</h1>
+    <AppLayout>
+      <h1 className="tp__title">Tiedotteeni</h1>
 
-      {isLoading && <p>Ladataan tietoja...</p>}
+      {isLoading && <p className="tp__muted">Ladataan tietoja...</p>}
       {isError && (
-        <p>
-          Tapahtui odottamaton virhe tietojen lataamisessa. Yritä hetken
-          kuluttua uudelleen.
-        </p>
+        <Banner
+          title={
+            "Jokin meni vikaan. Jos virhe aiheuttaa ongelmia, yritä päivittää sivu."
+          }
+        />
       )}
 
-      {meQuery.isSuccess && <p>Moikka, {meQuery.data.etunimi}!</p>}
-
-      {tiedotteetQuery.isSuccess && tiedotteetQuery.data.length === 0 && (
-        <p>Ei tiedotteita.</p>
+      {tiedotteetQuery.isSuccess && (
+        <>
+          <TiedoteSection
+            title="Uudet"
+            items={uudet}
+            emptyText="Ei uusia tiedotteita."
+          />
+          <TiedoteSection
+            title="Arkisto"
+            items={arkisto}
+            emptyText="Ei arkistoituja tiedotteita."
+          />
+        </>
       )}
-
-      {tiedotteetQuery.isSuccess && tiedotteetQuery.data.length > 0 && (
-        <ul>
-          {tiedotteetQuery.data.map((t) => (
-            <li key={t.id}>
-              <a href={t.url}>{t.url}</a>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    </AppLayout>
   );
 }
