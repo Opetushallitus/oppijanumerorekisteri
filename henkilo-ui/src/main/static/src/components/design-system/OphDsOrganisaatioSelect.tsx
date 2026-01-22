@@ -19,6 +19,7 @@ type OwnProps = {
     disabled?: boolean;
     type?: 'HENKILOHAKU';
     placeholder?: string;
+    label?: string;
 };
 
 const OrganisationMenuList = (props: MenuListProps<OrganisaatioSelectObject, false>) => {
@@ -35,7 +36,7 @@ const OrganisationMenuList = (props: MenuListProps<OrganisaatioSelectObject, fal
     );
 };
 
-export const OphDsOrganisaatioSelect = ({ defaultValue, disabled, onChange, type, placeholder }: OwnProps) => {
+export const OphDsOrganisaatioSelect = ({ defaultValue, disabled, label, onChange, type, placeholder }: OwnProps) => {
     const { L, locale } = useLocalisations();
     const { data: organisationNames } = useGetOrganisationNamesQuery();
     const omattiedotOrganisations = useOmatOrganisaatiot();
@@ -86,24 +87,31 @@ export const OphDsOrganisaatioSelect = ({ defaultValue, disabled, onChange, type
     );
 
     return (
-        <Select
-            {...selectStyles}
-            defaultValue={allOrganisations.find((o) => o.oid === defaultValue)}
-            inputId="organisaatio-select"
-            className="oph-ds-select-org"
-            isDisabled={disabled}
-            options={allOrganisations}
-            onInputChange={setSearchWord}
-            filterOption={(o, input) => containsSearchword(input.toLowerCase())(o.data)}
-            placeholder={placeholder ?? L['OMATTIEDOT_VALITSE_ORGANISAATIO']}
-            onChange={onChange}
-            components={{
-                MenuList: OrganisationMenuList,
-                Option: OrganisationOption,
-                SingleValue: OrganisationSingleValue,
-            }}
-            noOptionsMessage={() => L['HENKILOHAKU_EI_TULOKSIA']}
-            isClearable
-        />
+        <div>
+            {label && (
+                <label htmlFor="organisaatio-select" className="oph-ds-label">
+                    {label}
+                </label>
+            )}
+            <Select
+                {...selectStyles}
+                defaultValue={allOrganisations.find((o) => o.oid === defaultValue)}
+                inputId="organisaatio-select"
+                className="oph-ds-select-org"
+                isDisabled={disabled}
+                options={allOrganisations}
+                onInputChange={setSearchWord}
+                filterOption={(o, input) => containsSearchword(input.toLowerCase())(o.data)}
+                placeholder={placeholder ?? L['VALITSE_ORGANISAATIO']}
+                onChange={onChange}
+                components={{
+                    MenuList: OrganisationMenuList,
+                    Option: OrganisationOption,
+                    SingleValue: OrganisationSingleValue,
+                }}
+                noOptionsMessage={() => L['HENKILOHAKU_EI_TULOKSIA']}
+                isClearable
+            />
+        </div>
     );
 };

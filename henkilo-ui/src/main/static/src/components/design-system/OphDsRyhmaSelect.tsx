@@ -10,6 +10,7 @@ type OwnProps = {
     defaultValue?: string;
     selectOrganisaatio: (o: SingleValue<SelectOption>) => void;
     selectedOrganisaatioOid?: string;
+    label?: string;
     placeholder?: string;
     disabled?: boolean;
     type?: 'HENKILOHAKU';
@@ -39,17 +40,24 @@ export const OphDsRyhmaSelect = (props: OwnProps) => {
     }, [omatRyhmat, henkilohakuOrganisaatiot, locale, props.type]);
 
     return (
-        <Select
-            {...selectProps}
-            inputId="ryhma-select"
-            defaultValue={options.find((o) => o.value === props.defaultValue)}
-            className="oph-ds-ryhma-select"
-            options={options}
-            placeholder={props.placeholder ?? L['HENKILO_LISAA_KAYTTOOIKEUDET_RYHMA']}
-            onChange={props.selectOrganisaatio}
-            value={options.find((o) => o.value === props.selectedOrganisaatioOid)}
-            isDisabled={props.disabled}
-            isClearable
-        />
+        <div>
+            {props.label && (
+                <label htmlFor="ryhma-select" className="oph-ds-label">
+                    {props.label}
+                </label>
+            )}
+            <Select
+                {...selectProps}
+                inputId="ryhma-select"
+                defaultValue={options.find((o) => o.value === props.defaultValue)}
+                className="oph-ds-ryhma-select"
+                options={options}
+                placeholder={props.placeholder ?? L['VALITSE_RYHMA']}
+                onChange={props.selectOrganisaatio}
+                value={options.find((o) => o.value === props.selectedOrganisaatioOid)}
+                isDisabled={props.disabled}
+                isClearable
+            />
+        </div>
     );
 };

@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import { useLocalisations } from '../../selectors';
 
 type PageProps = {
     headers: string[];
@@ -7,16 +8,18 @@ type PageProps = {
 };
 
 export const OphDsTable = ({ headers, rows, rowDescriptionPartitive }: PageProps) => {
+    const { L } = useLocalisations();
+    const rowCount = rowDescriptionPartitive ? ` (${rows.length} ${rowDescriptionPartitive})` : '';
     return (
         <div>
-            {rowDescriptionPartitive && (
-                <div
-                    className="oph-ds-table-results"
-                    aria-live="polite"
-                    aria-atomic="true"
-                    data-testid={`${rowDescriptionPartitive}-count`}
-                >{`${rows.length} ${rowDescriptionPartitive}`}</div>
-            )}
+            <h2
+                className="oph-ds-table-results"
+                aria-live="polite"
+                aria-atomic="true"
+                data-testid={`${rowDescriptionPartitive}-count`}
+            >
+                {(L['HENKILOHAKU_HAKUTULOKSET'] ?? '') + rowCount}
+            </h2>
             <table className="oph-ds-table">
                 <thead>
                     <tr>

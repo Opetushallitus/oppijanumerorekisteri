@@ -90,6 +90,7 @@ export const VirkailijahakuPage = () => {
 
     return (
         <OphDsPage header={L['VIRKAILIJAHAKU']!}>
+            <p style={{ marginBottom: L['VIRKAILIJAHAKU_SELITE'] ? '1rem' : 0 }}>{L['VIRKAILIJAHAKU_SELITE']}</p>
             <div className={styles.formGrid}>
                 <DebouncedNameQuery
                     onChange={(nameQuery) => setFilters({ ...filters, nameQuery })}
@@ -97,7 +98,7 @@ export const VirkailijahakuPage = () => {
                 />
                 <div />
                 <OphDsOrganisaatioSelect
-                    placeholder={L['HENKILOHAKU_FILTERS_SUODATAORGANISAATIO']}
+                    label={L['HENKILOHAKU_FILTERS_SUODATAORGANISAATIO']}
                     type="HENKILOHAKU"
                     disabled={!!filters.ryhmaOid}
                     defaultValue={filters.organisaatioOid}
@@ -114,7 +115,7 @@ export const VirkailijahakuPage = () => {
                 />
                 <OphDsRyhmaSelect
                     defaultValue={filters.ryhmaOid}
-                    placeholder={L['HENKILOHAKU_FILTERS_RYHMA_PLACEHOLDER']}
+                    label={L['HENKILOHAKU_FILTERS_RYHMA_PLACEHOLDER']}
                     type="HENKILOHAKU"
                     disabled={!!filters.organisaatioOid}
                     selectOrganisaatio={(r) =>
@@ -135,17 +136,24 @@ export const VirkailijahakuPage = () => {
                     />
                 </div>
                 <div />
-                <Select
-                    {...selectProps}
-                    inputId="kayttooikeusryhma-select"
-                    defaultValue={kayttooikeusryhmaOptions.find((o) => o.value === `${filters.kayttooikeusryhmaId}`)}
-                    options={kayttooikeusryhmaOptions}
-                    placeholder={L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
-                    onChange={(id) =>
-                        setFilters({ ...filters, kayttooikeusryhmaId: id ? parseInt(id.value) : undefined })
-                    }
-                    isClearable
-                />
+                <div>
+                    <label htmlFor="kayttooikeusryhma-select" className="oph-ds-label">
+                        {L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
+                    </label>
+                    <Select
+                        {...selectProps}
+                        inputId="kayttooikeusryhma-select"
+                        defaultValue={kayttooikeusryhmaOptions.find(
+                            (o) => o.value === `${filters.kayttooikeusryhmaId}`
+                        )}
+                        options={kayttooikeusryhmaOptions}
+                        placeholder={L['VALITSE_KAYTTOOIKEUSRYHMA']}
+                        onChange={(id) =>
+                            setFilters({ ...filters, kayttooikeusryhmaId: id ? parseInt(id.value) : undefined })
+                        }
+                        isClearable
+                    />
+                </div>
             </div>
             <OphDsTable
                 headers={[L['HENKILO_NIMI']!, L['USERNAME']!, L['HENKILOHAKU_ORGANISAATIO']!]}
