@@ -60,11 +60,10 @@
         "start": "NODE_ENV=development npx webpack serve",
         "build": "GENERATE_SOURCEMAP=false NODE_ENV=production npx webpack --mode production",
         "lint": "eslint -c eslint.config.mjs",
-        "e2e:install-deps": "playwright install-deps && npm --prefix mock-api ci",
-        "e2e:chromium": "playwright install chromium",
-        "e2e:mock-api": "npm --prefix mock-api run mock-api",
-        "e2e:test": "playwright test",
-        "e2e:ci": "concurrently -s first -k 'npm:e2e:mock-api' 'npm:e2e:test'"
+        "test": "concurrently -s first -k 'npm:mock-api' 'playwright test'",
+        "mock-api": "npm --prefix mock-api run mock-api",
+        "ci:install-deps": "playwright install-deps && npm --prefix mock-api ci",
+        "ci:chromium": "playwright install chromium"
     },
     "browserslist": [
         "last 1 version",
