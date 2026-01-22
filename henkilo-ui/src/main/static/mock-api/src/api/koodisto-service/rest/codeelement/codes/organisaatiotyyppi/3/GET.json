@@ -1,0 +1,36 @@
+[
+    {
+        "koodiUri": "organisaatiotyyppi_01",
+        "metadata": [
+            {
+                "nimi": "koulu",
+                "lyhytNimi": "koulu",
+                "kieli": "FI"
+            },
+            {
+                "nimi": "skolan",
+                "lyhytNimi": "skolan",
+                "kieli": "SV"
+            }
+        ],
+        "versio": 3,
+        "koodiArvo": "01"
+    },
+    {
+        "koodiUri": "organisaatiotyyppi_02",
+        "metadata": [
+            {
+                "nimi": "oppilaitos",
+                "lyhytNimi": "oppilaitos",
+                "kieli": "FI"
+            },
+            {
+                "nimi": "akademi",
+                "lyhytNimi": "akademi",
+                "kieli": "SV"
+            }
+        ],
+        "versio": 2,
+        "koodiArvo": "02"
+    }
+]

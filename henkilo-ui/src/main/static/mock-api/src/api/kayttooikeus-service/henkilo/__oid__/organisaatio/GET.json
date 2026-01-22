@@ -1,1 +1,51 @@
-[]
+[
+    {
+        "id": 1,
+        "passivoitu": false,
+        "organisaatio": {
+            "oid": "1.2.246.562.10.00000000001",
+            "parentOidPath": "",
+            "nimi": {
+                "fi": "root",
+                "sv": "rootten",
+                "en": "root"
+            },
+            "tyypit": ["MUU_ORGANISAATIO"],
+            "children": [
+                {
+                    "oid": "1.2.246.562.98.52356235613",
+                    "parentOidPath": "1.2.246.562.98.52356235613/1.2.246.562.10.00000000001",
+                    "nimi": {
+                        "fi": "aliorg"
+                    },
+                    "tyypit": ["OPPILAITOS"],
+                    "children": [],
+                    "status": "AKTIIVINEN"
+                },
+                {
+                    "oid": "1.2.246.562.99.74536134523",
+                    "parentOidPath": "1.2.246.562.99.74536134523/1.2.246.562.98.18650221890/1.2.246.562.10.00000000001",
+                    "nimi": {
+                        "fi": " alialiorg"
+                    },
+                    "tyypit": ["TOIMIPISTE"],
+                    "children": [],
+                    "status": "AKTIIVINEN"
+                },
+                {
+                    "oid": "1.2.246.562.28.56456734773",
+                    "parentOidPath": "1.2.246.562.28.56456734773/1.2.246.562.10.00000000001",
+                    "nimi": {
+                        "fi": "ryhma1",
+                        "sv": "ryhma1",
+                        "en": "ryhma1"
+                    },
+                    "tyypit": ["Ryhma"],
+                    "children": [],
+                    "status": "AKTIIVINEN"
+                }
+            ],
+            "status": "AKTIIVINEN"
+        }
+    }
+]

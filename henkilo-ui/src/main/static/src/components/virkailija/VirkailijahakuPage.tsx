@@ -51,7 +51,7 @@ const DebouncedNameQuery = ({ defaultValue, onChange }: { defaultValue?: string;
         onChange(debounced);
     }, [debounced]);
 
-    return <OphDsInput id="filter" label={L['HAKUTERMI']!} onChange={setNameQuery} defaultValue={defaultValue} />;
+    return <OphDsInput id="nameQuery" label={L['HAKUTERMI']!} onChange={setNameQuery} defaultValue={defaultValue} />;
 };
 
 export const VirkailijahakuPage = () => {
@@ -112,16 +112,6 @@ export const VirkailijahakuPage = () => {
                         })
                     }
                 />
-                <OphDsChechbox
-                    id="subOrganisations"
-                    checked={!!filters.subOrganisation}
-                    label={L['HENKILOHAKU_FILTERS_ALIORGANISAATIOISTA']!}
-                    disabled={
-                        !filters.organisaatioOid ||
-                        filters.organisaatioOid === PropertySingleton.state.rootOrganisaatioOid
-                    }
-                    onChange={() => setFilters({ ...filters, subOrganisation: !filters.subOrganisation })}
-                />
                 <OphDsRyhmaSelect
                     defaultValue={filters.ryhmaOid}
                     placeholder={L['HENKILOHAKU_FILTERS_RYHMA_PLACEHOLDER']}
@@ -132,8 +122,22 @@ export const VirkailijahakuPage = () => {
                     }
                     selectedOrganisaatioOid={filters.ryhmaOid}
                 />
+                <div>
+                    <OphDsChechbox
+                        id="subOrganisations"
+                        checked={!!filters.subOrganisation}
+                        label={L['HENKILOHAKU_FILTERS_ALIORGANISAATIOISTA']!}
+                        disabled={
+                            !filters.organisaatioOid ||
+                            filters.organisaatioOid === PropertySingleton.state.rootOrganisaatioOid
+                        }
+                        onChange={() => setFilters({ ...filters, subOrganisation: !filters.subOrganisation })}
+                    />
+                </div>
+                <div />
                 <Select
                     {...selectProps}
+                    inputId="kayttooikeusryhma-select"
                     defaultValue={kayttooikeusryhmaOptions.find((o) => o.value === `${filters.kayttooikeusryhmaId}`)}
                     options={kayttooikeusryhmaOptions}
                     placeholder={L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}

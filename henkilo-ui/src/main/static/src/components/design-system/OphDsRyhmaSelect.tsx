@@ -41,6 +41,7 @@ export const OphDsRyhmaSelect = (props: OwnProps) => {
     return (
         <Select
             {...selectProps}
+            inputId="ryhma-select"
             defaultValue={options.find((o) => o.value === props.defaultValue)}
             className="oph-ds-ryhma-select"
             options={options}

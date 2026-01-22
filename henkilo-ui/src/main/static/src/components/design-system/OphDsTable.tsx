@@ -14,6 +14,7 @@ export const OphDsTable = ({ headers, rows, rowDescriptionPartitive }: PageProps
                     className="oph-ds-table-results"
                     aria-live="polite"
                     aria-atomic="true"
+                    data-testid={`${rowDescriptionPartitive}-count`}
                 >{`${rows.length} ${rowDescriptionPartitive}`}</div>
             )}
             <table className="oph-ds-table">
