@@ -6,16 +6,19 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "tiedote")
-@Builder
+@Builder(toBuilder = true)
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Tiedote {
@@ -29,4 +32,13 @@ public class Tiedote {
 
   @Column(nullable = false)
   private String url;
+
+  @Column(nullable = false, updatable = false, insertable = false)
+  private OffsetDateTime created;
+
+  @Column(nullable = false, insertable = false)
+  private OffsetDateTime updated;
+
+  @Column(nullable = false)
+  private boolean suomiFiViestiSent;
 }
