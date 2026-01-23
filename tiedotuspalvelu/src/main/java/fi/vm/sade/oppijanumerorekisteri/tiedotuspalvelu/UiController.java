@@ -1,5 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
+import static fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsService.ATTRIBUTE_KOKO_NIMI;
+
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsService;
 import java.util.List;
 import java.util.Map;
@@ -38,11 +40,11 @@ public class UiController {
   public MeResponse me() {
     var auth = SecurityContextHolder.getContext().getAuthentication();
     var principal = (CasUserDetailsService.CasAuthenticatedUser) auth.getPrincipal();
-    var authorities = principal.getAttributes();
-    return new MeResponse(authorities.get("firstName").get(0));
+    var attributes = principal.getAttributes();
+    return new MeResponse(attributes.get(ATTRIBUTE_KOKO_NIMI).get(0));
   }
 
-  public record MeResponse(String etunimi) {}
+  public record MeResponse(String nimi) {}
 
   private static Optional<String> currentUserOppijanumero() {
     var auth = SecurityContextHolder.getContext().getAuthentication();

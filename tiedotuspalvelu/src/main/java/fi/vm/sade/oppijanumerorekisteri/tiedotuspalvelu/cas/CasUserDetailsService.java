@@ -14,6 +14,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public class CasUserDetailsService
     implements AuthenticationUserDetailsService<CasAssertionAuthenticationToken> {
+
+  public static final String ATTRIBUTE_KOKO_NIMI = "displayName";
+  public static final String ATTRIBUTE_KUTSUMANIMI = "givenName";
+  public static final String ATTRIBUTE_SUKUNIMI = "sn";
+  public static final String ATTRIBUTE_HETU = "nationalIdentificationNumber";
+  public static final String ATTRIBUTE_OPPIJANUMERO = "personOid";
+
   private static final List<GrantedAuthority> DEFAULT_AUTHORITIES =
       List.of(new SimpleGrantedAuthority("ROLE_USER"));
 

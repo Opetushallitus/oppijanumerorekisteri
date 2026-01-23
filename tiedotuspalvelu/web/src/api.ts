@@ -1,8 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-type MeResponse = { etunimi: string };
+export type MeResponse = {
+  nimi: string;
+};
 
-type Tiedote = {
+export type Tiedote = {
   id: string;
   url: string;
   date?: string;
@@ -27,4 +29,3 @@ export const api = createApi({
 });
 
 export const { useGetMeQuery, useGetTiedotteetQuery } = api;
-export type { Tiedote };

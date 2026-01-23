@@ -14,8 +14,17 @@ module.exports = function () {
       },
       proxy: [
         {
-          context: ["/omat-viestit/ui"],
+          context: [
+            "/omat-viestit/ui",
+            "/omat-viestit/logout",
+            "/omat-viestit/j_spring_cas_security_check",
+          ],
           target: "http://localhost:8085",
+        },
+        {
+          context: ["/oppija-raamit"],
+          target: "https://testiopintopolku.fi",
+          changeOrigin: true,
         },
       ],
     },
