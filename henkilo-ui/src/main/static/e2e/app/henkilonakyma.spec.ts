@@ -165,7 +165,7 @@ test.describe('henkilönäkymä', () => {
         });
         const henkiloPage = await gotoHenkiloView(page, oid);
         await expect(henkiloPage.perustiedot.etunimet).toHaveText('Leon Elias');
-        await expect(henkiloPage.perustiedot.otsikko).toHaveText('Perustiedot (yksilöity eIDAS-tunnisteella)');
+        await expect(henkiloPage.perustiedot.otsikko).toHaveText('Perustiedot (eIDAS-yksilöity)');
         await expect(henkiloPage.perustiedot.eidas).toHaveText(
             'DE/FI/366193B0E55D436B494769486A9284D04E0A1DCFDBF8B9EDA63E5BF4C3CFE6F5'
         );
