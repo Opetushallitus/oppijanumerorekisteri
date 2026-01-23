@@ -23,7 +23,7 @@ test.describe('virkailijahaku', () => {
 
     test('haku by name', async ({ page }) => {
         const { filters, results } = await gotoVirkailijahaku(page);
-        await expect(results.count).toHaveText('0 virkailijaa');
+        await expect(results.count).toHaveText('Hakutulos (0 virkailijaa)');
 
         await mockVirkailijahaku(page, (c) => c.nameQuery === 'pasi', [
             {
@@ -51,7 +51,7 @@ test.describe('virkailijahaku', () => {
         ]);
 
         await filters.nameQuery.fill('pasi');
-        await expect(results.count).toHaveText('2 virkailijaa');
+        await expect(results.count).toHaveText('Hakutulos (2 virkailijaa)');
 
         await expect(results.get(1).name).toHaveText('Lapas, Pasi');
         await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/virkailija/1.2.246.562.99.32462346235');
@@ -66,7 +66,7 @@ test.describe('virkailijahaku', () => {
 
     test('haku by organisaatio', async ({ page }) => {
         const { filters, results } = await gotoVirkailijahaku(page);
-        await expect(results.count).toHaveText('0 virkailijaa');
+        await expect(results.count).toHaveText('Hakutulos (0 virkailijaa)');
 
         await test.step('excluding suborganisations', async () => {
             await mockVirkailijahaku(
@@ -84,7 +84,7 @@ test.describe('virkailijahaku', () => {
 
             await expect(filters.subOrganisationsCheckbox).toBeDisabled();
             await filters.organisaatioSelect.select('aliorg');
-            await expect(results.count).toHaveText('1 virkailijaa');
+            await expect(results.count).toHaveText('Hakutulos (1 virkailijaa)');
             await expect(filters.ryhmaSelect.locator).toBeDisabled();
 
             await expect(results.get(1).name).toHaveText('Kojootti, Keijo');
@@ -118,7 +118,7 @@ test.describe('virkailijahaku', () => {
 
             await expect(filters.subOrganisationsCheckbox).toBeEnabled();
             await filters.subOrganisationsLabel.click();
-            await expect(results.count).toHaveText('2 virkailijaa');
+            await expect(results.count).toHaveText('Hakutulos (2 virkailijaa)');
             await expect(filters.ryhmaSelect.locator).toBeDisabled();
 
             await expect(results.get(1).name).toHaveText('Kojootti, Keijo');
@@ -141,7 +141,7 @@ test.describe('virkailijahaku', () => {
 
     test('haku by ryhma', async ({ page }) => {
         const { filters, results } = await gotoVirkailijahaku(page);
-        await expect(results.count).toHaveText('0 virkailijaa');
+        await expect(results.count).toHaveText('Hakutulos (0 virkailijaa)');
 
         await mockVirkailijahaku(page, (c) => c.organisaatioOids[0] === '1.2.246.562.28.56456734773', [
             {
@@ -153,7 +153,7 @@ test.describe('virkailijahaku', () => {
         ]);
 
         await filters.ryhmaSelect.select('ryhma1');
-        await expect(results.count).toHaveText('1 virkailijaa');
+        await expect(results.count).toHaveText('Hakutulos (1 virkailijaa)');
         await expect(filters.organisaatioSelect.locator).toBeDisabled();
         await expect(filters.subOrganisationsCheckbox).toBeDisabled();
 
@@ -165,7 +165,7 @@ test.describe('virkailijahaku', () => {
 
     test('haku by käyttöoikeusryhmä', async ({ page }) => {
         const { filters, results } = await gotoVirkailijahaku(page);
-        await expect(results.count).toHaveText('0 virkailijaa');
+        await expect(results.count).toHaveText('Hakutulos (0 virkailijaa)');
 
         await mockVirkailijahaku(page, (c) => c.kayttooikeusryhmaId === 4056628, [
             {
@@ -177,7 +177,7 @@ test.describe('virkailijahaku', () => {
         ]);
 
         await filters.kayttooikeusryhma.select('kuvaus3');
-        await expect(results.count).toHaveText('1 virkailijaa');
+        await expect(results.count).toHaveText('Hakutulos (1 virkailijaa)');
 
         await expect(results.get(1).name).toHaveText('Kojootti, Keijo');
         await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/virkailija/1.2.246.562.99.75346352345');
@@ -187,7 +187,7 @@ test.describe('virkailijahaku', () => {
 
     test('suborganisations is disabled if root organisation is chosen', async ({ page }) => {
         const { filters, results } = await gotoVirkailijahaku(page);
-        await expect(results.count).toHaveText('0 virkailijaa');
+        await expect(results.count).toHaveText('Hakutulos (0 virkailijaa)');
 
         await mockVirkailijahaku(
             page,
@@ -204,7 +204,7 @@ test.describe('virkailijahaku', () => {
 
         await expect(filters.subOrganisationsCheckbox).toBeDisabled();
         await filters.organisaatioSelect.select('root');
-        await expect(results.count).toHaveText('1 virkailijaa');
+        await expect(results.count).toHaveText('Hakutulos (1 virkailijaa)');
 
         await expect(filters.subOrganisationsCheckbox).toBeDisabled();
     });
