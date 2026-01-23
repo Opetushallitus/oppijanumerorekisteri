@@ -11,8 +11,16 @@ export const Service: typeof window.Service = {
         }),
       ),
 
-  login: () => (window.location.pathname = "/omat-viestit/login"),
-  logout: () => (window.location.pathname = "/omat-viestit/logout"),
+  login: () => {
+    window.location.pathname = "/omat-viestit/login";
+  },
+  logout: () => {
+    const returnUrl = window.location.origin + "/omat-viestit/logout";
+    window.location.href =
+      window.location.origin +
+      "/cas-oppija/logout?service=" +
+      encodeURIComponent(returnUrl);
+  },
 
   changeLanguage: function () {
     return Promise.resolve();
