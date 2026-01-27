@@ -4,9 +4,10 @@ import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsServic
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import lombok.RequiredArgsConstructor;
 import org.apereo.cas.client.session.SingleSignOutFilter;
 import org.apereo.cas.client.validation.Cas30ServiceTicketValidator;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -40,14 +41,11 @@ import org.springframework.security.web.context.SecurityContextRepository;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfiguration {
   static final String SPRING_CAS_SECURITY_CHECK_PATH = "/j_spring_cas_security_check";
 
-  @Value("${tiedotuspalvelu.cas.server-url}")
-  private String casServerUrl;
-
-  @Value("${tiedotuspalvelu.cas.service-base-url}")
-  private String serviceBaseUrl;
+  private final TiedotuspalveluProperties properties;
 
   @Bean
   @Order(1)
@@ -144,7 +142,7 @@ public class SecurityConfiguration {
     var provider = new CasAuthenticationProvider();
     provider.setAuthenticationUserDetailsService(new CasUserDetailsService());
     provider.setServiceProperties(serviceProperties);
-    provider.setTicketValidator(new Cas30ServiceTicketValidator(casServerUrl));
+    provider.setTicketValidator(new Cas30ServiceTicketValidator(properties.cas().serverUrl()));
     provider.setKey("tiedotuspalvelu");
     return provider;
   }
@@ -152,7 +150,8 @@ public class SecurityConfiguration {
   @Bean
   ServiceProperties serviceProperties() {
     var serviceProperties = new ServiceProperties();
-    serviceProperties.setService(serviceBaseUrl + SPRING_CAS_SECURITY_CHECK_PATH);
+    serviceProperties.setService(
+        properties.cas().serviceBaseUrl() + SPRING_CAS_SECURITY_CHECK_PATH);
     serviceProperties.setSendRenew(false);
     serviceProperties.setAuthenticateAllArtifacts(true);
     return serviceProperties;
@@ -168,7 +167,7 @@ public class SecurityConfiguration {
   @Bean
   AuthenticationEntryPoint casAuthenticationEntryPoint(ServiceProperties serviceProperties) {
     CasAuthenticationEntryPoint entryPoint = new CasAuthenticationEntryPoint();
-    entryPoint.setLoginUrl(casServerUrl + "/login");
+    entryPoint.setLoginUrl(properties.cas().serverUrl() + "/login");
     entryPoint.setServiceProperties(serviceProperties);
     return entryPoint;
   }
