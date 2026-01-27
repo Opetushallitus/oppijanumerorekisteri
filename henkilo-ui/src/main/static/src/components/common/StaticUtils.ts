@@ -56,66 +56,6 @@ class StaticUtils {
         return obj;
     }
 
-    static findOrCreateYhteystiedotRyhmaFlat(
-        henkiloUpdate: Henkilo,
-        ryhmakuvaus: string,
-        yhteystietotyyppi: string,
-        label: string
-    ) {
-        let yhteystiedotRyhmaIndex: number | null = null;
-        let yhteystietoIndex: number | null = null;
-        let yhteystietoRyhma = henkiloUpdate.yhteystiedotRyhma.filter((yhteystiedotRyhma, idx) => {
-            const yhteystietoByTyyppi = yhteystiedotRyhma.yhteystieto.filter(
-                (yhteystieto) => yhteystieto.yhteystietoTyyppi === yhteystietotyyppi
-            )[0];
-            if (
-                yhteystiedotRyhmaIndex === null &&
-                yhteystiedotRyhma.ryhmaKuvaus === ryhmakuvaus &&
-                yhteystietoByTyyppi &&
-                yhteystietoByTyyppi.yhteystietoArvo &&
-                yhteystietoByTyyppi.yhteystietoArvo !== ''
-            ) {
-                yhteystiedotRyhmaIndex = idx;
-                return true;
-            }
-            return false;
-        })[0];
-        let yhteystieto = yhteystietoRyhma
-            ? yhteystietoRyhma.yhteystieto.filter((yhteystieto, idx) => {
-                  if (yhteystietoIndex === null && yhteystieto.yhteystietoTyyppi === yhteystietotyyppi) {
-                      yhteystietoIndex = idx;
-                      return true;
-                  }
-                  return false;
-              })[0]
-            : null;
-        if (yhteystiedotRyhmaIndex === null) {
-            yhteystiedotRyhmaIndex = henkiloUpdate.yhteystiedotRyhma.length;
-            yhteystietoRyhma = {
-                // readOnly: false, // TODO: not defined in type -- ensure that it's legit
-                ryhmaAlkuperaTieto: 'alkupera2', // Virkailija
-                ryhmaKuvaus: ryhmakuvaus,
-                yhteystieto: [],
-            };
-            henkiloUpdate.yhteystiedotRyhma.push(yhteystietoRyhma);
-        }
-
-        if (yhteystietoIndex === null) {
-            yhteystietoIndex = henkiloUpdate.yhteystiedotRyhma[yhteystiedotRyhmaIndex]?.yhteystieto.length ?? 0;
-            yhteystieto = {
-                yhteystietoTyyppi: yhteystietotyyppi,
-                yhteystietoArvo: '',
-            };
-            henkiloUpdate.yhteystiedotRyhma[yhteystiedotRyhmaIndex]?.yhteystieto.push(yhteystieto);
-        }
-        return {
-            label: label,
-            value: yhteystieto?.yhteystietoArvo,
-            inputValue:
-                'yhteystiedotRyhma.' + yhteystiedotRyhmaIndex + '.yhteystieto.' + yhteystietoIndex + '.yhteystietoArvo',
-        };
-    }
-
     static isVahvastiYksiloity(henkilo?: Henkilo | HenkiloDuplicate) {
         return henkilo?.yksiloityVTJ || henkilo?.yksiloityEidas;
     }

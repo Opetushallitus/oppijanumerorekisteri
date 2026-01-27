@@ -85,21 +85,17 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
 
     function _additionalInfo() {
         const info = [];
-        if (kayttajatiedot?.kayttajaTyyppi === 'PALVELU') {
-            info.push(L['HENKILO_ADDITIOINALINFO_PALVELU']);
-        } else {
-            if (henkilo?.yksiloity) {
-                info.push(L['HENKILO_ADDITIONALINFO_YKSILOITY']);
-            }
-            if (henkilo?.yksiloityEidas) {
-                info.push(L['HENKILO_ADDITIONALINFO_YKSILOITYEIDAS']);
-            }
-            if (henkilo?.yksiloityVTJ) {
-                info.push(L['HENKILO_ADDITIONALINFO_YKSILOITYVTJ']);
-            }
-            if (!henkilo?.yksiloity && !henkilo?.yksiloityVTJ && !henkilo?.yksiloityEidas) {
-                info.push(L['HENKILO_ADDITIOINALINFO_EIYKSILOITY']);
-            }
+        if (henkilo?.yksiloity) {
+            info.push(L['HENKILO_ADDITIONALINFO_YKSILOITY']);
+        }
+        if (henkilo?.yksiloityEidas) {
+            info.push(L['HENKILO_ADDITIONALINFO_YKSILOITYEIDAS']);
+        }
+        if (henkilo?.yksiloityVTJ) {
+            info.push(L['HENKILO_ADDITIONALINFO_YKSILOITYVTJ']);
+        }
+        if (!henkilo?.yksiloity && !henkilo?.yksiloityVTJ && !henkilo?.yksiloityEidas) {
+            info.push(L['HENKILO_ADDITIOINALINFO_EIYKSILOITY']);
         }
         if (henkilo?.duplicate) {
             info.push(L['HENKILO_ADDITIONALINFO_DUPLIKAATTI']);
