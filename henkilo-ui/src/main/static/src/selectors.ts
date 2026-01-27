@@ -1,6 +1,10 @@
+import { useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router';
+
 import { Localisations, L10n } from './types/localisation.type';
 import { Locale } from './types/locale.type';
 import {
+    useGetKayttajatiedotQuery,
     useGetKayttooikeusryhmasForHenkiloQuery,
     useGetOmatKayttooikeusryhmasQuery,
     useGetOmatOrganisaatiotQuery,
@@ -8,7 +12,6 @@ import {
 } from './api/kayttooikeus';
 import { Localisation, useGetLocalisationsQuery } from './api/lokalisointi';
 import { useGetLocaleQuery } from './api/oppijanumerorekisteri';
-import { useMemo } from 'react';
 import { useGetKansalaisuudetQuery, useGetKieletQuery, useGetSukupuoletQuery } from './api/koodisto';
 import StaticUtils from './components/common/StaticUtils';
 import { OrganisaatioWithChildren } from './types/domain/organisaatio/organisaatio.types';
@@ -143,4 +146,21 @@ export const useKieliOptions = (locale: Locale) => {
         [data, locale]
     );
     return options;
+};
+
+export const useRedirectByUser = (oid: string, allowedType: 'PALVELU' | 'VIRKAILIJA') => {
+    const navigate = useNavigate();
+    const { data: omattiedot } = useGetOmattiedotQuery();
+    const { data: kayttajatiedot } = useGetKayttajatiedotQuery(oid);
+    useEffect(() => {
+        if (omattiedot?.oidHenkilo === oid) {
+            navigate('/omattiedot', { replace: true });
+        }
+        if (kayttajatiedot?.kayttajaTyyppi === 'PALVELU' && allowedType !== 'PALVELU') {
+            navigate(`/jarjestelmatunnus/${oid}`, { replace: true });
+        }
+        if (kayttajatiedot?.kayttajaTyyppi === 'VIRKAILIJA' && allowedType !== 'VIRKAILIJA') {
+            navigate(`/virkailija/${oid}`, { replace: true });
+        }
+    }, [omattiedot, kayttajatiedot, oid]);
 };

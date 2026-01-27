@@ -7,15 +7,17 @@ import { useDeleteAccessMutation } from '../../../../api/oppijanumerorekisteri';
 type OwnProps = {
     henkiloOid: string;
     disabled?: boolean;
+    className?: string;
 };
 
-const PoistaKayttajatunnusButton = ({ henkiloOid, disabled }: OwnProps) => {
+const PoistaKayttajatunnusButton = ({ henkiloOid, disabled, className }: OwnProps) => {
     const { L } = useLocalisations();
     const [deleteAccess] = useDeleteAccessMutation();
 
     return (
         <ConfirmButton
             key="poistaKayttajatunnus"
+            className={className}
             action={() => {
                 const r = window.confirm(L['POISTAKAYTTAJATUNNUS_CONFIRM_TEKSTI']);
                 if (r) deleteAccess(henkiloOid);

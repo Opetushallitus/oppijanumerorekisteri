@@ -57,6 +57,9 @@
 }
 
 .oph-ds-page-content-container {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
     background-color: white;
     max-width: 1854px;
     border-top: 1px var(--gray-border);
@@ -71,6 +74,13 @@
     border-left: 1px var(--gray-border);
     border-right: 1px var(--gray-border);
   }
+}
+
+.oph-ds-card {
+    padding: 24px;
+    border-radius: 4px;
+    border-top: 5px solid var(--Link-Text-Default, #0033CC);
+    box-shadow: 2px 2px 8px 0px #00000026;
 }
 
 .oph-ds-input {
@@ -97,6 +107,15 @@
 
 .oph-ds-input:hover {
     border: 2px solid var(--OPH-Input-Stroke, #0041DC);
+}
+
+.oph-ds-input-error {
+    color: #CC3300;
+    border: 1px solid #CC3300;
+}
+
+.oph-ds-error {
+    color: #CC3300;
 }
 
 .oph-ds-label {

@@ -119,6 +119,10 @@ export const oppijaNavi = (oid: string): Array<NaviTab> => [
     },
 ];
 
+export const virkailija2Navi = (oid: string): Array<NaviTab> => [
+    { path: `/virkailija/${oid}`, label: 'NAVI_VIRKAILIJAN_TIEDOT' },
+];
+
 export const virkailijaNavi = (oid: string): Array<NaviTab> => [
     { path: `/virkailija/${oid}`, label: 'NAVI_HENKILON_TIEDOT' },
     {

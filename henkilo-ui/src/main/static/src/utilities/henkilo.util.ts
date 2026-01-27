@@ -59,12 +59,14 @@ export const createEmailOptions = (
     };
 };
 
-export const parseEmailOptions = (yhteystiedot?: Array<YhteystietoRyhma>): Array<EmailOption> =>
+export const parseWorkEmails = (yhteystiedot?: Array<YhteystietoRyhma>) =>
     (yhteystiedot || [])
         .filter((yhteystietoRyhma) => yhteystietoRyhma.ryhmaKuvaus === WORK_ADDRESS)
         .flatMap((yhteystietoRyhma) => yhteystietoRyhma.yhteystieto)
         .filter((yhteystieto) => yhteystieto.yhteystietoTyyppi === EMAIL)
         .map((yhteystieto) => yhteystieto.yhteystietoArvo)
         .filter((value) => !!value)
-        .sort((a, b) => (a && b ? a.localeCompare(b) : 1))
-        .map((email) => ({ value: email, label: email }));
+        .sort((a, b) => (a && b ? a.localeCompare(b) : 1));
+
+export const parseEmailOptions = (yhteystiedot?: Array<YhteystietoRyhma>): Array<EmailOption> =>
+    parseWorkEmails(yhteystiedot).map((email) => ({ value: email, label: email }));

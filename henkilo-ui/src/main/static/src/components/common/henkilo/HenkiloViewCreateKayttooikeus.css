@@ -28,6 +28,6 @@
     gap: 16px;
 }
 
-.kayttooikeus-form-grid .organisaatioSelection {
-    width: 700px;
+.kayttooikeus-form-organisation-selection > div {
+    min-width: 700px;
 }

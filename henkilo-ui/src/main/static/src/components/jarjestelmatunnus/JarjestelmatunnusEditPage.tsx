@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useParams } from 'react-router';
 
-import { useLocalisations } from '../../selectors';
+import { useLocalisations, useRedirectByUser } from '../../selectors';
 import { OphDsPage } from '../design-system/OphDsPage';
 import HenkiloViewCreateKayttooikeus from '../common/henkilo/HenkiloViewCreateKayttooikeus';
 import HenkiloViewExistingKayttooikeus from '../common/henkilo/HenkiloViewExistingKayttooikeus';
@@ -20,6 +20,7 @@ export const JarjestelmatunnusEditPage = () => {
         return;
     }
 
+    useRedirectByUser(params.oid, 'PALVELU');
     const { L } = useLocalisations();
     useTitle(L['JARJESTELMATUNNUKSEN_HALLINTA']);
     useNavigation(jarjestelmatunnusNavigation(params.oid), false);

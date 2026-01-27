@@ -158,7 +158,7 @@ export const VirkailijahakuPage = () => {
             <OphDsTable
                 headers={[L['HENKILO_NIMI']!, L['USERNAME']!, L['HENKILOHAKU_ORGANISAATIO']!]}
                 rows={renderedData.map((d) => [
-                    <Link key={`link-${d.kayttajatunnus}`} to={`/virkailija/${d.oidHenkilo}`} className="oph-ds-link">
+                    <Link key={`link-${d.kayttajatunnus}`} to={`/virkailija2/${d.oidHenkilo}`} className="oph-ds-link">
                         {d.nimi || d.oidHenkilo}
                     </Link>,
                     <span key={`nimi-${d.kayttajatunnus}`}>{d.kayttajatunnus}</span>,
