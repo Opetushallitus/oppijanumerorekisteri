@@ -54,12 +54,12 @@ test.describe('virkailijahaku', () => {
         await expect(results.count).toHaveText('Hakutulos (2 virkailijaa)');
 
         await expect(results.get(1).name).toHaveText('Lapas, Pasi');
-        await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/virkailija/1.2.246.562.99.32462346235');
+        await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/virkailija2/1.2.246.562.99.32462346235');
         await expect(results.get(1).username).toHaveText('username2');
         await expect(results.get(1).organisations).toHaveText('Koulun kannatusyhdistys (KOULU,OPPILAITOS)');
 
         await expect(results.get(2).name).toHaveText('Pasinen, Vesa');
-        await expect(results.get(2).name).toHaveAttribute('href', '/henkilo-ui/virkailija/1.2.246.562.99.45262572456');
+        await expect(results.get(2).name).toHaveAttribute('href', '/henkilo-ui/virkailija2/1.2.246.562.99.45262572456');
         await expect(results.get(2).username).toHaveText('username1');
         await expect(results.get(2).organisations).toHaveText('');
     });
@@ -90,7 +90,7 @@ test.describe('virkailijahaku', () => {
             await expect(results.get(1).name).toHaveText('Kojootti, Keijo');
             await expect(results.get(1).name).toHaveAttribute(
                 'href',
-                '/henkilo-ui/virkailija/1.2.246.562.99.75346352345'
+                '/henkilo-ui/virkailija2/1.2.246.562.99.75346352345'
             );
             await expect(results.get(1).username).toHaveText('username3');
             await expect(results.get(1).organisations).toHaveText('');
@@ -124,7 +124,7 @@ test.describe('virkailijahaku', () => {
             await expect(results.get(1).name).toHaveText('Kojootti, Keijo');
             await expect(results.get(1).name).toHaveAttribute(
                 'href',
-                '/henkilo-ui/virkailija/1.2.246.562.99.75346352345'
+                '/henkilo-ui/virkailija2/1.2.246.562.99.75346352345'
             );
             await expect(results.get(1).username).toHaveText('username3');
             await expect(results.get(1).organisations).toHaveText('');
@@ -132,7 +132,7 @@ test.describe('virkailijahaku', () => {
             await expect(results.get(2).name).toHaveText('Sorsa, Roope');
             await expect(results.get(2).name).toHaveAttribute(
                 'href',
-                '/henkilo-ui/virkailija/1.2.246.562.99.64354357473'
+                '/henkilo-ui/virkailija2/1.2.246.562.99.64354357473'
             );
             await expect(results.get(2).username).toHaveText('username4');
             await expect(results.get(2).organisations).toHaveText('');
@@ -158,7 +158,7 @@ test.describe('virkailijahaku', () => {
         await expect(filters.subOrganisationsCheckbox).toBeDisabled();
 
         await expect(results.get(1).name).toHaveText('Pasinen, Vesa');
-        await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/virkailija/1.2.246.562.99.45262572456');
+        await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/virkailija2/1.2.246.562.99.45262572456');
         await expect(results.get(1).username).toHaveText('username1');
         await expect(results.get(1).organisations).toHaveText('');
     });
@@ -180,7 +180,7 @@ test.describe('virkailijahaku', () => {
         await expect(results.count).toHaveText('Hakutulos (1 virkailijaa)');
 
         await expect(results.get(1).name).toHaveText('Kojootti, Keijo');
-        await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/virkailija/1.2.246.562.99.75346352345');
+        await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/virkailija2/1.2.246.562.99.75346352345');
         await expect(results.get(1).username).toHaveText('username3');
         await expect(results.get(1).organisations).toHaveText('');
     });
