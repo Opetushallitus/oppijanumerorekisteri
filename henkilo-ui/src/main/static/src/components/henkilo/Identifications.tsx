@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useId, useMemo, useState } from 'react';
 import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import Select from 'react-select';
 
@@ -15,7 +15,6 @@ import { useAppDispatch } from '../../store';
 import OphModal from '../common/modal/OphModal';
 import { useGetHenkilontunnistetyypitQuery } from '../../api/koodisto';
 import StaticUtils from '../common/StaticUtils';
-import Loader from '../common/icons/Loader';
 import { add } from '../../slices/toastSlice';
 
 type Props = {
@@ -35,6 +34,7 @@ export const Identifications = ({ oid }: Props) => {
     const [deleteIdentification, { isLoading: isDeleteLoading }] = useDeleteIdentificationMutation();
     const [postIdentification, { isLoading: isPostLoading }] = usePostIdentificationMutation();
     const { data: tunnistetyypit, isLoading: isTunnistetyypitLoading } = useGetHenkilontunnistetyypitQuery();
+    const henkilotunnisteetSectionLabel = useId();
 
     const getTunnisteLabel = (t: string) =>
         tunnistetyypit ? `${StaticUtils.getKoodiNimi(t, tunnistetyypit, locale)} (${t})` : t;
@@ -130,49 +130,53 @@ export const Identifications = ({ oid }: Props) => {
     }, [tunnistetyypit]);
 
     return (
-        <div id="identifications" style={{ wordBreak: 'break-word' }}>
-            {data && data.length > 0 && <OphTable table={table} isLoading={isLoading} />}
-            {(isPostLoading || isDeleteLoading || isFetching || isLoading) && <Loader />}
-            <Button
-                action={() => setShowAddModal(true)}
-                disabled={isTunnistetyypitLoading}
-                style={{ marginTop: '1rem' }}
-                dataTestId="identification-add-button"
-            >
-                {L['TUNNISTEET_LISAA']}
-            </Button>
-            {showAddModal && (
-                <OphModal title={L['TUNNISTEET_LISAA']} onClose={() => setShowAddModal(false)}>
-                    <>
-                        <div style={{ marginTop: '1rem' }}>
-                            <label htmlFor="newIdentifier">{L['TUNNISTEET_IDENTIFIER']}</label>
-                            <input
-                                id="newIdentifier"
-                                className="oph-input"
-                                value={newIdentifier}
-                                onChange={(e) => setNewIdentifier(e.target.value)}
-                            />
-                        </div>
-                        <div style={{ marginTop: '1rem' }}>
-                            <label htmlFor="newIdentifier">{L['TUNNISTEET_IDPENTITYID']}</label>
-                            <Select
-                                inputId="newIdpEntityId"
-                                options={idpEntityIdOptions}
-                                onChange={(option) => setNewIdpEntityId(option?.value ?? '')}
-                                value={idpEntityIdOptions.find((o) => o.value === newIdpEntityId)}
-                            />
-                        </div>
-                        <Button
-                            action={() => addIdentification()}
-                            disabled={!newIdentifier || !newIdpEntityId || isPostLoading}
-                            style={{ marginTop: '1rem' }}
-                            dataTestId="identification-confirm-add"
-                        >
-                            {L['TUNNISTEET_LISAA']}
-                        </Button>
-                    </>
-                </OphModal>
-            )}
-        </div>
+        <section aria-labelledby={henkilotunnisteetSectionLabel} className="henkiloViewUserContentWrapper">
+            <h2 id={henkilotunnisteetSectionLabel}>{L['TUNNISTEET_OTSIKKO']}</h2>
+            <div id="identifications" style={{ wordBreak: 'break-word' }}>
+                {data && data.length > 0 && (
+                    <OphTable table={table} isLoading={isPostLoading || isDeleteLoading || isFetching || isLoading} />
+                )}
+                <Button
+                    action={() => setShowAddModal(true)}
+                    disabled={isTunnistetyypitLoading}
+                    style={{ marginTop: '1rem' }}
+                    dataTestId="identification-add-button"
+                >
+                    {L['TUNNISTEET_LISAA']}
+                </Button>
+                {showAddModal && (
+                    <OphModal title={L['TUNNISTEET_LISAA']} onClose={() => setShowAddModal(false)}>
+                        <>
+                            <div style={{ marginTop: '1rem' }}>
+                                <label htmlFor="newIdentifier">{L['TUNNISTEET_IDENTIFIER']}</label>
+                                <input
+                                    id="newIdentifier"
+                                    className="oph-input"
+                                    value={newIdentifier}
+                                    onChange={(e) => setNewIdentifier(e.target.value)}
+                                />
+                            </div>
+                            <div style={{ marginTop: '1rem' }}>
+                                <label htmlFor="newIdentifier">{L['TUNNISTEET_IDPENTITYID']}</label>
+                                <Select
+                                    inputId="newIdpEntityId"
+                                    options={idpEntityIdOptions}
+                                    onChange={(option) => setNewIdpEntityId(option?.value ?? '')}
+                                    value={idpEntityIdOptions.find((o) => o.value === newIdpEntityId)}
+                                />
+                            </div>
+                            <Button
+                                action={() => addIdentification()}
+                                disabled={!newIdentifier || !newIdpEntityId || isPostLoading}
+                                style={{ marginTop: '1rem' }}
+                                dataTestId="identification-confirm-add"
+                            >
+                                {L['TUNNISTEET_LISAA']}
+                            </Button>
+                        </>
+                    </OphModal>
+                )}
+            </div>
+        </section>
     );
 };

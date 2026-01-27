@@ -1,4 +1,4 @@
-import React, { ReactNode, useRef, useState } from 'react';
+import React, { ReactNode, useId, useRef, useState } from 'react';
 import PinInput from 'react-pin-input';
 
 import {
@@ -359,6 +359,7 @@ const Mfa = ({ view, henkiloOid }: MfaProps) => {
     const userMfaProvider = view === 'omattiedot' ? omattiedot?.mfaProvider : kayttajatiedot?.mfaProvider;
     const { L } = useLocalisations();
     const [isMfaSetup, setMfaSetup] = useState(false);
+    const mfaSectionLabelId = useId();
 
     const mfaSetupComponent = isMfaSetup ? (
         <MfaSetup setMfaSetup={setMfaSetup} L={L} />
@@ -371,7 +372,8 @@ const Mfa = ({ view, henkiloOid }: MfaProps) => {
         mfaSetupComponent
     );
     return (
-        <div>
+        <section aria-labelledby={mfaSectionLabelId} className="henkiloViewUserContentWrapper">
+            <h2 id={mfaSectionLabelId}>{L.TIETOTURVA_ASETUKSET_OTSIKKO}</h2>
             <div className={styles.infoTitle}>
                 <span className={styles.mfaTitle}>
                     {L.MFA_TUNNISTAUTUMINEN}
@@ -384,7 +386,7 @@ const Mfa = ({ view, henkiloOid }: MfaProps) => {
                 )}
             </div>
             {view === 'omattiedot' && mfaStateComponent}
-        </div>
+        </section>
     );
 };
 

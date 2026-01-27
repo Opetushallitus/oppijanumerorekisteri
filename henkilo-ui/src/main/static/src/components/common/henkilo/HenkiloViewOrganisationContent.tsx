@@ -11,6 +11,7 @@ import {
 import Loader from '../icons/Loader';
 
 import './HenkiloViewOrganisationContent.css';
+import { OphDsChechbox } from '../../design-system/OphDsCheckbox';
 
 type OrganisaatioFlat = {
     name?: string;
@@ -54,52 +55,49 @@ export const HenkiloViewOrganisationContent = (props: { henkiloOid: string }) =>
 
     const sectionLabelId = useId();
 
-    if (isLoading || isApiOrgsLoading) {
-        return <Loader />;
-    }
-
     return (
         <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
             <h2 id={sectionLabelId}>{L['HENKILO_ORGANISAATIOT_OTSIKKO']}</h2>
-            <label className="oph-checkable" htmlFor="showPassive">
-                <input
-                    id="showPassive"
-                    type="checkbox"
-                    className="oph-checkable-input"
-                    onChange={() => setShowPassive(!showPassive)}
-                />
-                <span className="oph-checkable-text"> {L['HENKILO_NAYTA_PASSIIVISET_TEKSTI']}</span>
-            </label>
-            <div className="organisationContentWrapper">
-                {flatOrganisations.map((values, idx) =>
-                    !values.passive || showPassive ? (
-                        <div key={idx}>
-                            <div>
-                                <span className="oph-bold">
-                                    {values.name} {values.typesFlat}
-                                </span>
+            <OphDsChechbox
+                id="showPassive"
+                label={L['HENKILO_NAYTA_PASSIIVISET_TEKSTI']!}
+                checked={showPassive}
+                onChange={() => setShowPassive(!showPassive)}
+            />
+            {isLoading || isApiOrgsLoading ? (
+                <Loader />
+            ) : (
+                <div className="organisationContentWrapper">
+                    {flatOrganisations.map((values, idx) =>
+                        !values.passive || showPassive ? (
+                            <div key={idx}>
+                                <div>
+                                    <span className="oph-bold">
+                                        {values.name} {values.typesFlat}
+                                    </span>
+                                </div>
+                                <div className="labelValue">
+                                    <span className="oph-bold">{L['HENKILO_ORGTUNNISTE']}:</span>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <span>{values.id}</span>
+                                </div>
+                                <div className="labelValue">
+                                    {!values.passive ? (
+                                        <ConfirmButton
+                                            key="passivoiOrg"
+                                            action={() => passivoiHenkiloOrganisation(values.id)}
+                                            confirmLabel={L['HENKILO_ORG_PASSIVOI_CONFIRM']}
+                                            normalLabel={L['HENKILO_ORG_PASSIVOI']}
+                                        />
+                                    ) : (
+                                        <Button disabled>{L['HENKILO_ORG_PASSIVOITU']}</Button>
+                                    )}
+                                </div>
                             </div>
-                            <div className="labelValue">
-                                <span className="oph-bold">{L['HENKILO_ORGTUNNISTE']}:</span>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <span>{values.id}</span>
-                            </div>
-                            <div className="labelValue">
-                                {!values.passive ? (
-                                    <ConfirmButton
-                                        key="passivoiOrg"
-                                        action={() => passivoiHenkiloOrganisation(values.id)}
-                                        confirmLabel={L['HENKILO_ORG_PASSIVOI_CONFIRM']}
-                                        normalLabel={L['HENKILO_ORG_PASSIVOI']}
-                                    />
-                                ) : (
-                                    <Button disabled>{L['HENKILO_ORG_PASSIVOITU']}</Button>
-                                )}
-                            </div>
-                        </div>
-                    ) : null
-                )}
-            </div>
+                        ) : null
+                    )}
+                </div>
+            )}
         </section>
     );
 };

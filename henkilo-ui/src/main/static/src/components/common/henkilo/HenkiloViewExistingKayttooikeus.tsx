@@ -21,7 +21,6 @@ import {
     usePutKayttooikeusryhmaForHenkiloMutation,
 } from '../../../api/kayttooikeus';
 import ConfirmButton from '../button/ConfirmButton';
-import Loader from '../icons/Loader';
 import { OphDsBanner } from '../../design-system/OphDsBanner';
 import { add } from '../../../slices/toastSlice';
 import { useGetHenkiloQuery } from '../../../api/oppijanumerorekisteri';
@@ -354,24 +353,21 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
     });
 
     const sectionLabelId = useId();
-    return isLoading ? (
-        <Loader />
-    ) : isError ? (
-        <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
-            <h2 id={sectionLabelId}>{L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
-            <OphDsBanner type="error">
-                <p>{L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE']}</p>
-            </OphDsBanner>
-        </section>
-    ) : (
+    return (
         <section
             aria-labelledby={sectionLabelId}
             ref={props.existingKayttooikeusRef}
             className="henkiloViewUserContentWrapper"
         >
-            {accessRight && <AccessRightDetails {...accessRight} />}
             <h2 id={sectionLabelId}>{L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
-            <OphTable table={table} isLoading={false} />
+            {accessRight && <AccessRightDetails {...accessRight} />}
+            {isError ? (
+                <OphDsBanner type="error">
+                    <p>{L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE']}</p>
+                </OphDsBanner>
+            ) : (
+                <OphTable table={table} isLoading={isLoading} />
+            )}
         </section>
     );
 };

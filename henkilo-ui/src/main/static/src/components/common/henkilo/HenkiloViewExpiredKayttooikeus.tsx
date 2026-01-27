@@ -17,7 +17,6 @@ import {
     useGetOrganisationsQuery,
     usePostKayttooikeusAnomusMutation,
 } from '../../../api/kayttooikeus';
-import Loader from '../icons/Loader';
 import { add } from '../../../slices/toastSlice';
 import { useGetHenkiloQuery } from '../../../api/oppijanumerorekisteri';
 import ConfirmButton from '../button/ConfirmButton';
@@ -244,19 +243,13 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
     });
 
     const sectionLabelId = useId();
-    if (isLoading) {
-        return <Loader />;
-    } else {
-        return (
-            <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
-                {accessRight && <AccessRightDetails {...accessRight} />}
-                <div>
-                    <h2 id={sectionLabelId}>{L['HENKILO_VANHAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
-                    <OphTable table={table} isLoading={false} />
-                </div>
-            </section>
-        );
-    }
+    return (
+        <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
+            {accessRight && <AccessRightDetails {...accessRight} />}
+            <h2 id={sectionLabelId}>{L['HENKILO_VANHAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
+            <OphTable table={table} isLoading={isLoading} />
+        </section>
+    );
 };
 
 export default HenkiloViewExpiredKayttooikeus;

@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import Loader from '../common/icons/Loader';
@@ -61,9 +61,6 @@ export const VirkailijaViewPage = () => {
         }
     }, [omattiedot, oid]);
 
-    const henkilotunnisteetSectionLabel = useId();
-    const mfaSectionLabelId = useId();
-
     if (isHenkiloLoading || isAnomuksetLoading) {
         return <Loader />;
     } else if (henkilo?.henkiloKayttoEstetty) {
@@ -75,15 +72,13 @@ export const VirkailijaViewPage = () => {
                     <UserContentContainer oidHenkilo={oid} view={view} />
                 </div>
                 {isRekisterinpitaja && (
-                    <section aria-labelledby={henkilotunnisteetSectionLabel} className="wrapper">
-                        <h2 id={henkilotunnisteetSectionLabel}>{L.TUNNISTEET_OTSIKKO}</h2>
+                    <div className="wrapper">
                         <Identifications oid={oid} />
-                    </section>
+                    </div>
                 )}
-                <section aria-labelledby={mfaSectionLabelId} className="wrapper">
-                    <h2 id={mfaSectionLabelId}>{L.TIETOTURVA_ASETUKSET_OTSIKKO}</h2>
+                <div className="wrapper">
                     <Mfa henkiloOid={oid} view={view} />
-                </section>
+                </div>
                 <div className="wrapper">
                     <HenkiloViewContactContent henkiloOid={oid} view={view} readOnly={true} />
                 </div>

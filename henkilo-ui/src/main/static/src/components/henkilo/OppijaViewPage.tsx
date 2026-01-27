@@ -1,4 +1,4 @@
-import React, { useEffect, useId } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { useLocalisations } from '../../selectors';
@@ -41,7 +41,6 @@ export const OppijaViewPage = () => {
         }
     }, [omattiedot, oid]);
 
-    const henkilotunnisteetSectionLabel = useId();
     if (isHenkiloLoading || isLoading) {
         return <Loader />;
     } else if (henkilo?.henkiloKayttoEstetty) {
@@ -57,10 +56,9 @@ export const OppijaViewPage = () => {
                     />
                 </div>
                 {isRekisterinpitaja && (
-                    <section aria-labelledby={henkilotunnisteetSectionLabel} className="wrapper">
-                        <h2 id={henkilotunnisteetSectionLabel}>{L.TUNNISTEET_OTSIKKO}</h2>
+                    <div className="wrapper">
                         <Identifications oid={oid} />
-                    </section>
+                    </div>
                 )}
                 <div className="wrapper">
                     <HenkiloViewContactContent

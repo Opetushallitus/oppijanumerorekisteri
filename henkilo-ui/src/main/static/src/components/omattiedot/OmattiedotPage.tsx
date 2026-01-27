@@ -34,7 +34,6 @@ export const OmattiedotPage = () => {
                     <UserContentContainer oidHenkilo={omattiedot.oidHenkilo} view="omattiedot" />
                 </div>
                 <div className="wrapper">
-                    <h2>{L.TIETOTURVA_ASETUKSET_OTSIKKO}</h2>
                     <Mfa henkiloOid={omattiedot.oidHenkilo} view="omattiedot" />
                 </div>
                 <div className="wrapper">
