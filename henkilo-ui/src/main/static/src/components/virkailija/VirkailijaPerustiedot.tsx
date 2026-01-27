@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useState } from 'react';
+import React, { useEffect, useId, useMemo, useState } from 'react';
 
 import { OphDsInput } from '../design-system/OphDsInput';
 import { add } from '../../slices/toastSlice';
@@ -15,6 +15,8 @@ import HakatunnistePopupContent from '../common/button/HakaPopupContent';
 import PasswordPopupContent from '../common/button/PasswordPopupContent';
 
 import styles from './VirkailijaPerustiedot.module.css';
+import { useGetHenkiloQuery } from '../../api/oppijanumerorekisteri';
+import { parseWorkEmails } from '../../utilities/henkilo.util';
 
 const VirkailijaPerustiedotForm = ({ oid, cancel }: { oid: string; cancel: () => void }) => {
     const { L } = useLocalisations();
@@ -79,10 +81,15 @@ const VirkailijaPerustiedotForm = ({ oid, cancel }: { oid: string; cancel: () =>
 export const VirkailijaPerustiedot = ({ oid }: { oid: string }) => {
     const { L } = useLocalisations();
     const { data: kayttajatiedot, isLoading } = useGetKayttajatiedotQuery(oid);
+    const { data: henkilo } = useGetHenkiloQuery(oid);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const [muokkaa, setMuokkaa] = useState(false);
     const [haka, setHaka] = useState(false);
     const [password, setPassword] = useState(false);
+
+    const emails = useMemo(() => {
+        return parseWorkEmails(henkilo?.yhteystiedotRyhma).join(', ');
+    }, [henkilo]);
 
     const sectionId = useId();
 
@@ -115,6 +122,8 @@ export const VirkailijaPerustiedot = ({ oid }: { oid: string }) => {
                             <div>{oid}</div>
                             <div>{L['HENKILO_KAYTTAJANIMI']}</div>
                             <div>{kayttajatiedot?.username}</div>
+                            <div>{L['HENKILO_TYOSAHKOPOSTI']}</div>
+                            <div>{emails}</div>
                         </div>
                         <div className={styles.buttonRow}>
                             <button className="oph-ds-button" onClick={() => setMuokkaa(true)}>
