@@ -20,18 +20,10 @@ public class WebConfiguration implements WebMvcConfigurer {
         registry.addViewController("/{path:\\w+}")
                  .setViewName(mainBundle);
 
-        // explicit paths where a path may include an OID (the !static controller below does not catch these for some reason)
-        registry.addViewController("/virkailija/**")
-                 .setViewName(mainBundle);
-        registry.addViewController("/oppija/**")
-                 .setViewName(mainBundle);
-        registry.addViewController("/admin/**")
-                 .setViewName(mainBundle);
-
         // rest of the paths to non-static resources
         registry.addViewController("/")
                  .setViewName(mainBundle);
-        registry.addViewController("/{path:!static}/**")
+        registry.addViewController("/{first:^(?!static$)[^/]+}/**")
                  .setViewName(mainBundle);
     }
 }
