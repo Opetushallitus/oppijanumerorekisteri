@@ -20,21 +20,6 @@ export const parsePalveluRoolit = (organisaatiot?: Array<KayttooikeusOrganisaati
 };
 
 /*
- * Find if given organisaatiolist contains given organisaatioOid AND given palvelu & rooli -combination
- */
-export const hasPalveluRooliByOrganisaatioOid = (
-    organisaatiot: Array<KayttooikeusOrganisaatiot>,
-    organisaatioOid: string,
-    palveluRooli: string
-): boolean => {
-    return organisaatiot
-        .filter((organisaatio: KayttooikeusOrganisaatiot) => organisaatio.organisaatioOid === organisaatioOid)
-        .some((organisaatio: KayttooikeusOrganisaatiot) =>
-            organisaatioContainsAnyPalveluRooli(organisaatio, [palveluRooli])
-        );
-};
-
-/*
  * Check if given organisaatio contains at least one of the given palvelurooli
  */
 export const hasAnyPalveluRooli = (
@@ -55,7 +40,7 @@ export const isOnrRekisterinpitaja = (organisaatiot?: KayttooikeusOrganisaatiot[
 /*
  * Check if given organisaatio contains at least one of the given palveluRooli
  */
-export const organisaatioContainsAnyPalveluRooli = (
+const organisaatioContainsAnyPalveluRooli = (
     organisaatio: KayttooikeusOrganisaatiot,
     palveluRoolit: Array<string>
 ): boolean => {
@@ -67,7 +52,7 @@ export const organisaatioContainsAnyPalveluRooli = (
 /*
  * Check if KayttooikeusOikeudet contains at least one of the given palvelurooli
  */
-export const kayttooikeusMatchesAnyPalveluRooli = (
+const kayttooikeusMatchesAnyPalveluRooli = (
     kayttooikeus: KayttooikeusOikeudet,
     palveluRoolit: Array<string>
 ): boolean => {

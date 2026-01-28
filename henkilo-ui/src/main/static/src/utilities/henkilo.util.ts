@@ -1,15 +1,15 @@
-import { EmailOption } from '../types/emailoption.type';
 import { YhteystietoRyhma } from '../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
 import { MyonnettyKayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { WORK_ADDRESS, EMAIL } from '../types/constants';
 import { Henkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
+import { SelectOption } from './select';
 
 type RyhmaId = number;
 type CreateEmailOptions = {
-    emailSelection: Record<RyhmaId, EmailOption>;
+    emailSelection: Record<RyhmaId, SelectOption>;
     missingEmail: boolean;
     showMissingEmailNotification: boolean;
-    emailOptions: Array<EmailOption>;
+    emailOptions: Array<SelectOption>;
 };
 
 export const createEmailOptions = (
@@ -68,5 +68,5 @@ export const parseWorkEmails = (yhteystiedot?: Array<YhteystietoRyhma>) =>
         .filter((value) => !!value)
         .sort((a, b) => (a && b ? a.localeCompare(b) : 1));
 
-export const parseEmailOptions = (yhteystiedot?: Array<YhteystietoRyhma>): Array<EmailOption> =>
+export const parseEmailOptions = (yhteystiedot?: Array<YhteystietoRyhma>): Array<SelectOption> =>
     parseWorkEmails(yhteystiedot).map((email) => ({ value: email, label: email }));

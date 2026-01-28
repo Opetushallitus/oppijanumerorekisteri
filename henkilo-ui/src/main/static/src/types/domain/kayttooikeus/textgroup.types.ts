@@ -11,15 +11,3 @@ export type TextGroup = {
 export type TextGroupModify = {
     texts: Array<Text>;
 };
-
-export type TextGroupMap = {
-    id: number;
-    texts: {
-        [key: string]: string;
-    };
-};
-
-export type TextGroupArray = {
-    id: number;
-    texts: Array<Text>;
-};

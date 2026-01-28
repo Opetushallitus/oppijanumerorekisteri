@@ -31,11 +31,4 @@ export type OrganisaatioWithChildren = {
     parent: OrganisaatioWithChildren;
 };
 
-export type OrganisaatioTyyppi = 'ORGANISAATIO' | 'RYHMA';
-
-export type OrganisaatioCriteria = {
-    tyyppi?: OrganisaatioTyyppi;
-    tila?: Array<OrganisaatioStatus>;
-};
-
 export type OrganisaatioNameLookup = Record<string, Record<Asiointikieli, string>>;

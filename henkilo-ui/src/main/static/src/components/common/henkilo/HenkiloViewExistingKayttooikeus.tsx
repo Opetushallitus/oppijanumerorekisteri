@@ -4,7 +4,6 @@ import DatePicker from 'react-datepicker';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, SortingState } from '@tanstack/react-table';
 
 import { useAppDispatch } from '../../../store';
-import SuljeButton from './buttons/SuljeButton';
 import StaticUtils from '../StaticUtils';
 import { createEmailOptions } from '../../../utilities/henkilo.util';
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
@@ -292,16 +291,17 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                 header: () => L['HENKILO_KAYTTOOIKEUS_SULJE'],
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => (
-                    <SuljeButton
-                        suljeAction={() =>
+                    <ConfirmButton
+                        action={() =>
                             deleteKayttooikeusryhma({
                                 henkiloOid: props.oidHenkilo,
                                 organisationOid: getValue().organisaatioOid,
                                 kayttooikeusryhmaId: getValue().ryhmaId,
                             })
                         }
+                        normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_SULJE']}
+                        confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_SULJE_CONFIRM']}
                         disabled={false}
-                        L={L}
                     />
                 ),
                 enableSorting: false,
