@@ -22,7 +22,7 @@ import { JarjestelmatunnusEditPage } from './components/jarjestelmatunnus/Jarjes
 import { OppijaViewPage } from './components/henkilo/OppijaViewPage';
 import { VirkailijaViewPage } from './components/henkilo/VirkailijaViewPage';
 import { VirkailijahakuPage } from './components/virkailija/VirkailijahakuPage';
-import { VirkailijaEditPage } from './components/virkailija/VirkailijaEditPage';
+import { VirkailijaPage } from './components/virkailija/VirkailijaPage';
 
 export const AppRoutes = () => (
     <Routes>
@@ -36,8 +36,9 @@ export const AppRoutes = () => (
             <Route path="/virkailija/luonti" element={<VirkailijaCreateContainer />} />
             <Route path="/oppija/luonti" element={<FormSwitch />} />
             <Route path="/oppija/:oid" element={<OppijaViewPage />} />
+            <Route path="/virkailijahaku" element={<VirkailijahakuPage />} />
             <Route path="/virkailija/:oid" element={<VirkailijaViewPage />} />
-            <Route path="/virkailija2/:oid" element={<VirkailijaEditPage />} />
+            <Route path="/virkailija2/:oid" element={<VirkailijaPage />} />
             <Route path="/admin/:oid" element={<AdminRedirect />} />
             <Route path="/oppija/:oid/vtjvertailu" element={<VtjVertailuPage henkiloType="oppija" />} />
             <Route path="/virkailija/:oid/vtjvertailu" element={<VtjVertailuPage henkiloType="virkailija" />} />
@@ -53,7 +54,6 @@ export const AppRoutes = () => (
             <Route path="/jarjestelmatunnus" element={<JarjestelmatunnusListPage />} />
             <Route path="/jarjestelmatunnus/luonti" element={<JarjestelmatunnusCreatePage />} />
             <Route path="/jarjestelmatunnus/:oid" element={<JarjestelmatunnusEditPage />} />
-            <Route path="/virkailijahaku" element={<VirkailijahakuPage />} />
         </Route>
     </Routes>
 );

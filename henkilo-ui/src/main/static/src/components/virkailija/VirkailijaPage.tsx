@@ -17,7 +17,7 @@ import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpen
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
 import { OphDsCard } from '../design-system/OphDsCard';
 
-export const VirkailijaEditPage = () => {
+export const VirkailijaPage = () => {
     const { oid } = useParams();
     if (!oid) {
         return;
