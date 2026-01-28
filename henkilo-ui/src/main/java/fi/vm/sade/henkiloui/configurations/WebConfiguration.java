@@ -11,19 +11,14 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/kayttaja/*")
-                 .setViewName(kayttajaBundle);
         registry.addViewController("/kayttaja/**")
                  .setViewName(kayttajaBundle);
 
-        // this does not forward paths with e.g. dots so things like favicon.ico (and indeed main.html) work
-        registry.addViewController("/{path:\\w+}")
-                 .setViewName(mainBundle);
-
-        // rest of the paths to non-static resources
         registry.addViewController("/")
                  .setViewName(mainBundle);
-        registry.addViewController("/{first:^(?!static$)[^/]+}/**")
+        registry.addViewController("/{spring:\\w+}")
+                 .setViewName(mainBundle);
+        registry.addViewController("/{spring:(?!static)\\w+}/**")
                  .setViewName(mainBundle);
     }
 }
