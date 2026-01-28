@@ -11,6 +11,7 @@ import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { jarjestelmatunnusNavigation } from '../navigation/navigationconfigurations';
 import { JarjestelmatunnusPerustiedot } from './JarjestelmatunnusPerustiedot';
+import { OphDsCard } from '../design-system/OphDsCard';
 
 import './JarjestelmatunnusEditPage.css';
 
@@ -28,24 +29,30 @@ export const JarjestelmatunnusEditPage = () => {
 
     return (
         <OphDsPage header={L['JARJESTELMATUNNUKSEN_HALLINTA']!}>
-            <JarjestelmatunnusPerustiedot />
-            <hr />
-            <HenkiloViewOrganisationContent henkiloOid={params.oid} />
-            <hr />
-            <HenkiloViewExistingKayttooikeus
-                existingKayttooikeusRef={existingKayttooikeusRef}
-                isPalvelukayttaja
-                oidHenkilo={params.oid}
-                isOmattiedot={false}
-            />
-            <hr />
-            <HenkiloViewExpiredKayttooikeus oidHenkilo={params.oid} isOmattiedot={false} />
-            <hr />
-            <HenkiloViewCreateKayttooikeus
-                oidHenkilo={params.oid}
-                existingKayttooikeusRef={existingKayttooikeusRef}
-                isPalvelukayttaja
-            />
+            <OphDsCard>
+                <JarjestelmatunnusPerustiedot />
+            </OphDsCard>
+            <OphDsCard>
+                <HenkiloViewOrganisationContent henkiloOid={params.oid} />
+            </OphDsCard>
+            <OphDsCard>
+                <HenkiloViewExistingKayttooikeus
+                    existingKayttooikeusRef={existingKayttooikeusRef}
+                    isPalvelukayttaja
+                    oidHenkilo={params.oid}
+                    isOmattiedot={false}
+                />
+            </OphDsCard>
+            <OphDsCard>
+                <HenkiloViewExpiredKayttooikeus oidHenkilo={params.oid} isOmattiedot={false} />
+            </OphDsCard>
+            <OphDsCard>
+                <HenkiloViewCreateKayttooikeus
+                    oidHenkilo={params.oid}
+                    existingKayttooikeusRef={existingKayttooikeusRef}
+                    isPalvelukayttaja
+                />
+            </OphDsCard>
         </OphDsPage>
     );
 };
