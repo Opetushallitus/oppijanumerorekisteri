@@ -1,13 +1,13 @@
 import React, { useMemo, useState } from 'react';
-import classNames from 'classnames';
 
 import { isValidPassword } from '../../../validation/PasswordValidator';
 import { useLocalisations } from '../../../selectors';
 import { usePutPasswordMutation } from '../../../api/kayttooikeus';
 import { useAppDispatch } from '../../../store';
 import { add } from '../../../slices/toastSlice';
+import { OphDsInput } from '../../design-system/OphDsInput';
 
-import './PasswordPopupContent.css';
+import styles from './PasswordPopupContent.module.css';
 
 type OwnProps = {
     oidHenkilo: string;
@@ -51,45 +51,32 @@ const PasswordPopupContent = ({ oidHenkilo }: OwnProps) => {
             });
     }
 
-    const passwordClass = classNames('oph-input haka-input', {
-        'password-invalid': passwordValid === false,
-    });
-
-    const passwordConfirmedClass = classNames('oph-input haka-input', {
-        'password-invalid': passwordConfirmedValid === false,
-    });
-
     return (
-        <div id="password-popup-form">
-            <div className="password-controls">
-                <label>{L['SALASANA_UUSI']}</label>
-                <input
-                    className={passwordClass}
-                    type="password"
-                    aria-required="true"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-            </div>
-            <div className="password-controls">
-                <label>{L['SALASANA_VAHVISTA']}</label>
-                <input
-                    className={passwordConfirmedClass}
-                    type="password"
-                    aria-required="true"
-                    value={passwordConfirmed}
-                    onChange={(e) => setPasswordConfirmed(e.target.value)}
-                />
-            </div>
+        <div className={styles.passwordPopupContent}>
+            <OphDsInput
+                id="password"
+                label={L['SALASANA_UUSI']!}
+                type="password"
+                error={passwordValid ? undefined : L['SALASANA_EI_TAYTA_VAATIMUKSIA']}
+                onChange={setPassword}
+            />
+            <OphDsInput
+                id="passwordConfirmed"
+                label={L['SALASANA_VAHVISTA']!}
+                type="password"
+                error={passwordConfirmedValid ? undefined : L['SALASANA_EI_TASMAA']}
+                onChange={setPasswordConfirmed}
+            />
             <p>{L['SALASANA_SAANTO']}</p>
-            <button
-                className="oph-button oph-button-primary"
-                disabled={!passwordValid || !passwordConfirmedValid}
-                onClick={() => changePassword()}
-            >
-                {L['SALASANA_ASETA']}
-            </button>
-            <div className="clear" />
+            <div>
+                <button
+                    className="oph-ds-button"
+                    disabled={!passwordValid || !passwordConfirmedValid}
+                    onClick={() => changePassword()}
+                >
+                    {L['SALASANA_ASETA']}
+                </button>
+            </div>
         </div>
     );
 };

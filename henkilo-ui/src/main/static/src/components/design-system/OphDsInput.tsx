@@ -5,11 +5,12 @@ type PageProps = {
     disabled?: boolean;
     id: string;
     error?: string;
+    type?: string;
     label: string;
     onChange: (s: string) => void;
 };
 
-export const OphDsInput = ({ defaultValue, disabled, id, error, label, onChange }: PageProps) => {
+export const OphDsInput = ({ defaultValue, disabled, id, error, label, onChange, type }: PageProps) => {
     return (
         <div>
             <label htmlFor={id} className="oph-ds-label">
@@ -18,10 +19,10 @@ export const OphDsInput = ({ defaultValue, disabled, id, error, label, onChange 
             <input
                 id={id}
                 name={id}
-                type="text"
+                type={type ?? 'text'}
                 defaultValue={defaultValue}
                 onChange={(e) => onChange(e.target.value)}
-                className={`oph-ds-input ${error ? 'oph-ds-input-error' : ''}`}
+                className={`oph-ds-input ${error !== undefined ? 'oph-ds-input-error' : ''}`}
                 disabled={disabled}
                 autoComplete="false"
             />

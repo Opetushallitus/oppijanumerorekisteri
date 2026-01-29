@@ -36,6 +36,12 @@ export async function gotoVirkailija(page: Page, oid: string) {
             input: page.getByLabel('Lisää uusi tunnus'),
             submit: page.getByRole('button', { name: 'Tallenna tunnus' }),
         },
-        password: {},
+        password: {
+            password: page.getByLabel('Uusi salasana'),
+            passwordError: page.locator('input[name="password"] + span'),
+            passwordConfirmed: page.getByLabel('Vahvista salasana'),
+            passwordConfirmedError: page.locator('input[name="passwordConfirmed"] + span'),
+            submit: page.getByLabel('Aseta salasana').getByRole('button', { name: 'Aseta salasana' }),
+        },
     };
 }

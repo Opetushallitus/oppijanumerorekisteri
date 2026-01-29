@@ -77,14 +77,14 @@ test.describe('virkailijan perustiedot', () => {
         await buttons.haka.click();
         await expect(haka.tunnisteet).toHaveCount(0);
 
-        await haka.input.fill('uusitunnus');
-        await haka.submit.click();
-
         await page.route('/kayttooikeus-service/henkilo/1.2.3.4.66/hakatunnus', async (route) => {
             await route.fulfill({
                 json: ['uusitunnus'],
             });
         });
+
+        await haka.input.fill('uusitunnus');
+        await haka.submit.click();
 
         await expect(haka.tunnisteet).toHaveCount(1);
         await expect(haka.get(1).tunniste).toHaveText('uusitunnus');
@@ -97,5 +97,42 @@ test.describe('virkailijan perustiedot', () => {
 
         await haka.get(1).remove.click();
         await expect(haka.tunnisteet).toHaveCount(0);
+    });
+
+    test('changes password', async ({ page }) => {
+        const { buttons, password } = await gotoVirkailija(page, oid);
+
+        await buttons.password.click();
+        await expect(password.submit).toBeDisabled();
+        await expect(password.passwordError).toHaveText('Salasana ei täytä muotovaatimuksia.');
+        await expect(password.passwordConfirmedError).not.toBeAttached();
+
+        await password.password.fill('password1!');
+        await expect(password.submit).toBeDisabled();
+        await expect(password.passwordError).toHaveText('Salasana ei täytä muotovaatimuksia.');
+        await expect(password.passwordConfirmedError).toHaveText(
+            'Salasanan vahvistus ei täsmää uuden salasanan kanssa.'
+        );
+
+        await password.password.fill('asdfgASDFG12345!#$%*');
+        await expect(password.submit).toBeDisabled();
+        await expect(password.passwordError).not.toBeAttached();
+        await expect(password.passwordConfirmedError).toHaveText(
+            'Salasanan vahvistus ei täsmää uuden salasanan kanssa.'
+        );
+
+        await password.passwordConfirmed.fill('asdfgASDFG12345!#$%*');
+        await expect(password.submit).toBeEnabled();
+        await expect(password.passwordError).not.toBeAttached();
+        await expect(password.passwordConfirmedError).not.toBeAttached();
+
+        await page.route('/kayttooikeus-service/henkilo/1.2.3.4.66/password', async (route) => {
+            await route.fulfill({
+                status: 200,
+            });
+        });
+
+        await password.submit.click();
+        await expect(toastWithText(page, 'Salasanan tallennus onnistui.')).toBeVisible();
     });
 });
