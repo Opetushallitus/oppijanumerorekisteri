@@ -3,7 +3,7 @@ import { useLocation } from 'react-router';
 
 import { RekisteroidyPage } from './RekisteroidyPage';
 import Loader from '../../components/common/icons/Loader';
-import VirhePage from '../../components/common/page/VirhePage';
+import VirhePage from '../VirhePage';
 import { toSupportedLocale, useLocalisations } from '../../selectors';
 import { useGetKutsuByTokenQuery } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';

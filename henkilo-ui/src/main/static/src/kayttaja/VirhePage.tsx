@@ -1,9 +1,9 @@
 import React, { ReactNode } from 'react';
 
 import './VirhePage.css';
-import Button from '../button/Button';
-import { useLocalisations } from '../../../selectors';
-import { useTitle } from '../../../useTitle';
+import Button from '../components/common/button/Button';
+import { useLocalisations } from '../selectors';
+import { useTitle } from '../useTitle';
 
 type OwnProps = {
     topic?: string;

@@ -8,7 +8,7 @@ import ophLogo from '../img/logo_oph.svg';
 import okmLogo from '../img/logo_okm.png';
 import { useGetLocalisationsQuery } from '../api/lokalisointi';
 import { useGetOmattiedotQuery } from '../api/kayttooikeus';
-import VirhePage from '../components/common/page/VirhePage';
+import VirhePage from './VirhePage';
 import { OphDsToasts } from '../components/design-system/OphDsToast';
 
 const App = () => {

@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router';
 
 import VahvaTunnistusInfoPage from './VahvaTunnistusInfoPage';
-import VirhePage from '../../components/common/page/VirhePage';
+import VirhePage from '../VirhePage';
 import { toSupportedLocale } from '../../selectors';
 
 const VahvaTunnistusInfoContainer = () => {

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import VirhePage from '../../components/common/page/VirhePage';
+import VirhePage from '../VirhePage';
 import { useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
 import { useParams } from 'react-router';
