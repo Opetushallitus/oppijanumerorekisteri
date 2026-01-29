@@ -13,5 +13,5 @@ public interface TiedoteRepository extends JpaRepository<Tiedote, UUID> {
   @Query(
       value = "SELECT * FROM tiedote WHERE suomi_fi_viesti_sent = false FOR UPDATE SKIP LOCKED",
       nativeQuery = true)
-  List<Tiedote> findBySuomiFiViestiSentFalse();
+  List<Tiedote> findBySuomiFiViestiNotSent();
 }

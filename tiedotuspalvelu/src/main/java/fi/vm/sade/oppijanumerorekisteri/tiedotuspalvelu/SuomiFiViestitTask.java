@@ -15,8 +15,8 @@ public class SuomiFiViestitTask {
 
   @Transactional
   public void execute() {
-    log.debug("Running recurringSuomiFiViestiTask");
-    var unsentTiedotteet = tiedoteRepository.findBySuomiFiViestiSentFalse();
+    log.info("Running SuomiFiViestiTask");
+    var unsentTiedotteet = tiedoteRepository.findBySuomiFiViestiNotSent();
     for (var tiedote : unsentTiedotteet) {
       try {
         suomiFiViestitService.sendSuomiFiViesti(tiedote);
@@ -26,5 +26,6 @@ public class SuomiFiViestitTask {
         log.error("Failed to process tiedote {}", tiedote.getId(), e);
       }
     }
+    log.info("Finnished running SuomiFiViestiTask");
   }
 }

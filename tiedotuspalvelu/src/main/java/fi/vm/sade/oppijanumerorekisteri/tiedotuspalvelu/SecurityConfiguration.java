@@ -4,7 +4,6 @@ import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsServic
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.apereo.cas.client.session.SingleSignOutFilter;
 import org.apereo.cas.client.validation.Cas30ServiceTicketValidator;
