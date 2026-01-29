@@ -1,0 +1,16 @@
+.hakaPopupContent {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.hakaTunnisteList > li:nth-child(odd) {
+    background-color: #F6F6F6;
+}
+
+.hakaTunnisteList > li {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px;
+}

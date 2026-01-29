@@ -111,7 +111,7 @@ function AdminUserContent(props: OwnProps) {
         const buttonPopupStyles = {
             left: '0px',
             top: '3rem',
-            width: '15rem',
+            width: '350px',
             padding: '30px',
         };
         const disabled = henkilo?.duplicate || henkilo?.passivoitu;

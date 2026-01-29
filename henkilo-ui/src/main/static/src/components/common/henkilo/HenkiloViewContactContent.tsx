@@ -158,6 +158,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
                     {editing && !isFromVTJ(ryhma) && !isLastWorkEmail(yhteystiedot, idx) ? (
                         <button
                             className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
+                            title={L['POISTA']}
                             onClick={() => removeYhteystieto(idx)}
                         />
                     ) : null}

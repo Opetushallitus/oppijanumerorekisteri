@@ -90,7 +90,7 @@ function VirkailijaUserContent(props: OwnProps) {
                 styles={{
                     left: '0px',
                     top: '3rem',
-                    width: '15rem',
+                    width: '350px',
                     padding: '30px',
                 }}
                 disabled={duplicate || passivoitu}

@@ -4,8 +4,9 @@ import { useGetHakatunnisteetQuery, usePutHakatunnisteetMutation } from '../../.
 import { useLocalisations } from '../../../selectors';
 import { useAppDispatch } from '../../../store';
 import { add } from '../../../slices/toastSlice';
+import { OphDsInput } from '../../design-system/OphDsInput';
 
-import './HakaPopupContent.css';
+import styles from './HakaPopupContent.module.css';
 
 type OwnProps = {
     henkiloOid: string;
@@ -49,39 +50,33 @@ const HakatunnistePopupContent = ({ henkiloOid }: OwnProps) => {
     }
 
     return (
-        <div className="hakapopupcontent">
-            <ul>
-                {hakatunnisteet && hakatunnisteet?.length > 0 ? (
-                    hakatunnisteet.map((hakatunniste) => (
-                        <li className="tag" key={hakatunniste}>
-                            <span>{hakatunniste}</span>{' '}
-                            <a className="remove" href="#poista" onClick={() => removeHakatunniste(hakatunniste)}>
-                                {L['POISTA']}
-                            </a>
+        <div className={styles.hakaPopupContent}>
+            {hakatunnisteet && hakatunnisteet?.length > 0 ? (
+                <ul className={styles.hakaTunnisteList}>
+                    {hakatunnisteet.map((hakatunniste) => (
+                        <li key={hakatunniste}>
+                            <span>{hakatunniste}</span>
+                            <button
+                                className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
+                                title={L['POISTA']}
+                                onClick={() => removeHakatunniste(hakatunniste)}
+                            />
                         </li>
-                    ))
-                ) : (
-                    <span className="oph-h4 oph-strong hakapopup">{L['EI_HAKATUNNUKSIA']}</span>
-                )}
-            </ul>
-            <div className="oph-field oph-field-is-required">
-                <input
-                    type="text"
-                    className="oph-input haka-input"
-                    aria-required="true"
-                    placeholder="Lisää uusi tunnus"
-                    value={newTunniste}
-                    onChange={(e) => setNewTunniste(e.target.value)}
-                    onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) =>
-                        e.key === 'Enter' ? addHakatunniste() : null
-                    }
-                />
-                {hakatunnisteet?.includes(newTunniste) ? (
-                    <div className="oph-field-text oph-error">{L['HAKATUNNISTEET_VIRHE_OLEMASSAOLEVA']}</div>
-                ) : null}
+                    ))}
+                </ul>
+            ) : (
+                <div>{L['EI_HAKATUNNUKSIA']}</div>
+            )}
+            <OphDsInput
+                id="hakatunniste"
+                label="Lisää uusi tunnus"
+                defaultValue={newTunniste}
+                onChange={(t) => setNewTunniste(t)}
+            />
+            <div>
                 <button
-                    className="save oph-button oph-button-primary"
-                    disabled={!!hakatunnisteet?.includes(newTunniste)}
+                    className="oph-ds-button"
+                    disabled={!newTunniste || !!hakatunnisteet?.includes(newTunniste)}
                     onClick={() => addHakatunniste()}
                 >
                     {L['TALLENNA_TUNNUS']}

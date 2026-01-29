@@ -320,6 +320,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
                                             {kayttooikeusRyhmaSelection.label}
                                             <button
                                                 className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
+                                                title={L['POISTA']}
                                                 onClick={() =>
                                                     _removeKayttooikeusryhmaSelection(kayttooikeusRyhmaSelection)
                                                 }

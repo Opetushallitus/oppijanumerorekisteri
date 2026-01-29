@@ -95,6 +95,7 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
                     <h3>{L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_ORGANISAATIO']}</h3>
                     <button
                         className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
+                        title={L['POISTA']}
                         onClick={() => removeOrganisation()}
                     />
                 </div>
