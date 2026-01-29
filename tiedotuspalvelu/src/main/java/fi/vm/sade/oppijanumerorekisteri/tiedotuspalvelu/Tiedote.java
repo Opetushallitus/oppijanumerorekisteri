@@ -39,6 +39,10 @@ public class Tiedote {
   @Column(nullable = false, insertable = false)
   private OffsetDateTime updated;
 
+  @Column private OffsetDateTime processedAt;
+
+  @Column private OffsetDateTime nextRetry;
+
   @Column(nullable = false)
-  private boolean suomiFiViestiSent;
+  private int retryCount;
 }

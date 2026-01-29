@@ -11,7 +11,8 @@ public interface TiedoteRepository extends JpaRepository<Tiedote, UUID> {
   List<Tiedote> findByOppijanumeroOrderByIdAsc(String oppijanumero);
 
   @Query(
-      value = "SELECT * FROM tiedote WHERE suomi_fi_viesti_sent = false FOR UPDATE SKIP LOCKED",
+      value =
+          "SELECT * FROM tiedote WHERE processed_at IS NULL AND (next_retry IS NULL OR next_retry <= NOW()) FOR UPDATE SKIP LOCKED",
       nativeQuery = true)
-  List<Tiedote> findBySuomiFiViestiNotSent();
+  List<Tiedote> findByProcessedAtIsNull();
 }

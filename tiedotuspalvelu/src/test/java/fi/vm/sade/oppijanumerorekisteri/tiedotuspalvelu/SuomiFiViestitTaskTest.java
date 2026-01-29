@@ -10,7 +10,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import java.util.UUID;
@@ -102,7 +102,7 @@ public class SuomiFiViestitTaskTest {
             Tiedote.builder()
                 .oppijanumero("1.2.246.562.24.00000000001")
                 .url("https://a.example")
-                .suomiFiViestiSent(false)
+                .processedAt(null)
                 .build());
 
     suomiFiViestitTask.execute();
@@ -118,6 +118,83 @@ public class SuomiFiViestitTaskTest {
     wireMock.verify(1, postRequestedFor(urlEqualTo("/v2/messages/electronic")));
     wireMock.verify(1, postRequestedFor(urlEqualTo("/v1/token")));
 
-    assertTrue(tiedoteRepository.findById(tiedote.getId()).orElseThrow().isSuomiFiViestiSent());
+    assertNotNull(tiedoteRepository.findById(tiedote.getId()).orElseThrow().getProcessedAt());
+  }
+
+  @Test
+  public void respectsNextRetryTime() {
+    wireMock.stubFor(
+        get(urlPathMatching("/henkilo/.*"))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        """
+                        {
+                          "oid": "1.2.246.562.98.00000000001",
+                          "henkilotunnus": "010170-9999"
+                        }
+                        """)));
+    wireMock.stubFor(
+        post(urlEqualTo("/v1/token"))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody("{\"access_token\": \"abc\", \"expires_in\": 3600}")));
+    wireMock.stubFor(
+        post(urlEqualTo("/v2/messages/electronic")).willReturn(aResponse().withStatus(200)));
+
+    var futureTiedote =
+        tiedoteRepository.save(
+            Tiedote.builder()
+                .oppijanumero("1.2.246.562.24.00000000001")
+                .url("https://a.example")
+                .processedAt(null)
+                .nextRetry(java.time.OffsetDateTime.now().plusHours(1))
+                .retryCount(1)
+                .build());
+
+    var pastTiedote =
+        tiedoteRepository.save(
+            Tiedote.builder()
+                .oppijanumero("1.2.246.562.24.00000000002")
+                .url("https://b.example")
+                .processedAt(null)
+                .nextRetry(java.time.OffsetDateTime.now().minusMinutes(1))
+                .retryCount(1)
+                .build());
+
+    suomiFiViestitTask.execute();
+
+    var futureTiedoteUpdated = tiedoteRepository.findById(futureTiedote.getId()).orElseThrow();
+    assertNull(futureTiedoteUpdated.getProcessedAt());
+    assertEquals(1, futureTiedoteUpdated.getRetryCount());
+
+    var pastTiedoteUpdated = tiedoteRepository.findById(pastTiedote.getId()).orElseThrow();
+    assertNotNull(pastTiedoteUpdated.getProcessedAt());
+    wireMock.verify(1, postRequestedFor(urlEqualTo("/v2/messages/electronic")));
+  }
+
+  @Test
+  public void handlesOppijanumerorekisteriFailure() {
+    wireMock.stubFor(get(urlPathMatching("/henkilo/.*")).willReturn(aResponse().withStatus(500)));
+
+    var tiedote =
+        tiedoteRepository.save(
+            Tiedote.builder()
+                .oppijanumero("1.2.246.562.24.00000000001")
+                .url("https://a.example")
+                .processedAt(null)
+                .build());
+
+    suomiFiViestitTask.execute();
+
+    wireMock.verify(0, postRequestedFor(urlEqualTo("/v2/messages/electronic")));
+    var updatedTiedote = tiedoteRepository.findById(tiedote.getId()).orElseThrow();
+    assertNull(updatedTiedote.getProcessedAt());
+    assertEquals(1, updatedTiedote.getRetryCount());
+    assertNotNull(updatedTiedote.getNextRetry());
   }
 }
