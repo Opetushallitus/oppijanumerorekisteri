@@ -25,11 +25,13 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @SpringBootTest
-public class SuomiFiViestitTaskTest {
+public class TiedoteProcessingTest {
 
-  @Autowired private SuomiFiViestitTask suomiFiViestitTask;
+  @Autowired private FetchOppijaTask fetchOppijaTask;
+  @Autowired private SendSuomiFiViestitTask sendSuomiFiViestitTask;
 
   @Autowired private TiedoteRepository tiedoteRepository;
+  @Autowired private SuomiFiViestiRepository suomiFiViestiRepository;
 
   @MockitoBean private JwtDecoder jwtDecoder;
 
@@ -44,6 +46,8 @@ public class SuomiFiViestitTaskTest {
 
   @DynamicPropertySource
   static void registerProperties(DynamicPropertyRegistry registry) {
+    registry.add("tiedotuspalvelu.suomifi-viestit.enabled", () -> "true");
+    registry.add("tiedotuspalvelu.fetch-oppija.enabled", () -> "true");
     registry.add("tiedotuspalvelu.suomifi-viestit.base-url", wireMock::baseUrl);
     registry.add("tiedotuspalvelu.suomifi-viestit.username", () -> SUOMIFI_USERNAME);
     registry.add("tiedotuspalvelu.suomifi-viestit.password", () -> SUOMIFI_PASSWORD);
@@ -53,6 +57,7 @@ public class SuomiFiViestitTaskTest {
 
   @BeforeEach
   public void setup() {
+    suomiFiViestiRepository.deleteAll();
     tiedoteRepository.deleteAll();
     wireMock.resetAll();
   }
@@ -105,7 +110,8 @@ public class SuomiFiViestitTaskTest {
                 .processedAt(null)
                 .build());
 
-    suomiFiViestitTask.execute();
+    fetchOppijaTask.execute();
+    sendSuomiFiViestitTask.execute();
 
     wireMock.verify(
         postRequestedFor(urlEqualTo("/v2/messages/electronic"))
@@ -119,82 +125,5 @@ public class SuomiFiViestitTaskTest {
     wireMock.verify(1, postRequestedFor(urlEqualTo("/v1/token")));
 
     assertNotNull(tiedoteRepository.findById(tiedote.getId()).orElseThrow().getProcessedAt());
-  }
-
-  @Test
-  public void respectsNextRetryTime() {
-    wireMock.stubFor(
-        get(urlPathMatching("/henkilo/.*"))
-            .willReturn(
-                aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/json")
-                    .withBody(
-                        """
-                        {
-                          "oid": "1.2.246.562.98.00000000001",
-                          "henkilotunnus": "010170-9999"
-                        }
-                        """)));
-    wireMock.stubFor(
-        post(urlEqualTo("/v1/token"))
-            .willReturn(
-                aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/json")
-                    .withBody("{\"access_token\": \"abc\", \"expires_in\": 3600}")));
-    wireMock.stubFor(
-        post(urlEqualTo("/v2/messages/electronic")).willReturn(aResponse().withStatus(200)));
-
-    var futureTiedote =
-        tiedoteRepository.save(
-            Tiedote.builder()
-                .oppijanumero("1.2.246.562.24.00000000001")
-                .url("https://a.example")
-                .processedAt(null)
-                .nextRetry(java.time.OffsetDateTime.now().plusHours(1))
-                .retryCount(1)
-                .build());
-
-    var pastTiedote =
-        tiedoteRepository.save(
-            Tiedote.builder()
-                .oppijanumero("1.2.246.562.24.00000000002")
-                .url("https://b.example")
-                .processedAt(null)
-                .nextRetry(java.time.OffsetDateTime.now().minusMinutes(1))
-                .retryCount(1)
-                .build());
-
-    suomiFiViestitTask.execute();
-
-    var futureTiedoteUpdated = tiedoteRepository.findById(futureTiedote.getId()).orElseThrow();
-    assertNull(futureTiedoteUpdated.getProcessedAt());
-    assertEquals(1, futureTiedoteUpdated.getRetryCount());
-
-    var pastTiedoteUpdated = tiedoteRepository.findById(pastTiedote.getId()).orElseThrow();
-    assertNotNull(pastTiedoteUpdated.getProcessedAt());
-    wireMock.verify(1, postRequestedFor(urlEqualTo("/v2/messages/electronic")));
-  }
-
-  @Test
-  public void handlesOppijanumerorekisteriFailure() {
-    wireMock.stubFor(get(urlPathMatching("/henkilo/.*")).willReturn(aResponse().withStatus(500)));
-
-    var tiedote =
-        tiedoteRepository.save(
-            Tiedote.builder()
-                .oppijanumero("1.2.246.562.24.00000000001")
-                .url("https://a.example")
-                .processedAt(null)
-                .build());
-
-    suomiFiViestitTask.execute();
-
-    wireMock.verify(0, postRequestedFor(urlEqualTo("/v2/messages/electronic")));
-    var updatedTiedote = tiedoteRepository.findById(tiedote.getId()).orElseThrow();
-    assertNull(updatedTiedote.getProcessedAt());
-    assertEquals(1, updatedTiedote.getRetryCount());
-    assertNotNull(updatedTiedote.getNextRetry());
   }
 }

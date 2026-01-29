@@ -15,13 +15,21 @@ import org.springframework.context.annotation.Configuration;
 @AllArgsConstructor
 public class DbSchedulerConfiguration {
 
-  private final SuomiFiViestitTask suomiFiViestitTask;
+  private final FetchOppijaTask fetchOppijaTask;
+  private final SendSuomiFiViestitTask sendSuomiFiViestitTask;
+
+  @Bean
+  @ConditionalOnProperty(name = "tiedotuspalvelu.fetch-oppija.enabled", havingValue = "true")
+  public Task<Void> fetchOppijaTaskBean() {
+    return Tasks.recurring("fetch-oppija-task", Schedules.fixedDelay(Duration.ofSeconds(10)))
+        .execute((inst, ctx) -> fetchOppijaTask.execute());
+  }
 
   @Bean
   @ConditionalOnProperty(name = "tiedotuspalvelu.suomifi-viestit.enabled", havingValue = "true")
-  public Task<Void> suomiFiViestitTaskBean() {
+  public Task<Void> sendSuomiFiViestitTaskBean() {
     return Tasks.recurring(
             "send-suomi-fi-viestit-task", Schedules.fixedDelay(Duration.ofSeconds(10)))
-        .execute((inst, ctx) -> suomiFiViestitTask.execute());
+        .execute((inst, ctx) -> sendSuomiFiViestitTask.execute());
   }
 }

@@ -7,12 +7,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TiedoteRepository extends JpaRepository<Tiedote, UUID> {
-  List<Tiedote> findByOppijanumeroOrderByIdAsc(String oppijanumero);
-
+public interface SuomiFiViestiRepository extends JpaRepository<SuomiFiViesti, UUID> {
   @Query(
       value =
-          "SELECT * FROM tiedote WHERE processed_at IS NULL AND (next_retry IS NULL OR next_retry <= NOW()) FOR UPDATE SKIP LOCKED",
+          "SELECT * FROM suomifi_viesti WHERE processed_at IS NULL AND (next_retry IS NULL OR next_retry <= NOW()) FOR UPDATE SKIP LOCKED",
       nativeQuery = true)
-  List<Tiedote> findUnprocessed();
+  List<SuomiFiViesti> findUnprocessed();
 }

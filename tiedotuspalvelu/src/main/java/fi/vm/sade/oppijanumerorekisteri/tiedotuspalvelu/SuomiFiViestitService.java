@@ -13,9 +13,10 @@ public class SuomiFiViestitService {
   private final SuomiFiViestitClient suomiFiViestitClient;
   private final OppijanumerorekisteriClient oppijanumerorekisteriClient;
   private final TiedotuspalveluProperties tiedotuspalveluProperties;
+  private final SuomiFiViestiRepository suomiFiViestiRepository;
+  private final TiedoteRepository tiedoteRepository;
 
-  public void sendSuomiFiViesti(Tiedote tiedote) {
-    var henkilotieto = oppijanumerorekisteriClient.getHenkilotieto(tiedote.getOppijanumero());
+  public void sendSuomiFiViesti(Tiedote tiedote, SuomiFiViesti suomiFiViesti) {
     var request =
         new SuomiFiViestitElectronicMessageRequest(
             new ElectronicPart(
@@ -30,7 +31,7 @@ public class SuomiFiViestitService {
                 "Uusi tiedote",
                 "Normal"),
             tiedote.getId().toString(),
-            new Recipient(henkilotieto.henkilotunnus()),
+            new Recipient(suomiFiViesti.getHenkilotunnus()),
             new Sender(tiedotuspalveluProperties.suomifiViestit().senderServiceId()));
     suomiFiViestitClient.send(request);
     log.info(
