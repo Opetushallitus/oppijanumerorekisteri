@@ -23,6 +23,7 @@ export const OphDsInput = ({ defaultValue, disabled, id, error, label, onChange 
                 onChange={(e) => onChange(e.target.value)}
                 className={`oph-ds-input ${error ? 'oph-ds-input-error' : ''}`}
                 disabled={disabled}
+                autoComplete="false"
             />
             {error && <span className="oph-ds-error">{error}</span>}
         </div>

@@ -1,3 +1,7 @@
 {
-    "username": "testi"
+    "username": "testi",
+    "mfaProvider": null,
+    "kayttajaTyyppi": "virkailija",
+    "etunimet": "etu nimi",
+    "sukunimi": "suku-nimi"
 }

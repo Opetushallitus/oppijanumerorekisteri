@@ -30,7 +30,24 @@
             "ryhmaKuvaus": "yhteystietotyyppi1",
             "ryhmaAlkuperaTieto": "alkupera2",
             "readOnly": false,
-            "yhteystieto": []
+            "yhteystieto": [
+                {
+                    "yhteystietotyyppi": "YHTEYSTIETO_SAHKOPOSTI",
+                    "yhteystietoArvo": "e@mail.fi"
+                }
+            ]
+        },
+        {
+            "id": 234634,
+            "ryhmaKuvaus": "yhteystietotyyppi2",
+            "ryhmaAlkuperaTieto": "alkupera2",
+            "readOnly": false,
+            "yhteystieto": [
+                {
+                    "yhteystietoTyyppi": "YHTEYSTIETO_SAHKOPOSTI",
+                    "yhteystietoArvo": "etu@suku.fi"
+                }
+            ]
         }
     ],
     "yksilointivirheet": [],

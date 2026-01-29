@@ -18,7 +18,7 @@ import styles from './VirkailijaPerustiedot.module.css';
 import { useGetHenkiloQuery } from '../../api/oppijanumerorekisteri';
 import { parseWorkEmails } from '../../utilities/henkilo.util';
 
-const VirkailijaPerustiedotForm = ({ oid, cancel }: { oid: string; cancel: () => void }) => {
+const VirkailijaPerustiedotForm = ({ oid, closeForm }: { oid: string; closeForm: () => void }) => {
     const { L } = useLocalisations();
     const dispatch = useAppDispatch();
     const { data: kayttajatiedot } = useGetKayttajatiedotQuery(oid);
@@ -35,6 +35,7 @@ const VirkailijaPerustiedotForm = ({ oid, cancel }: { oid: string; cancel: () =>
         if (isValidKayttajatunnus(username) && username !== kayttajatiedot?.username) {
             await putKayttajatiedot({ oid, username })
                 .unwrap()
+                .then(() => closeForm())
                 .catch((error) => {
                     const errorKey =
                         isApiError(error) && error.data.message.includes('username_unique')
@@ -70,7 +71,7 @@ const VirkailijaPerustiedotForm = ({ oid, cancel }: { oid: string; cancel: () =>
                 >
                     {L['TALLENNA']}
                 </button>
-                <button className="oph-ds-button oph-ds-button-bordered" onClick={() => cancel()} disabled={false}>
+                <button className="oph-ds-button oph-ds-button-bordered" onClick={() => closeForm()} disabled={false}>
                     {L['PERUUTA']}
                 </button>
             </div>
@@ -110,20 +111,20 @@ export const VirkailijaPerustiedot = ({ oid }: { oid: string }) => {
                 {isLoading ? (
                     <Loader />
                 ) : muokkaa ? (
-                    <VirkailijaPerustiedotForm oid={oid} cancel={() => setMuokkaa(false)} />
+                    <VirkailijaPerustiedotForm oid={oid} closeForm={() => setMuokkaa(false)} />
                 ) : (
                     <>
                         <div className={styles.perustiedotGrid}>
                             <div>{L['HENKILO_SUKUNIMI']}</div>
-                            <div>{kayttajatiedot?.sukunimi}</div>
+                            <div data-testid="sukunimi">{kayttajatiedot?.sukunimi}</div>
                             <div>{L['HENKILO_ETUNIMET']}</div>
-                            <div>{kayttajatiedot?.etunimet}</div>
+                            <div data-testid="etunimet">{kayttajatiedot?.etunimet}</div>
                             <div>{L['HENKILO_OPPIJANUMERO']}</div>
-                            <div>{oid}</div>
+                            <div data-testid="oid">{oid}</div>
                             <div>{L['HENKILO_KAYTTAJANIMI']}</div>
-                            <div>{kayttajatiedot?.username}</div>
+                            <div data-testid="username">{kayttajatiedot?.username}</div>
                             <div>{L['HENKILO_TYOSAHKOPOSTI']}</div>
-                            <div>{emails}</div>
+                            <div data-testid="email">{emails}</div>
                         </div>
                         <div className={styles.buttonRow}>
                             <button className="oph-ds-button" onClick={() => setMuokkaa(true)}>
