@@ -4,7 +4,7 @@ import { useParams } from 'react-router';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { virkailija2Navi } from '../navigation/navigationconfigurations';
-import { useGetKayttooikeusAnomuksetForHenkiloQuery } from '../../api/kayttooikeus';
+import { useGetKayttajatiedotQuery, useGetKayttooikeusAnomuksetForHenkiloQuery } from '../../api/kayttooikeus';
 import { useLocalisations, useRedirectByUser } from '../../selectors';
 import { OphDsPage } from '../design-system/OphDsPage';
 import { VirkailijaPerustiedot } from './VirkailijaPerustiedot';
@@ -16,6 +16,8 @@ import HenkiloViewExpiredKayttooikeus from '../common/henkilo/HenkiloViewExpired
 import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
 import { OphDsCard } from '../design-system/OphDsCard';
+import { GenericErrorPage } from '../GenericErrorPage';
+import Loader from '../common/icons/Loader';
 
 export const VirkailijaPage = () => {
     const { oid } = useParams();
@@ -27,13 +29,21 @@ export const VirkailijaPage = () => {
     const { L } = useLocalisations();
     useTitle(L['TITLE_VIRKAILIJA']);
     useNavigation(virkailija2Navi(oid), true);
-    const { data: anomukset, error } = useGetKayttooikeusAnomuksetForHenkiloQuery(oid);
+    const { isLoading, error } = useGetKayttajatiedotQuery(oid);
+    const { data: anomukset } = useGetKayttooikeusAnomuksetForHenkiloQuery(oid);
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
 
+    if (isLoading) {
+        return <Loader />;
+    }
+
     if (error) {
-        if ('status' in error && (error.status === 401 || error.status === 403)) {
-            return <VirheKayttoEstetty L={L} />;
+        if ('status' in error) {
+            if (error.status === 401 || error.status === 403) {
+                return <VirheKayttoEstetty L={L} />;
+            }
         }
+        return <GenericErrorPage link="/virkailijahaku" />;
     }
 
     return (
