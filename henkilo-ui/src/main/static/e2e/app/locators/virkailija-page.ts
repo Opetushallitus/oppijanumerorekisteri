@@ -25,7 +25,7 @@ export async function gotoVirkailija(page: Page, oid: string) {
             vahvaistaPoisto: page.getByRole('button', { name: 'Vahvista käyttäjätunnuksen poistaminen' }),
         },
         haka: {
-            tunnisteet: page.getByLabel('Haka-tunnisteet').locator('li'),
+            tunnisteet: page.getByRole('dialog', { name: 'Haka-tunnisteet' }).locator('li'),
             get: (i: number) => {
                 const row = page.getByLabel('Haka-tunnisteet').locator(`ul li:nth-child(${i})`);
                 return {
@@ -41,7 +41,9 @@ export async function gotoVirkailija(page: Page, oid: string) {
             passwordError: page.locator('input[name="password"] + span'),
             passwordConfirmed: page.getByLabel('Vahvista salasana'),
             passwordConfirmedError: page.locator('input[name="passwordConfirmed"] + span'),
-            submit: page.getByLabel('Aseta salasana').getByRole('button', { name: 'Aseta salasana' }),
+            submit: page
+                .getByRole('dialog', { name: 'Aseta salasana' })
+                .getByRole('button', { name: 'Aseta salasana' }),
         },
     };
 }

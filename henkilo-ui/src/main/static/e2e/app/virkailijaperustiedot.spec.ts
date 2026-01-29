@@ -135,4 +135,24 @@ test.describe('virkailijan perustiedot', () => {
         await password.submit.click();
         await expect(toastWithText(page, 'Salasanan tallennus onnistui.')).toBeVisible();
     });
+
+    test('removes user', async ({ page }) => {
+        const { buttons } = await gotoVirkailija(page, oid);
+
+        page.on('dialog', async (dialog) => {
+            console.log(dialog.message());
+            await dialog.accept();
+        });
+
+        await buttons.poista.click();
+        await buttons.vahvaistaPoisto.click();
+
+        await page.route('/oppijanumerorekisteri-service/henkilo/1.2.3.4.66/access', async (route) => {
+            await route.fulfill({
+                status: 200,
+            });
+        });
+
+        await expect(page).toHaveURL(/virkailijahaku/);
+    });
 });
