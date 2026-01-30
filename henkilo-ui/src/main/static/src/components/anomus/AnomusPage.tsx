@@ -41,22 +41,20 @@ const AnomusPage = () => {
     }
 
     return (
-        <div className="mainContent wrapper">
-            <h2 className="oph-h2 oph-bold">{L['HENKILO_AVOIMET_KAYTTOOIKEUDET_OTSIKKO']}</h2>
-            <div>
-                <HaetutKayttooikeusRyhmatHakuForm onSubmit={onSubmit} />
-                <HenkiloViewOpenKayttooikeusanomus
-                    isOmattiedot={false}
-                    anomukset={data?.pages.flat() ?? []}
-                    fetchMoreSettings={{
-                        isActive: !isLoading && hasNextPage,
-                        fetchMoreAction: () => fetchNextPage(),
-                    }}
-                    onSortingChange={(s) => s.length && setSorted([s[0]!])}
-                    tableLoading={isLoading}
-                    piilotaOtsikko={true}
-                />
-            </div>
+        <div className="mainContent wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <h1>{L['HENKILO_AVOIMET_KAYTTOOIKEUDET_OTSIKKO']}</h1>
+            <HaetutKayttooikeusRyhmatHakuForm onSubmit={onSubmit} />
+            <HenkiloViewOpenKayttooikeusanomus
+                isOmattiedot={false}
+                anomukset={data?.pages.flat() ?? []}
+                fetchMoreSettings={{
+                    isActive: !isLoading && hasNextPage,
+                    fetchMoreAction: () => fetchNextPage(),
+                }}
+                onSortingChange={(s) => s.length && setSorted([s[0]!])}
+                tableLoading={isLoading}
+                piilotaOtsikko={true}
+            />
         </div>
     );
 };

@@ -1,9 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import Select, { createFilter, SingleValue } from 'react-select';
+import Select, { SingleValue } from 'react-select';
 
-import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup';
-import CloseButton from '../common/button/CloseButton';
-import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import {
     GetHaetutKayttooikeusryhmatRequest,
@@ -13,9 +10,10 @@ import {
 } from '../../api/kayttooikeus';
 import { useLocalisations } from '../../selectors';
 import { useDebounce } from '../../useDebounce';
-import { FastMenuList, SelectOption } from '../../utilities/select';
-
-import styles from './HaetutKayttooikeusRyhmatHakuForm.module.css';
+import { SelectOption, selectProps } from '../../utilities/select';
+import { OphDsInput } from '../design-system/OphDsInput';
+import { OphDsRadioGroup } from '../design-system/OphDsRadioGroup';
+import { OphDsOrganisaatioSelect } from '../design-system/OphDsOrganisaatioSelect';
 
 type OwnProps = {
     onSubmit: (criteria: Partial<GetHaetutKayttooikeusryhmatRequest>) => void;
@@ -53,15 +51,10 @@ const HaetutKayttooikeusRyhmatHakuForm = ({ onSubmit }: OwnProps) => {
         onSubmit({ kayttooikeusRyhmaIds });
     }, [debouncedKayttooikeusryhmaFilter]);
 
-    const onClearOrganisaatio = (): void => {
-        setSelectedOrganisaatio(undefined);
-        onSubmit({ organisaatioOids: '' });
-    };
-
-    const onOrganisaatioChange = (organisaatio: OrganisaatioSelectObject) => {
-        setSelectedOrganisaatio(organisaatio);
+    const onOrganisaatioChange = (organisaatio: SingleValue<OrganisaatioSelectObject>) => {
+        setSelectedOrganisaatio(organisaatio ?? undefined);
         setSelectedRyhma(undefined);
-        onSubmit({ organisaatioOids: organisaatio.oid });
+        onSubmit({ organisaatioOids: organisaatio?.oid });
     };
 
     const onRyhmaChange = (ryhma: SingleValue<SelectOption>) => {
@@ -87,55 +80,45 @@ const HaetutKayttooikeusRyhmatHakuForm = ({ onSubmit }: OwnProps) => {
     }, [ryhmat, locale]);
 
     return (
-        <form>
-            <div className={styles.row}>
-                <input
-                    className="oph-input"
+        <form style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+                <OphDsInput
+                    id="searchTerm"
+                    label={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']!}
                     defaultValue={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']}
+                    onChange={setSearchTerm}
                 />
-                <input
-                    className="oph-input"
-                    placeholder={L['KAYTTOOIKEUSRYHMAT_HALLINTA_SUODATA']}
+                <OphDsInput
+                    id="kayttooikeusryhmaFilter"
+                    label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_SUODATA']!}
                     defaultValue={kayttooikeusryhmaFilter}
-                    onChange={(e) => setKayttooikeusryhmaFilter(e.target.value)}
+                    onChange={setKayttooikeusryhmaFilter}
                 />
                 {omattiedot?.isAdmin && (
-                    <BooleanRadioButtonGroup
-                        value={naytaKaikki}
-                        onChange={onNaytaKaikkiChange}
-                        trueLabel={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_KAIKKI']!}
-                        falseLabel={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_OPH']!}
-                        className={styles.viewButtons}
+                    <OphDsRadioGroup<'true' | 'false'>
+                        checked={`${naytaKaikki}`}
+                        groupName="nayta-kaikki"
+                        legend=""
+                        onChange={(n) => onNaytaKaikkiChange(n === 'true')}
+                        radios={[
+                            { id: 'true', value: 'true', label: L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_KAIKKI']! },
+                            { id: 'false', value: 'false', label: L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_OPH']! },
+                        ]}
                     />
                 )}
             </div>
-            <div className={styles.selectRow}>
-                <input
-                    className="oph-input"
-                    type="text"
-                    value={selectedOrganisaatio ? selectedOrganisaatio.name : ''}
-                    placeholder={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_ORGANISAATIO']}
-                    readOnly
-                />
-                <OrganisaatioSelectModal onSelect={onOrganisaatioChange} />
-                <CloseButton closeAction={() => onClearOrganisaatio()} />
-            </div>
-
+            <OphDsOrganisaatioSelect disabled={!!selectedRyhma} onChange={onOrganisaatioChange} />
             {(omattiedot?.isAdmin || omattiedot?.isMiniAdmin) && (
-                <div className={styles.selectRow}>
-                    <Select
-                        id="ryhmafilter"
-                        options={ryhmaOptions}
-                        components={{ MenuList: FastMenuList }}
-                        filterOption={createFilter({ ignoreAccents: false })}
-                        value={ryhmaOptions.find((o) => o.value === selectedRyhma)}
-                        placeholder={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_RYHMA']}
-                        onChange={onRyhmaChange}
-                        isClearable
-                    />
-                </div>
+                <Select
+                    {...selectProps}
+                    id="ryhmafilter"
+                    options={ryhmaOptions}
+                    isDisabled={!!selectedOrganisaatio}
+                    value={ryhmaOptions.find((o) => o.value === selectedRyhma)}
+                    placeholder={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_RYHMA']}
+                    onChange={onRyhmaChange}
+                    isClearable
+                />
             )}
         </form>
     );
