@@ -9,6 +9,7 @@ import { store } from './store';
 import '../reset.css';
 import 'oph-virkailija-style-guide/oph-styles.css';
 import '../index.css';
+import './index.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../flex.css';
 import '../oph-design-system.css';

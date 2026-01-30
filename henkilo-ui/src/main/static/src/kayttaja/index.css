@@ -1,0 +1,24 @@
+.infoPageWrapper {
+    padding: 40px;
+    background-color: white;
+    border: #d5d5d5 solid 1px;
+    border-radius: 2px;
+    max-width: 700px;
+    margin: 120px auto 0;
+}
+
+.infoPageWrapper > p {
+    text-align: center;
+    padding-bottom: 15px;
+}
+
+.header-borderless {
+    margin-bottom: 20px;
+    padding-left: 30px;
+}
+
+.borderless-colored-wrapper {
+    padding: 30px;
+    background-color: #f6f4f0;
+    margin-bottom: 40px;
+}
