@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import java.util.UUID;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,11 +21,13 @@ public class ApiController {
 
   public record TiedoteDto(@NotBlank String oppijanumero, @NotBlank String url) {}
 
+  public record CreateResponse(UUID id) {}
+
   @PostMapping("/tiedotteet")
   @PreAuthorize("hasRole('APP_TIEDOTUSPALVELU_CRUD')")
-  public void createTiedote(@RequestBody @Valid TiedoteDto tiedoteDto) {
+  public CreateResponse createTiedote(@RequestBody @Valid TiedoteDto tiedoteDto) {
     var tiedote =
         Tiedote.builder().oppijanumero(tiedoteDto.oppijanumero()).url(tiedoteDto.url()).build();
-    tiedoteRepository.save(tiedote);
+    return new CreateResponse(tiedoteRepository.save(tiedote).getId());
   }
 }
