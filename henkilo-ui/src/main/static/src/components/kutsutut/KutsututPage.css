@@ -5,36 +5,3 @@
     text-align: left;
     padding: 10px;
 }
-
-.kutsutut-toggle {
-    flex-shrink: 0;
-}
-
-#kutsutut-page div.flex-item-1 {
-    margin-right: 5px;
-}
-
-#kutsutut-page #radiator {
-    margin-bottom: 2px;
-}
-
-.kutsutut-filters {
-    gap: 1rem;
-    margin-bottom: 10px;
-}
-
-.kutsutut-suodatus {
-    gap: 10px;
-}
-
-.kutsutut-organisaatiosuodatus {
-    margin-right: 10px;
-}
-
-.kutsutut-ryhmasuodatus {
-    padding-right: 20px;
-}
-
-#kutsutut-ryhmafilter {
-    width: 500px;
-}

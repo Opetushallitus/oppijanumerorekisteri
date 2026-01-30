@@ -142,8 +142,16 @@ export const KayttooikeusryhmatPage = () => {
                             legend={L['KAYTTOOIKEUSRYHMAT_SUODATA_TYYPILLA']}
                             onChange={setShowType}
                             radios={[
-                                { id: 'virkailija', label: L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_VIRKAILIJA']! },
-                                { id: 'palvelu', label: L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PALVELU']! },
+                                {
+                                    id: 'virkailija',
+                                    value: 'virkailija',
+                                    label: L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_VIRKAILIJA']!,
+                                },
+                                {
+                                    id: 'palvelu',
+                                    value: 'palvelu',
+                                    label: L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PALVELU']!,
+                                },
                             ]}
                         />
                     </div>
