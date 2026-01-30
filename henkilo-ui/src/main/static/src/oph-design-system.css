@@ -83,6 +83,12 @@
     box-shadow: 2px 2px 8px 0px #00000026;
 }
 
+.oph-ds-card-light {
+    padding: 24px;
+    border-radius: 4px;
+    box-shadow: 2px 2px 8px 0px #00000026;
+}
+
 .oph-ds-input {
     display: flex;
     height: 40px;

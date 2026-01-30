@@ -101,39 +101,37 @@ const MfaRegistered = ({ L, idpEntityId }: MfaRegisteredProps) => {
     };
 
     return (
-        <div>
-            <div className={styles.infoBody}>
-                <div className={styles.icon}>
-                    <PhoneIcon />
-                </div>
+        <div className={styles.infoBody}>
+            <div className={styles.icon}>
+                <PhoneIcon />
+            </div>
+            <div>
+                <p className={styles.infoText}>{L.MFA_REKISTEROITY_INFO}</p>
                 <div>
-                    <p className={styles.infoText}>{L.MFA_REKISTEROITY_INFO}</p>
-                    <div>
-                        {isMfaSetupEnabled(idpEntityId) ? (
-                            <>
-                                <button
-                                    className={`oph-button oph-button-primary ${styles.setupButton}`}
-                                    onClick={handleMfaDisable}
-                                    data-test-id="disable-mfa"
-                                    disabled={isLoading}
-                                >
-                                    {L.MFA_POISTA_KAYTOSTA}
-                                </button>
-                                {setupError && <span className="error-txt">{setupError}</span>}
-                            </>
-                        ) : (
-                            <>
-                                <a
-                                    className={`oph-button oph-button-primary ${styles.setupButton}`}
-                                    href="/service-provider-app/saml/logout"
-                                    data-test-id="login-suomifi"
-                                >
-                                    {L.MFA_KIRJAUDU_ULOS_SUOMIFI_TUNNISTUKSEEN}
-                                </a>
-                                <span className={styles.greyInfo}>{L.MFA_SUOMIFI_DISABLE}</span>
-                            </>
-                        )}
-                    </div>
+                    {isMfaSetupEnabled(idpEntityId) ? (
+                        <>
+                            <button
+                                className={`oph-button oph-button-primary ${styles.setupButton}`}
+                                onClick={handleMfaDisable}
+                                data-test-id="disable-mfa"
+                                disabled={isLoading}
+                            >
+                                {L.MFA_POISTA_KAYTOSTA}
+                            </button>
+                            {setupError && <span className="error-txt">{setupError}</span>}
+                        </>
+                    ) : (
+                        <>
+                            <a
+                                className={`oph-button oph-button-primary ${styles.setupButton}`}
+                                href="/service-provider-app/saml/logout"
+                                data-test-id="login-suomifi"
+                            >
+                                {L.MFA_KIRJAUDU_ULOS_SUOMIFI_TUNNISTUKSEEN}
+                            </a>
+                            <span className={styles.greyInfo}>{L.MFA_SUOMIFI_DISABLE}</span>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
@@ -148,35 +146,33 @@ type MfaUnregisteredProps = {
 
 const MfaUnregistered = ({ setMfaSetup, L, idpEntityId }: MfaUnregisteredProps) => {
     return (
-        <div>
-            <div className={styles.infoBody}>
-                <div className={styles.icon}>
-                    <PhoneIcon />
-                </div>
+        <div className={styles.infoBody}>
+            <div className={styles.icon}>
+                <PhoneIcon />
+            </div>
+            <div>
+                <p className={styles.infoText}>{L.MFA_OTA_KAYTTOON_INFO}</p>
                 <div>
-                    <p className={styles.infoText}>{L.MFA_OTA_KAYTTOON_INFO}</p>
-                    <div>
-                        {isMfaSetupEnabled(idpEntityId) ? (
-                            <button
+                    {isMfaSetupEnabled(idpEntityId) ? (
+                        <button
+                            className={`oph-button oph-button-primary ${styles.setupButton}`}
+                            onClick={() => setMfaSetup(true)}
+                            data-test-id="start-mfa-setup"
+                        >
+                            {L.MFA_OTA_KAYTTOON}
+                        </button>
+                    ) : (
+                        <>
+                            <a
                                 className={`oph-button oph-button-primary ${styles.setupButton}`}
-                                onClick={() => setMfaSetup(true)}
-                                data-test-id="start-mfa-setup"
+                                href="/service-provider-app/saml/logout"
+                                data-test-id="login-suomifi"
                             >
-                                {L.MFA_OTA_KAYTTOON}
-                            </button>
-                        ) : (
-                            <>
-                                <a
-                                    className={`oph-button oph-button-primary ${styles.setupButton}`}
-                                    href="/service-provider-app/saml/logout"
-                                    data-test-id="login-suomifi"
-                                >
-                                    {L.MFA_KIRJAUDU_ULOS_SUOMIFI_TUNNISTUKSEEN}
-                                </a>
-                                <span className={styles.greyInfo}>{L.MFA_SUOMIFI}</span>
-                            </>
-                        )}
-                    </div>
+                                {L.MFA_KIRJAUDU_ULOS_SUOMIFI_TUNNISTUKSEEN}
+                            </a>
+                            <span className={styles.greyInfo}>{L.MFA_SUOMIFI}</span>
+                        </>
+                    )}
                 </div>
             </div>
         </div>

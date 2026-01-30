@@ -205,7 +205,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
     return isLoading ? (
         <Loader />
     ) : (
-        <div className="kayttooikeus-anomus-wrapper">
+        <div className="henkiloViewUserContentWrapper">
             <h2>{L['OMATTIEDOT_OTSIKKO']}</h2>
             {emailOptions.showMissingEmailNotification ? (
                 <div className="oph-alert oph-alert-info">

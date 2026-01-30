@@ -13,6 +13,7 @@ import { KayttajatiedotRead } from '../../../types/domain/kayttooikeus/Kayttajat
 import { useGetHenkiloQuery, useUpdateHenkiloMutation } from '../../../api/oppijanumerorekisteri';
 import { add } from '../../../slices/toastSlice';
 import Loader from '../icons/Loader';
+import { OphDsInput } from '../../design-system/OphDsInput';
 
 type OwnProps = {
     readOnly: boolean;
@@ -59,11 +60,10 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
     const dispatch = useAppDispatch();
     const { locale, L } = useLocalisations();
     const { data: henkilo, isLoading: isHenkiloLoading } = useGetHenkiloQuery(props.henkiloOid);
-    const [putHenkilo] = useUpdateHenkiloMutation();
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: kayttajatiedot } = useGetKayttajatiedotQuery(props.henkiloOid);
+    const [putHenkilo] = useUpdateHenkiloMutation();
     const [yhteystiedot, setYhteystiedot] = useState<YhteystietoRyhma[]>([]);
-    const [errors, setErrors] = useState(false);
     const [editing, setEditing] = useState(false);
     const sectionLabelId = useId();
 
@@ -78,7 +78,11 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
 
     useEffect(() => {
         if (henkilo) {
-            setYhteystiedot(henkilo.yhteystiedotRyhma.map(sortYhteystietoByTyyppi));
+            setYhteystiedot(
+                henkilo.yhteystiedotRyhma
+                    .map(sortYhteystietoByTyyppi)
+                    .sort((a, b) => ((a.id ?? 0) > (b.id ?? 0) ? 1 : -1))
+            );
         }
     }, [henkilo]);
 
@@ -119,19 +123,20 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
             );
     }
 
-    function createYhteystiedotRyhma() {
-        setYhteystiedot([...yhteystiedot, { ...newYhteystiedotRyhma }]);
-    }
+    const isValid = useMemo(() => {
+        return !yhteystiedot.some((r) =>
+            r.yhteystieto.some(
+                (r) => r.yhteystietoTyyppi === EMAIL && r.yhteystietoArvo && !validateEmail(r.yhteystietoArvo)
+            )
+        );
+    }, [yhteystiedot]);
 
     const isDefaultWorkAddress = (yhteystieto: YhteystietoRyhma) =>
         yhteystieto.ryhmaKuvaus === WORK_ADDRESS &&
         yhteystieto.id ===
             Math.max(...yhteystiedot.filter((y) => y.ryhmaKuvaus === WORK_ADDRESS).map((y) => y.id ?? 0));
 
-    const validateAndMapYhteystietoArvo = (ryhma: YhteystietoRyhma, value: string, yhteystietoIdx: number) => {
-        if (ryhma.yhteystieto[yhteystietoIdx]?.yhteystietoTyyppi === EMAIL && value) {
-            setErrors(!validateEmail(value));
-        }
+    const mapYhteystietoArvo = (ryhma: YhteystietoRyhma, value: string, yhteystietoIdx: number) => {
         const yhteystieto = ryhma.yhteystieto.map((y, i) =>
             i === yhteystietoIdx ? { ...y, yhteystietoArvo: value } : y
         );
@@ -140,13 +145,13 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
 
     const mapYhteystietoRyhmaArvo = (value: string, yhteystiedotryhmaIdx: number, yhteystietoIdx: number) => {
         return yhteystiedot.map((r, i) =>
-            i === yhteystiedotryhmaIdx ? validateAndMapYhteystietoArvo(r, value, yhteystietoIdx) : r
+            i === yhteystiedotryhmaIdx ? mapYhteystietoArvo(r, value, yhteystietoIdx) : r
         );
     };
 
     const renderYhteystieto = (ryhma: YhteystietoRyhma, idx: number) => {
         return (
-            <div key={`${ryhma.id}-${idx}`}>
+            <div className="oph-ds-card-light" key={`${ryhma.id}-${idx}`}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <h3>
                         {koodiLabel(
@@ -165,27 +170,33 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
                 </div>
                 {ryhma.yhteystieto.map((y, idx2) => (
                     <div key={idx2}>
-                        <div
-                            style={{
-                                display: 'grid',
-                                gridTemplateColumns: '1fr 1fr',
-                                gap: '25px',
-                            }}
-                            className="labelValue"
-                        >
-                            <span className="oph-bold">{L[y.yhteystietoTyyppi]}</span>
-                            {editing && !isFromVTJ(ryhma) ? (
-                                <input
-                                    className="oph-ds-input"
-                                    defaultValue={y.yhteystietoArvo}
-                                    onChange={(e) =>
-                                        setYhteystiedot(mapYhteystietoRyhmaArvo(e.target.value, idx, idx2))
-                                    }
-                                />
-                            ) : (
-                                y.yhteystietoArvo
-                            )}
-                        </div>
+                        {editing && !isFromVTJ(ryhma) ? (
+                            <OphDsInput
+                                id={`${y.yhteystietoTyyppi}-${idx}`}
+                                label={L[y.yhteystietoTyyppi]!}
+                                defaultValue={y.yhteystietoArvo}
+                                error={
+                                    y.yhteystietoTyyppi === EMAIL &&
+                                    y.yhteystietoArvo &&
+                                    !validateEmail(y.yhteystietoArvo)
+                                        ? L['VIRKAILIJAN_LISAYS_SAHKOPOSTI_VIRHEELLINEN']
+                                        : undefined
+                                }
+                                onChange={(y) => setYhteystiedot(mapYhteystietoRyhmaArvo(y, idx, idx2))}
+                            />
+                        ) : (
+                            <div
+                                style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: '1fr 1fr',
+                                    gap: '25px',
+                                }}
+                                className="labelValue"
+                            >
+                                <span className="oph-bold">{L[y.yhteystietoTyyppi]}</span>
+                                <span>{y.yhteystietoArvo}</span>
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
@@ -197,14 +208,12 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
     }
     return (
         <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
-            <div>
-                <h2 id={sectionLabelId}>{L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</h2>
-                {henkilo?.turvakielto ? <h3>{L['YHTEYSTIETO_TURVAKIELTO']}</h3> : null}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
-                    {yhteystiedot
-                        .filter((c) => omattiedot?.isAdmin || !isVirkailija(kayttajatiedot) || !isFromVTJ(c))
-                        .map((ryhma, idx) => renderYhteystieto(ryhma, idx))}
-                </div>
+            <h2 id={sectionLabelId}>{L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</h2>
+            {henkilo?.turvakielto ? <h3>{L['YHTEYSTIETO_TURVAKIELTO']}</h3> : null}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
+                {yhteystiedot
+                    .filter((c) => omattiedot?.isAdmin || !isVirkailija(kayttajatiedot) || !isFromVTJ(c))
+                    .map((ryhma, idx) => renderYhteystieto(ryhma, idx))}
             </div>
             <div>
                 {!editing && hasHenkiloReadUpdateRights && (
@@ -221,14 +230,14 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
                         <button
                             className="oph-ds-button oph-ds-button-icon oph-ds-button-icon-plus"
                             style={{ marginRight: '1rem' }}
-                            onClick={() => createYhteystiedotRyhma()}
+                            onClick={() => setYhteystiedot([...yhteystiedot, { ...newYhteystiedotRyhma }])}
                         >
                             {L['HENKILO_LUOYHTEYSTIETO']}
                         </button>
                         <button
                             className="oph-ds-button"
                             style={{ marginRight: '1rem' }}
-                            disabled={errors}
+                            disabled={!isValid}
                             onClick={update}
                         >
                             {L['TALLENNA_LINKKI']}

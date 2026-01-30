@@ -137,8 +137,10 @@ h3 {
     margin-right: 12px !important;
 }
 
-.henkiloViewUserContentWrapper h2 {
-    margin-bottom: 24px;
+.henkiloViewUserContentWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
 
 .modal-button-row {
