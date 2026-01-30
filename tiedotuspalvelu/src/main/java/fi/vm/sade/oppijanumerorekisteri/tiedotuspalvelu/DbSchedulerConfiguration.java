@@ -20,14 +20,14 @@ public class DbSchedulerConfiguration {
 
   @Bean
   @ConditionalOnProperty(name = "tiedotuspalvelu.fetch-oppija.enabled", havingValue = "true")
-  public Task<Void> fetchOppijaTask() {
+  public Task<Void> fetchOppijaTaskBean() {
     return Tasks.recurring("fetch-oppija-task", Schedules.fixedDelay(Duration.ofSeconds(10)))
         .execute((inst, ctx) -> fetchOppijaTask.execute());
   }
 
   @Bean
   @ConditionalOnProperty(name = "tiedotuspalvelu.suomifi-viestit.enabled", havingValue = "true")
-  public Task<Void> sendSuomiFiViestitTask() {
+  public Task<Void> sendSuomiFiViestitTaskBean() {
     return Tasks.recurring(
             "send-suomi-fi-viestit-task", Schedules.fixedDelay(Duration.ofSeconds(10)))
         .execute((inst, ctx) -> sendSuomiFiViestitTask.execute());
