@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import OppijoidenTuontiYhteenveto from './OppijoidenTuontiYhteenveto';
 import OppijoidenTuontiListaus from './OppijoidenTuontiListaus';
-import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup';
-import DelayedSearchInput from '../henkilohaku/DelayedSearchInput';
 import TuontiKoosteTable from './TuontiKoosteTable';
 import { useLocalisations } from '../../selectors';
 import { useGetOppijoidenTuontiListausQuery } from '../../api/oppijanumerorekisteri';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { mainNavigation } from '../navigation/navigationconfigurations';
+import { OphDsRadioGroup } from '../design-system/OphDsRadioGroup';
+import { OphDsInput } from '../design-system/OphDsInput';
+import { useDebounce } from '../../useDebounce';
 
 export type OppijoidenTuontiCriteria = {
     page: string;
@@ -29,41 +30,38 @@ const OppijoidenTuontiContainer = () => {
     const [criteria, setCriteria] = useState<OppijoidenTuontiCriteria>(defaultCriteria);
     const [tuontikooste, setTuontikooste] = useState(false);
     const { data, isFetching } = useGetOppijoidenTuontiListausQuery(criteria);
+    const [nimiHaku, setNimiHaku] = useState('');
+    const debouncedSearch = useDebounce(nimiHaku, 300);
 
-    const onChangeNimiHaku = (nimiHaku: string) => {
-        setCriteria({ ...criteria, nimiHaku });
-    };
+    useEffect(() => {
+        if (debouncedSearch.length > 2 || debouncedSearch.length === 0) {
+            setCriteria({ ...criteria, nimiHaku: debouncedSearch });
+        }
+    }, [debouncedSearch]);
 
     const onPageChange = (page: number, count: number) => {
         setCriteria({ ...criteria, page: String(page), count: String(count) });
     };
 
     return (
-        <div className="mainContent wrapper">
-            <h1 style={{ marginBottom: '20px' }}>{L['OPPIJOIDEN_TUONTI_YHTEENVETO_OTSIKKO']}</h1>
+        <div className="mainContent wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <h1>{L['NAVI_OPPIJOIDEN_TUONTI']}</h1>
             <OppijoidenTuontiYhteenveto />
-
-            <div className="flex-horizontal" style={{ margin: '20px 0' }}>
-                <h1 className="flex-item-1">{L['OPPIJOIDEN_TUONTI_OPPIJAT_OTSIKKO']}</h1>
-                <div className="flex-item-1 flex-align-right">
-                    <BooleanRadioButtonGroup
-                        value={tuontikooste}
-                        onChange={() => setTuontikooste(!tuontikooste)}
-                        trueLabel={L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE']!}
-                        falseLabel={L['OPPIJOIDEN_TUONTI_NAYTA_VIRHEET']!}
-                    />
-                </div>
-            </div>
+            <OphDsRadioGroup<'true' | 'false'>
+                checked={`${tuontikooste}`}
+                groupName="tuontikooste"
+                legend=""
+                onChange={(t) => setTuontikooste(t === 'true')}
+                radios={[
+                    { id: 'true', value: 'true', label: L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE']! },
+                    { id: 'false', value: 'false', label: L['OPPIJOIDEN_TUONTI_NAYTA_VIRHEET']! },
+                ]}
+            />
             {tuontikooste ? (
                 <TuontiKoosteTable />
             ) : (
                 <>
-                    <DelayedSearchInput
-                        setSearchQueryAction={onChangeNimiHaku}
-                        defaultNameQuery={criteria.nimiHaku}
-                        minSearchValueLength={2}
-                        placeholder={L['OPPIJOIDEN_TUONTI_HAE_HENKILOITA']}
-                    />
+                    <OphDsInput id="nimiHaku" label={L['OPPIJOIDEN_TUONTI_HAE_HENKILOITA']!} onChange={setNimiHaku} />
                     {data && <OppijoidenTuontiListaus loading={isFetching} data={data} onPageChange={onPageChange} />}
                 </>
             )}
