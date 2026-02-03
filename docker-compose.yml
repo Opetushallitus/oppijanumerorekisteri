@@ -1,7 +1,7 @@
 services:
   database:
     container_name: oph-oppijanumerorekisteri-db
-    image: postgres:16.11@sha256:bcf87dcfa4b0056b484677f2aa19a08056d3a64ba942f5dc0156fb8c485d2302
+    image: postgres:16.11@sha256:6e9bbed548cc1ca776dd4685cfea9efe60d58df91186ec6bad7328fd03b388a5
     environment:
       - POSTGRES_USER=oph
       - POSTGRES_DB=oppijanumerorekisteri
@@ -16,7 +16,7 @@ services:
       retries: 5
   test-database:
     container_name: oph-oppijanumerorekisteri-test-db
-    image: postgres:16.11@sha256:bcf87dcfa4b0056b484677f2aa19a08056d3a64ba942f5dc0156fb8c485d2302
+    image: postgres:16.11@sha256:6e9bbed548cc1ca776dd4685cfea9efe60d58df91186ec6bad7328fd03b388a5
     environment:
       - POSTGRES_USER=oph
       - POSTGRES_DB=oppijanumerorekisteri
@@ -31,7 +31,7 @@ services:
       retries: 5
   oph-tiedotuspalvelu-db:
     container_name: oph-tiedotuspalvelu-db
-    image: postgres:16.11@sha256:bcf87dcfa4b0056b484677f2aa19a08056d3a64ba942f5dc0156fb8c485d2302
+    image: postgres:16.11@sha256:6e9bbed548cc1ca776dd4685cfea9efe60d58df91186ec6bad7328fd03b388a5
     environment:
       - POSTGRES_USER=tiedotuspalvelu
       - POSTGRES_DB=tiedotuspalvelu
@@ -46,7 +46,7 @@ services:
       retries: 5
   oph-tiedotuspalvelu-test-db:
     container_name: oph-tiedotuspalvelu-test-db
-    image: postgres:16.11@sha256:bcf87dcfa4b0056b484677f2aa19a08056d3a64ba942f5dc0156fb8c485d2302
+    image: postgres:16.11@sha256:6e9bbed548cc1ca776dd4685cfea9efe60d58df91186ec6bad7328fd03b388a5
     environment:
       - POSTGRES_USER=tiedotuspalvelu
       - POSTGRES_DB=tiedotuspalvelu
