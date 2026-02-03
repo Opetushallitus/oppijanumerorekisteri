@@ -19,7 +19,15 @@ public class ApiController {
     this.tiedoteRepository = tiedoteRepository;
   }
 
-  public record TiedoteDto(@NotBlank String oppijanumero, @NotBlank String url) {}
+  public record TiedoteDto(
+      @NotBlank String oppijanumero,
+      @NotBlank String url,
+      @NotBlank String titleFi,
+      @NotBlank String titleSv,
+      @NotBlank String titleEn,
+      @NotBlank String messageFi,
+      @NotBlank String messageSv,
+      @NotBlank String messageEn) {}
 
   public record CreateResponse(UUID id) {}
 
@@ -27,7 +35,16 @@ public class ApiController {
   @PreAuthorize("hasRole('APP_TIEDOTUSPALVELU_CRUD')")
   public CreateResponse createTiedote(@RequestBody @Valid TiedoteDto tiedoteDto) {
     var tiedote =
-        Tiedote.builder().oppijanumero(tiedoteDto.oppijanumero()).url(tiedoteDto.url()).build();
+        Tiedote.builder()
+            .oppijanumero(tiedoteDto.oppijanumero())
+            .url(tiedoteDto.url())
+            .titleFi(tiedoteDto.titleFi())
+            .titleSv(tiedoteDto.titleSv())
+            .titleEn(tiedoteDto.titleEn())
+            .messageFi(tiedoteDto.messageFi())
+            .messageSv(tiedoteDto.messageSv())
+            .messageEn(tiedoteDto.messageEn())
+            .build();
     return new CreateResponse(tiedoteRepository.save(tiedote).getId());
   }
 }

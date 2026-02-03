@@ -60,16 +60,34 @@ public class UiControllerTest {
         Tiedote.builder()
             .oppijanumero("1.2.246.562.24.00000000001")
             .url("https://a.example")
+            .titleFi("Title FI")
+            .titleSv("Title SV")
+            .titleEn("Title EN")
+            .messageFi("Message FI")
+            .messageSv("Message SV")
+            .messageEn("Message EN")
             .build());
     tiedoteRepository.save(
         Tiedote.builder()
             .oppijanumero("1.2.246.562.24.00000000001")
             .url("https://b.example")
+            .titleFi("Title FI")
+            .titleSv("Title SV")
+            .titleEn("Title EN")
+            .messageFi("Message FI")
+            .messageSv("Message SV")
+            .messageEn("Message EN")
             .build());
     tiedoteRepository.save(
         Tiedote.builder()
             .oppijanumero("1.2.246.562.24.00000000002")
             .url("https://c.example")
+            .titleFi("Title FI")
+            .titleSv("Title SV")
+            .titleEn("Title EN")
+            .messageFi("Message FI")
+            .messageSv("Message SV")
+            .messageEn("Message EN")
             .build());
 
     var response =

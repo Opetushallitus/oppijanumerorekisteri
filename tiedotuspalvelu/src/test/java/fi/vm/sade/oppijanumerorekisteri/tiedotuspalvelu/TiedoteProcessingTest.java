@@ -107,6 +107,12 @@ public class TiedoteProcessingTest {
             Tiedote.builder()
                 .oppijanumero("1.2.246.562.24.00000000001")
                 .url("https://a.example")
+                .titleFi("Test Title FI")
+                .titleSv("Test Title SV")
+                .titleEn("Test Title EN")
+                .messageFi("Test Message FI")
+                .messageSv("Test Message SV")
+                .messageEn("Test Message EN")
                 .processedAt(null)
                 .build());
 

@@ -45,6 +45,12 @@ public class ApiControllerTest {
     Map<String, String> data = new HashMap<>();
     data.put("oppijanumero", "1.2.246.562.99.12345678901");
     data.put("url", "https://example.com");
+    data.put("titleFi", "Otsikko");
+    data.put("titleSv", "Rubrik");
+    data.put("titleEn", "Title");
+    data.put("messageFi", "Viesti");
+    data.put("messageSv", "Meddelande");
+    data.put("messageEn", "Message");
 
     mockMvc
         .perform(
@@ -61,6 +67,12 @@ public class ApiControllerTest {
     Map<String, String> data = new HashMap<>();
     data.put("oppijanumero", "1.2.246.562.99.12345678901");
     data.put("url", "https://example.com");
+    data.put("titleFi", "Otsikko");
+    data.put("titleSv", "Rubrik");
+    data.put("titleEn", "Title");
+    data.put("messageFi", "Viesti");
+    data.put("messageSv", "Meddelande");
+    data.put("messageEn", "Message");
 
     mockMvc
         .perform(
@@ -95,6 +107,12 @@ public class ApiControllerTest {
     assertEquals(saved.getId(), returnedId);
     assertEquals("1.2.246.562.99.12345678901", saved.getOppijanumero());
     assertEquals("https://example.com", saved.getUrl());
+    assertEquals("Otsikko", saved.getTitleFi());
+    assertEquals("Rubrik", saved.getTitleSv());
+    assertEquals("Title", saved.getTitleEn());
+    assertEquals("Viesti", saved.getMessageFi());
+    assertEquals("Meddelande", saved.getMessageSv());
+    assertEquals("Message", saved.getMessageEn());
   }
 
   @Test

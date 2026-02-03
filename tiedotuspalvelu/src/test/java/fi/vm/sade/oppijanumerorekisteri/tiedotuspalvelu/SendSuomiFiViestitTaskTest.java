@@ -69,7 +69,17 @@ public class SendSuomiFiViestitTaskTest {
             .willReturn(aResponse().withStatus(200).withBody("{\"messageId\": 123}")));
 
     var tiedote =
-        tiedoteRepository.save(Tiedote.builder().oppijanumero("1.2.3").url("http://a").build());
+        tiedoteRepository.save(
+            Tiedote.builder()
+                .oppijanumero("1.2.3")
+                .url("http://a")
+                .titleFi("Title FI")
+                .titleSv("Title SV")
+                .titleEn("Title EN")
+                .messageFi("Message FI")
+                .messageSv("Message SV")
+                .messageEn("Message EN")
+                .build());
 
     var futureViesti =
         suomiFiViestiRepository.save(
@@ -115,7 +125,17 @@ public class SendSuomiFiViestitTaskTest {
         post(urlEqualTo("/v2/messages/electronic")).willReturn(aResponse().withStatus(500)));
 
     var tiedote =
-        tiedoteRepository.save(Tiedote.builder().oppijanumero("1.2.3").url("http://a").build());
+        tiedoteRepository.save(
+            Tiedote.builder()
+                .oppijanumero("1.2.3")
+                .url("http://a")
+                .titleFi("Title FI")
+                .titleSv("Title SV")
+                .titleEn("Title EN")
+                .messageFi("Message FI")
+                .messageSv("Message SV")
+                .messageEn("Message EN")
+                .build());
     var viesti =
         suomiFiViestiRepository.save(
             SuomiFiViesti.builder()
