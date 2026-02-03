@@ -38,7 +38,7 @@ const PostPrequelApp = () => {
 
     useEffect(() => {
         if (isOmattiedotSuccess && isLocaleSuccess && isLocalisationsSuccess && !!locale && !!L) {
-            if (locale?.toLowerCase() !== 'fi' && locale?.toLowerCase() !== 'sv') {
+            if (locale !== 'fi' && locale !== 'sv') {
                 dispatch(
                     add({
                         id: `EN_LOCALE_KEY-${Math.random()}`,
@@ -46,6 +46,8 @@ const PostPrequelApp = () => {
                         header: L['HENKILO_YHTEISET_ASIOINTIKIELI_EN_VAROITUS'],
                     })
                 );
+            } else {
+                document.documentElement.lang = locale;
             }
 
             setIsInitialized(true);
