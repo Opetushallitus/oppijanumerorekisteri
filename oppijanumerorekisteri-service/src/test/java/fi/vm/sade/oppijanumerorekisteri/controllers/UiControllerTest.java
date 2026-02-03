@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Sql("/sql/truncate_data.sql")
-@Sql("/controller/oppija/integration/fixture/tuonti-test-fixture.sql")
+@Sql("/controller/oppija/integration/fixture/ui-controller-test.sql")
 @SpringBootTest
 @AutoConfigureMockMvc
 class UiControllerTest {
