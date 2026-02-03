@@ -35,6 +35,19 @@ public class UiControllerTest {
 
   @MockitoBean private JwtDecoder jwtDecoder;
 
+  private Tiedote createTiedote(String oppijanumero) {
+    return Tiedote.builder()
+        .oppijanumero(oppijanumero)
+        .titleFi("Title FI")
+        .titleSv("Title SV")
+        .titleEn("Title EN")
+        .messageFi("Message FI")
+        .messageSv("Message SV")
+        .messageEn("Message EN")
+        .idempotencyKey(java.util.UUID.randomUUID().toString())
+        .build();
+  }
+
   @BeforeEach
   public void setup() throws Exception {
     tiedoteRepository.deleteAll();
@@ -53,39 +66,9 @@ public class UiControllerTest {
 
   @Test
   public void returnsOnlyCurrentUsersTiedotteet() throws Exception {
-    tiedoteRepository.save(
-        Tiedote.builder()
-            .oppijanumero("1.2.246.562.24.00000000001")
-            .titleFi("Title FI")
-            .titleSv("Title SV")
-            .titleEn("Title EN")
-            .messageFi("Message FI")
-            .messageSv("Message SV")
-            .messageEn("Message EN")
-            .idempotencyKey(java.util.UUID.randomUUID().toString())
-            .build());
-    tiedoteRepository.save(
-        Tiedote.builder()
-            .oppijanumero("1.2.246.562.24.00000000001")
-            .titleFi("Title FI")
-            .titleSv("Title SV")
-            .titleEn("Title EN")
-            .messageFi("Message FI")
-            .messageSv("Message SV")
-            .messageEn("Message EN")
-            .idempotencyKey(java.util.UUID.randomUUID().toString())
-            .build());
-    tiedoteRepository.save(
-        Tiedote.builder()
-            .oppijanumero("1.2.246.562.24.00000000002")
-            .titleFi("Title FI")
-            .titleSv("Title SV")
-            .titleEn("Title EN")
-            .messageFi("Message FI")
-            .messageSv("Message SV")
-            .messageEn("Message EN")
-            .idempotencyKey(java.util.UUID.randomUUID().toString())
-            .build());
+    tiedoteRepository.save(createTiedote("1.2.246.562.24.00000000001"));
+    tiedoteRepository.save(createTiedote("1.2.246.562.24.00000000001"));
+    tiedoteRepository.save(createTiedote("1.2.246.562.24.00000000002"));
 
     var response =
         mockMvc

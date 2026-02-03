@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -33,6 +32,18 @@ public class ApiControllerTest {
 
   @MockitoBean private JwtDecoder jwtDecoder;
 
+  private Map<String, String> createTiedote(String idempotencyKey) {
+    return Map.of(
+        "oppijanumero", "1.2.246.562.99.12345678901",
+        "titleFi", "Otsikko",
+        "titleSv", "Rubrik",
+        "titleEn", "Title",
+        "messageFi", "Viesti",
+        "messageSv", "Meddelande",
+        "messageEn", "Message",
+        "idempotencyKey", idempotencyKey);
+  }
+
   @Test
   public void createTiedoteRequiresAuthentication() throws Exception {
     mockMvc
@@ -42,22 +53,14 @@ public class ApiControllerTest {
 
   @Test
   public void createTiedoteFailsWithoutRequiredRole() throws Exception {
-    Map<String, String> data = new HashMap<>();
-    data.put("oppijanumero", "1.2.246.562.99.12345678901");
-    data.put("titleFi", "Otsikko");
-    data.put("titleSv", "Rubrik");
-    data.put("titleEn", "Title");
-    data.put("messageFi", "Viesti");
-    data.put("messageSv", "Meddelande");
-    data.put("messageEn", "Message");
-    data.put("idempotencyKey", UUID.randomUUID().toString());
+    var tiedote = createTiedote(UUID.randomUUID().toString());
 
     mockMvc
         .perform(
             post("/api/v1/tiedotteet")
                 .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(data)))
+                .content(objectMapper.writeValueAsString(tiedote)))
         .andExpect(status().isForbidden());
   }
 
@@ -65,15 +68,7 @@ public class ApiControllerTest {
   public void createTiedoteSucceedsWithValidData() throws Exception {
     tiedoteRepository.deleteAll();
     String idempotencyKey = UUID.randomUUID().toString();
-    Map<String, String> data = new HashMap<>();
-    data.put("oppijanumero", "1.2.246.562.99.12345678901");
-    data.put("titleFi", "Otsikko");
-    data.put("titleSv", "Rubrik");
-    data.put("titleEn", "Title");
-    data.put("messageFi", "Viesti");
-    data.put("messageSv", "Meddelande");
-    data.put("messageEn", "Message");
-    data.put("idempotencyKey", idempotencyKey);
+    var tiedote = createTiedote(idempotencyKey);
 
     mockMvc
         .perform(
@@ -81,7 +76,7 @@ public class ApiControllerTest {
                 .with(
                     jwt().authorities(new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(data)))
+                .content(objectMapper.writeValueAsString(tiedote)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").exists());
 
@@ -94,7 +89,7 @@ public class ApiControllerTest {
                             .authorities(
                                 new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(data)))
+                    .content(objectMapper.writeValueAsString(tiedote)))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -143,15 +138,7 @@ public class ApiControllerTest {
   public void createTiedoteWithSameIdempotencyKeyReturnsSameId() throws Exception {
     tiedoteRepository.deleteAll();
     String idempotencyKey = UUID.randomUUID().toString();
-    Map<String, String> data = new HashMap<>();
-    data.put("oppijanumero", "1.2.246.562.99.12345678901");
-    data.put("titleFi", "Otsikko");
-    data.put("titleSv", "Rubrik");
-    data.put("titleEn", "Title");
-    data.put("messageFi", "Viesti");
-    data.put("messageSv", "Meddelande");
-    data.put("messageEn", "Message");
-    data.put("idempotencyKey", idempotencyKey);
+    var tiedote = createTiedote(idempotencyKey);
 
     String firstResponse =
         mockMvc
@@ -162,7 +149,7 @@ public class ApiControllerTest {
                             .authorities(
                                 new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(data)))
+                    .content(objectMapper.writeValueAsString(tiedote)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").exists())
             .andReturn()
@@ -180,7 +167,7 @@ public class ApiControllerTest {
                             .authorities(
                                 new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(data)))
+                    .content(objectMapper.writeValueAsString(tiedote)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").exists())
             .andReturn()
@@ -199,26 +186,8 @@ public class ApiControllerTest {
   @Test
   public void createTiedoteWithDifferentIdempotencyKeysCreatesDifferentRecords() throws Exception {
     tiedoteRepository.deleteAll();
-
-    Map<String, String> data1 = new HashMap<>();
-    data1.put("oppijanumero", "1.2.246.562.99.12345678901");
-    data1.put("titleFi", "Otsikko 1");
-    data1.put("titleSv", "Rubrik 1");
-    data1.put("titleEn", "Title 1");
-    data1.put("messageFi", "Viesti 1");
-    data1.put("messageSv", "Meddelande 1");
-    data1.put("messageEn", "Message 1");
-    data1.put("idempotencyKey", UUID.randomUUID().toString());
-
-    Map<String, String> data2 = new HashMap<>();
-    data2.put("oppijanumero", "1.2.246.562.99.12345678901");
-    data2.put("titleFi", "Otsikko 2");
-    data2.put("titleSv", "Rubrik 2");
-    data2.put("titleEn", "Title 2");
-    data2.put("messageFi", "Viesti 2");
-    data2.put("messageSv", "Meddelande 2");
-    data2.put("messageEn", "Message 2");
-    data2.put("idempotencyKey", UUID.randomUUID().toString());
+    var tiedote1 = createTiedote(UUID.randomUUID().toString());
+    var tiedote2 = createTiedote(UUID.randomUUID().toString());
 
     String firstResponse =
         mockMvc
@@ -229,7 +198,7 @@ public class ApiControllerTest {
                             .authorities(
                                 new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(data1)))
+                    .content(objectMapper.writeValueAsString(tiedote1)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").exists())
             .andReturn()
@@ -247,7 +216,7 @@ public class ApiControllerTest {
                             .authorities(
                                 new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(data2)))
+                    .content(objectMapper.writeValueAsString(tiedote2)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").exists())
             .andReturn()

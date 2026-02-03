@@ -28,6 +28,19 @@ public class SendSuomiFiViestitTaskTest {
 
   @MockitoBean private JwtDecoder jwtDecoder;
 
+  private Tiedote createTiedote(String oppijanumero) {
+    return Tiedote.builder()
+        .oppijanumero(oppijanumero)
+        .titleFi("Title FI")
+        .titleSv("Title SV")
+        .titleEn("Title EN")
+        .messageFi("Message FI")
+        .messageSv("Message SV")
+        .messageEn("Message EN")
+        .idempotencyKey(UUID.randomUUID().toString())
+        .build();
+  }
+
   @RegisterExtension
   static WireMockExtension wireMock =
       WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
@@ -68,18 +81,7 @@ public class SendSuomiFiViestitTaskTest {
         post(urlEqualTo("/v2/messages/electronic"))
             .willReturn(aResponse().withStatus(200).withBody("{\"messageId\": 123}")));
 
-    var tiedote =
-        tiedoteRepository.save(
-            Tiedote.builder()
-                .oppijanumero("1.2.3")
-                .titleFi("Title FI")
-                .titleSv("Title SV")
-                .titleEn("Title EN")
-                .messageFi("Message FI")
-                .messageSv("Message SV")
-                .messageEn("Message EN")
-                .idempotencyKey(UUID.randomUUID().toString())
-                .build());
+    var tiedote = tiedoteRepository.save(createTiedote("1.2.3"));
 
     var futureViesti =
         suomiFiViestiRepository.save(
@@ -124,18 +126,7 @@ public class SendSuomiFiViestitTaskTest {
     wireMock.stubFor(
         post(urlEqualTo("/v2/messages/electronic")).willReturn(aResponse().withStatus(500)));
 
-    var tiedote =
-        tiedoteRepository.save(
-            Tiedote.builder()
-                .oppijanumero("1.2.3")
-                .titleFi("Title FI")
-                .titleSv("Title SV")
-                .titleEn("Title EN")
-                .messageFi("Message FI")
-                .messageSv("Message SV")
-                .messageEn("Message EN")
-                .idempotencyKey(UUID.randomUUID().toString())
-                .build());
+    var tiedote = tiedoteRepository.save(createTiedote("1.2.3"));
     var viesti =
         suomiFiViestiRepository.save(
             SuomiFiViesti.builder()

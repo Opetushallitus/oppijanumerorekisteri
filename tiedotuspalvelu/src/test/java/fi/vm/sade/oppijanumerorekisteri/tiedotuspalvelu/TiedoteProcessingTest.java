@@ -35,6 +35,20 @@ public class TiedoteProcessingTest {
 
   @MockitoBean private JwtDecoder jwtDecoder;
 
+  private Tiedote createTiedote(String oppijanumero) {
+    return Tiedote.builder()
+        .oppijanumero(oppijanumero)
+        .titleFi("Test Title FI")
+        .titleSv("Test Title SV")
+        .titleEn("Test Title EN")
+        .messageFi("Test Message FI")
+        .messageSv("Test Message SV")
+        .messageEn("Test Message EN")
+        .idempotencyKey(UUID.randomUUID().toString())
+        .processedAt(null)
+        .build();
+  }
+
   @RegisterExtension
   static WireMockExtension wireMock =
       WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
@@ -102,19 +116,7 @@ public class TiedoteProcessingTest {
                     .withHeader("Content-Type", "application/json")
                     .withBody("{\"messageId\": 123}")));
 
-    var tiedote =
-        tiedoteRepository.save(
-            Tiedote.builder()
-                .oppijanumero("1.2.246.562.24.00000000001")
-                .titleFi("Test Title FI")
-                .titleSv("Test Title SV")
-                .titleEn("Test Title EN")
-                .messageFi("Test Message FI")
-                .messageSv("Test Message SV")
-                .messageEn("Test Message EN")
-                .idempotencyKey(UUID.randomUUID().toString())
-                .processedAt(null)
-                .build());
+    var tiedote = tiedoteRepository.save(createTiedote("1.2.246.562.24.00000000001"));
 
     fetchOppijaTask.execute();
     sendSuomiFiViestitTask.execute();

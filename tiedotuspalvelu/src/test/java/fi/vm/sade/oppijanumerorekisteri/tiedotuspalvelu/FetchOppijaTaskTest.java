@@ -26,6 +26,20 @@ public class FetchOppijaTaskTest {
 
   @MockitoBean private JwtDecoder jwtDecoder;
 
+  private Tiedote createTiedote(String oppijanumero) {
+    return Tiedote.builder()
+        .oppijanumero(oppijanumero)
+        .titleFi("Title FI")
+        .titleSv("Title SV")
+        .titleEn("Title EN")
+        .messageFi("Message FI")
+        .messageSv("Message SV")
+        .messageEn("Message EN")
+        .idempotencyKey(java.util.UUID.randomUUID().toString())
+        .processedAt(null)
+        .build();
+  }
+
   @RegisterExtension
   static WireMockExtension wireMock =
       WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
@@ -60,32 +74,14 @@ public class FetchOppijaTaskTest {
 
     var futureTiedote =
         tiedoteRepository.save(
-            Tiedote.builder()
-                .oppijanumero("1.2.246.562.24.00000000001")
-                .titleFi("Title FI")
-                .titleSv("Title SV")
-                .titleEn("Title EN")
-                .messageFi("Message FI")
-                .messageSv("Message SV")
-                .messageEn("Message EN")
-                .idempotencyKey(java.util.UUID.randomUUID().toString())
-                .processedAt(null)
+            createTiedote("1.2.246.562.24.00000000001").toBuilder()
                 .nextRetry(java.time.OffsetDateTime.now().plusHours(1))
                 .retryCount(1)
                 .build());
 
     var pastTiedote =
         tiedoteRepository.save(
-            Tiedote.builder()
-                .oppijanumero("1.2.246.562.24.00000000002")
-                .titleFi("Title FI")
-                .titleSv("Title SV")
-                .titleEn("Title EN")
-                .messageFi("Message FI")
-                .messageSv("Message SV")
-                .messageEn("Message EN")
-                .idempotencyKey(java.util.UUID.randomUUID().toString())
-                .processedAt(null)
+            createTiedote("1.2.246.562.24.00000000002").toBuilder()
                 .nextRetry(java.time.OffsetDateTime.now().minusMinutes(1))
                 .retryCount(1)
                 .build());
@@ -104,19 +100,7 @@ public class FetchOppijaTaskTest {
   public void handlesOppijanumerorekisteriFailure() {
     wireMock.stubFor(get(urlPathMatching("/henkilo/.*")).willReturn(aResponse().withStatus(500)));
 
-    var tiedote =
-        tiedoteRepository.save(
-            Tiedote.builder()
-                .oppijanumero("1.2.246.562.24.00000000001")
-                .titleFi("Title FI")
-                .titleSv("Title SV")
-                .titleEn("Title EN")
-                .messageFi("Message FI")
-                .messageSv("Message SV")
-                .messageEn("Message EN")
-                .idempotencyKey(java.util.UUID.randomUUID().toString())
-                .processedAt(null)
-                .build());
+    var tiedote = tiedoteRepository.save(createTiedote("1.2.246.562.24.00000000001"));
 
     fetchOppijaTask.execute();
 
