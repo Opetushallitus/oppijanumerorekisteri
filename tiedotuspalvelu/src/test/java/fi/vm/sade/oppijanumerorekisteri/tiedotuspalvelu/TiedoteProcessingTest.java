@@ -112,6 +112,7 @@ public class TiedoteProcessingTest {
                 .messageFi("Test Message FI")
                 .messageSv("Test Message SV")
                 .messageEn("Test Message EN")
+                .idempotencyKey(UUID.randomUUID().toString())
                 .processedAt(null)
                 .build());
 

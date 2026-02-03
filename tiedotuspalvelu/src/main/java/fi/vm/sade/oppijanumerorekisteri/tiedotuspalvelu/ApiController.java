@@ -26,13 +26,19 @@ public class ApiController {
       @NotBlank String titleEn,
       @NotBlank String messageFi,
       @NotBlank String messageSv,
-      @NotBlank String messageEn) {}
+      @NotBlank String messageEn,
+      @NotBlank String idempotencyKey) {}
 
   public record CreateResponse(UUID id) {}
 
   @PostMapping("/tiedotteet")
   @PreAuthorize("hasRole('APP_TIEDOTUSPALVELU_CRUD')")
   public CreateResponse createTiedote(@RequestBody @Valid TiedoteDto tiedoteDto) {
+    var existingTiedote = tiedoteRepository.findByIdempotencyKey(tiedoteDto.idempotencyKey());
+    if (existingTiedote.isPresent()) {
+      return new CreateResponse(existingTiedote.get().getId());
+    }
+
     var tiedote =
         Tiedote.builder()
             .oppijanumero(tiedoteDto.oppijanumero())
@@ -42,6 +48,7 @@ public class ApiController {
             .messageFi(tiedoteDto.messageFi())
             .messageSv(tiedoteDto.messageSv())
             .messageEn(tiedoteDto.messageEn())
+            .idempotencyKey(tiedoteDto.idempotencyKey())
             .build();
     return new CreateResponse(tiedoteRepository.save(tiedote).getId());
   }

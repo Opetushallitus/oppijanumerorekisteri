@@ -60,4 +60,7 @@ public class Tiedote {
 
   @Column(nullable = false)
   private int retryCount;
+
+  @Column(nullable = false, unique = true)
+  private String idempotencyKey;
 }

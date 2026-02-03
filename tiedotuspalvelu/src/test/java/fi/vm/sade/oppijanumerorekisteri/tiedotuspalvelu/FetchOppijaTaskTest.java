@@ -68,6 +68,7 @@ public class FetchOppijaTaskTest {
                 .messageFi("Message FI")
                 .messageSv("Message SV")
                 .messageEn("Message EN")
+                .idempotencyKey(java.util.UUID.randomUUID().toString())
                 .processedAt(null)
                 .nextRetry(java.time.OffsetDateTime.now().plusHours(1))
                 .retryCount(1)
@@ -83,6 +84,7 @@ public class FetchOppijaTaskTest {
                 .messageFi("Message FI")
                 .messageSv("Message SV")
                 .messageEn("Message EN")
+                .idempotencyKey(java.util.UUID.randomUUID().toString())
                 .processedAt(null)
                 .nextRetry(java.time.OffsetDateTime.now().minusMinutes(1))
                 .retryCount(1)
@@ -112,6 +114,7 @@ public class FetchOppijaTaskTest {
                 .messageFi("Message FI")
                 .messageSv("Message SV")
                 .messageEn("Message EN")
+                .idempotencyKey(java.util.UUID.randomUUID().toString())
                 .processedAt(null)
                 .build());
 

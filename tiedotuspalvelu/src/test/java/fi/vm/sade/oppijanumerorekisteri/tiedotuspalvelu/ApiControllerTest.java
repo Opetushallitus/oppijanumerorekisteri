@@ -50,6 +50,7 @@ public class ApiControllerTest {
     data.put("messageFi", "Viesti");
     data.put("messageSv", "Meddelande");
     data.put("messageEn", "Message");
+    data.put("idempotencyKey", UUID.randomUUID().toString());
 
     mockMvc
         .perform(
@@ -63,6 +64,7 @@ public class ApiControllerTest {
   @Test
   public void createTiedoteSucceedsWithValidData() throws Exception {
     tiedoteRepository.deleteAll();
+    String idempotencyKey = UUID.randomUUID().toString();
     Map<String, String> data = new HashMap<>();
     data.put("oppijanumero", "1.2.246.562.99.12345678901");
     data.put("titleFi", "Otsikko");
@@ -71,6 +73,7 @@ public class ApiControllerTest {
     data.put("messageFi", "Viesti");
     data.put("messageSv", "Meddelande");
     data.put("messageEn", "Message");
+    data.put("idempotencyKey", idempotencyKey);
 
     mockMvc
         .perform(
@@ -100,7 +103,7 @@ public class ApiControllerTest {
     UUID returnedId = UUID.fromString(objectMapper.readTree(responseBody).get("id").asText());
 
     List<Tiedote> tiedotteet = tiedoteRepository.findAll();
-    assertEquals(2, tiedotteet.size());
+    assertEquals(1, tiedotteet.size());
     Tiedote saved = tiedotteet.stream().filter(t -> t.getId().equals(returnedId)).findFirst().get();
     assertEquals(saved.getId(), returnedId);
     assertEquals("1.2.246.562.99.12345678901", saved.getOppijanumero());
@@ -110,6 +113,7 @@ public class ApiControllerTest {
     assertEquals("Viesti", saved.getMessageFi());
     assertEquals("Meddelande", saved.getMessageSv());
     assertEquals("Message", saved.getMessageEn());
+    assertEquals(idempotencyKey, saved.getIdempotencyKey());
   }
 
   @Test
@@ -133,5 +137,127 @@ public class ApiControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Map.of("titleFi", "Otsikko"))))
         .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void createTiedoteWithSameIdempotencyKeyReturnsSameId() throws Exception {
+    tiedoteRepository.deleteAll();
+    String idempotencyKey = UUID.randomUUID().toString();
+    Map<String, String> data = new HashMap<>();
+    data.put("oppijanumero", "1.2.246.562.99.12345678901");
+    data.put("titleFi", "Otsikko");
+    data.put("titleSv", "Rubrik");
+    data.put("titleEn", "Title");
+    data.put("messageFi", "Viesti");
+    data.put("messageSv", "Meddelande");
+    data.put("messageEn", "Message");
+    data.put("idempotencyKey", idempotencyKey);
+
+    String firstResponse =
+        mockMvc
+            .perform(
+                post("/api/v1/tiedotteet")
+                    .with(
+                        jwt()
+                            .authorities(
+                                new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(data)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").exists())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+    UUID firstId = UUID.fromString(objectMapper.readTree(firstResponse).get("id").asText());
+
+    String secondResponse =
+        mockMvc
+            .perform(
+                post("/api/v1/tiedotteet")
+                    .with(
+                        jwt()
+                            .authorities(
+                                new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(data)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").exists())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+    UUID secondId = UUID.fromString(objectMapper.readTree(secondResponse).get("id").asText());
+
+    assertEquals(firstId, secondId);
+
+    List<Tiedote> tiedotteet = tiedoteRepository.findAll();
+    assertEquals(1, tiedotteet.size());
+    assertEquals(idempotencyKey, tiedotteet.get(0).getIdempotencyKey());
+  }
+
+  @Test
+  public void createTiedoteWithDifferentIdempotencyKeysCreatesDifferentRecords() throws Exception {
+    tiedoteRepository.deleteAll();
+
+    Map<String, String> data1 = new HashMap<>();
+    data1.put("oppijanumero", "1.2.246.562.99.12345678901");
+    data1.put("titleFi", "Otsikko 1");
+    data1.put("titleSv", "Rubrik 1");
+    data1.put("titleEn", "Title 1");
+    data1.put("messageFi", "Viesti 1");
+    data1.put("messageSv", "Meddelande 1");
+    data1.put("messageEn", "Message 1");
+    data1.put("idempotencyKey", UUID.randomUUID().toString());
+
+    Map<String, String> data2 = new HashMap<>();
+    data2.put("oppijanumero", "1.2.246.562.99.12345678901");
+    data2.put("titleFi", "Otsikko 2");
+    data2.put("titleSv", "Rubrik 2");
+    data2.put("titleEn", "Title 2");
+    data2.put("messageFi", "Viesti 2");
+    data2.put("messageSv", "Meddelande 2");
+    data2.put("messageEn", "Message 2");
+    data2.put("idempotencyKey", UUID.randomUUID().toString());
+
+    String firstResponse =
+        mockMvc
+            .perform(
+                post("/api/v1/tiedotteet")
+                    .with(
+                        jwt()
+                            .authorities(
+                                new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(data1)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").exists())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+    UUID firstId = UUID.fromString(objectMapper.readTree(firstResponse).get("id").asText());
+
+    String secondResponse =
+        mockMvc
+            .perform(
+                post("/api/v1/tiedotteet")
+                    .with(
+                        jwt()
+                            .authorities(
+                                new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(data2)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").exists())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+    UUID secondId = UUID.fromString(objectMapper.readTree(secondResponse).get("id").asText());
+    assertEquals(false, firstId.equals(secondId));
+
+    List<Tiedote> tiedotteet = tiedoteRepository.findAll();
+    assertEquals(2, tiedotteet.size());
   }
 }

@@ -62,6 +62,7 @@ public class UiControllerTest {
             .messageFi("Message FI")
             .messageSv("Message SV")
             .messageEn("Message EN")
+            .idempotencyKey(java.util.UUID.randomUUID().toString())
             .build());
     tiedoteRepository.save(
         Tiedote.builder()
@@ -72,6 +73,7 @@ public class UiControllerTest {
             .messageFi("Message FI")
             .messageSv("Message SV")
             .messageEn("Message EN")
+            .idempotencyKey(java.util.UUID.randomUUID().toString())
             .build());
     tiedoteRepository.save(
         Tiedote.builder()
@@ -82,6 +84,7 @@ public class UiControllerTest {
             .messageFi("Message FI")
             .messageSv("Message SV")
             .messageEn("Message EN")
+            .idempotencyKey(java.util.UUID.randomUUID().toString())
             .build());
 
     var response =

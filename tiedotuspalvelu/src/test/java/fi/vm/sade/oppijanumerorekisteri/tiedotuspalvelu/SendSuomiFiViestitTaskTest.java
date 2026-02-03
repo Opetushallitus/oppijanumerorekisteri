@@ -78,6 +78,7 @@ public class SendSuomiFiViestitTaskTest {
                 .messageFi("Message FI")
                 .messageSv("Message SV")
                 .messageEn("Message EN")
+                .idempotencyKey(UUID.randomUUID().toString())
                 .build());
 
     var futureViesti =
@@ -133,6 +134,7 @@ public class SendSuomiFiViestitTaskTest {
                 .messageFi("Message FI")
                 .messageSv("Message SV")
                 .messageEn("Message EN")
+                .idempotencyKey(UUID.randomUUID().toString())
                 .build());
     var viesti =
         suomiFiViestiRepository.save(
