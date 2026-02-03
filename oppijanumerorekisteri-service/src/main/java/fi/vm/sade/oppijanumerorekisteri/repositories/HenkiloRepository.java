@@ -1,6 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -35,4 +38,19 @@ public interface HenkiloRepository extends QuerydslPredicateExecutor<Henkilo>, J
 
     @Query("select h from Henkilo h left join h.eidasTunnisteet e where e.tunniste = :eidasTunniste")
     Optional<Henkilo> findByEidasTunniste(String eidasTunniste);
+
+    @Query("select h from Henkilo h where h.etunimet like :query% or h.kutsumanimi like :query% or h.sukunimi like :query%")
+    Page<Henkilo> findAllByOppijahakuQuery(String query, Pageable pageable);
+    @Query("select h from Henkilo h where h.passivoitu = false and (h.etunimet like :query% or h.kutsumanimi like :query% or h.sukunimi like :query%)")
+    Page<Henkilo> findAllNotPassivoituByOppijahakuQuery(String query, Pageable pageable);
+
+    @Query("select h from Henkilo h where (h.etunimet like :etunimet% or h.kutsumanimi like :etunimet%) and h.sukunimi like :sukunimi%")
+    Page<Henkilo> findAllByFullNameOppijahakuQuery(String etunimet, String sukunimi, Pageable pageable);
+    @Query("select h from Henkilo h where h.passivoitu = false and ((h.etunimet like :etunimet% or h.kutsumanimi like :etunimet%) and h.sukunimi like :sukunimi%)")
+    Page<Henkilo> findAllNotPassivoituByFullNameOppijahakuQuery(String etunimet, String sukunimi, Pageable pageable);
+
+    Page<Henkilo> findAllByHetu(String hetu, Pageable pageable);
+    Page<Henkilo> findAllByHetuAndPassivoituFalse(String hetu, Pageable pageable);
+    Page<Henkilo> findAllByOidHenkilo(String oidHenkilo, Pageable pageable);
+    Page<Henkilo> findAllByOidHenkiloAndPassivoituFalse(String oidHenkilo, Pageable pageable);
 }

@@ -1,8 +1,21 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaListDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiYhteenvetoDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijahakuCriteria;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijahakuResult;
+import fi.vm.sade.oppijanumerorekisteri.dto.Page;
+import fi.vm.sade.oppijanumerorekisteri.dto.TuontiApi;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
+
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -109,4 +122,5 @@ public interface OppijaService {
      */
     void deleteOrganisaatio(String henkiloOid, String organisaatioOid);
 
+    org.springframework.data.domain.Page<OppijahakuResult> oppijahaku(OppijahakuCriteria criteria);
 }

@@ -3,30 +3,30 @@
   "size": 20,
   "results": [
     {
-      "oid": "tuonti2",
+      "oid": "1.2.3.4.77",
       "oppijanumero": null,
       "luotu": 1668422800000,
       "muokattu": 1668422800000,
-      "syntymaaika": null,
-      "etunimet": "tuonti2",
-      "kutsumanimi": "tuonti2",
-      "sukunimi": "tuonti2",
+      "syntymaaika": "1998-11-14",
+      "etunimet": "tuontietu2",
+      "kutsumanimi": "tuontietu2",
+      "sukunimi": "tuontisuku2",
       "yksilointiTila": "HETU_PUUTTUU",
       "serviceUserOid": null,
       "serviceUserName": null
     },
     {
-      "oid": "tuonti1",
+      "oid": "1.2.3.4.6",
       "oppijanumero": null,
       "luotu": 1668412800000,
       "muokattu": 1668412800000,
-      "syntymaaika": null,
-      "etunimet": "tuonti1",
-      "kutsumanimi": "tuonti1",
-      "sukunimi": "tuonti1",
+      "syntymaaika": "1963-09-12",
+      "etunimet": "tuontietu1",
+      "kutsumanimi": "tuontietu1",
+      "sukunimi": "tuontisuku1",
       "yksilointiTila": "VIRHE",
-      "serviceUserOid": "tuonti1",
-      "serviceUserName": "tuonti1 tuonti1"
+      "serviceUserOid": "1.2.3.4.6",
+      "serviceUserName": "tuontisuku1 tuontietu1"
     }
   ],
   "totalElements": 2,
