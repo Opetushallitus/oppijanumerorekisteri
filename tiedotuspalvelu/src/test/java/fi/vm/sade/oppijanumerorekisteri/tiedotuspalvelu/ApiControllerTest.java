@@ -44,7 +44,6 @@ public class ApiControllerTest {
   public void createTiedoteFailsWithoutRequiredRole() throws Exception {
     Map<String, String> data = new HashMap<>();
     data.put("oppijanumero", "1.2.246.562.99.12345678901");
-    data.put("url", "https://example.com");
     data.put("titleFi", "Otsikko");
     data.put("titleSv", "Rubrik");
     data.put("titleEn", "Title");
@@ -66,7 +65,6 @@ public class ApiControllerTest {
     tiedoteRepository.deleteAll();
     Map<String, String> data = new HashMap<>();
     data.put("oppijanumero", "1.2.246.562.99.12345678901");
-    data.put("url", "https://example.com");
     data.put("titleFi", "Otsikko");
     data.put("titleSv", "Rubrik");
     data.put("titleEn", "Title");
@@ -106,7 +104,6 @@ public class ApiControllerTest {
     Tiedote saved = tiedotteet.stream().filter(t -> t.getId().equals(returnedId)).findFirst().get();
     assertEquals(saved.getId(), returnedId);
     assertEquals("1.2.246.562.99.12345678901", saved.getOppijanumero());
-    assertEquals("https://example.com", saved.getUrl());
     assertEquals("Otsikko", saved.getTitleFi());
     assertEquals("Rubrik", saved.getTitleSv());
     assertEquals("Title", saved.getTitleEn());
@@ -134,7 +131,7 @@ public class ApiControllerTest {
                 .with(
                     jwt().authorities(new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(Map.of("url", "https://example.com"))))
+                .content(objectMapper.writeValueAsString(Map.of("titleFi", "Otsikko"))))
         .andExpect(status().isBadRequest());
   }
 }

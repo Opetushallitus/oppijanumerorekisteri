@@ -11,9 +11,6 @@ import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsServic
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +56,6 @@ public class UiControllerTest {
     tiedoteRepository.save(
         Tiedote.builder()
             .oppijanumero("1.2.246.562.24.00000000001")
-            .url("https://a.example")
             .titleFi("Title FI")
             .titleSv("Title SV")
             .titleEn("Title EN")
@@ -70,7 +66,6 @@ public class UiControllerTest {
     tiedoteRepository.save(
         Tiedote.builder()
             .oppijanumero("1.2.246.562.24.00000000001")
-            .url("https://b.example")
             .titleFi("Title FI")
             .titleSv("Title SV")
             .titleEn("Title EN")
@@ -81,7 +76,6 @@ public class UiControllerTest {
     tiedoteRepository.save(
         Tiedote.builder()
             .oppijanumero("1.2.246.562.24.00000000002")
-            .url("https://c.example")
             .titleFi("Title FI")
             .titleSv("Title SV")
             .titleEn("Title EN")
@@ -102,10 +96,6 @@ public class UiControllerTest {
         objectMapper.readValue(response, UiController.TiedoteDto[].class);
 
     assertEquals(2, tiedotteet.length);
-
-    Set<String> urls =
-        Stream.of(tiedotteet).map(UiController.TiedoteDto::url).collect(Collectors.toSet());
-    assertEquals(Set.of("https://a.example", "https://b.example"), urls);
 
     for (UiController.TiedoteDto tiedote : tiedotteet) {
       assertNotNull(tiedote.id());

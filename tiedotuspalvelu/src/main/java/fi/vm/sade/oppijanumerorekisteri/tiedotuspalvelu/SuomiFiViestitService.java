@@ -21,14 +21,14 @@ public class SuomiFiViestitService {
         new SuomiFiViestitElectronicMessageRequest(
             new ElectronicPart(
                 List.of(),
-                "Katso tiedote: " + tiedote.getUrl(),
+                tiedote.getMessageFi(),
                 "Text",
                 "Normal",
                 new MessageNotifications(
                     new UnreadMessageNotification("Default reminder"),
                     "Organisation and service name"),
                 "No one",
-                "Uusi tiedote",
+                tiedote.getTitleFi(),
                 "Normal"),
             tiedote.getId().toString(),
             new Recipient(suomiFiViesti.getHenkilotunnus()),

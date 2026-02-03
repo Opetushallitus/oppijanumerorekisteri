@@ -62,7 +62,6 @@ public class FetchOppijaTaskTest {
         tiedoteRepository.save(
             Tiedote.builder()
                 .oppijanumero("1.2.246.562.24.00000000001")
-                .url("https://a.example")
                 .titleFi("Title FI")
                 .titleSv("Title SV")
                 .titleEn("Title EN")
@@ -78,7 +77,6 @@ public class FetchOppijaTaskTest {
         tiedoteRepository.save(
             Tiedote.builder()
                 .oppijanumero("1.2.246.562.24.00000000002")
-                .url("https://b.example")
                 .titleFi("Title FI")
                 .titleSv("Title SV")
                 .titleEn("Title EN")
@@ -108,7 +106,6 @@ public class FetchOppijaTaskTest {
         tiedoteRepository.save(
             Tiedote.builder()
                 .oppijanumero("1.2.246.562.24.00000000001")
-                .url("https://a.example")
                 .titleFi("Title FI")
                 .titleSv("Title SV")
                 .titleEn("Title EN")

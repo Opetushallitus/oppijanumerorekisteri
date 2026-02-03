@@ -106,7 +106,6 @@ public class TiedoteProcessingTest {
         tiedoteRepository.save(
             Tiedote.builder()
                 .oppijanumero("1.2.246.562.24.00000000001")
-                .url("https://a.example")
                 .titleFi("Test Title FI")
                 .titleSv("Test Title SV")
                 .titleEn("Test Title EN")
@@ -125,8 +124,8 @@ public class TiedoteProcessingTest {
             .withRequestBody(matchingJsonPath("$.externalId", equalTo(tiedote.getId().toString())))
             .withRequestBody(matchingJsonPath("$.recipient.id", equalTo("010170-9999")))
             .withRequestBody(matchingJsonPath("$.sender.serviceId", equalTo(SUOMIFI_SYSTEM_ID)))
-            .withRequestBody(
-                matchingJsonPath("$.electronic.body", containing("https://a.example"))));
+            .withRequestBody(matchingJsonPath("$.electronic.body", containing("Test Message FI")))
+            .withRequestBody(matchingJsonPath("$.electronic.title", containing("Test Title FI"))));
     wireMock.verify(1, postRequestedFor(urlEqualTo("/v2/messages/electronic")));
     wireMock.verify(1, postRequestedFor(urlEqualTo("/v1/token")));
 

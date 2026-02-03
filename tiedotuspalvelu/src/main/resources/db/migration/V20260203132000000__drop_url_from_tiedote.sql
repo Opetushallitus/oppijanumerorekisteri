@@ -1,0 +1,1 @@
+ALTER TABLE tiedote DROP COLUMN url;

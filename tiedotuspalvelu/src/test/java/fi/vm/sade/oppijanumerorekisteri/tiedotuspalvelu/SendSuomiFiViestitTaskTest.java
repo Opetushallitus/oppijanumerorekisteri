@@ -72,7 +72,6 @@ public class SendSuomiFiViestitTaskTest {
         tiedoteRepository.save(
             Tiedote.builder()
                 .oppijanumero("1.2.3")
-                .url("http://a")
                 .titleFi("Title FI")
                 .titleSv("Title SV")
                 .titleEn("Title EN")
@@ -128,7 +127,6 @@ public class SendSuomiFiViestitTaskTest {
         tiedoteRepository.save(
             Tiedote.builder()
                 .oppijanumero("1.2.3")
-                .url("http://a")
                 .titleFi("Title FI")
                 .titleSv("Title SV")
                 .titleEn("Title EN")

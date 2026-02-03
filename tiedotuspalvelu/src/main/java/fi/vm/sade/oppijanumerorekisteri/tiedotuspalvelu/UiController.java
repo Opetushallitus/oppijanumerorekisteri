@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UiController {
   private final TiedoteRepository tiedoteRepository;
 
-  public record TiedoteDto(UUID id, String url) {}
+  public record TiedoteDto(UUID id) {}
 
   @GetMapping("/tiedotteet")
   @PreAuthorize("isAuthenticated()")
@@ -30,7 +30,7 @@ public class UiController {
         .map(
             s ->
                 tiedoteRepository.findByOppijanumeroOrderByIdAsc(s).stream()
-                    .map(t -> new TiedoteDto(t.getId(), t.getUrl()))
+                    .map(t -> new TiedoteDto(t.getId()))
                     .toList())
         .orElseGet(List::of);
   }
