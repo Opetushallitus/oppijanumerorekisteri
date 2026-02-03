@@ -14,7 +14,6 @@ import { KayttooikeusryhmaPageContainer } from './components/kayttooikeusryhmat/
 import { KayttooikeusryhmatPage } from './components/kayttooikeusryhmat/listaus/KayttooikeusryhmatPage';
 import FormSwitch from './components/henkilo/oppija/create/form/FormSwitch';
 import { VirkailijaCreateContainer } from './components/henkilo/VirkailijaCreateContainer';
-import AdminRedirect from './components/henkilo/AdminRedirect';
 import { PalvelukayttajaInfo } from './containers/PalvelukayttajaInfo';
 import { JarjestelmatunnusCreatePage } from './components/jarjestelmatunnus/JarjestelmatunnusCreatePage';
 import { JarjestelmatunnusListPage } from './components/jarjestelmatunnus/JarjestelmatunnusListPage';
@@ -39,7 +38,6 @@ export const AppRoutes = () => (
             <Route path="/virkailijahaku" element={<VirkailijahakuPage />} />
             <Route path="/virkailija/:oid" element={<VirkailijaViewPage />} />
             <Route path="/virkailija2/:oid" element={<VirkailijaPage />} />
-            <Route path="/admin/:oid" element={<AdminRedirect />} />
             <Route path="/oppija/:oid/vtjvertailu" element={<VtjVertailuPage henkiloType="oppija" />} />
             <Route path="/virkailija/:oid/vtjvertailu" element={<VtjVertailuPage henkiloType="virkailija" />} />
             <Route path="/oppija/:oid/duplikaatit" element={<DuplikaatitContainer henkiloType="oppija" />} />
@@ -49,8 +47,6 @@ export const AppRoutes = () => (
             <Route path="/kayttooikeusryhmat" element={<KayttooikeusryhmatPage />} />
             <Route path="/kayttooikeusryhmat/lisaa" element={<KayttooikeusryhmaPageContainer />} />
             <Route path="/kayttooikeusryhmat/:id" element={<KayttooikeusryhmaPageContainer />} />
-            <Route path="/palvelukayttaja/luonti" element={<JarjestelmatunnusCreatePage />} />
-            <Route path="/palvelukayttaja" element={<JarjestelmatunnusListPage />} />
             <Route path="/jarjestelmatunnus" element={<JarjestelmatunnusListPage />} />
             <Route path="/jarjestelmatunnus/luonti" element={<JarjestelmatunnusCreatePage />} />
             <Route path="/jarjestelmatunnus/:oid" element={<JarjestelmatunnusEditPage />} />
