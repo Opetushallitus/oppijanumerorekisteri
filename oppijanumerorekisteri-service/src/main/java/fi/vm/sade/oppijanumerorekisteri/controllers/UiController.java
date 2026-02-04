@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.web.PagedModel;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +35,7 @@ public class UiController {
 
     @PostMapping("/oppijahaku")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001')")
-    public org.springframework.data.domain.Page<OppijahakuResult> oppijahaku(@Valid @RequestBody OppijahakuCriteria criteria) {
-        return oppijaService.oppijahaku(criteria);
+    public PagedModel<OppijahakuResult> oppijahaku(@Valid @RequestBody OppijahakuCriteria criteria) {
+        return new PagedModel<>(oppijaService.oppijahaku(criteria));
     }
 }
