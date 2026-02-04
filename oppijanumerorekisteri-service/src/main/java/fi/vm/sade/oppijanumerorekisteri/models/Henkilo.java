@@ -186,7 +186,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @NotAudited
     private Set<Identification> identifications = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE}, orphanRemoval = true)
     @JoinColumn(name = "henkilo_id", nullable = false)
     @NotAudited
     private List<EidasTunniste> eidasTunnisteet;
