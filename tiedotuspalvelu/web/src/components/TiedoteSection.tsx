@@ -1,6 +1,6 @@
 import React from "react";
 
-import type { Tiedote } from "../api";
+import type { TiedoteDto } from "../api";
 import { TiedoteListItem } from "./TiedoteListItem";
 
 export function TiedoteSection({
@@ -9,7 +9,7 @@ export function TiedoteSection({
   emptyText,
 }: {
   title: string;
-  items: Tiedote[];
+  items: TiedoteDto[];
   emptyText: string;
 }) {
   return (

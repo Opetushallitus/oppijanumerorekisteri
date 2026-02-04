@@ -4,12 +4,12 @@ export type MeResponse = {
   nimi: string;
 };
 
-export type Tiedote = {
+export type TiedoteDto = {
   id: string;
+  otsikko: string;
+  viesti: string;
   url: string;
-  date?: string;
-  title?: string;
-  archived?: boolean;
+  createdAt: string;
 };
 
 export const api = createApi({
@@ -21,7 +21,7 @@ export const api = createApi({
       query: () => "me",
       providesTags: ["me"],
     }),
-    getTiedotteet: builder.query<Tiedote[], void>({
+    getTiedotteet: builder.query<TiedoteDto[], void>({
       query: () => "tiedotteet",
       providesTags: ["tiedotteet"],
     }),

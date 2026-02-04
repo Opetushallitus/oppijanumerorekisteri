@@ -3,10 +3,14 @@ package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 import static fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsService.ATTRIBUTE_KOKO_NIMI;
 
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsService;
+
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class UiController {
   private final TiedoteRepository tiedoteRepository;
 
-  public record TiedoteDto(UUID id) {}
+  @Builder
+  public record TiedoteDto(
+      UUID id, String otsikko, String viesti, String url, OffsetDateTime createdAt) {}
 
   @GetMapping("/tiedotteet")
   @PreAuthorize("isAuthenticated()")
@@ -30,7 +36,15 @@ public class UiController {
         .map(
             s ->
                 tiedoteRepository.findByOppijanumeroOrderByIdAsc(s).stream()
-                    .map(t -> new TiedoteDto(t.getId()))
+                    .map(
+                        t ->
+                            TiedoteDto.builder()
+                                .id(t.getId())
+                                .otsikko(t.getTitleFi())
+                                .viesti(t.getMessageFi())
+                                .url("") // TODO
+                                .createdAt(t.getCreated())
+                                .build())
                     .toList())
         .orElseGet(List::of);
   }

@@ -11,8 +11,6 @@ export function App() {
   const isError = tiedotteetQuery.isError;
 
   const tiedotteet = tiedotteetQuery.isSuccess ? tiedotteetQuery.data : [];
-  const uudet = tiedotteet.filter((t) => t.archived !== true);
-  const arkisto = tiedotteet.filter((t) => t.archived === true);
 
   return (
     <div className="tp">
@@ -29,18 +27,11 @@ export function App() {
         )}
 
         {tiedotteetQuery.isSuccess && (
-          <>
-            <TiedoteSection
-              title="Uudet"
-              items={uudet}
-              emptyText="Ei uusia tiedotteita."
-            />
-            <TiedoteSection
-              title="Arkisto"
-              items={arkisto}
-              emptyText="Ei arkistoituja tiedotteita."
-            />
-          </>
+          <TiedoteSection
+            title="Tiedotteet"
+            items={tiedotteet}
+            emptyText="Ei tiedotteita."
+          />
         )}
       </div>
     </div>
