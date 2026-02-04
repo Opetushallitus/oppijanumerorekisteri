@@ -93,7 +93,7 @@ class UiControllerTest {
     @Test
     @WithMockUser(username = "1.2.3.4.5", authorities = ophVirkailijaRole)
     void oppijahakuReturnsOppijas() throws Exception {
-        var oppijahakuCriteria = new OppijahakuCriteria("tuonti", false, 0);
+        var oppijahakuCriteria = new OppijahakuCriteria("Tuonti", false, 0);
         var result = mvc.perform(post("/internal/oppijahaku")
                         .content(objectMapper.writeValueAsString(oppijahakuCriteria))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -106,7 +106,7 @@ class UiControllerTest {
     @Test
     @WithMockUser(username = "1.2.3.4.5", authorities = ophVirkailijaRole)
     void oppijahakuReturnsPassiveOppijas() throws Exception {
-        var oppijahakuCriteria = new OppijahakuCriteria("tuontietu1", true, 0);
+        var oppijahakuCriteria = new OppijahakuCriteria("tuontiEtu1", true, 0);
         var result = mvc.perform(post("/internal/oppijahaku")
                         .content(objectMapper.writeValueAsString(oppijahakuCriteria))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -119,7 +119,7 @@ class UiControllerTest {
     @Test
     @WithMockUser(username = "1.2.3.4.5", authorities = ophVirkailijaRole)
     void oppijahakuReturnsOppijasWithHenkiloUiFormattedQuery() throws Exception {
-        var oppijahakuCriteria = new OppijahakuCriteria("tuontisuku1, tuonti", false, 0);
+        var oppijahakuCriteria = new OppijahakuCriteria("TUONTISUKU1, tuonti", false, 0);
         var result = mvc.perform(post("/internal/oppijahaku")
                         .content(objectMapper.writeValueAsString(oppijahakuCriteria))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -132,7 +132,7 @@ class UiControllerTest {
     @Test
     @WithMockUser(username = "1.2.3.4.5", authorities = ophVirkailijaRole)
     void oppijahakuReturnsOppijasWithNameFormattedQuery() throws Exception {
-        var oppijahakuCriteria = new OppijahakuCriteria("tuontietu1 tuonti", false, 0);
+        var oppijahakuCriteria = new OppijahakuCriteria("tuontietu1 TUONTI", false, 0);
         var result = mvc.perform(post("/internal/oppijahaku")
                         .content(objectMapper.writeValueAsString(oppijahakuCriteria))
                         .contentType(MediaType.APPLICATION_JSON))

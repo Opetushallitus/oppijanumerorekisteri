@@ -39,14 +39,33 @@ public interface HenkiloRepository extends QuerydslPredicateExecutor<Henkilo>, J
     @Query("select h from Henkilo h left join h.eidasTunnisteet e where e.tunniste = :eidasTunniste")
     Optional<Henkilo> findByEidasTunniste(String eidasTunniste);
 
-    @Query("select h from Henkilo h where h.etunimet like :query% or h.kutsumanimi like :query% or h.sukunimi like :query%")
+    @Query("""
+        select h from Henkilo h
+        where h.etunimet ilike :query%
+           or h.kutsumanimi ilike :query%
+           or h.sukunimi ilike :query%""")
     Page<Henkilo> findAllByOppijahakuQuery(String query, Pageable pageable);
-    @Query("select h from Henkilo h where h.passivoitu = false and (h.etunimet like :query% or h.kutsumanimi like :query% or h.sukunimi like :query%)")
+
+    @Query("""
+        select h from Henkilo h
+        where h.passivoitu = false
+          and (h.etunimet ilike :query%
+            or h.kutsumanimi ilike :query%
+            or h.sukunimi ilike :query%
+              )""")
     Page<Henkilo> findAllNotPassivoituByOppijahakuQuery(String query, Pageable pageable);
 
-    @Query("select h from Henkilo h where (h.etunimet like :etunimet% or h.kutsumanimi like :etunimet%) and h.sukunimi like :sukunimi%")
+    @Query("""
+        select h from Henkilo h
+        where h.sukunimi ilike :sukunimi%
+          and (h.etunimet ilike :etunimet% or h.kutsumanimi ilike :etunimet%)""")
     Page<Henkilo> findAllByFullNameOppijahakuQuery(String etunimet, String sukunimi, Pageable pageable);
-    @Query("select h from Henkilo h where h.passivoitu = false and ((h.etunimet like :etunimet% or h.kutsumanimi like :etunimet%) and h.sukunimi like :sukunimi%)")
+
+    @Query("""
+        select h from Henkilo h
+        where h.passivoitu = false
+          and h.sukunimi ilike :sukunimi%
+          and (h.etunimet ilike :etunimet% or h.kutsumanimi ilike :etunimet%)""")
     Page<Henkilo> findAllNotPassivoituByFullNameOppijahakuQuery(String etunimet, String sukunimi, Pageable pageable);
 
     Page<Henkilo> findAllByHetu(String hetu, Pageable pageable);
