@@ -7,7 +7,6 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.EidasTunniste;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,13 +23,8 @@ public class HenkiloApiTest extends OppijanumerorekisteriApiTest {
     @Autowired
     HenkiloRepository henkiloRepository;
 
-    String oid;
-    String eidasTunniste;
-
-    @Before
-    public void before() {
-        oid = oidGenerator.generateOID();
-        eidasTunniste = "FOO/BAR/" + UUID.randomUUID().toString();
+    public String createHenkilo(List<EidasTunniste> eidasTunnisteet) {
+        String oid = oidGenerator.generateOID();
 
         var now = ZonedDateTime.now();
         henkiloRepository.save(Henkilo.builder()
@@ -38,23 +32,18 @@ public class HenkiloApiTest extends OppijanumerorekisteriApiTest {
                 .etunimet("Leon Elias")
                 .kutsumanimi("Leon Elias")
                 .sukunimi("Germany")
-                .yksiloityEidas(true)
-                .eidasTunnisteet(List.of(EidasTunniste.builder()
-                        .tunniste(eidasTunniste)
-                        .createdBy(oidGenerator.generateOID())
-                        .build()))
+                .yksiloityEidas(eidasTunnisteet != null)
+                .eidasTunnisteet(eidasTunnisteet)
                 .created(Date.from(now.toInstant()))
                 .modified(Date.from(now.toInstant()))
                 .build());
+        return oid;
     }
 
     @Test
     @UserRekisterinpitaja
     public void henkiloHasNoEidasTunnisteIfNotEidasYksilöity() throws Exception {
-        var h = henkiloRepository.findByOidHenkilo(oid).get();
-        h.setYksiloityEidas(false);
-        h.getEidasTunnisteet().clear();
-        henkiloRepository.save(h);
+        var oid = createHenkilo(null);
 
         var henkilo = getJson(HenkiloDto.class, "/henkilo/%s", oid);
         assertThat(henkilo.getOidHenkilo()).isEqualTo(oid);
@@ -68,6 +57,11 @@ public class HenkiloApiTest extends OppijanumerorekisteriApiTest {
     @Test
     @UserRekisterinpitaja
     public void eidasHenkiloDto() throws Exception {
+        String eidasTunniste = "FOO/BAR/" + UUID.randomUUID().toString();
+        var oid = createHenkilo(List.of(EidasTunniste.builder()
+                        .tunniste(eidasTunniste)
+                        .createdBy(oidGenerator.generateOID())
+                        .build()));
         var henkilo = getJson(HenkiloDto.class, "/henkilo/%s", oid);
         assertThat(henkilo.getOidHenkilo()).isEqualTo(oid);
         assertThat(henkilo.isYksiloityEidas()).isTrue();
