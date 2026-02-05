@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { useSelector } from 'react-redux';
 import { format, parseISO } from 'date-fns';
@@ -40,15 +40,10 @@ export const OppijahakuPage = () => {
     const [criteria, setCriteria] = useState<OppijahakuCriteria>(state);
     const skip = !criteria.query || criteria.query.length < 3;
     const { data, isFetching } = usePostOppijahakuQuery(criteria, { skip });
-    console.log(data);
 
     useEffect(() => {
         setCriteria(state);
     }, [state]);
-
-    const renderedData = useMemo(() => {
-        return data?.content && !skip ? data.content : [];
-    }, [data, skip, isFetching]);
 
     const setQuery = (query: string) => {
         if (query !== criteria.query) {
@@ -73,7 +68,7 @@ export const OppijahakuPage = () => {
             <OphDsTable
                 headers={[L['HENKILO_NIMI']!, L['HENKILO_SYNTYMAAIKA']!]}
                 isFetching={isFetching}
-                rows={renderedData.map((d) => [
+                rows={(data?.content ?? []).map((d) => [
                     <Link key={`nimi-${d.oid}`} to={`/oppija/${d.oid}`} className="oph-ds-link">
                         {`${d.sukunimi}, ${d.etunimet}`}
                     </Link>,
