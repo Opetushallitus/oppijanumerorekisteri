@@ -1,0 +1,3 @@
+ALTER TABLE tiedote ADD COLUMN url TEXT;
+UPDATE tiedote SET url = '' WHERE url IS NULL;
+ALTER TABLE tiedote ALTER COLUMN url SET NOT NULL;
