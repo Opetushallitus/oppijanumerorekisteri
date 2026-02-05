@@ -11,7 +11,7 @@ import { OphDsInput } from '../design-system/OphDsInput';
 import { OphDsTable } from '../design-system/OphDsTable';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
-import { virkailijaNavigation } from '../navigation/navigationconfigurations';
+import { oppijaNavigation } from '../navigation/navigationconfigurations';
 import { OppijahakuCriteria, usePostOppijahakuQuery } from '../../api/oppijanumerorekisteri';
 import { RootState, useAppDispatch } from '../../store';
 import { setState as _setState } from '../../slices/oppijahakuSlice';
@@ -33,7 +33,7 @@ const DebouncedNameQuery = ({ defaultValue, onChange }: { defaultValue?: string;
 export const OppijahakuPage = () => {
     const { L } = useLocalisations();
     useTitle('Oppijahaku');
-    useNavigation(virkailijaNavigation, false);
+    useNavigation(oppijaNavigation, false);
 
     const state = useSelector<RootState, OppijahakuCriteria>((state) => state.oppijahaku);
     const setState = (newState: OppijahakuCriteria) => useAppDispatch()(_setState(newState));

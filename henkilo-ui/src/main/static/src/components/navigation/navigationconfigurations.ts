@@ -51,6 +51,24 @@ export const mainNavigation: Array<NaviTab> = [
     },
 ];
 
+export const oppijaNavigation = [
+    {
+        path: '/oppijahaku',
+        label: 'NAVI_OPPIJAHAKU',
+        sallitutRoolit: ['OPPIJANUMEROREKISTERI_REKISTERINPITAJA'],
+    },
+    {
+        path: '/oppija/luonti',
+        label: 'NAVI_OPPIJAN_LUONTI',
+        sallitutRoolit: ['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI', 'OPPIJANUMEROREKISTERI_YLEISTUNNISTE_LUONTI'],
+    },
+    {
+        path: '/oppijoidentuonti',
+        label: 'NAVI_OPPIJOIDEN_TUONTI',
+        sallitutRoolit: ['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI'],
+    },
+];
+
 export const virkailijaNavigation = [
     {
         path: '/anomukset',
