@@ -32,7 +32,7 @@ public class ApiController {
 
   public record CreateResponse(UUID id) {}
 
-  @PostMapping("/tiedotteet")
+  @PostMapping("/tiedote/kielitutkintotodistus")
   @PreAuthorize("hasRole('APP_TIEDOTUSPALVELU_CRUD')")
   public CreateResponse createTiedote(@RequestBody @Valid TiedoteDto tiedoteDto) {
     var existingTiedote = tiedoteRepository.findByIdempotencyKey(tiedoteDto.idempotencyKey());

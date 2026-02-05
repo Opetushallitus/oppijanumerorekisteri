@@ -48,7 +48,7 @@ public class ApiControllerTest {
   @Test
   public void createTiedoteRequiresAuthentication() throws Exception {
     mockMvc
-        .perform(post("/api/v1/tiedotteet").contentType(MediaType.APPLICATION_JSON).content("{}"))
+        .perform(post("/api/v1/tiedote/kielitutkintotodistus").contentType(MediaType.APPLICATION_JSON).content("{}"))
         .andExpect(status().isUnauthorized());
   }
 
@@ -58,7 +58,7 @@ public class ApiControllerTest {
 
     mockMvc
         .perform(
-            post("/api/v1/tiedotteet")
+            post("/api/v1/tiedote/kielitutkintotodistus")
                 .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tiedote)))
@@ -73,7 +73,7 @@ public class ApiControllerTest {
 
     mockMvc
         .perform(
-            post("/api/v1/tiedotteet")
+            post("/api/v1/tiedote/kielitutkintotodistus")
                 .with(
                     jwt().authorities(new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -84,7 +84,7 @@ public class ApiControllerTest {
     String responseBody =
         mockMvc
             .perform(
-                post("/api/v1/tiedotteet")
+                post("/api/v1/tiedote/kielitutkintotodistus")
                     .with(
                         jwt()
                             .authorities(
@@ -117,7 +117,7 @@ public class ApiControllerTest {
   public void createTiedoteFailsWhenFieldsAreMissing() throws Exception {
     mockMvc
         .perform(
-            post("/api/v1/tiedotteet")
+            post("/api/v1/tiedote/kielitutkintotodistus")
                 .with(
                     jwt().authorities(new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -128,7 +128,7 @@ public class ApiControllerTest {
 
     mockMvc
         .perform(
-            post("/api/v1/tiedotteet")
+            post("/api/v1/tiedote/kielitutkintotodistus")
                 .with(
                     jwt().authorities(new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -145,7 +145,7 @@ public class ApiControllerTest {
     String firstResponse =
         mockMvc
             .perform(
-                post("/api/v1/tiedotteet")
+                post("/api/v1/tiedote/kielitutkintotodistus")
                     .with(
                         jwt()
                             .authorities(
@@ -163,7 +163,7 @@ public class ApiControllerTest {
     String secondResponse =
         mockMvc
             .perform(
-                post("/api/v1/tiedotteet")
+                post("/api/v1/tiedote/kielitutkintotodistus")
                     .with(
                         jwt()
                             .authorities(
@@ -194,7 +194,7 @@ public class ApiControllerTest {
     String firstResponse =
         mockMvc
             .perform(
-                post("/api/v1/tiedotteet")
+                post("/api/v1/tiedote/kielitutkintotodistus")
                     .with(
                         jwt()
                             .authorities(
@@ -212,7 +212,7 @@ public class ApiControllerTest {
     String secondResponse =
         mockMvc
             .perform(
-                post("/api/v1/tiedotteet")
+                post("/api/v1/tiedote/kielitutkintotodistus")
                     .with(
                         jwt()
                             .authorities(
