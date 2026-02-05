@@ -68,7 +68,7 @@ export const OppijahakuPage = () => {
             <OphDsTable
                 headers={[L['HENKILO_NIMI']!, L['HENKILO_SYNTYMAAIKA']!]}
                 isFetching={isFetching}
-                rows={(data?.content ?? []).map((d) => [
+                rows={((!skip && data?.content) || []).map((d) => [
                     <Link key={`nimi-${d.oid}`} to={`/oppija/${d.oid}`} className="oph-ds-link">
                         {`${d.sukunimi}, ${d.etunimet}`}
                     </Link>,
@@ -77,7 +77,11 @@ export const OppijahakuPage = () => {
                     </span>,
                 ])}
                 rowDescriptionPartitive={L['OPPIJAA']}
-                page={data?.page ? { page: data.page, setPage: (page) => setState({ ...criteria, page }) } : undefined}
+                page={
+                    !skip && data?.page
+                        ? { page: data.page, setPage: (page) => setState({ ...criteria, page }) }
+                        : undefined
+                }
             />
         </OphDsPage>
     );
