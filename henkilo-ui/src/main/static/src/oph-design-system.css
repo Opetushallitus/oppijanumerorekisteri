@@ -289,6 +289,20 @@
     border: 0;
 }
 
+.oph-ds-button-transparent {
+    color: #0033CC;
+    background-color: inherit;
+}
+
+.oph-ds-button-bordered {
+    color: var(--OPH-Button-Primary-variant-Background, #03C);
+    box-sizing: border-box;
+    padding: 6px 14px;
+    border-radius: 2px;
+    border: var(--OPH-Button-Secondary-variant-Stroke-width, 2px) solid var(--OPH-Button-Secondary-variant-Stroke, #03C);
+    background-color: var(--OPH-Button-Secondary-variant-Background, #FFF);
+}
+
 .oph-ds-button:hover {
     background-color: #0041DC;
 }
@@ -307,13 +321,24 @@
     background-color: #B2B2B2;
 }
 
-.oph-ds-button-bordered {
-    color: var(--OPH-Button-Primary-variant-Background, #03C);
-    box-sizing: border-box;
-    padding: 6px 14px;
-    border-radius: 2px;
-    border: var(--OPH-Button-Secondary-variant-Stroke-width, 2px) solid var(--OPH-Button-Secondary-variant-Stroke, #03C);
-    background-color: var(--OPH-Button-Secondary-variant-Background, #FFF);
+.oph-ds-button-transparent:hover {
+    background-color: inherit;
+    color: #0041DC;
+}
+
+.oph-ds-button-transparent:focus {
+    background-color: inherit;
+    color: #0041DC;
+}
+
+.oph-ds-button-transparent:active {
+    background-color: inherit;
+    color: #006;
+}
+
+.oph-ds-button-transparent:disabled {
+    background-color: inherit;
+    color: #B2B2B2;
 }
 
 .oph-ds-button-bordered:hover {
@@ -340,22 +365,6 @@
     background-color: #FFF;
     border: var(--OPH-Button-Secondary-variant-Stroke-width, 2px) solid #B2B2B2;
     color: #B2B2B2;
-}
-
-.oph-ds-button-transparent {
-    color: var(--OPH-Input-Stroke, #0041DC);
-    background-color: inherit;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 24px;
-    margin: 0;
-    padding: 8px 16px;
-    position: relative;
-    text-align: left;
-    width: 100%;
-    outline: none;
-    cursor: pointer;
-    border: 0;
 }
 
 .oph-ds-button-icon {
@@ -391,13 +400,6 @@
     padding: 0px 2px;
 }
 
-.oph-ds-accordion-header > button {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-}
-
 .oph-ds-accordion-header-text {
     display: inline-block;
     margin-right: 40px;
@@ -425,7 +427,23 @@
     width: 0.5rem;
 }
 
-.oph-ds-button-transparent[aria-expanded="true"] .oph-ds-accordion-icon {
+.oph-ds-accordion-header-button {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    margin: 0;
+    padding: 8px 16px;
+    position: relative;
+    text-align: left;
+    cursor: pointer;
+    border: 0;
+}
+
+.oph-ds-accordion-header-button[aria-expanded="true"] .oph-ds-accordion-icon {
     transform: translateY(-50%) rotate(-135deg);
 }
 
@@ -603,6 +621,12 @@
 
 .oph-ds-table tbody tr:hover {
     background: var(--Table-cell-Background-Hover-or-selected, #C1EAFF);
+}
+
+.oph-ds-table-page-dots {
+    color: #6D6D6D;
+    font-weight: 600;
+    padding: 8px 16px;
 }
 
 .oph-ds-toasts {

@@ -33,6 +33,31 @@ export type CreateHenkiloRequest = {
     sukunimi: string;
 };
 
+export type OppijahakuCriteria = {
+    query: string;
+    passive: boolean;
+    page: number;
+};
+
+type OppijahakuResult = {
+    oid: string;
+    etunimet: string;
+    sukunimi: string;
+    syntymaaika: string;
+};
+
+export type SpringPageModel = {
+    number: number;
+    size: number;
+    totalElements: number;
+    totalPages: number;
+};
+
+type SpringPage<T> = {
+    content: T[];
+    page: SpringPageModel;
+};
+
 type GetDuplicatesRequest = {
     etunimet?: string;
     kutsumanimi?: string;
@@ -68,6 +93,7 @@ export const oppijanumerorekisteriApi = createApi({
         'oppijoidentuontiyhteenveto',
         'oppijoidentuontilistaus',
         'henkilo',
+        'oppijahaku',
         'master',
         'slaves',
         'duplicates',
@@ -90,6 +116,14 @@ export const oppijanumerorekisteriApi = createApi({
                 return { henkiloKayttoEstetty: isKayttoEstetty(meta) };
             },
             extraOptions: { maxRetries: 0 }, // valid api responses include status codes 401 and 403
+        }),
+        postOppijahaku: builder.query<SpringPage<OppijahakuResult>, OppijahakuCriteria>({
+            query: (body) => ({
+                url: 'internal/oppijahaku',
+                method: 'POST',
+                body,
+            }),
+            providesTags: ['oppijahaku'],
         }),
         getLocale: builder.query<Locale, void>({
             query: () => ({
@@ -423,6 +457,7 @@ export const oppijanumerorekisteriApi = createApi({
 export const {
     useGetOnrPrequelQuery,
     useGetHenkiloQuery,
+    usePostOppijahakuQuery,
     useDeleteAccessMutation,
     useGetLocaleQuery,
     useGetPassinumerotQuery,

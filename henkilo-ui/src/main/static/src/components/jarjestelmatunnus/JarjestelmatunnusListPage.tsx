@@ -5,7 +5,6 @@ import { SingleValue } from 'react-select';
 import { PalvelukayttajaCriteria } from '../../types/domain/kayttooikeus/palvelukayttaja.types';
 import { useLocalisations } from '../../selectors';
 import { useGetPalvelukayttajatQuery } from '../../api/kayttooikeus';
-import Loader from '../common/icons/Loader';
 import { useDebounce } from '../../useDebounce';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import { OphDsPage } from '../design-system/OphDsPage';
@@ -65,6 +64,7 @@ export const JarjestelmatunnusListPage = () => {
             </div>
             <OphDsTable
                 headers={[L['HENKILO_PALVELUN_NIMI']!, L['HENKILO_KAYTTAJANIMI']!]}
+                isFetching={isFetching}
                 rows={(data ?? []).map((d) => [
                     <Link key={`link-${d.kayttajatunnus}`} to={`/jarjestelmatunnus/${d.oid}`} className="oph-ds-link">
                         {d.nimi}
@@ -73,7 +73,6 @@ export const JarjestelmatunnusListPage = () => {
                 ])}
                 rowDescriptionPartitive={L['JARJESTELMATUNNUSTA']}
             />
-            {isFetching && <Loader />}
         </OphDsPage>
     );
 };

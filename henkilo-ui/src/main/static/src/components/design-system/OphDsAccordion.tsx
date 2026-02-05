@@ -36,7 +36,7 @@ export const OphDsAccordion = ({ items }: PageProps) => {
                                 onClick={() => onToggle(index)}
                                 aria-expanded={show}
                                 aria-controls={`section-${index}`}
-                                className="oph-ds-button-transparent"
+                                className="oph-ds-button-transparent oph-ds-accordion-header-button"
                             >
                                 <span className="oph-ds-accordion-header-text">{item.header}</span>
                                 <span className="oph-ds-accordion-icon"></span>

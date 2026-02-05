@@ -1,15 +1,86 @@
 import React, { ReactNode } from 'react';
-import { useLocalisations } from '../../selectors';
 
-type PageProps = {
+import { useLocalisations } from '../../selectors';
+import { SpringPageModel } from '../../api/oppijanumerorekisteri';
+import Loader from '../common/icons/Loader';
+
+type TableProps = {
     headers: string[];
+    isFetching: boolean;
+    page?: PageProps;
     rows: ReactNode[][];
     rowDescriptionPartitive?: string;
 };
 
-export const OphDsTable = ({ headers, rows, rowDescriptionPartitive }: PageProps) => {
+type PageProps = {
+    page: SpringPageModel;
+    setPage: (p: number) => void;
+};
+
+const getRenderedPageRange = (page?: SpringPageModel) => {
+    if (!page) {
+        return [];
+    }
+    if (page.totalPages <= 8) {
+        return [...Array(page.totalPages).keys()];
+    }
+    if (page.number < 4) {
+        return [...Array(5).keys(), undefined, page.totalPages - 1];
+    }
+    if (page.number > page.totalPages - 5) {
+        return [0, undefined, ...[...Array(5).keys()].map((i) => i + page.totalPages - 5)];
+    }
+    return [0, undefined, ...[...Array(5).keys()].map((i) => i + page.number - 2), undefined, page.totalPages - 1];
+};
+
+const PageControls = ({ page, setPage }: PageProps) => {
     const { L } = useLocalisations();
-    const rowCount = rowDescriptionPartitive ? ` (${rows.length} ${rowDescriptionPartitive})` : '';
+    const renderedPageRange = getRenderedPageRange(page);
+    return (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '16px', gap: '4px' }}>
+            {
+                <button
+                    className="oph-ds-button oph-ds-button-transparent"
+                    onClick={() => setPage(page.number + 1)}
+                    disabled={page.number === 0}
+                >
+                    {L['TAULUKKO_EDELLINEN']}
+                </button>
+            }
+            {renderedPageRange.map((p, i) => {
+                if (p !== undefined) {
+                    return (
+                        <button
+                            key={`page-${i}`}
+                            className={`oph-ds-button ${p === page.number ? '' : 'oph-ds-button-transparent'}`}
+                            onClick={() => setPage(p)}
+                        >
+                            {p + 1}
+                        </button>
+                    );
+                } else {
+                    return (
+                        <div key={`page-${i}`} className="oph-ds-table-page-dots">
+                            ...
+                        </div>
+                    );
+                }
+            })}
+            <button
+                className="oph-ds-button oph-ds-button-transparent"
+                onClick={() => setPage(page.number + 1)}
+                disabled={page.number === page.totalPages - 1}
+            >
+                {L['TAULUKKO_SEURAAVA']}
+            </button>
+        </div>
+    );
+};
+
+export const OphDsTable = ({ headers, isFetching, page, rows, rowDescriptionPartitive }: TableProps) => {
+    const { L } = useLocalisations();
+    const totalElements = page ? page?.page.totalElements : rows.length;
+    const rowCount = rowDescriptionPartitive ? ` (${totalElements} ${rowDescriptionPartitive})` : '';
     return (
         <div>
             <h2
@@ -18,7 +89,7 @@ export const OphDsTable = ({ headers, rows, rowDescriptionPartitive }: PageProps
                 aria-atomic="true"
                 data-testid={`${rowDescriptionPartitive}-count`}
             >
-                {(L['HENKILOHAKU_HAKUTULOKSET'] ?? '') + rowCount}
+                {L['HENKILOHAKU_HAKUTULOKSET'] + rowCount}
             </h2>
             <table className="oph-ds-table">
                 <thead>
@@ -38,6 +109,8 @@ export const OphDsTable = ({ headers, rows, rowDescriptionPartitive }: PageProps
                     ))}
                 </tbody>
             </table>
+            <div style={{ padding: '16px' }}>{isFetching ? <Loader /> : <div style={{ padding: '12px' }}></div>}</div>
+            {page && <PageControls page={page.page} setPage={page.setPage} />}
         </div>
     );
 };

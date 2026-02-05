@@ -18,6 +18,7 @@ import { PalvelukayttajaInfo } from './containers/PalvelukayttajaInfo';
 import { JarjestelmatunnusCreatePage } from './components/jarjestelmatunnus/JarjestelmatunnusCreatePage';
 import { JarjestelmatunnusListPage } from './components/jarjestelmatunnus/JarjestelmatunnusListPage';
 import { JarjestelmatunnusEditPage } from './components/jarjestelmatunnus/JarjestelmatunnusEditPage';
+import { OppijahakuPage } from './components/oppija/OppijahakuPage';
 import { OppijaViewPage } from './components/henkilo/OppijaViewPage';
 import { VirkailijaViewPage } from './components/henkilo/VirkailijaViewPage';
 import { VirkailijahakuPage } from './components/virkailija/VirkailijahakuPage';
@@ -34,6 +35,7 @@ export const AppRoutes = () => (
             <Route path="/henkilohaku" element={<HenkilohakuContainer />} />
             <Route path="/virkailija/luonti" element={<VirkailijaCreateContainer />} />
             <Route path="/oppija/luonti" element={<FormSwitch />} />
+            <Route path="/oppijahaku" element={<OppijahakuPage />} />
             <Route path="/oppija/:oid" element={<OppijaViewPage />} />
             <Route path="/virkailijahaku" element={<VirkailijahakuPage />} />
             <Route path="/virkailija/:oid" element={<VirkailijaViewPage />} />

@@ -6,6 +6,7 @@ import { oppijanumerorekisteriApi } from './api/oppijanumerorekisteri';
 import { lokalisointiApi } from './api/lokalisointi';
 import { koodistoApi } from './api/koodisto';
 import henkilohakuReducer from './slices/henkilohakuSlice';
+import oppijahakuReducer from './slices/oppijahakuSlice';
 import virkailijahakuReducer from './slices/virkailijahakuSlice';
 import navigationReducer from './slices/navigationSlice';
 import toastReducer from './slices/toastSlice';
@@ -20,6 +21,7 @@ export const store = configureStore({
         toasts: toastReducer,
         navigation: navigationReducer,
         virkailijahaku: virkailijahakuReducer,
+        oppijahaku: oppijahakuReducer,
         [kayttooikeusApi.reducerPath]: kayttooikeusApi.reducer,
         [oppijanumerorekisteriApi.reducerPath]: oppijanumerorekisteriApi.reducer,
         [lokalisointiApi.reducerPath]: lokalisointiApi.reducer,

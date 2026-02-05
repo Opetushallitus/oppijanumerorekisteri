@@ -11,7 +11,6 @@ import {
     useGetKayttooikeusryhmasQuery,
     usePostVirkailijahakuQuery,
 } from '../../api/kayttooikeus';
-import Loader from '../common/icons/Loader';
 import { useDebounce } from '../../useDebounce';
 import { OphDsPage } from '../design-system/OphDsPage';
 import { OphDsChechbox } from '../design-system/OphDsCheckbox';
@@ -90,7 +89,7 @@ export const VirkailijahakuPage = () => {
 
     return (
         <OphDsPage header={L['VIRKAILIJAHAKU']!}>
-            <p style={{ marginBottom: L['VIRKAILIJAHAKU_SELITE'] ? '1rem' : 0 }}>{L['VIRKAILIJAHAKU_SELITE']}</p>
+            {L['VIRKAILIJAHAKU_SELITE'] && <p>{L['VIRKAILIJAHAKU_SELITE']}</p>}
             <div className={styles.formGrid}>
                 <DebouncedNameQuery
                     onChange={(nameQuery) => setFilters({ ...filters, nameQuery })}
@@ -157,6 +156,7 @@ export const VirkailijahakuPage = () => {
             </div>
             <OphDsTable
                 headers={[L['HENKILO_NIMI']!, L['USERNAME']!, L['HENKILOHAKU_ORGANISAATIO']!]}
+                isFetching={isFetching}
                 rows={renderedData.map((d) => [
                     <Link key={`link-${d.kayttajatunnus}`} to={`/virkailija2/${d.oidHenkilo}`} className="oph-ds-link">
                         {d.nimi || d.oidHenkilo}
@@ -175,11 +175,6 @@ export const VirkailijahakuPage = () => {
                 ])}
                 rowDescriptionPartitive={L['VIRKAILIJAA']}
             />
-            {isFetching && (
-                <div style={{ marginTop: '1rem' }}>
-                    <Loader />
-                </div>
-            )}
         </OphDsPage>
     );
 };

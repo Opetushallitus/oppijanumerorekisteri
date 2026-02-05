@@ -17,7 +17,7 @@ const initialState: VirkailijahakuFilters = {
     kayttooikeusryhmaId: undefined,
 };
 
-export const henkilohakuSlice = createSlice({
+export const virkailijahakuSlice = createSlice({
     name: 'virkailijahaku',
     initialState,
     reducers: {
@@ -32,6 +32,6 @@ export const henkilohakuSlice = createSlice({
     },
 });
 
-export const { setFilters, clearFilters } = henkilohakuSlice.actions;
+export const { setFilters, clearFilters } = virkailijahakuSlice.actions;
 
-export default henkilohakuSlice.reducer;
+export default virkailijahakuSlice.reducer;
