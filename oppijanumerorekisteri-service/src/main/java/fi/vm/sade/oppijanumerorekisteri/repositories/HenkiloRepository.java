@@ -41,31 +41,31 @@ public interface HenkiloRepository extends QuerydslPredicateExecutor<Henkilo>, J
 
     @Query("""
         select h from Henkilo h
-        where h.etunimet ilike :query%
-           or h.kutsumanimi ilike :query%
-           or h.sukunimi ilike :query%""")
+        where lower(h.etunimet) like :query%
+           or lower(h.kutsumanimi) like :query%
+           or lower(h.sukunimi) like :query%""")
     Page<Henkilo> findAllByOppijahakuQuery(String query, Pageable pageable);
 
     @Query("""
         select h from Henkilo h
         where h.passivoitu = false
-          and (h.etunimet ilike :query%
-            or h.kutsumanimi ilike :query%
-            or h.sukunimi ilike :query%
+          and (lower(h.etunimet) like :query%
+            or lower(h.kutsumanimi) like :query%
+            or lower(h.sukunimi) like :query%
               )""")
     Page<Henkilo> findAllNotPassivoituByOppijahakuQuery(String query, Pageable pageable);
 
     @Query("""
         select h from Henkilo h
-        where h.sukunimi ilike :sukunimi%
-          and (h.etunimet ilike :etunimet% or h.kutsumanimi ilike :etunimet%)""")
+        where lower(h.sukunimi) like :sukunimi%
+          and (lower(h.etunimet) like :etunimet% or lower(h.kutsumanimi) like :etunimet%)""")
     Page<Henkilo> findAllByFullNameOppijahakuQuery(String etunimet, String sukunimi, Pageable pageable);
 
     @Query("""
         select h from Henkilo h
         where h.passivoitu = false
-          and h.sukunimi ilike :sukunimi%
-          and (h.etunimet ilike :etunimet% or h.kutsumanimi ilike :etunimet%)""")
+          and lower(h.sukunimi) like :sukunimi%
+          and (lower(h.etunimet) like :etunimet% or lower(h.kutsumanimi) like :etunimet%)""")
     Page<Henkilo> findAllNotPassivoituByFullNameOppijahakuQuery(String etunimet, String sukunimi, Pageable pageable);
 
     Page<Henkilo> findAllByHetu(String hetu, Pageable pageable);

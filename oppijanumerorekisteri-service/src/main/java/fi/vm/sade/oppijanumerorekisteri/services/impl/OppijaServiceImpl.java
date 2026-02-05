@@ -328,11 +328,11 @@ public class OppijaServiceImpl implements OppijaService {
         } else if (criteria.getQuery().trim().matches("\\d{6}.\\d{3}[\\dA-Z]")) {
             return criteria.isPassive()
                 ? henkiloRepository.findAllByHetu(
-                        criteria.getQuery().trim(),
+                        criteria.getQuery().trim().toUpperCase(),
                         PageRequest.of(criteria.getPage(), 50, oppijahakuSort)
                     ).map(mapToOppijahakuResult)
                 : henkiloRepository.findAllByHetuAndPassivoituFalse(
-                        criteria.getQuery().trim(),
+                        criteria.getQuery().trim().toUpperCase(),
                         PageRequest.of(criteria.getPage(), 50, oppijahakuSort)
                     ).map(mapToOppijahakuResult);
         } else {
@@ -343,8 +343,8 @@ public class OppijaServiceImpl implements OppijaService {
     private org.springframework.data.domain.Page<Henkilo> oppijahakuByNames(OppijahakuCriteria criteria) {
         if (criteria.getQuery().contains(",")) {
             // search by henkilo-ui presentation i.e. "Lastname, Firstname (Middlename)"
-            String etunimet = criteria.getQuery().substring(criteria.getQuery().indexOf(",") + 1).trim();
-            String sukunimi = criteria.getQuery().split(",")[0].trim();
+            String etunimet = criteria.getQuery().substring(criteria.getQuery().indexOf(",") + 1).trim().toLowerCase();
+            String sukunimi = criteria.getQuery().split(",")[0].trim().toLowerCase();
             return criteria.isPassive()
                 ? henkiloRepository.findAllByFullNameOppijahakuQuery(
                         etunimet,
@@ -356,8 +356,8 @@ public class OppijaServiceImpl implements OppijaService {
                         PageRequest.of(criteria.getPage(), 50, oppijahakuSort));
         } else if (criteria.getQuery().contains(" ")) {
             // search by typical Finnish name presentation i.e. "Firstname (Middlename) Lastname"
-            String etunimet = criteria.getQuery().substring(0, criteria.getQuery().lastIndexOf(" ") + 1).trim();
-            String sukunimi = criteria.getQuery().substring(criteria.getQuery().lastIndexOf(" ") + 1).trim();
+            String etunimet = criteria.getQuery().substring(0, criteria.getQuery().lastIndexOf(" ") + 1).trim().toLowerCase();
+            String sukunimi = criteria.getQuery().substring(criteria.getQuery().lastIndexOf(" ") + 1).trim().toLowerCase();
             return criteria.isPassive()
                 ? henkiloRepository.findAllByFullNameOppijahakuQuery(
                         etunimet,
@@ -371,10 +371,10 @@ public class OppijaServiceImpl implements OppijaService {
 
         return criteria.isPassive()
             ? henkiloRepository.findAllByOppijahakuQuery(
-                    criteria.getQuery(),
+                    criteria.getQuery().toLowerCase(),
                     PageRequest.of(criteria.getPage(), 50, oppijahakuSort))
             : henkiloRepository.findAllNotPassivoituByOppijahakuQuery(
-                    criteria.getQuery(),
+                    criteria.getQuery().toLowerCase(),
                     PageRequest.of(criteria.getPage(), 50, oppijahakuSort));
     }
 
