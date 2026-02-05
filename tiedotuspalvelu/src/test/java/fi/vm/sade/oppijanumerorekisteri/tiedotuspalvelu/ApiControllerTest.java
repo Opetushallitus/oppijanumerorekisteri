@@ -23,6 +23,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class ApiControllerTest {
+  private static final String ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS =
+      "ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS";
 
   @Autowired private MockMvc mockMvc;
 
@@ -48,7 +50,10 @@ public class ApiControllerTest {
   @Test
   public void createTiedoteRequiresAuthentication() throws Exception {
     mockMvc
-        .perform(post("/api/v1/tiedote/kielitutkintotodistus").contentType(MediaType.APPLICATION_JSON).content("{}"))
+        .perform(
+            post("/api/v1/tiedote/kielitutkintotodistus")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
         .andExpect(status().isUnauthorized());
   }
 
@@ -75,7 +80,10 @@ public class ApiControllerTest {
         .perform(
             post("/api/v1/tiedote/kielitutkintotodistus")
                 .with(
-                    jwt().authorities(new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
+                    jwt()
+                        .authorities(
+                            new SimpleGrantedAuthority(
+                                ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS)))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tiedote)))
         .andExpect(status().isOk())
@@ -88,7 +96,8 @@ public class ApiControllerTest {
                     .with(
                         jwt()
                             .authorities(
-                                new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
+                                new SimpleGrantedAuthority(
+                                    ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS)))
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(tiedote)))
             .andExpect(status().isOk())
@@ -119,7 +128,10 @@ public class ApiControllerTest {
         .perform(
             post("/api/v1/tiedote/kielitutkintotodistus")
                 .with(
-                    jwt().authorities(new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
+                    jwt()
+                        .authorities(
+                            new SimpleGrantedAuthority(
+                                ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS)))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     objectMapper.writeValueAsString(
@@ -130,7 +142,10 @@ public class ApiControllerTest {
         .perform(
             post("/api/v1/tiedote/kielitutkintotodistus")
                 .with(
-                    jwt().authorities(new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
+                    jwt()
+                        .authorities(
+                            new SimpleGrantedAuthority(
+                                ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS)))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Map.of("titleFi", "Otsikko"))))
         .andExpect(status().isBadRequest());
@@ -149,7 +164,8 @@ public class ApiControllerTest {
                     .with(
                         jwt()
                             .authorities(
-                                new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
+                                new SimpleGrantedAuthority(
+                                    ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS)))
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(tiedote)))
             .andExpect(status().isOk())
@@ -167,7 +183,8 @@ public class ApiControllerTest {
                     .with(
                         jwt()
                             .authorities(
-                                new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
+                                new SimpleGrantedAuthority(
+                                    ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS)))
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(tiedote)))
             .andExpect(status().isOk())
@@ -198,7 +215,8 @@ public class ApiControllerTest {
                     .with(
                         jwt()
                             .authorities(
-                                new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
+                                new SimpleGrantedAuthority(
+                                    ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS)))
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(tiedote1)))
             .andExpect(status().isOk())
@@ -216,7 +234,8 @@ public class ApiControllerTest {
                     .with(
                         jwt()
                             .authorities(
-                                new SimpleGrantedAuthority("ROLE_APP_TIEDOTUSPALVELU_CRUD")))
+                                new SimpleGrantedAuthority(
+                                    ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS)))
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(tiedote2)))
             .andExpect(status().isOk())
