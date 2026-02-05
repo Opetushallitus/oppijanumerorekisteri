@@ -38,6 +38,7 @@ public class TiedoteProcessingTest {
   private Tiedote createTiedote(String oppijanumero) {
     return Tiedote.builder()
         .oppijanumero(oppijanumero)
+        .url("https://example.invalid/tiedote")
         .titleFi("Test Title FI")
         .titleSv("Test Title SV")
         .titleEn("Test Title EN")

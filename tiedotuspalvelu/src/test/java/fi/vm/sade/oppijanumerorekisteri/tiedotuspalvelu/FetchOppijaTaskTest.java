@@ -29,6 +29,7 @@ public class FetchOppijaTaskTest {
   private Tiedote createTiedote(String oppijanumero) {
     return Tiedote.builder()
         .oppijanumero(oppijanumero)
+        .url("https://example.invalid/tiedote")
         .titleFi("Title FI")
         .titleSv("Title SV")
         .titleEn("Title EN")

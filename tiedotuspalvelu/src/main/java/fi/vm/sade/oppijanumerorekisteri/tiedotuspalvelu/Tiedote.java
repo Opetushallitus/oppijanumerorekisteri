@@ -30,6 +30,9 @@ public class Tiedote {
   @Column(nullable = false)
   private String oppijanumero;
 
+  @Column(nullable = false)
+  private String url;
+
   @Column(name = "otsikko_fi", nullable = false)
   private String titleFi;
 

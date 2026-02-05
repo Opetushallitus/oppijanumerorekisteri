@@ -21,6 +21,7 @@ public class ApiController {
 
   public record TiedoteDto(
       @NotBlank String oppijanumero,
+      @NotBlank String url,
       @NotBlank String titleFi,
       @NotBlank String titleSv,
       @NotBlank String titleEn,
@@ -42,6 +43,7 @@ public class ApiController {
     var tiedote =
         Tiedote.builder()
             .oppijanumero(tiedoteDto.oppijanumero())
+            .url(tiedoteDto.url())
             .titleFi(tiedoteDto.titleFi())
             .titleSv(tiedoteDto.titleSv())
             .titleEn(tiedoteDto.titleEn())

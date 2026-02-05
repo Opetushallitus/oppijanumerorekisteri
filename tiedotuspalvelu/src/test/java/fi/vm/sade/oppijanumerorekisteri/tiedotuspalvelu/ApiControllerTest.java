@@ -35,6 +35,7 @@ public class ApiControllerTest {
   private Map<String, String> createTiedote(String idempotencyKey) {
     return Map.of(
         "oppijanumero", "1.2.246.562.99.12345678901",
+        "url", "https://example.invalid/tiedote",
         "titleFi", "Otsikko",
         "titleSv", "Rubrik",
         "titleEn", "Title",
@@ -102,6 +103,7 @@ public class ApiControllerTest {
     Tiedote saved = tiedotteet.stream().filter(t -> t.getId().equals(returnedId)).findFirst().get();
     assertEquals(saved.getId(), returnedId);
     assertEquals("1.2.246.562.99.12345678901", saved.getOppijanumero());
+    assertEquals("https://example.invalid/tiedote", saved.getUrl());
     assertEquals("Otsikko", saved.getTitleFi());
     assertEquals("Rubrik", saved.getTitleSv());
     assertEquals("Title", saved.getTitleEn());
