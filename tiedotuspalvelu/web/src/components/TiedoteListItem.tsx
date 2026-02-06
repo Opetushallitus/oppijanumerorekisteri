@@ -10,7 +10,7 @@ export function TiedoteListItem({ tiedote }: { tiedote: TiedoteDto }) {
     <li className="tp__item">
       <span className="tp__date">{dateText}</span>
       <span className="tp__text">
-        {tiedote.otsikko}{" "}
+        Olet suorittanut kielitutkinnon, voit ladata todistuksen{" "}
         <a className="tp__link" target="_blank" href="/koski/omattiedot">
           täältä
         </a>
