@@ -150,6 +150,7 @@ export const KayttooikeusryhmatPage = () => {
                 </div>
                 <Select
                     {...selectStyles}
+                    inputId="kayttooikeus-select"
                     ref={kayttooikeusSelectRef}
                     options={kayttooikeusOptions}
                     isDisabled={!palvelu}

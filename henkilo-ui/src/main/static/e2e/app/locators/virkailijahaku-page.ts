@@ -7,6 +7,7 @@ export async function gotoVirkailijahaku(page: Page) {
             locator: page.locator(id),
             select: async (s: string) => {
                 await page.locator(id).type(s);
+                await page.waitForTimeout(400);
                 await page.keyboard.press('Enter');
             },
         };

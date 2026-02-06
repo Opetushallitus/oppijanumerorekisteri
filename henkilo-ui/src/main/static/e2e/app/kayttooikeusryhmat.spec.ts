@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
 
 import kayttooikeusryhmat from '../../mock-api/src/api/kayttooikeus-service/kayttooikeusryhma/GET.json';
+import { gotoKayttooikeusryhmat } from './locators/kayttooikeusryhmat-page';
 
 test.describe('kayttooikeusryhmat list', () => {
     test('filters by kayttooikeus', async ({ page }) => {
-        await page.goto('/henkilo-ui/kayttooikeusryhmat');
+        const { filters } = await gotoKayttooikeusryhmat(page);
         await expect(page.locator('.oph-ds-accordion-header')).toHaveCount(3);
 
         await page.click('.oph-ds-accordion-header:first-child');
@@ -17,13 +18,8 @@ test.describe('kayttooikeusryhmat list', () => {
             }
         );
 
-        await page.type('#react-select-2-input', 'palvelu');
-        await page.keyboard.press('Enter');
-
-        await expect(page.locator('#react-select-3-input')).toBeEditable();
-        await page.type('#react-select-3-input', 'gugu');
-        await expect(page.getByText('Gugutus')).toBeVisible();
-        await page.keyboard.press('Enter');
+        await filters.palveluSelect.select('palvelu');
+        await filters.kayttooikeusSelect.select('gugu');
 
         await expect(page.locator('.oph-ds-accordion-header')).toHaveCount(1);
         await page.click('.oph-ds-accordion-header:first-child');
