@@ -130,6 +130,12 @@
     padding-right: 6px;
 }
 
+.oph-ds-label:has(+ input),
+.oph-ds-label:has(+ .oph-ds-select-container),
+.oph-ds-label:has(+ .oph-ds-select-container-focused) {
+    font-weight: 600;
+}
+
 .oph-ds-label:focus-within {
     outline-offset: 3px;
     outline: 2px solid #000;
@@ -186,6 +192,10 @@
     gap: 27px;
     margin: 0px;
     padding: 0px;
+}
+
+.oph-ds-radio-wrapper > legend {
+    font-weight: 600;
 }
 
 .oph-ds-radio-wrapper > label > input {
