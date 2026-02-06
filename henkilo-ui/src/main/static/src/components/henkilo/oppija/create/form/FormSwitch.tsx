@@ -7,12 +7,13 @@ import FormPicker from './FormPicker';
 import { useLocalisations } from '../../../../../selectors';
 import { useTitle } from '../../../../../useTitle';
 import { useNavigation } from '../../../../../useNavigation';
-import { mainNavigation } from '../../../../navigation/navigationconfigurations';
+import { mainNavigation, oppijaNavigation } from '../../../../navigation/navigationconfigurations';
+import { isNewNavi } from '../../../../navigation/TopNavigation';
 
 const FormSwitch = () => {
     const { L } = useLocalisations();
     useTitle(L('TITLE_OPPIJA_LUONTI'));
-    useNavigation(mainNavigation, false);
+    useNavigation(!isNewNavi ? mainNavigation : oppijaNavigation, false);
     const [formType, setFormType] = React.useState<FormType>();
     const goBack = () => setFormType(undefined);
     switch (formType) {

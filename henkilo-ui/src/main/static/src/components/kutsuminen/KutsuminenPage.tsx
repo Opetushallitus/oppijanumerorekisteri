@@ -17,8 +17,9 @@ import AddedOrganization from './AddedOrganization';
 import { useGetOmattiedotQuery, useGetOrganisaatioRyhmatQuery } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
-import { mainNavigation } from '../navigation/navigationconfigurations';
+import { mainNavigation, virkailijaNavigation } from '../navigation/navigationconfigurations';
 import { useGetHenkiloQuery } from '../../api/oppijanumerorekisteri';
+import { isNewNavi } from '../navigation/TopNavigation';
 
 const initialBasicInfo = {
     etunimi: '',
@@ -37,7 +38,7 @@ type ValidationMessages = {
 const KutsuminenPage = () => {
     const { L, locale } = useLocalisations();
     useTitle(L('TITLE_KUTSULOMAKE'));
-    useNavigation(mainNavigation, false);
+    useNavigation(!isNewNavi ? mainNavigation : virkailijaNavigation, false);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: henkilo, isLoading } = useGetHenkiloQuery(omattiedot?.oidHenkilo ?? skipToken);
     const { isLoading: ryhmatLoading } = useGetOrganisaatioRyhmatQuery();

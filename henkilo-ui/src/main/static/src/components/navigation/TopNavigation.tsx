@@ -12,6 +12,11 @@ import { RootState } from '../../store';
 
 import './TopNavigation.css';
 
+export const isNewNavi =
+    window.location.hostname.includes('virkailija.hahtuvaopintopolku.fi') ||
+    window.location.hostname.includes('virkailija.untuvaopintopolku.fi') ||
+    window.location.hostname.includes('localhost');
+
 export const TopNavigation = () => {
     const { L } = useLocalisations();
     const { data: omattiedot } = useGetOmattiedotQuery();
@@ -32,7 +37,7 @@ export const TopNavigation = () => {
     }
 
     const roolit = parsePalveluRoolit(omattiedot.organisaatiot) ?? [];
-    return (
+    return !isNewNavi ? (
         <div id="topNavigation" className="oph-bg-blue">
             <ul className="tabs">
                 {navigation.backButton ? (
@@ -77,6 +82,40 @@ export const TopNavigation = () => {
                         </li>
                     ))}
             </ul>
+        </div>
+    ) : (
+        <div className="oph-ds-navigation" role="navigation">
+            {navigation.backButton ? (
+                <a
+                    className="oph-ds-navlink"
+                    href="?"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        window.history.back();
+                    }}
+                >
+                    &#8701; {L('TAKAISIN_LINKKI')}
+                </a>
+            ) : null}
+            {navigation.tabs
+                .filter(
+                    (tab) =>
+                        omattiedot.isAdmin ||
+                        !tab.sallitutRoolit ||
+                        tab.sallitutRoolit.some((r) => !!r && roolit.includes(r))
+                )
+                .map((tab, index) => (
+                    <NavLink
+                        key={index}
+                        className={({ isActive }) =>
+                            `oph-ds-navlink ${isActive ? 'active' : ''} ${tab.disabled ? 'disabled' : ''}`
+                        }
+                        to={tab.path}
+                        end
+                    >
+                        {L(tab.label) ?? tab.label}
+                    </NavLink>
+                ))}
         </div>
     );
 };

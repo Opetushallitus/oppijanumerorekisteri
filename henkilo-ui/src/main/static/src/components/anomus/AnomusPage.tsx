@@ -12,12 +12,13 @@ import {
 } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
-import { mainNavigation } from '../navigation/navigationconfigurations';
+import { mainNavigation, virkailijaNavigation } from '../navigation/navigationconfigurations';
+import { isNewNavi } from '../navigation/TopNavigation';
 
 const AnomusPage = () => {
     const { L } = useLocalisations();
     useTitle(L('TITLE_ANOMUKSET'));
-    useNavigation(mainNavigation, false);
+    useNavigation(!isNewNavi ? mainNavigation : virkailijaNavigation, false);
     const [sorted, setSorted] = useState<SortingState>([{ id: 'ANOTTU_PVM', desc: true }]);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const [parameters, setParameters] = useState<GetHaetutKayttooikeusryhmatRequest>({

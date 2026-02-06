@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useSelector } from 'react-redux';
 import { format, parseISO } from 'date-fns';
 
@@ -16,9 +16,13 @@ import { RootState, useAppDispatch } from '../../store';
 import { setState as _setState } from '../../slices/oppijahakuSlice';
 
 import styles from './OppijahakuPage.module.css';
+import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
+import { hasAnyPalveluRooli } from '../../utilities/palvelurooli.util';
 
 export const OppijahakuPage = () => {
     const { L } = useLocalisations();
+    const navigate = useNavigate();
+    const { data: omattiedot } = useGetOmattiedotQuery();
     useTitle('Oppijahaku');
     useNavigation(oppijaNavigation, false);
 
@@ -27,6 +31,19 @@ export const OppijahakuPage = () => {
     const [criteria, setCriteria] = useState<OppijahakuCriteria>(state);
     const skip = !criteria.query || criteria.query.length < 3;
     const { data, isFetching } = usePostOppijahakuQuery(criteria, { skip });
+
+    useEffect(() => {
+        if (!omattiedot) {
+            return;
+        }
+        const isOnrRekisterinpitaja = hasAnyPalveluRooli(
+            omattiedot.organisaatiot.filter((o) => o.organisaatioOid === '1.2.246.562.10.00000000001'),
+            ['OPPIJANUMEROREKISTERI_REKISTERINPITAJA']
+        );
+        if (!isOnrRekisterinpitaja) {
+            navigate('/oppijoidentuonti');
+        }
+    }, [omattiedot]);
 
     useEffect(() => {
         setCriteria(state);
