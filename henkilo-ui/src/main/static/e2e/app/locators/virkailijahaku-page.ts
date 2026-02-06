@@ -14,7 +14,7 @@ export async function gotoVirkailijahaku(page: Page) {
     };
     return {
         filters: {
-            nameQuery: page.getByLabel('Hakutermi (nimi, käyttäjätunnus tai henkilön OID)'),
+            nameQuery: page.getByLabel('Hakutermi (sukunimi, etunimi, käyttäjätunnus tai henkilön OID)'),
             organisaatioSelect: selectLocator('#organisaatio-select'),
             ryhmaSelect: selectLocator('#ryhma-select'),
             kayttooikeusryhma: selectLocator('#kayttooikeusryhma-select'),
