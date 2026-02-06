@@ -59,13 +59,13 @@
 .oph-ds-page-content-container {
     display: flex;
     flex-direction: column;
-    gap: 36px;
+    gap: 16px;
     background-color: white;
     max-width: 1854px;
     border-top: 1px var(--gray-border);
     border-bottom: 1px var(--gray-border);
     margin: 32px 0;
-    padding: 32px;
+    padding: 16px 24px;
 }
 
 @media (width > 1200px) {
