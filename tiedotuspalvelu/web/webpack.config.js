@@ -26,6 +26,11 @@ module.exports = function () {
           target: "https://testiopintopolku.fi",
           changeOrigin: true,
         },
+        {
+          context: ["/koski"],
+          target: "https://testiopintopolku.fi",
+          changeOrigin: true,
+        },
       ],
     },
     output: {

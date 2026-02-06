@@ -11,7 +11,7 @@ export function TiedoteListItem({ tiedote }: { tiedote: TiedoteDto }) {
       <span className="tp__date">{dateText}</span>
       <span className="tp__text">
         {tiedote.otsikko}{" "}
-        <a className="tp__link" href={tiedote.url}>
+        <a className="tp__link" target="_blank" href="/koski/omattiedot">
           täältä
         </a>
       </span>
