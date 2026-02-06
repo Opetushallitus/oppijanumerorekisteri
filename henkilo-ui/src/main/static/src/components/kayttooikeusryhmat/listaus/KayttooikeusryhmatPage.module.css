@@ -1,0 +1,16 @@
+.inputFields {
+    display: grid;
+    grid-template-columns: 300px 400px 1fr;
+    gap: 16px;
+    align-items: end;
+}
+
+.controls {
+    display: flex;
+    align-items: end;
+    gap: 32px;
+}
+
+.passivoidut {
+    margin-bottom: 8px;
+}

@@ -22,7 +22,7 @@ import { SelectOption, selectStyles } from '../../../utilities/select';
 import { useTitle } from '../../../useTitle';
 import { Locale } from '../../../types/locale.type';
 
-import './KayttooikeusryhmatPage.css';
+import styles from './KayttooikeusryhmatPage.module.css';
 
 type Kayttajatyyppi = 'virkailija' | 'palvelu';
 
@@ -132,88 +132,70 @@ export const KayttooikeusryhmatPage = () => {
 
     return (
         <OphDsPage header={L['KAYTTOOIKEUSRYHMAT_OTSIKKO_LISTA']!}>
-            <section className="kayttoikeusryhmat-form">
-                <div className="kayttoikeusryhmat-row">
-                    <OphDsInput id="filter" label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_SUODATA']!} onChange={setFilter} />
-                    <div className="kayttoikeusryhmat-form-cell">
-                        <OphDsRadioGroup
-                            checked={showType}
-                            groupName="show-palvelu"
-                            legend={L['KAYTTOOIKEUSRYHMAT_SUODATA_TYYPILLA']}
-                            onChange={setShowType}
-                            radios={[
-                                {
-                                    id: 'virkailija',
-                                    value: 'virkailija',
-                                    label: L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_VIRKAILIJA']!,
-                                },
-                                {
-                                    id: 'palvelu',
-                                    value: 'palvelu',
-                                    label: L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PALVELU']!,
-                                },
-                            ]}
-                        />
-                    </div>
-                    <div className="kayttoikeusryhmat-form-cell">
-                        <div>
-                            <OphDsChechbox
-                                id="kayttooikeusryhmaNaytaPassivoidut"
-                                label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PASSIVOIDUT']!}
-                                checked={passiiviset}
-                                onChange={() => setPassiiviset(!passiiviset)}
-                            />
-                        </div>
-                    </div>
-                </div>
-                <div className="kayttooikeusryhmat-row-kayttooikeus">
-                    <div>{L['KAYTTOOIKEUSRYHMAT_SUODATA_KAYTTOOIKEUDELLA']}</div>
-                    <div>
-                        <Select
-                            {...selectStyles}
-                            styles={{
-                                control: (baseStyles) => ({
-                                    ...baseStyles,
-                                    maxWidth: '300px',
-                                }),
-                            }}
-                            options={palveluOptions}
-                            value={palvelu}
-                            placeholder={L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_PALVELU']}
-                            onChange={setPalveluAndKayttooikeus}
-                            isClearable
-                        />
-                        <Select
-                            {...selectStyles}
-                            styles={{
-                                control: (baseStyles) => ({
-                                    ...baseStyles,
-                                    width: '800px',
-                                    maxWidth: '100%',
-                                }),
-                            }}
-                            ref={kayttooikeusSelectRef}
-                            options={kayttooikeusOptions}
-                            isDisabled={!palvelu}
-                            value={kayttooikeus}
-                            placeholder={L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUS']}
-                            onChange={setKayttooikeus}
-                            isClearable
-                        />
-                    </div>
-                </div>
+            <div className={styles.inputFields}>
+                <OphDsInput id="filter" label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_SUODATA']!} onChange={setFilter} />
                 <div>
-                    {muokkausoikeus && (
-                        <div className="kayttoikeusryhmat-form-cell">
-                            <div>
-                                <Link className="oph-ds-link" to="/kayttooikeusryhmat/lisaa">
-                                    {L['KAYTTOOIKEUSRYHMAT_LISAA']}
-                                </Link>
-                            </div>
-                        </div>
-                    )}
+                    <label className="oph-ds-label" htmlFor="palvelu-select">
+                        {L['KAYTTOOIKEUSRYHMAT_SUODATA_KAYTTOOIKEUDELLA']}
+                    </label>
+                    <Select
+                        {...selectStyles}
+                        inputId="palvelu-select"
+                        options={palveluOptions}
+                        value={palvelu}
+                        placeholder={L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_PALVELU']}
+                        onChange={setPalveluAndKayttooikeus}
+                        isClearable
+                    />
                 </div>
-            </section>
+                <Select
+                    {...selectStyles}
+                    ref={kayttooikeusSelectRef}
+                    options={kayttooikeusOptions}
+                    isDisabled={!palvelu}
+                    value={kayttooikeus}
+                    placeholder={L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUS']}
+                    onChange={setKayttooikeus}
+                    isClearable
+                />
+            </div>
+            <div className={styles.controls}>
+                <OphDsRadioGroup
+                    checked={showType}
+                    groupName="show-palvelu"
+                    legend={L['KAYTTOOIKEUSRYHMAT_SUODATA_TYYPILLA']}
+                    onChange={setShowType}
+                    radios={[
+                        {
+                            id: 'virkailija',
+                            value: 'virkailija',
+                            label: L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_VIRKAILIJA']!,
+                        },
+                        {
+                            id: 'palvelu',
+                            value: 'palvelu',
+                            label: L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PALVELU']!,
+                        },
+                    ]}
+                />
+                <div className={styles.passivoidut}>
+                    <OphDsChechbox
+                        id="kayttooikeusryhmaNaytaPassivoidut"
+                        label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PASSIVOIDUT']!}
+                        checked={passiiviset}
+                        onChange={() => setPassiiviset(!passiiviset)}
+                    />
+                </div>
+            </div>
+            <div>
+                {muokkausoikeus && (
+                    <div>
+                        <Link className="oph-ds-link" to="/kayttooikeusryhmat/lisaa">
+                            {L['KAYTTOOIKEUSRYHMAT_LISAA']}
+                        </Link>
+                    </div>
+                )}
+            </div>
             <OphDsAccordion items={accordionItems} />
         </OphDsPage>
     );
