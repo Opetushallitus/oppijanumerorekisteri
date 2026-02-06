@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDebounce } from '../../useDebounce';
 
 type PageProps = {
     defaultValue?: string;
@@ -8,9 +9,28 @@ type PageProps = {
     type?: string;
     label: string;
     onChange: (s: string) => void;
+    debounceTimeout?: number;
 };
 
-export const OphDsInput = ({ defaultValue, disabled, id, error, label, onChange, type }: PageProps) => {
+export const OphDsInput = ({
+    defaultValue,
+    disabled,
+    id,
+    error,
+    label,
+    onChange,
+    type,
+    debounceTimeout,
+}: PageProps) => {
+    const [value, setValue] = useState(defaultValue ?? '');
+    const debounced = debounceTimeout ? useDebounce(value, debounceTimeout) : undefined;
+
+    useEffect(() => {
+        if (debounced !== undefined) {
+            onChange(debounced);
+        }
+    }, [debounced, debounceTimeout]);
+
     return (
         <div>
             <label htmlFor={id} className="oph-ds-label">
@@ -20,8 +40,8 @@ export const OphDsInput = ({ defaultValue, disabled, id, error, label, onChange,
                 id={id}
                 name={id}
                 type={type ?? 'text'}
-                defaultValue={defaultValue}
-                onChange={(e) => onChange(e.target.value)}
+                defaultValue={value}
+                onChange={(e) => (debounceTimeout ? setValue(e.target.value) : onChange(e.target.value))}
                 className={`oph-ds-input ${error !== undefined ? 'oph-ds-input-error' : ''}`}
                 disabled={disabled}
                 autoComplete="false"

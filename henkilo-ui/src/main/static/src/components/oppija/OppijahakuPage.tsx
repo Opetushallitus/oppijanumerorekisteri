@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import { format, parseISO } from 'date-fns';
 
 import { useLocalisations } from '../../selectors';
-import { useDebounce } from '../../useDebounce';
 import { OphDsPage } from '../design-system/OphDsPage';
 import { OphDsChechbox } from '../design-system/OphDsCheckbox';
 import { OphDsInput } from '../design-system/OphDsInput';
@@ -15,20 +14,6 @@ import { oppijaNavigation } from '../navigation/navigationconfigurations';
 import { OppijahakuCriteria, usePostOppijahakuQuery } from '../../api/oppijanumerorekisteri';
 import { RootState, useAppDispatch } from '../../store';
 import { setState as _setState } from '../../slices/oppijahakuSlice';
-
-const DebouncedNameQuery = ({ defaultValue, onChange }: { defaultValue?: string; onChange: (s: string) => void }) => {
-    const { L } = useLocalisations();
-    const [nameQuery, setNameQuery] = useState(defaultValue ?? '');
-    const debounced = useDebounce(nameQuery, 400);
-
-    useEffect(() => {
-        onChange(debounced);
-    }, [debounced]);
-
-    return (
-        <OphDsInput id="query" label={L['OPPIJAHAKU_HAKUTERMI']!} onChange={setNameQuery} defaultValue={defaultValue} />
-    );
-};
 
 export const OppijahakuPage = () => {
     const { L } = useLocalisations();
@@ -54,17 +39,19 @@ export const OppijahakuPage = () => {
     return (
         <OphDsPage header={L['OPPIJAHAKU']!}>
             {L['OPPIJAHAKU_SELITE'] && <p>{L['OPPIJAHAKU_SELITE']}</p>}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <DebouncedNameQuery onChange={setQuery} defaultValue={criteria.query} />
-                <div>
-                    <OphDsChechbox
-                        id="passive"
-                        checked={!!criteria.passive}
-                        label={L['HENKILO_NAYTA_PASSIIVISET_TEKSTI']!}
-                        onChange={() => setState({ ...criteria, passive: !criteria.passive, page: 0 })}
-                    />
-                </div>
-            </div>
+            <OphDsInput
+                id="query"
+                label={L['OPPIJAHAKU_HAKUTERMI']!}
+                onChange={setQuery}
+                defaultValue={criteria.query}
+                debounceTimeout={400}
+            />
+            <OphDsChechbox
+                id="passive"
+                checked={!!criteria.passive}
+                label={L['HENKILO_NAYTA_PASSIIVISET_TEKSTI']!}
+                onChange={() => setState({ ...criteria, passive: !criteria.passive, page: 0 })}
+            />
             <OphDsTable
                 headers={[L['HENKILO_NIMI']!, L['HENKILO_SYNTYMAAIKA']!]}
                 isFetching={isFetching}

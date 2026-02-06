@@ -11,7 +11,6 @@ import {
     useGetKayttooikeusryhmasQuery,
     usePostVirkailijahakuQuery,
 } from '../../api/kayttooikeus';
-import { useDebounce } from '../../useDebounce';
 import { OphDsPage } from '../design-system/OphDsPage';
 import { OphDsChechbox } from '../design-system/OphDsCheckbox';
 import { OphDsInput } from '../design-system/OphDsInput';
@@ -39,18 +38,6 @@ const mapFilters = (filters: VirkailijahakuFilters): PostVirkailijahakuRequest =
         subOrganisation: filters.subOrganisation,
         kayttooikeusryhmaId: filters.kayttooikeusryhmaId,
     };
-};
-
-const DebouncedNameQuery = ({ defaultValue, onChange }: { defaultValue?: string; onChange: (s: string) => void }) => {
-    const { L } = useLocalisations();
-    const [nameQuery, setNameQuery] = useState(defaultValue ?? '');
-    const debounced = useDebounce(nameQuery, 400);
-
-    useEffect(() => {
-        onChange(debounced);
-    }, [debounced]);
-
-    return <OphDsInput id="nameQuery" label={L['HAKUTERMI']!} onChange={setNameQuery} defaultValue={defaultValue} />;
 };
 
 export const VirkailijahakuPage = () => {
@@ -91,9 +78,12 @@ export const VirkailijahakuPage = () => {
         <OphDsPage header={L['VIRKAILIJAHAKU']!}>
             {L['VIRKAILIJAHAKU_SELITE'] && <p>{L['VIRKAILIJAHAKU_SELITE']}</p>}
             <div className={styles.formGrid}>
-                <DebouncedNameQuery
+                <OphDsInput
+                    id="nameQuery"
+                    label={L['HAKUTERMI']!}
                     onChange={(nameQuery) => setFilters({ ...filters, nameQuery })}
                     defaultValue={filters.nameQuery}
+                    debounceTimeout={400}
                 />
                 <div />
                 <OphDsOrganisaatioSelect
