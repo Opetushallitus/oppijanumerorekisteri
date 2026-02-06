@@ -33,7 +33,7 @@ public class ApiController {
   public record CreateResponse(UUID id) {}
 
   @PostMapping("/tiedote/kielitutkintotodistus")
-  @PreAuthorize("hasRole('APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS')")
+  @PreAuthorize("hasRole('APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE')")
   public CreateResponse createTiedote(@RequestBody @Valid TiedoteDto tiedoteDto) {
     var existingTiedote = tiedoteRepository.findByIdempotencyKey(tiedoteDto.idempotencyKey());
     if (existingTiedote.isPresent()) {
