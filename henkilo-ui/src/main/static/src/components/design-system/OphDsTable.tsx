@@ -33,15 +33,21 @@ const getRenderedPageRange = (page?: SpringPageModel) => {
     return [0, undefined, ...[...Array(5).keys()].map((i) => i + page.number - 2), undefined, page.totalPages - 1];
 };
 
-const PageControls = ({ page, setPage }: PageProps) => {
+const Pagination = ({ page, setPage }: PageProps) => {
     const { L } = useLocalisations();
     const renderedPageRange = getRenderedPageRange(page);
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '16px', gap: '4px' }}>
+        <nav
+            aria-labelledby="pagination"
+            style={{ display: 'flex', justifyContent: 'center', padding: '16px', gap: '4px' }}
+        >
+            <h2 id="pagination" style={{ display: 'none' }}>
+                {L['TAULUKKO_SIVUNUMEROINTI']}
+            </h2>
             {
                 <button
                     className="oph-ds-button oph-ds-button-transparent"
-                    onClick={() => setPage(page.number + 1)}
+                    onClick={() => setPage(page.number - 1)}
                     disabled={page.number === 0}
                 >
                     {L['TAULUKKO_EDELLINEN']}
@@ -53,6 +59,7 @@ const PageControls = ({ page, setPage }: PageProps) => {
                         <button
                             key={`page-${i}`}
                             className={`oph-ds-button ${p === page.number ? '' : 'oph-ds-button-transparent'}`}
+                            aria-current={p === page.number ? 'page' : undefined}
                             onClick={() => setPage(p)}
                         >
                             {p + 1}
@@ -73,7 +80,7 @@ const PageControls = ({ page, setPage }: PageProps) => {
             >
                 {L['TAULUKKO_SEURAAVA']}
             </button>
-        </div>
+        </nav>
     );
 };
 
@@ -110,7 +117,7 @@ export const OphDsTable = ({ headers, isFetching, page, rows, rowDescriptionPart
                 </tbody>
             </table>
             <div style={{ padding: '16px' }}>{isFetching ? <Loader /> : <div style={{ padding: '12px' }}></div>}</div>
-            {page && <PageControls page={page.page} setPage={page.setPage} />}
+            {page && page.page.totalPages > 1 && <Pagination page={page.page} setPage={page.setPage} />}
         </div>
     );
 };

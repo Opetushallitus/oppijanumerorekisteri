@@ -46,12 +46,14 @@ export const OppijahakuPage = () => {
                 defaultValue={criteria.query}
                 debounceTimeout={400}
             />
-            <OphDsChechbox
-                id="passive"
-                checked={!!criteria.passive}
-                label={L['HENKILO_NAYTA_PASSIIVISET_TEKSTI']!}
-                onChange={() => setState({ ...criteria, passive: !criteria.passive, page: 0 })}
-            />
+            <div>
+                <OphDsChechbox
+                    id="passive"
+                    checked={!!criteria.passive}
+                    label={L['HENKILO_NAYTA_PASSIIVISET_TEKSTI']!}
+                    onChange={() => setState({ ...criteria, passive: !criteria.passive, page: 0 })}
+                />
+            </div>
             <OphDsTable
                 headers={[L['HENKILO_NIMI']!, L['HENKILO_SYNTYMAAIKA']!]}
                 isFetching={isFetching}
@@ -60,7 +62,7 @@ export const OppijahakuPage = () => {
                         {`${d.sukunimi}, ${d.etunimet}`}
                     </Link>,
                     <span key={`syntymaaika-${d.oid}`}>
-                        {d.syntymaaika ? format(parseISO(d.syntymaaika), 'dd.MM.yyyy') : ''}
+                        {d.syntymaaika ? format(parseISO(d.syntymaaika), 'd.M.yyyy') : ''}
                     </span>,
                 ])}
                 rowDescriptionPartitive={L['OPPIJAA']}

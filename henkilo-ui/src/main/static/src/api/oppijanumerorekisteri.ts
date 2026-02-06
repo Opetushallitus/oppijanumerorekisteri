@@ -39,7 +39,7 @@ export type OppijahakuCriteria = {
     page: number;
 };
 
-type OppijahakuResult = {
+export type OppijahakuResult = {
     oid: string;
     etunimet: string;
     sukunimi: string;
@@ -53,7 +53,7 @@ export type SpringPageModel = {
     totalPages: number;
 };
 
-type SpringPage<T> = {
+export type SpringPage<T> = {
     content: T[];
     page: SpringPageModel;
 };
