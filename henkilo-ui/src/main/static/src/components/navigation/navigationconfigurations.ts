@@ -71,6 +71,18 @@ export const oppijaNavigation = [
 
 export const virkailijaNavigation = [
     {
+        path: '/virkailijahaku',
+        label: 'VIRKAILIJAHAKU',
+        sallitutRoolit: [
+            'OPPIJANUMEROREKISTERI_READ',
+            'OPPIJANUMEROREKISTERI_HENKILON_RU',
+            'OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',
+            'KAYTTOOIKEUS_READ',
+            'KAYTTOOIKEUS_CRUD',
+            'KAYTTOOIKEUS_ACCESS_RIGHTS_REPORT',
+        ],
+    },
+    {
         path: '/anomukset',
         label: 'NAVI_KAYTTOOIKEUSANOMUKSET',
         sallitutRoolit: [
@@ -92,35 +104,16 @@ export const virkailijaNavigation = [
         sallitutRoolit: ['KAYTTOOIKEUS_READ', 'KAYTTOOIKEUS_CRUD'],
     },
     {
-        path: '/virkailijahaku',
-        label: 'VIRKAILIJAHAKU',
-        sallitutRoolit: [
-            'OPPIJANUMEROREKISTERI_READ',
-            'OPPIJANUMEROREKISTERI_HENKILON_RU',
-            'OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',
-            'KAYTTOOIKEUS_READ',
-            'KAYTTOOIKEUS_CRUD',
-            'KAYTTOOIKEUS_ACCESS_RIGHTS_REPORT',
-        ],
-    },
-    {
         path: '/raportit/kayttooikeudet',
         label: 'KAYTTOOIKEUSRAPORTTI_TITLE',
         sallitutRoolit: ['KAYTTOOIKEUS_ACCESS_RIGHTS_REPORT'],
     },
 ];
 
-export const jarjestelmatunnusNavigation = (oid?: string) =>
-    oid
-        ? [
-              { path: '/jarjestelmatunnus', label: 'JARJESTELMATUNNUSTEN_HAKU' },
-              { path: '/jarjestelmatunnus/luonti', label: 'JARJESTELMATUNNUSTEN_LUONTI' },
-              { path: `/jarjestelmatunnus/${oid}`, label: 'JARJESTELMATUNNUKSEN_HALLINTA' },
-          ]
-        : [
-              { path: '/jarjestelmatunnus', label: 'JARJESTELMATUNNUSTEN_HAKU' },
-              { path: '/jarjestelmatunnus/luonti', label: 'JARJESTELMATUNNUSTEN_LUONTI' },
-          ];
+export const jarjestelmatunnusNavigation = [
+    { path: '/jarjestelmatunnus', label: 'JARJESTELMATUNNUSTEN_HAKU' },
+    { path: '/jarjestelmatunnus/luonti', label: 'JARJESTELMATUNNUSTEN_LUONTI' },
+];
 
 export const oppijaNavi = (oid: string): NaviTab[] => [
     { path: '/oppija/' + oid, label: 'NAVI_HENKILON_TIEDOT' },
@@ -135,10 +128,6 @@ export const oppijaNavi = (oid: string): NaviTab[] => [
         disabled: true,
         sallitutRoolit: ['OPPIJANUMEROREKISTERI_VTJ_VERTAILUNAKYMA', 'OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI'],
     },
-];
-
-export const virkailija2Navi = (oid: string): NaviTab[] => [
-    { path: `/virkailija/${oid}`, label: 'NAVI_VIRKAILIJAN_TIEDOT' },
 ];
 
 export const virkailijaNavi = (oid: string): NaviTab[] => [
@@ -156,5 +145,3 @@ export const virkailijaNavi = (oid: string): NaviTab[] => [
         sallitutRoolit: ['OPPIJANUMEROREKISTERI_VTJ_VERTAILUNAKYMA'],
     },
 ];
-
-export const emptyNavi = [];

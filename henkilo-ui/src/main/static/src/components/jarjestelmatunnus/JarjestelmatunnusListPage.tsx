@@ -35,7 +35,7 @@ const defaultCriteria: PostHenkilohakuRequest = {
 export const JarjestelmatunnusListPage = () => {
     const { L, locale } = useLocalisations();
     useTitle(L('JARJESTELMATUNNUSTEN_HAKU'));
-    useNavigation(jarjestelmatunnusNavigation(), false);
+    useNavigation(jarjestelmatunnusNavigation, false);
     const [criteria, setCriteria] = useState<PostHenkilohakuRequest>(defaultCriteria);
     const skip =
         (!criteria.nameQuery || criteria.nameQuery.length < 3) &&

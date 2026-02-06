@@ -3,7 +3,7 @@ import { useParams } from 'react-router';
 
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
-import { virkailija2Navi } from '../navigation/navigationconfigurations';
+import { virkailijaNavigation } from '../navigation/navigationconfigurations';
 import { useGetKayttajatiedotQuery, useGetKayttooikeusAnomuksetForHenkiloQuery } from '../../api/kayttooikeus';
 import { useLocalisations, useRedirectByUser } from '../../selectors';
 import { OphDsPage } from '../design-system/OphDsPage';
@@ -28,7 +28,7 @@ export const VirkailijaPage = () => {
     useRedirectByUser(oid, 'VIRKAILIJA');
     const { L } = useLocalisations();
     useTitle(L('TITLE_VIRKAILIJA'));
-    useNavigation(virkailija2Navi(oid), true);
+    useNavigation(virkailijaNavigation, false);
     const { isLoading, error } = useGetKayttajatiedotQuery(oid);
     const { data: anomukset } = useGetKayttooikeusAnomuksetForHenkiloQuery(oid);
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);

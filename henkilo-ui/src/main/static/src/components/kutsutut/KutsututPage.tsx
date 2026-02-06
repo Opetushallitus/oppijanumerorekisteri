@@ -19,13 +19,14 @@ import { SelectOption, selectProps } from '../../utilities/select';
 import OphModal from '../common/modal/OphModal';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
-import { mainNavigation } from '../navigation/navigationconfigurations';
+import { mainNavigation, virkailijaNavigation } from '../navigation/navigationconfigurations';
 import { OphDsOrganisaatioSelect } from '../design-system/OphDsOrganisaatioSelect';
 import { OphDsInput } from '../design-system/OphDsInput';
 import { OphDsRadioGroup } from '../design-system/OphDsRadioGroup';
 
 import './KutsututPage.css';
 import { getLocalization } from '../../utilities/localisation.util';
+import { isNewNavi } from '../navigation/TopNavigation';
 
 export type KutsututSearchParams = {
     searchTerm: string;
@@ -43,7 +44,7 @@ const getDefaultView = (isAdmin?: boolean, isVirkailija?: boolean): KutsuView =>
 export const KutsututPage = () => {
     const { L, locale } = useLocalisations();
     useTitle(L('TITLE_KUTSUTUT'));
-    useNavigation(mainNavigation, false);
+    useNavigation(!isNewNavi ? mainNavigation : virkailijaNavigation, false);
     const { data } = useGetOmattiedotQuery();
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: ryhmat } = useGetOrganisaatioRyhmatQuery();
