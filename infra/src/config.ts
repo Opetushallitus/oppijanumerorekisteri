@@ -18,6 +18,7 @@ export type Config = {
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": boolean;
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": boolean;
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": boolean;
+    "tiedotuspalvelu.fetch-oppija.enabled": boolean;
   };
   lampiExport?: {
     enabled: boolean;
@@ -34,6 +35,7 @@ const defaultConfig = {
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": false,
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": false,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": false,
+    "tiedotuspalvelu.fetch-oppija.enabled": false,
   },
 };
 
@@ -69,6 +71,7 @@ export const hahtuva: Config = {
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
+    "tiedotuspalvelu.fetch-oppija.enabled": true,
   },
 };
 

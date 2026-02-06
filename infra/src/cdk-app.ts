@@ -901,6 +901,7 @@ class TiedotuspalveluStack extends cdk.Stack {
         "server.port": appPort.toString(),
         "tiedotuspalvelu.base-url": `https://${config.opintopolkuHost}`,
         "tiedotuspalvelu.opintopolku-host": config.opintopolkuHost,
+        "tiedotuspalvelu.fetch-oppija.enabled": `${config.features["tiedotuspalvelu.fetch-oppija.enabled"]}`,
         "spring.datasource.url": `jdbc:postgresql://${props.database.clusterEndpoint.hostname}:${props.database.clusterEndpoint.port}/tiedotuspalvelu`,
       },
       secrets: {
