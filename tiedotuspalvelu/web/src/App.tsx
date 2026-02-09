@@ -15,7 +15,7 @@ export function App() {
   return (
     <div className="tp">
       <div className="tp__container">
-        <h1 className="tp__title">Tiedotteeni</h1>
+        <h1 className="tp__title">Viestini</h1>
 
         {isLoading && <p className="tp__muted">Ladataan tietoja...</p>}
         {isError && (
@@ -27,11 +27,7 @@ export function App() {
         )}
 
         {tiedotteetQuery.isSuccess && (
-          <TiedoteSection
-            title="Tiedotteet"
-            items={tiedotteet}
-            emptyText="Ei tiedotteita."
-          />
+          <TiedoteSection title="Tiedotteet" items={tiedotteet} />
         )}
       </div>
     </div>

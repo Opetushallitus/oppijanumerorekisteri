@@ -14,10 +14,8 @@ export function TiedoteSection({
 }) {
   return (
     <section className="tp__section" aria-label={title}>
-      <h2 className="tp__sectionTitle">{title}</h2>
-
       {items.length === 0 ? (
-        <p className="tp__muted">{emptyText}</p>
+        <p className="tp__muted">Ei tiedotteita.</p>
       ) : (
         <ul className="tp__list">
           {items.map((t) => (
