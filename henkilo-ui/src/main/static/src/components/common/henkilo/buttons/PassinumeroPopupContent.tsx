@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
-import Button from '../../../common/button/Button';
-import Loader from '../../../common/icons/Loader';
 import { useGetPassinumerotQuery, useSetPassinumerotMutation } from '../../../../api/oppijanumerorekisteri';
 import { useAppDispatch } from '../../../../store';
 import { useLocalisations } from '../../../../selectors';
 import { add } from '../../../../slices/toastSlice';
-
-import './PassinumeroPopupContent.css';
+import { OphDsInput } from '../../../design-system/OphDsInput';
 
 type Props = {
     oid: string;
@@ -16,68 +13,66 @@ type Props = {
 const PassinumeroPopupContent = ({ oid }: Props) => {
     const { L } = useLocalisations();
     const dispatch = useAppDispatch();
-    const {
-        data: passinumerot = [],
-        isLoading: isReading,
-        isError: readError,
-    } = useGetPassinumerotQuery(oid, {
+    const { data: passinumerot = [] } = useGetPassinumerotQuery(oid, {
         refetchOnMountOrArgChange: true,
     });
     const [newPassinumero, setNewPassinumero] = useState('');
-    const [setPassinumerot, { isLoading: isUpdating, isError: writeError }] = useSetPassinumerotMutation();
-
-    useEffect(() => {
-        if (readError || writeError) {
-            dispatch(
-                add({
-                    id: `KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE-${Math.random()}`,
-                    type: 'error',
-                    header: L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'],
-                })
-            );
-        }
-    }, [readError, writeError]);
+    const [setPassinumerot] = useSetPassinumerotMutation();
 
     const onSubmit = async (): Promise<void> => {
-        await setPassinumerot({ oid, passinumerot: [...passinumerot, newPassinumero] }).then(() =>
-            setNewPassinumero('')
-        );
+        await setPassinumerot({ oid, passinumerot: [...passinumerot, newPassinumero] })
+            .unwrap()
+            .then(() => setNewPassinumero(''))
+            .catch(() => {
+                dispatch(
+                    add({
+                        id: `TAPAHTUI_ODOTTAMATON_VIRHE-${Math.random()}`,
+                        type: 'error',
+                        header: L['TAPAHTUI_ODOTTAMATON_VIRHE'],
+                    })
+                );
+            });
     };
 
-    const remove = (removed: string) =>
-        setPassinumerot({ oid, passinumerot: [...passinumerot].filter((passinumero) => passinumero !== removed) });
+    const remove = async (removed: string) =>
+        await setPassinumerot({ oid, passinumerot: [...passinumerot].filter((passinumero) => passinumero !== removed) })
+            .unwrap()
+            .catch(() => {
+                dispatch(
+                    add({
+                        id: `TAPAHTUI_ODOTTAMATON_VIRHE-${Math.random()}`,
+                        type: 'error',
+                        header: L['TAPAHTUI_ODOTTAMATON_VIRHE'],
+                    })
+                );
+            });
 
-    return isReading || isUpdating ? (
-        <Loader />
-    ) : (
-        <>
-            <ul>
+    return (
+        <div className="passinumero-form" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {passinumerot.map((passinumero) => (
-                    <li key={passinumero}>
-                        <i
-                            role="button"
-                            tabIndex={0}
-                            className="fa fa-trash passinumero-trash"
+                    <div key={passinumero} style={{ display: 'flex', alignContent: 'center', gap: '16px' }}>
+                        <button
+                            className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
                             onClick={() => remove(passinumero)}
                         />
                         {passinumero}
-                    </li>
+                    </div>
                 ))}
-            </ul>
-            <form className="passinumero-form">
-                <input
-                    type="text"
-                    className="oph-input passinumero-input"
-                    aria-required="true"
-                    placeholder={L['LISAA_PASSINUMERO_PLACEHOLDER']}
-                    defaultValue={newPassinumero}
-                    onChange={(e) => setNewPassinumero(e.target.value)}
-                />
-                <Button action={() => onSubmit()} disabled={!newPassinumero || readError || writeError}>
+            </div>
+            <OphDsInput
+                id="passinumero"
+                aria-required="true"
+                label={L['LISAA_PASSINUMERO_PLACEHOLDER']!}
+                defaultValue={newPassinumero}
+                onChange={setNewPassinumero}
+            />
+            <div>
+                <button className="oph-ds-button" onClick={() => onSubmit()} disabled={!newPassinumero}>
                     {L['LISAA_PASSINUMERO']}
-                </Button>
-            </form>
-        </>
+                </button>
+            </div>
+        </div>
     );
 };
 
