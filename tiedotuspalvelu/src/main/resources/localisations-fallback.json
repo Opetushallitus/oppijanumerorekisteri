@@ -19,5 +19,7 @@
   { "key": "OMAT_VIESTIT_KIELITUTKINTOTODISTUS_VIESTI", "locale": "en", "value": "You have completed a language test, you can download the certificate" },
   { "key": "OMAT_VIESTIT_KIELITUTKINTOTODISTUS_LINKKI", "locale": "fi", "value": "täältä" },
   { "key": "OMAT_VIESTIT_KIELITUTKINTOTODISTUS_LINKKI", "locale": "sv", "value": "härifrån" },
-  { "key": "OMAT_VIESTIT_KIELITUTKINTOTODISTUS_LINKKI", "locale": "en", "value": "here" }
+  { "key": "OMAT_VIESTIT_KIELITUTKINTOTODISTUS_LINKKI", "locale": "en", "value": "here" },
+  { "key": "OMAT_VIESTIT_SUOMIFI_OTSIKKO", "locale": "fi", "value": "Huomioitavaa OmaOpintopolussa" },
+  { "key": "OMAT_VIESTIT_SUOMIFI_VIESTI", "locale": "fi", "value": "Hei\n\nSinulle on saapunut tiedote OmaOpintopolkuun\n\nTarkista tiedote kirjautumalla OmaOpintopolkuun. Voit katsoa huomioitavat\nasiat Tiedotteet-kohdasta.\n\nTietoturvan takia viestissä ei ole suoraa linkkiä palveluun.\n\nTerveisin\nOpetushallitus" }
 ]

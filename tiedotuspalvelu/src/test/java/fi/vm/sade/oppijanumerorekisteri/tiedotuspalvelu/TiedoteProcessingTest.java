@@ -119,7 +119,14 @@ public class TiedoteProcessingTest {
             .withHeader("Authorization", equalTo("Bearer " + SUOMIFI_TOKEN))
             .withRequestBody(matchingJsonPath("$.externalId", equalTo(tiedote.getId().toString())))
             .withRequestBody(matchingJsonPath("$.recipient.id", equalTo("010170-9999")))
-            .withRequestBody(matchingJsonPath("$.sender.serviceId", equalTo(SUOMIFI_SYSTEM_ID))));
+            .withRequestBody(matchingJsonPath("$.sender.serviceId", equalTo(SUOMIFI_SYSTEM_ID)))
+            .withRequestBody(
+                matchingJsonPath("$.electronic.title", equalTo("Huomioitavaa OmaOpintopolussa")))
+            .withRequestBody(
+                matchingJsonPath(
+                    "$.electronic.body",
+                    equalTo(
+                        "Hei\n\nSinulle on saapunut tiedote OmaOpintopolkuun\n\nTarkista tiedote kirjautumalla OmaOpintopolkuun. Voit katsoa huomioitavat\nasiat Tiedotteet-kohdasta.\n\nTietoturvan takia viestissä ei ole suoraa linkkiä palveluun.\n\nTerveisin\nOpetushallitus"))));
     wireMock.verify(1, postRequestedFor(urlEqualTo("/v2/messages/electronic")));
     wireMock.verify(1, postRequestedFor(urlEqualTo("/v1/token")));
 

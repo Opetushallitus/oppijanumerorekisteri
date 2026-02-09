@@ -36,6 +36,21 @@ public class LocalisationRepository {
     }
   }
 
+  public String translate(String key, String locale) {
+    var all = findAllWithFallback();
+    return all.stream()
+        .filter(l -> l.key().equals(key) && l.locale().equals(locale))
+        .map(LocalisationDto::value)
+        .findFirst()
+        .or(
+            () ->
+                all.stream()
+                    .filter(l -> l.key().equals(key) && l.locale().equals("fi"))
+                    .map(LocalisationDto::value)
+                    .findFirst())
+        .orElse(key);
+  }
+
   public void deleteAll() {
     jpaRepository.deleteAll();
   }

@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.locale.LocalisationRepository;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,20 +16,23 @@ public class SuomiFiViestitService {
   private final TiedotuspalveluProperties tiedotuspalveluProperties;
   private final SuomiFiViestiRepository suomiFiViestiRepository;
   private final TiedoteRepository tiedoteRepository;
+  private final LocalisationRepository localisationRepository;
 
   public void sendSuomiFiViesti(Tiedote tiedote, SuomiFiViesti suomiFiViesti) {
+    var title = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_OTSIKKO", "fi");
+    var body = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_VIESTI", "fi");
     var request =
         new SuomiFiViestitElectronicMessageRequest(
             new ElectronicPart(
                 List.of(),
-                tiedote.getMessageFi(),
+                body,
                 "Text",
                 "Normal",
                 new MessageNotifications(
                     new UnreadMessageNotification("Default reminder"),
                     "Organisation and service name"),
                 "No one",
-                tiedote.getTitleFi(),
+                title,
                 "Normal"),
             tiedote.getId().toString(),
             new Recipient(suomiFiViesti.getHenkilotunnus()),
