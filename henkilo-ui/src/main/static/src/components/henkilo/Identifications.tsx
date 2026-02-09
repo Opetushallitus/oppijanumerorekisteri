@@ -1,8 +1,6 @@
 import React, { useId, useMemo, useState } from 'react';
-import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import Select from 'react-select';
 
-import OphTable from '../OphTable';
 import {
     useDeleteIdentificationMutation,
     useGetIdentificationsQuery,
@@ -10,19 +8,18 @@ import {
 } from '../../api/oppijanumerorekisteri';
 import { Identification } from '../../types/domain/oppijanumerorekisteri/Identification.types';
 import { useLocalisations } from '../../selectors';
-import Button from '../common/button/Button';
 import { useAppDispatch } from '../../store';
 import OphModal from '../common/modal/OphModal';
 import { useGetHenkilontunnistetyypitQuery } from '../../api/koodisto';
 import StaticUtils from '../common/StaticUtils';
 import { add } from '../../slices/toastSlice';
+import { selectStyles } from '../../utilities/select';
+import { OphDsInput } from '../design-system/OphDsInput';
+import { OphDsTable } from '../design-system/OphDsTable';
 
 type Props = {
     oid: string;
 };
-
-const emptyData: Identification[] = [];
-const emptyColumns: ColumnDef<Identification>[] = [];
 
 export const Identifications = ({ oid }: Props) => {
     const dispatch = useAppDispatch();
@@ -30,7 +27,7 @@ export const Identifications = ({ oid }: Props) => {
     const [showAddModal, setShowAddModal] = useState(false);
     const [newIdentifier, setNewIdentifier] = useState('');
     const [newIdpEntityId, setNewIdpEntityId] = useState('');
-    const { data, isLoading, isFetching } = useGetIdentificationsQuery(oid, { skip: !oid });
+    const { data, isFetching } = useGetIdentificationsQuery(oid, { skip: !oid });
     const [deleteIdentification, { isLoading: isDeleteLoading }] = useDeleteIdentificationMutation();
     const [postIdentification, { isLoading: isPostLoading }] = usePostIdentificationMutation();
     const { data: tunnistetyypit, isLoading: isTunnistetyypitLoading } = useGetHenkilontunnistetyypitQuery();
@@ -72,54 +69,6 @@ export const Identifications = ({ oid }: Props) => {
             });
     };
 
-    const columns = useMemo<ColumnDef<Identification, Identification>[]>(
-        () => [
-            {
-                id: 'identifier',
-                header: () => L['TUNNISTEET_IDENTIFIER'],
-                accessorFn: (row) => row,
-                cell: ({ getValue }) => getValue().identifier,
-            },
-            {
-                id: 'idpEntityId',
-                header: () => L['TUNNISTEET_IDPENTITYID'],
-                accessorFn: (row) => row,
-                cell: ({ getValue }) => getTunnisteLabel(getValue().idpEntityId),
-            },
-            {
-                id: 'buttons',
-                header: () => '',
-                accessorFn: (row) => row,
-                cell: ({ getValue }) => (
-                    <Button
-                        action={() => removeIdentification(getValue())}
-                        disabled={isDeleteLoading}
-                        dataTestId="identification-remove-button"
-                    >
-                        {L['TUNNISTEET_POISTA']}
-                    </Button>
-                ),
-            },
-        ],
-        [data]
-    );
-
-    const memoizedData = useMemo(() => {
-        const renderedData = data;
-        if (!renderedData || !renderedData.length) {
-            return undefined;
-        }
-        return renderedData;
-    }, [data]);
-
-    const table = useReactTable({
-        columns: columns ?? emptyColumns,
-        pageCount: 1,
-        data: memoizedData ?? emptyData,
-        enableSorting: false,
-        getCoreRowModel: getCoreRowModel(),
-    });
-
     const idpEntityIdOptions = useMemo(() => {
         const options =
             tunnistetyypit?.map((t) => ({
@@ -134,45 +83,60 @@ export const Identifications = ({ oid }: Props) => {
             <h2 id={henkilotunnisteetSectionLabel}>{L['TUNNISTEET_OTSIKKO']}</h2>
             <div id="identifications" style={{ wordBreak: 'break-word' }}>
                 {data && data.length > 0 && (
-                    <OphTable table={table} isLoading={isPostLoading || isDeleteLoading || isFetching || isLoading} />
+                    <OphDsTable
+                        headers={[L['TUNNISTEET_IDENTIFIER']!, L['TUNNISTEET_IDPENTITYID']!, '']}
+                        isFetching={isFetching}
+                        rows={(data ?? []).map((d) => [
+                            <span key={`id-${d.identifier}`}>{d.identifier}</span>,
+                            <span key={`entity-${d.identifier}`}>{d.idpEntityId}</span>,
+                            <button
+                                key={`button-${d.identifier}`}
+                                className="oph-ds-button oph-ds-button-bordered oph-ds-button-icon oph-ds-icon-button-delete"
+                                onClick={() => removeIdentification(d)}
+                                disabled={isDeleteLoading}
+                                data-test-id="identification-remove-button"
+                            >
+                                {L['TUNNISTEET_POISTA']}
+                            </button>,
+                        ])}
+                    />
                 )}
-                <Button
-                    action={() => setShowAddModal(true)}
+                <button
+                    className="oph-ds-button"
+                    onClick={() => setShowAddModal(true)}
                     disabled={isTunnistetyypitLoading}
-                    style={{ marginTop: '1rem' }}
-                    dataTestId="identification-add-button"
+                    data-test-id="identification-add-button"
                 >
                     {L['TUNNISTEET_LISAA']}
-                </Button>
+                </button>
                 {showAddModal && (
                     <OphModal title={L['TUNNISTEET_LISAA']} onClose={() => setShowAddModal(false)}>
                         <>
-                            <div style={{ marginTop: '1rem' }}>
-                                <label htmlFor="newIdentifier">{L['TUNNISTEET_IDENTIFIER']}</label>
-                                <input
-                                    id="newIdentifier"
-                                    className="oph-input"
-                                    value={newIdentifier}
-                                    onChange={(e) => setNewIdentifier(e.target.value)}
-                                />
-                            </div>
+                            <OphDsInput
+                                id="newIdentifier"
+                                label={L['TUNNISTEET_IDENTIFIER']!}
+                                defaultValue={newIdentifier}
+                                onChange={setNewIdentifier}
+                            />
                             <div style={{ marginTop: '1rem' }}>
                                 <label htmlFor="newIdentifier">{L['TUNNISTEET_IDPENTITYID']}</label>
                                 <Select
+                                    {...selectStyles}
                                     inputId="newIdpEntityId"
                                     options={idpEntityIdOptions}
                                     onChange={(option) => setNewIdpEntityId(option?.value ?? '')}
                                     value={idpEntityIdOptions.find((o) => o.value === newIdpEntityId)}
                                 />
                             </div>
-                            <Button
-                                action={() => addIdentification()}
+                            <button
+                                className="oph-ds-button"
+                                onClick={() => addIdentification()}
                                 disabled={!newIdentifier || !newIdpEntityId || isPostLoading}
                                 style={{ marginTop: '1rem' }}
-                                dataTestId="identification-confirm-add"
+                                data-test-id="identification-confirm-add"
                             >
                                 {L['TUNNISTEET_LISAA']}
-                            </Button>
+                            </button>
                         </>
                     </OphModal>
                 )}
