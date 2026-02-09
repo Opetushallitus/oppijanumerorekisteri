@@ -4,9 +4,16 @@
     gap: 24px;
 }
 
+.perustiedotRows {
+    display: grid;
+    grid-template-columns: 500px 1fr;
+    gap: 16px;
+}
+
 .perustiedotGrid {
     display: grid;
     grid-template-columns: 160px 1fr;
+    align-content: start;
     gap: 16px;
 }
 

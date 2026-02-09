@@ -87,17 +87,18 @@ const Pagination = ({ page, setPage }: PageProps) => {
 export const OphDsTable = ({ headers, isFetching, page, rows, rowDescriptionPartitive }: TableProps) => {
     const { L } = useLocalisations();
     const totalElements = page ? page?.page.totalElements : rows.length;
-    const rowCount = rowDescriptionPartitive ? ` (${totalElements} ${rowDescriptionPartitive})` : '';
     return (
         <div>
-            <h2
-                className="oph-ds-table-results"
-                aria-live="polite"
-                aria-atomic="true"
-                data-testid={`${rowDescriptionPartitive}-count`}
-            >
-                {L['HENKILOHAKU_HAKUTULOKSET'] + rowCount}
-            </h2>
+            {rowDescriptionPartitive && (
+                <h2
+                    className="oph-ds-table-results"
+                    aria-live="polite"
+                    aria-atomic="true"
+                    data-testid={`${rowDescriptionPartitive}-count`}
+                >
+                    {L['HENKILOHAKU_HAKUTULOKSET'] + ` (${totalElements} ${rowDescriptionPartitive})`}
+                </h2>
+            )}
             <table className="oph-ds-table">
                 <thead>
                     <tr>

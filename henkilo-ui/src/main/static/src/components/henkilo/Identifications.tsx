@@ -83,23 +83,26 @@ export const Identifications = ({ oid }: Props) => {
             <h2 id={henkilotunnisteetSectionLabel}>{L['TUNNISTEET_OTSIKKO']}</h2>
             <div id="identifications" style={{ wordBreak: 'break-word' }}>
                 {data && data.length > 0 && (
-                    <OphDsTable
-                        headers={[L['TUNNISTEET_IDENTIFIER']!, L['TUNNISTEET_IDPENTITYID']!, '']}
-                        isFetching={isFetching}
-                        rows={(data ?? []).map((d) => [
-                            <span key={`id-${d.identifier}`}>{d.identifier}</span>,
-                            <span key={`entity-${d.identifier}`}>{d.idpEntityId}</span>,
-                            <button
-                                key={`button-${d.identifier}`}
-                                className="oph-ds-button oph-ds-button-bordered oph-ds-button-icon oph-ds-icon-button-delete"
-                                onClick={() => removeIdentification(d)}
-                                disabled={isDeleteLoading}
-                                data-test-id="identification-remove-button"
-                            >
-                                {L['TUNNISTEET_POISTA']}
-                            </button>,
-                        ])}
-                    />
+                    <div style={{ maxWidth: '1080px' }}>
+                        <OphDsTable
+                            headers={[L['TUNNISTEET_IDENTIFIER']!, L['TUNNISTEET_IDPENTITYID']!, '']}
+                            isFetching={isFetching}
+                            rows={(data ?? []).map((d) => [
+                                <span key={`id-${d.identifier}`}>{d.identifier}</span>,
+                                <span key={`entity-${d.identifier}`}>{d.idpEntityId}</span>,
+                                <div key={`button-${d.identifier}`} style={{ textAlign: 'right' }}>
+                                    <button
+                                        className="oph-ds-button oph-ds-button-bordered oph-ds-button-icon oph-ds-icon-button-delete"
+                                        onClick={() => removeIdentification(d)}
+                                        disabled={isDeleteLoading}
+                                        data-test-id="identification-remove-button"
+                                    >
+                                        {L['TUNNISTEET_POISTA']}
+                                    </button>
+                                </div>,
+                            ])}
+                        />
+                    </div>
                 )}
                 <button
                     className="oph-ds-button"

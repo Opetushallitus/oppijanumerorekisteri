@@ -36,10 +36,6 @@ export const OppijaTabs = ({ oid }: OppijaTabsProps) => {
         enabledVtjVertailuView(henkilo) &&
         vtjDataAvailable(yksilointitiedot);
 
-    if (!isDuplicateViewEnabled && !isVtjVertailuEnabled) {
-        return;
-    }
-
     return (
         <>
             <NavLink className={({ isActive }) => (isActive ? 'active' : 'inactive')} to={`/oppija2/${oid}`} end>

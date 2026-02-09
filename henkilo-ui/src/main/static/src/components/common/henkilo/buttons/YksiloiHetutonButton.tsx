@@ -10,6 +10,7 @@ import StaticUtils from '../../StaticUtils';
 type OwnProps = {
     henkiloOid: string;
     disabled?: boolean;
+    className?: string;
 };
 
 const YksiloiHetutonButton = (props: OwnProps) => {
@@ -24,6 +25,7 @@ const YksiloiHetutonButton = (props: OwnProps) => {
     return (
         <ConfirmButton
             key="yksilointi"
+            className={props.className}
             action={() =>
                 henkilo && isHenkiloValidForYksilointi(henkilo)
                     ? yksiloiHetuton(henkilo.oidHenkilo)

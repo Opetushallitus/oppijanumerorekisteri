@@ -22,7 +22,6 @@ const PassinumeroPopupContent = ({ oid }: Props) => {
     const onSubmit = async (): Promise<void> => {
         await setPassinumerot({ oid, passinumerot: [...passinumerot, newPassinumero] })
             .unwrap()
-            .then(() => setNewPassinumero(''))
             .catch(() => {
                 dispatch(
                     add({
@@ -49,17 +48,17 @@ const PassinumeroPopupContent = ({ oid }: Props) => {
 
     return (
         <div className="passinumero-form" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <ul style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {passinumerot.map((passinumero) => (
-                    <div key={passinumero} style={{ display: 'flex', alignContent: 'center', gap: '16px' }}>
+                    <li key={passinumero} style={{ display: 'flex', alignContent: 'center', gap: '16px' }}>
                         <button
                             className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
                             onClick={() => remove(passinumero)}
                         />
                         {passinumero}
-                    </div>
+                    </li>
                 ))}
-            </div>
+            </ul>
             <OphDsInput
                 id="passinumero"
                 aria-required="true"

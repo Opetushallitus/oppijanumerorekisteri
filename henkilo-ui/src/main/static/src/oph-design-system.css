@@ -39,6 +39,10 @@
     line-height: 26px;
 }
 
+.oph-ds-page-layout button {
+    font-family: "Open Sans";
+}
+
 .oph-ds-page-header-container {
     display: flex;
     flex-wrap: wrap;
@@ -345,6 +349,10 @@
     outline: none;
     cursor: pointer;
     border: 0;
+}
+
+.oph-ds-button-narrow {
+    padding: 0 16px;
 }
 
 .oph-ds-button-transparent {

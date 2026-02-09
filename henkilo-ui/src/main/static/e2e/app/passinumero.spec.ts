@@ -61,7 +61,7 @@ test.describe('Person page', () => {
         });
 
         await test.step('Passinumero can be removed', async () => {
-            await content.locator('.fa-trash').click();
+            await content.locator('.oph-ds-icon-button-delete').click();
             await expect(content.locator('li')).toHaveCount(0);
         });
 
@@ -72,7 +72,7 @@ test.describe('Person page', () => {
             );
             await content.locator('input').fill('testi-passinumero');
             await content.locator('button').click();
-            await expect(toastWithText(page, 'Tapahtui odottamaton virhe.')).toBeVisible();
+            await expect(toastWithText(page, 'Tapahtui odottamaton virhe')).toBeVisible();
         });
 
         await test.step('Popup can be closed', async () => {

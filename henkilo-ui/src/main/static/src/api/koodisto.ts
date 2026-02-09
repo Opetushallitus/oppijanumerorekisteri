@@ -20,6 +20,11 @@ export const koodiLabel = (koodi?: Koodi, locale?: Locale): string | undefined =
     koodi?.metadata?.find((m) => m.kieli?.toLocaleUpperCase() === locale?.toLocaleUpperCase())?.nimi ??
     koodi?.koodiArvo;
 
+export const koodiLabelByKoodiarvo = (koodisto?: Koodisto, koodiArvo?: string, locale?: Locale): string | undefined =>
+    koodisto
+        ?.find((k) => k.koodiArvo === koodiArvo)
+        ?.metadata?.find((m) => m.kieli?.toLocaleUpperCase() === locale?.toLocaleUpperCase())?.nimi ?? koodiArvo;
+
 export const koodistoApi = createApi({
     reducerPath: 'koodistoApi',
     baseQuery: fetchBaseQuery({

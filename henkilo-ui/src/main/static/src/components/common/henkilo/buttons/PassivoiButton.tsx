@@ -10,6 +10,7 @@ type OwnProps = {
     henkiloOid: string;
     passivoitu: boolean;
     disabled?: boolean;
+    className?: string;
 };
 
 const PassivoiButton = (props: OwnProps) => {
@@ -23,6 +24,7 @@ const PassivoiButton = (props: OwnProps) => {
     ) : (
         <ConfirmButton
             key="passivoi"
+            className={props.className}
             action={() =>
                 passivoiHenkilo(props.henkiloOid)
                     .unwrap()
