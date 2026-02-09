@@ -12,6 +12,12 @@ export type TiedoteDto = {
   createdAt: string;
 };
 
+export type LocalisationDto = {
+  key: string;
+  locale: string;
+  value: string;
+};
+
 export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({ baseUrl: "/omat-viestit/ui" }),
@@ -25,7 +31,14 @@ export const api = createApi({
       query: () => "tiedotteet",
       providesTags: ["tiedotteet"],
     }),
+    getLocalisations: builder.query<LocalisationDto[], void>({
+      query: () => "localisations",
+    }),
   }),
 });
 
-export const { useGetMeQuery, useGetTiedotteetQuery } = api;
+export const {
+  useGetMeQuery,
+  useGetTiedotteetQuery,
+  useGetLocalisationsQuery,
+} = api;

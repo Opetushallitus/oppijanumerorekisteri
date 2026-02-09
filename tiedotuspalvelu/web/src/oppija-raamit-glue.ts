@@ -1,4 +1,5 @@
 import { MeResponse } from "./api";
+import { setLocale } from "./useLocalisations";
 
 export const Service: typeof window.Service = {
   getUser: () =>
@@ -22,7 +23,8 @@ export const Service: typeof window.Service = {
       encodeURIComponent(returnUrl);
   },
 
-  changeLanguage: function () {
+  changeLanguage: function (lang) {
+    setLocale(lang);
     return Promise.resolve();
   },
 };

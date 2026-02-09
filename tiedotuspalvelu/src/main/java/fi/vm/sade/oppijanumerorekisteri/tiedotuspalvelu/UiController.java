@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 import static fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsService.ATTRIBUTE_KOKO_NIMI;
 
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsService;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.locale.LocalisationRepository;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/ui/")
 @RequiredArgsConstructor
+@Slf4j
 public class UiController {
   private final TiedoteRepository tiedoteRepository;
+  private final LocalisationRepository localisationRepository;
 
   @Builder
   public record TiedoteDto(
@@ -30,6 +34,7 @@ public class UiController {
   @PreAuthorize("isAuthenticated()")
   List<TiedoteDto> getTiedotteetForCurrentUser() {
     var oppijanumero = currentUserOppijanumero();
+    log.info("Fetching tiedotteet for oppijanumero: {}", oppijanumero.orElse("<none>"));
     return oppijanumero
         .map(
             s ->
@@ -45,6 +50,11 @@ public class UiController {
                                 .build())
                     .toList())
         .orElseGet(List::of);
+  }
+
+  @GetMapping("/localisations")
+  List<LocalisationRepository.LocalisationDto> getLocalisations() {
+    return localisationRepository.findAllWithFallback();
   }
 
   @GetMapping("/me")

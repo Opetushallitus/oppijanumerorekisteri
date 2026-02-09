@@ -1,0 +1,23 @@
+[
+  { "key": "OMAT_VIESTIT_OTSIKKO", "locale": "fi", "value": "Viestini" },
+  { "key": "OMAT_VIESTIT_OTSIKKO", "locale": "sv", "value": "Mina meddelanden" },
+  { "key": "OMAT_VIESTIT_OTSIKKO", "locale": "en", "value": "My messages" },
+  { "key": "OMAT_VIESTIT_LADATAAN", "locale": "fi", "value": "Ladataan tietoja..." },
+  { "key": "OMAT_VIESTIT_LADATAAN", "locale": "sv", "value": "Laddar information..." },
+  { "key": "OMAT_VIESTIT_LADATAAN", "locale": "en", "value": "Loading..." },
+  { "key": "OMAT_VIESTIT_VIRHE", "locale": "fi", "value": "Jokin meni vikaan. Jos virhe aiheuttaa ongelmia, yritä päivittää sivu." },
+  { "key": "OMAT_VIESTIT_VIRHE", "locale": "sv", "value": "Något gick fel. Om felet orsakar problem, försök att uppdatera sidan." },
+  { "key": "OMAT_VIESTIT_VIRHE", "locale": "en", "value": "Something went wrong. If the error causes problems, try refreshing the page." },
+  { "key": "OMAT_VIESTIT_TIEDOTTEET", "locale": "fi", "value": "Tiedotteet" },
+  { "key": "OMAT_VIESTIT_TIEDOTTEET", "locale": "sv", "value": "Meddelanden" },
+  { "key": "OMAT_VIESTIT_TIEDOTTEET", "locale": "en", "value": "Notifications" },
+  { "key": "OMAT_VIESTIT_EI_TIEDOTTEITA", "locale": "fi", "value": "Ei tiedotteita." },
+  { "key": "OMAT_VIESTIT_EI_TIEDOTTEITA", "locale": "sv", "value": "Inga meddelanden." },
+  { "key": "OMAT_VIESTIT_EI_TIEDOTTEITA", "locale": "en", "value": "No notifications." },
+  { "key": "OMAT_VIESTIT_KIELITUTKINTOTODISTUS_VIESTI", "locale": "fi", "value": "Olet suorittanut kielitutkinnon, voit ladata todistuksen" },
+  { "key": "OMAT_VIESTIT_KIELITUTKINTOTODISTUS_VIESTI", "locale": "sv", "value": "Du har avlagt ett språkprov, du kan ladda ner intyget" },
+  { "key": "OMAT_VIESTIT_KIELITUTKINTOTODISTUS_VIESTI", "locale": "en", "value": "You have completed a language test, you can download the certificate" },
+  { "key": "OMAT_VIESTIT_KIELITUTKINTOTODISTUS_LINKKI", "locale": "fi", "value": "täältä" },
+  { "key": "OMAT_VIESTIT_KIELITUTKINTOTODISTUS_LINKKI", "locale": "sv", "value": "härifrån" },
+  { "key": "OMAT_VIESTIT_KIELITUTKINTOTODISTUS_LINKKI", "locale": "en", "value": "here" }
+]

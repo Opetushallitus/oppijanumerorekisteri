@@ -49,7 +49,7 @@ public class SecurityConfiguration {
   @Bean
   @Order(1)
   SecurityFilterChain publicSecurityFilterChain(HttpSecurity http) throws Exception {
-    http.securityMatcher("/actuator/health")
+    http.securityMatcher("/actuator/health", "/ui/localisations")
         .csrf(CsrfConfigurer::disable)
         .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
 
