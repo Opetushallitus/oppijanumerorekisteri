@@ -37,7 +37,7 @@ export const OmattiedotPage = () => {
                     <Mfa henkiloOid={omattiedot.oidHenkilo} view="omattiedot" />
                 </div>
                 <div className="wrapper">
-                    <HenkiloViewContactContent henkiloOid={omattiedot.oidHenkilo} view="omattiedot" readOnly={true} />
+                    <HenkiloViewContactContent henkiloOid={omattiedot.oidHenkilo} isOmattiedot />
                 </div>
                 <div className="wrapper" ref={existingKayttooikeusRef}>
                     <HenkiloViewExistingKayttooikeus

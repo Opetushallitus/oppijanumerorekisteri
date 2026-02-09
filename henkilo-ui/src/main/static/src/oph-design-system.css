@@ -48,7 +48,7 @@
     max-width: 1920px;
     margin: 0 auto;
     background-color: white;
-    border-bottom: 1px var(--gray-border);
+    border-bottom: 1px solid var(--gray-border);
     word-wrap: break-word;
 }
 
@@ -57,23 +57,71 @@
 }
 
 .oph-ds-page-content-container {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
     background-color: white;
     max-width: 1854px;
-    border-top: 1px var(--gray-border);
-    border-bottom: 1px var(--gray-border);
+    border-top: 1px solid var(--gray-border);
+    border-bottom: 1px solid var(--gray-border);
     margin: 32px 0;
-    padding: 16px 24px;
 }
 
 @media (width > 1200px) {
   .oph-ds-page-content-container {
     margin: 32px;
-    border-left: 1px var(--gray-border);
-    border-right: 1px var(--gray-border);
+    border-left: 1px solid var(--gray-border);
+    border-right: 1px solid var(--gray-border);
   }
+}
+
+.oph-ds-page-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--gray-border);
+}
+
+.oph-ds-page-tabs > a {
+    height: 48px;
+    padding: 12px;
+    box-sizing: border-box;
+    line-height: 24px;
+    text-decoration: none;
+}
+
+.oph-ds-page-tabs > a.active {
+    background: #0033CC;
+    color: #FFFFFF;
+    outline: none;
+}
+
+.oph-ds-page-tabs > a.inactive {
+    color: #0033CC;
+}
+
+.oph-ds-page-tabs > a.inactive:focus {
+    color: #000066;
+    outline-offset: -2px;
+    outline: 2px solid #000066;
+}
+
+.oph-ds-page-tabs > a.inactive:hover {
+    color: #0033CC;
+    outline-offset: -2px;
+    outline: 2px solid #0033CC;
+}
+
+.oph-ds-page-tabs > button {
+    background-color: #FFFFFF;
+    font-size: 16px;
+    color: #B2B2B2;
+    line-height: 24px;
+    border: 0;
+    padding: 12px;
+    box-sizing: border-box;
+}
+
+.oph-ds-page-main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 24px;
 }
 
 .oph-ds-card {

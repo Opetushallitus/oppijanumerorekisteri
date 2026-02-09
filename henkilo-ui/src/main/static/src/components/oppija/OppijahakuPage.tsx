@@ -58,7 +58,7 @@ export const OppijahakuPage = () => {
                 headers={[L['HENKILO_NIMI']!, L['HENKILO_SYNTYMAAIKA']!]}
                 isFetching={isFetching}
                 rows={((!skip && data?.content) || []).map((d) => [
-                    <Link key={`nimi-${d.oid}`} to={`/oppija/${d.oid}`} className="oph-ds-link">
+                    <Link key={`nimi-${d.oid}`} to={`/oppija2/${d.oid}`} className="oph-ds-link">
                         {`${d.sukunimi}, ${d.etunimet}`}
                     </Link>,
                     <span key={`syntymaaika-${d.oid}`}>

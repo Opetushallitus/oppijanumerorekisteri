@@ -28,7 +28,7 @@ export type LinkRelation = {
 
 type Props = {
     henkilo: HenkiloCreate;
-    henkiloType: string;
+    henkiloType: 'oppija' | 'virkailija';
     vainLuku: boolean;
     duplicates: HenkiloDuplicate[];
     oidHenkilo?: string;

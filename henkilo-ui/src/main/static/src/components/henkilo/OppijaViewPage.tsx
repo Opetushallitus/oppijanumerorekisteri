@@ -61,11 +61,7 @@ export const OppijaViewPage = () => {
                     </div>
                 )}
                 <div className="wrapper">
-                    <HenkiloViewContactContent
-                        henkiloOid={oid}
-                        view={omattiedot?.isAdmin ? 'admin' : 'oppija'}
-                        readOnly={true}
-                    />
+                    <HenkiloViewContactContent henkiloOid={oid} />
                 </div>
             </div>
         );

@@ -80,7 +80,7 @@ export const VirkailijaViewPage = () => {
                     <Mfa henkiloOid={oid} view={view} />
                 </div>
                 <div className="wrapper">
-                    <HenkiloViewContactContent henkiloOid={oid} view={view} readOnly={true} />
+                    <HenkiloViewContactContent henkiloOid={oid} />
                 </div>
                 <div className="wrapper">
                     <HenkiloViewOrganisationContent henkiloOid={oid} />

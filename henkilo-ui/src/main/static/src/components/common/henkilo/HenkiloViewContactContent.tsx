@@ -3,7 +3,7 @@ import React, { useEffect, useId, useMemo, useState } from 'react';
 import PropertySingleton from '../../../globals/PropertySingleton';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { validateEmail } from '../../../validation/EmailValidator';
-import { WORK_ADDRESS, View, EMAIL } from '../../../types/constants';
+import { WORK_ADDRESS, EMAIL } from '../../../types/constants';
 import { YhteystietoRyhma } from '../../../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
 import { koodiLabel, useGetYhteystietotyypitQuery } from '../../../api/koodisto';
 import { useAppDispatch } from '../../../store';
@@ -16,9 +16,8 @@ import Loader from '../icons/Loader';
 import { OphDsInput } from '../../design-system/OphDsInput';
 
 type OwnProps = {
-    readOnly: boolean;
     henkiloOid: string;
-    view: View;
+    isOmattiedot?: boolean;
 };
 
 const isWorkMail = (y?: YhteystietoRyhma) =>
@@ -68,13 +67,13 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
     const sectionLabelId = useId();
 
     const hasHenkiloReadUpdateRights = useMemo(() => {
-        return props.view === 'omattiedot'
+        return props.isOmattiedot
             ? true
             : hasAnyPalveluRooli(omattiedot?.organisaatiot, [
                   'OPPIJANUMEROREKISTERI_HENKILON_RU',
                   'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
               ]);
-    }, [props.view, omattiedot]);
+    }, [props.isOmattiedot, omattiedot]);
 
     useEffect(() => {
         if (henkilo) {
