@@ -87,6 +87,7 @@ export const dev: Config = {
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
+    "tiedotuspalvelu.fetch-oppija.enabled": false,
   },
   lampiExport: {
     enabled: true,
@@ -106,6 +107,7 @@ export const qa: Config = {
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
+    "tiedotuspalvelu.fetch-oppija.enabled": false,
   },
   lampiExport: {
     enabled: true,
