@@ -45,7 +45,7 @@ test.describe('oppijahaku', () => {
         await expect(results.count).toHaveText('Hakutulos (1 oppijaa)');
 
         await expect(results.get(1).name).toHaveText('la, pasi ville');
-        await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/oppija/1.2.246.562.99.45262572456');
+        await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/oppija2/1.2.246.562.99.45262572456');
         await expect(results.get(1).syntymaaika).toHaveText('13.1.1934');
 
         await mockOppijahaku(page, (c) => c.query === 'pasi' && c.page === 0 && c.passive === true, {
@@ -75,11 +75,11 @@ test.describe('oppijahaku', () => {
         await expect(results.count).toHaveText('Hakutulos (2 oppijaa)');
 
         await expect(results.get(1).name).toHaveText('la, pasi ville');
-        await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/oppija/1.2.246.562.99.45262572456');
+        await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/oppija2/1.2.246.562.99.45262572456');
         await expect(results.get(1).syntymaaika).toHaveText('13.1.1934');
 
         await expect(results.get(2).name).toHaveText('pasila, masi');
-        await expect(results.get(2).name).toHaveAttribute('href', '/henkilo-ui/oppija/1.2.246.562.99.45262572345');
+        await expect(results.get(2).name).toHaveAttribute('href', '/henkilo-ui/oppija2/1.2.246.562.99.45262572345');
         await expect(results.get(2).syntymaaika).toHaveText('7.10.1954');
     });
 
@@ -112,7 +112,7 @@ test.describe('oppijahaku', () => {
             await expect(pagination.previous).toBeDisabled();
 
             await expect(results.get(1).name).toHaveText('la, pasi ville');
-            await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/oppija/1.2.246.562.99.45262572456');
+            await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/oppija2/1.2.246.562.99.45262572456');
             await expect(results.get(1).syntymaaika).toHaveText('13.1.1934');
         });
 
@@ -137,7 +137,7 @@ test.describe('oppijahaku', () => {
             await pagination.page(2).click();
 
             await expect(results.get(1).name).toHaveText('pasila, masi');
-            await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/oppija/1.2.246.562.99.45262572345');
+            await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/oppija2/1.2.246.562.99.45262572345');
             await expect(results.get(1).syntymaaika).toHaveText('7.10.1954');
 
             await expect(pagination.page(2)).toHaveAttribute('aria-current', 'page');
@@ -147,7 +147,7 @@ test.describe('oppijahaku', () => {
             await pagination.previous.click();
 
             await expect(results.get(1).name).toHaveText('la, pasi ville');
-            await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/oppija/1.2.246.562.99.45262572456');
+            await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/oppija2/1.2.246.562.99.45262572456');
             await expect(results.get(1).syntymaaika).toHaveText('13.1.1934');
 
             await expect(pagination.page(1)).toHaveAttribute('aria-current', 'page');
@@ -157,7 +157,7 @@ test.describe('oppijahaku', () => {
             await pagination.next.click();
 
             await expect(results.get(1).name).toHaveText('pasila, masi');
-            await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/oppija/1.2.246.562.99.45262572345');
+            await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/oppija2/1.2.246.562.99.45262572345');
             await expect(results.get(1).syntymaaika).toHaveText('7.10.1954');
 
             await expect(pagination.page(2)).toHaveAttribute('aria-current', 'page');
