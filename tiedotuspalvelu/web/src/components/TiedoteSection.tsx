@@ -6,11 +6,9 @@ import { TiedoteListItem } from "./TiedoteListItem";
 export function TiedoteSection({
   title,
   items,
-  emptyText,
 }: {
   title: string;
   items: TiedoteDto[];
-  emptyText: string;
 }) {
   return (
     <section className="tp__section" aria-label={title}>
