@@ -1,9 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
-import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.locale.FetchLocalisationsTask;
 import com.github.kagkarlsson.scheduler.task.Task;
 import com.github.kagkarlsson.scheduler.task.helper.Tasks;
 import com.github.kagkarlsson.scheduler.task.schedule.Schedules;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.locale.FetchLocalisationsTask;
 import java.time.Duration;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,12 +36,9 @@ public class DbSchedulerConfiguration {
   }
 
   @Bean
-  @ConditionalOnProperty(
-      name = "tiedotuspalvelu.fetch-localisations.enabled",
-      havingValue = "true")
+  @ConditionalOnProperty(name = "tiedotuspalvelu.fetch-localisations.enabled", havingValue = "true")
   public Task<Void> fetchLocalisationsTaskBean() {
-    return Tasks.recurring(
-            "fetch-localisations-task", Schedules.fixedDelay(Duration.ofMinutes(5)))
+    return Tasks.recurring("fetch-localisations-task", Schedules.fixedDelay(Duration.ofMinutes(5)))
         .execute((inst, ctx) -> fetchLocalisationsTask.execute());
   }
 }
