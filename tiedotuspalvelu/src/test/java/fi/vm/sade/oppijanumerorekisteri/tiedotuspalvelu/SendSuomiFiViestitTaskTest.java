@@ -31,13 +31,6 @@ public class SendSuomiFiViestitTaskTest {
   private Tiedote createTiedote(String oppijanumero) {
     return Tiedote.builder()
         .oppijanumero(oppijanumero)
-        .url("https://example.invalid/tiedote")
-        .titleFi("Title FI")
-        .titleSv("Title SV")
-        .titleEn("Title EN")
-        .messageFi("Message FI")
-        .messageSv("Message SV")
-        .messageEn("Message EN")
         .idempotencyKey(UUID.randomUUID().toString())
         .build();
   }

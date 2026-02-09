@@ -19,16 +19,7 @@ public class ApiController {
     this.tiedoteRepository = tiedoteRepository;
   }
 
-  public record TiedoteDto(
-      @NotBlank String oppijanumero,
-      @NotBlank String url,
-      @NotBlank String titleFi,
-      @NotBlank String titleSv,
-      @NotBlank String titleEn,
-      @NotBlank String messageFi,
-      @NotBlank String messageSv,
-      @NotBlank String messageEn,
-      @NotBlank String idempotencyKey) {}
+  public record TiedoteDto(@NotBlank String oppijanumero, @NotBlank String idempotencyKey) {}
 
   public record CreateResponse(UUID id) {}
 
@@ -43,13 +34,6 @@ public class ApiController {
     var tiedote =
         Tiedote.builder()
             .oppijanumero(tiedoteDto.oppijanumero())
-            .url(tiedoteDto.url())
-            .titleFi(tiedoteDto.titleFi())
-            .titleSv(tiedoteDto.titleSv())
-            .titleEn(tiedoteDto.titleEn())
-            .messageFi(tiedoteDto.messageFi())
-            .messageSv(tiedoteDto.messageSv())
-            .messageEn(tiedoteDto.messageEn())
             .idempotencyKey(tiedoteDto.idempotencyKey())
             .build();
     return new CreateResponse(tiedoteRepository.save(tiedote).getId());

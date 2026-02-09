@@ -35,16 +35,7 @@ public class ApiControllerTest {
   @MockitoBean private JwtDecoder jwtDecoder;
 
   private Map<String, String> createTiedote(String idempotencyKey) {
-    return Map.of(
-        "oppijanumero", "1.2.246.562.99.12345678901",
-        "url", "https://example.invalid/tiedote",
-        "titleFi", "Otsikko",
-        "titleSv", "Rubrik",
-        "titleEn", "Title",
-        "messageFi", "Viesti",
-        "messageSv", "Meddelande",
-        "messageEn", "Message",
-        "idempotencyKey", idempotencyKey);
+    return Map.of("oppijanumero", "1.2.246.562.99.12345678901", "idempotencyKey", idempotencyKey);
   }
 
   @Test
@@ -112,13 +103,6 @@ public class ApiControllerTest {
     Tiedote saved = tiedotteet.stream().filter(t -> t.getId().equals(returnedId)).findFirst().get();
     assertEquals(saved.getId(), returnedId);
     assertEquals("1.2.246.562.99.12345678901", saved.getOppijanumero());
-    assertEquals("https://example.invalid/tiedote", saved.getUrl());
-    assertEquals("Otsikko", saved.getTitleFi());
-    assertEquals("Rubrik", saved.getTitleSv());
-    assertEquals("Title", saved.getTitleEn());
-    assertEquals("Viesti", saved.getMessageFi());
-    assertEquals("Meddelande", saved.getMessageSv());
-    assertEquals("Message", saved.getMessageEn());
     assertEquals(idempotencyKey, saved.getIdempotencyKey());
   }
 
@@ -147,7 +131,7 @@ public class ApiControllerTest {
                             new SimpleGrantedAuthority(
                                 ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE)))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(Map.of("titleFi", "Otsikko"))))
+                .content(objectMapper.writeValueAsString(Map.of("idempotencyKey", "some-key"))))
         .andExpect(status().isBadRequest());
   }
 

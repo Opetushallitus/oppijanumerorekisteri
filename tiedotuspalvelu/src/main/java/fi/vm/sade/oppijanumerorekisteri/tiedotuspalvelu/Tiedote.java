@@ -30,25 +30,24 @@ public class Tiedote {
   @Column(nullable = false)
   private String oppijanumero;
 
-  @Column(nullable = false)
-  private String url;
+  @Column private String url;
 
-  @Column(name = "otsikko_fi", nullable = false)
+  @Column(name = "otsikko_fi")
   private String titleFi;
 
-  @Column(name = "otsikko_sv", nullable = false)
+  @Column(name = "otsikko_sv")
   private String titleSv;
 
-  @Column(name = "otsikko_en", nullable = false)
+  @Column(name = "otsikko_en")
   private String titleEn;
 
-  @Column(name = "viesti_fi", nullable = false)
+  @Column(name = "viesti_fi")
   private String messageFi;
 
-  @Column(name = "viesti_sv", nullable = false)
+  @Column(name = "viesti_sv")
   private String messageSv;
 
-  @Column(name = "viesti_en", nullable = false)
+  @Column(name = "viesti_en")
   private String messageEn;
 
   @Column(nullable = false, updatable = false, insertable = false)

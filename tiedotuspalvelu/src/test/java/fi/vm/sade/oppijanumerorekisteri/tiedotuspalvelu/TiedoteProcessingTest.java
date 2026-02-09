@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
@@ -38,13 +37,6 @@ public class TiedoteProcessingTest {
   private Tiedote createTiedote(String oppijanumero) {
     return Tiedote.builder()
         .oppijanumero(oppijanumero)
-        .url("https://example.invalid/tiedote")
-        .titleFi("Test Title FI")
-        .titleSv("Test Title SV")
-        .titleEn("Test Title EN")
-        .messageFi("Test Message FI")
-        .messageSv("Test Message SV")
-        .messageEn("Test Message EN")
         .idempotencyKey(UUID.randomUUID().toString())
         .processedAt(null)
         .build();
@@ -127,9 +119,7 @@ public class TiedoteProcessingTest {
             .withHeader("Authorization", equalTo("Bearer " + SUOMIFI_TOKEN))
             .withRequestBody(matchingJsonPath("$.externalId", equalTo(tiedote.getId().toString())))
             .withRequestBody(matchingJsonPath("$.recipient.id", equalTo("010170-9999")))
-            .withRequestBody(matchingJsonPath("$.sender.serviceId", equalTo(SUOMIFI_SYSTEM_ID)))
-            .withRequestBody(matchingJsonPath("$.electronic.body", containing("Test Message FI")))
-            .withRequestBody(matchingJsonPath("$.electronic.title", containing("Test Title FI"))));
+            .withRequestBody(matchingJsonPath("$.sender.serviceId", equalTo(SUOMIFI_SYSTEM_ID))));
     wireMock.verify(1, postRequestedFor(urlEqualTo("/v2/messages/electronic")));
     wireMock.verify(1, postRequestedFor(urlEqualTo("/v1/token")));
 
