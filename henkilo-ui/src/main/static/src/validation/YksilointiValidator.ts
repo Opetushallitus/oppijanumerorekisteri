@@ -12,3 +12,6 @@ export const isHenkiloValidForYksilointi = (henkilo?: Henkilo | HenkiloDuplicate
         henkilo?.kansalaisuus?.length
     );
 };
+
+const hetuRegex = new RegExp(/^\d{6}[-+ABCDEFYXWVU]\d{3}[\dA-Z]$/);
+export const isValidHetu = (hetu: string) => hetuRegex.test(hetu);

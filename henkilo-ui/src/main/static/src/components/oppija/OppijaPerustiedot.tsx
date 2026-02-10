@@ -4,11 +4,14 @@ import { Link } from 'react-router';
 import Select, { MultiValue, SingleValue } from 'react-select';
 import { format, parseISO } from 'date-fns';
 
+import { useAppDispatch } from '../../store';
+import { add } from '../../slices/toastSlice';
 import {
     useGetHenkiloMasterQuery,
     useGetHenkiloQuery,
     useGetHenkiloSlavesQuery,
     useUnlinkHenkiloMutation,
+    useUpdateHenkiloMutation,
 } from '../../api/oppijanumerorekisteri';
 import {
     koodiLabelByKoodiarvo,
@@ -25,28 +28,32 @@ import {
     useSukupuoliOptions,
 } from '../../selectors';
 import { hasAnyPalveluRooli } from '../../utilities/palvelurooli.util';
-import YksiloiHetutonButton from '../common/henkilo/buttons/YksiloiHetutonButton';
 import StaticUtils from '../common/StaticUtils';
+import YksiloiHetutonButton from '../common/henkilo/buttons/YksiloiHetutonButton';
 import PassivoiButton from '../common/henkilo/buttons/PassivoiButton';
 import AktivoiButton from '../common/henkilo/buttons/AktivoiButton';
+import VtjOverrideButton from '../common/henkilo/buttons/VtjOverrideButton';
 import PuraHetuttomanYksilointiButton from '../common/henkilo/buttons/PuraHetuttomanYksilointi';
 import OphModal from '../common/modal/OphModal';
 import PassinumeroPopupContent from '../common/henkilo/buttons/PassinumeroPopupContent';
 import Loader from '../common/icons/Loader';
 import { OphDsInput } from '../design-system/OphDsInput';
+import { isValidHetu } from '../../validation/YksilointiValidator';
 import { isValidKutsumanimi } from '../../validation/KutsumanimiValidator';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { SelectOption, selectStyles } from '../../utilities/select';
-import VtjOverrideButton from '../common/henkilo/buttons/VtjOverrideButton';
 
 import styles from './OppijaPerustiedot.module.css';
 
 const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; closeForm: () => void }) => {
     const { L, locale } = useLocalisations();
+    const dispatch = useAppDispatch();
+
     const kieliOptions = useKieliOptions(locale);
     const asiointikieliOptions = useAsiointikielet(locale);
     const kansalaisuusOptions = useKansalaisuusOptions(locale);
     const sukupuoliOptions = useSukupuoliOptions(locale);
+
     const [etunimet, setEtunimet] = useState(henkilo.etunimet);
     const [sukunimi, setSukunimi] = useState(henkilo.sukunimi);
     const [syntymaaika, setSyntymaaika] = useState(henkilo.syntymaaika ? parseISO(henkilo.syntymaaika) : null);
@@ -64,6 +71,50 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
     const [asiointikieli, setAsiointikieli] = useState<SingleValue<SelectOption> | undefined>(
         asiointikieliOptions.find((k) => k.value === henkilo?.asiointiKieli?.kieliKoodi)
     );
+
+    const isFormValid = useMemo(() => {
+        return !!etunimet && !!sukunimi && isValidKutsumanimi(etunimet, kutsumanimi) && (!hetu || isValidHetu(hetu));
+    }, [etunimet, sukunimi, kutsumanimi, hetu]);
+
+    const [putHenkilo] = useUpdateHenkiloMutation();
+    const updateHenkilo = async () => {
+        const henkiloUpdate: Partial<Henkilo> = {
+            ...structuredClone(henkilo),
+            etunimet,
+            sukunimi,
+            kutsumanimi,
+            hetu,
+            syntymaaika: syntymaaika ? format(syntymaaika, 'yyyy-MM-dd') : undefined,
+            kansalaisuus: kansalaisuus.map((k) => ({ kansalaisuusKoodi: k.value })),
+            aidinkieli: kieliOptions
+                .filter((k) => k.value === aidinkieli?.value)
+                .map((k) => ({ kieliKoodi: k.value, kieliTyyppi: k.label }))
+                .pop(),
+            asiointiKieli: asiointikieliOptions
+                .filter((k) => k.value === asiointikieli?.value)
+                .map((k) => ({ kieliKoodi: k.value, kieliTyyppi: k.label }))
+                .pop(),
+            sukupuoli: sukupuoli?.value as '1' | '2',
+        };
+        await putHenkilo(henkiloUpdate)
+            .unwrap()
+            .then(() => closeForm())
+            .catch((error) => {
+                const header =
+                    error.status === 400 && error.data.includes('invalid.hetu')
+                        ? L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU']
+                        : error.data.includes('socialsecuritynr.already.exists')
+                          ? L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU_KAYTOSSA']
+                          : L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE'];
+                dispatch(
+                    add({
+                        id: `henkilo-update-failed-${Math.random()}`,
+                        type: 'error',
+                        header,
+                    })
+                );
+            });
+    };
 
     return (
         <>
@@ -85,7 +136,13 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                                 label={L['HENKILO_SUKUNIMI']!}
                                 onChange={setSukunimi}
                             />
-                            <OphDsInput id="hetu" defaultValue={hetu} label={L['HENKILO_HETU']!} onChange={setHetu} />
+                            <OphDsInput
+                                id="hetu"
+                                error={hetu && !isValidHetu(hetu) ? '' : undefined}
+                                defaultValue={hetu}
+                                label={L['HENKILO_HETU']!}
+                                onChange={setHetu}
+                            />
                         </>
                     )}
                     <OphDsInput
@@ -171,7 +228,9 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                 )}
             </div>
             <div className={styles.buttonRow}>
-                <button className="oph-ds-button">{L['TALLENNA']}</button>
+                <button className="oph-ds-button" disabled={!isFormValid} onClick={updateHenkilo}>
+                    {L['TALLENNA']}
+                </button>
                 <button className="oph-ds-button oph-ds-button-bordered" onClick={() => closeForm()} disabled={false}>
                     {L['PERUUTA']}
                 </button>
