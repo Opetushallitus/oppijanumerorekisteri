@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 import com.github.kagkarlsson.scheduler.task.Task;
 import com.github.kagkarlsson.scheduler.task.helper.Tasks;
 import com.github.kagkarlsson.scheduler.task.schedule.Schedules;
+import fi.vm.sade.JdbcSessionMappingStorage;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.locale.FetchLocalisationsTask;
 import java.time.Duration;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ public class DbSchedulerConfiguration {
   private final FetchOppijaTask fetchOppijaTask;
   private final SendSuomiFiViestitTask sendSuomiFiViestitTask;
   private final FetchLocalisationsTask fetchLocalisationsTask;
+  private final JdbcSessionMappingStorage jdbcSessionMappingStorage;
 
   @Bean
   @ConditionalOnProperty(name = "tiedotuspalvelu.fetch-oppija.enabled", havingValue = "true")
@@ -40,5 +42,11 @@ public class DbSchedulerConfiguration {
   public Task<Void> fetchLocalisationsTaskBean() {
     return Tasks.recurring("fetch-localisations-task", Schedules.fixedDelay(Duration.ofMinutes(5)))
         .execute((inst, ctx) -> fetchLocalisationsTask.execute());
+  }
+
+  @Bean
+  public Task<Void> casClientSessionCleanerTaskBean() {
+    return Tasks.recurring("cas-client-session-cleaner", Schedules.fixedDelay(Duration.ofHours(1)))
+        .execute((inst, ctx) -> jdbcSessionMappingStorage.clean());
   }
 }

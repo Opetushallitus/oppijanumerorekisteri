@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
+import fi.vm.sade.JdbcSessionMappingStorage;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsService;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.cas.ServiceProperties;
@@ -36,6 +38,8 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.session.Session;
+import org.springframework.session.SessionRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -157,9 +161,16 @@ public class SecurityConfiguration {
   }
 
   @Bean
-  SingleSignOutFilter singleSignOutFilter() {
+  JdbcSessionMappingStorage jdbcSessionMappingStorage(
+      JdbcTemplate jdbcTemplate, SessionRepository<? extends Session> sessionRepository) {
+    return new JdbcSessionMappingStorage(jdbcTemplate, sessionRepository);
+  }
+
+  @Bean
+  SingleSignOutFilter singleSignOutFilter(JdbcSessionMappingStorage sessionMappingStorage) {
     var filter = new SingleSignOutFilter();
     filter.setIgnoreInitConfiguration(true);
+    filter.setSessionMappingStorage(sessionMappingStorage);
     return filter;
   }
 
