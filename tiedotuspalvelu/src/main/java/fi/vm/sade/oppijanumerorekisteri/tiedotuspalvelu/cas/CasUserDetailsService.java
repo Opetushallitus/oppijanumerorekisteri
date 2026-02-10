@@ -1,10 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas;
 
 import java.io.Serial;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.springframework.security.cas.authentication.CasAssertionAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -54,6 +52,10 @@ public class CasUserDetailsService
     private CasAuthenticatedUser(String username, Map<String, List<String>> attributes) {
       this.username = username;
       this.attributes = attributes;
+    }
+
+    public Optional<String> getHenkiloOid() {
+      return attributes.getOrDefault(ATTRIBUTE_OPPIJANUMERO, List.of()).stream().findFirst();
     }
 
     @Override

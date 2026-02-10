@@ -31,7 +31,8 @@ public class RequestCallerFilter extends GenericFilterBean {
               .map(token -> token.getToken().getSubject())
               .or(
                   () ->
-                      getUserDetails(servletRequest).map(userDetails -> userDetails.getUsername()));
+                      getUserDetails(servletRequest)
+                          .flatMap(userDetails -> userDetails.getHenkiloOid()));
       callerOid.ifPresent(
           oid -> {
             MDC.put(CALLER_HENKILO_OID_ATTRIBUTE, oid);
