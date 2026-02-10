@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas;
 
 import java.io.Serial;
 import java.util.*;
-
 import org.springframework.security.cas.authentication.CasAssertionAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
