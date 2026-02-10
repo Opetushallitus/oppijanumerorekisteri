@@ -1,6 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.logging;
 
 import ch.qos.logback.access.tomcat.LogbackValve;
+import fi.vm.sade.RequestCallerFilter;
+import fi.vm.sade.RequestIdFilter;
 import org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactory;

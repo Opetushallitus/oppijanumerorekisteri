@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.logging;
+package fi.vm.sade;
 
 import jakarta.servlet.*;
 import java.io.IOException;
