@@ -8,9 +8,10 @@ import { ButtonNotification } from '../../button/NotificationButton';
 type OwnProps = {
     henkiloOid: string;
     disabled?: boolean;
+    className?: string;
 };
 
-const VtjOverrideButton = ({ henkiloOid, disabled }: OwnProps) => {
+const VtjOverrideButton = ({ henkiloOid, disabled, className }: OwnProps) => {
     const { data: henkilo } = useGetHenkiloQuery(henkiloOid);
     const { L } = useLocalisations();
     const [notification, setNotification] = useState<ButtonNotification>();
@@ -18,6 +19,7 @@ const VtjOverrideButton = ({ henkiloOid, disabled }: OwnProps) => {
     return henkilo?.yksiloityVTJ && henkilo.hetu ? (
         <ConfirmButton
             key="vtjOverride"
+            className={className}
             action={() =>
                 yliajaTiedotVtj(henkilo.oidHenkilo)
                     .unwrap()

@@ -114,33 +114,31 @@ export const Identifications = ({ oid }: Props) => {
                 </button>
                 {showAddModal && (
                     <OphModal title={L['TUNNISTEET_LISAA']} onClose={() => setShowAddModal(false)}>
-                        <>
-                            <OphDsInput
-                                id="newIdentifier"
-                                label={L['TUNNISTEET_IDENTIFIER']!}
-                                defaultValue={newIdentifier}
-                                onChange={setNewIdentifier}
+                        <OphDsInput
+                            id="newIdentifier"
+                            label={L['TUNNISTEET_IDENTIFIER']!}
+                            defaultValue={newIdentifier}
+                            onChange={setNewIdentifier}
+                        />
+                        <div style={{ marginTop: '1rem' }}>
+                            <label htmlFor="newIdentifier">{L['TUNNISTEET_IDPENTITYID']}</label>
+                            <Select
+                                {...selectStyles}
+                                inputId="newIdpEntityId"
+                                options={idpEntityIdOptions}
+                                onChange={(option) => setNewIdpEntityId(option?.value ?? '')}
+                                value={idpEntityIdOptions.find((o) => o.value === newIdpEntityId)}
                             />
-                            <div style={{ marginTop: '1rem' }}>
-                                <label htmlFor="newIdentifier">{L['TUNNISTEET_IDPENTITYID']}</label>
-                                <Select
-                                    {...selectStyles}
-                                    inputId="newIdpEntityId"
-                                    options={idpEntityIdOptions}
-                                    onChange={(option) => setNewIdpEntityId(option?.value ?? '')}
-                                    value={idpEntityIdOptions.find((o) => o.value === newIdpEntityId)}
-                                />
-                            </div>
-                            <button
-                                className="oph-ds-button"
-                                onClick={() => addIdentification()}
-                                disabled={!newIdentifier || !newIdpEntityId || isPostLoading}
-                                style={{ marginTop: '1rem' }}
-                                data-test-id="identification-confirm-add"
-                            >
-                                {L['TUNNISTEET_LISAA']}
-                            </button>
-                        </>
+                        </div>
+                        <button
+                            className="oph-ds-button"
+                            onClick={() => addIdentification()}
+                            disabled={!newIdentifier || !newIdpEntityId || isPostLoading}
+                            style={{ marginTop: '1rem' }}
+                            data-test-id="identification-confirm-add"
+                        >
+                            {L['TUNNISTEET_LISAA']}
+                        </button>
                     </OphModal>
                 )}
             </div>

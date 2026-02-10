@@ -183,6 +183,7 @@
 }
 
 .oph-ds-label:has(+ input),
+.oph-ds-label:has(+ .react-datepicker-wrapper),
 .oph-ds-label:has(+ .oph-ds-select-container),
 .oph-ds-label:has(+ .oph-ds-select-container-focused) {
     font-weight: 600;
@@ -542,7 +543,7 @@
 
 .oph-ds-select-control {
     border: 1px solid var(--OPH-Input-Stroke, #454545);
-    height: 40px;
+    min-height: 40px;
     box-sizing: border-box;
     border-radius: 2px;
     padding: 6px 12px;
@@ -550,7 +551,7 @@
 
 .oph-ds-select-control-focused {
     border: 2px solid var(--OPH-Input-Stroke, #0041DC);
-    height: 40px;
+    min-height: 40px;
     box-sizing: border-box;
     border-radius: 2px;
     padding: 5px 11px;
@@ -558,7 +559,7 @@
 
 .oph-ds-select-control-disabled {
     border: 1px solid var(--OPH-Input-Stroke, #B2B2B2);
-    height: 40px;
+    min-height: 40px;
     box-sizing: border-box;
     border-radius: 2px;
     padding: 6px 12px;
@@ -616,6 +617,11 @@
     display: flex;
     align-items: center;
     cursor: pointer;
+}
+
+.oph-ds-multivalue-label {
+    background-color: #F6F6F6;
+    padding: 1px 6px;
 }
 
 .oph-ds-select-option {

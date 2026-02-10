@@ -53,6 +53,7 @@ export const selectStyles = {
         dropdownIndicator: (state: SelectState) =>
             state.isFocused ? 'oph-ds-select-dropdownIndicator-focused' : 'oph-ds-select-dropdownIndicator',
         menu: () => 'oph-ds-select-menu',
+        multiValue: () => 'oph-ds-multivalue-label',
         option: () => 'oph-ds-select-option',
     },
 };
