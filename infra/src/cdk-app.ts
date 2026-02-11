@@ -902,6 +902,8 @@ class TiedotuspalveluStack extends cdk.Stack {
         "tiedotuspalvelu.base-url": `https://${config.opintopolkuHost}`,
         "tiedotuspalvelu.opintopolku-host": config.opintopolkuHost,
         "tiedotuspalvelu.fetch-oppija.enabled": `${config.features["tiedotuspalvelu.fetch-oppija.enabled"]}`,
+        "tiedotuspalvelu.suomifi-viestit.enabled": `${config.features["tiedotuspalvelu.suomifi-viestit.enabled"]}`,
+        "tiedotuspalvelu.suomifi-viestit.base-url": `${config.features["tiedotuspalvelu.suomifi-viestit.base-url"]}`,
         "tiedotuspalvelu.oauth2.token-url": `https://${getEnvironment()}.otuva.opintopolku.fi/kayttooikeus-service/oauth2/token`,
         "spring.security.oauth2.resourceserver.jwt.issuer-uri": `https://${getEnvironment()}.otuva.opintopolku.fi/kayttooikeus-service`,
         "spring.security.oauth2.resourceserver.jwt.jwk-set-uri": `https://${getEnvironment()}.otuva.opintopolku.fi/kayttooikeus-service/oauth2/jwks`,
@@ -922,6 +924,31 @@ class TiedotuspalveluStack extends cdk.Stack {
             { parameterName: "/tiedotuspalvelu/oauth2/client-secret" },
           ),
         ),
+        "tiedotuspalvelu.suomifi-viestit.username": ecs.Secret.fromSsmParameter(
+          ssm.StringParameter.fromSecureStringParameterAttributes(
+            this,
+            "TiedotuspalveluSuomifiViestitUsername",
+            { parameterName: "/tiedotuspalvelu/suomifi-viestit/username" },
+          ),
+        ),
+        "tiedotuspalvelu.suomifi-viestit.password": ecs.Secret.fromSsmParameter(
+          ssm.StringParameter.fromSecureStringParameterAttributes(
+            this,
+            "TiedotuspalveluSuomifiViestitPassword",
+            { parameterName: "/tiedotuspalvelu/suomifi-viestit/password" },
+          ),
+        ),
+        "tiedotuspalvelu.suomifi-viestit.sender-service-id":
+          ecs.Secret.fromSsmParameter(
+            ssm.StringParameter.fromSecureStringParameterAttributes(
+              this,
+              "TiedotuspalveluSuomifiViestitSenderServiceId",
+              {
+                parameterName:
+                  "/tiedotuspalvelu/suomifi-viestit/sender-service-id",
+              },
+            ),
+          ),
         "spring.datasource.username": ecs.Secret.fromSecretsManager(
           props.database.secret!,
           "username",

@@ -19,6 +19,8 @@ export type Config = {
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": boolean;
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": boolean;
     "tiedotuspalvelu.fetch-oppija.enabled": boolean;
+    "tiedotuspalvelu.suomifi-viestit.enabled": boolean;
+    "tiedotuspalvelu.suomifi-viestit.base-url": string;
   };
   lampiExport?: {
     enabled: boolean;
@@ -36,6 +38,8 @@ const defaultConfig = {
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": false,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": false,
     "tiedotuspalvelu.fetch-oppija.enabled": false,
+    "tiedotuspalvelu.suomifi-viestit.enabled": false,
+    "tiedotuspalvelu.suomifi-viestit.base-url": "http://localhost",
   },
 };
 
@@ -72,6 +76,8 @@ export const hahtuva: Config = {
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
     "tiedotuspalvelu.fetch-oppija.enabled": true,
+    "tiedotuspalvelu.suomifi-viestit.enabled": false,
+    "tiedotuspalvelu.suomifi-viestit.base-url": "http://localhost",
   },
 };
 
@@ -88,6 +94,8 @@ export const dev: Config = {
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
     "tiedotuspalvelu.fetch-oppija.enabled": true,
+    "tiedotuspalvelu.suomifi-viestit.enabled": false,
+    "tiedotuspalvelu.suomifi-viestit.base-url": "http://localhost",
   },
   lampiExport: {
     enabled: true,
@@ -108,6 +116,9 @@ export const qa: Config = {
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
     "tiedotuspalvelu.fetch-oppija.enabled": true,
+    "tiedotuspalvelu.suomifi-viestit.enabled": true,
+    "tiedotuspalvelu.suomifi-viestit.base-url":
+      "https://api.messages-qa.suomi.fi",
   },
   lampiExport: {
     enabled: true,
