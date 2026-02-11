@@ -1,6 +1,6 @@
 {
   "name": "oppijanumerorekisteri-ci",
   "devDependencies": {
-    "@types/node": "24.10.11"
+    "@types/node": "24.10.12"
   }
 }
