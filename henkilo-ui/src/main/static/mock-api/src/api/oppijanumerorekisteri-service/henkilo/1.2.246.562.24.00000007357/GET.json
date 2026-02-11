@@ -6,12 +6,12 @@
     "etunimet": "Testi",
     "kutsumanimi": "Testi",
     "sukunimi": "Henkilö",
-    "aidinkieli": null,
+    "aidinkieli": { "kieliKoodi": "fi", "kieliTyyppi": "suomi" },
     "asiointiKieli": null,
-    "kansalaisuus": [],
+    "kansalaisuus": [{ "kansalaisuusKoodi": "248" }],
     "kasittelijaOid": "1.2.246.562.24.00000000001",
-    "syntymaaika": null,
-    "sukupuoli": null,
+    "syntymaaika": "2022-01-01",
+    "sukupuoli": "1",
     "kotikunta": null,
     "oppijanumero": "1.2.246.562.24.00000007357",
     "turvakielto": false,
@@ -26,6 +26,5 @@
     "vtjsynced": null,
     "yhteystiedotRyhma": [],
     "yksilointivirheet": [],
-    "kielisyys": [],
-    "henkiloTyyppi": "OPPIJA"
+    "kielisyys": []
 }

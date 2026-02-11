@@ -7,12 +7,12 @@
     "kutsumanimi": "Greta",
     "sukunimi": "Denimman",
     "aidinkieli": {
-        "kieliKoodi": "VK",
-        "kieliTyyppi": null
+        "kieliKoodi": "vk",
+        "kieliTyyppi": "viittomakieli"
     },
     "asiointiKieli": {
-        "kieliKoodi": "VK",
-        "kieliTyyppi": null
+        "kieliKoodi": "fi",
+        "kieliTyyppi": "suomi"
     },
     "kansalaisuus": [
         {

@@ -55,7 +55,7 @@ const PassinumeroPopupContent = ({ oid }: Props) => {
                             className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
                             onClick={() => remove(passinumero)}
                         />
-                        {passinumero}
+                        <span>{passinumero}</span>
                     </li>
                 ))}
             </ul>

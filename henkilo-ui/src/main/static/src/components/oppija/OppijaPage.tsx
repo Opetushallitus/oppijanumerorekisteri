@@ -28,7 +28,6 @@ export const OppijaPage = () => {
     useTitle(L['TITLE_OPPIJA']);
     useNavigation(oppijaNavigation, false);
     const { data: omattiedot, isLoading } = useGetOmattiedotQuery();
-    const isRekisterinpitaja = omattiedot ? isOnrRekisterinpitaja(omattiedot.organisaatiot) : false;
     const { data: henkilo, isLoading: isHenkiloLoading } = useGetHenkiloQuery(oid);
 
     useEffect(() => {
@@ -50,7 +49,7 @@ export const OppijaPage = () => {
                 <OphDsCard>
                     <OppijaPerustiedot oid={oid} />
                 </OphDsCard>
-                {isRekisterinpitaja && (
+                {isOnrRekisterinpitaja(omattiedot?.organisaatiot) && (
                     <OphDsCard>
                         <Identifications oid={oid} />
                     </OphDsCard>

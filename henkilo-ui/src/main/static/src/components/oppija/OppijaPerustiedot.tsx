@@ -160,7 +160,7 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                         </label>
                         <Select
                             {...selectStyles}
-                            id="kieli-select"
+                            inputId="asiointikieli-select"
                             options={asiointikieliOptions}
                             value={asiointikieli}
                             onChange={setAsiointikieli}
@@ -190,7 +190,7 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                             </label>
                             <Select
                                 {...selectStyles}
-                                id="kansalaisuus-select"
+                                inputId="kansalaisuus-select"
                                 isMulti={true}
                                 options={kansalaisuusOptions}
                                 value={kansalaisuus}
@@ -204,7 +204,7 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                             </label>
                             <Select
                                 {...selectStyles}
-                                id="aidinkieli-select"
+                                inputId="aidinkieli-select"
                                 options={kieliOptions}
                                 value={aidinkieli}
                                 onChange={setAidinkieli}
@@ -217,7 +217,7 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                             </label>
                             <Select
                                 {...selectStyles}
-                                id="sukupuoli-select"
+                                inputId="sukupuoli-select"
                                 options={sukupuoliOptions}
                                 value={sukupuoli}
                                 onChange={setSukupuoli}
@@ -285,7 +285,7 @@ const OppijaPerustiedotView = ({ oid, openForm }: { oid: string; openForm: () =>
                     <div>{L['HENKILO_KUTSUMANIMI']}</div>
                     <div data-testid="kutsumanimi">{henkilo?.kutsumanimi}</div>
                     <div>{L['HENKILO_SYNTYMAAIKA']}</div>
-                    <div data-testid="kutsumanimi">
+                    <div data-testid="syntymaaika">
                         {henkilo?.syntymaaika ? format(parseISO(henkilo.syntymaaika), 'd.M.yyyy') : ''}
                     </div>
                     <div>{L['HENKILO_HETU']}</div>
@@ -306,7 +306,7 @@ const OppijaPerustiedotView = ({ oid, openForm }: { oid: string; openForm: () =>
                     <div data-testid="kansalaisuus">
                         {henkilo?.kansalaisuus
                             .map((k) => koodiLabelByKoodiarvo(kansalaisuusKoodisto, k.kansalaisuusKoodi, locale))
-                            .join(',')}
+                            .join(', ')}
                     </div>
                     <div>{L['HENKILO_AIDINKIELI']}</div>
                     <div data-testid="aidinkieli">
@@ -436,12 +436,12 @@ export const OppijaPerustiedot = ({ oid }: { oid: string }) => {
         if (henkilo?.passivoitu) {
             info.push(L['PASSIVOI_PASSIVOITU']);
         }
-        return info.length ? '(' + info.join(', ') + ')' : '';
+        return info.length ? ' (' + info.join(', ') + ')' : '';
     }, [henkilo]);
 
     return (
         <section aria-labelledby={sectionId} className="henkiloViewUserContentWrapper">
-            <h2 id={sectionId}>{'Oppijan perustiedot ' + yksilointiTranslation}</h2>
+            <h2 id={sectionId}>{L['OPPIJAN_PERUSTIEDOT'] + yksilointiTranslation}</h2>
             <div className={styles.perustiedotContent}>
                 {isLoading ? (
                     <Loader />
