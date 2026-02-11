@@ -902,11 +902,26 @@ class TiedotuspalveluStack extends cdk.Stack {
         "tiedotuspalvelu.base-url": `https://${config.opintopolkuHost}`,
         "tiedotuspalvelu.opintopolku-host": config.opintopolkuHost,
         "tiedotuspalvelu.fetch-oppija.enabled": `${config.features["tiedotuspalvelu.fetch-oppija.enabled"]}`,
+        "tiedotuspalvelu.oauth2.token-url": `https://${getEnvironment()}.otuva.opintopolku.fi/kayttooikeus-service/oauth2/token`,
         "spring.security.oauth2.resourceserver.jwt.issuer-uri": `https://${getEnvironment()}.otuva.opintopolku.fi/kayttooikeus-service`,
         "spring.security.oauth2.resourceserver.jwt.jwk-set-uri": `https://${getEnvironment()}.otuva.opintopolku.fi/kayttooikeus-service/oauth2/jwks`,
         "spring.datasource.url": `jdbc:postgresql://${props.database.clusterEndpoint.hostname}:${props.database.clusterEndpoint.port}/tiedotuspalvelu`,
       },
       secrets: {
+        "tiedotuspalvelu.oauth2.client-id": ecs.Secret.fromSsmParameter(
+          ssm.StringParameter.fromSecureStringParameterAttributes(
+            this,
+            "TiedotuspalveluOauth2ClientId",
+            { parameterName: "/tiedotuspalvelu/oauth2/client-id" },
+          ),
+        ),
+        "tiedotuspalvelu.oauth2.client-secret": ecs.Secret.fromSsmParameter(
+          ssm.StringParameter.fromSecureStringParameterAttributes(
+            this,
+            "TiedotuspalveluOauth2ClientSecret",
+            { parameterName: "/tiedotuspalvelu/oauth2/client-secret" },
+          ),
+        ),
         "spring.datasource.username": ecs.Secret.fromSecretsManager(
           props.database.secret!,
           "username",
