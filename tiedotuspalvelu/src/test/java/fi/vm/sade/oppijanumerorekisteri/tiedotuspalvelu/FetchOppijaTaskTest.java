@@ -1,12 +1,16 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -38,9 +42,16 @@ public class FetchOppijaTaskTest {
   static WireMockExtension wireMock =
       WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
 
+  private static final String OPP_CLIENT_ID = UUID.randomUUID().toString();
+  private static final String OPP_CLIENT_SECRET = UUID.randomUUID().toString();
+  private static final String OPP_TOKEN = UUID.randomUUID().toString();
+
   @DynamicPropertySource
   static void registerProperties(DynamicPropertyRegistry registry) {
     registry.add("tiedotuspalvelu.oppijanumerorekisteri.base-url", wireMock::baseUrl);
+    registry.add("tiedotuspalvelu.oauth2.token-url", () -> wireMock.baseUrl() + "/oauth2/token");
+    registry.add("tiedotuspalvelu.oauth2.client-id", () -> OPP_CLIENT_ID);
+    registry.add("tiedotuspalvelu.oauth2.client-secret", () -> OPP_CLIENT_SECRET);
   }
 
   @BeforeEach
@@ -53,7 +64,23 @@ public class FetchOppijaTaskTest {
   @Test
   public void respectsNextRetryTime() {
     wireMock.stubFor(
+        post(urlEqualTo("/oauth2/token"))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        """
+                        {
+                          "access_token": "%s",
+                          "expires_in": 3600,
+                          "token_type": "Bearer"
+                        }
+                        """
+                            .formatted(OPP_TOKEN))));
+    wireMock.stubFor(
         get(urlPathMatching("/henkilo/.*"))
+            .withHeader("Authorization", equalTo("Bearer " + OPP_TOKEN))
             .willReturn(
                 aResponse()
                     .withStatus(200)
@@ -92,7 +119,25 @@ public class FetchOppijaTaskTest {
 
   @Test
   public void handlesOppijanumerorekisteriFailure() {
-    wireMock.stubFor(get(urlPathMatching("/henkilo/.*")).willReturn(aResponse().withStatus(500)));
+    wireMock.stubFor(
+        post(urlEqualTo("/oauth2/token"))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        """
+                        {
+                          "access_token": "%s",
+                          "expires_in": 3600,
+                          "token_type": "Bearer"
+                        }
+                        """
+                            .formatted(OPP_TOKEN))));
+    wireMock.stubFor(
+        get(urlPathMatching("/henkilo/.*"))
+            .withHeader("Authorization", equalTo("Bearer " + OPP_TOKEN))
+            .willReturn(aResponse().withStatus(500)));
 
     var tiedote = tiedoteRepository.save(createTiedote("1.2.246.562.24.00000000001"));
 

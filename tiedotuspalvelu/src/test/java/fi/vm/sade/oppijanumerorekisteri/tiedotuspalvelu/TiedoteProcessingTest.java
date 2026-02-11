@@ -50,6 +50,9 @@ public class TiedoteProcessingTest {
   private static final String SUOMIFI_PASSWORD = UUID.randomUUID().toString();
   private static final String SUOMIFI_SYSTEM_ID = UUID.randomUUID().toString();
   private static final String SUOMIFI_TOKEN = UUID.randomUUID().toString();
+  private static final String OPPIJA_CLIENT_ID = UUID.randomUUID().toString();
+  private static final String OPPIJA_CLIENT_SECRET = UUID.randomUUID().toString();
+  private static final String OPPIJA_TOKEN = UUID.randomUUID().toString();
 
   @DynamicPropertySource
   static void registerProperties(DynamicPropertyRegistry registry) {
@@ -60,6 +63,9 @@ public class TiedoteProcessingTest {
     registry.add("tiedotuspalvelu.suomifi-viestit.password", () -> SUOMIFI_PASSWORD);
     registry.add("tiedotuspalvelu.suomifi-viestit.sender-service-id", () -> SUOMIFI_SYSTEM_ID);
     registry.add("tiedotuspalvelu.oppijanumerorekisteri.base-url", wireMock::baseUrl);
+    registry.add("tiedotuspalvelu.oauth2.token-url", () -> wireMock.baseUrl() + "/oauth2/token");
+    registry.add("tiedotuspalvelu.oauth2.client-id", () -> OPPIJA_CLIENT_ID);
+    registry.add("tiedotuspalvelu.oauth2.client-secret", () -> OPPIJA_CLIENT_SECRET);
   }
 
   @BeforeEach
@@ -73,6 +79,7 @@ public class TiedoteProcessingTest {
   public void processesTiedote() {
     wireMock.stubFor(
         get(urlPathMatching("/henkilo/.*"))
+            .withHeader("Authorization", equalTo("Bearer " + OPPIJA_TOKEN))
             .willReturn(
                 aResponse()
                     .withStatus(200)
@@ -84,6 +91,21 @@ public class TiedoteProcessingTest {
                           "henkilotunnus": "010170-9999"
                         }
                         """)));
+    wireMock.stubFor(
+        post(urlEqualTo("/oauth2/token"))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        """
+                        {
+                          "access_token": "%s",
+                          "expires_in": 3600,
+                          "token_type": "Bearer"
+                        }
+                        """
+                            .formatted(OPPIJA_TOKEN))));
     wireMock.stubFor(
         post(urlEqualTo("/v1/token"))
             .withRequestBody(matchingJsonPath("$.username", equalTo(SUOMIFI_USERNAME)))
@@ -129,6 +151,7 @@ public class TiedoteProcessingTest {
                         "Hei\n\nSinulle on saapunut tiedote OmaOpintopolkuun\n\nTarkista tiedote kirjautumalla OmaOpintopolkuun. Voit katsoa huomioitavat\nasiat Tiedotteet-kohdasta.\n\nTietoturvan takia viestissä ei ole suoraa linkkiä palveluun.\n\nTerveisin\nOpetushallitus"))));
     wireMock.verify(1, postRequestedFor(urlEqualTo("/v2/messages/electronic")));
     wireMock.verify(1, postRequestedFor(urlEqualTo("/v1/token")));
+    wireMock.verify(1, postRequestedFor(urlEqualTo("/oauth2/token")));
 
     assertNotNull(tiedoteRepository.findById(tiedote.getId()).orElseThrow().getProcessedAt());
   }

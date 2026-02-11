@@ -8,11 +8,15 @@ public record TiedotuspalveluProperties(
     String opintopolkuHost,
     CasProperties cas,
     SuomiFiViestitProperties suomifiViestit,
-    OppijanumerorekisteriProperties oppijanumerorekisteri) {
+    OppijanumerorekisteriProperties oppijanumerorekisteri,
+    Oauth2Properties oauth2) {
   public record CasProperties(String serverUrl, String serviceBaseUrl) {}
 
   public record SuomiFiViestitProperties(
       Boolean enabled, String baseUrl, String username, String password, String senderServiceId) {}
 
   public record OppijanumerorekisteriProperties(@NotBlank String baseUrl) {}
+
+  public record Oauth2Properties(
+      @NotBlank String tokenUrl, @NotBlank String clientId, @NotBlank String clientSecret) {}
 }
