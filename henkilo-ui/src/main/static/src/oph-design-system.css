@@ -5,6 +5,9 @@
 
 .oph-ds-page-layout {
     all: initial;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     color: var(--OPH-Input-Text, #1D1D1D);
     font-family: "Open Sans";
     font-size: 16px;
@@ -47,9 +50,10 @@
     display: flex;
     flex-wrap: wrap;
     align-content: center;
+    justify-content: center;
     min-height: 65px;
     padding: 0 32px;
-    max-width: 1920px;
+    width: calc(100% - 64px);
     margin: 0 auto;
     background-color: white;
     border-bottom: 1px solid var(--gray-border);
@@ -58,10 +62,12 @@
 
 .oph-ds-page-header {
     width: 100%;
+    max-width: 1854px;
 }
 
 .oph-ds-page-content-container {
     background-color: white;
+    width: 100%;
     max-width: 1854px;
     border-top: 1px solid var(--gray-border);
     border-bottom: 1px solid var(--gray-border);
@@ -69,11 +75,21 @@
 }
 
 @media (width > 1200px) {
-  .oph-ds-page-content-container {
-    margin: 32px;
-    border-left: 1px solid var(--gray-border);
-    border-right: 1px solid var(--gray-border);
-  }
+    .oph-ds-page-header-container {
+        padding: 0;
+        width: 100%;
+    }
+
+    .oph-ds-page-header {
+        width: calc(100% - 64px);
+    }
+
+    .oph-ds-page-content-container {
+        margin: 32px;
+        width: calc(100% - 64px);
+        border-left: 1px solid var(--gray-border);
+        border-right: 1px solid var(--gray-border);
+    }
 }
 
 .oph-ds-page-tabs {
