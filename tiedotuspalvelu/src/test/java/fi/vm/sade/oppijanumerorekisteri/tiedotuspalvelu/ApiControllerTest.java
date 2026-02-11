@@ -64,37 +64,7 @@ public class ApiControllerTest {
     tiedoteRepository.deleteAll();
     String idempotencyKey = UUID.randomUUID().toString();
     var tiedote = createTiedote(idempotencyKey);
-
-    mockMvc
-        .perform(
-            post("/api/v1/tiedote/kielitutkintotodistus")
-                .with(
-                    jwt()
-                        .authorities(
-                            new SimpleGrantedAuthority(
-                                ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD)))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(tiedote)))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").exists());
-
-    String responseBody =
-        mockMvc
-            .perform(
-                post("/api/v1/tiedote/kielitutkintotodistus")
-                    .with(
-                        jwt()
-                            .authorities(
-                                new SimpleGrantedAuthority(
-                                    ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD)))
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(tiedote)))
-            .andExpect(status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-
-    UUID returnedId = UUID.fromString(objectMapper.readTree(responseBody).get("id").asText());
+    var returnedId = postTiedoteAndReturnTiedoteId(tiedote);
 
     List<Tiedote> tiedotteet = tiedoteRepository.findAll();
     assertEquals(1, tiedotteet.size());
