@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
@@ -20,7 +19,7 @@ public class SuomiFiViestitClient {
 
   private final ObjectMapper objectMapper;
   private final TiedotuspalveluProperties properties;
-  private final HttpClient httpClient = HttpClient.newHttpClient();
+  private final LoggingHttpClient httpClient = new LoggingHttpClient("suomifi-viestit");
 
   public void send(SuomiFiViestitElectronicMessageRequest request) {
     var token = fetchAccessToken();

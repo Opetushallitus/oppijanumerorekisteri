@@ -3,10 +3,10 @@ package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.locale;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.LoggingHttpClient;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedotuspalveluProperties;
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
@@ -21,7 +21,7 @@ public class LokalisointiClient {
 
   private final ObjectMapper objectMapper;
   private final TiedotuspalveluProperties properties;
-  private final HttpClient httpClient = HttpClient.newHttpClient();
+  private final LoggingHttpClient httpClient = new LoggingHttpClient("lokalisointi");
 
   @JsonIgnoreProperties(ignoreUnknown = true)
   public record LokalisointiEntry(String key, String locale, String value) {}

@@ -1,0 +1,16 @@
+<configuration>
+  <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+  <appender name="JSON-CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <logger
+      name="fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.LoggingHttpClient"
+      level="INFO"
+      additivity="false">
+    <appender-ref ref="JSON-CONSOLE"/>
+  </logger>
+</configuration>
