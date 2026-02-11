@@ -48,7 +48,7 @@ public class ApiControllerTest {
 
   @Test
   public void createTiedoteFailsWithoutRequiredRole() throws Exception {
-    var tiedote = createTiedote(UUID.randomUUID().toString());
+    var tiedote = createTiedote();
 
     mockMvc
         .perform(
@@ -175,8 +175,8 @@ public class ApiControllerTest {
   @Test
   public void createTiedoteWithDifferentIdempotencyKeysCreatesDifferentRecords() throws Exception {
     tiedoteRepository.deleteAll();
-    var tiedote1 = createTiedote(UUID.randomUUID().toString());
-    var tiedote2 = createTiedote(UUID.randomUUID().toString());
+    var tiedote1 = createTiedote();
+    var tiedote2 = createTiedote();
 
     String firstResponse = postTiedote(tiedote1);
 
@@ -189,6 +189,10 @@ public class ApiControllerTest {
 
     List<Tiedote> tiedotteet = tiedoteRepository.findAll();
     assertEquals(2, tiedotteet.size());
+  }
+
+  private Map<String, String> createTiedote() {
+    return createTiedote(UUID.randomUUID().toString());
   }
 
   private Map<String, String> createTiedote(String idempotencyKey) {
