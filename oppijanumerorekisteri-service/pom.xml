@@ -176,9 +176,9 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-envers</artifactId>
-            <version>6.6.42.Final</version>
+            <version>7.2.4.Final</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.orm</groupId>
