@@ -2,12 +2,6 @@ export type PalvelukayttajaCreate = {
     nimi: string;
 };
 
-export type PalvelukayttajaRead = {
-    oid: string;
-    nimi: string;
-    kayttajatunnus: string | null | undefined;
-};
-
 export type Jarjestelmatunnus = {
     oid: string;
     nimi: string;
@@ -27,10 +21,4 @@ export type Kasittelija = {
     sukunimi: string;
     etunimet: string;
     kutsumanimi: string;
-};
-
-export type PalvelukayttajaCriteria = {
-    subOrganisation: string;
-    nameQuery: string;
-    organisaatioOid?: string;
 };

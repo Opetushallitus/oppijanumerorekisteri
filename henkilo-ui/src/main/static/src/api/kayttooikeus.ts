@@ -5,12 +5,7 @@ import { OrganisaatioHenkilo } from '../types/domain/kayttooikeus/OrganisaatioHe
 import { Omattiedot } from '../types/domain/kayttooikeus/Omattiedot.types';
 import { Locale } from '../types/locale.type';
 import { KutsuRead } from '../types/domain/kayttooikeus/Kutsu.types';
-import {
-    Jarjestelmatunnus,
-    PalvelukayttajaCreate,
-    PalvelukayttajaCriteria,
-    PalvelukayttajaRead,
-} from '../types/domain/kayttooikeus/palvelukayttaja.types';
+import { Jarjestelmatunnus, PalvelukayttajaCreate } from '../types/domain/kayttooikeus/palvelukayttaja.types';
 import { HenkilohakuResult } from '../types/domain/kayttooikeus/HenkilohakuResult.types';
 import { Henkilohaku, HenkilohakuCriteria } from '../types/domain/kayttooikeus/HenkilohakuCriteria.types';
 import { HaettuKayttooikeusryhma } from '../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
@@ -80,7 +75,7 @@ type PutKutsuRequest = {
     }[];
 };
 
-export type PostVirkailijahakuRequest = {
+export type PostHenkilohakuRequest = {
     subOrganisation?: boolean;
     nameQuery?: string;
     organisaatioOids?: string[];
@@ -199,7 +194,6 @@ export const kayttooikeusApi = createApi({
         'kayttajatiedot',
         'hakatunnisteet',
         'palvelukayttaja',
-        'palvelukayttajat',
         'henkilohaku',
         'henkilohakucount',
         'henkilohakuorganisaatiot',
@@ -223,6 +217,7 @@ export const kayttooikeusApi = createApi({
         'henkilonkayttooikeusryhmat',
         'henkiloByLoginToken',
         'virkailijahaku',
+        'jarjestelmatunnushaku',
     ],
     endpoints: (builder) => ({
         getOtuvaPrequel: builder.query<void, void>({
@@ -338,43 +333,47 @@ export const kayttooikeusApi = createApi({
             }),
             invalidatesTags: ['hakatunnisteet'],
         }),
-        getPalvelukayttajat: builder.query<PalvelukayttajaRead[], PalvelukayttajaCriteria>({
-            query: (criteria) => `palvelukayttaja?${new URLSearchParams(criteria).toString()}`,
-            providesTags: ['palvelukayttajat'],
-        }),
         getPalvelukayttaja: builder.query<Jarjestelmatunnus, string>({
             query: (oid) => `palvelukayttaja/${oid}`,
             providesTags: ['palvelukayttaja'],
         }),
-        postPalvelukayttaja: builder.mutation<PalvelukayttajaRead, PalvelukayttajaCreate>({
+        postPalvelukayttaja: builder.mutation<Jarjestelmatunnus, PalvelukayttajaCreate>({
             query: (body) => ({
                 url: 'palvelukayttaja',
                 method: 'POST',
                 body,
             }),
-            invalidatesTags: ['palvelukayttaja', 'palvelukayttajat'],
+            invalidatesTags: ['palvelukayttaja', 'jarjestelmatunnushaku'],
         }),
         putPalvelukayttajaCasPassword: builder.mutation<string, string>({
             query: (oid) => ({
                 url: `palvelukayttaja/${oid}/cas`,
                 method: 'PUT',
             }),
-            invalidatesTags: ['palvelukayttaja', 'palvelukayttajat'],
+            invalidatesTags: ['palvelukayttaja', 'jarjestelmatunnushaku'],
         }),
         putPalvelukayttajaOauth2Secret: builder.mutation<string, string>({
             query: (oid) => ({
                 url: `palvelukayttaja/${oid}/oauth2`,
                 method: 'PUT',
             }),
-            invalidatesTags: ['palvelukayttaja', 'palvelukayttajat'],
+            invalidatesTags: ['palvelukayttaja', 'jarjestelmatunnushaku'],
         }),
-        postVirkailijahaku: builder.query<HenkilohakuResult[], PostVirkailijahakuRequest>({
+        postVirkailijahaku: builder.query<HenkilohakuResult[], PostHenkilohakuRequest>({
             query: (body) => ({
                 url: 'internal/virkailijahaku',
                 method: 'POST',
                 body,
             }),
             providesTags: ['virkailijahaku'],
+        }),
+        postJarjestelmatunnushaku: builder.query<HenkilohakuResult[], PostHenkilohakuRequest>({
+            query: (body) => ({
+                url: 'internal/jarjestelmatunnushaku',
+                method: 'POST',
+                body,
+            }),
+            providesTags: ['jarjestelmatunnushaku'],
         }),
         getHenkiloHaku: builder.infiniteQuery<HenkilohakuResult[], Henkilohaku, number>({
             query: ({ queryArg: { criteria, parameters }, pageParam }) => ({
@@ -655,7 +654,6 @@ export const {
     usePutHakatunnisteetMutation,
     usePutKayttajatiedotMutation,
     usePutPasswordMutation,
-    useGetPalvelukayttajatQuery,
     useGetPalvelukayttajaQuery,
     usePostPalvelukayttajaMutation,
     usePutPalvelukayttajaCasPasswordMutation,
@@ -698,4 +696,5 @@ export const {
     useLazyGetEmailVerificationLoginTokenValidationQuery,
     usePostEmailVerificationMutation,
     usePostVirkailijahakuQuery,
+    usePostJarjestelmatunnushakuQuery,
 } = kayttooikeusApi;

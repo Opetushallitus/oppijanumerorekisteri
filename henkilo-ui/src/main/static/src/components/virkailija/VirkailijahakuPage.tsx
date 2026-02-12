@@ -7,7 +7,7 @@ import { RootState, useAppDispatch } from '../../store';
 import { setFilters as _setFilters, VirkailijahakuFilters } from '../../slices/virkailijahakuSlice';
 import { useLocalisations } from '../../selectors';
 import {
-    PostVirkailijahakuRequest,
+    PostHenkilohakuRequest,
     useGetKayttooikeusryhmasQuery,
     usePostVirkailijahakuQuery,
 } from '../../api/kayttooikeus';
@@ -27,7 +27,7 @@ import { Koodi, koodiLabel, useGetOrganisaatiotyypitQuery } from '../../api/kood
 
 import styles from './VirkailijahakuPage.module.css';
 
-const mapFilters = (filters: VirkailijahakuFilters): PostVirkailijahakuRequest => {
+const mapFilters = (filters: VirkailijahakuFilters): PostHenkilohakuRequest => {
     return {
         nameQuery: filters.nameQuery,
         organisaatioOids: filters.ryhmaOid
@@ -49,7 +49,7 @@ export const VirkailijahakuPage = () => {
     const { data: kayttooikeusryhmas } = useGetKayttooikeusryhmasQuery({ passiiviset: false });
     const { data: organisaatiotyypit } = useGetOrganisaatiotyypitQuery();
 
-    const [criteria, setCriteria] = useState<PostVirkailijahakuRequest>(filters);
+    const [criteria, setCriteria] = useState<PostHenkilohakuRequest>(filters);
     const skip =
         (!criteria.nameQuery || criteria.nameQuery.length < 3) &&
         !criteria.organisaatioOids?.length &&

@@ -1,10 +1,10 @@
-.jarjestelmatunnus-haku-form {
+.jarjestelmatunnusHakuForm {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
     min-height: 64px;
 }
 
-.jarjestelmatunnus-haku-form > * {
-    min-height: 64px;
+.jarjestelmatunnusHakuForm input {
+    width: 100%;
 }

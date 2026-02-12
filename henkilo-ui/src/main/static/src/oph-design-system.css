@@ -559,7 +559,7 @@
 
 .oph-ds-select-control {
     border: 1px solid var(--OPH-Input-Stroke, #454545);
-    min-height: 40px;
+    min-height: 40px !important;
     box-sizing: border-box;
     border-radius: 2px;
     padding: 6px 12px;
@@ -567,7 +567,7 @@
 
 .oph-ds-select-control-focused {
     border: 2px solid var(--OPH-Input-Stroke, #0041DC);
-    min-height: 40px;
+    min-height: 40px !important;
     box-sizing: border-box;
     border-radius: 2px;
     padding: 5px 11px;
@@ -575,7 +575,7 @@
 
 .oph-ds-select-control-disabled {
     border: 1px solid var(--OPH-Input-Stroke, #B2B2B2);
-    min-height: 40px;
+    min-height: 40px !important;
     box-sizing: border-box;
     border-radius: 2px;
     padding: 6px 12px;
