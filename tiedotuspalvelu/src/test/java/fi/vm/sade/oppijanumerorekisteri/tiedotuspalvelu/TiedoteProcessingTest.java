@@ -24,7 +24,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @SpringBootTest
-public class TiedoteProcessingTest {
+public class TiedoteProcessingTest implements ResourceReader {
 
   @Autowired private FetchOppijaTask fetchOppijaTask;
   @Autowired private SendSuomiFiViestitTask sendSuomiFiViestitTask;
@@ -78,18 +78,14 @@ public class TiedoteProcessingTest {
   @Test
   public void processesTiedote() {
     wireMock.stubFor(
-        get(urlPathMatching("/henkilo/.*"))
+        get(urlPathMatching("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES))
             .withHeader("Authorization", equalTo("Bearer " + OPPIJA_TOKEN))
             .willReturn(
                 aResponse()
                     .withStatus(200)
                     .withHeader("Content-Type", "application/json")
                     .withBody(
-                        """
-                        {
-                          "hetu": "010170-9999"
-                        }
-                        """)));
+                        readResource("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + ".json"))));
     wireMock.stubFor(
         post(urlEqualTo("/oauth2/token"))
             .willReturn(
@@ -130,7 +126,7 @@ public class TiedoteProcessingTest {
                     .withHeader("Content-Type", "application/json")
                     .withBody("{\"messageId\": 123}")));
 
-    var tiedote = tiedoteRepository.save(createTiedote("1.2.246.562.24.00000000001"));
+    var tiedote = tiedoteRepository.save(createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES));
 
     fetchOppijaTask.execute();
     sendSuomiFiViestitTask.execute();
@@ -139,7 +135,7 @@ public class TiedoteProcessingTest {
         postRequestedFor(urlEqualTo("/v2/messages/electronic"))
             .withHeader("Authorization", equalTo("Bearer " + SUOMIFI_TOKEN))
             .withRequestBody(matchingJsonPath("$.externalId", equalTo(tiedote.getId().toString())))
-            .withRequestBody(matchingJsonPath("$.recipient.id", equalTo("010170-9999")))
+            .withRequestBody(matchingJsonPath("$.recipient.id", equalTo("041157-998B")))
             .withRequestBody(matchingJsonPath("$.sender.serviceId", equalTo(SUOMIFI_SYSTEM_ID)))
             .withRequestBody(
                 matchingJsonPath("$.electronic.title", equalTo("Huomioitavaa OmaOpintopolussa")))

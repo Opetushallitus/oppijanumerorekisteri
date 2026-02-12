@@ -22,7 +22,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @SpringBootTest
-public class FetchOppijaTaskTest {
+public class FetchOppijaTaskTest implements ResourceReader {
 
   @Autowired private FetchOppijaTask fetchOppijaTask;
   @Autowired private TiedoteRepository tiedoteRepository;
@@ -86,11 +86,7 @@ public class FetchOppijaTaskTest {
                     .withStatus(200)
                     .withHeader("Content-Type", "application/json")
                     .withBody(
-                        """
-                        {
-                          "hetu": "010170-9999"
-                        }
-                        """)));
+                        readResource("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + ".json"))));
 
     var futureTiedote =
         tiedoteRepository.save(
@@ -134,11 +130,11 @@ public class FetchOppijaTaskTest {
                         """
                             .formatted(OPP_TOKEN))));
     wireMock.stubFor(
-        get(urlPathMatching("/henkilo/.*"))
+        get(urlPathMatching("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES))
             .withHeader("Authorization", equalTo("Bearer " + OPP_TOKEN))
             .willReturn(aResponse().withStatus(500)));
 
-    var tiedote = tiedoteRepository.save(createTiedote("1.2.246.562.24.00000000001"));
+    var tiedote = tiedoteRepository.save(createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES));
 
     fetchOppijaTask.execute();
 
