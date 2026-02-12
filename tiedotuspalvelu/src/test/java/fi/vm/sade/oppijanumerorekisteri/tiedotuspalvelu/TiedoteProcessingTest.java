@@ -87,8 +87,7 @@ public class TiedoteProcessingTest {
                     .withBody(
                         """
                         {
-                          "oid": "1.2.246.562.98.00000000001",
-                          "henkilotunnus": "010170-9999"
+                          "hetu": "010170-9999"
                         }
                         """)));
     wireMock.stubFor(
