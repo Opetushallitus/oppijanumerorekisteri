@@ -204,6 +204,71 @@ test.describe('henkilönäkymä', () => {
             page.locator('a[href="/henkilo-ui/virkailija/1.2.246.562.98.24707445854/vtjvertailu"]')
         ).not.toHaveClass('disabled-link');
     });
+
+    test('yhteystiedot blocks are sorted by type priority and then by id', async ({ page }) => {
+        const oid = TESTIAINEISTO_GRETA_OID;
+        await overrideOmattiedot(page, JSON.parse(readFileSync('./e2e/app/omattiedot-kehittaja.json', 'utf8')));
+        await mockRoute(page, `/oppijanumerorekisteri-service/henkilo/${oid}`, {
+            json: {
+                ...greta,
+                yhteystiedotRyhma: [
+                    {
+                        id: 166568039,
+                        ryhmaKuvaus: 'yhteystietotyyppi2',
+                        ryhmaAlkuperaTieto: 'alkupera2',
+                        readOnly: false,
+                        yhteystieto: [
+                            {
+                                yhteystietoTyyppi: 'YHTEYSTIETO_SAHKOPOSTI',
+                                yhteystietoArvo: 'wanhempi-osoite@work.fi',
+                            },
+                        ],
+                    },
+                    {
+                        id: 166568053,
+                        ryhmaKuvaus: 'yhteystietotyyppi8',
+                        ryhmaAlkuperaTieto: 'alkupera1',
+                        readOnly: false,
+                        yhteystieto: [
+                            { yhteystietoTyyppi: 'YHTEYSTIETO_SAHKOPOSTI', yhteystietoArvo: 'vtj@example.com' },
+                        ],
+                    },
+                    {
+                        id: 166568034,
+                        ryhmaKuvaus: 'yhteystietotyyppi4',
+                        ryhmaAlkuperaTieto: 'alkupera1',
+                        readOnly: false,
+                        yhteystieto: [
+                            { yhteystietoTyyppi: 'YHTEYSTIETO_KATUOSOITE', yhteystietoArvo: 'Väestökatu 1' },
+                            { yhteystietoTyyppi: 'YHTEYSTIETO_POSTINUMERO', yhteystietoArvo: '00100' },
+                            { yhteystietoTyyppi: 'YHTEYSTIETO_KUNTA', yhteystietoArvo: 'HELSINKI' },
+                            { yhteystietoTyyppi: 'YHTEYSTIETO_MAA', yhteystietoArvo: 'Suomi' },
+                        ],
+                    },
+                    {
+                        id: 166568046,
+                        ryhmaKuvaus: 'yhteystietotyyppi2',
+                        ryhmaAlkuperaTieto: 'alkupera2',
+                        readOnly: false,
+                        yhteystieto: [
+                            { yhteystietoTyyppi: 'YHTEYSTIETO_SAHKOPOSTI', yhteystietoArvo: 'uudempi-osoite@work.fi' },
+                        ],
+                    },
+                ],
+            },
+        });
+
+        await gotoOppijaView(page, oid);
+
+        const yhteystiedot = page.getByRole('region', { name: 'Yhteystiedot' });
+        const headings = yhteystiedot.getByRole('heading', { level: 3 });
+        await expect(headings).toHaveText([
+            'VTJ Sähköinen osoite',
+            'VTJ Vakinainen kotimainen osoite',
+            'Työosoite',
+            'Työosoite *',
+        ]);
+    });
 });
 
 async function gotoHenkiloView(page: Page, oid: string) {

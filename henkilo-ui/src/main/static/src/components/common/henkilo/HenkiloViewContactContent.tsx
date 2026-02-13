@@ -3,7 +3,7 @@ import React, { useEffect, useId, useMemo, useState } from 'react';
 import PropertySingleton from '../../../globals/PropertySingleton';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { validateEmail } from '../../../validation/EmailValidator';
-import { WORK_ADDRESS, EMAIL } from '../../../types/constants';
+import { WORK_ADDRESS, VTJ_VAKINAINEN_KOTIMAINEN_OSOITE, VTJ_SAHKOINEN_OSOITE, EMAIL } from '../../../types/constants';
 import { YhteystietoRyhma } from '../../../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
 import { koodiLabel, useGetYhteystietotyypitQuery } from '../../../api/koodisto';
 import { useAppDispatch } from '../../../store';
@@ -54,6 +54,22 @@ const sortYhteystietoByTyyppi = (r: YhteystietoRyhma) => {
     return { ...r, yhteystieto: y };
 };
 
+const yhteystiedotRyhmaPriority = (ryhma: YhteystietoRyhma): number => {
+    switch (ryhma.ryhmaKuvaus) {
+        case VTJ_SAHKOINEN_OSOITE:
+            return 0;
+        case VTJ_VAKINAINEN_KOTIMAINEN_OSOITE:
+            return 1;
+        case WORK_ADDRESS:
+            return 2;
+        default:
+            return 3;
+    }
+};
+
+const sortYhteystiedotRyhma = (a: YhteystietoRyhma, b: YhteystietoRyhma): number =>
+    yhteystiedotRyhmaPriority(a) - yhteystiedotRyhmaPriority(b) || (a.id ?? 0) - (b.id ?? 0);
+
 export function HenkiloViewContactContentComponent(props: OwnProps) {
     const { data: yhteystietotyypit } = useGetYhteystietotyypitQuery();
     const dispatch = useAppDispatch();
@@ -77,11 +93,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
 
     useEffect(() => {
         if (henkilo) {
-            setYhteystiedot(
-                henkilo.yhteystiedotRyhma
-                    .map(sortYhteystietoByTyyppi)
-                    .sort((a, b) => ((a.id ?? 0) > (b.id ?? 0) ? 1 : -1))
-            );
+            setYhteystiedot([...henkilo.yhteystiedotRyhma].sort(sortYhteystiedotRyhma).map(sortYhteystietoByTyyppi));
         }
     }, [henkilo]);
 
@@ -93,7 +105,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
 
     function discard() {
         if (henkilo) {
-            setYhteystiedot(henkilo.yhteystiedotRyhma.map(sortYhteystietoByTyyppi));
+            setYhteystiedot([...henkilo.yhteystiedotRyhma].sort(sortYhteystiedotRyhma).map(sortYhteystietoByTyyppi));
         }
         setEditing(false);
     }
