@@ -56,7 +56,7 @@ test.describe('virkailijahaku', () => {
         await expect(results.get(1).name).toHaveText('pasilan autopesu');
         await expect(results.get(1).name).toHaveAttribute(
             'href',
-            '/henkilo-ui/jarjestelmatunnus/1.2.246.562.99.32462346235'
+            '/henkilo-ui/jarjestelmatunnus/1.2.246.562.99.45262572456'
         );
         await expect(results.get(1).username).toHaveText('pasipesu');
         await expect(results.get(1).organisations).toHaveText('');
@@ -64,7 +64,7 @@ test.describe('virkailijahaku', () => {
         await expect(results.get(2).name).toHaveText('pasin palvelu');
         await expect(results.get(2).name).toHaveAttribute(
             'href',
-            '/henkilo-ui/jarjestelmatunnus/1.2.246.562.99.45262572456'
+            '/henkilo-ui/jarjestelmatunnus/1.2.246.562.99.32462346235'
         );
         await expect(results.get(2).username).toHaveText('username2');
         await expect(results.get(2).organisations).toHaveText('Koulun kannatusyhdistys (KOULU,OPPILAITOS)');
