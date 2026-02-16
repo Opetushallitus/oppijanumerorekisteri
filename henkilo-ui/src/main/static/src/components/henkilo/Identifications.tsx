@@ -71,10 +71,12 @@ export const Identifications = ({ oid }: Props) => {
 
     const idpEntityIdOptions = useMemo(() => {
         const options =
-            tunnistetyypit?.map((t) => ({
-                value: t.koodiArvo,
-                label: getTunnisteLabel(t.koodiArvo),
-            })) ?? [];
+            tunnistetyypit
+                ?.filter((t) => t.koodiUri !== 'henkilontunnistetyypit_eidas')
+                ?.map((t) => ({
+                    value: t.koodiArvo,
+                    label: getTunnisteLabel(t.koodiArvo),
+                })) ?? [];
         return options.sort((a, b) => (a.label.toLocaleLowerCase() < b.label.toLocaleLowerCase() ? -1 : 1));
     }, [tunnistetyypit]);
 

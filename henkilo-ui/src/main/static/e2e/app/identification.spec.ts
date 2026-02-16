@@ -102,4 +102,20 @@ test.describe('identifications', () => {
         await page.waitForLoadState('networkidle');
         await expect(oppijaPage.henkilotunnisteet.section).not.toBeVisible();
     });
+
+    test('eidas is not an accepted henkilötunnistetyyppi', async ({ page }) => {
+        const oppijaPage = await gotoOppijaView(page, '1.2.246.562.24.49146995140');
+        const dialog = await oppijaPage.henkilotunnisteet.openLisääHenkilötunnisteDialog();
+
+        await dialog.idpEntityId.click();
+
+        const options = page.locator('.oph-ds-select-option');
+        await expect(options).toHaveCount(3);
+
+        const optionTexts = await options.allTextContents();
+        ['email', 'google', 'oppijatoken'].forEach((identificationType, _) =>
+            expect(optionTexts.some((text) => text.toLowerCase().includes(identificationType))).toBe(true)
+        );
+        expect(optionTexts.some((text) => text.toLowerCase().includes('eidas'))).toBe(false);
+    });
 });
