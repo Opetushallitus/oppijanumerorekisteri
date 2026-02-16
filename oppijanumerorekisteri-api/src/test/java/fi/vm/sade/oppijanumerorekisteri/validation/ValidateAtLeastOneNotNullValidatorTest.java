@@ -4,8 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.validator.internal.util.annotation.AnnotationDescriptor;
-import org.hibernate.validator.internal.util.annotation.AnnotationFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +12,7 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import jakarta.validation.ConstraintValidatorContext;
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 
@@ -50,12 +49,32 @@ public class ValidateAtLeastOneNotNullValidatorTest {
     }
 
     private ValidateAtLeastOneNotNull createAnnotation(Collection<String> value) {
-        AnnotationDescriptor.Builder<ValidateAtLeastOneNotNull> builder =
-            new AnnotationDescriptor.Builder<ValidateAtLeastOneNotNull>(ValidateAtLeastOneNotNull.class);
-        builder.setAttribute("value", value.toArray(new String[value.size()]));
-        AnnotationDescriptor<ValidateAtLeastOneNotNull> descriptor = builder.build();
-//        descriptor.setValue("value", value.toArray(new String[value.size()]));
-        return AnnotationFactory.create(descriptor);
+        return new ValidateAtLeastOneNotNull() {
+            @Override
+            public String[] value() {
+                return value.toArray(new String[0]);
+            }
+
+            @Override
+            public String message() {
+                return "";
+            }
+
+            @Override
+            public Class<?>[] groups() {
+                return new Class[0];
+            }
+
+            @Override
+            public Class<? extends jakarta.validation.Payload>[] payload() {
+                return new Class[0];
+            }
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return ValidateAtLeastOneNotNull.class;
+            }
+        };
     }
 
     @Test
