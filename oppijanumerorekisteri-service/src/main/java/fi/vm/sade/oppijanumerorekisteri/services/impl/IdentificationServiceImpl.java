@@ -66,6 +66,10 @@ public class IdentificationServiceImpl implements IdentificationService {
             throw new ValidationException("Tuntematon koodiston 'henkilontunnistetyypit' koodi " + dto.getIdpEntityId().getIdpEntityId());
         }
 
+        if (IdpEntityId.eidas.equals(dto.getIdpEntityId())) {
+            throw new ValidationException("eIDAS-tunnisteiden lisääminen ei ole sallittua");
+        }
+
         Henkilo henkilo = henkiloRepository.findByIdentification(oid, dto)
                 .orElseGet(() -> save(oid, dto));
         return mapper.mapAsList(henkilo.getIdentifications(), IdentificationDto.class);

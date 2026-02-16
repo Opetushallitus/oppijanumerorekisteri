@@ -73,7 +73,19 @@ public class IdentificationServiceImplTest {
         given(this.koodistoService.list(eq(Koodisto.HENKILON_TUNNISTETYYPIT))).willReturn(Collections.singleton(tunnisteKoodiType));
 
         assertThrows(ValidationException.class, () -> this.identificationService
-            .create("1.2.3.4.5", IdentificationDto.of(IdpEntityId.eidas, "eidas")));
+            .create("1.2.3.4.5", IdentificationDto.of(IdpEntityId.eidas, "google")));
+    }
+
+    @Test
+    public void createIdentificationThrowsWhenEidasIdentification() throws Exception {
+        KoodiType eidasKoodiType = new KoodiType();
+        eidasKoodiType.setKoodiArvo("eidas");
+        given(this.koodistoService.list(eq(Koodisto.HENKILON_TUNNISTETYYPIT))).willReturn(Collections.singleton(eidasKoodiType));
+
+        ValidationException exception = assertThrows(ValidationException.class, () -> this.identificationService
+            .create("1.2.3.4.5", IdentificationDto.of(IdpEntityId.eidas, "test-identifier")));
+
+        assertThat(exception.getMessage()).contains("eIDAS-tunnisteiden lisääminen ei ole sallittua");
     }
 
     @Test
