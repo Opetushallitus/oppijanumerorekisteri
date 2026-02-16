@@ -1,20 +1,22 @@
 package fi.vm.sade.oppijanumerorekisteri.validation;
 
+import java.lang.annotation.Annotation;
+import java.util.Collection;
+import java.util.List;
+
+import jakarta.validation.ConstraintValidatorContext;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Answers;
 import org.mockito.Mock;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import jakarta.validation.ConstraintValidatorContext;
-import java.lang.annotation.Annotation;
-import java.util.Collection;
-import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
