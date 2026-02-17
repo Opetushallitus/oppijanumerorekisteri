@@ -32,5 +32,6 @@ public class FetchLocalisationsTask {
     localisationRepository.deleteAll();
     localisationRepository.saveAll(localisations);
     log.info("Fetched {} localisations", localisations.size());
+    log.info("Finished running FetchLocalisationsTask");
   }
 }

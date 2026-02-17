@@ -47,6 +47,10 @@ public class DbSchedulerConfiguration {
   @Bean
   public Task<Void> casClientSessionCleanerTaskBean() {
     return Tasks.recurring("cas-client-session-cleaner", Schedules.fixedDelay(Duration.ofHours(1)))
-        .execute((inst, ctx) -> jdbcSessionMappingStorage.clean());
+        .execute(
+            (inst, ctx) -> {
+              jdbcSessionMappingStorage.clean();
+              log.info("Finished running CasClientSessionCleanerTask");
+            });
   }
 }

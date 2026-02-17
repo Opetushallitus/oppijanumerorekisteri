@@ -99,6 +99,7 @@ class CdkApp extends cdk.App {
       database: databaseStack.tiedotuspalveluDatabase,
       ecsCluster: ecsStack.cluster,
       hostedZone: dnsStack.tiedotuspalveluHostedZone,
+      alarmTopic,
     });
 
     new HenkiloUiApplicationStack(
@@ -852,6 +853,7 @@ type TiedotuspalveluStackProps = cdk.StackProps & {
   ecsCluster: ecs.Cluster;
   hostedZone: route53.IHostedZone;
   database: rds.DatabaseCluster;
+  alarmTopic: sns.ITopic;
 };
 
 class TiedotuspalveluStack extends cdk.Stack {
@@ -872,6 +874,15 @@ class TiedotuspalveluStack extends cdk.Stack {
       logGroupName: sharedAccount.prefix("/tiedotuspalvelu"),
       retention: logs.RetentionDays.INFINITE,
     });
+
+    if (config.features["tiedotuspalvelu.fetch-oppija.enabled"]) {
+      this.fetchOppijaAlarm(logGroup, props.alarmTopic);
+    }
+    if (config.features["tiedotuspalvelu.suomifi-viestit.enabled"]) {
+      this.sendSuomiFiViestitAlarm(logGroup, props.alarmTopic);
+    }
+    this.fetchLocalisationsAlarm(logGroup, props.alarmTopic);
+    this.casClientSessionCleanerAlarm(logGroup, props.alarmTopic);
 
     const dockerImage = new ecr_assets.DockerImageAsset(this, "AppImage", {
       directory: path.join(__dirname, "../../tiedotuspalvelu"),
@@ -1041,6 +1052,50 @@ class TiedotuspalveluStack extends cdk.Stack {
         port: appPort.toString(),
       },
     });
+  }
+
+  fetchOppijaAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
+    alarms.alarmIfExpectedLogLineIsMissing(
+      this,
+      sharedAccount.prefix("FetchOppijaTask"),
+      logGroup,
+      alarmTopic,
+      logs.FilterPattern.literal('"Finished running FetchOppijaTask"'),
+    );
+  }
+
+  sendSuomiFiViestitAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
+    alarms.alarmIfExpectedLogLineIsMissing(
+      this,
+      sharedAccount.prefix("SendSuomiFiViestitTask"),
+      logGroup,
+      alarmTopic,
+      logs.FilterPattern.literal('"Finished running SendSuomiFiViestitTask"'),
+    );
+  }
+
+  fetchLocalisationsAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
+    alarms.alarmIfExpectedLogLineIsMissing(
+      this,
+      sharedAccount.prefix("FetchLocalisationsTask"),
+      logGroup,
+      alarmTopic,
+      logs.FilterPattern.literal('"Finished running FetchLocalisationsTask"'),
+    );
+  }
+
+  casClientSessionCleanerAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
+    alarms.alarmIfExpectedLogLineIsMissing(
+      this,
+      sharedAccount.prefix("TiedotuspalveluCasClientSessionCleanerTask"),
+      logGroup,
+      alarmTopic,
+      logs.FilterPattern.literal(
+        '"Finished running CasClientSessionCleanerTask"',
+      ),
+      cdk.Duration.hours(2),
+      1,
+    );
   }
 }
 
