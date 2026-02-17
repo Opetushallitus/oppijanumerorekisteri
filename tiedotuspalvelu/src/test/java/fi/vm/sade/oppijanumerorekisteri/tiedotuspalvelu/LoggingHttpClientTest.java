@@ -22,6 +22,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.util.UUID;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -48,24 +49,37 @@ public class LoggingHttpClientTest {
     logger.setLevel(Level.INFO);
     logger.addAppender(listAppender);
     try {
-      var testPath = "/" + UUID.randomUUID();
-      var testClientName = UUID.randomUUID().toString();
-      wireMock.stubFor(
-          get(urlEqualTo(testPath)).willReturn(aResponse().withStatus(200).withBody("ok")));
+      Stream.of(200, 301, 400, 500)
+          .forEach(
+              statusCode -> {
+                listAppender.list.clear();
+                var testPath = "/" + UUID.randomUUID();
+                var testClientName = UUID.randomUUID().toString();
+                wireMock.stubFor(
+                    get(urlEqualTo(testPath))
+                        .willReturn(aResponse().withStatus(statusCode).withBody("ok")));
 
-      var httpClient = new LoggingHttpClient(testClientName);
-      var request =
-          HttpRequest.newBuilder().uri(URI.create(wireMock.baseUrl() + testPath)).GET().build();
+                var httpClient = new LoggingHttpClient(testClientName);
+                var request =
+                    HttpRequest.newBuilder()
+                        .uri(URI.create(wireMock.baseUrl() + testPath))
+                        .GET()
+                        .build();
 
-      httpClient.send(request, HttpResponse.BodyHandlers.discarding());
+                try {
+                  httpClient.send(request, HttpResponse.BodyHandlers.discarding());
 
-      var message = singleLogMessage(listAppender);
-      var json = objectMapper.readTree(message);
-      assertEquals(testClientName, json.get("client").asText());
-      assertEquals(wireMock.baseUrl() + testPath, json.get("url").asText());
-      assertEquals(200, json.get("httpCode").asInt());
-      assertTrue(json.get("duration").asLong() >= 0);
-      assertNotNull(Instant.parse(json.get("timestamp").asText()));
+                  var message = singleLogMessage(listAppender);
+                  var json = objectMapper.readTree(message);
+                  assertEquals(testClientName, json.get("client").asText());
+                  assertEquals(wireMock.baseUrl() + testPath, json.get("url").asText());
+                  assertEquals(statusCode, json.get("httpCode").asInt());
+                  assertTrue(json.get("duration").asLong() >= 0);
+                  assertNotNull(Instant.parse(json.get("timestamp").asText()));
+                } catch (Exception e) {
+                  throw new RuntimeException(e);
+                }
+              });
     } finally {
       logger.detachAppender(listAppender);
       logger.setLevel(originalLevel);
