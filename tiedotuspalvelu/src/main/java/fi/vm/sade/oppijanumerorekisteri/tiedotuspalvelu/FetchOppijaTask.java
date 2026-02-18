@@ -39,7 +39,7 @@ public class FetchOppijaTask {
         tiedote.setRetryCount(0);
         tiedoteRepository.save(tiedote);
       } catch (Exception e) {
-        log.error("Failed to fetch henkilotunnus for tiedote {}", tiedote.getId(), e);
+        log.error("Failed to fetch oppija for tiedote {}", tiedote.getId(), e);
         tiedote.setRetryCount(tiedote.getRetryCount() + 1);
         long delayInMinutes =
             (long) Math.min(Math.pow(2, tiedote.getRetryCount() - 1), _24_HOURS_IN_MINUTES);
