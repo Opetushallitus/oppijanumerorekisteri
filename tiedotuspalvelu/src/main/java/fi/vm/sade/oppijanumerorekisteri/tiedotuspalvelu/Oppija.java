@@ -3,7 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record Henkilotieto(
+public record Oppija(
     String hetu,
     String etunimet,
     String sukunimi,

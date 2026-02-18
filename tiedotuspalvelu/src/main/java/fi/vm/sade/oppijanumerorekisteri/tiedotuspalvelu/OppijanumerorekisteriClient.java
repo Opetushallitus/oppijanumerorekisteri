@@ -23,7 +23,7 @@ public class OppijanumerorekisteriClient {
   private final TiedotuspalveluProperties properties;
   private final LoggingHttpClient httpClient = new LoggingHttpClient("oppijanumerorekisteri");
 
-  public Henkilotieto getHenkilotieto(String oid) {
+  public Oppija getOppija(String oid) {
     var token = fetchAccessToken();
     try {
       var httpRequest =
@@ -89,7 +89,7 @@ public class OppijanumerorekisteriClient {
     return URLEncoder.encode(value, StandardCharsets.UTF_8);
   }
 
-  private Henkilotieto mapToHenkilotieto(HenkiloDto dto) {
+  private Oppija mapToHenkilotieto(HenkiloDto dto) {
     var yhteystiedot =
         dto.yhteystiedotRyhma().stream().flatMap(ryhma -> ryhma.yhteystieto().stream()).toList();
 
@@ -97,7 +97,7 @@ public class OppijanumerorekisteriClient {
     var postinumero = findYhteystietoArvo(yhteystiedot, "YHTEYSTIETO_POSTINUMERO");
     var kaupunki = findYhteystietoArvo(yhteystiedot, "YHTEYSTIETO_KAUPUNKI");
 
-    return new Henkilotieto(
+    return new Oppija(
         dto.hetu(), dto.etunimet(), dto.sukunimi(), katuosoite, postinumero, kaupunki);
   }
 
