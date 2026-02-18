@@ -1057,7 +1057,7 @@ class TiedotuspalveluStack extends cdk.Stack {
   fetchOppijaAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
     alarms.alarmIfExpectedLogLineIsMissing(
       this,
-      sharedAccount.prefix("FetchOppijaTask"),
+      sharedAccount.tiedotuspalveluPrefix("FetchOppijaTask"),
       logGroup,
       alarmTopic,
       logs.FilterPattern.literal('"Finished running FetchOppijaTask"'),
@@ -1067,7 +1067,7 @@ class TiedotuspalveluStack extends cdk.Stack {
   sendSuomiFiViestitAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
     alarms.alarmIfExpectedLogLineIsMissing(
       this,
-      sharedAccount.prefix("SendSuomiFiViestitTask"),
+      sharedAccount.tiedotuspalveluPrefix("SendSuomiFiViestitTask"),
       logGroup,
       alarmTopic,
       logs.FilterPattern.literal('"Finished running SendSuomiFiViestitTask"'),
@@ -1077,7 +1077,7 @@ class TiedotuspalveluStack extends cdk.Stack {
   fetchLocalisationsAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
     alarms.alarmIfExpectedLogLineIsMissing(
       this,
-      sharedAccount.prefix("FetchLocalisationsTask"),
+      sharedAccount.tiedotuspalveluPrefix("FetchLocalisationsTask"),
       logGroup,
       alarmTopic,
       logs.FilterPattern.literal('"Finished running FetchLocalisationsTask"'),
@@ -1090,7 +1090,7 @@ class TiedotuspalveluStack extends cdk.Stack {
   ) {
     alarms.alarmIfExpectedLogLineIsMissing(
       this,
-      sharedAccount.prefix("TiedotuspalveluCasClientSessionCleanerTask"),
+      sharedAccount.tiedotuspalveluPrefix("CasClientSessionCleanerTask"),
       logGroup,
       alarmTopic,
       logs.FilterPattern.literal(
