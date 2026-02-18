@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.net.URLEncoder;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +36,8 @@ public class OppijanumerorekisteriClient {
       var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
       if (response.statusCode() == 200) {
-        return objectMapper.readValue(response.body(), Henkilotieto.class);
+        var henkiloDto = objectMapper.readValue(response.body(), HenkiloDto.class);
+        return mapToHenkilotieto(henkiloDto);
       }
       throw new IllegalStateException(
           "Oppijanumerorekisteri call failed with status " + response.statusCode());
@@ -85,6 +88,34 @@ public class OppijanumerorekisteriClient {
   private String encodeFormValue(String value) {
     return URLEncoder.encode(value, StandardCharsets.UTF_8);
   }
+
+  private Henkilotieto mapToHenkilotieto(HenkiloDto dto) {
+    var yhteystiedot =
+        dto.yhteystiedotRyhma().stream().flatMap(ryhma -> ryhma.yhteystieto().stream()).toList();
+
+    var katuosoite = findYhteystietoArvo(yhteystiedot, "YHTEYSTIETO_KATUOSOITE");
+    var postinumero = findYhteystietoArvo(yhteystiedot, "YHTEYSTIETO_POSTINUMERO");
+    var kaupunki = findYhteystietoArvo(yhteystiedot, "YHTEYSTIETO_KAUPUNKI");
+
+    return new Henkilotieto(dto.hetu(), katuosoite, postinumero, kaupunki);
+  }
+
+  private String findYhteystietoArvo(List<YhteystietoDto> yhteystiedot, String tyyppi) {
+    return yhteystiedot.stream()
+        .filter(yt -> tyyppi.equals(yt.yhteystietoTyyppi()))
+        .map(YhteystietoDto::yhteystietoArvo)
+        .findFirst()
+        .orElse(null);
+  }
+
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  private record HenkiloDto(String hetu, List<YhteystiedotRyhmaDto> yhteystiedotRyhma) {}
+
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  private record YhteystiedotRyhmaDto(List<YhteystietoDto> yhteystieto) {}
+
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  private record YhteystietoDto(String yhteystietoTyyppi, String yhteystietoArvo) {}
 
   private record AccessTokenResponse(@JsonProperty("access_token") String accessToken) {
     AccessTokenResponse {

@@ -22,8 +22,15 @@ public class FetchOppijaTask {
     var unprocessed = tiedoteRepository.findUnprocessed();
     for (var tiedote : unprocessed) {
       try {
-        var hetu = oppijanumerorekisteriClient.getHenkilotieto(tiedote.getOppijanumero()).hetu();
-        var viesti = SuomiFiViesti.builder().tiedoteId(tiedote.getId()).henkilotunnus(hetu).build();
+        var henkilotieto = oppijanumerorekisteriClient.getHenkilotieto(tiedote.getOppijanumero());
+        var viesti =
+            SuomiFiViesti.builder()
+                .tiedoteId(tiedote.getId())
+                .henkilotunnus(henkilotieto.hetu())
+                .katuosoite(henkilotieto.katuosoite())
+                .postinumero(henkilotieto.postinumero())
+                .kaupunki(henkilotieto.kaupunki())
+                .build();
         suomiFiViestiRepository.save(viesti);
         tiedote.setProcessedAt(OffsetDateTime.now());
         tiedote.setNextRetry(null);
