@@ -97,7 +97,8 @@ public class OppijanumerorekisteriClient {
     var postinumero = findYhteystietoArvo(yhteystiedot, "YHTEYSTIETO_POSTINUMERO");
     var kaupunki = findYhteystietoArvo(yhteystiedot, "YHTEYSTIETO_KAUPUNKI");
 
-    return new Henkilotieto(dto.hetu(), katuosoite, postinumero, kaupunki);
+    return new Henkilotieto(
+        dto.hetu(), dto.etunimet(), dto.sukunimi(), katuosoite, postinumero, kaupunki);
   }
 
   private String findYhteystietoArvo(List<YhteystietoDto> yhteystiedot, String tyyppi) {
@@ -109,7 +110,11 @@ public class OppijanumerorekisteriClient {
   }
 
   @JsonIgnoreProperties(ignoreUnknown = true)
-  private record HenkiloDto(String hetu, List<YhteystiedotRyhmaDto> yhteystiedotRyhma) {}
+  private record HenkiloDto(
+      String hetu,
+      String etunimet,
+      String sukunimi,
+      List<YhteystiedotRyhmaDto> yhteystiedotRyhma) {}
 
   @JsonIgnoreProperties(ignoreUnknown = true)
   private record YhteystiedotRyhmaDto(List<YhteystietoDto> yhteystieto) {}

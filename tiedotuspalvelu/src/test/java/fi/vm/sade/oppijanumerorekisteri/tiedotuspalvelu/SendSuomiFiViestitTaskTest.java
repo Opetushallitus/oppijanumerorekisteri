@@ -82,6 +82,11 @@ public class SendSuomiFiViestitTaskTest {
             SuomiFiViesti.builder()
                 .tiedoteId(tiedote.getId())
                 .henkilotunnus("010170-9999")
+                .name("Kissa Minou")
+                .streetAddress("Kissankuja 1")
+                .zipCode("00100")
+                .city("Helsinki")
+                .countryCode("FI")
                 .nextRetry(OffsetDateTime.now().plusHours(1))
                 .retryCount(1)
                 .build());
@@ -91,6 +96,11 @@ public class SendSuomiFiViestitTaskTest {
             SuomiFiViesti.builder()
                 .tiedoteId(tiedote.getId())
                 .henkilotunnus("010170-9998")
+                .name("Katti Purr")
+                .streetAddress("Kissatie 2")
+                .zipCode("00200")
+                .city("Espoo")
+                .countryCode("FI")
                 .nextRetry(OffsetDateTime.now().minusMinutes(1))
                 .retryCount(1)
                 .build());
@@ -126,6 +136,11 @@ public class SendSuomiFiViestitTaskTest {
             SuomiFiViesti.builder()
                 .tiedoteId(tiedote.getId())
                 .henkilotunnus("010170-9999")
+                .name("Mirri Meow")
+                .streetAddress("Kissankatu 3")
+                .zipCode("00300")
+                .city("Vantaa")
+                .countryCode("FI")
                 .build());
 
     sendSuomiFiViestitTask.execute();

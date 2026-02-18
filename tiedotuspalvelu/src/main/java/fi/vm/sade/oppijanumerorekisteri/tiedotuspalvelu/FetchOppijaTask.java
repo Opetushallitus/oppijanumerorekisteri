@@ -27,9 +27,11 @@ public class FetchOppijaTask {
             SuomiFiViesti.builder()
                 .tiedoteId(tiedote.getId())
                 .henkilotunnus(henkilotieto.hetu())
-                .katuosoite(henkilotieto.katuosoite())
-                .postinumero(henkilotieto.postinumero())
-                .kaupunki(henkilotieto.kaupunki())
+                .name(henkilotieto.etunimet() + " " + henkilotieto.sukunimi())
+                .streetAddress(henkilotieto.katuosoite())
+                .zipCode(henkilotieto.postinumero())
+                .city(henkilotieto.kaupunki())
+                .countryCode("FI")
                 .build();
         suomiFiViestiRepository.save(viesti);
         tiedote.setProcessedAt(OffsetDateTime.now());

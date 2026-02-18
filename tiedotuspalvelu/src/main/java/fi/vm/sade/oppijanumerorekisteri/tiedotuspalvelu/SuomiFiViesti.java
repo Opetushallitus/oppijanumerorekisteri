@@ -33,15 +33,26 @@ public class SuomiFiViesti {
   @Column(nullable = false)
   private String henkilotunnus;
 
-  @Column private String katuosoite;
+  @Column(nullable = false)
+  private String name;
 
-  @Column private String postinumero;
+  @Column(nullable = false)
+  private String streetAddress;
 
-  @Column private String kaupunki;
+  @Column(nullable = false)
+  private String zipCode;
 
-  @Column private OffsetDateTime processedAt;
+  @Column(nullable = false)
+  private String city;
 
-  @Column private OffsetDateTime nextRetry;
+  @Column(nullable = false)
+  private String countryCode;
+
+  @Column(nullable = false)
+  private OffsetDateTime processedAt;
+
+  @Column(nullable = false)
+  private OffsetDateTime nextRetry;
 
   @Column(nullable = false)
   private int retryCount;
