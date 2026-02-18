@@ -1084,7 +1084,10 @@ class TiedotuspalveluStack extends cdk.Stack {
     );
   }
 
-  casClientSessionCleanerAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
+  casClientSessionCleanerAlarm(
+    logGroup: logs.LogGroup,
+    alarmTopic: sns.ITopic,
+  ) {
     alarms.alarmIfExpectedLogLineIsMissing(
       this,
       sharedAccount.prefix("TiedotuspalveluCasClientSessionCleanerTask"),
