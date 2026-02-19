@@ -116,6 +116,13 @@ public class FetchOppijaTaskTest implements ResourceReader {
   public void handlesOppijanumerorekisteriFailure() {
     wireMock.stubFor(
         post(urlEqualTo("/oauth2/token"))
+            .withRequestBody(
+                equalTo(
+                    "grant_type=client_credentials"
+                        + "&client_id="
+                        + OPP_CLIENT_ID
+                        + "&client_secret="
+                        + OPP_CLIENT_SECRET))
             .willReturn(
                 aResponse()
                     .withStatus(200)

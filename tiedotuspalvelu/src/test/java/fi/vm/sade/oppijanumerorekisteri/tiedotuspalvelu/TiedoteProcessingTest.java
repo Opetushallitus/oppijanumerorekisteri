@@ -88,6 +88,13 @@ public class TiedoteProcessingTest implements ResourceReader {
                         readResource("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + ".json"))));
     wireMock.stubFor(
         post(urlEqualTo("/oauth2/token"))
+            .withRequestBody(
+                equalTo(
+                    "grant_type=client_credentials"
+                        + "&client_id="
+                        + OPPIJA_CLIENT_ID
+                        + "&client_secret="
+                        + OPPIJA_CLIENT_SECRET))
             .willReturn(
                 aResponse()
                     .withStatus(200)
