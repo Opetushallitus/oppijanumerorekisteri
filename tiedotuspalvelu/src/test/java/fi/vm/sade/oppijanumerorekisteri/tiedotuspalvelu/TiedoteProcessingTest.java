@@ -77,61 +77,10 @@ public class TiedoteProcessingTest implements ResourceReader {
 
   @Test
   public void processesTiedote() {
-    wireMock.stubFor(
-        get(urlPathMatching("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES))
-            .withHeader("Authorization", equalTo("Bearer " + OPPIJA_TOKEN))
-            .willReturn(
-                aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/json")
-                    .withBody(
-                        readResource("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + ".json"))));
-    wireMock.stubFor(
-        post(urlEqualTo("/oauth2/token"))
-            .withRequestBody(
-                equalTo(
-                    "grant_type=client_credentials"
-                        + "&client_id="
-                        + OPPIJA_CLIENT_ID
-                        + "&client_secret="
-                        + OPPIJA_CLIENT_SECRET))
-            .willReturn(
-                aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/json")
-                    .withBody(
-                        """
-                        {
-                          "access_token": "%s",
-                          "expires_in": 3600,
-                          "token_type": "Bearer"
-                        }
-                        """
-                            .formatted(OPPIJA_TOKEN))));
-    wireMock.stubFor(
-        post(urlEqualTo("/v1/token"))
-            .withRequestBody(matchingJsonPath("$.username", equalTo(SUOMIFI_USERNAME)))
-            .withRequestBody(matchingJsonPath("$.password", equalTo(SUOMIFI_PASSWORD)))
-            .willReturn(
-                aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/json")
-                    .withBody(
-                        """
-                        {
-                          "access_token": "%s",
-                          "expires_in": 3600,
-                          "token_type": "Bearer"
-                        }
-                        """
-                            .formatted(SUOMIFI_TOKEN))));
-    wireMock.stubFor(
-        post(urlEqualTo("/v2/messages/electronic"))
-            .willReturn(
-                aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/json")
-                    .withBody("{\"messageId\": 123}")));
+    stubGettingOtuvaOauthToken();
+    stubGettingOppija();
+    stubGettingSuomiFiViestitToken();
+    stubSendingSuomiFiElectronicMessage();
 
     var tiedote = tiedoteRepository.save(createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES));
 
@@ -156,5 +105,72 @@ public class TiedoteProcessingTest implements ResourceReader {
     wireMock.verify(1, postRequestedFor(urlEqualTo("/oauth2/token")));
 
     assertNotNull(tiedoteRepository.findById(tiedote.getId()).orElseThrow().getProcessedAt());
+  }
+
+  private void stubGettingOppija() {
+    wireMock.stubFor(
+        get(urlPathMatching("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES))
+            .withHeader("Authorization", equalTo("Bearer " + OPPIJA_TOKEN))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        readResource("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + ".json"))));
+  }
+
+  private void stubSendingSuomiFiElectronicMessage() {
+    wireMock.stubFor(
+        post(urlEqualTo("/v2/messages/electronic"))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody("{\"messageId\": 123}")));
+  }
+
+  private void stubGettingSuomiFiViestitToken() {
+    wireMock.stubFor(
+        post(urlEqualTo("/v1/token"))
+            .withRequestBody(matchingJsonPath("$.username", equalTo(SUOMIFI_USERNAME)))
+            .withRequestBody(matchingJsonPath("$.password", equalTo(SUOMIFI_PASSWORD)))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        """
+                        {
+                          "access_token": "%s",
+                          "expires_in": 3600,
+                          "token_type": "Bearer"
+                        }
+                        """
+                            .formatted(SUOMIFI_TOKEN))));
+  }
+
+  private void stubGettingOtuvaOauthToken() {
+    wireMock.stubFor(
+        post(urlEqualTo("/oauth2/token"))
+            .withRequestBody(
+                equalTo(
+                    "grant_type=client_credentials"
+                        + "&client_id="
+                        + OPPIJA_CLIENT_ID
+                        + "&client_secret="
+                        + OPPIJA_CLIENT_SECRET))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        """
+                        {
+                          "access_token": "%s",
+                          "expires_in": 3600,
+                          "token_type": "Bearer"
+                        }
+                        """
+                            .formatted(OPPIJA_TOKEN))));
   }
 }
