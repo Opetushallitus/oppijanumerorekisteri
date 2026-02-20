@@ -382,13 +382,6 @@ public class HenkiloServiceImpl implements HenkiloService {
     }
 
     @Override
-    public HenkiloForceReadDto getByHetuForMuutostieto(String hetu) {
-        return findByHetu(hetu)
-                .map(henkilo -> mapper.map(henkilo, HenkiloForceReadDto.class))
-                .orElseThrow(() -> new NotFoundException(hetu));
-    }
-
-    @Override
     public List<KotikuntaHistoria> getKotikuntaHistoria(List<String> oids) {
         return henkiloDataRepository.findKotikuntaHistorias(oids);
     }

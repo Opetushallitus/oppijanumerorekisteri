@@ -358,18 +358,6 @@ public class HenkiloModificationServiceIntegrationTest {
 
     @Test
     @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
-    public void getByHetuForMuutostietoPalauttaaHuoltajan() {
-        String hetu = "170798-915D";
-
-        HenkiloForceReadDto readDto = henkiloService.getByHetuForMuutostieto(hetu);
-
-        assertThat(readDto.getHuoltajat())
-                .extracting(HuoltajaCreateDto::getHetu)
-                .containsExactly("111298-917M");
-    }
-
-    @Test
-    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void huoltajaCreateValidoiHuoltajanHuoltajatyyppi() {
         HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
                 .hetu("hetu")

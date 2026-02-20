@@ -137,13 +137,6 @@ public class Service2ServiceController {
         return henkiloService.list(criteria, offset, limit);
     }
 
-    @GetMapping("/henkilo/hetu={hetu}")
-    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_MUUTOSTIETOPALVELU')")
-    @Operation(summary ="Palauttaa henkilön tiedot muutostietopalvelua varten")
-    public HenkiloForceReadDto getByHetuForMuutostieto(@PathVariable String hetu) {
-        return henkiloService.getByHetuForMuutostieto(hetu);
-    }
-
     @PostMapping("/henkilo/kotikuntahistoria")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_KOTIKUNTAHISTORIA')")
     @Operation(summary ="Palauttaa kotikuntahistorian annetuille henkilöille")
