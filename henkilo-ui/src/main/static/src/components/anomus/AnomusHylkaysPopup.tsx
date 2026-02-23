@@ -4,7 +4,7 @@ import { KAYTTOOIKEUDENTILA, KayttooikeudenTila } from '../../globals/Kayttooike
 import { HenkilonNimi } from '../../types/domain/kayttooikeus/HenkilonNimi';
 import { useLocalisations } from '../../selectors';
 import { HaettuKayttooikeusryhma } from '../../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
-import StaticUtils from '../common/StaticUtils';
+import { getOrganisationNameWithType } from '../common/StaticUtils';
 import { useGetOrganisationsQuery } from '../../api/kayttooikeus';
 
 type Props = {
@@ -34,7 +34,7 @@ const AnomusHylkaysPopup = ({ kayttooikeusryhma, updateHaettuKayttooikeusryhma }
                         </td>
                         <td>
                             {isSuccess
-                                ? StaticUtils.getOrganisationNameWithType(
+                                ? getOrganisationNameWithType(
                                       organisations?.find((o) => o.oid === organisaatioOid),
                                       L,
                                       locale

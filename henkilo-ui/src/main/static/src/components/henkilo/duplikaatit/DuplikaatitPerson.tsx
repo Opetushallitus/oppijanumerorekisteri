@@ -11,7 +11,7 @@ import Button from '../../common/button/Button';
 import { LinkRelation } from './HenkiloViewDuplikaatit';
 import { useLocalisations } from '../../../selectors';
 import { Koodi, koodiLabel, useGetKansalaisuudetQuery, useGetKieletQuery } from '../../../api/koodisto';
-import StaticUtils from '../../common/StaticUtils';
+import { isVahvastiYksiloity } from '../../common/StaticUtils';
 
 import './DuplikaatitPerson.css';
 
@@ -75,10 +75,10 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
     const { L, locale } = useLocalisations();
     const hakemukset = props.hakemukset ? props.hakemukset.map(_parseHakemus(kansalaisuudet, kielet, locale)) : [];
     const hakemus = hakemukset.shift();
-    const vahvastiYksiloity = StaticUtils.isVahvastiYksiloity(henkilo);
+    const vahvastiYksiloity = isVahvastiYksiloity(henkilo);
     const canLinkDuplicateToMaster = !master.passivoitu && !vahvastiYksiloity && (!henkilo.yksiloity || canForceLink);
     const canLinkMasterToDuplicate =
-        !henkilo.passivoitu && !StaticUtils.isVahvastiYksiloity(master) && (!master.yksiloity || canForceLink);
+        !henkilo.passivoitu && !isVahvastiYksiloity(master) && (!master.yksiloity || canForceLink);
 
     return (
         <div className={classNames({ person: true, master: isMaster })}>

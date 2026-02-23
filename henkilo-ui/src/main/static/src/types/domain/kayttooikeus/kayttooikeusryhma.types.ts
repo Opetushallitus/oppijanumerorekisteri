@@ -9,7 +9,7 @@ export type Kayttooikeusryhma = {
     tunniste: string;
     nimi: TextGroup;
     kuvaus: TextGroup | null | undefined;
-    organisaatioViite: Array<OrganisaatioViite>;
+    organisaatioViite: OrganisaatioViite[];
     rooliRajoite?: string;
     passivoitu?: boolean;
     ryhmaRestriction?: boolean;
@@ -22,10 +22,10 @@ export type Kayttooikeusryhma = {
 export type KayttooikeusRyhmaModify = {
     nimi: TextGroup;
     kuvaus: TextGroup;
-    palvelutRoolit: Array<PalveluRooliModify>;
-    organisaatioTyypit: Array<string>;
+    palvelutRoolit: PalveluRooliModify[];
+    organisaatioTyypit: string[];
     rooliRajoite: string;
-    slaveIds: Array<number>;
+    slaveIds: number[];
     passivoitu: boolean;
     ryhmaRestriction: boolean;
 };

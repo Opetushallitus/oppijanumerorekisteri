@@ -31,7 +31,7 @@ import PassinumeroButton from '../buttons/PassinumeroButton';
 import PoistaKayttajatunnusButton from '../buttons/PoistaKayttajatunnusButton';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
 import { useGetKayttajatiedotQuery, useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
-import StaticUtils from '../../StaticUtils';
+import { isVahvastiYksiloity } from '../../StaticUtils';
 import { useGetHenkiloQuery } from '../../../../api/oppijanumerorekisteri';
 import EidasTunnisteet from '../labelvalues/EidasTunnisteet';
 
@@ -121,7 +121,7 @@ function AdminUserContent(props: OwnProps) {
         ) : null;
         const yksiloiHetutonButton = <YksiloiHetutonButton henkiloOid={props.oidHenkilo} disabled={disabled} />;
         const puraHetuttomanYksilointiButton =
-            henkilo?.yksiloity && !StaticUtils.isVahvastiYksiloity(henkilo) && !henkilo?.hetu ? (
+            henkilo?.yksiloity && !isVahvastiYksiloity(henkilo) && !henkilo?.hetu ? (
                 <PuraHetuttomanYksilointiButton henkiloOid={props.oidHenkilo} disabled={disabled} />
             ) : null;
         const passivoiButton =

@@ -36,7 +36,7 @@ type State = {
     disabled: boolean;
     loading: boolean;
     submitted: boolean;
-    errors: Array<Error>;
+    errors: Error[];
     henkilo: HenkiloCreate;
     form: Form;
 };

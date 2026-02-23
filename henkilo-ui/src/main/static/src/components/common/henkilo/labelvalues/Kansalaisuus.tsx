@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import Select from 'react-select';
 
-import StaticUtils from '../../StaticUtils';
+import { isVahvastiYksiloity, localizeKoodiNimi } from '../../StaticUtils';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { NamedMultiSelectOption } from '../../../../utilities/select';
 import { FieldlessLabelValue } from './FieldlessLabelValue';
@@ -19,13 +19,13 @@ const Kansalaisuus = (props: OwnProps) => {
     const { locale } = useLocalisations();
     const kansalaisuus = props.henkiloUpdate.kansalaisuus || [];
     const { data: henkilo } = useGetHenkiloQuery(props.henkiloUpdate.oidHenkilo);
-    const disabled = StaticUtils.isVahvastiYksiloity(henkilo);
+    const disabled = isVahvastiYksiloity(henkilo);
     const { data } = useGetKansalaisuudetQuery();
     const options = useMemo(() => {
         return (
             data?.map((koodi) => ({
                 value: koodi.koodiArvo.toLowerCase(),
-                label: StaticUtils.localizeKoodiNimi(koodi, locale),
+                label: localizeKoodiNimi(koodi, locale),
                 optionsName: 'kansalaisuus',
             })) ?? []
         );

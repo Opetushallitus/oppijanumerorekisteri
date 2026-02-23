@@ -4,9 +4,7 @@ import { ValidationMessage } from '../../../types/validation.type';
 
 type Props = {
     children: ReactNode;
-    validationMessages: {
-        [key: string]: ValidationMessage;
-    };
+    validationMessages: Record<string, ValidationMessage>;
     buttonAction: (event: React.MouseEvent<HTMLElement>) => void;
     disabled?: boolean;
 };

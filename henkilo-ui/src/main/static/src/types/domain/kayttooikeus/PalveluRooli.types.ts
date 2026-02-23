@@ -2,7 +2,7 @@ import { Text } from './text.types';
 
 export type PalveluRooli = {
     palveluName: string;
-    palveluTexts: Array<Text>;
+    palveluTexts: Text[];
     rooli: string;
-    rooliTexts: Array<Text>;
+    rooliTexts: Text[];
 };

@@ -5,7 +5,7 @@ import { useGetHenkiloQuery, useYksiloiHetutonMutation } from '../../../../api/o
 import { isHenkiloValidForYksilointi } from '../../../../validation/YksilointiValidator';
 import { ButtonNotification } from '../../button/NotificationButton';
 import { useLocalisations } from '../../../../selectors';
-import StaticUtils from '../../StaticUtils';
+import { isVahvastiYksiloity } from '../../StaticUtils';
 
 type OwnProps = {
     henkiloOid: string;
@@ -18,7 +18,7 @@ const YksiloiHetutonButton = (props: OwnProps) => {
     const { data: henkilo } = useGetHenkiloQuery(props.henkiloOid);
     const [yksiloiHetuton] = useYksiloiHetutonMutation();
     const [notification, setNotification] = useState<ButtonNotification>();
-    if (StaticUtils.isVahvastiYksiloity(henkilo) || henkilo?.yksiloity || henkilo?.hetu) {
+    if (isVahvastiYksiloity(henkilo) || henkilo?.yksiloity || henkilo?.hetu) {
         return null;
     }
 

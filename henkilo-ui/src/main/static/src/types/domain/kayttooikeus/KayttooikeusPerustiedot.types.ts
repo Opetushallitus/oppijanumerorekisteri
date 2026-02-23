@@ -1,6 +1,6 @@
 export type KayttooikeusOrganisaatiot = {
     readonly organisaatioOid: string;
-    readonly kayttooikeudet: Array<KayttooikeusOikeudet>;
+    readonly kayttooikeudet: KayttooikeusOikeudet[];
 };
 
 export type KayttooikeusOikeudet = {

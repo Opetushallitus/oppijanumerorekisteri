@@ -10,12 +10,12 @@ import { koodiLabel, useGetOppilaitostyypitQuery, useGetOrganisaatiotyypitQuery 
 type Props = {
     ryhmaRestriction: boolean;
     toggleRyhmaRestriction: () => void;
-    organisaatioSelections: Array<OrganisaatioSelectObject>;
+    organisaatioSelections: OrganisaatioSelectObject[];
     organisaatioSelectAction: (organisaatio: OrganisaatioSelectObject) => void;
     removeOrganisaatioSelectAction: (selection: OrganisaatioSelectObject) => void;
-    oppilaitostyypitSelections: Array<string>;
+    oppilaitostyypitSelections: string[];
     oppilaitostyypitSelectAction: React.ReactEventHandler<HTMLInputElement>;
-    organisaatiotyypitSelections: Array<string>;
+    organisaatiotyypitSelections: string[];
     organisaatiotyypitSelectAction: React.ReactEventHandler<HTMLInputElement>;
 };
 

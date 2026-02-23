@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { useNavigate } from 'react-router';
 
 import { useAppDispatch } from '../../../../store';
-import StaticUtils from '../../StaticUtils';
+import { updateFieldByDotAnnotation, updateSelectValueByDotAnnotation } from '../../StaticUtils';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import OppijaUserContent from './OppijaUserContent';
 import AdminUserContent from './AdminUserContent';
@@ -194,12 +194,12 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
     }
 
     function _updateModelField(event: React.SyntheticEvent<HTMLInputElement>) {
-        const newHenkiloUpdate = { ...StaticUtils.updateFieldByDotAnnotation(henkiloUpdate, event) };
+        const newHenkiloUpdate = { ...updateFieldByDotAnnotation(henkiloUpdate, event) };
         setHenkiloUpdate(newHenkiloUpdate);
     }
 
     function _updateModelSelectValue(event: SingleValue<NamedSelectOption> | NamedMultiSelectOption) {
-        const newHenkiloUpdate = { ...StaticUtils.updateSelectValueByDotAnnotation(henkiloUpdate, event) };
+        const newHenkiloUpdate = { ...updateSelectValueByDotAnnotation(henkiloUpdate, event) };
         setHenkiloUpdate(newHenkiloUpdate);
     }
 

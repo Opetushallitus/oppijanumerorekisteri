@@ -14,7 +14,7 @@ type KielistettyKayttooikeusryhma = {
 };
 
 type Props = {
-    kayttooikeusryhmat: Array<Kayttooikeusryhma>;
+    kayttooikeusryhmat: Kayttooikeusryhma[];
     onSelect: (kayttooikeusryhma: Kayttooikeusryhma) => void;
     sallittuKayttajatyyppi: SallitutKayttajatyypit | null | undefined;
 };

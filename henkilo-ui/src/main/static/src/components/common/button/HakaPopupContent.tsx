@@ -33,7 +33,7 @@ const HakatunnistePopupContent = ({ henkiloOid }: OwnProps) => {
         }
     }
 
-    async function saveHakatunnisteet(tunnisteet: Array<string>) {
+    async function saveHakatunnisteet(tunnisteet: string[]) {
         await putHakatunnisteet({ oid: henkiloOid, tunnisteet: tunnisteet })
             .unwrap()
             .catch(({ data }) => {

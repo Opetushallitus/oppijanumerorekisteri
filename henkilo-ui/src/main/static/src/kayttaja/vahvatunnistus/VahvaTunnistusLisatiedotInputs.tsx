@@ -22,7 +22,7 @@ export type Error = {
     name: string;
     text?: string;
 };
-export type Errors = Array<Error>;
+export type Errors = Error[];
 export type Form = {
     values: Values;
     metadata: Metadata;

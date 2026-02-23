@@ -6,6 +6,6 @@ export type Omattiedot = {
     mfaProvider?: string | null;
     idpEntityId?: string;
     oidHenkilo: string;
-    organisaatiot: Array<KayttooikeusOrganisaatiot>;
+    organisaatiot: KayttooikeusOrganisaatiot[];
     anomusilmoitus: number[];
 };

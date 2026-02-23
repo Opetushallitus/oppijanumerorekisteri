@@ -43,7 +43,7 @@ export const VirkailijaCreateContainer = () => {
         setVirheet(validate(newVirkailija));
     };
 
-    const validate = (virkailija: VirkailijaCreate): Array<string> => {
+    const validate = (virkailija: VirkailijaCreate): string[] => {
         const virheet: string[] = [];
         if (virkailija.kutsumanimi) {
             if (!isValidKutsumanimi(virkailija.etunimet, virkailija.kutsumanimi)) {

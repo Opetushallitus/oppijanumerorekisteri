@@ -1,37 +1,18 @@
-import typescriptEslint from '@typescript-eslint/eslint-plugin';
+import { defineConfig } from 'eslint/config';
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
 import react from 'eslint-plugin-react';
-import tsParser from '@typescript-eslint/parser';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import js from '@eslint/js';
-import { FlatCompat } from '@eslint/eslintrc';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all,
-});
-
-export default [
-    ...compat.extends(
-        'eslint:recommended',
-        'plugin:react/recommended',
-        'plugin:jsx-a11y/recommended',
-        'plugin:@typescript-eslint/recommended',
-        'eslint-config-prettier'
-    ),
+export default defineConfig([
+    eslint.configs.recommended,
+    tseslint.configs.strict,
+    tseslint.configs.stylistic,
+    react.configs.flat.recommended,
+    jsxA11y.flatConfigs.recommended,
+    eslintPluginPrettierRecommended,
     {
-        plugins: {
-            '@typescript-eslint': typescriptEslint,
-            react,
-        },
-
-        languageOptions: {
-            parser: tsParser,
-        },
-
         settings: {
             react: {
                 version: 'detect',
@@ -42,7 +23,10 @@ export default [
             'jsx-a11y/click-events-have-key-events': 1,
             'jsx-a11y/no-autofocus': 1,
             'jsx-a11y/no-noninteractive-element-interactions': 1,
+            '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
             '@typescript-eslint/no-explicit-any': 1,
+            '@typescript-eslint/no-invalid-void-type': 1, // does not recognise rtk generic type arguments
+            '@typescript-eslint/no-non-null-assertion': 1,
             '@typescript-eslint/no-unused-vars': [
                 'error',
                 {
@@ -66,4 +50,4 @@ export default [
             'mock-api/*',
         ],
     },
-];
+]);

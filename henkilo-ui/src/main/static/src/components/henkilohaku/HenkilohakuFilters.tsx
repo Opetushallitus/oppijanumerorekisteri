@@ -6,7 +6,7 @@ import SubOrganisationCheckbox from './criterias/SubOrganisationCheckbox';
 import NoOrganisationCheckbox from './criterias/NoOrganisationCheckbox';
 import PassiivisetOrganisationCheckbox from './criterias/PassiivisetOrganisationCheckbox';
 import DuplikaatitOrganisationCheckbox from './criterias/DuplikaatitOrganisationCheckbox';
-import StaticUtils from '../common/StaticUtils';
+import { getLocalisedText } from '../common/StaticUtils';
 import CloseButton from '../common/button/CloseButton';
 import { HenkilohakuCriteria } from '../../types/domain/kayttooikeus/HenkilohakuCriteria.types';
 import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
@@ -24,7 +24,7 @@ import { FastMenuList, SelectOption } from '../../utilities/select';
 type OwnProps = {
     ryhmaSelectionAction: (o: SingleValue<SelectOption>) => void;
     selectedRyhma: string | undefined;
-    selectedOrganisation?: Array<string> | string;
+    selectedOrganisation?: string[] | string;
     selectedKayttooikeus: string | undefined;
     duplikaatitAction: () => void;
     passiivisetAction: () => void;
@@ -54,7 +54,7 @@ const HenkilohakuFilters = (props: OwnProps) => {
         return (allKayttooikeusryhmas ?? [])
             .map((kayttooikeusryhma) => ({
                 value: `${kayttooikeusryhma.id}`,
-                label: StaticUtils.getLocalisedText(kayttooikeusryhma.description, locale) ?? '',
+                label: getLocalisedText(kayttooikeusryhma.description, locale) ?? '',
             }))
             .sort((a, b) => (a.label && b.label ? a.label.localeCompare(b.label) : 1));
     }, [allKayttooikeusryhmas]);
@@ -69,7 +69,7 @@ const HenkilohakuFilters = (props: OwnProps) => {
         props.organisaatioSelectAction(organisaatio);
     };
 
-    function _parseRyhmaOptions(organisaatiot: Array<OrganisaatioHenkilo>) {
+    function _parseRyhmaOptions(organisaatiot: OrganisaatioHenkilo[]) {
         return organisaatiot
             .reduce<OrganisaatioWithChildren[]>(
                 (acc, organisaatio) => acc.concat([organisaatio.organisaatio], organisaatio.organisaatio.children),

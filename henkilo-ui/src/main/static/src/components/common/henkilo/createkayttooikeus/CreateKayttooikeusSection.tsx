@@ -15,7 +15,7 @@ export type ValittuKayttooikeusryhma = {
 };
 
 type Props = {
-    selectedList: Array<ValittuKayttooikeusryhma>;
+    selectedList: ValittuKayttooikeusryhma[];
     addKayttooikeus: (arg0: ValittuKayttooikeusryhma) => void;
     removeKayttooikeus: (kayttooikeusryhmaId: number) => void;
     selectedOrganisationOid?: string;

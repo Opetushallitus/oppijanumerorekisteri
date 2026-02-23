@@ -9,12 +9,12 @@ type CreateEmailOptions = {
     emailSelection: Record<RyhmaId, SelectOption>;
     missingEmail: boolean;
     showMissingEmailNotification: boolean;
-    emailOptions: Array<SelectOption>;
+    emailOptions: SelectOption[];
 };
 
 export const createEmailOptions = (
     filterKayttooikeusRyhma: (kayttooikeus: MyonnettyKayttooikeusryhma) => boolean,
-    kayttooikeusryhmat: Array<MyonnettyKayttooikeusryhma>,
+    kayttooikeusryhmat: MyonnettyKayttooikeusryhma[],
     henkilo?: Henkilo
 ): CreateEmailOptions => {
     const emailOptions = parseEmailOptions(henkilo?.yhteystiedotRyhma);
@@ -59,7 +59,7 @@ export const createEmailOptions = (
     };
 };
 
-export const parseWorkEmails = (yhteystiedot?: Array<YhteystietoRyhma>) =>
+export const parseWorkEmails = (yhteystiedot?: YhteystietoRyhma[]) =>
     (yhteystiedot || [])
         .filter((yhteystietoRyhma) => yhteystietoRyhma.ryhmaKuvaus === WORK_ADDRESS)
         .flatMap((yhteystietoRyhma) => yhteystietoRyhma.yhteystieto)
@@ -68,5 +68,5 @@ export const parseWorkEmails = (yhteystiedot?: Array<YhteystietoRyhma>) =>
         .filter((value) => !!value)
         .sort((a, b) => (a && b ? a.localeCompare(b) : 1));
 
-export const parseEmailOptions = (yhteystiedot?: Array<YhteystietoRyhma>): Array<SelectOption> =>
+export const parseEmailOptions = (yhteystiedot?: YhteystietoRyhma[]): SelectOption[] =>
     parseWorkEmails(yhteystiedot).map((email) => ({ value: email, label: email }));

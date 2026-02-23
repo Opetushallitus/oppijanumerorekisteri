@@ -10,7 +10,7 @@ import { SpinnerInButton } from '../icons/SpinnerInButton';
 import { useLocalisations } from '../../../selectors';
 
 type Props = {
-    kayttooikeusryhmat: Array<Kayttooikeusryhma>;
+    kayttooikeusryhmat: Kayttooikeusryhma[];
     kayttooikeusryhmaValittu: boolean;
     onSelect: (kayttooikeusryhma: Kayttooikeusryhma) => void;
     disabled?: boolean;

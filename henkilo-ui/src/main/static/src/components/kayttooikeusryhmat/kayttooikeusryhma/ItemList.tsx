@@ -5,7 +5,7 @@ import { useLocalisations } from '../../../selectors';
 import './ItemList.css';
 
 type Props<T> = {
-    items: Array<T>;
+    items: T[];
     removeAction: (arg0: T) => void;
     getItemName: (arg0: T) => string;
 };

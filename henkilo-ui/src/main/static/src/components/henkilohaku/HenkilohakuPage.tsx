@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 import { SingleValue } from 'react-select';
 
 import HenkilohakuFilters from './HenkilohakuFilters';
-import StaticUtils from '../common/StaticUtils';
+import { getOrganisaatiotyypitFlat } from '../common/StaticUtils';
 import Loader from '../common/icons/Loader';
 import {
     HenkilohakuCriteria,
@@ -90,7 +90,7 @@ const HenkilohakuPage = () => {
                             <li key={idx2}>
                                 {(organisaatio.localisedLabels[locale] ?? organisaatio.identifier) +
                                     ' ' +
-                                    StaticUtils.getOrganisaatiotyypitFlat(L, true, organisaatio.tyypit)}
+                                    getOrganisaatiotyypitFlat(L, true, organisaatio.tyypit)}
                             </li>
                         ))}
                     </ul>

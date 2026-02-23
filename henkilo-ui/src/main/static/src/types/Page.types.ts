@@ -4,7 +4,7 @@ export type Page<T> = {
     last: boolean;
     number: number;
     numberOfElements: number;
-    results: Array<T>;
+    results: T[];
     size: number;
     totalElements: 0;
     totalPages: number;

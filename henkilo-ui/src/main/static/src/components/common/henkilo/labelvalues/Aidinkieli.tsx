@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import Select, { SingleValue } from 'react-select';
 
-import StaticUtils from '../../StaticUtils';
+import { isVahvastiYksiloity, localizeKoodiNimi } from '../../StaticUtils';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { FieldlessLabelValue } from './FieldlessLabelValue';
 import { NamedSelectOption } from '../../../../utilities/select';
@@ -23,7 +23,7 @@ const Aidinkieli = (props: OwnProps) => {
         return (
             data?.map((koodi) => ({
                 value: koodi.koodiArvo.toLowerCase(),
-                label: StaticUtils.localizeKoodiNimi(koodi, locale),
+                label: localizeKoodiNimi(koodi, locale),
                 optionsName: 'aidinkieli.kieliKoodi',
             })) ?? []
         );
@@ -37,7 +37,7 @@ const Aidinkieli = (props: OwnProps) => {
                     options={options}
                     value={options.find((o) => o.value === props.henkiloUpdate.aidinkieli?.kieliKoodi)}
                     onChange={props.updateModelSelectAction}
-                    isDisabled={StaticUtils.isVahvastiYksiloity(henkilo)}
+                    isDisabled={isVahvastiYksiloity(henkilo)}
                 />
             )}
         </FieldlessLabelValue>

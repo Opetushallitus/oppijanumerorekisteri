@@ -14,7 +14,7 @@ import {
 } from '../../api/kayttooikeus';
 import { useDebounce } from '../../useDebounce';
 import { KutsuView } from './KutsuViews';
-import StaticUtils from '../common/StaticUtils';
+import { getLocalisedText } from '../common/StaticUtils';
 import { SelectOption, selectProps } from '../../utilities/select';
 import OphModal from '../common/modal/OphModal';
 import { useTitle } from '../../useTitle';
@@ -66,9 +66,7 @@ export const KutsututPage = () => {
             kayttooikeusryhmat
                 ?.map((kayttooikeusryhma) => ({
                     value: '' + kayttooikeusryhma.id,
-                    label:
-                        StaticUtils.getLocalisedText(kayttooikeusryhma.description, locale) ??
-                        String(kayttooikeusryhma.id),
+                    label: getLocalisedText(kayttooikeusryhma.description, locale) ?? String(kayttooikeusryhma.id),
                 }))
                 .sort((a, b) => (a.label && b.label ? a.label.localeCompare(b.label) : 1)) ?? []
         );

@@ -7,7 +7,7 @@ type LocalNotificationProps = {
     title?: string;
     toggle?: boolean;
     onClose?: () => void;
-    children?: React.ReactElement | Array<React.ReactElement> | string;
+    children?: React.ReactElement | React.ReactElement[] | string;
 };
 
 type State = {

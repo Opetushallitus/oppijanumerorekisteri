@@ -28,7 +28,7 @@ import {
     useSukupuoliOptions,
 } from '../../selectors';
 import { hasAnyPalveluRooli } from '../../utilities/palvelurooli.util';
-import StaticUtils from '../common/StaticUtils';
+import { isVahvastiYksiloity } from '../common/StaticUtils';
 import YksiloiHetutonButton from '../common/henkilo/buttons/YksiloiHetutonButton';
 import PassivoiButton from '../common/henkilo/buttons/PassivoiButton';
 import AktivoiButton from '../common/henkilo/buttons/AktivoiButton';
@@ -120,7 +120,7 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
         <>
             <div className={styles.perustiedotRows}>
                 <div>
-                    {!StaticUtils.isVahvastiYksiloity(henkilo) && (
+                    {!isVahvastiYksiloity(henkilo) && (
                         <>
                             <OphDsInput
                                 id="etunimet"
@@ -168,7 +168,7 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                         />
                     </div>
                 </div>
-                {!StaticUtils.isVahvastiYksiloity(henkilo) && (
+                {!isVahvastiYksiloity(henkilo) && (
                     <div>
                         <div style={{ width: '300px' }}>
                             <label className="oph-ds-label" htmlFor="syntymaaika">
@@ -375,7 +375,7 @@ const OppijaPerustiedotView = ({ oid, openForm }: { oid: string; openForm: () =>
                     </button>
                 )}
                 {hasYksilointiPermission &&
-                    !StaticUtils.isVahvastiYksiloity(henkilo) &&
+                    !isVahvastiYksiloity(henkilo) &&
                     !henkilo?.yksiloity &&
                     !henkilo?.hetu &&
                     !henkilo?.duplicate &&
@@ -386,10 +386,9 @@ const OppijaPerustiedotView = ({ oid, openForm }: { oid: string; openForm: () =>
                             disabled={henkilo?.duplicate || henkilo?.passivoitu}
                         />
                     )}
-                {omattiedot?.isAdmin &&
-                    henkilo?.yksiloity &&
-                    !StaticUtils.isVahvastiYksiloity(henkilo) &&
-                    !henkilo?.hetu && <PuraHetuttomanYksilointiButton className="oph-ds-button" henkiloOid={oid} />}
+                {omattiedot?.isAdmin && henkilo?.yksiloity && !isVahvastiYksiloity(henkilo) && !henkilo?.hetu && (
+                    <PuraHetuttomanYksilointiButton className="oph-ds-button" henkiloOid={oid} />
+                )}
                 {omattiedot?.isAdmin && !henkilo?.passivoitu && (
                     <PassivoiButton className="oph-ds-button" henkiloOid={oid} passivoitu={false} />
                 )}

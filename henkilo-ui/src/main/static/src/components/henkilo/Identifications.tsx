@@ -11,7 +11,7 @@ import { useLocalisations } from '../../selectors';
 import { useAppDispatch } from '../../store';
 import OphModal from '../common/modal/OphModal';
 import { useGetHenkilontunnistetyypitQuery } from '../../api/koodisto';
-import StaticUtils from '../common/StaticUtils';
+import { getKoodiNimi } from '../common/StaticUtils';
 import { add } from '../../slices/toastSlice';
 import { selectStyles } from '../../utilities/select';
 import { OphDsInput } from '../design-system/OphDsInput';
@@ -33,8 +33,7 @@ export const Identifications = ({ oid }: Props) => {
     const { data: tunnistetyypit, isLoading: isTunnistetyypitLoading } = useGetHenkilontunnistetyypitQuery();
     const henkilotunnisteetSectionLabel = useId();
 
-    const getTunnisteLabel = (t: string) =>
-        tunnistetyypit ? `${StaticUtils.getKoodiNimi(t, tunnistetyypit, locale)} (${t})` : t;
+    const getTunnisteLabel = (t: string) => (tunnistetyypit ? `${getKoodiNimi(t, tunnistetyypit, locale)} (${t})` : t);
 
     const removeIdentification = (identification: Identification) => {
         deleteIdentification({ oid, identification })

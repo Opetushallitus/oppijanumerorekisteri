@@ -7,7 +7,7 @@ import {
  * Parse all palveluroolit to an array of strings eg. ['OPPIJANUMEROREKISTERI_DUPLIKAATTINAKYMA', ...]
  * Note that resulting list contains all palveluroolit from all organisaatiot
  */
-export const parsePalveluRoolit = (organisaatiot?: Array<KayttooikeusOrganisaatiot>): Array<string> => {
+export const parsePalveluRoolit = (organisaatiot?: KayttooikeusOrganisaatiot[]): string[] => {
     return (
         organisaatiot
             ?.map((organisaatio: KayttooikeusOrganisaatiot) =>
@@ -15,17 +15,14 @@ export const parsePalveluRoolit = (organisaatiot?: Array<KayttooikeusOrganisaati
                     (kayttooikeus: KayttooikeusOikeudet) => `${kayttooikeus.palvelu}_${kayttooikeus.oikeus}`
                 )
             )
-            .reduce((prev: Array<string>, current: Array<string>) => [...prev, ...current], []) ?? []
+            .reduce((prev, current) => [...prev, ...current], []) ?? []
     );
 };
 
 /*
  * Check if given organisaatio contains at least one of the given palvelurooli
  */
-export const hasAnyPalveluRooli = (
-    organisaatiot?: Array<KayttooikeusOrganisaatiot>,
-    palveluRoolit?: Array<string>
-): boolean => {
+export const hasAnyPalveluRooli = (organisaatiot?: KayttooikeusOrganisaatiot[], palveluRoolit?: string[]): boolean => {
     if (!organisaatiot || !palveluRoolit) {
         return false;
     }
@@ -42,7 +39,7 @@ export const isOnrRekisterinpitaja = (organisaatiot?: KayttooikeusOrganisaatiot[
  */
 const organisaatioContainsAnyPalveluRooli = (
     organisaatio: KayttooikeusOrganisaatiot,
-    palveluRoolit: Array<string>
+    palveluRoolit: string[]
 ): boolean => {
     return organisaatio.kayttooikeudet.some((kayttooikeus: KayttooikeusOikeudet) =>
         kayttooikeusMatchesAnyPalveluRooli(kayttooikeus, palveluRoolit)
@@ -52,10 +49,7 @@ const organisaatioContainsAnyPalveluRooli = (
 /*
  * Check if KayttooikeusOikeudet contains at least one of the given palvelurooli
  */
-const kayttooikeusMatchesAnyPalveluRooli = (
-    kayttooikeus: KayttooikeusOikeudet,
-    palveluRoolit: Array<string>
-): boolean => {
+const kayttooikeusMatchesAnyPalveluRooli = (kayttooikeus: KayttooikeusOikeudet, palveluRoolit: string[]): boolean => {
     const searchTerm = `${kayttooikeus.palvelu}_${kayttooikeus.oikeus}`;
     return palveluRoolit.some((palveluRooli: string) => searchTerm === palveluRooli);
 };

@@ -6,9 +6,9 @@ import { Locale } from '../types/locale.type';
 export type Koodi = {
     koodiArvo: string;
     koodiUri: string;
-    metadata: Array<KoodiMetadata>;
+    metadata: KoodiMetadata[];
 };
-export type Koodisto = Array<Koodi>;
+export type Koodisto = Koodi[];
 
 export type KoodiMetadata = {
     kieli: string;

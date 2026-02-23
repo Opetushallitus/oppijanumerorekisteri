@@ -1,6 +1,6 @@
 import { NaviTab } from '../../types/navigation.type';
 
-export const mainNavigation: Array<NaviTab> = [
+export const mainNavigation: NaviTab[] = [
     {
         path: '/anomukset',
         label: 'NAVI_KAYTTOOIKEUSANOMUKSET',
@@ -122,7 +122,7 @@ export const jarjestelmatunnusNavigation = (oid?: string) =>
               { path: '/jarjestelmatunnus/luonti', label: 'JARJESTELMATUNNUSTEN_LUONTI' },
           ];
 
-export const oppijaNavi = (oid: string): Array<NaviTab> => [
+export const oppijaNavi = (oid: string): NaviTab[] => [
     { path: '/oppija/' + oid, label: 'NAVI_HENKILON_TIEDOT' },
     {
         path: `/oppija/${oid}/duplikaatit`,
@@ -137,11 +137,11 @@ export const oppijaNavi = (oid: string): Array<NaviTab> => [
     },
 ];
 
-export const virkailija2Navi = (oid: string): Array<NaviTab> => [
+export const virkailija2Navi = (oid: string): NaviTab[] => [
     { path: `/virkailija/${oid}`, label: 'NAVI_VIRKAILIJAN_TIEDOT' },
 ];
 
-export const virkailijaNavi = (oid: string): Array<NaviTab> => [
+export const virkailijaNavi = (oid: string): NaviTab[] => [
     { path: `/virkailija/${oid}`, label: 'NAVI_HENKILON_TIEDOT' },
     {
         path: `/virkailija/${oid}/duplikaatit`,
@@ -157,4 +157,4 @@ export const virkailijaNavi = (oid: string): Array<NaviTab> => [
     },
 ];
 
-export const emptyNavi: Array<NaviTab> = [];
+export const emptyNavi = [];

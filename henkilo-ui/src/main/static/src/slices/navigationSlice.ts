@@ -3,10 +3,10 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 
 import { NaviTab } from '../types/navigation.type';
 
-export interface NavigationState {
+export type NavigationState = {
     tabs: NaviTab[];
     backButton: boolean;
-}
+};
 
 export const initialState: NavigationState = {
     tabs: [],

@@ -15,7 +15,7 @@ type Props = {
     palveluKayttooikeusSelectAction: (selection: SingleValue<SelectOption>) => void;
     palveluKayttooikeusSelection: SingleValue<SelectOption>;
     lisaaPalveluJaKayttooikeusAction: () => void;
-    palveluJaKayttooikeusSelections: Array<PalveluJaKayttooikeusSelection>;
+    palveluJaKayttooikeusSelections: PalveluJaKayttooikeusSelection[];
     removePalveluJaKayttooikeus: (arg0: PalveluJaKayttooikeusSelection) => void;
 };
 

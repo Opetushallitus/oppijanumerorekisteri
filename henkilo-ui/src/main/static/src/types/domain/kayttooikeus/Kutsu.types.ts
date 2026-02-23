@@ -10,7 +10,7 @@ export type KutsuOrganisaatio = {
     nimi: { fi?: string; sv?: string; en?: string };
     organisaatioOid: string;
     voimassaLoppuPvm: string | null | undefined;
-    kayttoOikeusRyhmat: Array<KayttooikeusRyhma>;
+    kayttoOikeusRyhmat: KayttooikeusRyhma[];
 };
 
 export type KutsuRead = {
@@ -21,7 +21,7 @@ export type KutsuRead = {
     sahkoposti: string;
     aikaleima: string;
     asiointikieli: Asiointikieli;
-    organisaatiot: Array<KutsuOrganisaatio>;
+    organisaatiot: KutsuOrganisaatio[];
     hakaIdentifier: string;
     saate?: string;
 };

@@ -4,7 +4,7 @@ import DatePicker from 'react-datepicker';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, SortingState } from '@tanstack/react-table';
 
 import { useAppDispatch } from '../../../store';
-import StaticUtils from '../StaticUtils';
+import { getOrganisationNameWithType } from '../StaticUtils';
 import { createEmailOptions } from '../../../utilities/henkilo.util';
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
@@ -241,7 +241,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                 accessorFn: (row) => row,
                 cell: ({ getValue }) =>
                     isSuccess
-                        ? StaticUtils.getOrganisationNameWithType(
+                        ? getOrganisationNameWithType(
                               organisations?.find((o) => o.oid === getValue().organisaatioOid),
                               L,
                               locale

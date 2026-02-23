@@ -3,7 +3,7 @@ import { addYears, format, isBefore, parseISO } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, Row, SortingState } from '@tanstack/react-table';
 
-import StaticUtils from '../StaticUtils';
+import { getOrganisationNameWithType } from '../StaticUtils';
 import Button from '../button/Button';
 import PopupButton from '../button/PopupButton';
 import AnomusHylkaysPopup from '../../anomus/AnomusHylkaysPopup';
@@ -51,7 +51,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     const { data: organisations, isSuccess } = useGetOrganisationsQuery();
     const [putHaettuKayttooikeusryhma, { isLoading }] = usePutHaettuKayttooikeusryhmaMutation();
     const [peruKayttooikeusAnomus] = usePutPeruKayttooikeusAnomusMutation();
-    const [dates, setDates] = useState<{ [anomusId: string]: { alkupvm: Date; loppupvm?: Date } }>(
+    const [dates, setDates] = useState<Record<string, { alkupvm: Date; loppupvm?: Date }>>(
         props.anomukset.reduce(
             (acc, kayttooikeus) => ({
                 ...acc,
@@ -254,7 +254,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 accessorFn: (row) => row,
                 cell: ({ getValue }) =>
                     isSuccess
-                        ? StaticUtils.getOrganisationNameWithType(
+                        ? getOrganisationNameWithType(
                               organisations.find((o) => o.oid === getValue().anomus.organisaatioOid),
                               L,
                               locale

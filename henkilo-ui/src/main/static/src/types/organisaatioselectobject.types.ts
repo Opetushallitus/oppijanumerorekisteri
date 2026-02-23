@@ -3,8 +3,8 @@ import { SelectOption } from '../utilities/select';
 export type OrganisaatioSelectObject = {
     oid: string;
     name: string;
-    parentNames: Array<string>;
-    organisaatiotyypit: Array<string>;
+    parentNames: string[];
+    organisaatiotyypit: string[];
     oidPath?: string;
     status?: string;
 };

@@ -1,7 +1,7 @@
 import React, { SyntheticEvent } from 'react';
 
 import LabelValue from './LabelValue';
-import StaticUtils from '../../StaticUtils';
+import { isVahvastiYksiloity } from '../../StaticUtils';
 import { useGetHenkiloQuery } from '../../../../api/oppijanumerorekisteri';
 
 type OwnProps = {
@@ -23,7 +23,7 @@ const Sukunimi = (props: OwnProps) => {
                 label: props.label || 'HENKILO_SUKUNIMI',
                 value: henkilo?.sukunimi,
                 inputValue: 'sukunimi',
-                disabled: StaticUtils.isVahvastiYksiloity(henkilo),
+                disabled: isVahvastiYksiloity(henkilo),
             }}
         />
     );

@@ -3,7 +3,7 @@ import { format, parseISO } from 'date-fns';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, SortingState } from '@tanstack/react-table';
 
 import { useAppDispatch } from '../../../store';
-import StaticUtils from '../StaticUtils';
+import { defaultOrganisaatio, getOrganisationNameWithType } from '../StaticUtils';
 import { createEmailOptions } from '../../../utilities/henkilo.util';
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
@@ -159,12 +159,12 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
                 cell: ({ getValue }) => (
                     <span>
                         {isSuccess
-                            ? StaticUtils.getOrganisationNameWithType(
+                            ? getOrganisationNameWithType(
                                   organisations.find((o) => o.oid === getValue().organisaatioOid),
                                   L,
                                   locale
                               )
-                            : StaticUtils.defaultOrganisaatio(getValue().organisaatioOid, allLocalisations).nimi.fi}
+                            : defaultOrganisaatio(getValue().organisaatioOid, allLocalisations).nimi.fi}
                     </span>
                 ),
             },

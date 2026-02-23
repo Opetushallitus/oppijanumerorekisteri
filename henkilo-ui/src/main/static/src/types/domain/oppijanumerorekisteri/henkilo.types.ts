@@ -16,8 +16,8 @@ export type Henkilo = {
     sukunimi: string;
     aidinkieli: Kielisyys;
     asiointiKieli: Kielisyys;
-    kielisyys: Array<Kielisyys>;
-    kansalaisuus: Array<Kansalaisuus>;
+    kielisyys: Kielisyys[];
+    kansalaisuus: Kansalaisuus[];
     kasittelijaOid: string;
     syntymaaika: string;
     sukupuoli: '1' | '2';
@@ -28,14 +28,14 @@ export type Henkilo = {
     yksiloityVTJ: boolean;
     yksilointiYritetty: boolean;
     yksiloityEidas: boolean;
-    eidasTunnisteet: Array<EidasTunniste>;
+    eidasTunnisteet: EidasTunniste[];
     duplicate: boolean;
     created: number;
     modified: number;
     vtjsynced: number;
     huoltaja: Henkilo;
-    yhteystiedotRyhma: Array<YhteystietoRyhma>;
-    yksilointivirheet: Array<Yksilointivirhe>;
+    yhteystiedotRyhma: YhteystietoRyhma[];
+    yksilointivirheet: Yksilointivirhe[];
     anomusilmoitus?: number[];
     kayttajanimi?: string;
 };
@@ -51,11 +51,11 @@ export type HenkiloCreate = {
     kutsumanimi?: string;
     sukunimi?: string;
     aidinkieli?: Kielisyys;
-    kansalaisuus?: Array<Kansalaisuus>;
+    kansalaisuus?: Kansalaisuus[];
     syntymaaika?: string;
     sukupuoli?: '1' | '2';
-    passinumerot: Array<string> | null;
-    yhteystiedotRyhma: Array<YhteystietoRyhma> | null;
+    passinumerot: string[] | null;
+    yhteystiedotRyhma: YhteystietoRyhma[] | null;
     yksiloity?: boolean;
 };
 

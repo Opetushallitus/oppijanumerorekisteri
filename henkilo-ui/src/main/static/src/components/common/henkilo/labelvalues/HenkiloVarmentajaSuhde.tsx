@@ -21,7 +21,7 @@ const HenkiloVarmentajaSuhde = (props: OwnProps) => {
         henkiloVarmennettavas: 'HENKILO_VARMENNETTAVA',
     };
 
-    const linkitetytGroup = (varmentajas: Array<string>) => {
+    const linkitetytGroup = (varmentajas: string[]) => {
         return (
             <>
                 {varmentajas.map((varmentajaOid, index) => (

@@ -5,5 +5,5 @@ export type Yksilointitieto = {
     sukunimi?: string;
     kutsumanimi?: string;
     sukupuoli?: string;
-    yhteystiedot?: Array<YhteystietoRyhma>;
+    yhteystiedot?: YhteystietoRyhma[];
 };

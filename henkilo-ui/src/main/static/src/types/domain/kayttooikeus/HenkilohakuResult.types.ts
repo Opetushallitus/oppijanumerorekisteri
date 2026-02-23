@@ -4,11 +4,11 @@ export type HenkilohakuResult = {
     oidHenkilo: string;
     nimi: string;
     kayttajatunnus: string;
-    organisaatioNimiList: Array<OrganisaatioMinimal>;
+    organisaatioNimiList: OrganisaatioMinimal[];
 };
 
 export type OrganisaatioMinimal = {
     identifier: string;
-    tyypit: Array<string>;
+    tyypit: string[];
     localisedLabels: Record<Locale, string>;
 };

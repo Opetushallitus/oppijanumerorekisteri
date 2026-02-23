@@ -3,9 +3,9 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 
 import type { ToastProps } from '../components/design-system/OphDsToast';
 
-export interface ToastState {
+export type ToastState = {
     toasts: ToastProps[];
-}
+};
 
 const initialState: ToastState = {
     toasts: [],

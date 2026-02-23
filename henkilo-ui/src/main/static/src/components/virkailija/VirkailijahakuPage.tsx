@@ -21,7 +21,7 @@ import { useNavigation } from '../../useNavigation';
 import { virkailijaNavigation } from '../navigation/navigationconfigurations';
 import { OphDsRyhmaSelect } from '../design-system/OphDsRyhmaSelect';
 import { selectProps } from '../../utilities/select';
-import StaticUtils from '../common/StaticUtils';
+import { getLocalisedText } from '../common/StaticUtils';
 import PropertySingleton from '../../globals/PropertySingleton';
 import { Koodi, koodiLabel, useGetOrganisaatiotyypitQuery } from '../../api/koodisto';
 
@@ -66,7 +66,7 @@ export const VirkailijahakuPage = () => {
 
     const kayttooikeusryhmaOptions = useMemo(() => {
         return (kayttooikeusryhmas ?? [])
-            .map((k) => ({ value: `${k.id}`, label: StaticUtils.getLocalisedText(k.description, locale) ?? '' }))
+            .map((k) => ({ value: `${k.id}`, label: getLocalisedText(k.description, locale) ?? '' }))
             .sort((a, b) => (a.label && b.label ? a.label.localeCompare(b.label) : 1));
     }, [kayttooikeusryhmas]);
 

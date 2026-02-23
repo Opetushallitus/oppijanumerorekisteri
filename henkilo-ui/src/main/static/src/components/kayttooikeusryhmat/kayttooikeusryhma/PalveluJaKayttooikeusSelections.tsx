@@ -4,7 +4,7 @@ import { PalveluJaKayttooikeusSelection } from './KayttooikeusryhmaPage';
 import { Localisations } from '../../../types/localisation.type';
 
 type Props = {
-    items: Array<PalveluJaKayttooikeusSelection>;
+    items: PalveluJaKayttooikeusSelection[];
     removeAction: (arg0: PalveluJaKayttooikeusSelection) => void;
     L: Localisations;
 };

@@ -13,7 +13,7 @@ import {
 import { Localisation, useGetLocalisationsQuery } from './api/lokalisointi';
 import { useGetLocaleQuery } from './api/oppijanumerorekisteri';
 import { useGetKansalaisuudetQuery, useGetKieletQuery, useGetSukupuoletQuery } from './api/koodisto';
-import StaticUtils from './components/common/StaticUtils';
+import { localizeKoodiNimi } from './components/common/StaticUtils';
 import { OrganisaatioWithChildren } from './types/domain/organisaatio/organisaatio.types';
 
 const VALID_KIELI_URI_FOR_ASIOINTIKIELI = ['kieli_fi', 'kieli_sv', 'kieli_en'];
@@ -40,7 +40,7 @@ const mapLocalisationsByLocale = (localisations?: Localisation[]): L10n => {
 };
 
 export const useLocalisations = (
-    skipUserLocale: boolean = false
+    skipUserLocale = false
 ): {
     L: Localisations;
     locale: Locale;
@@ -95,7 +95,7 @@ export const useAsiointikielet = (locale: Locale) => {
         return (
             asiointikielet.map((koodi) => ({
                 value: koodi.koodiArvo.toLowerCase(),
-                label: StaticUtils.localizeKoodiNimi(koodi, locale),
+                label: localizeKoodiNimi(koodi, locale),
                 optionsName: 'asiointiKieli.kieliKoodi',
             })) ?? []
         );
@@ -110,7 +110,7 @@ export const useSukupuoliOptions = (locale: Locale) => {
             data
                 .map((koodi) => ({
                     value: koodi.koodiArvo.toLowerCase(),
-                    label: StaticUtils.localizeKoodiNimi(koodi, locale),
+                    label: localizeKoodiNimi(koodi, locale),
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? [],
         [data, locale]
@@ -125,7 +125,7 @@ export const useKansalaisuusOptions = (locale: Locale) => {
             data
                 .map((koodi) => ({
                     value: koodi.koodiArvo.toLowerCase(),
-                    label: StaticUtils.localizeKoodiNimi(koodi, locale),
+                    label: localizeKoodiNimi(koodi, locale),
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? [],
         [data, locale]
@@ -140,7 +140,7 @@ export const useKieliOptions = (locale: Locale) => {
             data
                 .map((koodi) => ({
                     value: koodi.koodiArvo.toLowerCase(),
-                    label: StaticUtils.localizeKoodiNimi(koodi, locale),
+                    label: localizeKoodiNimi(koodi, locale),
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? [],
         [data, locale]

@@ -18,7 +18,7 @@ const emptyColumns: ColumnDef<Detail>[] = [];
 export const resolveInvitationRights = (
     kutsu: Kutsu | null | undefined,
     locale: Locale
-): Array<{ organisaatio?: string; ryhma?: string }> =>
+): { organisaatio?: string; ryhma?: string }[] =>
     kutsu
         ? kutsu.organisaatiot.flatMap((organisaatio) =>
               organisaatio.kayttoOikeusRyhmat.map((ryhma) => ({

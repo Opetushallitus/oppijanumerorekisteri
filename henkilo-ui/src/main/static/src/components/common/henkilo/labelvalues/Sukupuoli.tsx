@@ -5,7 +5,7 @@ import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.
 import { FieldlessLabelValue } from './FieldlessLabelValue';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../../../utilities/select';
 import { useGetSukupuoletQuery } from '../../../../api/koodisto';
-import StaticUtils from '../../StaticUtils';
+import { localizeKoodiNimi } from '../../StaticUtils';
 import { useLocalisations } from '../../../../selectors';
 
 type OwnProps = {
@@ -21,7 +21,7 @@ const Sukupuoli = (props: OwnProps) => {
         return (
             data?.map((koodi) => ({
                 value: koodi.koodiArvo.toLowerCase(),
-                label: StaticUtils.localizeKoodiNimi(koodi, locale),
+                label: localizeKoodiNimi(koodi, locale),
                 optionsName: 'sukupuoli',
             })) ?? []
         );

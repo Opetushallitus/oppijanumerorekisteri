@@ -3,8 +3,8 @@ import React, { ReactNode } from 'react';
 import EditButtons from '../buttons/EditButtons';
 
 type Props = {
-    basicInfo: Array<Array<ReactNode>>;
-    readOnlyButtons: Array<ReactNode>;
+    basicInfo: ReactNode[][];
+    readOnlyButtons: ReactNode[];
     readOnly: boolean;
     discardAction: () => void;
     updateAction: () => Promise<void>;

@@ -49,11 +49,11 @@ export type KayttooikeusryhmaForm = {
     name: LocalizableField;
     description: LocalizableField;
     ryhmaRestriction: boolean;
-    organisaatioSelections: Array<OrganisaatioSelectObject>;
-    oppilaitostyypitSelections: Array<string>;
-    organisaatiotyypitSelections: Array<string>;
+    organisaatioSelections: OrganisaatioSelectObject[];
+    oppilaitostyypitSelections: string[];
+    organisaatiotyypitSelections: string[];
     kayttooikeusryhmaSelections: SelectOption[];
-    palveluJaKayttooikeusSelections: Array<PalveluJaKayttooikeusSelection>;
+    palveluJaKayttooikeusSelections: PalveluJaKayttooikeusSelection[];
     sallittuKayttajatyyppi: SallitutKayttajatyypit | null;
 };
 
@@ -156,7 +156,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
         return result;
     };
 
-    const _parseExistingOrganisaatioData = (): Array<OrganisaatioSelectObject> => {
+    const _parseExistingOrganisaatioData = (): OrganisaatioSelectObject[] => {
         if (!organisations || organisations.length === 0 || !kayttooikeusryhma?.organisaatioViite) {
             return [];
         }
@@ -192,7 +192,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
         return input.split('.')[4] !== undefined && input.split('.')[4] !== '10';
     };
 
-    const _parseExistingOppilaitostyyppiData = (): Array<string> => {
+    const _parseExistingOppilaitostyyppiData = (): string[] => {
         if (!kayttooikeusryhma?.organisaatioViite || !organisaatiotyyppiKoodisto) {
             return [];
         }
@@ -206,7 +206,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
         return oppilaitostyypit.filter((oppilaitostyyppi) => ids.includes(oppilaitostyyppi));
     };
 
-    const _parseExistingOrganisaatiotyyppiData = (): Array<string> => {
+    const _parseExistingOrganisaatiotyyppiData = (): string[] => {
         if (!kayttooikeusryhma?.organisaatioViite || !organisaatiotyyppiKoodisto) {
             return [];
         }
@@ -445,14 +445,14 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
         return { texts };
     };
 
-    const _parsePalvelutRoolit = (): Array<PalveluRooliModify> => {
+    const _parsePalvelutRoolit = (): PalveluRooliModify[] => {
         return kayttooikeusryhmaForm.palveluJaKayttooikeusSelections.map((item) => ({
             palveluName: item.palvelu?.value ?? '',
             rooli: item.kayttooikeus?.value ?? '',
         }));
     };
 
-    const _parseOrganisaatioTyypit = (): Array<string> => {
+    const _parseOrganisaatioTyypit = (): string[] => {
         const oppilaitostyypit = kayttooikeusryhmaForm.oppilaitostyypitSelections;
         const organisaatiotyypit = kayttooikeusryhmaForm.organisaatiotyypitSelections;
         const tyypit = oppilaitostyypit.concat(organisaatiotyypit);

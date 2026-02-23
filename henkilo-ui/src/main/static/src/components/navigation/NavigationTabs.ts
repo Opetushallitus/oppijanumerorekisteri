@@ -27,7 +27,7 @@ export const henkiloViewTabs = (
     henkiloType: 'virkailija' | 'oppija',
     masterHenkiloOid?: string,
     yksilointitiedot?: Yksilointitieto
-): Array<NaviTab> => {
+): NaviTab[] => {
     const tabs = henkiloType === 'virkailija' ? virkailijaNavi(oidHenkilo) : oppijaNavi(oidHenkilo);
 
     // Wait until all needed and correct data has been fetched before enabling tabs to prevent them switching on/off

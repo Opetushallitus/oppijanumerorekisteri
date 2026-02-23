@@ -1,7 +1,7 @@
 import React, { SyntheticEvent } from 'react';
 
 import LabelValue from './LabelValue';
-import StaticUtils from '../../StaticUtils';
+import { isVahvastiYksiloity } from '../../StaticUtils';
 import { useGetHenkiloQuery } from '../../../../api/oppijanumerorekisteri';
 
 type OwnProps = {
@@ -20,7 +20,7 @@ const Etunimet = (props: OwnProps) => {
                 label: 'HENKILO_ETUNIMET',
                 value: henkilo?.etunimet,
                 inputValue: 'etunimet',
-                disabled: StaticUtils.isVahvastiYksiloity(henkilo),
+                disabled: isVahvastiYksiloity(henkilo),
             }}
         />
     );
