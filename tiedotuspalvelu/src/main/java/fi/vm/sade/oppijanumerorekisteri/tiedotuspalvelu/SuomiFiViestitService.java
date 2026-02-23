@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 public class SuomiFiViestitService {
 
   private final SuomiFiViestitClient suomiFiViestitClient;
-  private final OppijanumerorekisteriClient oppijanumerorekisteriClient;
   private final TiedotuspalveluProperties tiedotuspalveluProperties;
-  private final SuomiFiViestiRepository suomiFiViestiRepository;
-  private final TiedoteRepository tiedoteRepository;
   private final LocalisationRepository localisationRepository;
 
   public void sendSuomiFiViesti(Tiedote tiedote, SuomiFiViesti suomiFiViesti) {
