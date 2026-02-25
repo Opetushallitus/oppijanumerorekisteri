@@ -1,8 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories;
 
+import com.querydsl.core.NonUniqueResultException;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.enums.CleanupStep;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
 import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
@@ -498,6 +500,50 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
                         Collections.singleton(new Yhteystieto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo)))))
                 .kasittelijaOid(kasittelija)
                 .syntymaaika(syntymaAika)
+                .build();
+    }
+
+    @Test
+    public void throwsWhenSearchingWithDuplicateIdentificationNoOid() {
+        var duplicateIdentifier = "duplicateTunniste";
+        var duplicateIdpEntityId = IdpEntityId.oppijaToken;
+
+        // Add 2 people with the same identification (oppijaToken)
+        // NOTE: this should be impossible, and should be prevented in source data
+        var person1 = createTestHenkilo(
+                TESTI_HETU,
+                Set.of(
+                        Identification.builder()
+                                .identifier(duplicateIdentifier)
+                                .idpEntityId(duplicateIdpEntityId)
+                                .build()));
+        dataRepository.saveAndFlush(person1);
+
+        var person2 = createTestHenkilo(
+                TOINEN_HETU,
+                Set.of(
+                        Identification.builder()
+                        .identifier(duplicateIdentifier)
+                        .idpEntityId(duplicateIdpEntityId)
+                        .build()));
+        dataRepository.saveAndFlush(person2);
+
+        assertThrows(NonUniqueResultException.class, () -> {
+            dataRepository.findByIdentification(IdentificationDto.of(duplicateIdpEntityId, duplicateIdentifier));
+        });
+    }
+
+    private Henkilo createTestHenkilo(String hetu, Set<Identification> identifications) {
+        Date now = new Date();
+        return Henkilo.builder()
+                .oidHenkilo(UUID.randomUUID().toString())
+                .etunimet("Testi Henkilö")
+                .kutsumanimi("Henkilö")
+                .sukunimi("Testinovic")
+                .hetu(hetu)
+                .identifications(identifications)
+                .created(now)
+                .modified(now)
                 .build();
     }
 }

@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.aspects;
 
+import com.querydsl.core.NonUniqueResultException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,6 +154,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Map<String, Object>> messageNotReadableException(HttpMessageNotReadableException e, HttpServletRequest request) {
         return constructErrorResponse(e, HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(NonUniqueResultException.class)
+    public ResponseEntity<Map<String, Object>> nonUniqueDataException(NonUniqueResultException e, HttpServletRequest request) {
+        var status = HttpStatus.CONFLICT;
+        var body = constructErrorBody(e, status, request);
+        body.put("httpQuery", request.getQueryString());
+        return ResponseEntity.status(status).body(body);
     }
 
 }
