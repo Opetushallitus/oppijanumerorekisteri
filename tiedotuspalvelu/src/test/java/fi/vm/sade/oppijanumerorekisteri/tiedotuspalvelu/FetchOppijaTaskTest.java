@@ -150,4 +150,48 @@ public class FetchOppijaTaskTest implements ResourceReader {
     assertEquals(1, updatedTiedote.getRetryCount());
     assertNotNull(updatedTiedote.getNextRetry());
   }
+
+  @Test
+  public void handlesMissingOppijaAddressData() {
+    wireMock.stubFor(
+        post(urlEqualTo("/oauth2/token"))
+            .withRequestBody(
+                equalTo(
+                    "grant_type=client_credentials"
+                        + "&client_id="
+                        + OPP_CLIENT_ID
+                        + "&client_secret="
+                        + OPP_CLIENT_SECRET))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        """
+                                            {
+                                              "access_token": "%s",
+                                              "expires_in": 3600,
+                                              "token_type": "Bearer"
+                                            }
+                                            """
+                            .formatted(OPP_TOKEN))));
+    wireMock.stubFor(
+        get(urlPathMatching("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES))
+            .withHeader("Authorization", equalTo("Bearer " + OPP_TOKEN))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withBody(
+                        readResource(
+                            "/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + "-no-address.json"))));
+
+    var tiedote = tiedoteRepository.save(createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES));
+
+    fetchOppijaTask.execute();
+
+    var updatedTiedote = tiedoteRepository.findById(tiedote.getId()).orElseThrow();
+    assertNull(updatedTiedote.getProcessedAt());
+    assertEquals(1, updatedTiedote.getRetryCount());
+    assertNotNull(updatedTiedote.getNextRetry());
+  }
 }

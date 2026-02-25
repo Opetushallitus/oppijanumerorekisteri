@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.ValidationException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -10,6 +11,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.function.Supplier;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +25,7 @@ public class OppijanumerorekisteriClient {
   private final TiedotuspalveluProperties properties;
   private final LoggingHttpClient httpClient = new LoggingHttpClient("oppijanumerorekisteri");
 
-  public Oppija getOppija(String oid) {
+  public Oppija getOppija(String oid) throws ValidationException {
     var token = fetchAccessToken();
     try {
       var httpRequest =
@@ -89,28 +91,42 @@ public class OppijanumerorekisteriClient {
     return URLEncoder.encode(value, StandardCharsets.UTF_8);
   }
 
-  private Oppija mapToHenkilotieto(HenkiloDto dto) {
+  private Oppija mapToHenkilotieto(HenkiloDto dto) throws ValidationException {
+    var oppijanumero = dto.oppijanumero();
     var yhteystiedot =
         dto.yhteystiedotRyhma().stream().flatMap(ryhma -> ryhma.yhteystieto().stream()).toList();
 
-    var katuosoite = findYhteystietoArvo(yhteystiedot, "YHTEYSTIETO_KATUOSOITE");
-    var postinumero = findYhteystietoArvo(yhteystiedot, "YHTEYSTIETO_POSTINUMERO");
-    var kaupunki = findYhteystietoArvo(yhteystiedot, "YHTEYSTIETO_KAUPUNKI");
+    var katuosoite = findYhteystietoArvo(oppijanumero, yhteystiedot, "YHTEYSTIETO_KATUOSOITE");
+    var postinumero = findYhteystietoArvo(oppijanumero, yhteystiedot, "YHTEYSTIETO_POSTINUMERO");
+    var kaupunki = findYhteystietoArvo(oppijanumero, yhteystiedot, "YHTEYSTIETO_KAUPUNKI");
 
     return new Oppija(
         dto.hetu(), dto.etunimet(), dto.sukunimi(), katuosoite, postinumero, kaupunki);
   }
 
-  private String findYhteystietoArvo(List<YhteystietoDto> yhteystiedot, String tyyppi) {
+  private String findYhteystietoArvo(
+      String oppijanumero, List<YhteystietoDto> yhteystiedot, String tyyppi)
+      throws ValidationException {
     return yhteystiedot.stream()
         .filter(yt -> tyyppi.equals(yt.yhteystietoTyyppi()))
         .map(YhteystietoDto::yhteystietoArvo)
         .findFirst()
-        .orElse(null);
+        .orElseThrow(getExceptionSupplier(oppijanumero, tyyppi));
+  }
+
+  private Supplier<ValidationException> getExceptionSupplier(String oppijanumero, String tyyppi) {
+    return new Supplier<ValidationException>() {
+      @Override
+      public ValidationException get() {
+        return new ValidationException(
+            "No yhteystieto found for type " + tyyppi + " for oppijanumero " + oppijanumero);
+      }
+    };
   }
 
   @JsonIgnoreProperties(ignoreUnknown = true)
   private record HenkiloDto(
+      String oppijanumero,
       String hetu,
       String etunimet,
       String sukunimi,
