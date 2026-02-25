@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import fi.vm.sade.oppijanumerorekisteri.KoodiTypeBuilder;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.SuspendableIdentificationException;
@@ -10,6 +11,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.models.KoodiType;
 import fi.vm.sade.oppijanumerorekisteri.models.Yksilointivirhe;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointivirheRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
@@ -61,6 +63,9 @@ public class IdentificationServiceImplTest {
     private HenkiloRepository henkiloRepository;
 
     @Mock
+    private IdentificationRepository identificationRepository;
+
+    @Mock
     private YksilointiService yksilointiService;
 
     @Mock
@@ -107,6 +112,115 @@ public class IdentificationServiceImplTest {
         assertThat(identifications).extracting("idpEntityId", "identifier")
             .containsExactlyInAnyOrder(tuple(IdpEntityId.email, "email"));
         verify(this.henkiloModificationService, times(0)).update(any());
+    }
+
+    @Test
+    public void throwsWhenAlreadyHasIdentification() {
+        initKoodistoServiceMock();
+
+        var identification = Identification.builder()
+                .identifier("testi.testaaja@testi.fi")
+                .idpEntityId(IdpEntityId.oppijaToken)
+                .build();
+        given(identificationRepository.findIdentical(any(IdentificationDto.class))).willReturn(List.of(identification));
+
+        var personOid = "1.2.3.4.5";
+        var person = Henkilo.builder()
+                .oidHenkilo(personOid)
+                .hetu("hetu1")
+                .identifications(Set.of(identification))
+                .build();
+        given(henkiloRepository.findByIdentification(eq(personOid), any())).willReturn(Optional.of(person));
+
+        assertThrows(Exception.class, () -> {
+            identificationService.create(personOid, IdentificationDto.of(
+                    identification.getIdpEntityId(),
+                    identification.getIdentifier()
+            ));
+        });
+        verify(henkiloModificationService, times(0)).update(any());
+    }
+
+    @Test
+    public void throwsWhenOtherPersonHasIdentification() {
+        initKoodistoServiceMock();
+
+        var identification = Identification.builder()
+                .identifier("testi.testaaja@testi.fi")
+                .idpEntityId(IdpEntityId.oppijaToken)
+                .build();
+        given(identificationRepository.findIdentical(any(IdentificationDto.class))).willReturn(List.of(identification));
+
+        var personOid = "1.2.3.4.5";
+        var person = Henkilo.builder()
+                .oidHenkilo(personOid)
+                .hetu("hetu1")
+                .identifications(Set.of())
+                .build();
+        given(henkiloRepository.findByIdentification(eq(personOid), any())).willReturn(Optional.of(person));
+
+        // Person 2 has the identification
+        var person2Oid = "1.2.3.4.6";
+        var person2 = Henkilo.builder()
+                .oidHenkilo(person2Oid)
+                .hetu("hetu2")
+                .identifications(Set.of(identification))
+                .build();
+        given(henkiloRepository.findByIdentification(eq(person2Oid), any())).willReturn(Optional.of(person2));
+
+        assertThrows(Exception.class, () -> {
+            identificationService.create(personOid, IdentificationDto.of(
+                    identification.getIdpEntityId(),
+                    identification.getIdentifier()
+            ));
+        });
+        verify(henkiloModificationService, times(0)).update(any());
+    }
+
+    @Test
+    public void addsUniqueIdentification() {
+        initKoodistoServiceMock();
+
+        var identification = Identification.builder()
+                .identifier("testi.testaaja@testi.fi")
+                .idpEntityId(IdpEntityId.oppijaToken)
+                .build();
+        var identificationDto = IdentificationDto.of(
+                identification.getIdpEntityId(),
+                identification.getIdentifier()
+        );
+        given(identificationRepository.findIdentical(eq(identificationDto))).willReturn(List.of(identification));
+
+        var personOid = "1.2.3.4.5";
+        var person = Henkilo.builder()
+                .oidHenkilo(personOid)
+                .hetu("hetu")
+                .identifications(Set.of(identification))
+                .build();
+        given(henkiloRepository.findByIdentification(eq(personOid), any())).willReturn(Optional.of(person));
+
+        given(this.mapper.mapAsList(any(Iterable.class), eq(IdentificationDto.class))).willReturn(List.of(identification));
+        var identifications = identificationService.create(
+                personOid,
+                IdentificationDto.of(
+                        IdpEntityId.oppijaToken,
+                        "testi.testaaja.toinen@testi.fi"
+                ));
+        assertThat(identifications)
+                .extracting("idpEntityId", "identifier")
+                .containsExactlyInAnyOrder(
+                        // Has only the identification defined for the mock person, since repositories are mocks
+                        tuple(identification.getIdpEntityId(), identification.getIdentifier())
+                );
+    }
+
+    private void initKoodistoServiceMock() {
+        given(this.koodistoService.list(eq(Koodisto.HENKILON_TUNNISTETYYPIT))).willReturn(
+                List.of(
+                        new KoodiTypeBuilder(Koodisto.HENKILON_TUNNISTETYYPIT, "oppijaToken").versio(1).build(),
+                        new KoodiTypeBuilder(Koodisto.HENKILON_TUNNISTETYYPIT, "email").versio(1).build()
+                )
+        );
     }
 
     @Test
