@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 
+import com.querydsl.core.NonUniqueResultException;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
@@ -319,7 +320,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     }
 
     @Override
-    public Optional<Henkilo> findByIdentification(IdentificationDto identification) {
+    public Optional<Henkilo> findByIdentification(IdentificationDto identification) throws NonUniqueResultException {
         return this.findByIdentification(null, identification);
     }
 
