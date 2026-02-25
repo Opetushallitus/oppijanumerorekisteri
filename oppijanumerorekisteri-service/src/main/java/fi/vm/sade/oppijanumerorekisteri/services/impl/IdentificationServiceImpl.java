@@ -11,6 +11,7 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
@@ -45,6 +46,7 @@ public class IdentificationServiceImpl implements IdentificationService {
     private final DuplicateService duplicateService;
     private final OppijaTuontiService oppijaTuontiService;
     private final OppijanumerorekisteriProperties properties;
+    private final IdentificationRepository identificationRepository;
 
     private Henkilo getHenkiloByOid(String oid) {
         return henkiloRepository.findByOidHenkilo(oid).orElseThrow(()
@@ -68,6 +70,11 @@ public class IdentificationServiceImpl implements IdentificationService {
 
         if (IdpEntityId.eidas.equals(dto.getIdpEntityId())) {
             throw new ValidationException("eIDAS-tunnisteiden lisääminen ei ole sallittua");
+        }
+
+        var duplicates = identificationRepository.findIdentical(dto);
+        if (!duplicates.isEmpty()) {
+            throw new ValidationException("Duplikaattitunnisteiden lisääminen ei ole sallittua");
         }
 
         Henkilo henkilo = henkiloRepository.findByIdentification(oid, dto)
