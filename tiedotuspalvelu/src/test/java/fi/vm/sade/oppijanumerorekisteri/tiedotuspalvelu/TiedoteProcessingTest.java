@@ -56,8 +56,6 @@ public class TiedoteProcessingTest implements ResourceReader {
 
   @DynamicPropertySource
   static void registerProperties(DynamicPropertyRegistry registry) {
-    registry.add("tiedotuspalvelu.suomifi-viestit.enabled", () -> "true");
-    registry.add("tiedotuspalvelu.fetch-oppija.enabled", () -> "true");
     registry.add("tiedotuspalvelu.suomifi-viestit.base-url", wireMock::baseUrl);
     registry.add("tiedotuspalvelu.suomifi-viestit.username", () -> SUOMIFI_USERNAME);
     registry.add("tiedotuspalvelu.suomifi-viestit.password", () -> SUOMIFI_PASSWORD);
