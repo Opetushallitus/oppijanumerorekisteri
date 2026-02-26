@@ -38,12 +38,7 @@ public class UiController {
         .map(
             s ->
                 tiedoteRepository.findByOppijanumeroOrderByIdAsc(s).stream()
-                    .map(
-                        t ->
-                            TiedoteDto.builder()
-                                .id(t.getId())
-                                .createdAt(t.getCreated())
-                                .build())
+                    .map(t -> TiedoteDto.builder().id(t.getId()).createdAt(t.getCreated()).build())
                     .toList())
         .orElseGet(List::of);
   }
