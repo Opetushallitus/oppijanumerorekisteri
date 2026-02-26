@@ -17,8 +17,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -74,32 +76,16 @@ public class ApiControllerTest {
 
   @Test
   public void createTiedoteFailsWhenFieldsAreMissing() throws Exception {
-    mockMvc
-        .perform(
-            post("/api/v1/tiedote/kielitutkintotodistus")
-                .with(
-                    jwt()
-                        .authorities(
-                            new SimpleGrantedAuthority(
-                                ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD)))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                         { "oppijanumero": "1.2.246.562.99.12345678901" }
-                         """))
+    performValidPostRequest(
+            """
+                   { "oppijanumero": "1.2.246.562.99.12345678901" }
+                   """)
         .andExpect(status().isBadRequest());
 
-    mockMvc
-        .perform(
-            post("/api/v1/tiedote/kielitutkintotodistus")
-                .with(
-                    jwt()
-                        .authorities(
-                            new SimpleGrantedAuthority(
-                                ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD)))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                            { "idempotencyKey": "some-key" }
-                         """))
+    performValidPostRequest(
+            """
+                   { "idempotencyKey": "some-key" }
+                   """)
         .andExpect(status().isBadRequest());
   }
 
@@ -136,16 +122,7 @@ public class ApiControllerTest {
   private @NonNull UUID postTiedoteRequestAndReturnTiedoteId(TiedoteRequest tiedote)
       throws Exception {
     var response =
-        mockMvc
-            .perform(
-                post("/api/v1/tiedote/kielitutkintotodistus")
-                    .with(
-                        jwt()
-                            .authorities(
-                                new SimpleGrantedAuthority(
-                                    ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD)))
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(tiedote)))
+        performValidPostRequest(objectMapper.writeValueAsString(tiedote))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").exists())
             .andReturn()
@@ -161,6 +138,21 @@ public class ApiControllerTest {
 
   private TiedoteRequest createTiedoteRequest(String idempotencyKey) {
     return new TiedoteRequest("1.2.246.562.99.12345678901", idempotencyKey);
+  }
+
+  private @NonNull ResultActions performValidPostRequest(String content) throws Exception {
+    return mockMvc.perform(
+        post("/api/v1/tiedote/kielitutkintotodistus")
+            .with(validToken())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(content));
+  }
+
+  private SecurityMockMvcRequestPostProcessors.@NonNull JwtRequestPostProcessor validToken() {
+    return jwt()
+        .authorities(
+            new SimpleGrantedAuthority(
+                ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD));
   }
 }
 
