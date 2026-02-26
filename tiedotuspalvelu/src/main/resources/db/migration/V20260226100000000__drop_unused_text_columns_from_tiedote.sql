@@ -1,0 +1,9 @@
+ALTER TABLE tiedote
+  DROP COLUMN url,
+  DROP COLUMN otsikko_fi,
+  DROP COLUMN otsikko_sv,
+  DROP COLUMN otsikko_en,
+  DROP COLUMN viesti_fi,
+  DROP COLUMN viesti_sv,
+  DROP COLUMN viesti_en,
+  DROP COLUMN notification_sent;

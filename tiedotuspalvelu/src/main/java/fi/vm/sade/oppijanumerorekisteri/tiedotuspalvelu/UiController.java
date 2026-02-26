@@ -27,8 +27,7 @@ public class UiController {
   private final LocalisationRepository localisationRepository;
 
   @Builder
-  public record TiedoteDto(
-      UUID id, String otsikko, String viesti, String url, OffsetDateTime createdAt) {}
+  public record TiedoteDto(UUID id, OffsetDateTime createdAt) {}
 
   @GetMapping("/tiedotteet")
   @PreAuthorize("isAuthenticated()")
@@ -43,9 +42,6 @@ public class UiController {
                         t ->
                             TiedoteDto.builder()
                                 .id(t.getId())
-                                .otsikko(t.getTitleFi())
-                                .viesti(t.getMessageFi())
-                                .url("") // TODO
                                 .createdAt(t.getCreated())
                                 .build())
                     .toList())

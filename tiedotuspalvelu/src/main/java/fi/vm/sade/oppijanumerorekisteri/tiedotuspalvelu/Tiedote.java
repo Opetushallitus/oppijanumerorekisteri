@@ -30,28 +30,8 @@ public class Tiedote {
   @Column(nullable = false)
   private String oppijanumero;
 
-  @Column private String url;
-
   @Column(nullable = false)
   private String todistusUrl;
-
-  @Column(name = "otsikko_fi")
-  private String titleFi;
-
-  @Column(name = "otsikko_sv")
-  private String titleSv;
-
-  @Column(name = "otsikko_en")
-  private String titleEn;
-
-  @Column(name = "viesti_fi")
-  private String messageFi;
-
-  @Column(name = "viesti_sv")
-  private String messageSv;
-
-  @Column(name = "viesti_en")
-  private String messageEn;
 
   @Column(nullable = false, updatable = false, insertable = false)
   private OffsetDateTime created;
