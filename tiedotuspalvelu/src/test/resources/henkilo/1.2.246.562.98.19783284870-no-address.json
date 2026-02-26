@@ -1,0 +1,45 @@
+{
+  "oidHenkilo": "1.2.246.562.98.19783284870",
+  "hetu": "041157-998B",
+  "kaikkiHetut": [],
+  "passivoitu": false,
+  "etunimet": "Hellin",
+  "kutsumanimi": "Hellin",
+  "sukunimi": "Sevillantes",
+  "aidinkieli": {
+    "kieliKoodi": "vk",
+    "kieliTyyppi": "viittomakieli"
+  },
+  "asiointiKieli": {
+    "kieliKoodi": "vk",
+    "kieliTyyppi": "viittomakieli"
+  },
+  "kansalaisuus": [
+    {
+      "kansalaisuusKoodi": "246"
+    }
+  ],
+  "kasittelijaOid": "testidatantuonti",
+  "syntymaaika": "1957-11-04",
+  "kuolinpaiva": null,
+  "sukupuoli": "2",
+  "kotikunta": "918",
+  "oppijanumero": "1.2.246.562.98.19783284870",
+  "turvakielto": false,
+  "eiSuomalaistaHetua": false,
+  "yksiloity": false,
+  "yksiloityVTJ": true,
+  "yksilointiYritetty": true,
+  "yksiloityEidas": false,
+  "eidasTunnisteet": [],
+  "duplicate": false,
+  "created": 1741614154510,
+  "modified": 1741614154510,
+  "vtjsynced": null,
+  "yhteystiedotRyhma": [],
+  "yksilointivirheet": [],
+  "passinumerot": [],
+  "kielisyys": [],
+  "modifiedAt": "2025-03-10T15:42:34.510+02:00",
+  "createdAt": "2025-03-10T15:42:34.510+02:00"
+}
