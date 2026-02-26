@@ -38,7 +38,7 @@ public class TiedoteProcessingTest implements ResourceReader {
     return Tiedote.builder()
         .oppijanumero(oppijanumero)
         .idempotencyKey(UUID.randomUUID().toString())
-        .processedAt(null)
+        .todistusUrl("https://example.com/todistus")
         .build();
   }
 

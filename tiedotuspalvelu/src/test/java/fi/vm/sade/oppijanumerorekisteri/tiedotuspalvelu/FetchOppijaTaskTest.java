@@ -34,7 +34,7 @@ public class FetchOppijaTaskTest implements ResourceReader {
     return Tiedote.builder()
         .oppijanumero(oppijanumero)
         .idempotencyKey(java.util.UUID.randomUUID().toString())
-        .processedAt(null)
+        .todistusUrl("https://example.com/todistus")
         .build();
   }
 

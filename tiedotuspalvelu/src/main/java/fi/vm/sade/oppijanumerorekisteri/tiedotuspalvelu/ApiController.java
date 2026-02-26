@@ -19,7 +19,8 @@ public class ApiController {
     this.tiedoteRepository = tiedoteRepository;
   }
 
-  public record TiedoteDto(@NotBlank String oppijanumero, @NotBlank String idempotencyKey) {}
+  public record TiedoteDto(
+      @NotBlank String oppijanumero, @NotBlank String idempotencyKey, String todistusUrl) {}
 
   public record CreateResponse(UUID id) {}
 
@@ -35,6 +36,8 @@ public class ApiController {
         Tiedote.builder()
             .oppijanumero(tiedoteDto.oppijanumero())
             .idempotencyKey(tiedoteDto.idempotencyKey())
+            .todistusUrl(
+                tiedoteDto.todistusUrl() != null ? tiedoteDto.todistusUrl() : "placeholder")
             .build();
     return new CreateResponse(tiedoteRepository.save(tiedote).getId());
   }

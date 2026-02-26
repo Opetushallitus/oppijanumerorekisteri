@@ -39,6 +39,7 @@ public class UiControllerTest {
     return Tiedote.builder()
         .oppijanumero(oppijanumero)
         .idempotencyKey(java.util.UUID.randomUUID().toString())
+        .todistusUrl("https://example.com/todistus")
         .build();
   }
 
