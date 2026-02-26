@@ -8,7 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
@@ -47,7 +46,7 @@ public class ApiControllerTest {
 
   @Test
   public void createTiedoteFailsWithoutRequiredRole() throws Exception {
-    var tiedote = createTiedote();
+    var tiedote = createTiedoteRequest();
 
     mockMvc
         .perform(
@@ -62,8 +61,8 @@ public class ApiControllerTest {
   public void createTiedoteSucceedsWithValidData() throws Exception {
     tiedoteRepository.deleteAll();
     String idempotencyKey = UUID.randomUUID().toString();
-    var tiedote = createTiedote(idempotencyKey);
-    var returnedId = postTiedoteAndReturnTiedoteId(tiedote);
+    var tiedote = createTiedoteRequest(idempotencyKey);
+    var returnedId = postTiedoteRequestAndReturnTiedoteId(tiedote);
 
     List<Tiedote> tiedotteet = tiedoteRepository.findAll();
     assertEquals(1, tiedotteet.size());
@@ -84,9 +83,9 @@ public class ApiControllerTest {
                             new SimpleGrantedAuthority(
                                 ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD)))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    objectMapper.writeValueAsString(
-                        Map.of("oppijanumero", "1.2.246.562.99.12345678901"))))
+                .content("""
+                         { "oppijanumero": "1.2.246.562.99.12345678901" }
+                         """))
         .andExpect(status().isBadRequest());
 
     mockMvc
@@ -98,7 +97,9 @@ public class ApiControllerTest {
                             new SimpleGrantedAuthority(
                                 ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD)))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(Map.of("idempotencyKey", "some-key"))))
+                .content("""
+                            { "idempotencyKey": "some-key" }
+                         """))
         .andExpect(status().isBadRequest());
   }
 
@@ -106,9 +107,9 @@ public class ApiControllerTest {
   public void createTiedoteWithSameIdempotencyKeyReturnsSameId() throws Exception {
     tiedoteRepository.deleteAll();
     String idempotencyKey = UUID.randomUUID().toString();
-    var tiedote = createTiedote(idempotencyKey);
-    var firstId = postTiedoteAndReturnTiedoteId(tiedote);
-    var secondId = postTiedoteAndReturnTiedoteId(tiedote);
+    var tiedote = createTiedoteRequest(idempotencyKey);
+    var firstId = postTiedoteRequestAndReturnTiedoteId(tiedote);
+    var secondId = postTiedoteRequestAndReturnTiedoteId(tiedote);
 
     assertEquals(firstId, secondId);
 
@@ -120,11 +121,11 @@ public class ApiControllerTest {
   @Test
   public void createTiedoteWithDifferentIdempotencyKeysCreatesDifferentRecords() throws Exception {
     tiedoteRepository.deleteAll();
-    var tiedote1 = createTiedote();
-    var tiedote2 = createTiedote();
+    var tiedote1 = createTiedoteRequest();
+    var tiedote2 = createTiedoteRequest();
 
-    var firstId = postTiedoteAndReturnTiedoteId(tiedote1);
-    var secondId = postTiedoteAndReturnTiedoteId(tiedote2);
+    var firstId = postTiedoteRequestAndReturnTiedoteId(tiedote1);
+    var secondId = postTiedoteRequestAndReturnTiedoteId(tiedote2);
 
     assertEquals(false, firstId.equals(secondId));
 
@@ -132,7 +133,7 @@ public class ApiControllerTest {
     assertEquals(2, tiedotteet.size());
   }
 
-  private @NonNull UUID postTiedoteAndReturnTiedoteId(Map<String, String> tiedote)
+  private @NonNull UUID postTiedoteRequestAndReturnTiedoteId(TiedoteRequest tiedote)
       throws Exception {
     var response =
         mockMvc
@@ -154,11 +155,13 @@ public class ApiControllerTest {
     return UUID.fromString(objectMapper.readTree(response).get("id").asText());
   }
 
-  private Map<String, String> createTiedote() {
-    return createTiedote(UUID.randomUUID().toString());
+  private TiedoteRequest createTiedoteRequest() {
+    return createTiedoteRequest(UUID.randomUUID().toString());
   }
 
-  private Map<String, String> createTiedote(String idempotencyKey) {
-    return Map.of("oppijanumero", "1.2.246.562.99.12345678901", "idempotencyKey", idempotencyKey);
+  private TiedoteRequest createTiedoteRequest(String idempotencyKey) {
+    return new TiedoteRequest("1.2.246.562.99.12345678901", idempotencyKey);
   }
 }
+
+record TiedoteRequest(String oppijanumero, String idempotencyKey) {}
