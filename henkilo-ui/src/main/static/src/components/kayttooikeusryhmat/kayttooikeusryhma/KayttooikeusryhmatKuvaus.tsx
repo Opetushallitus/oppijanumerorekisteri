@@ -12,7 +12,7 @@ const KayttooikeusryhmatKuvaus = (props: Props) => {
     const { L } = useLocalisations();
     return (
         <div className="kayttooikeusryhmat-kuvaus">
-            <h4>{L['KAYTTOOIKEUSRYHMAT_LISAA_KUVAUS']}</h4>
+            <h4>{L('KAYTTOOIKEUSRYHMAT_LISAA_KUVAUS')}</h4>
             <div className="oph-field oph-field-inline oph-field-is-required">
                 <label className="oph-label oph-bold oph-label-short" htmlFor="kayttooikeusryhma-kuvaus-fi">
                     FI

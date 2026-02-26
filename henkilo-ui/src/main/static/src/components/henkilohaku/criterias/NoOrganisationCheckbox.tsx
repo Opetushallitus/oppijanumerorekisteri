@@ -1,8 +1,8 @@
 import React from 'react';
-import { Localisations } from '../../../types/localisation.type';
+import { LocalisationFn } from '../../../types/localisation.type';
 
 type Props = {
-    L: Localisations;
+    L: LocalisationFn;
     noOrganisationValue: boolean;
     noOrganisationAction: () => void;
 };
@@ -16,7 +16,7 @@ const NoOrganisationCheckbox = ({ L, noOrganisationValue, noOrganisationAction }
             onChange={noOrganisationAction}
             checked={noOrganisationValue}
         />
-        <span className="oph-checkable-text"> {L['HENKILOHAKU_FILTERS_ILMANORGANISAATIOTA']}</span>
+        <span className="oph-checkable-text"> {L('HENKILOHAKU_FILTERS_ILMANORGANISAATIOTA')}</span>
     </label>
 );
 

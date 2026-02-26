@@ -24,10 +24,10 @@ const TuontiDetails = ({ tuontiId, onClose }: OwnProps) => {
     const columns = useMemo<ColumnDef<Tuontidata, Tuontidata>[]>(
         () => [
             expanderColumn(),
-            { accessorFn: (row) => row.tunniste, header: () => L['TUONTIDATA_TUNNISTE'], id: 'tunniste' },
+            { accessorFn: (row) => row.tunniste, header: () => L('TUONTIDATA_TUNNISTE'), id: 'tunniste' },
             {
                 accessorFn: (row) => row,
-                header: () => L['OPPIJOIDEN_TUONTI_NIMI'],
+                header: () => L('OPPIJOIDEN_TUONTI_NIMI'),
                 cell: ({ getValue }) => (
                     <Link to={`/oppija/${getValue().henkiloOid}`} target="_blank">
                         {getValue().henkiloNimi}
@@ -37,7 +37,7 @@ const TuontiDetails = ({ tuontiId, onClose }: OwnProps) => {
             },
             {
                 accessorFn: (row) => row,
-                header: () => L['TUONTIDATA_VIRHE'],
+                header: () => L('TUONTIDATA_VIRHE'),
                 cell: ({ getValue }) => getValue().conflict && <i className="fa fa-check" />,
                 id: 'conflict',
             },
@@ -73,7 +73,7 @@ const TuontiDetails = ({ tuontiId, onClose }: OwnProps) => {
                     onClick={() => setShowAll(!showAll)}
                     onChange={() => ({})}
                 />
-                <span className="oph-checkbox-button-text">{L['TUONTIDATA_VAIN_VIRHEET']}</span>
+                <span className="oph-checkbox-button-text">{L('TUONTIDATA_VAIN_VIRHEET')}</span>
             </label>
             <OphTable<Tuontidata>
                 table={table}

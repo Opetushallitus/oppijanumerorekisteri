@@ -18,8 +18,8 @@ const PuraHetuttomanYksilointiButton = (props: OwnProps) => {
             key="purayksilointi"
             className={props.className}
             action={() => puraYksilointi(props.henkiloOid)}
-            normalLabel={L['PURA_YKSILOINTI_LINKKI']}
-            confirmLabel={L['PURA_YKSILOINTI_LINKKI_CONFIRM']}
+            normalLabel={L('PURA_YKSILOINTI_LINKKI')}
+            confirmLabel={L('PURA_YKSILOINTI_LINKKI_CONFIRM')}
             disabled={props.disabled}
         />
     );

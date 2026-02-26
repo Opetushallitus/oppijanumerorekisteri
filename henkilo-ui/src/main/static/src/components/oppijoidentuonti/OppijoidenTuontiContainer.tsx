@@ -25,7 +25,7 @@ const defaultCriteria = {
 
 const OppijoidenTuontiContainer = () => {
     const { L } = useLocalisations();
-    useTitle(L['TITLE_OPPIJOIDENTUONTI']);
+    useTitle(L('TITLE_OPPIJOIDENTUONTI'));
     useNavigation(mainNavigation, false);
     const [criteria, setCriteria] = useState<OppijoidenTuontiCriteria>(defaultCriteria);
     const [tuontikooste, setTuontikooste] = useState(false);
@@ -45,7 +45,7 @@ const OppijoidenTuontiContainer = () => {
 
     return (
         <div className="mainContent wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h1>{L['NAVI_OPPIJOIDEN_TUONTI']}</h1>
+            <h1>{L('NAVI_OPPIJOIDEN_TUONTI')}</h1>
             <OppijoidenTuontiYhteenveto />
             <OphDsRadioGroup<'true' | 'false'>
                 checked={`${tuontikooste}`}
@@ -53,15 +53,15 @@ const OppijoidenTuontiContainer = () => {
                 legend=""
                 onChange={(t) => setTuontikooste(t === 'true')}
                 radios={[
-                    { id: 'true', value: 'true', label: L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE']! },
-                    { id: 'false', value: 'false', label: L['OPPIJOIDEN_TUONTI_NAYTA_VIRHEET']! },
+                    { id: 'true', value: 'true', label: L('OPPIJOIDEN_TUONTI_TUONTIKOOSTE') },
+                    { id: 'false', value: 'false', label: L('OPPIJOIDEN_TUONTI_NAYTA_VIRHEET') },
                 ]}
             />
             {tuontikooste ? (
                 <TuontiKoosteTable />
             ) : (
                 <>
-                    <OphDsInput id="nimiHaku" label={L['OPPIJOIDEN_TUONTI_HAE_HENKILOITA']!} onChange={setNimiHaku} />
+                    <OphDsInput id="nimiHaku" label={L('OPPIJOIDEN_TUONTI_HAE_HENKILOITA')} onChange={setNimiHaku} />
                     {data && <OppijoidenTuontiListaus loading={isFetching} data={data} onPageChange={onPageChange} />}
                 </>
             )}

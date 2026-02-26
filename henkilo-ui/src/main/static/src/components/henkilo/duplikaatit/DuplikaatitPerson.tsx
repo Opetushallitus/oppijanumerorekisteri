@@ -83,18 +83,18 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
     return (
         <div className={classNames({ person: true, master: isMaster })}>
             <DataCell className="type">
-                {L[isMaster ? 'DUPLIKAATIT_HENKILON_TIEDOT' : 'DUPLIKAATIT_DUPLIKAATTI']}
+                {L(isMaster ? 'DUPLIKAATIT_HENKILON_TIEDOT' : 'DUPLIKAATIT_DUPLIKAATTI')}
             </DataCell>
-            <DataCell className="type">{L['DUPLIKAATIT_ONR']}</DataCell>
+            <DataCell className="type">{L('DUPLIKAATIT_ONR')}</DataCell>
             <DataCell>{henkilo.hetu}</DataCell>
             <DataCell>
-                {henkilo.yksiloity || vahvastiYksiloity ? L['HENKILO_YHTEISET_KYLLA'] : L['HENKILO_YHTEISET_EI']}
+                {henkilo.yksiloity || vahvastiYksiloity ? L('HENKILO_YHTEISET_KYLLA') : L('HENKILO_YHTEISET_EI')}
             </DataCell>
             <DataCell>{henkilo.kutsumanimi}</DataCell>
             <DataCell>{henkilo.etunimet}</DataCell>
             <DataCell>{henkilo.sukunimi}</DataCell>
 
-            <DataCell>{L[sukupuolet[henkilo?.sukupuoli ?? 1]]}</DataCell>
+            <DataCell>{L(sukupuolet[henkilo?.sukupuoli ?? 1])}</DataCell>
             <DataCell>{henkilo.syntymaaika}</DataCell>
             <DataCell>
                 <Link className="oph-link" to={`/${henkiloType}/${henkilo.oidHenkilo}`}>
@@ -110,11 +110,11 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
                     .join(', ')}
             </DataCell>
             <DataCell>{_koodistoLabel(henkilo.aidinkieli?.kieliKoodi, kielet, locale)}</DataCell>
-            <DataCell className="type">{L['DUPLIKAATIT_HAKEMUS']}</DataCell>
+            <DataCell className="type">{L('DUPLIKAATIT_HAKEMUS')}</DataCell>
             {renderHakemusData(hakemus, henkiloType)}
             <DataCell hakemus>
                 {!!hakemukset.length && (
-                    <DuplikaatitApplicationsPopup title={L['DUPLIKAATIT_MUUTHAKEMUKSET']!}>
+                    <DuplikaatitApplicationsPopup title={L('DUPLIKAATIT_MUUTHAKEMUKSET')}>
                         {hakemukset.map((h) => (
                             <div className="application" key={h.oid}>
                                 {renderHakemusData(h, henkiloType)}
@@ -130,7 +130,7 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
                         action={() => setLink({ master, duplicate: henkilo })}
                         dataTestId={`link-duplicate-from-${henkilo.oidHenkilo}`}
                     >
-                        {`< ${L['DUPLIKAATIT_YHDISTA_TAMA_DUPLIKAATTI']}`}
+                        {`< ${L('DUPLIKAATIT_YHDISTA_TAMA_DUPLIKAATTI')}`}
                     </Button>
                     <div className="duplicate-separator-container">
                         <span className="duplicate-separator">TAI</span>
@@ -140,7 +140,7 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
                         action={() => setLink({ master: henkilo, duplicate: master })}
                         dataTestId={`link-main-to-${henkilo.oidHenkilo}`}
                     >
-                        {`${L['DUPLIKAATIT_YHDISTA_TAHAN_HENKILOON']} >`}
+                        {`${L('DUPLIKAATIT_YHDISTA_TAHAN_HENKILOON')} >`}
                     </Button>
                 </DataCell>
             )}

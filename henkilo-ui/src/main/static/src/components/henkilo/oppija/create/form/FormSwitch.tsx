@@ -11,7 +11,7 @@ import { mainNavigation } from '../../../../navigation/navigationconfigurations'
 
 const FormSwitch = () => {
     const { L } = useLocalisations();
-    useTitle(L['TITLE_OPPIJA_LUONTI']);
+    useTitle(L('TITLE_OPPIJA_LUONTI'));
     useNavigation(mainNavigation, false);
     const [formType, setFormType] = React.useState<FormType>();
     const goBack = () => setFormType(undefined);

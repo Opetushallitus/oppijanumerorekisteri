@@ -18,7 +18,7 @@ const HakaButton = (props: OwnProps) => {
             popupStyle={props.styles}
             popupTitle={
                 <span className="oph-h3 oph-strong" style={{ textAlign: 'left' }}>
-                    {L['HAKATUNNISTEET']}:
+                    {L('HAKATUNNISTEET')}:
                 </span>
             }
             popupClass="oph-popup-default oph-popup-bottom"
@@ -26,7 +26,7 @@ const HakaButton = (props: OwnProps) => {
             popupButtonWrapperPositioning="relative"
             popupContent={<HakatunnistePopupContent henkiloOid={props.oidHenkilo} />}
         >
-            {L['LISAA_HAKA_LINKKI']}
+            {L('LISAA_HAKA_LINKKI')}
         </PopupButton>
     );
 };

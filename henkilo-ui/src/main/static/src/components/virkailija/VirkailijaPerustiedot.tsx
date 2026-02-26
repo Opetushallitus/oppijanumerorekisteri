@@ -45,7 +45,7 @@ const VirkailijaPerustiedotForm = ({ oid, closeForm }: { oid: string; closeForm:
                         add({
                             id: `put-kayttajatiedot-${Math.random()}`,
                             type: 'error',
-                            header: L[errorKey],
+                            header: L(errorKey),
                         })
                     );
                 });
@@ -57,10 +57,10 @@ const VirkailijaPerustiedotForm = ({ oid, closeForm }: { oid: string; closeForm:
             <OphDsInput
                 id="username"
                 error={
-                    isValidKayttajatunnus(username) ? undefined : L['NOTIFICATION_HENKILOTIEDOT_KAYTTAJATUNNUS_VIRHE']
+                    isValidKayttajatunnus(username) ? undefined : L('NOTIFICATION_HENKILOTIEDOT_KAYTTAJATUNNUS_VIRHE')
                 }
                 defaultValue={kayttajatiedot?.username}
-                label={L['HENKILO_KAYTTAJANIMI']!}
+                label={L('HENKILO_KAYTTAJANIMI')}
                 onChange={setUsername}
             />
             <div className={styles.buttonRow}>
@@ -69,10 +69,10 @@ const VirkailijaPerustiedotForm = ({ oid, closeForm }: { oid: string; closeForm:
                     onClick={updatePerustiedot}
                     disabled={username === kayttajatiedot?.username || !isValidKayttajatunnus(username)}
                 >
-                    {L['TALLENNA']}
+                    {L('TALLENNA')}
                 </button>
                 <button className="oph-ds-button oph-ds-button-bordered" onClick={() => closeForm()} disabled={false}>
-                    {L['PERUUTA']}
+                    {L('PERUUTA')}
                 </button>
             </div>
         </>
@@ -97,16 +97,16 @@ export const VirkailijaPerustiedot = ({ oid }: { oid: string }) => {
     return (
         <section aria-labelledby={sectionId} className="henkiloViewUserContentWrapper">
             {haka && (
-                <OphModal title={L['HAKATUNNISTEET']} onClose={() => setHaka(false)}>
+                <OphModal title={L('HAKATUNNISTEET')} onClose={() => setHaka(false)}>
                     <HakatunnistePopupContent henkiloOid={oid} />
                 </OphModal>
             )}
             {password && (
-                <OphModal title={L['SALASANA_ASETA']} onClose={() => setPassword(false)}>
+                <OphModal title={L('SALASANA_ASETA')} onClose={() => setPassword(false)}>
                     <PasswordPopupContent oidHenkilo={oid} />
                 </OphModal>
             )}
-            <h2 id={sectionId}>{L['VIRKAILIJAN_TIEDOT_OTSIKKO']}</h2>
+            <h2 id={sectionId}>{L('VIRKAILIJAN_TIEDOT_OTSIKKO')}</h2>
             <div className={styles.perustiedotContent}>
                 {isLoading ? (
                     <Loader />
@@ -115,26 +115,26 @@ export const VirkailijaPerustiedot = ({ oid }: { oid: string }) => {
                 ) : (
                     <>
                         <div className={styles.perustiedotGrid}>
-                            <div>{L['HENKILO_SUKUNIMI']}</div>
+                            <div>{L('HENKILO_SUKUNIMI')}</div>
                             <div data-testid="sukunimi">{kayttajatiedot?.sukunimi}</div>
-                            <div>{L['HENKILO_ETUNIMET']}</div>
+                            <div>{L('HENKILO_ETUNIMET')}</div>
                             <div data-testid="etunimet">{kayttajatiedot?.etunimet}</div>
-                            <div>{L['HENKILO_OPPIJANUMERO']}</div>
+                            <div>{L('HENKILO_OPPIJANUMERO')}</div>
                             <div data-testid="oid">{oid}</div>
-                            <div>{L['HENKILO_KAYTTAJANIMI']}</div>
+                            <div>{L('HENKILO_KAYTTAJANIMI')}</div>
                             <div data-testid="username">{kayttajatiedot?.username}</div>
-                            <div>{L['HENKILO_TYOSAHKOPOSTI']}</div>
+                            <div>{L('HENKILO_TYOSAHKOPOSTI')}</div>
                             <div data-testid="email">{emails}</div>
                         </div>
                         <div className={styles.buttonRow}>
                             <button className="oph-ds-button" onClick={() => setMuokkaa(true)}>
-                                {L['MUOKKAA']}
+                                {L('MUOKKAA')}
                             </button>
                             <button className="oph-ds-button" onClick={() => setHaka(true)}>
-                                {L['LISAA_HAKA_LINKKI']}
+                                {L('LISAA_HAKA_LINKKI')}
                             </button>
                             <button className="oph-ds-button" onClick={() => setPassword(true)}>
-                                {L['SALASANA_ASETA']}
+                                {L('SALASANA_ASETA')}
                             </button>
                             {isOnrRekisterinpitaja(omattiedot?.organisaatiot) && (
                                 <PoistaKayttajatunnusButton className="oph-ds-button" henkiloOid={oid} />

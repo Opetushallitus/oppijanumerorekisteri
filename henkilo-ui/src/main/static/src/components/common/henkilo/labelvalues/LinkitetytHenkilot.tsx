@@ -44,7 +44,7 @@ const LinkitetytHenkilot = ({ henkiloOid, oppija }: OwnProps) => {
                                 <TextButton
                                     action={() => unlinkHenkilo({ masterOid: henkiloOid, slaveOid: slave.oidHenkilo })}
                                 >
-                                    {L['HENKILO_POISTA_LINKITYS']}
+                                    {L('HENKILO_POISTA_LINKITYS')}
                                 </TextButton>
                             </span>
                         )}

@@ -107,13 +107,13 @@ test.describe('Hae duplikaatit', () => {
         await routeOmattiedotWithoutRoles(page);
         await page.goto('/henkilo-ui/virkailija/1.2.3.4.5/duplikaatit');
         await Promise.all(
-            groupedDuplicates.yksiloity!.map(async (duplicate) => {
+            groupedDuplicates.yksiloity.map(async (duplicate) => {
                 const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
                 await expect(locator).toBeDisabled();
             })
         );
         await Promise.all(
-            groupedDuplicates.yksiloityVtj!.map(async (duplicate) => {
+            groupedDuplicates.yksiloityVtj.map(async (duplicate) => {
                 const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
                 await expect(locator).toBeDisabled();
             })
@@ -125,7 +125,7 @@ test.describe('Hae duplikaatit', () => {
             })
         );
         await Promise.all(
-            groupedDuplicates.yksiloimaton!.map(async (duplicate) => {
+            groupedDuplicates.yksiloimaton.map(async (duplicate) => {
                 const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
                 await expect(locator).toBeEnabled();
             })
@@ -136,13 +136,13 @@ test.describe('Hae duplikaatit', () => {
         await routeOmattiedotWithPurkuRole(page);
         await page.goto('/henkilo-ui/virkailija/1.2.3.4.5/duplikaatit');
         await Promise.all(
-            groupedDuplicates.yksiloity!.map(async (duplicate) => {
+            groupedDuplicates.yksiloity.map(async (duplicate) => {
                 const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
                 await expect(locator).toBeEnabled();
             })
         );
         await Promise.all(
-            groupedDuplicates.yksiloityVtj!.map(async (duplicate) => {
+            groupedDuplicates.yksiloityVtj.map(async (duplicate) => {
                 const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
                 await expect(locator).toBeDisabled();
             })
@@ -154,7 +154,7 @@ test.describe('Hae duplikaatit', () => {
             })
         );
         await Promise.all(
-            groupedDuplicates.yksiloimaton!.map(async (duplicate) => {
+            groupedDuplicates.yksiloimaton.map(async (duplicate) => {
                 const locator = page.locator(`[data-test-id="link-duplicate-from-${duplicate.oidHenkilo}"]`);
                 await expect(locator).toBeEnabled();
             })

@@ -27,13 +27,13 @@ const MyonnettavatKayttooikeusryhmat = (props: Props) => {
 
     return (
         <div className="myonnettavat-kayttooikeusryhmat">
-            <h4>{L['KAYTTOOIKEUSRYHMAT_LISAA_MITA_SAA_MYONTAA']}</h4>
+            <h4>{L('KAYTTOOIKEUSRYHMAT_LISAA_MITA_SAA_MYONTAA')}</h4>
             <div className="flex-horizontal">
                 <div className="flex-item-1">
                     <Select
                         id="kayttooikeusryhma-myontooikeudet"
                         options={kayttooikeusryhmaOptions}
-                        placeholder={L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUSRYHMA']}
+                        placeholder={L('KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUSRYHMA')}
                         onChange={props.kayttooikeusryhmaSelectAction}
                     />
                     <ItemList

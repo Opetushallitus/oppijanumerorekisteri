@@ -95,7 +95,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 disabled={!perustelut}
                 popupContent={<p>{perustelut}</p>}
             >
-                {L['AVAA']}
+                {L('AVAA')}
             </PopupButton>
         );
     }
@@ -105,7 +105,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
             <div>
                 <div style={{ display: 'table-cell', paddingRight: '10px' }}>
                     <Button action={() => cancelAnomus(haettuKayttooikeusRyhma)}>
-                        {L['HENKILO_KAYTTOOIKEUSANOMUS_PERU']}
+                        {L('HENKILO_KAYTTOOIKEUSANOMUS_PERU')}
                     </Button>
                 </div>
             </div>
@@ -113,8 +113,8 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     }
 
     function createNotificationMessage(henkilo: HenkilonNimi, messageKey: string): string {
-        const message = L[messageKey];
-        const henkiloLocalized = L['HENKILO_KAYTTOOIKEUSANOMUS_NOTIFICATIONS_HENKILON'];
+        const message = L(messageKey);
+        const henkiloLocalized = L('HENKILO_KAYTTOOIKEUSANOMUS_NOTIFICATIONS_HENKILON');
         const etunimet = henkilo.etunimet;
         const sukunimi = henkilo.sukunimi;
         const oid = henkilo.oid;
@@ -155,7 +155,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                         add({
                             id: `anomus_${henkilo.oid}_${id}`,
                             type: 'error',
-                            header: L['HENKILO_KAYTTOIKEUSANOMUS_OIKEUS_FAILURE'],
+                            header: L('HENKILO_KAYTTOIKEUSANOMUS_OIKEUS_FAILURE'),
                         })
                     );
                 } else {
@@ -183,8 +183,8 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 <div className="anomuslistaus-myonnabutton" style={{ display: 'table-cell', paddingRight: '10px' }}>
                     <ConfirmButton
                         action={() => handleAnomus(haettuKayttooikeusRyhma.id, KAYTTOOIKEUDENTILA.MYONNETTY, henkilo)}
-                        normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA']}
-                        confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA_CONFIRM']}
+                        normalLabel={L('HENKILO_KAYTTOOIKEUSANOMUS_MYONNA')}
+                        confirmLabel={L('HENKILO_KAYTTOOIKEUSANOMUS_MYONNA_CONFIRM')}
                         disabled={!dates?.[haettuKayttooikeusRyhma.id]?.loppupvm || isLoading}
                     />
                 </div>
@@ -193,7 +193,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                         className="oph-button oph-button-cancel oph-button-small"
                         onClick={() => setHylkaaAnomus(haettuKayttooikeusRyhma.id)}
                     >
-                        {L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA']}
+                        {L('HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA')}
                     </button>
                 </div>
             </div>
@@ -208,7 +208,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                     add({
                         id: `peru-kayttooikeus-error-${Math.random()}`,
                         type: 'error',
-                        header: L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'],
+                        header: L('KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'),
                     })
                 );
             });
@@ -235,7 +235,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
             expanderColumn(),
             {
                 id: 'ANOTTU_PVM',
-                header: () => L['ANOTTU_PVM'],
+                header: () => L('ANOTTU_PVM'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => format(parseISO(getValue().anomus.anottuPvm), 'd.M.yyyy'),
                 sortingFn: (a, b) =>
@@ -243,14 +243,14 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUS_NIMI',
-                header: () => L['HENKILO_KAYTTOOIKEUS_NIMI'],
+                header: () => L('HENKILO_KAYTTOOIKEUS_NIMI'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => getValue().anomus.henkilo.etunimet + ' ' + getValue().anomus.henkilo.sukunimi,
                 enableSorting: false,
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO',
-                header: () => L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO'],
+                header: () => L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) =>
                     isSuccess
@@ -264,7 +264,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA',
-                header: () => L['HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA'],
+                header: () => L('HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => (
                     <AccessRightDetaisLink<Kayttooikeusryhma>
@@ -282,14 +282,14 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUSANOMUS_PERUSTELU',
-                header: () => L['HENKILO_KAYTTOOIKEUSANOMUS_PERUSTELU'],
+                header: () => L('HENKILO_KAYTTOOIKEUSANOMUS_PERUSTELU'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => createSelitePopupButton(getValue().anomus.perustelut),
                 enableSorting: false,
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUS_ALKUPVM',
-                header: () => L['HENKILO_KAYTTOOIKEUS_ALKUPVM'],
+                header: () => L('HENKILO_KAYTTOOIKEUS_ALKUPVM'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) =>
                     dates[getValue().id]?.alkupvm ? format(dates[getValue().id]!.alkupvm, 'd.M.yyyy') : '',
@@ -297,7 +297,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM',
-                header: () => L['HENKILO_KAYTTOOIKEUS_LOPPUPVM'],
+                header: () => L('HENKILO_KAYTTOOIKEUS_LOPPUPVM'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) =>
                     dates[getValue().id]?.loppupvm ? format(dates[getValue().id]!.loppupvm!, 'd.M.yyyy') : '',
@@ -305,7 +305,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM_MYONTO',
-                header: () => L['HENKILO_KAYTTOOIKEUS_LOPPUPVM'],
+                header: () => L('HENKILO_KAYTTOOIKEUS_LOPPUPVM'),
                 accessorFn: (row) => row,
                 enableSorting: false,
                 cell: ({ getValue }) => (
@@ -330,9 +330,9 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI',
-                header: () => L['HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI'],
+                header: () => L('HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI'),
                 accessorFn: (row) => row,
-                cell: ({ getValue }) => L[getValue().anomus.anomusTyyppi],
+                cell: ({ getValue }) => L(getValue().anomus.anomusTyyppi),
                 enableSorting: false,
             },
             {
@@ -382,7 +382,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
         <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
             {hylattyKayttooikeusryhma && (
                 <OphModal
-                    title={L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA_HAKEMUS']}
+                    title={L('HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA_HAKEMUS')}
                     onClose={() => setHylkaaAnomus(undefined)}
                     onOverlayClick={() => setHylkaaAnomus(undefined)}
                 >
@@ -394,7 +394,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
             )}
             {accessRight && <AccessRightDetails {...accessRight} />}
             <div>
-                {!props.piilotaOtsikko && <h2 id={sectionLabelId}>{L['HENKILO_AVOIMET_KAYTTOOIKEUDET_OTSIKKO']}</h2>}
+                {!props.piilotaOtsikko && <h2 id={sectionLabelId}>{L('HENKILO_AVOIMET_KAYTTOOIKEUDET_OTSIKKO')}</h2>}
                 {props.fetchMoreSettings ? (
                     <OphTableWithInfiniteScroll
                         table={table}

@@ -27,7 +27,7 @@ export const VirkailijaPage = () => {
 
     useRedirectByUser(oid, 'VIRKAILIJA');
     const { L } = useLocalisations();
-    useTitle(L['TITLE_VIRKAILIJA']);
+    useTitle(L('TITLE_VIRKAILIJA'));
     useNavigation(virkailija2Navi(oid), true);
     const { isLoading, error } = useGetKayttajatiedotQuery(oid);
     const { data: anomukset } = useGetKayttooikeusAnomuksetForHenkiloQuery(oid);
@@ -47,7 +47,7 @@ export const VirkailijaPage = () => {
     }
 
     return (
-        <OphDsPage header={L['TITLE_VIRKAILIJA']!}>
+        <OphDsPage header={L('TITLE_VIRKAILIJA')}>
             <OphDsCard>
                 <VirkailijaPerustiedot oid={oid} />
             </OphDsCard>

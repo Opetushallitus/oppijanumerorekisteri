@@ -105,7 +105,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
                     add({
                         id: `anomus-ok-${Math.random()}`,
                         type: 'ok',
-                        header: L['OMATTIEDOT_ANOMUKSEN_TALLENNUS_OK'],
+                        header: L('OMATTIEDOT_ANOMUKSEN_TALLENNUS_OK'),
                     })
                 );
             })
@@ -114,7 +114,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
                     add({
                         id: `anomus-error-${Math.random()}`,
                         type: 'error',
-                        header: L['OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS'],
+                        header: L('OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS'),
                     })
                 );
             });
@@ -154,7 +154,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
         () => [
             {
                 id: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO',
-                header: () => L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO'],
+                header: () => L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => (
                     <span>
@@ -170,7 +170,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS',
-                header: () => L['HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS'],
+                header: () => L('HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => (
                     <AccessRightDetaisLink<MyonnettyKayttooikeusryhma>
@@ -185,18 +185,18 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUS_TILA',
-                header: () => L['HENKILO_KAYTTOOIKEUS_TILA'],
-                accessorFn: (row) => L[row.tila],
+                header: () => L('HENKILO_KAYTTOOIKEUS_TILA'),
+                accessorFn: (row) => L(row.tila),
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA',
-                header: () => L['HENKILO_KAYTTOOIKEUS_KASITTELIJA'],
+                header: () => L('HENKILO_KAYTTOOIKEUS_KASITTELIJA'),
                 accessorFn: (row) =>
                     format(parseISO(row.kasitelty), 'd.M.yyyy') + ' / ' + (row.kasittelijaNimi || row.kasittelijaOid),
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUS_JATKOAIKA',
-                header: () => L['OMATTIEDOT_HAE_JATKOAIKAA'],
+                header: () => L('OMATTIEDOT_HAE_JATKOAIKAA'),
                 accessorFn: (row) => row,
                 enableSorting: false,
                 cell: ({ getValue }) =>
@@ -206,8 +206,8 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
                             {createEmailSelectionIfMoreThanOne(getValue().ryhmaId)}
                             <ConfirmButton
                                 action={() => _createKayttooikeusAnomus(getValue())}
-                                normalLabel={L['OMATTIEDOT_HAE_JATKOAIKAA']}
-                                confirmLabel={L['OMATTIEDOT_HAE_JATKOAIKAA_CONFIRM']}
+                                normalLabel={L('OMATTIEDOT_HAE_JATKOAIKAA')}
+                                confirmLabel={L('OMATTIEDOT_HAE_JATKOAIKAA_CONFIRM')}
                                 disabled={isHaeJatkoaikaaButtonDisabled(getValue().ryhmaId, getValue())}
                             />
                         </div>
@@ -246,7 +246,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
     return (
         <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
             {accessRight && <AccessRightDetails {...accessRight} />}
-            <h2 id={sectionLabelId}>{L['HENKILO_VANHAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
+            <h2 id={sectionLabelId}>{L('HENKILO_VANHAT_KAYTTOOIKEUDET_OTSIKKO')}</h2>
             <OphTable table={table} isLoading={isLoading} />
         </section>
     );

@@ -26,15 +26,15 @@ export const OppijaDuplicatesPage = () => {
     const { data: duplicates } = useGetHenkiloDuplicatesQuery({ L, oid });
     const { isLoading } = useGetHakemuksetQuery({ L, oid });
 
-    useTitle(L['TITLE_DUPLIKAATTIHAKU']);
+    useTitle(L('TITLE_DUPLIKAATTIHAKU'));
     useNavigation(oppijaNavigation, false);
 
     return (
         <OphDsPage header={`${henkilo?.sukunimi}, ${henkilo?.etunimet}`} tabs={<OppijaTabs oid={oid} />}>
-            <h2>{L['DUPLIKAATIT_HEADER']}</h2>
+            <h2>{L('DUPLIKAATIT_HEADER')}</h2>
             <p>
-                <a className="oph-link" href={L['DUPLIKAATIT_OHJELINKKI_OSOITE']} target="_blank" rel="noreferrer">
-                    {L['DUPLIKAATIT_OHJELINKKI_TEKSTI']}
+                <a className="oph-link" href={L('DUPLIKAATIT_OHJELINKKI_OSOITE')} target="_blank" rel="noreferrer">
+                    {L('DUPLIKAATIT_OHJELINKKI_TEKSTI')}
                 </a>
             </p>
             {isHenkiloLoading || isLoading || !henkilo || !duplicates ? (

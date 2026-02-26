@@ -1,7 +1,7 @@
 import { unparse } from 'papaparse';
 import { format, parseISO } from 'date-fns';
 
-import { Localisations } from '../../../types/localisation.type';
+import { LocalisationFn } from '../../../types/localisation.type';
 import { AccessRightsReportRow } from '../../../api/kayttooikeus';
 
 const BOM = '\ufeff';
@@ -9,26 +9,26 @@ const DELIMITER = ';';
 
 const formatDate = (date: string) => format(parseISO(date), 'd.M.yyyy');
 
-export const createCSV = (data: AccessRightsReportRow[], L: Localisations) =>
+export const createCSV = (data: AccessRightsReportRow[], L: LocalisationFn) =>
     unparse(
         {
             data: data.map((row) => ({
-                [L['HENKILO_NIMI']!]: row.personName,
-                [L['HENKILO_OPPIJANUMERO']!]: row.personOid,
-                [L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA']!]: row.organisationName,
-                [L['OID']!]: row.organisationOid,
-                [L['HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS']!]: row.accessRightName,
-                [L['HENKILO_KAYTTOOIKEUS_ALKUPVM']!]: row.startDate && formatDate(row.startDate),
-                [L['HENKILO_KAYTTOOIKEUS_LOPPUPVM']!]: row.endDate && formatDate(row.endDate),
+                [L('HENKILO_NIMI')]: row.personName,
+                [L('HENKILO_OPPIJANUMERO')]: row.personOid,
+                [L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA')]: row.organisationName,
+                [L('OID')]: row.organisationOid,
+                [L('HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS')]: row.accessRightName,
+                [L('HENKILO_KAYTTOOIKEUS_ALKUPVM')]: row.startDate && formatDate(row.startDate),
+                [L('HENKILO_KAYTTOOIKEUS_LOPPUPVM')]: row.endDate && formatDate(row.endDate),
             })),
             fields: [
-                L['HENKILO_NIMI']!,
-                L['HENKILO_OPPIJANUMERO']!,
-                L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA']!,
-                L['OID']!,
-                L['HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS']!,
-                L['HENKILO_KAYTTOOIKEUS_ALKUPVM']!,
-                L['HENKILO_KAYTTOOIKEUS_LOPPUPVM']!,
+                L('HENKILO_NIMI'),
+                L('HENKILO_OPPIJANUMERO'),
+                L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA'),
+                L('OID'),
+                L('HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS'),
+                L('HENKILO_KAYTTOOIKEUS_ALKUPVM'),
+                L('HENKILO_KAYTTOOIKEUS_LOPPUPVM'),
             ],
         },
         {
@@ -52,6 +52,6 @@ export const downloadCSV = (csv: string) => {
     link.click();
 };
 
-export const exportReport = (data: AccessRightsReportRow[], L: Localisations) => downloadCSV(createCSV(data, L));
+export const exportReport = (data: AccessRightsReportRow[], L: LocalisationFn) => downloadCSV(createCSV(data, L));
 
 export default exportReport;

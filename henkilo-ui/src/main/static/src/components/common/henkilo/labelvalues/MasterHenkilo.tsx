@@ -42,7 +42,7 @@ const MasterHenkilo = ({ oidHenkilo, oppija }: OwnProps) => {
                         <TextButton
                             action={() => unlinkHenkilo({ masterOid: master.oidHenkilo, slaveOid: oidHenkilo })}
                         >
-                            {L['HENKILO_POISTA_LINKITYS']}
+                            {L('HENKILO_POISTA_LINKITYS')}
                         </TextButton>
                     </span>
                 )}

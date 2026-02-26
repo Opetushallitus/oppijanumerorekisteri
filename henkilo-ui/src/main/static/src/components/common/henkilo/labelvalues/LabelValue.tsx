@@ -34,7 +34,7 @@ const LabelValue = ({ values, readOnly, updateModelFieldAction, autofocus, requi
                 }}
             >
                 {!hideLabel && values.label ? (
-                    <span className="oph-bold">{L[values.label] + (required ? ' *' : '')}</span>
+                    <span className="oph-bold">{L(values.label) + (required ? ' *' : '')}</span>
                 ) : (
                     <span>&nbsp;</span>
                 )}

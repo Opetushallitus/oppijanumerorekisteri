@@ -41,7 +41,7 @@ export const JarjestelmatunnusPerustiedot = () => {
                 dispatch(
                     add({
                         id: `jarjestelmatunnus-edit-${Math.random()}`,
-                        header: L['JARJESTELMATUNNUS_PAIVITYS_ONNISTUI'],
+                        header: L('JARJESTELMATUNNUS_PAIVITYS_ONNISTUI'),
                         type: 'ok',
                     })
                 );
@@ -51,7 +51,7 @@ export const JarjestelmatunnusPerustiedot = () => {
                 dispatch(
                     add({
                         id: `jarjestelmatunnus-edit-${Math.random()}`,
-                        header: L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE'],
+                        header: L('NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE'),
                         type: 'error',
                     })
                 );
@@ -60,7 +60,7 @@ export const JarjestelmatunnusPerustiedot = () => {
 
     return (
         <>
-            <h2 className="jarjestelmatunnus-edit-header">{L['PALVELUN_PERUSTIEDOT']}</h2>
+            <h2 className="jarjestelmatunnus-edit-header">{L('PALVELUN_PERUSTIEDOT')}</h2>
             <div className="jarjestelmatunnus-edit-info">
                 <div className="jarjestelmatunnus-perustiedot">
                     {muokkaa ? (
@@ -68,7 +68,7 @@ export const JarjestelmatunnusPerustiedot = () => {
                             <OphDsInput
                                 id="palvelunnimi"
                                 defaultValue={henkilo?.sukunimi}
-                                label={L['HENKILO_PALVELUN_NIMI']!}
+                                label={L('HENKILO_PALVELUN_NIMI')}
                                 onChange={setPalvelunNimi}
                             />
                             <div className="jarjestelmatunnus-edit-buttons">
@@ -78,35 +78,35 @@ export const JarjestelmatunnusPerustiedot = () => {
                                     disabled={isUpdatingHenkilo || !palvelunNimi}
                                     data-test-id="tallenna"
                                 >
-                                    {L['TALLENNA']}
+                                    {L('TALLENNA')}
                                 </button>
                                 <button
                                     className="oph-ds-button oph-ds-button-bordered"
                                     onClick={() => setMuokkaa(false)}
                                     disabled={isUpdatingHenkilo}
                                 >
-                                    {L['PERUUTA']}
+                                    {L('PERUUTA')}
                                 </button>
                             </div>
                         </form>
                     ) : (
                         <>
                             <div className="jarjestelmatunnus-edit-info-grid">
-                                <div>{L['HENKILO_PALVELUN_NIMI']}</div>
+                                <div>{L('HENKILO_PALVELUN_NIMI')}</div>
                                 <div data-test-id="palvelunnimi">{henkilo?.sukunimi}</div>
                             </div>
                             <button className="oph-ds-button" onClick={() => setMuokkaa(true)}>
-                                {L['MUOKKAA_PALVELUN_NIMEA']}
+                                {L('MUOKKAA_PALVELUN_NIMEA')}
                             </button>
                         </>
                     )}
                 </div>
                 <div>
-                    <h3>{L['OAUTH2_TUNNUS_HALLINTA']}</h3>
+                    <h3>{L('OAUTH2_TUNNUS_HALLINTA')}</h3>
 
-                    <p>{L['OAUTH2_TUNNUS_SELITE']}</p>
+                    <p>{L('OAUTH2_TUNNUS_SELITE')}</p>
                     <p>
-                        <span>{L['OAUTH2_TUNNUS_OHJE']}</span>
+                        <span>{L('OAUTH2_TUNNUS_OHJE')}</span>
                         <a
                             href="https://wiki.eduuni.fi/x/Md8hHw"
                             target="_blank"
@@ -119,8 +119,8 @@ export const JarjestelmatunnusPerustiedot = () => {
                     {!!jarjestelmatunnus?.oauth2Credentials?.length && (
                         <div className="jarjestelmatunnus-edit-oauth2-grid">
                             <div>client_id</div>
-                            <div>{L['LUOTU']}</div>
-                            <div>{L['KASITTELIJA']}</div>
+                            <div>{L('LUOTU')}</div>
+                            <div>{L('KASITTELIJA')}</div>
                             {jarjestelmatunnus.oauth2Credentials.map((o) => (
                                 <React.Fragment key={o.created}>
                                     <div data-test-id="oauth2clientid">{o.clientId}</div>
@@ -135,19 +135,19 @@ export const JarjestelmatunnusPerustiedot = () => {
                         </div>
                     )}
                     <button className="oph-ds-button" onClick={() => setOauth2Modal(true)} data-test-id="oauth2">
-                        {L['OAUTH2_TUNNUS_UUSI']}
+                        {L('OAUTH2_TUNNUS_UUSI')}
                     </button>
                 </div>
                 <div>
-                    <h3>{L['CAS_TUNNUS_HALLINTA']}</h3>
+                    <h3>{L('CAS_TUNNUS_HALLINTA')}</h3>
                     <div className="jarjestelmatunnus-edit-info-grid">
-                        <div>{L['CAS_TUNNUS']}</div>
+                        <div>{L('CAS_TUNNUS')}</div>
                         <div data-test-id="castunnus">{jarjestelmatunnus?.kayttajatunnus}</div>
-                        <div>{L['DUPLIKAATIT_OIDHENKILO']}</div>
+                        <div>{L('DUPLIKAATIT_OIDHENKILO')}</div>
                         <div data-test-id="oid">{params.oid}</div>
                     </div>
                     <button className="oph-ds-button" onClick={() => setCasModal(true)} data-test-id="cas">
-                        {L['CAS_TUNNUS_UUSI']}
+                        {L('CAS_TUNNUS_UUSI')}
                     </button>
                 </div>
             </div>

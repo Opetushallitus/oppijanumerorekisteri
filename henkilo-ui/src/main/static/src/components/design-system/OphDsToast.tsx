@@ -44,7 +44,7 @@ export const OphDsToast = ({ id, body, header, type }: ToastProps) => {
             <div className="oph-ds-toast-body">{body}</div>
             <button
                 type="button"
-                aria-label={L['TUONTIDATA_SULJE']}
+                aria-label={L('TUONTIDATA_SULJE')}
                 className="oph-ds-toast-close-button"
                 onClick={() => dispatch(remove(id))}
             >

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Localisations } from '../../../types/localisation.type';
+import { LocalisationFn } from '../../../types/localisation.type';
 
 type Props = {
-    L: Localisations;
+    L: LocalisationFn;
     subOrganisationValue: boolean;
     subOrganisationAction: (arg?: React.ChangeEvent<HTMLInputElement>) => void;
 };
@@ -16,7 +16,7 @@ const SubOrganisationCheckbox = ({ L, subOrganisationValue, subOrganisationActio
             onChange={subOrganisationAction}
             checked={subOrganisationValue}
         />
-        <span className="oph-checkable-text"> {L['HENKILOHAKU_FILTERS_ALIORGANISAATIOISTA']}</span>
+        <span className="oph-checkable-text"> {L('HENKILOHAKU_FILTERS_ALIORGANISAATIOISTA')}</span>
     </label>
 );
 

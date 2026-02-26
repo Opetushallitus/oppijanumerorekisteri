@@ -41,8 +41,8 @@ const YksiloiHetutonButton = (props: OwnProps) => {
                           notL10nText: 'YKSILOI_PUUTTUVAT_TIEDOT_TEXT',
                       })
             }
-            normalLabel={L['YKSILOI_LINKKI']}
-            confirmLabel={L['YKSILOI_LINKKI_CONFIRM']}
+            normalLabel={L('YKSILOI_LINKKI')}
+            confirmLabel={L('YKSILOI_LINKKI_CONFIRM')}
             disabled={props.disabled}
             notification={notification}
             removeNotification={() => setNotification(undefined)}

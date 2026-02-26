@@ -74,7 +74,7 @@ const KayttooikeusryhmaSelect = (props: Props) => {
             <div className="flex-1 flex-same-size">
                 <input
                     className="oph-input"
-                    placeholder={L['OMATTIEDOT_RAJAA_LISTAUSTA']}
+                    placeholder={L('OMATTIEDOT_RAJAA_LISTAUSTA')}
                     type="text"
                     value={hakutermi}
                     onChange={(event) => setHakutermi(event.target.value)}
@@ -113,7 +113,7 @@ const KayttooikeusryhmaSelect = (props: Props) => {
                     onClick={onSubmit}
                     disabled={!valittu}
                 >
-                    {L['OMATTIEDOT_LISAA_HAETTAVIIN_KAYTTOOIKEUSRYHMIIN']}
+                    {L('OMATTIEDOT_LISAA_HAETTAVIIN_KAYTTOOIKEUSRYHMIIN')}
                 </button>
             </div>
         </div>

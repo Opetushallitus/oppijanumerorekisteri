@@ -23,12 +23,12 @@ export const JarjestelmatunnusEditPage = () => {
 
     useRedirectByUser(params.oid, 'PALVELU');
     const { L } = useLocalisations();
-    useTitle(L['JARJESTELMATUNNUKSEN_HALLINTA']);
+    useTitle(L('JARJESTELMATUNNUKSEN_HALLINTA'));
     useNavigation(jarjestelmatunnusNavigation(params.oid), false);
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
 
     return (
-        <OphDsPage header={L['JARJESTELMATUNNUKSEN_HALLINTA']!}>
+        <OphDsPage header={L('JARJESTELMATUNNUKSEN_HALLINTA')}>
             <OphDsCard>
                 <JarjestelmatunnusPerustiedot />
             </OphDsCard>

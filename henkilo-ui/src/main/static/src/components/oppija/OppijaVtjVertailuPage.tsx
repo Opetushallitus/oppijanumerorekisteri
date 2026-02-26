@@ -34,7 +34,7 @@ export const OppijaVtjVertailuPage = () => {
     const yksilointitiedotQuery = useGetYksilointitiedotQuery(oid);
     const [yliajaYksiloimaton] = usePutYliajaYksiloimatonMutation();
 
-    useTitle(L['TITLE_VTJ_VERTAILU']);
+    useTitle(L('TITLE_VTJ_VERTAILU'));
     useNavigation(oppijaNavigation, false);
 
     async function overrideHenkiloInformation(oid: string): Promise<void> {
@@ -44,7 +44,7 @@ export const OppijaVtjVertailuPage = () => {
                 dispatch(
                     add({
                         id: `HENKILOVTJYLIAJOISUCCESS-${Math.random()}`,
-                        header: L['HENKILO_VTJ_YLIAJA_SUCCESS'],
+                        header: L('HENKILO_VTJ_YLIAJA_SUCCESS'),
                         type: 'ok',
                     })
                 );
@@ -53,7 +53,7 @@ export const OppijaVtjVertailuPage = () => {
                 dispatch(
                     add({
                         id: `HENKILOVTJYLIAJOIFAILURE-${Math.random()}`,
-                        header: L['HENKILO_VTJ_YLIAJA_FAILURE'],
+                        header: L('HENKILO_VTJ_YLIAJA_FAILURE'),
                         type: 'error',
                     })
                 );
@@ -79,10 +79,10 @@ export const OppijaVtjVertailuPage = () => {
             header={henkilo ? `${henkilo?.sukunimi}, ${henkilo?.etunimet}` : '...'}
             tabs={<OppijaTabs oid={oid} />}
         >
-            <h2>{L['HENKILO_VTJ_VERTAILU']}</h2>
+            <h2>{L('HENKILO_VTJ_VERTAILU')}</h2>
             <VtjVertailuListaus henkilo={henkilo} />
             <Button action={() => overrideHenkiloInformation(oid)} disabled={isDisabled()}>
-                {L['HENKILO_VTJ_YLIAJA']}
+                {L('HENKILO_VTJ_YLIAJA')}
             </Button>
         </OphDsPage>
     );

@@ -31,7 +31,7 @@ const KayttooikeusryhmaSelectModal = (props: Props) => {
     const validationMessage: ValidationMessage = {
         id: 'KAYTTOOIKEUSRYHMA_VALINTA_EI_SALLITTUJA',
         isValid,
-        labelLocalised: L['KAYTTOOIKEUSRYHMA_VALINTA_EI_SALLITTUJA'],
+        labelLocalised: L('KAYTTOOIKEUSRYHMA_VALINTA_EI_SALLITTUJA'),
     };
 
     return (
@@ -41,7 +41,7 @@ const KayttooikeusryhmaSelectModal = (props: Props) => {
                 validationMessages={{ key: validationMessage }}
                 buttonAction={() => setVisible(true)}
             >
-                <SpinnerInButton show={!!props.loading} /> {L['OMATTIEDOT_VALITSE_KAYTTOOIKEUSRYHMA']}
+                <SpinnerInButton show={!!props.loading} /> {L('OMATTIEDOT_VALITSE_KAYTTOOIKEUSRYHMA')}
             </ValidationMessageButton>
             {visible && (
                 <OphModal onClose={() => setVisible(false)} onOverlayClick={() => setVisible(false)}>

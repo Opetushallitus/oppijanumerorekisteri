@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLocation } from 'react-router';
+import { skipToken } from '@reduxjs/toolkit/query/react';
 
 import { RekisteroidyPage } from './RekisteroidyPage';
 import Loader from '../../components/common/icons/Loader';
@@ -13,11 +14,7 @@ const RekisteroidyContainer = () => {
     const { getLocalisations } = useLocalisations(true);
     const search = new URLSearchParams(location.search);
     const temporaryToken = search.get('temporaryKutsuToken');
-    const {
-        data: kutsu,
-        isLoading: isKutsuLoading,
-        isError,
-    } = useGetKutsuByTokenQuery(temporaryToken!, { skip: !temporaryToken });
+    const { data: kutsu, isLoading: isKutsuLoading, isError } = useGetKutsuByTokenQuery(temporaryToken ?? skipToken);
     const locale = toSupportedLocale(kutsu?.asiointikieli);
     const L = getLocalisations(kutsu?.asiointikieli);
 

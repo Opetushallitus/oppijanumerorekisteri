@@ -12,7 +12,7 @@ const KayttooikeusryhmatNimi = (props: Props) => {
     const { L } = useLocalisations();
     return (
         <div className="kayttooikeusryhmat-nimi">
-            <h4>{L['KAYTTOOIKEUSRYHMAT_LISAA_NIMI']}</h4>
+            <h4>{L('KAYTTOOIKEUSRYHMAT_LISAA_NIMI')}</h4>
             <div className="oph-field oph-field-inline oph-field-is-required">
                 <label className="oph-label oph-bold oph-label-short" htmlFor="kayttooikeusryhma-nimi-fi">
                     FI

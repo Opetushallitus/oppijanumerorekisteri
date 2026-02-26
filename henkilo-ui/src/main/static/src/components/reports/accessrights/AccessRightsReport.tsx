@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { skipToken } from '@reduxjs/toolkit/query/react';
 
 import Loader from '../../common/icons/Loader';
 import Controls from './AccessRightsReportControls';
@@ -15,9 +16,9 @@ export const AccessRightsReport = () => {
     const [filter, setFilter] = useState<string | undefined>(undefined);
     const [filterValues, setFilterValues] = useState<string[]>([]);
     const { L } = useLocalisations();
-    useTitle(L['KAYTTOOIKEUSRAPORTTI_TITLE']);
+    useTitle(L('KAYTTOOIKEUSRAPORTTI_TITLE'));
     useNavigation(mainNavigation, false);
-    const { data, isFetching } = useGetAccessRightReportQuery(oid!, { skip: !oid });
+    const { data, isFetching } = useGetAccessRightReportQuery(oid ?? skipToken);
 
     useEffect(() => {
         setFilter(undefined);
@@ -29,7 +30,7 @@ export const AccessRightsReport = () => {
     return (
         <div className="mainContent wrapper">
             <div className="flex-horizontal">
-                <span className="oph-h2 oph-bold henkilohaku-main-header">{L['KAYTTOOIKEUSRAPORTTI_TITLE']}</span>
+                <span className="oph-h2 oph-bold henkilohaku-main-header">{L('KAYTTOOIKEUSRAPORTTI_TITLE')}</span>
             </div>
             <Controls
                 disabled={isFetching}

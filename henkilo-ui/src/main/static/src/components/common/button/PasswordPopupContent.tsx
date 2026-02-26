@@ -36,7 +36,7 @@ const PasswordPopupContent = ({ oidHenkilo }: OwnProps) => {
                     add({
                         id: `Password_update_${Math.random()}`,
                         type: 'ok',
-                        header: L['NOTIFICATION_SALASANA_OK_TOPIC'],
+                        header: L('NOTIFICATION_SALASANA_OK_TOPIC'),
                     })
                 );
             })
@@ -45,7 +45,7 @@ const PasswordPopupContent = ({ oidHenkilo }: OwnProps) => {
                     add({
                         id: `Password_update_${Math.random()}`,
                         type: 'error',
-                        header: L['NOTIFICATION_SALASANA_ERROR_TOPIC'],
+                        header: L('NOTIFICATION_SALASANA_ERROR_TOPIC'),
                     })
                 );
             });
@@ -55,26 +55,26 @@ const PasswordPopupContent = ({ oidHenkilo }: OwnProps) => {
         <div className={styles.passwordPopupContent}>
             <OphDsInput
                 id="password"
-                label={L['SALASANA_UUSI']!}
+                label={L('SALASANA_UUSI')}
                 type="password"
-                error={passwordValid ? undefined : L['SALASANA_EI_TAYTA_VAATIMUKSIA']}
+                error={passwordValid ? undefined : L('SALASANA_EI_TAYTA_VAATIMUKSIA')}
                 onChange={setPassword}
             />
             <OphDsInput
                 id="passwordConfirmed"
-                label={L['SALASANA_VAHVISTA']!}
+                label={L('SALASANA_VAHVISTA')}
                 type="password"
-                error={passwordConfirmedValid ? undefined : L['SALASANA_EI_TASMAA']}
+                error={passwordConfirmedValid ? undefined : L('SALASANA_EI_TASMAA')}
                 onChange={setPasswordConfirmed}
             />
-            <p>{L['SALASANA_SAANTO']}</p>
+            <p>{L('SALASANA_SAANTO')}</p>
             <div>
                 <button
                     className="oph-ds-button"
                     disabled={!passwordValid || !passwordConfirmedValid}
                     onClick={() => changePassword()}
                 >
-                    {L['SALASANA_ASETA']}
+                    {L('SALASANA_ASETA')}
                 </button>
             </div>
         </div>

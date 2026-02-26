@@ -83,7 +83,7 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
             if (!hasError('kutsumanimi') && !isValidKutsumanimi(henkilo.etunimet, henkilo.kutsumanimi)) {
                 errors.push({
                     name: 'kutsumanimi',
-                    value: L['HENKILO_KUTSUMANIMI_VALIDOINTI']!,
+                    value: L('HENKILO_KUTSUMANIMI_VALIDOINTI'),
                 });
                 newState.errors = errors;
             } else if (hasError('kutsumanimi') && isValidKutsumanimi(henkilo.etunimet, henkilo.kutsumanimi)) {
@@ -111,49 +111,49 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
         if (!henkilo.etunimet) {
             errors.push({
                 name: 'etunimet',
-                value: L['LOMAKE_PAKOLLINEN_TIETO']!,
+                value: L('LOMAKE_PAKOLLINEN_TIETO'),
             });
         }
         if (!henkilo.kutsumanimi) {
             errors.push({
                 name: 'kutsumanimi',
-                value: L['LOMAKE_PAKOLLINEN_TIETO']!,
+                value: L('LOMAKE_PAKOLLINEN_TIETO'),
             });
         }
         if (!isValidKutsumanimi(henkilo.etunimet, henkilo.kutsumanimi)) {
             errors.push({
                 name: 'kutsumanimi',
-                value: L['HENKILO_KUTSUMANIMI_VALIDOINTI']!,
+                value: L('HENKILO_KUTSUMANIMI_VALIDOINTI'),
             });
         }
         if (!henkilo.sukunimi) {
             errors.push({
                 name: 'sukunimi',
-                value: L['LOMAKE_PAKOLLINEN_TIETO']!,
+                value: L('LOMAKE_PAKOLLINEN_TIETO'),
             });
         }
         if (!henkilo.syntymaaika) {
             errors.push({
                 name: 'syntymaaika',
-                value: L['LOMAKE_PAKOLLINEN_TIETO']!,
+                value: L('LOMAKE_PAKOLLINEN_TIETO'),
             });
         }
         if (!henkilo.sukupuoli) {
             errors.push({
                 name: 'sukupuoli',
-                value: L['LOMAKE_PAKOLLINEN_TIETO']!,
+                value: L('LOMAKE_PAKOLLINEN_TIETO'),
             });
         }
         if (!henkilo.aidinkieli) {
             errors.push({
                 name: 'aidinkieli',
-                value: L['LOMAKE_PAKOLLINEN_TIETO']!,
+                value: L('LOMAKE_PAKOLLINEN_TIETO'),
             });
         }
         if (!henkilo.kansalaisuus || henkilo.kansalaisuus.length === 0) {
             errors.push({
                 name: 'kansalaisuus',
-                value: L['LOMAKE_PAKOLLINEN_TIETO']!,
+                value: L('LOMAKE_PAKOLLINEN_TIETO'),
             });
         }
 
@@ -220,12 +220,12 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
     return (
         <form onSubmit={tallenna}>
             <div className="oph-field oph-field-is-required">
-                <label className="oph-label">{L['HENKILO_ETUNIMET']}</label>
+                <label className="oph-label">{L('HENKILO_ETUNIMET')}</label>
                 <input
                     className={classNames('oph-input', {
                         'oph-input-has-error': isSubmittedAndHasError('etunimet'),
                     })}
-                    placeholder={L['HENKILO_ETUNIMET']}
+                    placeholder={L('HENKILO_ETUNIMET')}
                     type="text"
                     name="etunimet"
                     onChange={onHenkiloInputChange}
@@ -233,12 +233,12 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
                 {renderErrors('etunimet')}
             </div>
             <div className="oph-field oph-field-is-required">
-                <label className="oph-label">{L['HENKILO_KUTSUMANIMI']}</label>
+                <label className="oph-label">{L('HENKILO_KUTSUMANIMI')}</label>
                 <input
                     className={classNames('oph-input', {
                         'oph-input-has-error': hasError('kutsumanimi'),
                     })}
-                    placeholder={L['HENKILO_KUTSUMANIMI']}
+                    placeholder={L('HENKILO_KUTSUMANIMI')}
                     type="text"
                     name="kutsumanimi"
                     onChange={onHenkiloInputChange}
@@ -246,12 +246,12 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
                 {renderErrors('kutsumanimi')}
             </div>
             <div className="oph-field oph-field-is-required">
-                <label className="oph-label">{L['HENKILO_SUKUNIMI']}</label>
+                <label className="oph-label">{L('HENKILO_SUKUNIMI')}</label>
                 <input
                     className={classNames('oph-input', {
                         'oph-input-has-error': isSubmittedAndHasError('sukunimi'),
                     })}
-                    placeholder={L['HENKILO_SUKUNIMI']}
+                    placeholder={L('HENKILO_SUKUNIMI')}
                     type="text"
                     name="sukunimi"
                     onChange={onHenkiloInputChange}
@@ -259,7 +259,7 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
                 {renderErrors('sukunimi')}
             </div>
             <div className="oph-field oph-field-is-required">
-                <label className="oph-label">{L['HENKILO_SYNTYMAAIKA']}</label>
+                <label className="oph-label">{L('HENKILO_SYNTYMAAIKA')}</label>
                 <div />
                 <ReactDatePicker
                     className={`oph-input ${isSubmittedAndHasError('syntymaaika') ? 'oph-input-has-error' : ''}`}
@@ -277,7 +277,7 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
                 {renderErrors('syntymaaika')}
             </div>
             <div className="oph-field oph-field-is-required">
-                <label className="oph-label">{L['HENKILO_SUKUPUOLI']}</label>
+                <label className="oph-label">{L('HENKILO_SUKUPUOLI')}</label>
                 <Select
                     options={sukupuoliOptions}
                     onChange={(value) =>
@@ -290,12 +290,12 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
                     className={classNames({
                         'oph-input-has-error': isSubmittedAndHasError('sukupuoli'),
                     })}
-                    placeholder={L['HENKILO_SUKUPUOLI']}
+                    placeholder={L('HENKILO_SUKUPUOLI')}
                 />
                 {renderErrors('sukupuoli')}
             </div>
             <div className="oph-field oph-field-is-required">
-                <label className="oph-label">{L['HENKILO_AIDINKIELI']}</label>
+                <label className="oph-label">{L('HENKILO_AIDINKIELI')}</label>
                 <Select
                     options={kieliOptions}
                     onChange={(value) =>
@@ -308,12 +308,12 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
                     className={classNames({
                         'oph-input-has-error': isSubmittedAndHasError('aidinkieli'),
                     })}
-                    placeholder={L['HENKILO_AIDINKIELI']}
+                    placeholder={L('HENKILO_AIDINKIELI')}
                 />
                 {renderErrors('aidinkieli')}
             </div>
             <div className="oph-field oph-field-is-required">
-                <label className="oph-label">{L['HENKILO_KANSALAISUUS']}</label>
+                <label className="oph-label">{L('HENKILO_KANSALAISUUS')}</label>
                 <Select
                     options={kansalaisuusOptions}
                     onChange={(values) =>
@@ -329,17 +329,17 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
                     className={classNames({
                         'oph-input-has-error': isSubmittedAndHasError('kansalaisuus'),
                     })}
-                    placeholder={L['HENKILO_KANSALAISUUS']}
+                    placeholder={L('HENKILO_KANSALAISUUS')}
                 />
                 {renderErrors('kansalaisuus')}
             </div>
             <div className="oph-field">
-                <label className="oph-label">{L['HENKILO_PASSINUMERO']}</label>
+                <label className="oph-label">{L('HENKILO_PASSINUMERO')}</label>
                 <input
                     className={classNames('oph-input', {
                         'oph-input-has-error': isSubmittedAndHasError('passinumero'),
                     })}
-                    placeholder={L['HENKILO_PASSINUMERO']}
+                    placeholder={L('HENKILO_PASSINUMERO')}
                     type="text"
                     name="passinumero"
                     onChange={onFormInputChange}
@@ -347,12 +347,12 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
                 {renderErrors('passinumero')}
             </div>
             <div className="oph-field">
-                <label className="oph-label">{L['YHTEYSTIETO_SAHKOPOSTI']}</label>
+                <label className="oph-label">{L('YHTEYSTIETO_SAHKOPOSTI')}</label>
                 <input
                     className={classNames('oph-input', {
                         'oph-input-has-error': isSubmittedAndHasError('sahkoposti'),
                     })}
-                    placeholder={L['YHTEYSTIETO_SAHKOPOSTI']}
+                    placeholder={L('YHTEYSTIETO_SAHKOPOSTI')}
                     type="email"
                     name="sahkoposti"
                     onChange={onFormInputChange}
@@ -362,16 +362,16 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
             <div className="oph-field">
                 {!state.loading ? (
                     <button type="submit" className="oph-button oph-button-primary" disabled={state.disabled}>
-                        {L['TALLENNA_LINKKI']}
+                        {L('TALLENNA_LINKKI')}
                     </button>
                 ) : (
                     <div style={{ display: 'inline-block' }}>
                         <Loader />
-                        <span>{L['LOMAKE_LOADING']}</span>
+                        <span>{L('LOMAKE_LOADING')}</span>
                     </div>
                 )}
                 {state.submitted && state.errors.length > 0 && (
-                    <span className="oph-field-text oph-error">{L['LOMAKE_SISALTAA_VIRHEITA']}</span>
+                    <span className="oph-field-text oph-error">{L('LOMAKE_SISALTAA_VIRHEITA')}</span>
                 )}
             </div>
         </form>

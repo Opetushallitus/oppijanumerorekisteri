@@ -11,7 +11,6 @@ import {
 import appleStore from '../../img/apple_store.svg';
 import googlePlay from '../../img/google_play.svg';
 import Loader from '../common/icons/Loader';
-import { Localisations } from '../../types/localisation.type';
 import { View } from '../../types/constants';
 import { useLocalisations } from '../../selectors';
 import { useAppDispatch } from '../../store';
@@ -67,12 +66,12 @@ const isMfaSetupEnabled = (idpEntityId?: string) => {
 };
 
 type MfaRegisteredProps = {
-    L: Localisations;
     idpEntityId?: string;
 };
 
-const MfaRegistered = ({ L, idpEntityId }: MfaRegisteredProps) => {
+const MfaRegistered = ({ idpEntityId }: MfaRegisteredProps) => {
     const dispatch = useAppDispatch();
+    const { L } = useLocalisations();
     const [postMfaDisable, { isLoading }] = usePostMfaDisableMutation();
     const [setupError, setSetupError] = useState<string>();
 
@@ -85,7 +84,7 @@ const MfaRegistered = ({ L, idpEntityId }: MfaRegisteredProps) => {
                     add({
                         id: `enable-mfa-${Math.random()}`,
                         type: 'ok',
-                        header: L.MFA_POISTETTU_KAYTOSTA,
+                        header: L('MFA_POISTETTU_KAYTOSTA'),
                     })
                 );
             })
@@ -94,7 +93,7 @@ const MfaRegistered = ({ L, idpEntityId }: MfaRegisteredProps) => {
                     add({
                         id: `enable-mfa-${Math.random()}`,
                         type: 'error',
-                        header: L.MFA_VIRHE,
+                        header: L('MFA_VIRHE'),
                     })
                 );
             });
@@ -106,7 +105,7 @@ const MfaRegistered = ({ L, idpEntityId }: MfaRegisteredProps) => {
                 <PhoneIcon />
             </div>
             <div>
-                <p className={styles.infoText}>{L.MFA_REKISTEROITY_INFO}</p>
+                <p className={styles.infoText}>{L('MFA_REKISTEROITY_INFO')}</p>
                 <div>
                     {isMfaSetupEnabled(idpEntityId) ? (
                         <>
@@ -116,7 +115,7 @@ const MfaRegistered = ({ L, idpEntityId }: MfaRegisteredProps) => {
                                 data-test-id="disable-mfa"
                                 disabled={isLoading}
                             >
-                                {L.MFA_POISTA_KAYTOSTA}
+                                {L('MFA_POISTA_KAYTOSTA')}
                             </button>
                             {setupError && <span className="error-txt">{setupError}</span>}
                         </>
@@ -127,9 +126,9 @@ const MfaRegistered = ({ L, idpEntityId }: MfaRegisteredProps) => {
                                 href="/service-provider-app/saml/logout"
                                 data-test-id="login-suomifi"
                             >
-                                {L.MFA_KIRJAUDU_ULOS_SUOMIFI_TUNNISTUKSEEN}
+                                {L('MFA_KIRJAUDU_ULOS_SUOMIFI_TUNNISTUKSEEN')}
                             </a>
-                            <span className={styles.greyInfo}>{L.MFA_SUOMIFI_DISABLE}</span>
+                            <span className={styles.greyInfo}>{L('MFA_SUOMIFI_DISABLE')}</span>
                         </>
                     )}
                 </div>
@@ -140,18 +139,18 @@ const MfaRegistered = ({ L, idpEntityId }: MfaRegisteredProps) => {
 
 type MfaUnregisteredProps = {
     setMfaSetup: (b: boolean) => void;
-    L: Localisations;
     idpEntityId?: string;
 };
 
-const MfaUnregistered = ({ setMfaSetup, L, idpEntityId }: MfaUnregisteredProps) => {
+const MfaUnregistered = ({ setMfaSetup, idpEntityId }: MfaUnregisteredProps) => {
+    const { L } = useLocalisations();
     return (
         <div className={styles.infoBody}>
             <div className={styles.icon}>
                 <PhoneIcon />
             </div>
             <div>
-                <p className={styles.infoText}>{L.MFA_OTA_KAYTTOON_INFO}</p>
+                <p className={styles.infoText}>{L('MFA_OTA_KAYTTOON_INFO')}</p>
                 <div>
                     {isMfaSetupEnabled(idpEntityId) ? (
                         <button
@@ -159,7 +158,7 @@ const MfaUnregistered = ({ setMfaSetup, L, idpEntityId }: MfaUnregisteredProps) 
                             onClick={() => setMfaSetup(true)}
                             data-test-id="start-mfa-setup"
                         >
-                            {L.MFA_OTA_KAYTTOON}
+                            {L('MFA_OTA_KAYTTOON')}
                         </button>
                     ) : (
                         <>
@@ -168,9 +167,9 @@ const MfaUnregistered = ({ setMfaSetup, L, idpEntityId }: MfaUnregisteredProps) 
                                 href="/service-provider-app/saml/logout"
                                 data-test-id="login-suomifi"
                             >
-                                {L.MFA_KIRJAUDU_ULOS_SUOMIFI_TUNNISTUKSEEN}
+                                {L('MFA_KIRJAUDU_ULOS_SUOMIFI_TUNNISTUKSEEN')}
                             </a>
-                            <span className={styles.greyInfo}>{L.MFA_SUOMIFI}</span>
+                            <span className={styles.greyInfo}>{L('MFA_SUOMIFI')}</span>
                         </>
                     )}
                 </div>
@@ -199,11 +198,11 @@ const MfaSetupStep = ({ icon, info, children }: MfaSetupStepProps) => {
 
 type MfaSetupProps = {
     setMfaSetup: (b: boolean) => void;
-    L: Localisations;
 };
 
-const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
+const MfaSetup = ({ setMfaSetup }: MfaSetupProps) => {
     const dispatch = useAppDispatch();
+    const { L } = useLocalisations();
     const { data, isLoading: isGetLoading, isSuccess } = useGetMfaSetupQuery();
     const [postMfaEnable, { isLoading: isPostLoading }] = usePostMfaEnableMutation();
     const pinInput = useRef<PinInput>(null);
@@ -214,7 +213,7 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
     if (!isSuccess) {
         return (
             <div className="error-txt" data-test-id="setup-error">
-                {L.MFA_TIETOJEN_HAKU_EPAONNISTUI}
+                {L('MFA_TIETOJEN_HAKU_EPAONNISTUI')}
             </div>
         );
     }
@@ -232,7 +231,7 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
                         add({
                             id: `enable-mfa-${Math.random()}`,
                             type: 'ok',
-                            header: L.MFA_OTETTU_KAYTTOON,
+                            header: L('MFA_OTETTU_KAYTTOON'),
                         })
                     );
                     setMfaSetup(false);
@@ -241,7 +240,7 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
                         add({
                             id: `enable-mfa-${Math.random()}`,
                             type: 'error',
-                            header: L.MFA_VIRHE,
+                            header: L('MFA_VIRHE'),
                         })
                     );
                 }
@@ -252,7 +251,7 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
                         add({
                             id: `enable-mfa-${Math.random()}`,
                             type: 'error',
-                            header: L.MFA_VAARA_KOODI,
+                            header: L('MFA_VAARA_KOODI'),
                         })
                     );
                     pinInput.current?.clear();
@@ -262,7 +261,7 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
                         add({
                             id: `enable-mfa-${Math.random()}`,
                             type: 'error',
-                            header: L.MFA_VIRHE,
+                            header: L('MFA_VIRHE'),
                         })
                     );
                 }
@@ -272,7 +271,7 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
     return (
         <div>
             <div className={styles.setupContainer}>
-                <MfaSetupStep icon={<StepOneIcon />} info={L.MFA_LATAA_APP_INFO!}>
+                <MfaSetupStep icon={<StepOneIcon />} info={L('MFA_LATAA_APP_INFO')}>
                     <a
                         href="https://apps.apple.com/us/app/google-authenticator/id388497605"
                         target="_blank"
@@ -289,10 +288,10 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
                         <img src={googlePlay} alt="GooglePlay" width="180" height="53" />
                     </a>
                 </MfaSetupStep>
-                <MfaSetupStep icon={<StepTwoIcon />} info={L.MFA_LUE_QR_KOODI_INFO!}>
+                <MfaSetupStep icon={<StepTwoIcon />} info={L('MFA_LUE_QR_KOODI_INFO')}>
                     <img src={data.qrCodeDataUri} alt={data.secretKey} width="180" height="180" />
                 </MfaSetupStep>
-                <MfaSetupStep icon={<StepThreeIcon />} info={L.MFA_SYOTA_KOODI_INFO!}>
+                <MfaSetupStep icon={<StepThreeIcon />} info={L('MFA_SYOTA_KOODI_INFO')}>
                     <PinInput
                         length={6}
                         initialValue=""
@@ -320,12 +319,12 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
                         disabled={isPostLoading}
                         ref={pinInput}
                     />
-                    {isPostLoading && <div>{L.MFA_OTETAAN_KAYTTOON}</div>}
+                    {isPostLoading && <div>{L('MFA_OTETAAN_KAYTTOON')}</div>}
                 </MfaSetupStep>
             </div>
             <hr className={styles.hr} />
             <div className={styles.greyInfo}>
-                {L.MFA_KOODI_VAIHTOEHTO_INFO}{' '}
+                {L('MFA_KOODI_VAIHTOEHTO_INFO')}{' '}
                 <span
                     className={styles.secretKey}
                     data-test-id="secret-key"
@@ -358,26 +357,26 @@ const Mfa = ({ view, henkiloOid }: MfaProps) => {
     const mfaSectionLabelId = useId();
 
     const mfaSetupComponent = isMfaSetup ? (
-        <MfaSetup setMfaSetup={setMfaSetup} L={L} />
+        <MfaSetup setMfaSetup={setMfaSetup} />
     ) : (
-        <MfaUnregistered setMfaSetup={setMfaSetup} L={L} idpEntityId={omattiedot?.idpEntityId} />
+        <MfaUnregistered setMfaSetup={setMfaSetup} idpEntityId={omattiedot?.idpEntityId} />
     );
     const mfaStateComponent = omattiedot?.mfaProvider ? (
-        <MfaRegistered L={L} idpEntityId={omattiedot?.idpEntityId} />
+        <MfaRegistered idpEntityId={omattiedot?.idpEntityId} />
     ) : (
         mfaSetupComponent
     );
     return (
         <section aria-labelledby={mfaSectionLabelId} className="henkiloViewUserContentWrapper">
-            <h2 id={mfaSectionLabelId}>{L.TIETOTURVA_ASETUKSET_OTSIKKO}</h2>
+            <h2 id={mfaSectionLabelId}>{L('TIETOTURVA_ASETUKSET_OTSIKKO')}</h2>
             <div className={styles.infoTitle}>
                 <span className={styles.mfaTitle}>
-                    {L.MFA_TUNNISTAUTUMINEN}
-                    {isMfaSetup && ` - ${L.MFA_KAYTTOONOTTO}`}
+                    {L('MFA_TUNNISTAUTUMINEN')}
+                    {isMfaSetup && ` - ${L('MFA_KAYTTOONOTTO')}`}
                 </span>
                 {!isMfaSetup && (
                     <span className={styles.mfaEnabled} data-test-id="mfa-status">
-                        {userMfaProvider ? L.MFA_KAYTOSSA : L.MFA_EI_KAYTOSSA}
+                        {userMfaProvider ? L('MFA_KAYTOSSA') : L('MFA_EI_KAYTOSSA')}
                     </span>
                 )}
             </div>

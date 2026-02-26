@@ -158,12 +158,12 @@ const OphTable = <T,>({ table, isLoading, renderSubComponent }: OphTableProps<T>
                             }}
                             disabled={isLoading || !table.getCanPreviousPage()}
                         >
-                            {L['TAULUKKO_EDELLINEN']}
+                            {L('TAULUKKO_EDELLINEN')}
                         </button>
                     </div>
                     <div className="center">
                         <span className="page-info">
-                            {L['TAULUKKO_SIVU']}
+                            {L('TAULUKKO_SIVU')}
                             <div className="page-jump">
                                 <input
                                     ref={pageRef as LegacyRef<HTMLInputElement> | undefined}
@@ -186,7 +186,7 @@ const OphTable = <T,>({ table, isLoading, renderSubComponent }: OphTableProps<T>
                             >
                                 {[10, 20, 50, 100].map((pageSize) => (
                                     <option key={pageSize} value={pageSize}>
-                                        {pageSize} {L['TAULUKKO_RIVIA']}
+                                        {pageSize} {L('TAULUKKO_RIVIA')}
                                     </option>
                                 ))}
                             </select>
@@ -203,7 +203,7 @@ const OphTable = <T,>({ table, isLoading, renderSubComponent }: OphTableProps<T>
                             }}
                             disabled={isLoading || !table.getCanNextPage()}
                         >
-                            {L['TAULUKKO_SEURAAVA']}
+                            {L('TAULUKKO_SEURAAVA')}
                         </button>
                     </div>
                 </div>

@@ -52,7 +52,7 @@ const ToggleKayttooikeusryhmaStateModal = (props: OwnProps) => {
                     add({
                         id: `passivoi-kayttooikeusryhma-error-${Math.random()}`,
                         type: 'error',
-                        header: L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'],
+                        header: L('KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'),
                     })
                 )
             );
@@ -70,7 +70,7 @@ const ToggleKayttooikeusryhmaStateModal = (props: OwnProps) => {
                     add({
                         id: `passivoi-kayttooikeusryhma-error-${Math.random()}`,
                         type: 'error',
-                        header: L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'],
+                        header: L('KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'),
                     })
                 )
             );
@@ -80,19 +80,19 @@ const ToggleKayttooikeusryhmaStateModal = (props: OwnProps) => {
         <React.Fragment>
             {!isPassivoitu ? (
                 <button className="oph-button oph-button-cancel" onClick={() => setShowModal(true)}>
-                    {L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI']}
+                    {L('KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI')}
                 </button>
             ) : (
                 <button className="oph-button oph-button-primary" onClick={() => setShowModal(true)}>
-                    {L['KAYTTOOIKEUSRYHMAT_AKTIVOI']}
+                    {L('KAYTTOOIKEUSRYHMAT_AKTIVOI')}
                 </button>
             )}
             {showModal && (
                 <OphModal
                     title={
                         isPassivoitu
-                            ? L['KAYTTOOIKEUSRYHMAT_LISAA_AKTIVOI_VARMISTUS']
-                            : L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI_VARMISTUS']
+                            ? L('KAYTTOOIKEUSRYHMAT_LISAA_AKTIVOI_VARMISTUS')
+                            : L('KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI_VARMISTUS')
                     }
                     onClose={() => setShowModal(false)}
                 >
@@ -102,10 +102,10 @@ const ToggleKayttooikeusryhmaStateModal = (props: OwnProps) => {
                             onClick={() => (isPassivoitu ? aktivoi() : passivoi())}
                         >
                             <SpinnerInButton show={isWaitingRequest} />{' '}
-                            {isPassivoitu ? L['KAYTTOOIKEUSRYHMAT_AKTIVOI'] : L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI']}
+                            {isPassivoitu ? L('KAYTTOOIKEUSRYHMAT_AKTIVOI') : L('KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI')}
                         </button>
                         <button className="oph-button oph-button-cancel" onClick={() => setShowModal(false)}>
-                            {L['PERUUTA']}
+                            {L('PERUUTA')}
                         </button>
                     </div>
                 </OphModal>

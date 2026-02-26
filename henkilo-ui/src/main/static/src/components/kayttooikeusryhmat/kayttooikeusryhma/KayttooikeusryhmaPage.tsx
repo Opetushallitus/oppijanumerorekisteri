@@ -171,7 +171,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
                 const name =
                     organisaatio?.status === 'AKTIIVINEN'
                         ? localizedName
-                        : `${localizedName} (${L['KAYTTOOIKEUSRYHMAT_PASSIVOITU']})`;
+                        : `${localizedName} (${L('KAYTTOOIKEUSRYHMAT_PASSIVOITU')})`;
                 const orgData: OrganisaatioSelectObject = {
                     oid: organisaatio?.oid ?? '',
                     name,
@@ -464,9 +464,9 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
     };
 
     const _hasPassiveOrganisaatioRajoite = (): boolean => {
-        const passivoitu = L['KAYTTOOIKEUSRYHMAT_PASSIVOITU'];
+        const passivoitu = L('KAYTTOOIKEUSRYHMAT_PASSIVOITU');
         const organisaatioSelections = kayttooikeusryhmaForm.organisaatioSelections;
-        return !!organisaatioSelections?.some((selection) => selection.name.includes(passivoitu!));
+        return !!organisaatioSelections?.some((selection) => selection.name.includes(passivoitu));
     };
 
     const parsePayload = (): KayttooikeusryhmaRequest => ({
@@ -492,7 +492,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
                     add({
                         id: `create-kayttooikeusryhma-${Math.random()}`,
                         type: 'error',
-                        header: L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'],
+                        header: L('KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'),
                     })
                 );
                 throw error;
@@ -511,7 +511,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
                     add({
                         id: `update-kayttooikeusryhma-${props.kayttooikeusryhmaId}-${Math.random()}`,
                         type: 'error',
-                        header: L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'],
+                        header: L('KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'),
                     })
                 );
                 throw error;
@@ -519,7 +519,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
     }
 
     function getStatusString() {
-        return isPassivoitu ? ` (${L['KAYTTOOIKEUSRYHMAT_PASSIVOITU']})` : '';
+        return isPassivoitu ? ` (${L('KAYTTOOIKEUSRYHMAT_PASSIVOITU')})` : '';
     }
 
     function renderKayttooikeusryhmaMuokattu() {
@@ -531,7 +531,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
             if (muokattu && muokkaaja) {
                 return `${muokattu} (${muokkaaja})`;
             }
-            return L['EI_TIEDOSSA'];
+            return L('EI_TIEDOSSA');
         }
         return '';
     }
@@ -539,7 +539,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
     return (
         <div className="mainContent wrapper">
             <span className="oph-h2 oph-bold kayttooikeusryhma-header">
-                {L['KAYTTOOIKEUSRYHMAT_OTSIKKO'] + getStatusString()}
+                {L('KAYTTOOIKEUSRYHMAT_OTSIKKO') + getStatusString()}
             </span>
             <KayttooikeusryhmatNimi name={kayttooikeusryhmaForm.name} setName={_setName} />
 
@@ -589,7 +589,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
                         return props.kayttooikeusryhmaId ? updateKayttooikeusryhma() : createNewKayttooikeusryhma();
                     }}
                 >
-                    <SpinnerInButton show={toggleTallenna}></SpinnerInButton> {L['TALLENNA']}
+                    <SpinnerInButton show={toggleTallenna}></SpinnerInButton> {L('TALLENNA')}
                 </button>
                 <button
                     className="oph-button oph-button-cancel"
@@ -597,28 +597,28 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
                         navigate('/kayttooikeusryhmat');
                     }}
                 >
-                    {L['PERUUTA']}
+                    {L('PERUUTA')}
                 </button>
                 <ToggleKayttooikeusryhmaStateModal kayttooikeusryhmaId={props.kayttooikeusryhmaId} />
                 <span>
-                    {L['MUOKATTU']}: {renderKayttooikeusryhmaMuokattu()}
+                    {L('MUOKATTU')}: {renderKayttooikeusryhmaMuokattu()}
                 </span>
             </div>
 
             <LocalNotification
                 toggle={!_validateKayttooikeusryhmaInputs()}
                 type={'info'}
-                title={L['KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVA_TIETO_OTSIKKO']}
+                title={L('KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVA_TIETO_OTSIKKO')}
             >
                 <ul>
                     {_validateKayttooikeusryhmaNimet() ? null : (
-                        <li>{L['KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_NIMI']}</li>
+                        <li>{L('KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_NIMI')}</li>
                     )}
                     {_validateKayttooikeusryhmaDescriptions() ? null : (
-                        <li>{L['KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_KUVAUS']}</li>
+                        <li>{L('KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_KUVAUS')}</li>
                     )}
                     {_validateKayttooikeusryhmaPalveluKayttooikeusryhmaSelections() ? null : (
-                        <li>{L['KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_PALVELUKAYTTOOIKEUS']}</li>
+                        <li>{L('KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_PALVELUKAYTTOOIKEUS')}</li>
                     )}
                 </ul>
             </LocalNotification>
@@ -626,7 +626,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
             <LocalNotification
                 toggle={_hasPassiveOrganisaatioRajoite.call(this)}
                 type="warning"
-                title={L['KAYTTOOIKEUSRYHMAT_PASSIVOITU_VAROITUS']}
+                title={L('KAYTTOOIKEUSRYHMAT_PASSIVOITU_VAROITUS')}
             />
         </div>
     );

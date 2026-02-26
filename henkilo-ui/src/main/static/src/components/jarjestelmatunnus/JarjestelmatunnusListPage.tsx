@@ -33,7 +33,7 @@ const defaultCriteria: PostHenkilohakuRequest = {
 
 export const JarjestelmatunnusListPage = () => {
     const { L, locale } = useLocalisations();
-    useTitle(L['JARJESTELMATUNNUSTEN_HAKU']);
+    useTitle(L('JARJESTELMATUNNUSTEN_HAKU'));
     useNavigation(jarjestelmatunnusNavigation(), false);
     const [criteria, setCriteria] = useState<PostHenkilohakuRequest>(defaultCriteria);
     const skip =
@@ -58,18 +58,18 @@ export const JarjestelmatunnusListPage = () => {
     }, [organisaatiotyypit]);
 
     return (
-        <OphDsPage header={L['JARJESTELMATUNNUSTEN_HAKU']!}>
+        <OphDsPage header={L('JARJESTELMATUNNUSTEN_HAKU')}>
             <div className={styles.jarjestelmatunnusHakuForm}>
                 <OphDsInput
                     id="nameQuery"
-                    label={L['SUODATA_PALVELUN_NIMELLA']!}
+                    label={L('SUODATA_PALVELUN_NIMELLA')}
                     onChange={(nameQuery) => setCriteria({ ...criteria, nameQuery })}
                     defaultValue={criteria.nameQuery}
                     debounceTimeout={400}
                 />
                 <div>
                     <label htmlFor="kayttooikeusryhma-select" className="oph-ds-label">
-                        {L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
+                        {L('HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER')}
                     </label>
                     <Select
                         {...selectProps}
@@ -78,7 +78,7 @@ export const JarjestelmatunnusListPage = () => {
                             (o) => o.value === `${criteria.kayttooikeusryhmaId}`
                         )}
                         options={kayttooikeusryhmaOptions}
-                        placeholder={L['VALITSE_KAYTTOOIKEUSRYHMA']}
+                        placeholder={L('VALITSE_KAYTTOOIKEUSRYHMA')}
                         onChange={(id) =>
                             setCriteria({ ...criteria, kayttooikeusryhmaId: id ? parseInt(id.value) : undefined })
                         }
@@ -86,7 +86,7 @@ export const JarjestelmatunnusListPage = () => {
                     />
                 </div>
                 <OphDsOrganisaatioSelect
-                    label={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_ORGANISAATIO']}
+                    label={L('HAETTU_KAYTTOOIKEUSRYHMA_HAKU_ORGANISAATIO')}
                     onChange={setOrganisationCriteria}
                 />
                 <div />
@@ -94,7 +94,7 @@ export const JarjestelmatunnusListPage = () => {
                     <OphDsChechbox
                         checked={!!criteria.subOrganisation}
                         id="subOrganisations"
-                        label={L['HENKILOHAKU_FILTERS_ALIORGANISAATIOISTA']!}
+                        label={L('HENKILOHAKU_FILTERS_ALIORGANISAATIOISTA')}
                         disabled={
                             !criteria.organisaatioOids ||
                             criteria.organisaatioOids[0] === PropertySingleton.state.rootOrganisaatioOid
@@ -104,7 +104,7 @@ export const JarjestelmatunnusListPage = () => {
                 </div>
             </div>
             <OphDsTable
-                headers={[L['HENKILO_PALVELUN_NIMI']!, L['USERNAME']!, L['HENKILOHAKU_ORGANISAATIO']!]}
+                headers={[L('HENKILO_PALVELUN_NIMI'), L('USERNAME'), L('HENKILOHAKU_ORGANISAATIO')]}
                 isFetching={isFetching}
                 rows={(data ?? []).map((d) => [
                     <Link
@@ -126,7 +126,7 @@ export const JarjestelmatunnusListPage = () => {
                         ))}
                     </ul>,
                 ])}
-                rowDescriptionPartitive={L['JARJESTELMATUNNUSTA']}
+                rowDescriptionPartitive={L('JARJESTELMATUNNUSTA')}
             />
         </OphDsPage>
     );

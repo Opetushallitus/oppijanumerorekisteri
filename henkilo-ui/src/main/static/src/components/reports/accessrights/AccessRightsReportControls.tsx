@@ -54,7 +54,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
                     <div className="flex-item-1 ">
                         <Select
                             options={filterOptions}
-                            placeholder={L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
+                            placeholder={L('HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER')}
                             value={filterOptions.find((o) => o.value === filter)}
                             onChange={(option) => option && setFilter(option.value)}
                             isClearable
@@ -66,7 +66,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
                 <div className="flex-horizontal access-right-report-controls-row">
                     <div className="flex-item-1 ">
                         <Button action={dataExport}>
-                            {L['KAYTTOOIKEUSRAPORTTI_EXPORT']}
+                            {L('KAYTTOOIKEUSRAPORTTI_EXPORT')}
                             <DownloadIcon />
                         </Button>
                     </div>

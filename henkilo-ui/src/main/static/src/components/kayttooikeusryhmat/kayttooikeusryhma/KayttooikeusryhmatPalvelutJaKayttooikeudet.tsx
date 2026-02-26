@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Select, { SingleValue } from 'react-select';
+import { skipToken } from '@reduxjs/toolkit/query/react';
 
 import { PalveluJaKayttooikeusSelection } from './KayttooikeusryhmaPage';
 import PalveluJaKayttooikeusSelections from './PalveluJaKayttooikeusSelections';
@@ -23,9 +24,7 @@ const KayttooikeusryhmatPalvelutJaKayttooikeudet = (props: Props) => {
     const { L, locale } = useLocalisations();
     const { data: palvelut } = useGetPalvelutQuery();
     const value = props.palvelutSelection?.value;
-    const { data: palveluKayttooikeudet } = useGetPalveluKayttooikeudetQuery(value!, {
-        skip: !props.palvelutSelection?.value,
-    });
+    const { data: palveluKayttooikeudet } = useGetPalveluKayttooikeudetQuery(value ?? skipToken);
     const [palveluKayttooikeusOptions, setPalveluKayttooikeusOptions] = useState<SelectOption[]>([]);
     const palvelutOptions = useMemo(
         () =>
@@ -47,14 +46,14 @@ const KayttooikeusryhmatPalvelutJaKayttooikeudet = (props: Props) => {
 
     return (
         <div className="kayttooikeusryhmat-palvelu-ja-kayttooikeudet">
-            <h4>{L['KAYTTOOIKEUSRYHMAT_LISAA_PALVELUT_JA_OIKEUDET']} *</h4>
+            <h4>{L('KAYTTOOIKEUSRYHMAT_LISAA_PALVELUT_JA_OIKEUDET')} *</h4>
             <div className="flex-horizontal">
                 <div className="flex-item-1">
                     <Select
                         id="kayttooikeusryhmat-palvelut"
                         options={palvelutOptions}
                         value={props.palvelutSelection}
-                        placeholder={L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_PALVELU']}
+                        placeholder={L('KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_PALVELU')}
                         onChange={props.palvelutSelectAction}
                     />
                 </div>
@@ -67,7 +66,7 @@ const KayttooikeusryhmatPalvelutJaKayttooikeudet = (props: Props) => {
                                 options={palveluKayttooikeusOptions}
                                 isDisabled={!props.palvelutSelection}
                                 value={props.palveluKayttooikeusSelection}
-                                placeholder={L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUS']}
+                                placeholder={L('KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUS')}
                                 onChange={props.palveluKayttooikeusSelectAction}
                             />
                         </div>
@@ -79,7 +78,7 @@ const KayttooikeusryhmatPalvelutJaKayttooikeudet = (props: Props) => {
                             }
                             onClick={() => props.lisaaPalveluJaKayttooikeusAction()}
                         >
-                            {L['LISAA']}
+                            {L('LISAA')}
                         </button>
                     </div>
                 </div>

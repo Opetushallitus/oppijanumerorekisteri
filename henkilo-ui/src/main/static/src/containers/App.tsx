@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router';
 import { registerLocale, setDefaultLocale } from 'react-datepicker';
 import { fi } from 'date-fns/locale/fi';
+import { skipToken } from '@reduxjs/toolkit/query/react';
 
 import { useAppDispatch } from '../store';
 import { TopNavigation } from '../components/navigation/TopNavigation';
@@ -34,7 +35,7 @@ const PostPrequelApp = () => {
     const { isSuccess: isLocalisationsSuccess } = useGetLocalisationsQuery('henkilo-ui');
     const { L } = useLocalisations();
     const oid = omattiedot?.oidHenkilo;
-    useGetOmatOrganisaatiotQuery({ oid: oid!, locale: locale! }, { skip: !omattiedot?.oidHenkilo || !locale });
+    useGetOmatOrganisaatiotQuery(oid && locale ? { oid, locale } : skipToken);
 
     useEffect(() => {
         if (isOmattiedotSuccess && isLocaleSuccess && isLocalisationsSuccess && !!locale && !!L) {
@@ -43,7 +44,7 @@ const PostPrequelApp = () => {
                     add({
                         id: `EN_LOCALE_KEY-${Math.random()}`,
                         type: 'error',
-                        header: L['HENKILO_YHTEISET_ASIOINTIKIELI_EN_VAROITUS'],
+                        header: L('HENKILO_YHTEISET_ASIOINTIKIELI_EN_VAROITUS'),
                     })
                 );
             } else {

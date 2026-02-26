@@ -10,11 +10,16 @@ import { add } from '../../slices/toastSlice';
 import { useGetHenkiloByLoginTokenQuery } from '../../api/kayttooikeus';
 
 const EmailVerificationContainer = () => {
-    const dispatch = useAppDispatch();
     const params = useParams();
+    if (!params.loginToken) {
+        return;
+    }
+
+    const dispatch = useAppDispatch();
+    const locale = params.locale ?? 'fi';
     const { getLocalisations } = useLocalisations();
-    const { data: henkilo, isLoading, isError } = useGetHenkiloByLoginTokenQuery(params.loginToken!);
-    const L = getLocalisations(params.locale);
+    const { data: henkilo, isLoading, isError } = useGetHenkiloByLoginTokenQuery(params.loginToken);
+    const L = getLocalisations(locale);
 
     useTitle(L['TITLE_SAHKOPOSTI_VARMISTAMINEN']);
 
@@ -34,15 +39,15 @@ const EmailVerificationContainer = () => {
         );
     };
 
-    return isLoading || isError ? (
+    return isLoading || isError || !henkilo ? (
         <Loader />
     ) : (
         <EmailVerificationPage
-            henkilo={henkilo!}
-            loginToken={params.loginToken!}
+            henkilo={henkilo}
+            loginToken={params.loginToken}
             errorNotification={errorNotification}
             L={L}
-            locale={params.locale!}
+            locale={locale}
         />
     );
 };

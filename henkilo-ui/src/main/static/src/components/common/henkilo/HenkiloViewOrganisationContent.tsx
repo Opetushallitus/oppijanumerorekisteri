@@ -57,10 +57,10 @@ export const HenkiloViewOrganisationContent = (props: { henkiloOid: string }) =>
 
     return (
         <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
-            <h2 id={sectionLabelId}>{L['HENKILO_ORGANISAATIOT_OTSIKKO']}</h2>
+            <h2 id={sectionLabelId}>{L('HENKILO_ORGANISAATIOT_OTSIKKO')}</h2>
             <OphDsChechbox
                 id="showPassive"
-                label={L['HENKILO_NAYTA_PASSIIVISET_TEKSTI']!}
+                label={L('HENKILO_NAYTA_PASSIIVISET_TEKSTI')}
                 checked={showPassive}
                 onChange={() => setShowPassive(!showPassive)}
             />
@@ -77,7 +77,7 @@ export const HenkiloViewOrganisationContent = (props: { henkiloOid: string }) =>
                                     </span>
                                 </div>
                                 <div className="labelValue">
-                                    <span className="oph-bold">{L['HENKILO_ORGTUNNISTE']}:</span>
+                                    <span className="oph-bold">{L('HENKILO_ORGTUNNISTE')}:</span>
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     <span>{values.id}</span>
                                 </div>
@@ -86,11 +86,11 @@ export const HenkiloViewOrganisationContent = (props: { henkiloOid: string }) =>
                                         <ConfirmButton
                                             key="passivoiOrg"
                                             action={() => passivoiHenkiloOrganisation(values.id)}
-                                            confirmLabel={L['HENKILO_ORG_PASSIVOI_CONFIRM']}
-                                            normalLabel={L['HENKILO_ORG_PASSIVOI']}
+                                            confirmLabel={L('HENKILO_ORG_PASSIVOI_CONFIRM')}
+                                            normalLabel={L('HENKILO_ORG_PASSIVOI')}
                                         />
                                     ) : (
-                                        <Button disabled>{L['HENKILO_ORG_PASSIVOITU']}</Button>
+                                        <Button disabled>{L('HENKILO_ORG_PASSIVOITU')}</Button>
                                     )}
                                 </div>
                             </div>

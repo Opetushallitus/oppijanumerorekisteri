@@ -1,6 +1,7 @@
 import './HenkilohakuFilters.css';
 import React, { useMemo, useState } from 'react';
 import Select, { createFilter, SingleValue } from 'react-select';
+import { skipToken } from '@reduxjs/toolkit/query/react';
 
 import SubOrganisationCheckbox from './criterias/SubOrganisationCheckbox';
 import NoOrganisationCheckbox from './criterias/NoOrganisationCheckbox';
@@ -42,9 +43,7 @@ const HenkilohakuFilters = (props: OwnProps) => {
     const { data: allKayttooikeusryhmas } = useGetKayttooikeusryhmasQuery({ passiiviset: false });
     const { data: omattiedot } = useGetOmattiedotQuery();
     const oidHenkilo = omattiedot?.oidHenkilo;
-    const { data: henkilohakuOrganisaatiot, isLoading } = useGetHenkiloHakuOrganisaatiotQuery(oidHenkilo!, {
-        skip: !omattiedot,
-    });
+    const { data: henkilohakuOrganisaatiot, isLoading } = useGetHenkiloHakuOrganisaatiotQuery(oidHenkilo ?? skipToken);
 
     const ryhmaOptions = useMemo(() => {
         return _parseRyhmaOptions(henkilohakuOrganisaatiot ?? []);
@@ -87,7 +86,7 @@ const HenkilohakuFilters = (props: OwnProps) => {
         <div className="henkilohakufilters-wrapper">
             <div className="oph-field oph-field-inline">
                 <label className="oph-label oph-bold" aria-describedby="field-text">
-                    {L['HENKILOHAKU_FILTERS_HAEMYOS']}
+                    {L('HENKILOHAKU_FILTERS_HAEMYOS')}
                 </label>
                 {omattiedot?.isAdmin ? (
                     <div className="flex-inline">
@@ -130,7 +129,7 @@ const HenkilohakuFilters = (props: OwnProps) => {
                             className="oph-input flex-item-1 henkilohaku-organisaatiosuodatus"
                             type="text"
                             value={organisaatioSelection}
-                            placeholder={L['HENKILOHAKU_ORGANISAATIOSUODATUS']}
+                            placeholder={L('HENKILOHAKU_ORGANISAATIOSUODATUS')}
                             readOnly
                         />
                         <OrganisaatioSelectModal
@@ -150,7 +149,7 @@ const HenkilohakuFilters = (props: OwnProps) => {
                                 id="kayttooikeusryhmaFilter"
                                 options={kayttooikeusryhmas}
                                 value={kayttooikeusryhmas.find((o) => o.value === props.selectedKayttooikeus)}
-                                placeholder={L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
+                                placeholder={L('HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER')}
                                 onChange={props.kayttooikeusSelectionAction}
                                 isClearable
                             />
@@ -169,7 +168,7 @@ const HenkilohakuFilters = (props: OwnProps) => {
                                     components={{ MenuList: FastMenuList }}
                                     filterOption={createFilter({ ignoreAccents: false })}
                                     value={ryhmaOptions.find((o) => o.value === props.selectedRyhma)}
-                                    placeholder={L['HENKILOHAKU_FILTERS_RYHMA_PLACEHOLDER']}
+                                    placeholder={L('HENKILOHAKU_FILTERS_RYHMA_PLACEHOLDER')}
                                     onChange={props.ryhmaSelectionAction}
                                     isClearable
                                 />

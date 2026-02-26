@@ -1,12 +1,12 @@
 import React from 'react';
 import './PalveluJaKayttooikeusSelections.css';
 import { PalveluJaKayttooikeusSelection } from './KayttooikeusryhmaPage';
-import { Localisations } from '../../../types/localisation.type';
+import { LocalisationFn } from '../../../types/localisation.type';
 
 type Props = {
     items: PalveluJaKayttooikeusSelection[];
     removeAction: (arg0: PalveluJaKayttooikeusSelection) => void;
-    L: Localisations;
+    L: LocalisationFn;
 };
 
 const PalveluJaKayttooikeusSelections = (props: Props) => (
@@ -18,7 +18,7 @@ const PalveluJaKayttooikeusSelections = (props: Props) => (
                     <span className="flex-item-1 kayttooikeus-element">
                         {item.kayttooikeus?.label}{' '}
                         <button className="oph-button oph-button-cancel" onClick={() => props.removeAction(item)}>
-                            {props.L['POISTA']}
+                            {props.L('POISTA')}
                         </button>
                     </span>
                 </li>

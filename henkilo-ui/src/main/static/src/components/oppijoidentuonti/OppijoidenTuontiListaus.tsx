@@ -25,9 +25,9 @@ const OppijoidenTuontiListaus = ({ data, onPageChange, loading }: Props) => {
 
     const YKSILOINTI_TILAT = {
         OK: '',
-        VIRHE: L['YKSILOINTI_TILA_VIRHE'],
-        KESKEN: L['YKSILOINTI_TILA_KESKEN'],
-        HETU_PUUTTUU: L['YKSILOINTI_TILA_HETU_PUUTTUU'],
+        VIRHE: L('YKSILOINTI_TILA_VIRHE'),
+        KESKEN: L('YKSILOINTI_TILA_KESKEN'),
+        HETU_PUUTTUU: L('YKSILOINTI_TILA_HETU_PUUTTUU'),
     };
 
     function renderOppijaLinkki(henkilo: OppijaList) {
@@ -39,13 +39,13 @@ const OppijoidenTuontiListaus = ({ data, onPageChange, loading }: Props) => {
     const columns = useMemo<ColumnDef<OppijaList, OppijaList>[]>(
         () => [
             {
-                header: () => L['OPPIJOIDEN_TUONTI_LUONTIAIKA'],
+                header: () => L('OPPIJOIDEN_TUONTI_LUONTIAIKA'),
                 accessorFn: (henkilo: OppijaList) => format(new Date(henkilo.luotu), 'd.M.yyyy HH:mm'),
                 id: 'CREATED',
                 enableSorting: false,
             },
             {
-                header: () => L['OPPIJOIDEN_TUONTI_KASITTELIJA'],
+                header: () => L('OPPIJOIDEN_TUONTI_KASITTELIJA'),
                 accessorFn: (henkilo: OppijaList) => henkilo,
                 cell: ({ getValue }) =>
                     getValue().serviceUserOid ? (
@@ -55,27 +55,27 @@ const OppijoidenTuontiListaus = ({ data, onPageChange, loading }: Props) => {
                 id: 'kasittelija',
             },
             {
-                header: () => L['OPPIJOIDEN_TUONTI_OID'],
+                header: () => L('OPPIJOIDEN_TUONTI_OID'),
                 accessorFn: (henkilo: OppijaList) => henkilo.oid,
                 enableSorting: false,
                 id: 'oid',
             },
             {
-                header: () => L['OPPIJOIDEN_TUONTI_HENKILOTUNNUS_SYNTYMAIKA'],
+                header: () => L('OPPIJOIDEN_TUONTI_HENKILOTUNNUS_SYNTYMAIKA'),
                 accessorFn: (henkilo: OppijaList) =>
                     henkilo.syntymaaika ? format(parseISO(henkilo.syntymaaika), 'd.M.yyyy') : '',
                 enableSorting: false,
                 id: 'hetu',
             },
             {
-                header: () => L['OPPIJOIDEN_TUONTI_NIMI'],
+                header: () => L('OPPIJOIDEN_TUONTI_NIMI'),
                 accessorFn: (henkilo: OppijaList) => henkilo,
                 cell: ({ getValue }) => renderOppijaLinkki(getValue()),
                 id: 'NAME',
                 enableSorting: false,
             },
             {
-                header: () => L['OPPIJOIDEN_TUONTI_VIRHEET'],
+                header: () => L('OPPIJOIDEN_TUONTI_VIRHEET'),
                 accessorFn: (henkilo: OppijaList) => YKSILOINTI_TILAT[henkilo.yksilointiTila] ?? '',
                 enableSorting: false,
                 id: 'virheet',

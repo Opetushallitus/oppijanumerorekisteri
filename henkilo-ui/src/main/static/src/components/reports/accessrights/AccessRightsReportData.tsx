@@ -30,12 +30,12 @@ export const AccessRightsReport = ({ report }: Props) => {
         () => [
             {
                 accessorFn: (row) => row.personName,
-                header: () => L['HENKILO_NIMI'],
+                header: () => L('HENKILO_NIMI'),
                 id: 'personName',
             },
             {
                 accessorFn: (row) => row,
-                header: () => L['HENKILO_OPPIJANUMERO'],
+                header: () => L('HENKILO_OPPIJANUMERO'),
                 cell: ({ getValue }) => (
                     <Link to={`/virkailija/${getValue().personOid}`} target="_blank">
                         {getValue().personOid}
@@ -46,29 +46,29 @@ export const AccessRightsReport = ({ report }: Props) => {
             },
             {
                 accessorFn: (row) => row.organisationName,
-                header: () => L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA'],
+                header: () => L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA'),
                 id: 'organisationName',
             },
             {
                 accessorFn: (row) => row.organisationOid,
-                header: () => L['OID'],
+                header: () => L('OID'),
                 id: 'organisationOid',
             },
             {
                 accessorFn: (row) => row.accessRightName,
-                header: () => L['HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS'],
+                header: () => L('HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS'),
                 id: 'accessRightName',
             },
             {
                 accessorFn: (row) => row,
-                header: () => L['HENKILO_KAYTTOOIKEUS_ALKUPVM'],
+                header: () => L('HENKILO_KAYTTOOIKEUS_ALKUPVM'),
                 cell: ({ getValue }) => <div className="right">{formatDate(getValue().startDate)}</div>,
                 sortingFn: (a, b) => a.original.startDate.localeCompare(b.original.startDate),
                 id: 'startDate',
             },
             {
                 accessorFn: (row) => row,
-                header: () => L['HENKILO_KAYTTOOIKEUS_LOPPUPVM'],
+                header: () => L('HENKILO_KAYTTOOIKEUS_LOPPUPVM'),
                 cell: ({ getValue }) => <div className="right">{formatDate(getValue().endDate)}</div>,
                 sortingFn: (a, b) => a.original.endDate.localeCompare(b.original.endDate),
                 id: 'endDate',

@@ -12,7 +12,7 @@ const LabelValueGroup = ({ label, valueGroup }: OwnProps) => {
     return (
         <div id={label}>
             <div className="labelValue" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-                <span className="oph-bold">{L[label]}</span>
+                <span className="oph-bold">{L(label)}</span>
                 {valueGroup}
             </div>
         </div>

@@ -37,11 +37,11 @@ export const OppijahakuPage = () => {
     };
 
     return (
-        <OphDsPage header={L['OPPIJAHAKU']!}>
-            {L['OPPIJAHAKU_SELITE'] && <p>{L['OPPIJAHAKU_SELITE']}</p>}
+        <OphDsPage header={L('OPPIJAHAKU')}>
+            {L('OPPIJAHAKU_SELITE') && <p>{L('OPPIJAHAKU_SELITE')}</p>}
             <OphDsInput
                 id="query"
-                label={L['OPPIJAHAKU_HAKUTERMI']!}
+                label={L('OPPIJAHAKU_HAKUTERMI')}
                 onChange={setQuery}
                 defaultValue={criteria.query}
                 debounceTimeout={400}
@@ -50,12 +50,12 @@ export const OppijahakuPage = () => {
                 <OphDsChechbox
                     id="passive"
                     checked={!!criteria.passive}
-                    label={L['HENKILO_NAYTA_PASSIIVISET_TEKSTI']!}
+                    label={L('HENKILO_NAYTA_PASSIIVISET_TEKSTI')}
                     onChange={() => setState({ ...criteria, passive: !criteria.passive, page: 0 })}
                 />
             </div>
             <OphDsTable
-                headers={[L['HENKILO_NIMI']!, L['HENKILO_SYNTYMAAIKA']!]}
+                headers={[L('HENKILO_NIMI'), L('HENKILO_SYNTYMAAIKA')]}
                 isFetching={isFetching}
                 rows={((!skip && data?.content) || []).map((d) => [
                     <Link key={`nimi-${d.oid}`} to={`/oppija2/${d.oid}`} className="oph-ds-link">
@@ -65,7 +65,7 @@ export const OppijahakuPage = () => {
                         {d.syntymaaika ? format(parseISO(d.syntymaaika), 'd.M.yyyy') : ''}
                     </span>,
                 ])}
-                rowDescriptionPartitive={L['OPPIJAA']}
+                rowDescriptionPartitive={L('OPPIJAA')}
                 page={
                     !skip && data?.page
                         ? { page: data.page, setPage: (page) => setState({ ...criteria, page }) }

@@ -20,7 +20,7 @@ const ItemList = <T,>({ items, removeAction, getItemName }: Props<T>) => {
                         <li className="item-list-element flex-horizontal" key={index}>
                             <span className="flex-item-1">{getItemName(item)}</span>
                             <button className="oph-button oph-button-cancel" onClick={() => removeAction(item)}>
-                                {L['POISTA']}
+                                {L('POISTA')}
                             </button>
                         </li>
                     ))}

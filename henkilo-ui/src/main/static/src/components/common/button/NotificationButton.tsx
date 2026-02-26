@@ -35,8 +35,8 @@ const NotificationButton = (props: OwnProps) => {
                         <span aria-hidden="true">×</span>
                     </button>
                     <div className="oph-popup-arrow" />
-                    <div className="oph-popup-title">{L[notification.notL10nMessage]}</div>
-                    <div className="oph-popup-content">{L[notification.notL10nText]}</div>
+                    <div className="oph-popup-title">{L(notification.notL10nMessage)}</div>
+                    <div className="oph-popup-content">{L(notification.notL10nText)}</div>
                 </div>
             ) : null}
         </div>

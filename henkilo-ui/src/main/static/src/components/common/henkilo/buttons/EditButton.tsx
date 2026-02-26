@@ -12,7 +12,7 @@ const EditButton = (props: OwnProps) => {
     const { L } = useLocalisations();
     return (
         <Button key="edit" disabled={props.disabled} action={props.editAction}>
-            {L['MUOKKAA_LINKKI']}
+            {L('MUOKKAA_LINKKI')}
         </Button>
     );
 };

@@ -12,7 +12,7 @@ import { mainNavigation } from '../navigation/navigationconfigurations';
 
 const HenkilohakuContainer = () => {
     const { L } = useLocalisations();
-    useTitle(L['TITLE_HENKILOHAKU']);
+    useTitle(L('TITLE_HENKILOHAKU'));
     useNavigation(mainNavigation, false);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { isLoading } = useGetKayttooikeusryhmasQuery({ passiiviset: true });

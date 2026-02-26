@@ -22,10 +22,10 @@ export const GenericErrorPage = ({ link }: Props) => {
                         />
                     </svg>
                 </div>
-                <h1>{L['TAPAHTUI_ODOTTAMATON_VIRHE']}</h1>
-                <p>{L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE']}</p>
+                <h1>{L('TAPAHTUI_ODOTTAMATON_VIRHE')}</h1>
+                <p>{L('KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE')}</p>
                 <Link to={link} className="oph-ds-button">
-                    {L['SIIRRY_PALVELUN_ETUSIVULLE']}
+                    {L('SIIRRY_PALVELUN_ETUSIVULLE')}
                 </Link>
             </div>
         </div>

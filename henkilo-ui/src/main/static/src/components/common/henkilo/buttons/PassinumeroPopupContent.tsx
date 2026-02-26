@@ -27,7 +27,7 @@ const PassinumeroPopupContent = ({ oid }: Props) => {
                     add({
                         id: `TAPAHTUI_ODOTTAMATON_VIRHE-${Math.random()}`,
                         type: 'error',
-                        header: L['TAPAHTUI_ODOTTAMATON_VIRHE'],
+                        header: L('TAPAHTUI_ODOTTAMATON_VIRHE'),
                     })
                 );
             });
@@ -41,7 +41,7 @@ const PassinumeroPopupContent = ({ oid }: Props) => {
                     add({
                         id: `TAPAHTUI_ODOTTAMATON_VIRHE-${Math.random()}`,
                         type: 'error',
-                        header: L['TAPAHTUI_ODOTTAMATON_VIRHE'],
+                        header: L('TAPAHTUI_ODOTTAMATON_VIRHE'),
                     })
                 );
             });
@@ -62,13 +62,13 @@ const PassinumeroPopupContent = ({ oid }: Props) => {
             <OphDsInput
                 id="passinumero"
                 aria-required="true"
-                label={L['LISAA_PASSINUMERO_PLACEHOLDER']!}
+                label={L('LISAA_PASSINUMERO_PLACEHOLDER')}
                 defaultValue={newPassinumero}
                 onChange={setNewPassinumero}
             />
             <div>
                 <button className="oph-ds-button" onClick={() => onSubmit()} disabled={!newPassinumero}>
-                    {L['LISAA_PASSINUMERO']}
+                    {L('LISAA_PASSINUMERO')}
                 </button>
             </div>
         </div>

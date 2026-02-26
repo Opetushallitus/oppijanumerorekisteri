@@ -33,16 +33,16 @@ const KutsuDetails = ({ kutsu }: Props) => {
     const columns = useMemo<ColumnDef<Detail>[]>(
         () => [
             {
-                header: () => L['KUTSU_KAYTTOOIKEUSRYHMAT_MAIN_HEADER'],
+                header: () => L('KUTSU_KAYTTOOIKEUSRYHMAT_MAIN_HEADER'),
                 id: 'group',
                 columns: [
                     {
-                        header: () => L['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_ORGANISAATIO_HEADER'],
+                        header: () => L('HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_ORGANISAATIO_HEADER'),
                         accessorFn: (row) => row.organisaatio,
                         id: 'organisaatio',
                     },
                     {
-                        header: () => L['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_KAYTTOOIKEUS_HEADER'],
+                        header: () => L('HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_KAYTTOOIKEUS_HEADER'),
                         accessorFn: (row) => row.ryhma,
                         id: 'ryhma',
                     },

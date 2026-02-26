@@ -17,14 +17,14 @@ export const FormPicker = ({ setFormType }: Props) => {
     return (
         <div className="mainContent wrapper">
             <div className="form-picker">
-                <span className="oph-h2 oph-bold">{L['OPPIJAN_LUONTI_OTSIKKO']}</span>
+                <span className="oph-h2 oph-bold">{L('OPPIJAN_LUONTI_OTSIKKO')}</span>
                 {(data?.isAdmin ||
                     hasAnyPalveluRooli(data?.organisaatiot, ['OPPIJANUMEROREKISTERI_YLEISTUNNISTE_LUONTI'])) && (
-                    <Button action={() => setFormType('ssn')}>{L['OPPIJAN_LUONTI_HETULLINEN']}</Button>
+                    <Button action={() => setFormType('ssn')}>{L('OPPIJAN_LUONTI_HETULLINEN')}</Button>
                 )}
                 {(data?.isAdmin ||
                     hasAnyPalveluRooli(data?.organisaatiot, ['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI'])) && (
-                    <Button action={() => setFormType('anonymous')}>{L['OPPIJAN_LUONTI_HETUTON']}</Button>
+                    <Button action={() => setFormType('anonymous')}>{L('OPPIJAN_LUONTI_HETUTON')}</Button>
                 )}
             </div>
         </div>

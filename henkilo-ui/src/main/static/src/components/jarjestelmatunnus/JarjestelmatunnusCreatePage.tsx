@@ -13,7 +13,7 @@ import { jarjestelmatunnusNavigation } from '../navigation/navigationconfigurati
 
 export const JarjestelmatunnusCreatePage = () => {
     const { L } = useLocalisations();
-    useTitle(L['JARJESTELMATUNNUSTEN_LUONTI']);
+    useTitle(L('JARJESTELMATUNNUSTEN_LUONTI'));
     useNavigation(jarjestelmatunnusNavigation(), false);
     const [nimi, setNimi] = useState('');
     const [postPalvelukayttaja, { isLoading }] = usePostPalvelukayttajaMutation();
@@ -30,7 +30,7 @@ export const JarjestelmatunnusCreatePage = () => {
             .catch((error) => {
                 dispatch(
                     add({
-                        header: L['HENKILON_LUONTI_EPAONNISTUI'],
+                        header: L('HENKILON_LUONTI_EPAONNISTUI'),
                         id: 'jarjestelmatunnusluonti-' + Math.random(),
                         type: 'error',
                     })
@@ -40,13 +40,13 @@ export const JarjestelmatunnusCreatePage = () => {
     };
 
     return (
-        <OphDsPage header={L['JARJESTELMATUNNUSTEN_LUONTI']!}>
+        <OphDsPage header={L('JARJESTELMATUNNUSTEN_LUONTI')}>
             <form onSubmit={onSubmit}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
-                    <OphDsInput id="palvelu" label={L['HENKILO_PALVELUN_NIMI']!} onChange={setNimi} />
+                    <OphDsInput id="palvelu" label={L('HENKILO_PALVELUN_NIMI')} onChange={setNimi} />
                     <div>
                         <button type="submit" className="oph-ds-button" disabled={!nimi || isLoading}>
-                            {L['TALLENNA_LINKKI']}
+                            {L('TALLENNA_LINKKI')}
                         </button>
                     </div>
                 </div>

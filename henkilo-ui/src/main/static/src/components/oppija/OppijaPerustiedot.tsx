@@ -102,10 +102,10 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
             .catch((error) => {
                 const header =
                     error.status === 400 && error.data.includes('invalid.hetu')
-                        ? L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU']
+                        ? L('NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU')
                         : error.data.includes('socialsecuritynr.already.exists')
-                          ? L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU_KAYTOSSA']
-                          : L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE'];
+                          ? L('NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU_KAYTOSSA')
+                          : L('NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE');
                 dispatch(
                     add({
                         id: `henkilo-update-failed-${Math.random()}`,
@@ -126,21 +126,21 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                                 id="etunimet"
                                 error={etunimet ? undefined : ''}
                                 defaultValue={etunimet}
-                                label={L['HENKILO_ETUNIMET']!}
+                                label={L('HENKILO_ETUNIMET')}
                                 onChange={setEtunimet}
                             />
                             <OphDsInput
                                 id="sukunimi"
                                 error={sukunimi ? undefined : ''}
                                 defaultValue={sukunimi}
-                                label={L['HENKILO_SUKUNIMI']!}
+                                label={L('HENKILO_SUKUNIMI')}
                                 onChange={setSukunimi}
                             />
                             <OphDsInput
                                 id="hetu"
                                 error={hetu && !isValidHetu(hetu) ? '' : undefined}
                                 defaultValue={hetu}
-                                label={L['HENKILO_HETU']!}
+                                label={L('HENKILO_HETU')}
                                 onChange={setHetu}
                             />
                         </>
@@ -148,15 +148,15 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                     <OphDsInput
                         id="kutsumanimi"
                         error={
-                            isValidKutsumanimi(etunimet, kutsumanimi) ? undefined : L['HENKILO_KUTSUMANIMI_VALIDOINTI']
+                            isValidKutsumanimi(etunimet, kutsumanimi) ? undefined : L('HENKILO_KUTSUMANIMI_VALIDOINTI')
                         }
                         defaultValue={kutsumanimi}
-                        label={L['HENKILO_KUTSUMANIMI']!}
+                        label={L('HENKILO_KUTSUMANIMI')}
                         onChange={setKutsumanimi}
                     />
                     <div style={{ width: '300px' }}>
                         <label className="oph-ds-label" htmlFor="kieli-select">
-                            {L['HENKILO_ASIOINTIKIELI']}
+                            {L('HENKILO_ASIOINTIKIELI')}
                         </label>
                         <Select
                             {...selectStyles}
@@ -164,7 +164,7 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                             options={asiointikieliOptions}
                             value={asiointikieli}
                             onChange={setAsiointikieli}
-                            placeholder={L['HENKILO_ASIOINTIKIELI']}
+                            placeholder={L('HENKILO_ASIOINTIKIELI')}
                         />
                     </div>
                 </div>
@@ -172,7 +172,7 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                     <div>
                         <div style={{ width: '300px' }}>
                             <label className="oph-ds-label" htmlFor="syntymaaika">
-                                {L['HENKILO_SYNTYMAAIKA']}
+                                {L('HENKILO_SYNTYMAAIKA')}
                             </label>
                             <DatePicker
                                 id="syntymaaika"
@@ -186,7 +186,7 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                         </div>
                         <div style={{ width: '300px' }}>
                             <label className="oph-ds-label" htmlFor="kansalaisuus-select">
-                                {L['HENKILO_KANSALAISUUS']}
+                                {L('HENKILO_KANSALAISUUS')}
                             </label>
                             <Select
                                 {...selectStyles}
@@ -195,12 +195,12 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                                 options={kansalaisuusOptions}
                                 value={kansalaisuus}
                                 onChange={setKansalaisuus}
-                                placeholder={L['HENKILO_KANSALAISUUS']}
+                                placeholder={L('HENKILO_KANSALAISUUS')}
                             />
                         </div>
                         <div style={{ width: '300px' }}>
                             <label className="oph-ds-label" htmlFor="aidinkieli-select">
-                                {L['HENKILO_AIDINKIELI']}
+                                {L('HENKILO_AIDINKIELI')}
                             </label>
                             <Select
                                 {...selectStyles}
@@ -208,12 +208,12 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                                 options={kieliOptions}
                                 value={aidinkieli}
                                 onChange={setAidinkieli}
-                                placeholder={L['HENKILO_AIDINKIELI']}
+                                placeholder={L('HENKILO_AIDINKIELI')}
                             />
                         </div>
                         <div style={{ width: '300px' }}>
                             <label className="oph-ds-label" htmlFor="sukupuoli-select">
-                                {L['HENKILO_SUKUPUOLI']}
+                                {L('HENKILO_SUKUPUOLI')}
                             </label>
                             <Select
                                 {...selectStyles}
@@ -221,7 +221,7 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                                 options={sukupuoliOptions}
                                 value={sukupuoli}
                                 onChange={setSukupuoli}
-                                placeholder={L['HENKILO_SUKUPUOLI']}
+                                placeholder={L('HENKILO_SUKUPUOLI')}
                             />
                         </div>
                     </div>
@@ -229,10 +229,10 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
             </div>
             <div className={styles.buttonRow}>
                 <button className="oph-ds-button" disabled={!isFormValid} onClick={updateHenkilo}>
-                    {L['TALLENNA']}
+                    {L('TALLENNA')}
                 </button>
                 <button className="oph-ds-button oph-ds-button-bordered" onClick={() => closeForm()} disabled={false}>
-                    {L['PERUUTA']}
+                    {L('PERUUTA')}
                 </button>
             </div>
         </>
@@ -272,57 +272,57 @@ const OppijaPerustiedotView = ({ oid, openForm }: { oid: string; openForm: () =>
     return (
         <>
             {passport && (
-                <OphModal title={L['PASSINUMEROT']} onClose={() => setPassport(false)}>
+                <OphModal title={L('PASSINUMEROT')} onClose={() => setPassport(false)}>
                     <PassinumeroPopupContent oid={oid} />
                 </OphModal>
             )}
             <div className={styles.perustiedotRows}>
                 <div className={styles.perustiedotGrid}>
-                    <div>{L['HENKILO_SUKUNIMI']}</div>
+                    <div>{L('HENKILO_SUKUNIMI')}</div>
                     <div data-testid="sukunimi">{henkilo?.sukunimi}</div>
-                    <div>{L['HENKILO_ETUNIMET']}</div>
+                    <div>{L('HENKILO_ETUNIMET')}</div>
                     <div data-testid="etunimet">{henkilo?.etunimet}</div>
-                    <div>{L['HENKILO_KUTSUMANIMI']}</div>
+                    <div>{L('HENKILO_KUTSUMANIMI')}</div>
                     <div data-testid="kutsumanimi">{henkilo?.kutsumanimi}</div>
-                    <div>{L['HENKILO_SYNTYMAAIKA']}</div>
+                    <div>{L('HENKILO_SYNTYMAAIKA')}</div>
                     <div data-testid="syntymaaika">
                         {henkilo?.syntymaaika ? format(parseISO(henkilo.syntymaaika), 'd.M.yyyy') : ''}
                     </div>
-                    <div>{L['HENKILO_HETU']}</div>
+                    <div>{L('HENKILO_HETU')}</div>
                     <div data-testid="hetu">{henkilo?.hetu}</div>
                     {henkilo?.eidasTunnisteet && henkilo.eidasTunnisteet.length > 0 && (
                         <>
-                            <div>{L['HENKILO_EIDASTUNNISTEET']}</div>
+                            <div>{L('HENKILO_EIDASTUNNISTEET')}</div>
                             <div data-testid="eidas">{henkilo?.eidasTunnisteet.map((e) => e.tunniste).join(', ')}</div>
                         </>
                     )}
-                    <div>{L['HENKILO_ASIOINTIKIELI']}</div>
+                    <div>{L('HENKILO_ASIOINTIKIELI')}</div>
                     <div data-testid="asiointikieli">
                         {koodiLabelByKoodiarvo(kieliKoodisto, henkilo?.asiointiKieli?.kieliKoodi.toUpperCase(), locale)}
                     </div>
                 </div>
                 <div className={styles.perustiedotGrid}>
-                    <div>{L['HENKILO_KANSALAISUUS']}</div>
+                    <div>{L('HENKILO_KANSALAISUUS')}</div>
                     <div data-testid="kansalaisuus">
                         {henkilo?.kansalaisuus
                             .map((k) => koodiLabelByKoodiarvo(kansalaisuusKoodisto, k.kansalaisuusKoodi, locale))
                             .join(', ')}
                     </div>
-                    <div>{L['HENKILO_AIDINKIELI']}</div>
+                    <div>{L('HENKILO_AIDINKIELI')}</div>
                     <div data-testid="aidinkieli">
                         {koodiLabelByKoodiarvo(kieliKoodisto, henkilo?.aidinkieli?.kieliKoodi.toUpperCase(), locale)}
                     </div>
-                    <div>{L['HENKILO_SUKUPUOLI']}</div>
+                    <div>{L('HENKILO_SUKUPUOLI')}</div>
                     <div data-testid="sukupuoli">
                         {koodiLabelByKoodiarvo(sukupuoliKoodisto, henkilo?.sukupuoli, locale)}
                     </div>
-                    <div>{L['HENKILO_OPPIJANUMERO']}</div>
+                    <div>{L('HENKILO_OPPIJANUMERO')}</div>
                     <div data-testid="oppijanumero">{master?.oidHenkilo}</div>
-                    <div>{L['HENKILO_OID']}</div>
+                    <div>{L('HENKILO_OID')}</div>
                     <div data-testid="oid">{oid}</div>
                     {duplicates?.length ? (
                         <>
-                            <div>{L['HENKILO_LINKITETYT']}</div>
+                            <div>{L('HENKILO_LINKITETYT')}</div>
                             <div data-testid="duplicates">
                                 {duplicates.map((d) => {
                                     return (
@@ -338,7 +338,7 @@ const OppijaPerustiedotView = ({ oid, openForm }: { oid: string; openForm: () =>
                                                         unlinkHenkilo({ masterOid: oid, slaveOid: d.oidHenkilo })
                                                     }
                                                 >
-                                                    {L['HENKILO_POISTA_LINKITYS']}
+                                                    {L('HENKILO_POISTA_LINKITYS')}
                                                 </button>
                                             )}
                                         </div>
@@ -349,7 +349,7 @@ const OppijaPerustiedotView = ({ oid, openForm }: { oid: string; openForm: () =>
                     ) : undefined}
                     {master && master.oidHenkilo !== oid ? (
                         <>
-                            <div>{L['HENKILO_LINKITETYT_MASTER']}</div>
+                            <div>{L('HENKILO_LINKITETYT_MASTER')}</div>
                             <div data-testid="master">
                                 <Link
                                     className="oph-ds-link"
@@ -360,7 +360,7 @@ const OppijaPerustiedotView = ({ oid, openForm }: { oid: string; openForm: () =>
                                         className="oph-ds-button oph-ds-button-narrow oph-ds-button-transparent"
                                         onClick={() => unlinkHenkilo({ masterOid: master.oidHenkilo, slaveOid: oid })}
                                     >
-                                        {L['HENKILO_POISTA_LINKITYS']}
+                                        {L('HENKILO_POISTA_LINKITYS')}
                                     </button>
                                 )}
                             </div>
@@ -371,7 +371,7 @@ const OppijaPerustiedotView = ({ oid, openForm }: { oid: string; openForm: () =>
             <div className={styles.buttonRow}>
                 {hasUpdatePermission && !henkilo?.duplicate && !henkilo?.passivoitu && (
                     <button className="oph-ds-button" onClick={() => openForm()}>
-                        {L['MUOKKAA']}
+                        {L('MUOKKAA')}
                     </button>
                 )}
                 {hasYksilointiPermission &&
@@ -397,7 +397,7 @@ const OppijaPerustiedotView = ({ oid, openForm }: { oid: string; openForm: () =>
                 )}
                 {omattiedot?.isAdmin && (
                     <button className="oph-ds-button" onClick={() => setPassport(true)}>
-                        {L['HALLITSE_PASSINUMEROITA']}
+                        {L('HALLITSE_PASSINUMEROITA')}
                     </button>
                 )}
                 {omattiedot?.isAdmin && !henkilo?.duplicate && !henkilo?.passivoitu && (
@@ -418,29 +418,29 @@ export const OppijaPerustiedot = ({ oid }: { oid: string }) => {
     const yksilointiTranslation = useMemo(() => {
         const info = [];
         if (henkilo?.yksiloity) {
-            info.push(L['HENKILO_ADDITIONALINFO_YKSILOITY']);
+            info.push(L('HENKILO_ADDITIONALINFO_YKSILOITY'));
         }
         if (henkilo?.yksiloityEidas) {
-            info.push(L['HENKILO_ADDITIONALINFO_YKSILOITYEIDAS']);
+            info.push(L('HENKILO_ADDITIONALINFO_YKSILOITYEIDAS'));
         }
         if (henkilo?.yksiloityVTJ) {
-            info.push(L['HENKILO_ADDITIONALINFO_YKSILOITYVTJ']);
+            info.push(L('HENKILO_ADDITIONALINFO_YKSILOITYVTJ'));
         }
         if (!henkilo?.yksiloity && !henkilo?.yksiloityVTJ && !henkilo?.yksiloityEidas) {
-            info.push(L['HENKILO_ADDITIOINALINFO_EIYKSILOITY']);
+            info.push(L('HENKILO_ADDITIOINALINFO_EIYKSILOITY'));
         }
         if (henkilo?.duplicate) {
-            info.push(L['HENKILO_ADDITIONALINFO_DUPLIKAATTI']);
+            info.push(L('HENKILO_ADDITIONALINFO_DUPLIKAATTI'));
         }
         if (henkilo?.passivoitu) {
-            info.push(L['PASSIVOI_PASSIVOITU']);
+            info.push(L('PASSIVOI_PASSIVOITU'));
         }
         return info.length ? ' (' + info.join(', ') + ')' : '';
     }, [henkilo]);
 
     return (
         <section aria-labelledby={sectionId} className="henkiloViewUserContentWrapper">
-            <h2 id={sectionId}>{L['OPPIJAN_PERUSTIEDOT'] + yksilointiTranslation}</h2>
+            <h2 id={sectionId}>{L('OPPIJAN_PERUSTIEDOT') + yksilointiTranslation}</h2>
             <div className={styles.perustiedotContent}>
                 {isLoading ? (
                     <Loader />

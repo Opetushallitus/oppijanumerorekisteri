@@ -42,7 +42,7 @@ const Pagination = ({ page, setPage }: PageProps) => {
             style={{ display: 'flex', justifyContent: 'center', padding: '16px', gap: '4px' }}
         >
             <h2 id="pagination" style={{ display: 'none' }}>
-                {L['TAULUKKO_SIVUNUMEROINTI']}
+                {L('TAULUKKO_SIVUNUMEROINTI')}
             </h2>
             {
                 <button
@@ -50,7 +50,7 @@ const Pagination = ({ page, setPage }: PageProps) => {
                     onClick={() => setPage(page.number - 1)}
                     disabled={page.number === 0}
                 >
-                    {L['TAULUKKO_EDELLINEN']}
+                    {L('TAULUKKO_EDELLINEN')}
                 </button>
             }
             {renderedPageRange.map((p, i) => {
@@ -78,7 +78,7 @@ const Pagination = ({ page, setPage }: PageProps) => {
                 onClick={() => setPage(page.number + 1)}
                 disabled={page.number === page.totalPages - 1}
             >
-                {L['TAULUKKO_SEURAAVA']}
+                {L('TAULUKKO_SEURAAVA')}
             </button>
         </nav>
     );
@@ -96,7 +96,7 @@ export const OphDsTable = ({ headers, isFetching, page, rows, rowDescriptionPart
                     aria-atomic="true"
                     data-testid={`${rowDescriptionPartitive}-count`}
                 >
-                    {L['HENKILOHAKU_HAKUTULOKSET'] + ` (${totalElements} ${rowDescriptionPartitive})`}
+                    {L('HENKILOHAKU_HAKUTULOKSET') + ` (${totalElements} ${rowDescriptionPartitive})`}
                 </h2>
             )}
             <table className="oph-ds-table">

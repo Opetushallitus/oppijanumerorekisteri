@@ -3,11 +3,9 @@ import classnames from 'classnames';
 import Button from '../../../../common/button/Button';
 import './DetailsForm.css';
 import { useLocalisations } from '../../../../../selectors';
-import { Localisations } from '../../../../../types/localisation.type';
 
 type Props = {
     text: string;
-    L: Localisations;
 };
 
 const CopyToClipboard: React.FC<Props> = ({ text }) => {
@@ -26,7 +24,7 @@ const CopyToClipboard: React.FC<Props> = ({ text }) => {
             <input type="text" className="oph-input" value={text || ''} readOnly />
             <Button action={copyToCliplboard}>
                 <i className={classnames('fa', copied ? 'fa-check' : 'fa-copy')} aria-hidden="true" />
-                {L['KOPIOI']}
+                {L('KOPIOI')}
             </Button>
         </div>
     );

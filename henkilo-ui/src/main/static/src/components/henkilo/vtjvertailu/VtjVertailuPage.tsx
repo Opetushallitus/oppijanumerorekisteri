@@ -37,7 +37,7 @@ export const VtjVertailuPage = (props: OwnProps) => {
     const yksilointitiedotQuery = useGetYksilointitiedotQuery(oid);
     const [yliajaYksiloimaton] = usePutYliajaYksiloimatonMutation();
 
-    useTitle(L['TITLE_VTJ_VERTAILU']);
+    useTitle(L('TITLE_VTJ_VERTAILU'));
     useNavigation(
         henkiloViewTabs(oid, henkilo, props.henkiloType, master?.oidHenkilo, yksilointitiedotQuery.data),
         true
@@ -50,7 +50,7 @@ export const VtjVertailuPage = (props: OwnProps) => {
                 dispatch(
                     add({
                         id: `HENKILOVTJYLIAJOISUCCESS-${Math.random()}`,
-                        header: L['HENKILO_VTJ_YLIAJA_SUCCESS'],
+                        header: L('HENKILO_VTJ_YLIAJA_SUCCESS'),
                         type: 'ok',
                     })
                 );
@@ -59,7 +59,7 @@ export const VtjVertailuPage = (props: OwnProps) => {
                 dispatch(
                     add({
                         id: `HENKILOVTJYLIAJOIFAILURE-${Math.random()}`,
-                        header: L['HENKILO_VTJ_YLIAJA_FAILURE'],
+                        header: L('HENKILO_VTJ_YLIAJA_FAILURE'),
                         type: 'error',
                     })
                 );
@@ -82,10 +82,10 @@ export const VtjVertailuPage = (props: OwnProps) => {
         <Loader />
     ) : (
         <div className="mainContent wrapper">
-            <h2>{L['HENKILO_VTJ_VERTAILU']}</h2>
+            <h2>{L('HENKILO_VTJ_VERTAILU')}</h2>
             <VtjVertailuListaus henkilo={henkilo} />
             <Button action={() => overrideHenkiloInformation(oid)} disabled={isDisabled()}>
-                {L['HENKILO_VTJ_YLIAJA']}
+                {L('HENKILO_VTJ_YLIAJA')}
             </Button>
         </div>
     );

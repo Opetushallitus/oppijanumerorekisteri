@@ -1,6 +1,6 @@
 import { SingleValue } from 'react-select';
 
-import { Localisations, L10n } from '../../types/localisation.type';
+import { L10n, LocalisationFn } from '../../types/localisation.type';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { Locale } from '../../types/locale.type';
 import { TextGroup } from '../../types/domain/kayttooikeus/textgroup.types';
@@ -59,17 +59,17 @@ export function isVahvastiYksiloity(henkilo?: Henkilo | HenkiloDuplicate) {
     return henkilo?.yksiloityVTJ || henkilo?.yksiloityEidas;
 }
 
-export function getOrganisaatiotyypitFlat(L: Localisations, uppercase: boolean, tyypit?: string[]) {
+export function getOrganisaatiotyypitFlat(L: LocalisationFn, uppercase: boolean, tyypit?: string[]) {
     return tyypit?.length
         ? '(' +
               tyypit
-                  .map((tyyppi) => L[tyyppi.toUpperCase() + (uppercase ? '_ISO' : '')] || tyyppi)
+                  .map((tyyppi) => L(tyyppi.toUpperCase() + (uppercase ? '_ISO' : '')) || tyyppi)
                   .reduce((type1, type2) => type1.concat(', ', type2)) +
               ')'
         : '';
 }
 
-export function getOrganisationNameWithType(org: Organisaatio | undefined, L: Localisations, locale: Locale) {
+export function getOrganisationNameWithType(org: Organisaatio | undefined, L: LocalisationFn, locale: Locale) {
     return org?.nimi?.[locale] + ' ' + getOrganisaatiotyypitFlat(L, false, org?.tyypit);
 }
 

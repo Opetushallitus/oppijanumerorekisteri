@@ -1,23 +1,22 @@
 import React from 'react';
 import Select, { SingleValue } from 'react-select';
 
-import { Localisations } from '../../types/localisation.type';
 import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
 import { SelectOption } from '../../utilities/select';
 import { Locale } from '../../types/locale.type';
-import { useAsiointikielet } from '../../selectors';
+import { useAsiointikielet, useLocalisations } from '../../selectors';
 
 import './BasicinfoForm.css';
 
 type Props = {
     disabled: boolean;
     basicInfo: KutsuBasicInfo;
-    L: Localisations;
     locale: Locale;
     setBasicInfo: (arg0: KutsuBasicInfo) => void;
 };
 
 const BasicinfoForm = (props: Props) => {
+    const { L } = useLocalisations();
     const { basicInfo } = props;
     const asiointikielet = useAsiointikielet(props.locale);
 
@@ -55,10 +54,10 @@ const BasicinfoForm = (props: Props) => {
 
     return (
         <fieldset id="basicinfo">
-            <h2>{props.L['VIRKAILIJAN_TIEDOT_OTSIKKO']}</h2>
+            <h2>{L('VIRKAILIJAN_TIEDOT_OTSIKKO')}</h2>
             <ul className="flex-outer">
                 <li>
-                    <label>{props.L['VIRKAILIJAN_TIEDOT_ETUNIMI']}</label>
+                    <label>{L('VIRKAILIJAN_TIEDOT_ETUNIMI')}</label>
                     <input
                         type="text"
                         className="oph-input"
@@ -68,7 +67,7 @@ const BasicinfoForm = (props: Props) => {
                     />
                 </li>
                 <li>
-                    <label>{props.L['VIRKAILIJAN_TIEDOT_SUKUNIMI']}</label>
+                    <label>{L('VIRKAILIJAN_TIEDOT_SUKUNIMI')}</label>
                     <input
                         type="text"
                         className="oph-input"
@@ -78,7 +77,7 @@ const BasicinfoForm = (props: Props) => {
                     />
                 </li>
                 <li>
-                    <label>{props.L['VIRKAILIJAN_TIEDOT_SPOSTI']}</label>
+                    <label>{L('VIRKAILIJAN_TIEDOT_SPOSTI')}</label>
                     <input
                         type="text"
                         className="oph-input"
@@ -88,7 +87,7 @@ const BasicinfoForm = (props: Props) => {
                     />
                 </li>
                 <li>
-                    <label>{props.L['VIRKAILIJAN_TIEDOT_ASIOINTIKIELI']}</label>
+                    <label>{L('VIRKAILIJAN_TIEDOT_ASIOINTIKIELI')}</label>
                     <Select
                         name="languageSelection"
                         isDisabled={props.disabled}
@@ -98,7 +97,7 @@ const BasicinfoForm = (props: Props) => {
                     />
                 </li>
                 <li>
-                    <label>{props.L['VIRKAILIJAN_TIEDOT_SAATE']}</label>
+                    <label>{L('VIRKAILIJAN_TIEDOT_SAATE')}</label>
                     <textarea
                         className="oph-input"
                         value={basicInfo.saate}
@@ -107,7 +106,7 @@ const BasicinfoForm = (props: Props) => {
                         onChange={updateSaate}
                     />
                 </li>
-                <div className="oph-field-text">{props.L['VIRKAILIJAN_LISAYS_ASIOINTIKIELI_TARKENNE']}</div>
+                <div className="oph-field-text">{L('VIRKAILIJAN_LISAYS_ASIOINTIKIELI_TARKENNE')}</div>
             </ul>
         </fieldset>
     );

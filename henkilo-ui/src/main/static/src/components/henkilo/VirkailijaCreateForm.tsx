@@ -32,11 +32,11 @@ const VirkailijaCreateForm = (props: VirkailijaCreateFormProps) => {
         <form onSubmit={onSubmit}>
             <div className="oph-field oph-field-is-required">
                 <label className="oph-label" htmlFor="etunimet">
-                    {L['HENKILO_ETUNIMET']}
+                    {L('HENKILO_ETUNIMET')}
                 </label>
                 <input
                     className="oph-input"
-                    placeholder={L['HENKILO_ETUNIMET']}
+                    placeholder={L('HENKILO_ETUNIMET')}
                     type="text"
                     name="etunimet"
                     value={props.virkailija.etunimet}
@@ -45,11 +45,11 @@ const VirkailijaCreateForm = (props: VirkailijaCreateFormProps) => {
             </div>
             <div className="oph-field oph-field-is-required">
                 <label className="oph-label" htmlFor="kutsumanimi">
-                    {L['HENKILO_KUTSUMANIMI']}
+                    {L('HENKILO_KUTSUMANIMI')}
                 </label>
                 <input
                     className="oph-input"
-                    placeholder={L['HENKILO_KUTSUMANIMI']}
+                    placeholder={L('HENKILO_KUTSUMANIMI')}
                     type="text"
                     name="kutsumanimi"
                     value={props.virkailija.kutsumanimi}
@@ -58,11 +58,11 @@ const VirkailijaCreateForm = (props: VirkailijaCreateFormProps) => {
             </div>
             <div className="oph-field oph-field-is-required">
                 <label className="oph-label" htmlFor="sukunimi">
-                    {L['HENKILO_SUKUNIMI']}
+                    {L('HENKILO_SUKUNIMI')}
                 </label>
                 <input
                     className="oph-input"
-                    placeholder={L['HENKILO_SUKUNIMI']}
+                    placeholder={L('HENKILO_SUKUNIMI')}
                     type="text"
                     name="sukunimi"
                     value={props.virkailija.sukunimi}
@@ -71,11 +71,11 @@ const VirkailijaCreateForm = (props: VirkailijaCreateFormProps) => {
             </div>
             <div className="oph-field oph-field-is-required">
                 <label className="oph-label" htmlFor="kayttajatunnus">
-                    {L['HENKILO_KAYTTAJANIMI']}
+                    {L('HENKILO_KAYTTAJANIMI')}
                 </label>
                 <input
                     className="oph-input"
-                    placeholder={L['HENKILO_KAYTTAJANIMI']}
+                    placeholder={L('HENKILO_KAYTTAJANIMI')}
                     type="text"
                     name="kayttajatunnus"
                     value={props.virkailija.kayttajatunnus}
@@ -84,25 +84,25 @@ const VirkailijaCreateForm = (props: VirkailijaCreateFormProps) => {
             </div>
             <div className="oph-field oph-field-is-required">
                 <label className="oph-label" htmlFor="salasana">
-                    {L['HENKILO_PASSWORD']}
+                    {L('HENKILO_PASSWORD')}
                 </label>
                 <input
                     className="oph-input"
-                    placeholder={L['HENKILO_PASSWORD']}
+                    placeholder={L('HENKILO_PASSWORD')}
                     type="password"
                     name="salasana"
                     value={props.virkailija.salasana}
                     onChange={onInputChange}
                 />
-                <div className="oph-field-text">{L['SALASANA_OHJE']}</div>
+                <div className="oph-field-text">{L('SALASANA_OHJE')}</div>
             </div>
             <div className="oph-field oph-field-is-required">
                 <label className="oph-label" htmlFor="salasanaUudestaan">
-                    {L['HENKILO_PASSWORDAGAIN']}
+                    {L('HENKILO_PASSWORDAGAIN')}
                 </label>
                 <input
                     className="oph-input"
-                    placeholder={L['HENKILO_PASSWORDAGAIN']}
+                    placeholder={L('HENKILO_PASSWORDAGAIN')}
                     type="password"
                     name="salasanaUudestaan"
                     value={props.virkailija.salasanaUudestaan}
@@ -111,7 +111,7 @@ const VirkailijaCreateForm = (props: VirkailijaCreateFormProps) => {
             </div>
             <div>
                 <button type="submit" className="oph-button oph-button-primary" disabled={props.disabled}>
-                    {L['TALLENNA_LINKKI']}
+                    {L('TALLENNA_LINKKI')}
                 </button>
             </div>
         </form>

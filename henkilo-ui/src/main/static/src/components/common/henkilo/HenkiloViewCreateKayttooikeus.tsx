@@ -75,7 +75,7 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                 dispatch(
                     add({
                         id: `kayttooikeus-${oidHenkilo}-${Math.random()}`,
-                        header: L['NOTIFICATION_LISAA_KAYTTOOIKEUS_ONNISTUI'],
+                        header: L('NOTIFICATION_LISAA_KAYTTOOIKEUS_ONNISTUI'),
                         type: 'ok',
                     })
                 );
@@ -86,7 +86,7 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                 dispatch(
                     add({
                         id: `kayttooikeus-${oidHenkilo}-${Math.random()}`,
-                        header: L['NOTIFICATION_LISAA_KAYTTOOIKEUS_EPAONNISTUI'],
+                        header: L('NOTIFICATION_LISAA_KAYTTOOIKEUS_EPAONNISTUI'),
                         type: 'error',
                     })
                 );
@@ -96,9 +96,9 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
     const sectionLabelId = useId();
     return (
         <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
-            <h2 id={sectionLabelId}>{L['HENKILO_LISAA_KAYTTOOIKEUDET_OTSIKKO']}</h2>
+            <h2 id={sectionLabelId}>{L('HENKILO_LISAA_KAYTTOOIKEUDET_OTSIKKO')}</h2>
             <div className="kayttooikeus-form-grid">
-                <div className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE']}</div>
+                <div className="oph-bold">{L('HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE')}</div>
                 <div className="kayttooikeus-form-organisation-selection">
                     <OphDsOrganisaatioSelect
                         disabled={!!ryhmaSelection || !!selectedList?.length}
@@ -110,10 +110,10 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                         disabled={!!organisationSelection || !!selectedList?.length}
                     />
                 </div>
-                <div className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_KESTO']}</div>
+                <div className="oph-bold">{L('HENKILO_LISAA_KAYTTOOIKEUDET_KESTO')}</div>
                 <div>
                     <div className="kayttooikeus-input-container">
-                        <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_ALKAA']}</span>
+                        <span className="oph-h5">{L('HENKILO_LISAA_KAYTTOOIKEUDET_ALKAA')}</span>
                         <ReactDatePicker
                             className="oph-input"
                             onChange={(date) => setAlkupvm(date ?? new Date())}
@@ -125,7 +125,7 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                         />
                     </div>
                     <div className="kayttooikeus-input-container">
-                        <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY']}</span>
+                        <span className="oph-h5">{L('HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY')}</span>
                         <ReactDatePicker
                             className="oph-input"
                             onChange={(date) => date && setLoppupvmInput(date)}
@@ -137,7 +137,7 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                         />
                     </div>
                 </div>
-                <div className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT']}</div>
+                <div className="oph-bold">{L('HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT')}</div>
                 <div>
                     <CKKayttooikeudet
                         selectedList={selectedList}
@@ -155,18 +155,18 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                         validationMessages={{
                             organisation: {
                                 id: 'organisation',
-                                labelLocalised: L['HENKILO_LISAA_KAYTTOOIKEUDET_ORGANISAATIO_VALID'],
+                                labelLocalised: L('HENKILO_LISAA_KAYTTOOIKEUDET_ORGANISAATIO_VALID'),
                                 isValid: !!organisationSelection || !!ryhmaSelection,
                             },
                             kayttooikeus: {
                                 id: 'kayttooikeus',
-                                labelLocalised: L['HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID'],
+                                labelLocalised: L('HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID'),
                                 isValid: !!selectedList?.length,
                             },
                         }}
                         buttonAction={createKayttooikeusAction}
                     >
-                        {L['HENKILO_LISAA_KAYTTOOIKEUDET_HAE_BUTTON']}
+                        {L('HENKILO_LISAA_KAYTTOOIKEUDET_HAE_BUTTON')}
                     </ValidationMessageButton>
                 </div>
             </div>

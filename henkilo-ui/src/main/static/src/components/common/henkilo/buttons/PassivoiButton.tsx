@@ -19,7 +19,7 @@ const PassivoiButton = (props: OwnProps) => {
     const [notification, setNotification] = useState<ButtonNotification>();
     return props.passivoitu ? (
         <Button key="passivoi" disabled={!!props.passivoitu}>
-            {L['PASSIVOI_PASSIVOITU']}
+            {L('PASSIVOI_PASSIVOITU')}
         </Button>
     ) : (
         <ConfirmButton
@@ -35,8 +35,8 @@ const PassivoiButton = (props: OwnProps) => {
                         })
                     )
             }
-            normalLabel={L['PASSIVOI_LINKKI']}
-            confirmLabel={L['PASSIVOI_LINKKI_CONFIRM']}
+            normalLabel={L('PASSIVOI_LINKKI')}
+            confirmLabel={L('PASSIVOI_LINKKI_CONFIRM')}
             disabled={!!props.disabled}
             notification={notification}
             removeNotification={() => setNotification(undefined)}

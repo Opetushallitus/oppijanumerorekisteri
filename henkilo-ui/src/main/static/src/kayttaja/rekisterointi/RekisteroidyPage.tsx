@@ -177,7 +177,7 @@ export const RekisteroidyPage = (props: OwnProps) => {
                     <div className="flex-horizontal">
                         <div className="wrapper flex-item-1">
                             <div>
-                                <p className="oph-h3 oph-bold">{props.L['REKISTEROIDY_PERUSTIEDOT']}</p>
+                                <p className="oph-h3 oph-bold">{L['REKISTEROIDY_PERUSTIEDOT']}</p>
                                 <div className="labelValue label-row">
                                     <div className="oph-bold">{L['HENKILO_ETUNIMET']}</div>
                                     <div>{kutsu.etunimi}</div>

@@ -42,7 +42,7 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
                     add({
                         id: `KUTSU_CONFIRMATION_SUCCESS-${Math.random()}`,
                         type: 'ok',
-                        header: L['KUTSU_LUONTI_ONNISTUI'],
+                        header: L('KUTSU_LUONTI_ONNISTUI'),
                     })
                 )
             );
@@ -53,17 +53,17 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
             expanderColumn(),
             {
                 id: 'NIMI',
-                header: () => L['KUTSUT_NIMI_OTSIKKO'],
+                header: () => L('KUTSUT_NIMI_OTSIKKO'),
                 accessorFn: (row) => `${row.etunimi} ${row.sukunimi}`,
             },
             {
                 id: 'SAHKOPOSTI',
-                header: () => L['KUTSUT_SAHKOPOSTI_OTSIKKO'],
+                header: () => L('KUTSUT_SAHKOPOSTI_OTSIKKO'),
                 accessorFn: (row) => row.sahkoposti,
             },
             {
                 id: 'KUTSUTUT_ORGANISAATIO_OTSIKKO',
-                header: () => L['KUTSUTUT_ORGANISAATIO_OTSIKKO'],
+                header: () => L('KUTSUTUT_ORGANISAATIO_OTSIKKO'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => (
                     <div>
@@ -76,7 +76,7 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
             },
             {
                 id: 'AIKALEIMA',
-                header: () => L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO'],
+                header: () => L('KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => {
                     const sent = parseISO(getValue().aikaleima);
@@ -84,7 +84,7 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
                         <span>
                             {format(sent, 'd.M.yyyy HH:mm')}{' '}
                             {isBefore(addMonths(sent, 1), new Date()) ? (
-                                <span className="oph-red">{L['KUTSUTUT_VIRKAILIJAT_KUTSU_VANHENTUNUT']}</span>
+                                <span className="oph-red">{L('KUTSUTUT_VIRKAILIJAT_KUTSU_VANHENTUNUT')}</span>
                             ) : null}
                         </span>
                     );
@@ -94,7 +94,7 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
             },
             {
                 id: 'KUTSUTUT_SAATE_OTSIKKO',
-                header: () => L['KUTSUTUT_SAATE_OTSIKKO'],
+                header: () => L('KUTSUTUT_SAATE_OTSIKKO'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) =>
                     getValue().saate ? (
@@ -106,7 +106,7 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
                             simple={true}
                             popupContent={<p>{getValue().saate}</p>}
                         >
-                            {L['AVAA']}
+                            {L('AVAA')}
                         </PopupButton>
                     ) : (
                         ''
@@ -115,24 +115,24 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
             },
             {
                 id: 'KUTSUTUT_LAHETA_UUDELLEEN',
-                header: () => L['KUTSUTUT_LAHETA_UUDELLEEN'],
+                header: () => L('KUTSUTUT_LAHETA_UUDELLEEN'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) =>
                     getValue().tila === 'AVOIN' && (
                         <Button action={() => resendAction(getValue().id)}>
-                            {L['KUTSUTUT_LAHETA_UUDELLEEN_NAPPI']}
+                            {L('KUTSUTUT_LAHETA_UUDELLEEN_NAPPI')}
                         </Button>
                     ),
                 enableSorting: false,
             },
             {
                 id: 'KUTSU_PERUUTA',
-                header: () => L['KUTSUTUT_PERUUTA_KUTSU'],
+                header: () => L('KUTSUTUT_PERUUTA_KUTSU'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) =>
                     getValue().tila === 'AVOIN' && (
                         <Button cancel action={() => cancelInvitation(getValue())}>
-                            {L['KUTSUTUT_PERUUTA_KUTSU_NAPPI']}
+                            {L('KUTSUTUT_PERUUTA_KUTSU_NAPPI')}
                         </Button>
                     ),
                 enableSorting: false,

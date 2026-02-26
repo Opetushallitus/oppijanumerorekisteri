@@ -1,6 +1,7 @@
 import React, { Children, useMemo, useState } from 'react';
 import { FixedSizeList } from 'react-window';
 import Select, { components, MenuListProps, OptionProps, SingleValue, SingleValueProps } from 'react-select';
+import { skipToken } from '@reduxjs/toolkit/query';
 
 import type { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import { useLocalisations, useOmatOrganisaatiot } from '../../selectors';
@@ -41,9 +42,9 @@ export const OphDsOrganisaatioSelect = ({ defaultValue, disabled, label, onChang
     const { data: organisationNames } = useGetOrganisationNamesQuery();
     const omattiedotOrganisations = useOmatOrganisaatiot();
     const { data: omattiedot } = useGetOmattiedotQuery();
-    const { data: henkilohakuOrganisaatiot } = useGetHenkiloHakuOrganisaatiotQuery(omattiedot!.oidHenkilo, {
-        skip: !omattiedot || type !== 'HENKILOHAKU',
-    });
+    const { data: henkilohakuOrganisaatiot } = useGetHenkiloHakuOrganisaatiotQuery(
+        omattiedot && type === 'HENKILOHAKU' ? omattiedot.oidHenkilo : skipToken
+    );
     const [searchWord, setSearchWord] = useState<string>('');
 
     const allOrganisations = useMemo(() => {
@@ -75,8 +76,8 @@ export const OphDsOrganisaatioSelect = ({ defaultValue, disabled, label, onChang
                     </div>
                 </div>
                 <div>
-                    {o.data.status === 'SUUNNITELTU' && <div>{L['ORGANISAATIONVALINTA_SUUNNITELTU']}</div>}
-                    {o.data.status === 'PASSIIVINEN' && <div>{L['ORGANISAATIONVALINTA_PASSIIVINEN']}</div>}
+                    {o.data.status === 'SUUNNITELTU' && <div>{L('ORGANISAATIONVALINTA_SUUNNITELTU')}</div>}
+                    {o.data.status === 'PASSIIVINEN' && <div>{L('ORGANISAATIONVALINTA_PASSIIVINEN')}</div>}
                 </div>
             </div>
         </components.Option>
@@ -102,14 +103,14 @@ export const OphDsOrganisaatioSelect = ({ defaultValue, disabled, label, onChang
                 options={allOrganisations}
                 onInputChange={setSearchWord}
                 filterOption={(o, input) => containsSearchword(input.toLowerCase())(o.data)}
-                placeholder={placeholder ?? L['VALITSE_ORGANISAATIO']}
+                placeholder={placeholder ?? L('VALITSE_ORGANISAATIO')}
                 onChange={onChange}
                 components={{
                     MenuList: OrganisationMenuList,
                     Option: OrganisationOption,
                     SingleValue: OrganisationSingleValue,
                 }}
-                noOptionsMessage={() => L['HENKILOHAKU_EI_TULOKSIA']}
+                noOptionsMessage={() => L('HENKILOHAKU_EI_TULOKSIA')}
                 isClearable
             />
         </div>

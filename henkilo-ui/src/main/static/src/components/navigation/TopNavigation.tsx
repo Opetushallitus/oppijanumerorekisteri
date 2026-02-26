@@ -44,7 +44,7 @@ export const TopNavigation = () => {
                                 window.history.back();
                             }}
                         >
-                            &#8701; {L['TAKAISIN_LINKKI']} <PlaceholderIcon />
+                            &#8701; {L('TAKAISIN_LINKKI')} <PlaceholderIcon />
                         </a>
                     </li>
                 ) : null}
@@ -69,7 +69,7 @@ export const TopNavigation = () => {
                             >
                                 {({ isActive }) => (
                                     <span>
-                                        {L[tab.label] ?? tab.label}
+                                        {L(tab.label)}
                                         {isActive ? <AngleDownIcon /> : <PlaceholderIcon />}
                                     </span>
                                 )}

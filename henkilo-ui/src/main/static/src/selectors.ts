@@ -1,7 +1,8 @@
 import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
+import { skipToken } from '@reduxjs/toolkit/query';
 
-import { Localisations, L10n } from './types/localisation.type';
+import { LocalisationFn, Localisations, L10n } from './types/localisation.type';
 import { Locale } from './types/locale.type';
 import {
     useGetKayttajatiedotQuery,
@@ -42,7 +43,7 @@ const mapLocalisationsByLocale = (localisations?: Localisation[]): L10n => {
 export const useLocalisations = (
     skipUserLocale = false
 ): {
-    L: Localisations;
+    L: LocalisationFn;
     locale: Locale;
     allLocalisations: L10n;
     getLocalisations: (l?: string) => Localisations;
@@ -52,7 +53,7 @@ export const useLocalisations = (
     const { data: localisations } = useGetLocalisationsQuery('henkilo-ui');
     const { L, allLocalisations, getLocalisations } = useMemo(() => {
         const allLocalisations = mapLocalisationsByLocale(localisations);
-        const L = allLocalisations?.[supportedLocale];
+        const L = (key: string) => allLocalisations[supportedLocale][key] ?? key;
         const getLocalisations = (l?: string) => allLocalisations?.[toSupportedLocale(l)];
         return { L, allLocalisations, getLocalisations };
     }, [localisations, supportedLocale]);
@@ -63,8 +64,7 @@ export const useOmatOrganisaatiot = () => {
     const { locale } = useLocalisations();
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: omatOrganisaatiot } = useGetOmatOrganisaatiotQuery(
-        { oid: omattiedot!.oidHenkilo, locale },
-        { skip: !omattiedot }
+        omattiedot ? { oid: omattiedot.oidHenkilo, locale } : skipToken
     );
     return omatOrganisaatiot;
 };
@@ -82,8 +82,8 @@ function flattenOrganisaatioWithChildren(org: OrganisaatioWithChildren): Organis
     return [org, ...org.children.flatMap(flattenOrganisaatioWithChildren)];
 }
 
-export const useKayttooikeusryhmas = (isOmattiedot: boolean, henkiloOid?: string) => {
-    const kayttooikeusryhmas = useGetKayttooikeusryhmasForHenkiloQuery(henkiloOid!, { skip: isOmattiedot });
+export const useKayttooikeusryhmas = (isOmattiedot: boolean, henkiloOid: string) => {
+    const kayttooikeusryhmas = useGetKayttooikeusryhmasForHenkiloQuery(henkiloOid, { skip: isOmattiedot });
     const omatKayttooikeusryhma = useGetOmatKayttooikeusryhmasQuery(undefined, { skip: !isOmattiedot });
     return isOmattiedot ? omatKayttooikeusryhma : kayttooikeusryhmas;
 };

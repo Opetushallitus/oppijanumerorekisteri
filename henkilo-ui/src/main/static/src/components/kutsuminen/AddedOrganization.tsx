@@ -2,6 +2,7 @@ import React from 'react';
 import { SingleValue } from 'react-select';
 import ReactDatePicker from 'react-datepicker';
 import { addYears, format, isAfter, isBefore, parseISO } from 'date-fns';
+import { skipToken } from '@reduxjs/toolkit/query';
 
 import { OphDsRyhmaSelect } from '../design-system/OphDsRyhmaSelect';
 import { findOmattiedotOrganisatioOrRyhmaByOid } from '../../utilities/organisaatio.util';
@@ -33,14 +34,11 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
     const { L, locale } = useLocalisations();
     const { data: omattiedot } = useGetOmattiedotQuery();
     const oid = omattiedot?.oidHenkilo;
-    const { data: omatOrganisaatios } = useGetOmatOrganisaatiotQuery({ oid: oid!, locale }, { skip: !omattiedot });
+    const { data: omatOrganisaatios } = useGetOmatOrganisaatiotQuery(oid ? { oid, locale } : skipToken);
     const { data: organisationNames } = useGetOrganisationNamesQuery();
     const selectedOrganisaatioOid = addedOrg.organisation?.oid;
     const { data: allPermissions, isLoading } = useGetAllowedKayttooikeusryhmasForOrganisationQuery(
-        { oidHenkilo: oid!, oidOrganisaatio: selectedOrganisaatioOid },
-        {
-            skip: !omattiedot || !selectedOrganisaatioOid,
-        }
+        oid && selectedOrganisaatioOid ? { oidHenkilo: oid, oidOrganisaatio: selectedOrganisaatioOid } : skipToken
     );
     const selectablePermissions = allPermissions
         ? allPermissions.filter((p) => !addedOrg.selectedPermissions.find((s) => s.ryhmaId === p.ryhmaId))
@@ -92,10 +90,10 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
         <div className="added-org">
             <div className="row">
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <h3>{L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_ORGANISAATIO']}</h3>
+                    <h3>{L('VIRKAILIJAN_LISAYS_ORGANISAATIOON_ORGANISAATIO')}</h3>
                     <button
                         className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
-                        title={L['POISTA']}
+                        title={L('POISTA')}
                         onClick={() => removeOrganisation()}
                     />
                 </div>
@@ -104,7 +102,7 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
                         className="oph-input flex-item-1 kutsuminen-organisaatiosuodatus"
                         type="text"
                         value={addedOrg.organisation?.name ?? ''}
-                        placeholder={L['VIRKAILIJAN_LISAYS_ORGANISAATIO']}
+                        placeholder={L('VIRKAILIJAN_LISAYS_ORGANISAATIO')}
                         readOnly
                     />
                     <OrganisaatioSelectModal onSelect={selectOrganisaatio} />
@@ -118,7 +116,7 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
             </div>
 
             <div className="row permissions-row">
-                <label htmlFor="permissions">{L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_MYONNA_KAYTTOOIKEUKSIA']}</label>
+                <label htmlFor="permissions">{L('VIRKAILIJAN_LISAYS_ORGANISAATIOON_MYONNA_KAYTTOOIKEUKSIA')}</label>
 
                 <div className="permissionSelect">
                     <KayttooikeusryhmaSelectModal
@@ -148,7 +146,7 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
 
                 <div className="clear" />
 
-                <label>{L['HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY']}</label>
+                <label>{L('HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY')}</label>
                 <div>
                     <ReactDatePicker
                         className="oph-input"

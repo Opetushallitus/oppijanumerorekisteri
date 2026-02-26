@@ -1,4 +1,5 @@
 import React from 'react';
+import { skipToken } from '@reduxjs/toolkit/query/react';
 
 import LabelValue from './LabelValue';
 import { useGetHenkiloQuery } from '../../../../api/oppijanumerorekisteri';
@@ -12,7 +13,7 @@ type OwnProps = {
 };
 
 const Kutsumanimi = (props: OwnProps) => {
-    const { data: henkilo } = useGetHenkiloQuery(props.henkiloOid!, { skip: !props.henkiloOid });
+    const { data: henkilo } = useGetHenkiloQuery(props.henkiloOid ?? skipToken);
     return (
         <LabelValue
             readOnly={props.readOnly}

@@ -55,7 +55,7 @@ export const KutsuConfirmation = (props: Props) => {
                     add({
                         id: `kutsu-ok-${Math.random()}`,
                         type: 'ok',
-                        header: L['VIRKAILIJAN_LISAYS_LAHETETTY'],
+                        header: L('VIRKAILIJAN_LISAYS_LAHETETTY'),
                     })
                 );
                 setSent(true);
@@ -65,18 +65,18 @@ export const KutsuConfirmation = (props: Props) => {
                     add({
                         id: `kutsu-failed-${Math.random()}`,
                         type: 'error',
-                        header: L['KUTSU_LUONTI_EPAONNISTUI_TUNTEMATON_VIRHE'],
+                        header: L('KUTSU_LUONTI_EPAONNISTUI_TUNTEMATON_VIRHE'),
                     })
                 );
             });
     }
     return (
         <OphModal onClose={props.modalCloseFn} onOverlayClick={props.modalCloseFn}>
-            <h2>{L['VIRKAILIJAN_LISAYS_ESIKATSELU_OTSIKKO']}</h2>
+            <h2>{L('VIRKAILIJAN_LISAYS_ESIKATSELU_OTSIKKO')}</h2>
             <p>
-                {L['VIRKAILIJAN_LISAYS_ESIKATSELU_TEKSTI']} {props.basicInfo.email}
+                {L('VIRKAILIJAN_LISAYS_ESIKATSELU_TEKSTI')} {props.basicInfo.email}
             </p>
-            <h3>{L['VIRKAILIJAN_LISAYS_ESIKATSELU_ALAOTSIKKO']}</h3>
+            <h3>{L('VIRKAILIJAN_LISAYS_ESIKATSELU_ALAOTSIKKO')}</h3>
             {props.addedOrgs.map((org) => (
                 <div key={org.organisation.oid}>
                     <span className="oph-h3 oph-strong">{org.organisation.name}</span>
@@ -91,10 +91,10 @@ export const KutsuConfirmation = (props: Props) => {
             ))}
             <div className="row">
                 {sent ? (
-                    <Button action={onClose}>{L['VIRKAILIJAN_LISAYS_LAHETETTY']}</Button>
+                    <Button action={onClose}>{L('VIRKAILIJAN_LISAYS_LAHETETTY')}</Button>
                 ) : (
                     <Button action={sendInvitation} loading={isLoading}>
-                        {L['VIRKAILIJAN_LISAYS_TALLENNA']}
+                        {L('VIRKAILIJAN_LISAYS_TALLENNA')}
                     </Button>
                 )}
             </div>

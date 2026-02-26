@@ -38,7 +38,7 @@ const KayttooikeusryhmanOrganisaatiorajoite = (props: Props) => {
 
     return (
         <div className="kayttooikeusryhman-myonto-kohde">
-            <h4>{L['KAYTTOOIKEUSRYHMAT_LISAA_ORGANISAATIORAJOITE_OTSIKKO']}</h4>
+            <h4>{L('KAYTTOOIKEUSRYHMAT_LISAA_ORGANISAATIORAJOITE_OTSIKKO')}</h4>
             <label className="oph-checkable" htmlFor="ryhmarestriction">
                 <input
                     id="ryhmarestriction"
@@ -47,7 +47,7 @@ const KayttooikeusryhmanOrganisaatiorajoite = (props: Props) => {
                     onChange={props.toggleRyhmaRestriction}
                     checked={props.ryhmaRestriction}
                 />
-                <span className="oph-checkable-text">{L['KAYTTOOIKEUSRYHMAT_LISAA_RYHMA']}</span>
+                <span className="oph-checkable-text">{L('KAYTTOOIKEUSRYHMAT_LISAA_RYHMA')}</span>
             </label>
 
             <div className="flex-horizontal">
@@ -61,7 +61,7 @@ const KayttooikeusryhmanOrganisaatiorajoite = (props: Props) => {
                 </div>
                 <div className="flex-item-1 oppilaitostyyppi-wrapper">
                     <fieldset className="oph-fieldset">
-                        <legend className="oph-label">{L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_OPPILAITOSTYYPPI']}</legend>
+                        <legend className="oph-label">{L('KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_OPPILAITOSTYYPPI')}</legend>
                         {oppilaitostyypitOptions.map((option, idx) => (
                             <label key={'oppilaitostyypit' + idx} htmlFor={'oppilaitostyypit' + idx}>
                                 <input
@@ -84,7 +84,7 @@ const KayttooikeusryhmanOrganisaatiorajoite = (props: Props) => {
                 <div className="flex-item-1 organisaatiotyyppi-wrapper">
                     <fieldset className="oph-fieldset">
                         <legend className="oph-label">
-                            {L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_ORGANISAATIOTYYPPI']}
+                            {L('KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_ORGANISAATIOTYYPPI')}
                         </legend>
                         {organisaatiotyypitOptions.map((option, idx) => (
                             <label key={'organisaatiotyypit' + idx} htmlFor={'organisaatiotyypit' + idx}>

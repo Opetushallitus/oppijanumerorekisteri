@@ -28,7 +28,7 @@ const OppijaCreateDuplikaatit = (props: Props) => {
 
     return (
         <div>
-            <div className="oph-field">{L['OPPIJAN_LUONTI_DUPLIKAATIT_OHJE']}</div>
+            <div className="oph-field">{L('OPPIJAN_LUONTI_DUPLIKAATIT_OHJE')}</div>
             <HenkiloViewDuplikaatit
                 henkilo={{ ...props.oppija }}
                 vainLuku={true}
@@ -37,10 +37,10 @@ const OppijaCreateDuplikaatit = (props: Props) => {
             />
             <div className="oph-field">
                 <button type="button" className="oph-button oph-button-primary" onClick={tallenna}>
-                    {L['OPPIJAN_LUONTI_LUO_NAPPI']}
+                    {L('OPPIJAN_LUONTI_LUO_NAPPI')}
                 </button>
                 <button type="button" className="oph-button oph-button-cancel" onClick={peruuta}>
-                    {L['PERUUTA']}
+                    {L('PERUUTA')}
                 </button>
             </div>
         </div>

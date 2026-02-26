@@ -22,7 +22,7 @@ const Syntymaaika = (props: OwnProps) => {
                     gridTemplateColumns: props.readOnly ? '1fr 1fr' : '1fr',
                 }}
             >
-                <span className="oph-bold">{L['HENKILO_SYNTYMAAIKA']}</span>
+                <span className="oph-bold">{L('HENKILO_SYNTYMAAIKA')}</span>
                 {props.readOnly ? (
                     <span className="field">
                         {props.henkiloUpdate.syntymaaika ? format(props.henkiloUpdate.syntymaaika, 'd.M.yyyy') : ''}

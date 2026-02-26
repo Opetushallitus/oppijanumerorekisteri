@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import Select, { SingleValue } from 'react-select';
+import { skipToken } from '@reduxjs/toolkit/query';
 
 import { useLocalisations, useOmatRyhmat } from '../../selectors';
 import { SelectOption, selectProps } from '../../utilities/select';
@@ -20,9 +21,9 @@ export const OphDsRyhmaSelect = (props: OwnProps) => {
     const { L, locale } = useLocalisations();
     const omatRyhmat = !props.type ? useOmatRyhmat() : [];
     const { data: omattiedot } = useGetOmattiedotQuery();
-    const { data: henkilohakuOrganisaatiot } = useGetHenkiloHakuOrganisaatiotQuery(omattiedot!.oidHenkilo, {
-        skip: !omattiedot || props.type !== 'HENKILOHAKU',
-    });
+    const { data: henkilohakuOrganisaatiot } = useGetHenkiloHakuOrganisaatiotQuery(
+        omattiedot && props.type === 'HENKILOHAKU' ? omattiedot.oidHenkilo : skipToken
+    );
     const options = useMemo(() => {
         const ryhmat =
             props.type === 'HENKILOHAKU'
@@ -52,7 +53,7 @@ export const OphDsRyhmaSelect = (props: OwnProps) => {
                 defaultValue={options.find((o) => o.value === props.defaultValue)}
                 className="oph-ds-ryhma-select"
                 options={options}
-                placeholder={props.placeholder ?? L['VALITSE_RYHMA']}
+                placeholder={props.placeholder ?? L('VALITSE_RYHMA')}
                 onChange={props.selectOrganisaatio}
                 value={options.find((o) => o.value === props.selectedOrganisaatioOid)}
                 isDisabled={props.disabled}

@@ -19,7 +19,7 @@ const PassinumeroButton = ({ oid, styles, disabled }: Props) => {
             popupStyle={styles}
             popupTitle={
                 <span className="oph-h3 oph-strong" style={{ textAlign: 'left' }}>
-                    {L['PASSINUMEROT']}:
+                    {L('PASSINUMEROT')}:
                 </span>
             }
             popupClass={'oph-popup-default oph-popup-bottom'}
@@ -27,7 +27,7 @@ const PassinumeroButton = ({ oid, styles, disabled }: Props) => {
             popupButtonWrapperPositioning={'relative'}
             popupContent={<PassinumeroPopupContent oid={oid} />}
         >
-            {L['HALLITSE_PASSINUMEROITA']}
+            {L('HALLITSE_PASSINUMEROITA')}
         </PopupButton>
     );
 };

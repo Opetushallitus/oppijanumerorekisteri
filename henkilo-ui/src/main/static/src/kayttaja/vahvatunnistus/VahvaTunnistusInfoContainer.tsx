@@ -74,8 +74,10 @@ const VahvaTunnistusInfoContainer = () => {
         );
     } else if (virhe) {
         return <VirhePage topic="VAHVATUNNISTUSINFO_VIRHE_OTSIKKO" text="VAHVATUNNISTUSINFO_VIRHE_TEKSTI" />;
+    } else if (loginToken) {
+        return <VahvaTunnistusInfoPage loginToken={loginToken} locale={locale} />;
     } else {
-        return <VahvaTunnistusInfoPage loginToken={loginToken!} locale={locale} />;
+        return;
     }
 };
 

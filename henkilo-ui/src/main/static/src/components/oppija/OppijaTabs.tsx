@@ -47,10 +47,10 @@ export const OppijaTabs = ({ oid }: OppijaTabsProps) => {
                     to={`/oppija2/${oid}/duplikaatit`}
                     end
                 >
-                    {L['NAVI_HAE_DUPLIKAATIT']}
+                    {L('NAVI_HAE_DUPLIKAATIT')}
                 </NavLink>
             ) : (
-                <button disabled>{L['NAVI_HAE_DUPLIKAATIT']}</button>
+                <button disabled>{L('NAVI_HAE_DUPLIKAATIT')}</button>
             )}
             {isVtjVertailuEnabled ? (
                 <NavLink
@@ -58,10 +58,10 @@ export const OppijaTabs = ({ oid }: OppijaTabsProps) => {
                     to={`/oppija2/${oid}/vtjvertailu`}
                     end
                 >
-                    {L['NAVI_VTJ_VERTAILU']}
+                    {L('NAVI_VTJ_VERTAILU')}
                 </NavLink>
             ) : (
-                <button disabled>{L['NAVI_VTJ_VERTAILU']}</button>
+                <button disabled>{L('NAVI_VTJ_VERTAILU')}</button>
             )}
         </>
     );

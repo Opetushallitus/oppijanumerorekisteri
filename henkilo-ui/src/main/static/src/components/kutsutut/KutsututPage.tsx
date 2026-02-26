@@ -41,7 +41,7 @@ const getDefaultView = (isAdmin?: boolean, isVirkailija?: boolean): KutsuView =>
 
 export const KutsututPage = () => {
     const { L, locale } = useLocalisations();
-    useTitle(L['TITLE_KUTSUTUT']);
+    useTitle(L('TITLE_KUTSUTUT'));
     useNavigation(mainNavigation, false);
     const { data } = useGetOmattiedotQuery();
     const { data: omattiedot } = useGetOmattiedotQuery();
@@ -103,11 +103,11 @@ export const KutsututPage = () => {
 
     return (
         <div className="mainContent wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h1>{L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</h1>
+            <h1>{L('KUTSUTUT_VIRKAILIJAT_OTSIKKO')}</h1>
             <div style={{ display: 'flex', gap: '1rem' }}>
                 <OphDsInput
                     id="henkilo"
-                    label={L['KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO']!}
+                    label={L('KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO')}
                     defaultValue={params.searchTerm}
                     onChange={(s) => setParams({ ...params, searchTerm: s })}
                 />
@@ -118,8 +118,8 @@ export const KutsututPage = () => {
                         legend=""
                         onChange={(v) => setParams({ ...params, view: v })}
                         radios={[
-                            { id: 'OPH', value: 'OPH', label: L['KUTSUTUT_OPH_BUTTON']! },
-                            { id: 'KAIKKI', value: '', label: L['KUTSUTUT_KAIKKI_BUTTON']! },
+                            { id: 'OPH', value: 'OPH', label: L('KUTSUTUT_OPH_BUTTON') },
+                            { id: 'KAIKKI', value: '', label: L('KUTSUTUT_KAIKKI_BUTTON') },
                         ]}
                     />
                 ) : omattiedot?.isMiniAdmin ? (
@@ -132,9 +132,9 @@ export const KutsututPage = () => {
                             {
                                 id: 'KAYTTOOIKEUSRYHMA',
                                 value: 'KAYTTOOIKEUSRYHMA',
-                                label: L['KUTSUTUT_OMA_KAYTTOOIKEUSRYHMA_BUTTON']!,
+                                label: L('KUTSUTUT_OMA_KAYTTOOIKEUSRYHMA_BUTTON'),
                             },
-                            { id: 'OMA', value: '', label: L['KUTSUTUT_OMA_ORGANISAATIO_BUTTON']! },
+                            { id: 'OMA', value: '', label: L('KUTSUTUT_OMA_ORGANISAATIO_BUTTON') },
                         ]}
                     />
                 ) : (
@@ -148,7 +148,7 @@ export const KutsututPage = () => {
                     id="kayttooikeusryhmaFilter"
                     options={kayttooikeusryhmaOptions}
                     value={kayttooikeusryhmaOptions.find((o) => o.value === params.kayttooikeusryhmaIds)}
-                    placeholder={L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
+                    placeholder={L('HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER')}
                     onChange={(k) => setParams({ ...params, kayttooikeusryhmaIds: k?.value ?? '' })}
                     isClearable
                 />
@@ -158,7 +158,7 @@ export const KutsututPage = () => {
                     isDisabled={!!organisaatioSelection}
                     options={ryhmaOptions}
                     value={ryhmaOptions.find((o) => o.value === ryhmaSelection)}
-                    placeholder={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_RYHMA']}
+                    placeholder={L('HAETTU_KAYTTOOIKEUSRYHMA_HAKU_RYHMA')}
                     onChange={onRyhmaChange}
                     isClearable
                 />
@@ -166,18 +166,18 @@ export const KutsututPage = () => {
             <KutsututTable params={delayedParams} cancelInvitation={(k) => setConfirmDelete(k)} />
             {confirmDelete && (
                 <OphModal
-                    title={L['PERUUTA_KUTSU_VAHVISTUS']}
+                    title={L('PERUUTA_KUTSU_VAHVISTUS')}
                     onClose={() => setConfirmDelete(undefined)}
                     onOverlayClick={() => setConfirmDelete(undefined)}
                 >
                     <div className="kutsu-confirmation-table">
-                        <div>{L['KUTSUT_NIMI_OTSIKKO']}</div>
+                        <div>{L('KUTSUT_NIMI_OTSIKKO')}</div>
                         <div>
                             {confirmDelete.etunimi} {confirmDelete.sukunimi}
                         </div>
-                        <div>{L['KUTSUT_SAHKOPOSTI_OTSIKKO']}</div>
+                        <div>{L('KUTSUT_SAHKOPOSTI_OTSIKKO')}</div>
                         <div>{confirmDelete.sahkoposti}</div>
-                        <div>{L['KUTSUTUT_ORGANISAATIO_OTSIKKO']}</div>
+                        <div>{L('KUTSUTUT_ORGANISAATIO_OTSIKKO')}</div>
                         <div>
                             {confirmDelete.organisaatiot.map((org) => (
                                 <div className="kutsuOrganisaatio" key={org.organisaatioOid}>
@@ -185,11 +185,11 @@ export const KutsututPage = () => {
                                 </div>
                             ))}
                         </div>
-                        <div>{L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO']}</div>
+                        <div>{L('KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO')}</div>
                         <div>{format(parseISO(confirmDelete.aikaleima), 'd.M.yyyy')}</div>
                     </div>
                     <button className="oph-ds-button" onClick={cancelInvitationConfirmed}>
-                        {L['PERUUTA_KUTSU']}
+                        {L('PERUUTA_KUTSU')}
                     </button>
                 </OphModal>
             )}

@@ -24,7 +24,7 @@ export const FieldlessLabelValue = ({ showOnlyOnWrite, label, readOnly, children
                 }}
             >
                 {!hideLabel && label ? (
-                    <span className="oph-bold">{L[label] + (required ? ' *' : '')}</span>
+                    <span className="oph-bold">{L(label) + (required ? ' *' : '')}</span>
                 ) : (
                     <span>&nbsp;</span>
                 )}

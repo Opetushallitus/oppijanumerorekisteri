@@ -27,7 +27,7 @@ const EditButtons = (props: OwnProps) => {
     return (
         <div>
             <Button className="edit-button-discard-button" key="discard" cancel action={props.discardAction}>
-                {L['PERUUTA_LINKKI']}
+                {L('PERUUTA_LINKKI')}
             </Button>
             <Button
                 className="edit-button-update-button"
@@ -35,7 +35,7 @@ const EditButtons = (props: OwnProps) => {
                 disabled={!props.isValidForm || updating}
                 action={update}
             >
-                <SpinnerInButton show={updating} /> {L['TALLENNA_LINKKI']}
+                <SpinnerInButton show={updating} /> {L('TALLENNA_LINKKI')}
             </Button>
         </div>
     );

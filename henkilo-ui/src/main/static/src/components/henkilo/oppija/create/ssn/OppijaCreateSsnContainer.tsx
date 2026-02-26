@@ -103,7 +103,7 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
 
     return (
         <div className="mainContent wrapper">
-            <span className="oph-h2 oph-bold">{L['OPPIJAN_LUONTI_OTSIKKO']}</span>
+            <span className="oph-h2 oph-bold">{L('OPPIJAN_LUONTI_OTSIKKO')}</span>
             <span className="float-right">
                 <CloseButton closeAction={goBack} />
             </span>
@@ -111,81 +111,81 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
                 {createOid && (
                     <>
                         <div className="create-result oph-alert-success">
-                            <ReactMarkdown>{L['CREATE_PERSON_SUCCESS'] ?? ''}</ReactMarkdown>
-                            <CopyToClipboard text={createOid} L={L} />
+                            <ReactMarkdown>{L('CREATE_PERSON_SUCCESS') ?? ''}</ReactMarkdown>
+                            <CopyToClipboard text={createOid} />
                         </div>
-                        <Button action={resetState}>{L['HENKILO_LUOYHTEYSTIETO']}</Button>
+                        <Button action={resetState}>{L('HENKILO_LUOYHTEYSTIETO')}</Button>
                     </>
                 )}
                 {createError && (
                     <div className="create-result oph-alert-error">
-                        <ReactMarkdown>{L['CREATE_PERSON_FAILURE'] ?? ''}</ReactMarkdown>
+                        <ReactMarkdown>{L('CREATE_PERSON_FAILURE') ?? ''}</ReactMarkdown>
                     </div>
                 )}
                 {existingMessage && (
                     <div className={getMessageClass(existingStatus)}>
-                        <ReactMarkdown>{L[existingMessage] ?? ''}</ReactMarkdown>
-                        {existingStatus === 200 && <CopyToClipboard text={existingOid ?? ''} L={L} />}
-                        {existingStatus === 204 && <Button action={handleCreate}>{L['HENKILO_LUOYHTEYSTIETO']}</Button>}
+                        <ReactMarkdown>{L(existingMessage) ?? ''}</ReactMarkdown>
+                        {existingStatus === 200 && <CopyToClipboard text={existingOid ?? ''} />}
+                        {existingStatus === 204 && <Button action={handleCreate}>{L('HENKILO_LUOYHTEYSTIETO')}</Button>}
                     </div>
                 )}
                 {!createOid && !createError && (
                     <form>
                         <div className="oph-field oph-field-is-required">
-                            <label className="oph-label">{L['HENKILO_HETU']}</label>
+                            <label className="oph-label">{L('HENKILO_HETU')}</label>
                             <input
                                 className={`oph-input ${!isHetu(form) ? 'oph-input-has-error' : ''}`}
-                                placeholder={L['HENKILO_HETU']}
+                                placeholder={L('HENKILO_HETU')}
                                 type="text"
                                 onChange={(e) => setForm({ ...form, hetu: e.target.value })}
                             />
                             {!isHetu(form) && (
-                                <div className="oph-field-text oph-error">{L['LOMAKE_KENTTA_SISALTAA_VIRHEITA']}</div>
+                                <div className="oph-field-text oph-error">{L('LOMAKE_KENTTA_SISALTAA_VIRHEITA')}</div>
                             )}
                         </div>
                         <div className="oph-field oph-field-is-required">
-                            <label className="oph-label">{L['HENKILO_ETUNIMET']}</label>
+                            <label className="oph-label">{L('HENKILO_ETUNIMET')}</label>
                             <input
                                 className={`oph-input ${!form.etunimet.trim() ? 'oph-input-has-error' : ''}`}
-                                placeholder={L['HENKILO_ETUNIMET']}
+                                placeholder={L('HENKILO_ETUNIMET')}
                                 type="text"
                                 onChange={(e) => setForm({ ...form, etunimet: e.target.value })}
                             />
                             {!form.etunimet.trim() && (
-                                <div className="oph-field-text oph-error">{L['LOMAKE_PAKOLLINEN_TIETO']}</div>
+                                <div className="oph-field-text oph-error">{L('LOMAKE_PAKOLLINEN_TIETO')}</div>
                             )}
                         </div>
                         <div className="oph-field oph-field-is-required">
-                            <label className="oph-label">{L['HENKILO_KUTSUMANIMI']}</label>
+                            <label className="oph-label">{L('HENKILO_KUTSUMANIMI')}</label>
                             <input
                                 className={`oph-input ${!isValidKutsumanimi(form.etunimet, form.kutsumanimi) ? 'oph-input-has-error' : ''}`}
-                                placeholder={L['HENKILO_KUTSUMANIMI']}
+                                placeholder={L('HENKILO_KUTSUMANIMI')}
                                 type="text"
                                 onChange={(e) => setForm({ ...form, kutsumanimi: e.target.value })}
                             />
                             {!isValidKutsumanimi(form.etunimet, form.kutsumanimi) && (
-                                <div className="oph-field-text oph-error">{L['HENKILO_KUTSUMANIMI_VALIDOINTI']}</div>
+                                <div className="oph-field-text oph-error">{L('HENKILO_KUTSUMANIMI_VALIDOINTI')}</div>
                             )}
                         </div>
                         <div className="oph-field oph-field-is-required">
-                            <label className="oph-label">{L['HENKILO_SUKUNIMI']}</label>
+                            <label className="oph-label">{L('HENKILO_SUKUNIMI')}</label>
                             <input
                                 className={`oph-input ${!form.sukunimi.trim() ? 'oph-input-has-error' : ''}`}
-                                placeholder={L['HENKILO_SUKUNIMI']}
+                                placeholder={L('HENKILO_SUKUNIMI')}
                                 type="text"
                                 onChange={(e) => setForm({ ...form, sukunimi: e.target.value })}
                             />
                             {!form.sukunimi.trim() && (
-                                <div className="oph-field-text oph-error">{L['LOMAKE_PAKOLLINEN_TIETO']}</div>
+                                <div className="oph-field-text oph-error">{L('LOMAKE_PAKOLLINEN_TIETO')}</div>
                             )}
                         </div>
                         <div className="oph-field">
                             <Button action={() => handleExists()} disabled={!isValid(form) || isLoading}>
                                 <SpinnerInButton show={isLoading} />
-                                {L['KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO']}
+                                {L('KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO')}
                             </Button>
                             <Button className="margin-left" action={() => resetState()} disabled={isLoading}>
-                                {L['TYHJENNA']}
+                                {L('TYHJENNA')}
                             </Button>
                         </div>
                     </form>

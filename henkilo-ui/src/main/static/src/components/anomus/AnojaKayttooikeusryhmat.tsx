@@ -56,11 +56,11 @@ export const AnojaKayttooikeusryhmat = ({ henkiloOid }: Props) => {
                   organisaatio.nimi['en'] ||
                   organisaatio.nimi['sv'] ||
                   organisaatio.oid
-            : L['HENKILO_AVOIMET_KAYTTOOIKEUDET_ORGANISAATIOTA_EI_LOYDY'];
+            : L('HENKILO_AVOIMET_KAYTTOOIKEUDET_ORGANISAATIOTA_EI_LOYDY');
     };
 
     const _parseVoimassaPvm = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): string | undefined => {
-        const noLoppupvm = L['HENKILO_AVOIMET_KAYTTOOIKEUDET_EI_LOPPUPVM'];
+        const noLoppupvm = L('HENKILO_AVOIMET_KAYTTOOIKEUDET_EI_LOPPUPVM');
         if (!myonnettyKayttooikeusryhma.voimassaPvm) {
             return noLoppupvm;
         } else if (myonnettyKayttooikeusryhma.tila !== KAYTTOOIKEUDENTILA.SULJETTU) {
@@ -74,21 +74,21 @@ export const AnojaKayttooikeusryhmat = ({ henkiloOid }: Props) => {
     const columns = useMemo<ColumnDef<KayttooikeusryhmaData>[]>(
         () => [
             {
-                header: () => L['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_MAIN_HEADER'],
+                header: () => L('HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_MAIN_HEADER'),
                 id: 'group',
                 columns: [
                     {
-                        header: () => L['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_ORGANISAATIO_HEADER'],
+                        header: () => L('HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_ORGANISAATIO_HEADER'),
                         accessorFn: (row) => row.organisaatioNimi,
                         id: 'organisaatioNimi',
                     },
                     {
-                        header: () => L['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_KAYTTOOIKEUS_HEADER'],
+                        header: () => L('HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_KAYTTOOIKEUS_HEADER'),
                         accessorFn: (row) => row.kayttooikeusryhmaNimi,
                         id: 'kayttooikeusryhmaNimi',
                     },
                     {
-                        header: () => L['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_VOIMASSAPVM_HEADER'],
+                        header: () => L('HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_VOIMASSAPVM_HEADER'),
                         accessorFn: (row) => row.voimassaPvm,
                         id: 'voimassaPvm',
                     },
@@ -126,7 +126,7 @@ export const AnojaKayttooikeusryhmat = ({ henkiloOid }: Props) => {
         return (
             <LocalNotification
                 type="error"
-                title={L['NOTIFICATION_ANOMUKSEN_ANOJAN_OIKEUKSIEN_HAKU_VIRHE']}
+                title={L('NOTIFICATION_ANOMUKSEN_ANOJAN_OIKEUKSIEN_HAKU_VIRHE')}
                 toggle={true}
             />
         );
@@ -134,6 +134,6 @@ export const AnojaKayttooikeusryhmat = ({ henkiloOid }: Props) => {
         return <OphTable table={table} isLoading={false} />;
     }
     return (
-        <LocalNotification type="info" title={L['NOTIFICATION_ANOMUKSEN_ANOJAN_KAYTTOOIKEUDET_TYHJA']} toggle={true} />
+        <LocalNotification type="info" title={L('NOTIFICATION_ANOMUKSEN_ANOJAN_KAYTTOOIKEUDET_TYHJA')} toggle={true} />
     );
 };

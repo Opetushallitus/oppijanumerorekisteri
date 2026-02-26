@@ -31,9 +31,9 @@ const VtjVertailuListaus = ({ henkilo }: Props) => {
 
     function renderSukupuoli(henkilo: HenkiloData) {
         if (henkilo.sukupuoli === '1') {
-            return L['HENKILO_VTJ_SUKUPUOLI_MIES'];
+            return L('HENKILO_VTJ_SUKUPUOLI_MIES');
         } else if (henkilo.sukupuoli === '2') {
-            return L['HENKILO_VTJ_SUKUPUOLI_NAINEN'];
+            return L('HENKILO_VTJ_SUKUPUOLI_NAINEN');
         } else {
             return '';
         }
@@ -49,7 +49,7 @@ const VtjVertailuListaus = ({ henkilo }: Props) => {
             <ul>
                 {yhteystiedot.map((yhteystieto, index) => (
                     <li key={index}>
-                        {L[yhteystieto.yhteystietoTyyppi]} - {yhteystieto.yhteystietoArvo}
+                        {L(yhteystieto.yhteystietoTyyppi)} - {yhteystieto.yhteystietoArvo}
                     </li>
                 ))}
             </ul>
@@ -59,34 +59,34 @@ const VtjVertailuListaus = ({ henkilo }: Props) => {
     const columns = useMemo<ColumnDef<HenkiloData, HenkiloData>[]>(
         () => [
             {
-                header: () => L['HENKILO_VTJ_TIETOLAHDE'],
-                accessorFn: (henkilo) => L[henkilo.palvelu],
+                header: () => L('HENKILO_VTJ_TIETOLAHDE'),
+                accessorFn: (henkilo) => L(henkilo.palvelu),
                 id: 'palvelu',
                 width: 150,
             },
             {
-                header: () => L['HENKILO_VTJ_ETUNIMET'],
+                header: () => L('HENKILO_VTJ_ETUNIMET'),
                 accessorFn: (henkilo) => henkilo.etunimet,
                 id: 'etunimet',
             },
             {
-                header: () => L['HENKILO_VTJ_SUKUNIMI'],
+                header: () => L('HENKILO_VTJ_SUKUNIMI'),
                 accessorFn: (henkilo) => henkilo.sukunimi,
                 id: 'sukunimi',
             },
             {
-                header: () => L['HENKILO_VTJ_KUTSUMANIMI'],
+                header: () => L('HENKILO_VTJ_KUTSUMANIMI'),
                 accessorFn: (henkilo) => henkilo.kutsumanimi,
                 id: 'kutsumanimi',
             },
             {
-                header: () => L['HENKILO_VTJ_SUKUPUOLI'],
+                header: () => L('HENKILO_VTJ_SUKUPUOLI'),
                 accessorFn: (henkilo) => renderSukupuoli(henkilo),
                 id: 'sukupuoli',
                 width: 100,
             },
             {
-                Header: L['HENKILO_VTJ_YHTEYSTIEDOT'],
+                Header: L('HENKILO_VTJ_YHTEYSTIEDOT'),
                 accessorFn: (henkilo) => henkilo,
                 cell: ({ getValue }) => renderYhteystiedotRyhma(getValue()),
                 id: 'yhteystiedot',

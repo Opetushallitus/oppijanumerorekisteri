@@ -39,7 +39,10 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
     const isDisabled = props.disabled || !(props.organisaatiot ?? omattiedotOrganisations)?.length;
 
     const _renderRow = (renderParams: ListChildComponentProps) => {
-        const organisaatio = organisations[renderParams.index]!;
+        const organisaatio = organisations[renderParams.index];
+        if (!organisaatio) {
+            return;
+        }
         return (
             <div
                 className="organisaatio"
@@ -62,10 +65,10 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
                     {organisaatio.organisaatiotyypit?.length > 0 && `(${organisaatio.organisaatiotyypit.toString()})`}
                 </div>
                 {organisaatio.status === 'SUUNNITELTU' && (
-                    <div className="suunniteltu">{L['ORGANISAATIONVALINTA_SUUNNITELTU']}</div>
+                    <div className="suunniteltu">{L('ORGANISAATIONVALINTA_SUUNNITELTU')}</div>
                 )}
                 {organisaatio.status === 'PASSIIVINEN' && (
-                    <div className="passiivinen">{L['ORGANISAATIONVALINTA_PASSIIVINEN']}</div>
+                    <div className="passiivinen">{L('ORGANISAATIONVALINTA_PASSIIVINEN')}</div>
                 )}
             </div>
         );
@@ -99,16 +102,16 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
                 buttonAction={() => setModalVisible(true)}
             >
                 <SpinnerInButton show={!(props.organisaatiot ?? omattiedotOrganisations)?.length} />{' '}
-                {L['OMATTIEDOT_VALITSE_ORGANISAATIO']}
+                {L('OMATTIEDOT_VALITSE_ORGANISAATIO')}
             </ValidationMessageButton>
             {isModalVisible && (
                 <OphModal onClose={() => setModalVisible(false)}>
                     <div className="organisaatio-select">
-                        <p className="oph-h3">{L['OMATTIEDOT_ORGANISAATIO_VALINTA']}</p>
+                        <p className="oph-h3">{L('OMATTIEDOT_ORGANISAATIO_VALINTA')}</p>
                         <input
                             name="org"
                             className="oph-input"
-                            placeholder={L['OMATTIEDOT_RAJAA_LISTAUSTA']}
+                            placeholder={L('OMATTIEDOT_RAJAA_LISTAUSTA')}
                             type="text"
                             value={searchWord}
                             onChange={onFilter}

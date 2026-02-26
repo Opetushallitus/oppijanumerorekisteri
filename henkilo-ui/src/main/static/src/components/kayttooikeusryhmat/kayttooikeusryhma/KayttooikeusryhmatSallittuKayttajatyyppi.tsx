@@ -13,7 +13,7 @@ const KayttooikeusryhmatSallittuKayttajatyyppi = ({ kayttajaTyyppi, setSallittuK
     const { L } = useLocalisations();
     return (
         <div className="kayttooikeusryhmat-sallittu-kayttajatyyppi-wrapper">
-            <span className="oph-h4 oph-bold">{L['KAYTTOOIKEUSRYHMAT_KAYTTAJATYYPPI_OTSIKKO']}</span>
+            <span className="oph-h4 oph-bold">{L('KAYTTOOIKEUSRYHMAT_KAYTTAJATYYPPI_OTSIKKO')}</span>
             <label className="oph-checkable oph-field-is-required" htmlFor="kayttooikeusryhmaKayttajatyyppi">
                 <input
                     id="kayttooikeusryhmaKayttajatyyppi"
@@ -22,7 +22,7 @@ const KayttooikeusryhmatSallittuKayttajatyyppi = ({ kayttajaTyyppi, setSallittuK
                     onChange={setSallittuKayttajatyyppi}
                     checked={kayttajaTyyppi === 'PALVELU'}
                 />
-                <span className="oph-checkable-text">{L['KAYTTOOIKEUSRYHMAT_KAYTTAJATYYPPI_VAIN_PALVELU']}</span>
+                <span className="oph-checkable-text">{L('KAYTTOOIKEUSRYHMAT_KAYTTAJATYYPPI_VAIN_PALVELU')}</span>
             </label>
         </div>
     );

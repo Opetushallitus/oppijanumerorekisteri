@@ -47,7 +47,7 @@ export const OppijaCreateAnonymousContainer = ({ goBack }: OwnProps) => {
                 add({
                     id: `HENKILON_LUONTI_VIRHE-${Math.random()}`,
                     type: 'error',
-                    header: L['HENKILON_LUONTI_EPAONNISTUI'],
+                    header: L('HENKILON_LUONTI_EPAONNISTUI'),
                 })
             );
             throw error;
@@ -66,7 +66,7 @@ export const OppijaCreateAnonymousContainer = ({ goBack }: OwnProps) => {
 
     return (
         <div className="mainContent wrapper">
-            <span className="oph-h2 oph-bold">{L['OPPIJAN_LUONTI_OTSIKKO']}</span>
+            <span className="oph-h2 oph-bold">{L('OPPIJAN_LUONTI_OTSIKKO')}</span>
             <span style={{ float: 'right' }}>
                 <CloseButton closeAction={goBack} />
             </span>

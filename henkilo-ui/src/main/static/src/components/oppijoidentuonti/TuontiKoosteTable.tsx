@@ -40,7 +40,7 @@ const TuontiKoosteTable = () => {
     const columns = useMemo<ColumnDef<TuontiKoosteRivi, TuontiKoosteRivi>[]>(
         () => [
             {
-                header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ID'],
+                header: () => L('OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ID'),
                 accessorFn: (tuonti) => tuonti,
                 cell: ({ getValue }) =>
                     getValue()?.conflicts && canViewDetails ? (
@@ -51,45 +51,45 @@ const TuontiKoosteTable = () => {
                 id: 'id',
             },
             {
-                header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_AIKALEIMA'],
+                header: () => L('OPPIJOIDEN_TUONTI_TUONTIKOOSTE_AIKALEIMA'),
                 accessorFn: (tuonti) => format(new Date(tuonti.timestamp), 'd.M.yyyy HH:mm'),
                 id: 'timestamp',
             },
             {
-                header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KASITTELIJA'],
+                header: () => L('OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KASITTELIJA'),
                 accessorFn: (tuonti) => tuonti,
                 cell: ({ getValue }) => <Link to={`/virkailija/${getValue()?.oid}`}>{getValue()?.author}</Link>,
                 id: 'author',
             },
             {
-                header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_TOTAL'],
+                header: () => L('OPPIJOIDEN_TUONTI_TUONTIKOOSTE_TOTAL'),
                 accessorFn: (tuonti) => tuonti.total,
                 id: 'total',
             },
             {
-                header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ONNISTUNEET'],
+                header: () => L('OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ONNISTUNEET'),
                 accessorFn: (tuonti) => tuonti.successful,
                 id: 'successful',
             },
             {
-                header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_VIRHEET'],
+                header: () => L('OPPIJOIDEN_TUONTI_TUONTIKOOSTE_VIRHEET'),
                 accessorFn: (tuonti) => tuonti.failures,
                 id: 'failures',
             },
             {
-                header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KONFLIKTIT'],
+                header: () => L('OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KONFLIKTIT'),
                 accessorFn: (tuonti) => tuonti.conflicts,
                 id: 'conflicts',
             },
             {
-                header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_STATUS'],
+                header: () => L('OPPIJOIDEN_TUONTI_TUONTIKOOSTE_STATUS'),
                 accessorFn: (tuonti) => tuonti,
                 cell: ({ getValue }) => (getValue().inProgress ? null : <i className="fa fa-check" />),
                 id: 'inProgress',
             },
             {
-                header: () => L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_API'] ?? '',
-                accessorFn: (tuonti) => tuonti.api ?? L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_EI_APIA'],
+                header: () => L('OPPIJOIDEN_TUONTI_TUONTIKOOSTE_API') ?? '',
+                accessorFn: (tuonti) => tuonti.api ?? L('OPPIJOIDEN_TUONTI_TUONTIKOOSTE_EI_APIA'),
                 enableSorting: false,
                 id: 'api',
             },
@@ -155,7 +155,7 @@ const TuontiKoosteTable = () => {
             <div style={{ display: 'flex' }}>
                 <div style={{ margin: '0 2rem 1rem 0' }}>
                     <div>
-                        <label htmlFor="tuontikooste-id">{L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ID']}</label>
+                        <label htmlFor="tuontikooste-id">{L('OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ID')}</label>
                     </div>
                     <input
                         className="oph-input"
@@ -168,7 +168,7 @@ const TuontiKoosteTable = () => {
                 </div>
                 <div style={{ margin: '0 2rem 1rem 0' }}>
                     <div>
-                        <label htmlFor="tuontikooste-author">{L['OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KASITTELIJA']}</label>
+                        <label htmlFor="tuontikooste-author">{L('OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KASITTELIJA')}</label>
                     </div>
                     <input
                         className="oph-input"

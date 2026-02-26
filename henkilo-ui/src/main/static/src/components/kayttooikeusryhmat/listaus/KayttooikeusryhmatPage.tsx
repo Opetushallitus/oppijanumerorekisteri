@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import Select, { SelectInstance, SingleValue } from 'react-select';
+import { skipToken } from '@reduxjs/toolkit/query';
 
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { useLocalisations } from '../../../selectors';
@@ -49,7 +50,7 @@ const nimiSort = (locale: Locale) => (a: Kayttooikeusryhma, b: Kayttooikeusryhma
 
 export const KayttooikeusryhmatPage = () => {
     const { L, locale } = useLocalisations();
-    useTitle(L['TITLE_KAYTTO_OIKEUSRYHMA']);
+    useTitle(L('TITLE_KAYTTO_OIKEUSRYHMA'));
     const { data: omattiedot } = useGetOmattiedotQuery();
     const muokkausoikeus =
         !!omattiedot?.organisaatiot &&
@@ -70,9 +71,7 @@ export const KayttooikeusryhmatPage = () => {
     });
     const { data: palvelut } = useGetPalvelutQuery();
     const palveluValue = palvelu?.value;
-    const { data: kayttooikeudet } = useGetPalveluKayttooikeudetQuery(palveluValue!, {
-        skip: !palvelu?.value,
-    });
+    const { data: kayttooikeudet } = useGetPalveluKayttooikeudetQuery(palveluValue ?? skipToken);
     const kayttooikeusSelectRef = useRef<SelectInstance<SelectOption>>(null);
 
     const setPalveluAndKayttooikeus = (p: SingleValue<SelectOption>) => {
@@ -114,36 +113,30 @@ export const KayttooikeusryhmatPage = () => {
             .sort(nimiSort(locale));
 
         return visibleKayttooikeusryhmas.map((item) => {
-            const statusString = item.passivoitu ? ` (${L['KAYTTOOIKEUSRYHMAT_PASSIVOITU']})` : '';
+            const statusString = item.passivoitu ? ` (${L('KAYTTOOIKEUSRYHMAT_PASSIVOITU')})` : '';
             return {
                 header: `${localizeTextGroup(item?.nimi?.texts, locale)} ${statusString}`,
                 children: (show: boolean) => (
-                    <KayttooikeusryhmaTiedot
-                        muokkausoikeus={muokkausoikeus}
-                        show={show}
-                        item={item}
-                        L={L}
-                        locale={locale}
-                    />
+                    <KayttooikeusryhmaTiedot muokkausoikeus={muokkausoikeus} show={show} item={item} />
                 ),
             };
         });
     }, [kayttooikeusryhmat, showType, filter]);
 
     return (
-        <OphDsPage header={L['KAYTTOOIKEUSRYHMAT_OTSIKKO_LISTA']!}>
+        <OphDsPage header={L('KAYTTOOIKEUSRYHMAT_OTSIKKO_LISTA')}>
             <div className={styles.inputFields}>
-                <OphDsInput id="filter" label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_SUODATA']!} onChange={setFilter} />
+                <OphDsInput id="filter" label={L('KAYTTOOIKEUSRYHMAT_HALLINTA_SUODATA')} onChange={setFilter} />
                 <div>
                     <label className="oph-ds-label" htmlFor="palvelu-select">
-                        {L['KAYTTOOIKEUSRYHMAT_SUODATA_KAYTTOOIKEUDELLA']}
+                        {L('KAYTTOOIKEUSRYHMAT_SUODATA_KAYTTOOIKEUDELLA')}
                     </label>
                     <Select
                         {...selectStyles}
                         inputId="palvelu-select"
                         options={palveluOptions}
                         value={palvelu}
-                        placeholder={L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_PALVELU']}
+                        placeholder={L('KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_PALVELU')}
                         onChange={setPalveluAndKayttooikeus}
                         isClearable
                     />
@@ -155,7 +148,7 @@ export const KayttooikeusryhmatPage = () => {
                     options={kayttooikeusOptions}
                     isDisabled={!palvelu}
                     value={kayttooikeus}
-                    placeholder={L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUS']}
+                    placeholder={L('KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUS')}
                     onChange={setKayttooikeus}
                     isClearable
                 />
@@ -164,25 +157,25 @@ export const KayttooikeusryhmatPage = () => {
                 <OphDsRadioGroup
                     checked={showType}
                     groupName="show-palvelu"
-                    legend={L['KAYTTOOIKEUSRYHMAT_SUODATA_TYYPILLA']}
+                    legend={L('KAYTTOOIKEUSRYHMAT_SUODATA_TYYPILLA')}
                     onChange={setShowType}
                     radios={[
                         {
                             id: 'virkailija',
                             value: 'virkailija',
-                            label: L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_VIRKAILIJA']!,
+                            label: L('KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_VIRKAILIJA'),
                         },
                         {
                             id: 'palvelu',
                             value: 'palvelu',
-                            label: L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PALVELU']!,
+                            label: L('KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PALVELU'),
                         },
                     ]}
                 />
                 <div className={styles.passivoidut}>
                     <OphDsChechbox
                         id="kayttooikeusryhmaNaytaPassivoidut"
-                        label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PASSIVOIDUT']!}
+                        label={L('KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PASSIVOIDUT')}
                         checked={passiiviset}
                         onChange={() => setPassiiviset(!passiiviset)}
                     />
@@ -192,7 +185,7 @@ export const KayttooikeusryhmatPage = () => {
                 {muokkausoikeus && (
                     <div>
                         <Link className="oph-ds-link" to="/kayttooikeusryhmat/lisaa">
-                            {L['KAYTTOOIKEUSRYHMAT_LISAA']}
+                            {L('KAYTTOOIKEUSRYHMAT_LISAA')}
                         </Link>
                     </div>
                 )}

@@ -94,10 +94,10 @@ export const VahvaTunnistusLisatiedotContainer = () => {
         refreshForm({ ...form.values });
         const newForm = { ...form, submitted: true };
         setForm(newForm);
-        if (form.errors.length === 0) {
+        if (form.errors.length === 0 && params.loginToken) {
             await postUudelleenRekisterointi({
                 kielisyys: locale,
-                loginToken: params.loginToken!,
+                loginToken: params.loginToken,
                 body: { ...form.values, salasana: form.values.password },
             })
                 .unwrap()

@@ -17,7 +17,7 @@ const PoistaKayttajatunnusButton = ({ henkiloOid, disabled, className }: OwnProp
     const [deleteAccess] = useDeleteAccessMutation();
 
     const poistaKayttajatunnus = async () => {
-        const r = window.confirm(L['POISTAKAYTTAJATUNNUS_CONFIRM_TEKSTI']);
+        const r = window.confirm(L('POISTAKAYTTAJATUNNUS_CONFIRM_TEKSTI'));
         if (r) {
             await deleteAccess(henkiloOid)
                 .unwrap()
@@ -30,8 +30,8 @@ const PoistaKayttajatunnusButton = ({ henkiloOid, disabled, className }: OwnProp
             key="poistaKayttajatunnus"
             className={className}
             action={() => poistaKayttajatunnus()}
-            normalLabel={L['POISTAKAYTTAJATUNNUS_LINKKI']}
-            confirmLabel={L['POISTAKAYTTAJATUNNUS_LINKKI_CONFIRM']}
+            normalLabel={L('POISTAKAYTTAJATUNNUS_LINKKI')}
+            confirmLabel={L('POISTAKAYTTAJATUNNUS_LINKKI_CONFIRM')}
             disabled={!!disabled}
         />
     );

@@ -119,7 +119,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
                     add({
                         id: `henkilo-update-ok-${Math.random()}`,
                         type: 'ok',
-                        header: L['HENKILO_YHTEYSTIEDOT_OTSIKKO'],
+                        header: L('HENKILO_YHTEYSTIEDOT_OTSIKKO'),
                     })
                 );
             })
@@ -128,7 +128,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
                     add({
                         id: `henkilo-update-failed-${Math.random()}`,
                         type: 'error',
-                        header: L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE'],
+                        header: L('NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE'),
                     })
                 )
             );
@@ -174,7 +174,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
                     {editing && !isFromVTJ(ryhma) && !isLastWorkEmail(yhteystiedot, idx) ? (
                         <button
                             className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
-                            title={L['POISTA']}
+                            title={L('POISTA')}
                             onClick={() => removeYhteystieto(idx)}
                         />
                     ) : null}
@@ -184,13 +184,13 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
                         {editing && !isFromVTJ(ryhma) ? (
                             <OphDsInput
                                 id={`${y.yhteystietoTyyppi}-${idx}`}
-                                label={L[y.yhteystietoTyyppi]!}
+                                label={L(y.yhteystietoTyyppi)}
                                 defaultValue={y.yhteystietoArvo}
                                 error={
                                     y.yhteystietoTyyppi === EMAIL &&
                                     y.yhteystietoArvo &&
                                     !validateEmail(y.yhteystietoArvo)
-                                        ? L['VIRKAILIJAN_LISAYS_SAHKOPOSTI_VIRHEELLINEN']
+                                        ? L('VIRKAILIJAN_LISAYS_SAHKOPOSTI_VIRHEELLINEN')
                                         : undefined
                                 }
                                 onChange={(y) => setYhteystiedot(mapYhteystietoRyhmaArvo(y, idx, idx2))}
@@ -204,7 +204,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
                                 }}
                                 className="labelValue"
                             >
-                                <span className="oph-bold">{L[y.yhteystietoTyyppi]}</span>
+                                <span className="oph-bold">{L(y.yhteystietoTyyppi)}</span>
                                 <span>{y.yhteystietoArvo}</span>
                             </div>
                         )}
@@ -219,8 +219,8 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
     }
     return (
         <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
-            <h2 id={sectionLabelId}>{L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</h2>
-            {henkilo?.turvakielto ? <h3>{L['YHTEYSTIETO_TURVAKIELTO']}</h3> : null}
+            <h2 id={sectionLabelId}>{L('HENKILO_YHTEYSTIEDOT_OTSIKKO')}</h2>
+            {henkilo?.turvakielto ? <h3>{L('YHTEYSTIETO_TURVAKIELTO')}</h3> : null}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
                 {yhteystiedot
                     .filter((c) => omattiedot?.isAdmin || !isVirkailija(kayttajatiedot) || !isFromVTJ(c))
@@ -233,7 +233,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
                         disabled={henkilo?.passivoitu || henkilo?.duplicate}
                         onClick={() => setEditing(true)}
                     >
-                        {L['MUOKKAA_LINKKI']}
+                        {L('MUOKKAA_LINKKI')}
                     </button>
                 )}
                 {editing && (
@@ -243,7 +243,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
                             style={{ marginRight: '1rem' }}
                             onClick={() => setYhteystiedot([...yhteystiedot, { ...newYhteystiedotRyhma }])}
                         >
-                            {L['HENKILO_LUOYHTEYSTIETO']}
+                            {L('HENKILO_LUOYHTEYSTIETO')}
                         </button>
                         <button
                             className="oph-ds-button"
@@ -251,10 +251,10 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
                             disabled={!isValid}
                             onClick={update}
                         >
-                            {L['TALLENNA_LINKKI']}
+                            {L('TALLENNA_LINKKI')}
                         </button>
                         <button className="oph-ds-button oph-ds-button-bordered" onClick={discard}>
-                            {L['PERUUTA_LINKKI']}
+                            {L('PERUUTA_LINKKI')}
                         </button>
                     </div>
                 )}

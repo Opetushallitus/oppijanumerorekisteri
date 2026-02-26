@@ -42,7 +42,7 @@ const mapFilters = (filters: VirkailijahakuFilters): PostHenkilohakuRequest => {
 
 export const VirkailijahakuPage = () => {
     const { L, locale } = useLocalisations();
-    useTitle(L['VIRKAILIJAHAKU']);
+    useTitle(L('VIRKAILIJAHAKU'));
     useNavigation(virkailijaNavigation, false);
     const filters = useSelector<RootState, VirkailijahakuFilters>((state) => state.virkailijahaku);
     const setFilters = (filters: VirkailijahakuFilters) => useAppDispatch()(_setFilters(filters));
@@ -75,19 +75,19 @@ export const VirkailijahakuPage = () => {
     }, [data, skip, isFetching]);
 
     return (
-        <OphDsPage header={L['VIRKAILIJAHAKU']!}>
-            {L['VIRKAILIJAHAKU_SELITE'] && <p>{L['VIRKAILIJAHAKU_SELITE']}</p>}
+        <OphDsPage header={L('VIRKAILIJAHAKU')}>
+            {L('VIRKAILIJAHAKU_SELITE') && <p>{L('VIRKAILIJAHAKU_SELITE')}</p>}
             <div className={styles.formGrid}>
                 <OphDsInput
                     id="nameQuery"
-                    label={L['HAKUTERMI']!}
+                    label={L('HAKUTERMI')}
                     onChange={(nameQuery) => setFilters({ ...filters, nameQuery })}
                     defaultValue={filters.nameQuery}
                     debounceTimeout={400}
                 />
                 <div />
                 <OphDsOrganisaatioSelect
-                    label={L['HENKILOHAKU_FILTERS_SUODATAORGANISAATIO']}
+                    label={L('HENKILOHAKU_FILTERS_SUODATAORGANISAATIO')}
                     type="HENKILOHAKU"
                     disabled={!!filters.ryhmaOid}
                     defaultValue={filters.organisaatioOid}
@@ -104,7 +104,7 @@ export const VirkailijahakuPage = () => {
                 />
                 <OphDsRyhmaSelect
                     defaultValue={filters.ryhmaOid}
-                    label={L['HENKILOHAKU_FILTERS_RYHMA_PLACEHOLDER']}
+                    label={L('HENKILOHAKU_FILTERS_RYHMA_PLACEHOLDER')}
                     type="HENKILOHAKU"
                     disabled={!!filters.organisaatioOid}
                     selectOrganisaatio={(r) =>
@@ -116,7 +116,7 @@ export const VirkailijahakuPage = () => {
                     <OphDsChechbox
                         id="subOrganisations"
                         checked={!!filters.subOrganisation}
-                        label={L['HENKILOHAKU_FILTERS_ALIORGANISAATIOISTA']!}
+                        label={L('HENKILOHAKU_FILTERS_ALIORGANISAATIOISTA')}
                         disabled={
                             !filters.organisaatioOid ||
                             filters.organisaatioOid === PropertySingleton.state.rootOrganisaatioOid
@@ -127,7 +127,7 @@ export const VirkailijahakuPage = () => {
                 <div />
                 <div>
                     <label htmlFor="kayttooikeusryhma-select" className="oph-ds-label">
-                        {L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
+                        {L('HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER')}
                     </label>
                     <Select
                         {...selectProps}
@@ -136,7 +136,7 @@ export const VirkailijahakuPage = () => {
                             (o) => o.value === `${filters.kayttooikeusryhmaId}`
                         )}
                         options={kayttooikeusryhmaOptions}
-                        placeholder={L['VALITSE_KAYTTOOIKEUSRYHMA']}
+                        placeholder={L('VALITSE_KAYTTOOIKEUSRYHMA')}
                         onChange={(id) =>
                             setFilters({ ...filters, kayttooikeusryhmaId: id ? parseInt(id.value) : undefined })
                         }
@@ -145,7 +145,7 @@ export const VirkailijahakuPage = () => {
                 </div>
             </div>
             <OphDsTable
-                headers={[L['HENKILO_NIMI']!, L['USERNAME']!, L['HENKILOHAKU_ORGANISAATIO']!]}
+                headers={[L('HENKILO_NIMI'), L('USERNAME'), L('HENKILOHAKU_ORGANISAATIO')]}
                 isFetching={isFetching}
                 rows={renderedData.map((d) => [
                     <Link key={`link-${d.kayttajatunnus}`} to={`/virkailija2/${d.oidHenkilo}`} className="oph-ds-link">
@@ -163,7 +163,7 @@ export const VirkailijahakuPage = () => {
                         ))}
                     </ul>,
                 ])}
-                rowDescriptionPartitive={L['VIRKAILIJAA']}
+                rowDescriptionPartitive={L('VIRKAILIJAA')}
             />
         </OphDsPage>
     );

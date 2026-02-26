@@ -42,7 +42,7 @@ const Salasana = (props: OwnProps) => {
                 hideLabel={true}
                 values={{
                     label: 'EMPTY_PLACEHOLDER',
-                    value: L['REKISTEROIDY_PASSWORD_TEXT'],
+                    value: L('REKISTEROIDY_PASSWORD_TEXT'),
                     className: 'oph-h6',
                 }}
             />

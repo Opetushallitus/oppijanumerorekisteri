@@ -149,7 +149,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                     add({
                         id: `anomus-ok-${Math.random()}`,
                         type: 'ok',
-                        header: L['OMATTIEDOT_ANOMUKSEN_TALLENNUS_OK'],
+                        header: L('OMATTIEDOT_ANOMUKSEN_TALLENNUS_OK'),
                     })
                 );
             })
@@ -158,7 +158,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                     add({
                         id: `anomus-error-${Math.random()}`,
                         type: 'error',
-                        header: L['OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS'],
+                        header: L('OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS'),
                     })
                 );
             });
@@ -211,7 +211,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                                         add({
                                             id: `jatkoaika-ok-${Math.random()}`,
                                             type: 'ok',
-                                            header: L['NOTIFICATION_LISAA_KAYTTOOIKEUS_ONNISTUI'],
+                                            header: L('NOTIFICATION_LISAA_KAYTTOOIKEUS_ONNISTUI'),
                                         })
                                     );
                                 })
@@ -220,13 +220,13 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                                         add({
                                             id: `jatkoaika-error-${Math.random()}`,
                                             type: 'error',
-                                            header: L['NOTIFICATION_LISAA_KAYTTOOIKEUS_EPAONNISTUI'],
+                                            header: L('NOTIFICATION_LISAA_KAYTTOOIKEUS_EPAONNISTUI'),
                                         })
                                     );
                                 })
                         }
-                        normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA']}
-                        confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA_CONFIRM']}
+                        normalLabel={L('HENKILO_KAYTTOOIKEUSANOMUS_MYONNA')}
+                        confirmLabel={L('HENKILO_KAYTTOOIKEUSANOMUS_MYONNA_CONFIRM')}
                     />
                 </div>
             </div>
@@ -237,7 +237,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
         () => [
             {
                 id: 'organisaatio',
-                header: () => L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA'],
+                header: () => L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) =>
                     isSuccess
@@ -250,7 +250,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
             },
             {
                 id: 'kayttooikeus',
-                header: () => L['HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS'],
+                header: () => L('HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => (
                     <AccessRightDetaisLink<MyonnettyKayttooikeusryhma>
@@ -265,30 +265,30 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
             },
             {
                 id: 'alkupvm',
-                header: () => L['HENKILO_KAYTTOOIKEUS_ALKUPVM'],
+                header: () => L('HENKILO_KAYTTOOIKEUS_ALKUPVM'),
                 accessorFn: (row) => row.alkuPvm && format(parseISO(row.alkuPvm), 'd.M.yyyy'),
             },
             {
                 id: 'loppupvm',
-                header: () => L['HENKILO_KAYTTOOIKEUS_LOPPUPVM'],
+                header: () => L('HENKILO_KAYTTOOIKEUS_LOPPUPVM'),
                 accessorFn: (row) => row.voimassaPvm && format(parseISO(row.voimassaPvm), 'd.M.yyyy'),
             },
             {
                 id: 'kasittelija',
-                header: () => L['HENKILO_KAYTTOOIKEUS_KASITTELIJA'],
+                header: () => L('HENKILO_KAYTTOOIKEUS_KASITTELIJA'),
                 accessorFn: (row) =>
                     format(parseISO(row.kasitelty), 'd.M.yyyy') + ' / ' + (row.kasittelijaNimi || row.kasittelijaOid),
             },
             {
                 id: 'jatkoaika',
-                header: () => L['HENKILO_KAYTTOOIKEUS_JATKOAIKA'],
+                header: () => L('HENKILO_KAYTTOOIKEUS_JATKOAIKA'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => renderJatkoaikaCell(getValue()),
                 enableSorting: false,
             },
             {
                 id: 'sulje',
-                header: () => L['HENKILO_KAYTTOOIKEUS_SULJE'],
+                header: () => L('HENKILO_KAYTTOOIKEUS_SULJE'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => (
                     <ConfirmButton
@@ -299,8 +299,8 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                                 kayttooikeusryhmaId: getValue().ryhmaId,
                             })
                         }
-                        normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_SULJE']}
-                        confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_SULJE_CONFIRM']}
+                        normalLabel={L('HENKILO_KAYTTOOIKEUSANOMUS_SULJE')}
+                        confirmLabel={L('HENKILO_KAYTTOOIKEUSANOMUS_SULJE_CONFIRM')}
                         disabled={false}
                     />
                 ),
@@ -308,15 +308,15 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
             },
             {
                 id: 'haeJatkoaikaa',
-                header: () => L['OMATTIEDOT_HAE_JATKOAIKAA'],
+                header: () => L('OMATTIEDOT_HAE_JATKOAIKAA'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => (
                     <div>
                         {createEmailSelectionIfMoreThanOne(getValue().ryhmaId)}
                         <ConfirmButton
                             action={() => _createKayttooikeusAnomus(getValue())}
-                            normalLabel={L['OMATTIEDOT_HAE_JATKOAIKAA']}
-                            confirmLabel={L['OMATTIEDOT_HAE_JATKOAIKAA_CONFIRM']}
+                            normalLabel={L('OMATTIEDOT_HAE_JATKOAIKAA')}
+                            confirmLabel={L('OMATTIEDOT_HAE_JATKOAIKAA_CONFIRM')}
                             disabled={isHaeJatkoaikaaButtonDisabled(getValue())}
                         />
                     </div>
@@ -359,11 +359,11 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
             ref={props.existingKayttooikeusRef}
             className="henkiloViewUserContentWrapper"
         >
-            <h2 id={sectionLabelId}>{L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</h2>
+            <h2 id={sectionLabelId}>{L('HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO')}</h2>
             {accessRight && <AccessRightDetails {...accessRight} />}
             {isError ? (
                 <OphDsBanner type="error">
-                    <p>{L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE']}</p>
+                    <p>{L('KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE')}</p>
                 </OphDsBanner>
             ) : (
                 <OphTable table={table} isLoading={isLoading} />

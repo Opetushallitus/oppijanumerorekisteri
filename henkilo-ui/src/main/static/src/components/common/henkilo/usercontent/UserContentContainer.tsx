@@ -86,22 +86,22 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
     function _additionalInfo() {
         const info = [];
         if (henkilo?.yksiloity) {
-            info.push(L['HENKILO_ADDITIONALINFO_YKSILOITY']);
+            info.push(L('HENKILO_ADDITIONALINFO_YKSILOITY'));
         }
         if (henkilo?.yksiloityEidas) {
-            info.push(L['HENKILO_ADDITIONALINFO_YKSILOITYEIDAS']);
+            info.push(L('HENKILO_ADDITIONALINFO_YKSILOITYEIDAS'));
         }
         if (henkilo?.yksiloityVTJ) {
-            info.push(L['HENKILO_ADDITIONALINFO_YKSILOITYVTJ']);
+            info.push(L('HENKILO_ADDITIONALINFO_YKSILOITYVTJ'));
         }
         if (!henkilo?.yksiloity && !henkilo?.yksiloityVTJ && !henkilo?.yksiloityEidas) {
-            info.push(L['HENKILO_ADDITIOINALINFO_EIYKSILOITY']);
+            info.push(L('HENKILO_ADDITIOINALINFO_EIYKSILOITY'));
         }
         if (henkilo?.duplicate) {
-            info.push(L['HENKILO_ADDITIONALINFO_DUPLIKAATTI']);
+            info.push(L('HENKILO_ADDITIONALINFO_DUPLIKAATTI'));
         }
         if (henkilo?.passivoitu) {
-            info.push(L['PASSIVOI_PASSIVOITU']);
+            info.push(L('PASSIVOI_PASSIVOITU'));
         }
         return info.length ? ' (' + info.join(', ') + ')' : '';
     }
@@ -119,7 +119,7 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
         const newHenkiloUpdate = Object.assign({}, henkiloUpdate);
         await updateAnomusilmoitus(newHenkiloUpdate);
         if (newHenkiloUpdate.kayttajanimi !== undefined) {
-            await updateKayttajatiedot(newHenkiloUpdate);
+            await updateKayttajatiedot(newHenkiloUpdate.oid, newHenkiloUpdate.kayttajanimi);
         }
         await updateHenkilo(newHenkiloUpdate);
         setReadOnly(true);
@@ -131,10 +131,10 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
             .catch((error) => {
                 const errorMessages = [];
                 if (error.status === 400 && error.data.includes('invalid.hetu')) {
-                    errorMessages.push(L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU']);
+                    errorMessages.push(L('NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU'));
                 }
                 if (error.status === 400 && error.data.includes('socialsecuritynr.already.exists')) {
-                    errorMessages.push(L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU_KAYTOSSA']);
+                    errorMessages.push(L('NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU_KAYTOSSA'));
                 }
                 if (errorMessages.length > 0) {
                     errorMessages.forEach((errorMessage) =>
@@ -151,7 +151,7 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
                         add({
                             id: `henkilo-update-failed-${Math.random()}`,
                             type: 'error',
-                            header: L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE'],
+                            header: L('NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE'),
                         })
                     );
                 }
@@ -175,8 +175,8 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
         }
     }
 
-    async function updateKayttajatiedot(henkiloUpdate: Henkilo) {
-        return putKayttajatiedot({ oid: henkiloUpdate.oidHenkilo, username: henkiloUpdate.kayttajanimi! })
+    async function updateKayttajatiedot(oid: string, username: string) {
+        return putKayttajatiedot({ oid, username })
             .unwrap()
             .catch((error) => {
                 const errorKey =
@@ -187,7 +187,7 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
                     add({
                         id: `put-kayttajatiedot-${Math.random()}`,
                         type: 'error',
-                        header: L[errorKey],
+                        header: L(errorKey),
                     })
                 );
             });
@@ -226,11 +226,11 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
         const virhe = henkilo?.yksilointivirheet?.[0];
         const virheKey = (virhe && yksilointivirheMap[virhe.yksilointivirheTila]) || 'HENKILO_YKSILOINTIVIRHE_OLETUS';
         return virhe?.uudelleenyritysAikaleima
-            ? `${L[virheKey]} ${L['HENKILO_YKSILOINTIVIRHE_UUDELLEENYRITYS']} ${format(
+            ? `${L(virheKey)} ${L('HENKILO_YKSILOINTIVIRHE_UUDELLEENYRITYS')} ${format(
                   new Date(virhe?.uudelleenyritysAikaleima),
                   'd.M.yyyy H:mm'
               )}`
-            : L[virheKey];
+            : L(virheKey);
     }
 
     let content;
@@ -299,27 +299,27 @@ export const UserContentContainer = ({ oidHenkilo, view, isOppija }: OwnProps) =
     }
 
     return (
-        <section aria-label={L['HENKILO_PERUSTIEDOT_OTSIKKO']} className="henkiloViewUserContentWrapper">
-            <h2>{L['HENKILO_PERUSTIEDOT_OTSIKKO'] + _additionalInfo()}</h2>
+        <section aria-label={L('HENKILO_PERUSTIEDOT_OTSIKKO')} className="henkiloViewUserContentWrapper">
+            <h2>{L('HENKILO_PERUSTIEDOT_OTSIKKO') + _additionalInfo()}</h2>
             {content}
 
             <LocalNotification
-                title={L['NOTIFICATION_HENKILOTIEDOT_VIRHE_OTSIKKO']}
+                title={L('NOTIFICATION_HENKILOTIEDOT_VIRHE_OTSIKKO')}
                 type="warning"
                 toggle={!readOnly && !_validForm()}
             >
-                <ul>{_validKutsumanimi() ? null : <li>{L['NOTIFICATION_HENKILOTIEDOT_KUTSUMANIMI_VIRHE']}</li>}</ul>
+                <ul>{_validKutsumanimi() ? null : <li>{L('NOTIFICATION_HENKILOTIEDOT_KUTSUMANIMI_VIRHE')}</li>}</ul>
                 <ul>
-                    {_validKayttajatunnus() ? null : <li>{L['NOTIFICATION_HENKILOTIEDOT_KAYTTAJATUNNUS_VIRHE']}</li>}
+                    {_validKayttajatunnus() ? null : <li>{L('NOTIFICATION_HENKILOTIEDOT_KAYTTAJATUNNUS_VIRHE')}</li>}
                 </ul>
             </LocalNotification>
-            <LocalNotification title={L['HENKILO_YKSILOINTIVIRHE_OTSIKKO']} type="error">
+            <LocalNotification title={L('HENKILO_YKSILOINTIVIRHE_OTSIKKO')} type="error">
                 <ul>{_validYksilointi() ? null : <li>{_getYksilointivirhe()}</li>}</ul>
             </LocalNotification>
             {vtjVertailuEnabled && vtjDataAvailable(yksilointitiedot) && (
-                <LocalNotification title={L['HENKILO_YKSILOINTIVIRHE_OTSIKKO']} type="error">
+                <LocalNotification title={L('HENKILO_YKSILOINTIVIRHE_OTSIKKO')} type="error">
                     <ul>
-                        <li>{L['HENKILO_YKSILOINTIVIRHE_NIMITIEDOT']}</li>
+                        <li>{L('HENKILO_YKSILOINTIVIRHE_NIMITIEDOT')}</li>
                     </ul>
                 </LocalNotification>
             )}

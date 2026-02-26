@@ -1,8 +1,8 @@
 import React from 'react';
-import { Localisations } from '../../../types/localisation.type';
+import { LocalisationFn } from '../../../types/localisation.type';
 
 type Props = {
-    L: Localisations;
+    L: LocalisationFn;
     passiivisetValue: boolean;
     passiivisetAction: () => void;
 };
@@ -16,7 +16,7 @@ const PassiivisetOrganisationCheckbox = ({ L, passiivisetValue, passiivisetActio
             onChange={passiivisetAction}
             checked={passiivisetValue}
         />
-        <span className="oph-checkable-text"> {L['HENKILOHAKU_FILTERS_PASSIIVISET']}</span>
+        <span className="oph-checkable-text"> {L('HENKILOHAKU_FILTERS_PASSIIVISET')}</span>
     </label>
 );
 

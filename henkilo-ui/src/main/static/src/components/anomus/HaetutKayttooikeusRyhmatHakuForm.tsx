@@ -84,13 +84,13 @@ const HaetutKayttooikeusRyhmatHakuForm = ({ onSubmit }: OwnProps) => {
             <div style={{ display: 'flex', gap: '1rem' }}>
                 <OphDsInput
                     id="searchTerm"
-                    label={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']!}
+                    label={L('HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO')}
                     defaultValue={searchTerm}
                     onChange={setSearchTerm}
                 />
                 <OphDsInput
                     id="kayttooikeusryhmaFilter"
-                    label={L['KAYTTOOIKEUSRYHMAT_HALLINTA_SUODATA']!}
+                    label={L('KAYTTOOIKEUSRYHMAT_HALLINTA_SUODATA')}
                     defaultValue={kayttooikeusryhmaFilter}
                     onChange={setKayttooikeusryhmaFilter}
                 />
@@ -101,8 +101,8 @@ const HaetutKayttooikeusRyhmatHakuForm = ({ onSubmit }: OwnProps) => {
                         legend=""
                         onChange={(n) => onNaytaKaikkiChange(n === 'true')}
                         radios={[
-                            { id: 'true', value: 'true', label: L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_KAIKKI']! },
-                            { id: 'false', value: 'false', label: L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_OPH']! },
+                            { id: 'true', value: 'true', label: L('HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_KAIKKI') },
+                            { id: 'false', value: 'false', label: L('HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_OPH') },
                         ]}
                     />
                 )}
@@ -115,7 +115,7 @@ const HaetutKayttooikeusRyhmatHakuForm = ({ onSubmit }: OwnProps) => {
                     options={ryhmaOptions}
                     isDisabled={!!selectedOrganisaatio}
                     value={ryhmaOptions.find((o) => o.value === selectedRyhma)}
-                    placeholder={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_RYHMA']}
+                    placeholder={L('HAETTU_KAYTTOOIKEUSRYHMA_HAKU_RYHMA')}
                     onChange={onRyhmaChange}
                     isClearable
                 />

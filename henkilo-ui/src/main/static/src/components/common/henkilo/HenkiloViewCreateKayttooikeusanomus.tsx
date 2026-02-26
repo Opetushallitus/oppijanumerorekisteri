@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Select, { createFilter, SingleValue } from 'react-select';
+import { skipToken } from '@reduxjs/toolkit/query/react';
 
 import { useAppDispatch } from '../../../store';
 import Button from '../button/Button';
@@ -42,10 +43,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
     const [ryhmaSelection, setRyhmaSelection] = useState<SingleValue<SelectOption>>();
     const [activeSelection, setActiveSelection] = useState<string>();
     const { data: organisaatioKayttooikeusryhmat, isFetching } = useGetKayttooikeusryhmaOrganisaatiotQuery(
-        activeSelection!,
-        {
-            skip: !activeSelection,
-        }
+        activeSelection ?? skipToken
     );
     const [kayttooikeusryhmaSelections, setKayttooikeusryhmaSelections] = useState<KayttooikeusryhmaSelection[]>([]);
     const [perustelut, setPerustelut] = useState<string>();
@@ -186,7 +184,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
                     add({
                         id: `anomus-ok-${Math.random()}`,
                         type: 'ok',
-                        header: L['OMATTIEDOT_ANOMUKSEN_TALLENNUS_OK'],
+                        header: L('OMATTIEDOT_ANOMUKSEN_TALLENNUS_OK'),
                     })
                 );
                 _resetAnomusFormFields();
@@ -196,7 +194,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
                     add({
                         id: `anomus-error-${Math.random()}`,
                         type: 'error',
-                        header: L['OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS'],
+                        header: L('OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS'),
                     })
                 );
             });
@@ -206,11 +204,11 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
         <Loader />
     ) : (
         <div className="henkiloViewUserContentWrapper">
-            <h2>{L['OMATTIEDOT_OTSIKKO']}</h2>
+            <h2>{L('OMATTIEDOT_OTSIKKO')}</h2>
             {emailOptions.showMissingEmailNotification ? (
                 <div className="oph-alert oph-alert-info">
                     <div className="oph-alert-container">
-                        <div className="oph-alert-title">{L['OMATTIEDOT_PUUTTUVA_SAHKOPOSTI_UUSI_ANOMUS']}</div>
+                        <div className="oph-alert-title">{L('OMATTIEDOT_PUUTTUVA_SAHKOPOSTI_UUSI_ANOMUS')}</div>
                         <button
                             className="oph-button oph-button-close"
                             type="button"
@@ -227,7 +225,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
             <div>
                 <div className="oph-field oph-field-inline">
                     <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
-                        {L['OMATTIEDOT_ORGANISAATIO_TAI_RYHMA']}*
+                        {L('OMATTIEDOT_ORGANISAATIO_TAI_RYHMA')}*
                     </label>
 
                     <div className="oph-input-container flex-horizontal">
@@ -235,7 +233,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
                             className="oph-input flex-item-1 kutsutut-organisaatiosuodatus"
                             type="text"
                             value={organisationSelection?.name ?? ''}
-                            placeholder={L['OMATTIEDOT_VALITSE_ORGANISAATIO']}
+                            placeholder={L('OMATTIEDOT_VALITSE_ORGANISAATIO')}
                             readOnly
                         />
                         <OrganisaatioSelectModal
@@ -257,7 +255,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
                             components={{ MenuList: FastMenuList }}
                             filterOption={createFilter({ ignoreAccents: false })}
                             value={ryhmaSelection}
-                            placeholder={L['OMATTIEDOT_ANOMINEN_RYHMA']}
+                            placeholder={L('OMATTIEDOT_ANOMINEN_RYHMA')}
                             isDisabled={!!kayttooikeusryhmaSelections.length || emailOptions.missingEmail}
                             isClearable
                         />
@@ -271,12 +269,12 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
                             htmlFor="email"
                             aria-describedby="field-text"
                         >
-                            {L['OMATTIEDOT_SAHKOPOSTIOSOITE']}*
+                            {L('OMATTIEDOT_SAHKOPOSTIOSOITE')}*
                         </label>
 
                         <div className="oph-input-container">
                             <Select
-                                placeholder={L['OMATTIEDOT_SAHKOPOSTI_VALINTA']}
+                                placeholder={L('OMATTIEDOT_SAHKOPOSTI_VALINTA')}
                                 options={emailOptions.options}
                                 value={emailOptions.options.find((o) => o.value === emailOptions.emailSelection)}
                                 onChange={(selection) => {
@@ -291,7 +289,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
 
                 <div className="oph-field oph-field-inline">
                     <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
-                        {L['OMATTIEDOT_ANOTTAVAT']}*
+                        {L('OMATTIEDOT_ANOTTAVAT')}*
                     </label>
 
                     <div className="oph-input-container kayttooikeus-selection-wrapper">
@@ -320,7 +318,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
                                             {kayttooikeusRyhmaSelection.label}
                                             <button
                                                 className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
-                                                title={L['POISTA']}
+                                                title={L('POISTA')}
                                                 onClick={() =>
                                                     _removeKayttooikeusryhmaSelection(kayttooikeusRyhmaSelection)
                                                 }
@@ -344,7 +342,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
                         htmlFor="perustelut"
                         aria-describedby="field-text"
                     >
-                        {L['OMATTIEDOT_PERUSTELUT']}
+                        {L('OMATTIEDOT_PERUSTELUT')}
                     </label>
 
                     <div className="oph-input-container">
@@ -357,7 +355,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
                             cols={30}
                             rows={10}
                             maxLength={255}
-                            placeholder={L['OMATTIEDOT_PERUSTELU_VIRHE']}
+                            placeholder={L('OMATTIEDOT_PERUSTELU_VIRHE')}
                             disabled={emailOptions.missingEmail}
                         />
                     </div>
@@ -370,7 +368,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
                     <div className="oph-input-container">
                         <div className="anomus-button">
                             <Button action={_createKayttooikeusAnomus} disabled={!validAnomusForm()}>
-                                {L['OMATTIEDOT_HAE_BUTTON']}
+                                {L('OMATTIEDOT_HAE_BUTTON')}
                             </Button>
                         </div>
 
@@ -378,17 +376,17 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
                             <div className="flex-item-1">
                                 {showInstructions && (
                                     <LocalNotification
-                                        title={L['OMATTIEDOT_ANOMINEN_VIRHEET']}
+                                        title={L('OMATTIEDOT_ANOMINEN_VIRHEET')}
                                         toggle={!validAnomusForm()}
                                         type="warning"
                                     >
                                         <ul>
-                                            {!activeSelection ? <li>{L['OMATTIEDOT_VAATIMUS_ORGANISAATIO']}</li> : null}
+                                            {!activeSelection ? <li>{L('OMATTIEDOT_VAATIMUS_ORGANISAATIO')}</li> : null}
                                             {!_validKayttooikeusryhmaSelection() ? (
-                                                <li>{L['OMATTIEDOT_VAATIMUS_KAYTTOOIKEUDET']}</li>
+                                                <li>{L('OMATTIEDOT_VAATIMUS_KAYTTOOIKEUDET')}</li>
                                             ) : null}
-                                            {!_validEmailSelection() ? <li>{L['OMATTIEDOT_VAATIMUS_EMAIL']}</li> : null}
-                                            {!perustelut ? <li>{L['OMATTIEDOT_PERUSTELU_VIRHE']}</li> : null}
+                                            {!_validEmailSelection() ? <li>{L('OMATTIEDOT_VAATIMUS_EMAIL')}</li> : null}
+                                            {!perustelut ? <li>{L('OMATTIEDOT_PERUSTELU_VIRHE')}</li> : null}
                                         </ul>
                                     </LocalNotification>
                                 )}

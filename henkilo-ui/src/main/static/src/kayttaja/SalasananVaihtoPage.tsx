@@ -11,8 +11,8 @@ import { useTitle } from '../useTitle';
 import { add } from '../slices/toastSlice';
 
 export const SalasananVaihtoPage = () => {
-    const { getLocalisations } = useLocalisations();
     const params = useParams();
+    const { getLocalisations } = useLocalisations();
     const L = getLocalisations(params.locale);
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -25,7 +25,10 @@ export const SalasananVaihtoPage = () => {
     useTitle(L['TITLE_SALASANANVAIHTO']);
 
     const submit = async () => {
-        postPasswordChange({ loginToken: params.loginToken!, newPassword, currentPassword })
+        if (!params.loginToken) {
+            return;
+        }
+        postPasswordChange({ loginToken: params.loginToken, newPassword, currentPassword })
             .unwrap()
             .then(() => setPasswordChanged(true))
             .catch(() =>

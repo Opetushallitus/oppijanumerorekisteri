@@ -43,7 +43,7 @@ export const Identifications = ({ oid }: Props) => {
                     add({
                         id: `REMOVE_SAHKOPOSTITUNNISTEET-${Math.random()}`,
                         type: 'error',
-                        header: L['SAHKOPOSTITUNNISTE_POISTO_VIRHE'],
+                        header: L('SAHKOPOSTITUNNISTE_POISTO_VIRHE'),
                     })
                 );
             });
@@ -62,7 +62,7 @@ export const Identifications = ({ oid }: Props) => {
                     add({
                         id: `SAVE_SAHKOPOSTITUNNISTEET-${Math.random()}`,
                         type: 'error',
-                        header: L['SAHKOPOSTITUNNISTE_TALLENNUS_VIRHE'],
+                        header: L('SAHKOPOSTITUNNISTE_TALLENNUS_VIRHE'),
                     })
                 );
             });
@@ -81,12 +81,12 @@ export const Identifications = ({ oid }: Props) => {
 
     return (
         <section aria-labelledby={henkilotunnisteetSectionLabel} className="henkiloViewUserContentWrapper">
-            <h2 id={henkilotunnisteetSectionLabel}>{L['TUNNISTEET_OTSIKKO']}</h2>
+            <h2 id={henkilotunnisteetSectionLabel}>{L('TUNNISTEET_OTSIKKO')}</h2>
             <div id="identifications" style={{ wordBreak: 'break-word' }}>
                 {data && data.length > 0 && (
                     <div style={{ maxWidth: '1080px' }}>
                         <OphDsTable
-                            headers={[L['TUNNISTEET_IDENTIFIER']!, L['TUNNISTEET_IDPENTITYID']!, '']}
+                            headers={[L('TUNNISTEET_IDENTIFIER'), L('TUNNISTEET_IDPENTITYID'), '']}
                             isFetching={isFetching}
                             rows={(data ?? []).map((d) => [
                                 <span key={`id-${d.identifier}`}>{d.identifier}</span>,
@@ -98,7 +98,7 @@ export const Identifications = ({ oid }: Props) => {
                                         disabled={isDeleteLoading}
                                         data-test-id="identification-remove-button"
                                     >
-                                        {L['TUNNISTEET_POISTA']}
+                                        {L('TUNNISTEET_POISTA')}
                                     </button>
                                 </div>,
                             ])}
@@ -111,18 +111,18 @@ export const Identifications = ({ oid }: Props) => {
                     disabled={isTunnistetyypitLoading}
                     data-test-id="identification-add-button"
                 >
-                    {L['TUNNISTEET_LISAA']}
+                    {L('TUNNISTEET_LISAA')}
                 </button>
                 {showAddModal && (
-                    <OphModal title={L['TUNNISTEET_LISAA']} onClose={() => setShowAddModal(false)}>
+                    <OphModal title={L('TUNNISTEET_LISAA')} onClose={() => setShowAddModal(false)}>
                         <OphDsInput
                             id="newIdentifier"
-                            label={L['TUNNISTEET_IDENTIFIER']!}
+                            label={L('TUNNISTEET_IDENTIFIER')}
                             defaultValue={newIdentifier}
                             onChange={setNewIdentifier}
                         />
                         <div style={{ marginTop: '1rem' }}>
-                            <label htmlFor="newIdentifier">{L['TUNNISTEET_IDPENTITYID']}</label>
+                            <label htmlFor="newIdentifier">{L('TUNNISTEET_IDPENTITYID')}</label>
                             <Select
                                 {...selectStyles}
                                 inputId="newIdpEntityId"
@@ -138,7 +138,7 @@ export const Identifications = ({ oid }: Props) => {
                             style={{ marginTop: '1rem' }}
                             data-test-id="identification-confirm-add"
                         >
-                            {L['TUNNISTEET_LISAA']}
+                            {L('TUNNISTEET_LISAA')}
                         </button>
                     </OphModal>
                 )}

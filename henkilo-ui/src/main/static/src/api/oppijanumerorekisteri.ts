@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery, FetchBaseQueryMeta, retry } from '@reduxjs/toolkit/query/react';
 
 import { getCommonOptions, isApiError } from './common';
-import { Localisations } from '../types/localisation.type';
+import { LocalisationFn } from '../types/localisation.type';
 import { Locale } from '../types/locale.type';
 import { TuontiKooste, TuontiKoosteCriteria } from '../types/tuontikooste.types';
 import { Tuontidata } from '../types/tuontidata.types';
@@ -23,7 +23,7 @@ export type LinkHenkilosRequest = {
     masterOid: string;
     force: boolean;
     duplicateOids: string[];
-    L: Localisations;
+    L: LocalisationFn;
 };
 
 export type CreateHenkiloRequest = {
@@ -179,7 +179,7 @@ export const oppijanumerorekisteriApi = createApi({
                     dispatch(
                         add({
                             id: `link-${masterOid}-${Math.random()}`,
-                            header: L['DUPLIKAATIT_NOTIFICATION_ONNISTUI'],
+                            header: L('DUPLIKAATIT_NOTIFICATION_ONNISTUI'),
                             type: 'ok',
                         })
                     );
@@ -187,7 +187,7 @@ export const oppijanumerorekisteriApi = createApi({
                     dispatch(
                         add({
                             id: `link-${masterOid}-${Math.random()}`,
-                            header: L['DUPLIKAATIT_NOTIFICATION_EPAONNISTUI'],
+                            header: L('DUPLIKAATIT_NOTIFICATION_EPAONNISTUI'),
                             type: 'error',
                         })
                     );
@@ -218,7 +218,7 @@ export const oppijanumerorekisteriApi = createApi({
             extraOptions: { maxRetries: 1 },
             invalidatesTags: ['henkilo', 'locale'],
         }),
-        aktivoiHenkilo: builder.mutation<void, { oidHenkilo: string; L: Localisations }>({
+        aktivoiHenkilo: builder.mutation<void, { oidHenkilo: string; L: LocalisationFn }>({
             query: ({ oidHenkilo }) => ({
                 url: 'henkilo',
                 method: 'PUT',
@@ -234,7 +234,7 @@ export const oppijanumerorekisteriApi = createApi({
                     dispatch(
                         add({
                             id: `aktivoi-${oidHenkilo}-${Math.random()}`,
-                            header: L['AKTIVOI_EPAONNISTUI'],
+                            header: L('AKTIVOI_EPAONNISTUI'),
                             type: 'error',
                         })
                     );
@@ -268,7 +268,7 @@ export const oppijanumerorekisteriApi = createApi({
             extraOptions: { maxRetries: 0 },
             invalidatesTags: ['henkilo'],
         }),
-        getTuontikooste: builder.query<TuontiKooste, { L: Localisations; criteria: TuontiKoosteCriteria }>({
+        getTuontikooste: builder.query<TuontiKooste, { L: LocalisationFn; criteria: TuontiKoosteCriteria }>({
             query: ({ criteria }) => ({
                 url: `oppija/tuontikooste?${new URLSearchParams(criteria).toString()}`,
             }),
@@ -279,7 +279,7 @@ export const oppijanumerorekisteriApi = createApi({
                     dispatch(
                         add({
                             id: `tuontikooste-${Math.random()}`,
-                            header: L['KAYTTOOIKEUSRAPORTTI_ERROR'],
+                            header: L('KAYTTOOIKEUSRAPORTTI_ERROR'),
                             type: 'error',
                         })
                     );
@@ -287,7 +287,7 @@ export const oppijanumerorekisteriApi = createApi({
             },
             providesTags: ['tuontikooste'],
         }),
-        getTuontidata: builder.query<Tuontidata[], { L: Localisations; tuontiId: number }>({
+        getTuontidata: builder.query<Tuontidata[], { L: LocalisationFn; tuontiId: number }>({
             query: ({ tuontiId }) => ({
                 url: `oppija/tuontidata/${tuontiId}`,
             }),
@@ -298,7 +298,7 @@ export const oppijanumerorekisteriApi = createApi({
                     dispatch(
                         add({
                             id: `tuontidata-${Math.random()}`,
-                            header: L['KAYTTOOIKEUSRAPORTTI_ERROR'],
+                            header: L('KAYTTOOIKEUSRAPORTTI_ERROR'),
                             type: 'error',
                         })
                     );
@@ -381,22 +381,22 @@ export const oppijanumerorekisteriApi = createApi({
                 'henkilo',
             ],
         }),
-        getHenkiloDuplicates: builder.query<HenkiloDuplicate[], { oid: string; L: Localisations }>({
+        getHenkiloDuplicates: builder.query<HenkiloDuplicate[], { oid: string; L: LocalisationFn }>({
             query: ({ oid }) => `henkilo/${oid}/duplicates`,
             providesTags: (_result, _error, { oid }) => [{ type: 'duplicates', id: oid }],
             async onQueryStarted({ L, oid }, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
                 } catch (error) {
-                    let errorMessage = L['NOTIFICATION_DUPLIKAATIT_VIRHE'] + ' ' + oid;
+                    let errorMessage = L('NOTIFICATION_DUPLIKAATIT_VIRHE') + ' ' + oid;
                     if (isApiError(error)) {
                         if (
                             error.data.message.startsWith('Failed to read response from ataru') ||
                             error.data.message.startsWith('Failed to fetch applications from ataru')
                         ) {
-                            errorMessage = L['NOTIFICATION_DUPLIKAATIT_HAKEMUKSET_ATARU_VIRHE'] + ' ' + oid;
+                            errorMessage = L('NOTIFICATION_DUPLIKAATIT_HAKEMUKSET_ATARU_VIRHE') + ' ' + oid;
                         } else if (error.data.message.startsWith('Failed fetching hakemuksetDto for henkilos')) {
-                            errorMessage = L['NOTIFICATION_DUPLIKAATIT_HAKEMUKSET_HAKUAPP_VIRHE'] + ' ' + oid;
+                            errorMessage = L('NOTIFICATION_DUPLIKAATIT_HAKEMUKSET_HAKUAPP_VIRHE') + ' ' + oid;
                         }
                     }
                     dispatch(
@@ -422,7 +422,7 @@ export const oppijanumerorekisteriApi = createApi({
             }),
             invalidatesTags: ['henkilo', 'duplicates'],
         }),
-        getHakemukset: builder.query<Hakemus[], { oid: string; L: Localisations }>({
+        getHakemukset: builder.query<Hakemus[], { oid: string; L: LocalisationFn }>({
             query: ({ oid }) => `henkilo/${oid}/hakemukset`,
             extraOptions: { maxRetries: 1 },
             providesTags: (_result, _error, { oid }) => [{ type: 'hakemukset', id: oid }],
@@ -430,15 +430,15 @@ export const oppijanumerorekisteriApi = createApi({
                 try {
                     await queryFulfilled;
                 } catch (error) {
-                    let errorMessage = L['NOTIFICATION_HENKILO_HAKEMUKSET_VIRHE'] + ' ' + oid;
+                    let errorMessage = L('NOTIFICATION_HENKILO_HAKEMUKSET_VIRHE') + ' ' + oid;
                     if (isApiError(error)) {
                         if (
                             error.data.message.startsWith('Failed to read response from ataru') ||
                             error.data.message.startsWith('Failed to fetch applications from ataru')
                         ) {
-                            errorMessage = L['NOTIFICATION_HENKILO_HAKEMUKSET_ATARU_VIRHE'] + ' ' + oid;
+                            errorMessage = L('NOTIFICATION_HENKILO_HAKEMUKSET_ATARU_VIRHE') + ' ' + oid;
                         } else if (error.data.message.startsWith('Failed fetching hakemuksetDto for henkilos')) {
-                            errorMessage = L['NOTIFICATION_HENKILO_HAKEMUKSET_HAKUAPP_VIRHE'] + ' ' + oid;
+                            errorMessage = L('NOTIFICATION_HENKILO_HAKEMUKSET_HAKUAPP_VIRHE') + ' ' + oid;
                         }
                     }
                     dispatch(

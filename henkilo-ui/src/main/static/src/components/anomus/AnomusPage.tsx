@@ -16,7 +16,7 @@ import { mainNavigation } from '../navigation/navigationconfigurations';
 
 const AnomusPage = () => {
     const { L } = useLocalisations();
-    useTitle(L['TITLE_ANOMUKSET']);
+    useTitle(L('TITLE_ANOMUKSET'));
     useNavigation(mainNavigation, false);
     const [sorted, setSorted] = useState<SortingState>([{ id: 'ANOTTU_PVM', desc: true }]);
     const { data: omattiedot } = useGetOmattiedotQuery();
@@ -42,7 +42,7 @@ const AnomusPage = () => {
 
     return (
         <div className="mainContent wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h1>{L['HENKILO_AVOIMET_KAYTTOOIKEUDET_OTSIKKO']}</h1>
+            <h1>{L('HENKILO_AVOIMET_KAYTTOOIKEUDET_OTSIKKO')}</h1>
             <HaetutKayttooikeusRyhmatHakuForm onSubmit={onSubmit} />
             <HenkiloViewOpenKayttooikeusanomus
                 isOmattiedot={false}
@@ -51,7 +51,7 @@ const AnomusPage = () => {
                     isActive: !isLoading && hasNextPage,
                     fetchMoreAction: () => fetchNextPage(),
                 }}
-                onSortingChange={(s) => s.length && setSorted([s[0]!])}
+                onSortingChange={(s) => s.length && s[0] && setSorted([s[0]])}
                 tableLoading={isLoading}
                 piilotaOtsikko={true}
             />

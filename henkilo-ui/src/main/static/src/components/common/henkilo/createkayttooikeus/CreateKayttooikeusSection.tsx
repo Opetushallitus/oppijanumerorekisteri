@@ -1,4 +1,5 @@
 import React from 'react';
+import { skipToken } from '@reduxjs/toolkit/query';
 
 import KayttooikeusryhmaSelectModal from '../../select/KayttooikeusryhmaSelectModal';
 import { myonnettyToKayttooikeusryhma } from '../../../../utils/KayttooikeusryhmaUtils';
@@ -33,10 +34,7 @@ const CreateKayttooikeusSection = ({
     const { data: omattiedot } = useGetOmattiedotQuery();
     const oidHenkilo = omattiedot?.oidHenkilo;
     const { data, isLoading } = useGetAllowedKayttooikeusryhmasForOrganisationQuery(
-        { oidHenkilo: oidHenkilo!, oidOrganisaatio: selectedOrganisationOid! },
-        {
-            skip: !omattiedot || !selectedOrganisationOid,
-        }
+        oidHenkilo && selectedOrganisationOid ? { oidHenkilo, oidOrganisaatio: selectedOrganisationOid } : skipToken
     );
     const kayttooikeusryhmat =
         data
@@ -68,7 +66,7 @@ const CreateKayttooikeusSection = ({
                             <button
                                 className="oph-button oph-button-close"
                                 type="button"
-                                title={L['POISTA']}
+                                title={L('POISTA')}
                                 aria-label="Close"
                                 disabled={!selectedOrganisationOid}
                                 onClick={() => removeKayttooikeus(selected.value)}

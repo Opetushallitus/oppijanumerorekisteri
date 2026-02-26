@@ -21,12 +21,12 @@ const PasswordButton = (props: OwnProps) => {
             popupStyle={props.styles}
             popupTitle={
                 <span className="oph-h3 oph-strong" style={{ textAlign: 'left' }}>
-                    {L['SALASANA_ASETA']}
+                    {L('SALASANA_ASETA')}
                 </span>
             }
             popupContent={<PasswordPopupContent oidHenkilo={props.oidHenkilo} />}
         >
-            {L['SALASANA_ASETA']}
+            {L('SALASANA_ASETA')}
         </PopupButton>
     );
 };

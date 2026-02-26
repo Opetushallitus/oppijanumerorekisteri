@@ -67,7 +67,7 @@ const HenkilohakuPage = () => {
         () => [
             {
                 id: 'HENKILO_NIMI',
-                header: () => L['HENKILO_NIMI'],
+                header: () => L('HENKILO_NIMI'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => (
                     <Link to={`/virkailija/${getValue().oidHenkilo}`}>{getValue().nimi ?? ''}</Link>
@@ -77,12 +77,12 @@ const HenkilohakuPage = () => {
             },
             {
                 id: 'USERNAME',
-                header: () => L['USERNAME'],
+                header: () => L('USERNAME'),
                 accessorFn: (row) => row.kayttajatunnus ?? '',
             },
             {
                 id: 'HENKILOHAKU_ORGANISAATIO',
-                header: () => L['HENKILOHAKU_ORGANISAATIO'],
+                header: () => L('HENKILOHAKU_ORGANISAATIO'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) => (
                     <ul>
@@ -123,7 +123,7 @@ const HenkilohakuPage = () => {
 
     return (
         <div className="mainContent wrapper">
-            <div className="oph-h2 oph-bold henkilohaku-main-header">{L['HENKILOHAKU_OTSIKKO']}</div>
+            <div className="oph-h2 oph-bold henkilohaku-main-header">{L('HENKILOHAKU_OTSIKKO')}</div>
             <input
                 className="oph-input"
                 defaultValue={criteria.nameQuery}
@@ -146,12 +146,12 @@ const HenkilohakuPage = () => {
                 }
             />
             <div className="oph-h3 oph-bold henkilohaku-result-header">
-                {L['HENKILOHAKU_HAKUTULOKSET']} (
+                {L('HENKILOHAKU_HAKUTULOKSET')} (
                 {isFetching
                     ? '...'
                     : !resultCount || resultCount === '0'
-                      ? L['HENKILOHAKU_EI_TULOKSIA']
-                      : `${resultCount} ${L['HENKILOHAKU_OSUMA']}`}
+                      ? L('HENKILOHAKU_EI_TULOKSIA')
+                      : `${resultCount} ${L('HENKILOHAKU_OSUMA')}`}
                 )
             </div>
             {!!memoizedData?.length && (

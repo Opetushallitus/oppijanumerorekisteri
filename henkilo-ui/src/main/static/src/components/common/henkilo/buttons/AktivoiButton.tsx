@@ -17,8 +17,8 @@ const AktivoiButton = ({ oidHenkilo, className }: Props) => {
             key="aktivoi"
             className={className}
             action={() => aktivoiHenkilo({ L, oidHenkilo })}
-            normalLabel={L['AKTIVOI_LINKKI']}
-            confirmLabel={L['AKTIVOI_LINKKI_CONFIRM']}
+            normalLabel={L('AKTIVOI_LINKKI')}
+            confirmLabel={L('AKTIVOI_LINKKI_CONFIRM')}
         />
     );
 };

@@ -42,7 +42,7 @@ const HakatunnistePopupContent = ({ henkiloOid }: OwnProps) => {
                         add({
                             id: `DUPLICATE_HAKA_KEY-${Math.random()}`,
                             type: 'error',
-                            header: `${L['HAKATUNNISTEET_VIRHE_KAYTOSSA_ALKU']} (${newTunniste}) ${L['HAKATUNNISTEET_VIRHE_KAYTOSSA_LOPPU']}`,
+                            header: `${L('HAKATUNNISTEET_VIRHE_KAYTOSSA_ALKU')} (${newTunniste}) ${L('HAKATUNNISTEET_VIRHE_KAYTOSSA_LOPPU')}`,
                         })
                     );
                 }
@@ -58,14 +58,14 @@ const HakatunnistePopupContent = ({ henkiloOid }: OwnProps) => {
                             <span>{hakatunniste}</span>
                             <button
                                 className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
-                                title={L['POISTA']}
+                                title={L('POISTA')}
                                 onClick={() => removeHakatunniste(hakatunniste)}
                             />
                         </li>
                     ))}
                 </ul>
             ) : (
-                <div>{L['EI_HAKATUNNUKSIA']}</div>
+                <div>{L('EI_HAKATUNNUKSIA')}</div>
             )}
             <OphDsInput
                 id="hakatunniste"
@@ -79,7 +79,7 @@ const HakatunnistePopupContent = ({ henkiloOid }: OwnProps) => {
                     disabled={!newTunniste || !!hakatunnisteet?.includes(newTunniste)}
                     onClick={() => addHakatunniste()}
                 >
-                    {L['TALLENNA_TUNNUS']}
+                    {L('TALLENNA_TUNNUS')}
                 </button>
             </div>
         </div>

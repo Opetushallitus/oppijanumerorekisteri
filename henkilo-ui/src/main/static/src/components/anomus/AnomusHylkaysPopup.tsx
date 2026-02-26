@@ -24,13 +24,13 @@ const AnomusHylkaysPopup = ({ kayttooikeusryhma, updateHaettuKayttooikeusryhma }
                 <tbody>
                     <tr>
                         <td style={{ fontWeight: 'bold', paddingRight: '0.5rem' }}>
-                            {L['HENKILO_KAYTTOOIKEUS_NIMI']}:
+                            {L('HENKILO_KAYTTOOIKEUS_NIMI')}:
                         </td>
                         <td>{henkilo.etunimet + ' ' + henkilo.sukunimi}</td>
                     </tr>
                     <tr>
                         <td style={{ fontWeight: 'bold', paddingRight: '0.5rem' }}>
-                            {L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO']}:
+                            {L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO')}:
                         </td>
                         <td>
                             {isSuccess
@@ -44,7 +44,7 @@ const AnomusHylkaysPopup = ({ kayttooikeusryhma, updateHaettuKayttooikeusryhma }
                     </tr>
                     <tr>
                         <td style={{ fontWeight: 'bold', paddingRight: '0.5rem' }}>
-                            {L['HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA']}:
+                            {L('HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA')}:
                         </td>
                         <td>
                             {
@@ -58,7 +58,7 @@ const AnomusHylkaysPopup = ({ kayttooikeusryhma, updateHaettuKayttooikeusryhma }
             </table>
             <textarea
                 className="oph-input"
-                placeholder={L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYSPERUSTE']}
+                placeholder={L('HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYSPERUSTE')}
                 name="hylkaysperuste"
                 id="hylkaysperuste"
                 value={peruste}
@@ -73,7 +73,7 @@ const AnomusHylkaysPopup = ({ kayttooikeusryhma, updateHaettuKayttooikeusryhma }
                     updateHaettuKayttooikeusryhma(kayttooikeusryhma.id, KAYTTOOIKEUDENTILA.HYLATTY, henkilo, peruste)
                 }
             >
-                {L['HENKILO_KAYTTOOIKEUSANOMUS_VAHVISTA_HYLKAYS']}
+                {L('HENKILO_KAYTTOOIKEUSANOMUS_VAHVISTA_HYLKAYS')}
             </button>
         </div>
     );

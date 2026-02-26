@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { skipToken } from '@reduxjs/toolkit/query/react';
 
 import Loader from '../common/icons/Loader';
 import { useGetKayttooikeusAnomuksetForHenkiloQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
@@ -16,14 +17,14 @@ import { useGetHenkiloQuery } from '../../api/oppijanumerorekisteri';
 export const OmattiedotPage = () => {
     const { data: omattiedot, isSuccess: isOmattiedotSuccess } = useGetOmattiedotQuery();
     const oid = omattiedot?.oidHenkilo;
-    const { isSuccess: isHenkiloSuccess } = useGetHenkiloQuery(oid!, { skip: !omattiedot });
+    const { isSuccess: isHenkiloSuccess } = useGetHenkiloQuery(oid ?? skipToken);
     const { L } = useLocalisations();
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
-    const { data: anomukset, isSuccess: isAnomusetSuccess } = useGetKayttooikeusAnomuksetForHenkiloQuery(oid!, {
-        skip: !omattiedot,
-    });
+    const { data: anomukset, isSuccess: isAnomusetSuccess } = useGetKayttooikeusAnomuksetForHenkiloQuery(
+        oid ?? skipToken
+    );
 
-    useTitle(L['TITLE_OMAT_TIEDOT']);
+    useTitle(L('TITLE_OMAT_TIEDOT'));
 
     if (!isOmattiedotSuccess || !isHenkiloSuccess || !isAnomusetSuccess) {
         return <Loader />;

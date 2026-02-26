@@ -30,8 +30,8 @@ const VtjOverrideButton = ({ henkiloOid, disabled, className }: OwnProps) => {
                         })
                     )
             }
-            normalLabel={L['VTJ_OVERRIDE_LINKKI']}
-            confirmLabel={L['VTJ_OVERRIDE_LINKKI_CONFIRM']}
+            normalLabel={L('VTJ_OVERRIDE_LINKKI')}
+            confirmLabel={L('VTJ_OVERRIDE_LINKKI_CONFIRM')}
             disabled={disabled}
             notification={notification}
             removeNotification={() => setNotification(undefined)}
