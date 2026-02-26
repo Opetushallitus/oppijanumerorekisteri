@@ -77,13 +77,13 @@ public class ApiControllerTest {
 
   @Test
   public void createTiedoteFailsWhenFieldsAreMissing() throws Exception {
-    performValidPostRequest(
+    performAuthorizedPostRequest(
             """
                    { "oppijanumero": "1.2.246.562.99.12345678901" }
                    """)
         .andExpect(status().isBadRequest());
 
-    performValidPostRequest(
+    performAuthorizedPostRequest(
             """
                    { "idempotencyKey": "some-key" }
                    """)
@@ -123,7 +123,7 @@ public class ApiControllerTest {
   private @NonNull UUID postTiedoteRequestAndReturnTiedoteId(TiedoteRequest tiedote)
       throws Exception {
     var response =
-        performValidPostRequest(objectMapper.writeValueAsString(tiedote))
+        performAuthorizedPostRequest(objectMapper.writeValueAsString(tiedote))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").exists())
             .andReturn()
@@ -141,7 +141,7 @@ public class ApiControllerTest {
     return new TiedoteRequest("1.2.246.562.99.12345678901", idempotencyKey);
   }
 
-  private @NonNull ResultActions performValidPostRequest(String content) throws Exception {
+  private @NonNull ResultActions performAuthorizedPostRequest(String content) throws Exception {
     return mockMvc.perform(createAuthorizedPostRequest(content));
   }
 
