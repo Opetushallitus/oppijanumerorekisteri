@@ -21,6 +21,7 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -141,11 +142,14 @@ public class ApiControllerTest {
   }
 
   private @NonNull ResultActions performValidPostRequest(String content) throws Exception {
-    return mockMvc.perform(
-        post("/api/v1/tiedote/kielitutkintotodistus")
-            .with(validToken())
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(content));
+    return mockMvc.perform(createAuthorizedPostRequest(content));
+  }
+
+  private @NonNull MockHttpServletRequestBuilder createAuthorizedPostRequest(String content) {
+    return post("/api/v1/tiedote/kielitutkintotodistus")
+        .with(validToken())
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(content);
   }
 
   private SecurityMockMvcRequestPostProcessors.@NonNull JwtRequestPostProcessor validToken() {
