@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Component
 @Slf4j
@@ -16,34 +16,41 @@ public class FetchSuomiFiEventsTask {
   private final SuomiFiViestitEventRepository eventRepository;
   private final SuomiFiViestitEventsCursorRepository cursorRepository;
   private final ObjectMapper objectMapper;
+  private final TransactionTemplate transactionTemplate;
 
-  @Transactional
   public void execute() {
     log.info("Running FetchSuomiFiEventsTask");
-    var cursor = cursorRepository.findById(true).orElse(null);
-    var continuationToken = cursor != null ? cursor.getContinuationToken() : null;
+    var continuationToken =
+        transactionTemplate.execute(
+            status ->
+                cursorRepository
+                    .findById(true)
+                    .map(SuomiFiViestitEventsCursor::getContinuationToken)
+                    .orElse(null));
 
     while (true) {
       var response = suomiFiViestitClient.fetchEvents(continuationToken);
+      var token = response.continuationToken();
 
-      for (var event : response.events()) {
-        var messageId = event.metadata().get("messageId");
-        eventRepository.save(
-            SuomiFiViestitEvent.builder()
-                .eventTime(event.eventTime())
-                .eventType(event.type())
-                .messageId(messageId != null ? messageId.toString() : null)
-                .metadata(serializeMetadata(event.metadata()))
-                .build());
-      }
+      transactionTemplate.executeWithoutResult(
+          status -> {
+            for (var event : response.events()) {
+              var messageId = event.metadata().get("messageId");
+              eventRepository.save(
+                  SuomiFiViestitEvent.builder()
+                      .eventTime(event.eventTime())
+                      .eventType(event.type())
+                      .messageId(messageId != null ? messageId.toString() : null)
+                      .metadata(serializeMetadata(event.metadata()))
+                      .build());
+            }
 
-      continuationToken = response.continuationToken();
-      if (cursor == null) {
-        cursor = new SuomiFiViestitEventsCursor(true, continuationToken);
-      } else {
-        cursor.setContinuationToken(continuationToken);
-      }
-      cursorRepository.save(cursor);
+            var cursor = cursorRepository.findById(true).orElse(new SuomiFiViestitEventsCursor());
+            cursor.setContinuationToken(token);
+            cursorRepository.save(cursor);
+          });
+
+      continuationToken = token;
 
       if (response.events().isEmpty()) {
         break;
