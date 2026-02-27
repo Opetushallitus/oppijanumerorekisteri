@@ -8,6 +8,9 @@ import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -79,7 +82,40 @@ public class SuomiFiViestitClient {
     }
   }
 
+  public EventsResponse fetchEvents(String continuationToken) {
+    var token = fetchAccessToken();
+    try {
+      var uri = properties.suomifiViestit().baseUrl() + "/v2/events";
+      if (continuationToken != null) {
+        uri += "?continuationToken=" + continuationToken;
+      }
+      var httpRequest =
+          HttpRequest.newBuilder()
+              .uri(URI.create(uri))
+              .header("Authorization", "Bearer " + token)
+              .GET()
+              .build();
+      var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+      if (response.statusCode() < 200 || response.statusCode() >= 300) {
+        throw new IllegalStateException(
+            "Suomi.fi events call failed with status " + response.statusCode());
+      }
+      return objectMapper.readValue(response.body(), EventsResponse.class);
+    } catch (JsonProcessingException e) {
+      throw new IllegalStateException("Failed to parse Suomi.fi events response", e);
+    } catch (IOException e) {
+      throw new IllegalStateException("Suomi.fi events call failed with IO error", e);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new IllegalStateException("Suomi.fi events call interrupted", e);
+    }
+  }
+
   record SendResponse(String messageId) {}
+
+  record EventsResponse(String continuationToken, List<Event> events) {}
+
+  record Event(String type, OffsetDateTime eventTime, Map<String, Object> metadata) {}
 
   private record AccessTokenRequestBody(String username, String password) {}
 

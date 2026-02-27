@@ -19,6 +19,7 @@ public class DbSchedulerConfiguration {
 
   private final FetchOppijaTask fetchOppijaTask;
   private final SendSuomiFiViestitTask sendSuomiFiViestitTask;
+  private final FetchSuomiFiEventsTask fetchSuomiFiEventsTask;
   private final FetchLocalisationsTask fetchLocalisationsTask;
   private final JdbcSessionMappingStorage jdbcSessionMappingStorage;
 
@@ -35,6 +36,14 @@ public class DbSchedulerConfiguration {
     return Tasks.recurring(
             "send-suomi-fi-viestit-task", Schedules.fixedDelay(Duration.ofSeconds(10)))
         .execute((inst, ctx) -> sendSuomiFiViestitTask.execute());
+  }
+
+  @Bean
+  @ConditionalOnProperty(name = "tiedotuspalvelu.suomifi-viestit.enabled", havingValue = "true")
+  public Task<Void> fetchSuomiFiEventsTaskBean() {
+    return Tasks.recurring(
+            "fetch-suomi-fi-viestit-events-task", Schedules.fixedDelay(Duration.ofMinutes(1)))
+        .execute((inst, ctx) -> fetchSuomiFiEventsTask.execute());
   }
 
   @Bean
