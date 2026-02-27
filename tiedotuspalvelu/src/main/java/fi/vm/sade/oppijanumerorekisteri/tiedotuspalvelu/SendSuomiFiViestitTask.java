@@ -29,7 +29,8 @@ public class SendSuomiFiViestitTask {
                     () ->
                         new IllegalStateException(
                             "Tiedote not found for SuomiFiViesti " + viesti.getId()));
-        suomiFiViestitService.sendSuomiFiViesti(tiedote, viesti);
+        var messageId = suomiFiViestitService.sendSuomiFiViesti(tiedote, viesti);
+        viesti.setMessageId(messageId);
         viesti.setProcessedAt(OffsetDateTime.now());
         viesti.setNextRetry(null);
         viesti.setRetryCount(0);

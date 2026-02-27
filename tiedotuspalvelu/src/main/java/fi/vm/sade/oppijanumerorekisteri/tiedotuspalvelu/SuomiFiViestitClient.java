@@ -21,7 +21,7 @@ public class SuomiFiViestitClient {
   private final TiedotuspalveluProperties properties;
   private final LoggingHttpClient httpClient = new LoggingHttpClient("suomifi-viestit");
 
-  public void send(SuomiFiViestitElectronicMessageRequest request) {
+  public String send(SuomiFiViestitElectronicMessageRequest request) {
     var token = fetchAccessToken();
     try {
       var payload = objectMapper.writeValueAsString(request);
@@ -35,7 +35,8 @@ public class SuomiFiViestitClient {
       var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
       if (response.statusCode() == 200 || response.statusCode() == 409) {
-        return;
+        var sendResponse = objectMapper.readValue(response.body(), SendResponse.class);
+        return sendResponse.messageId();
       }
       throw new IllegalStateException(
           "Suomi.fi viestit call failed with status " + response.statusCode());
@@ -77,6 +78,8 @@ public class SuomiFiViestitClient {
       throw new IllegalStateException("Suomi.fi token call interrupted", e);
     }
   }
+
+  record SendResponse(String messageId) {}
 
   private record AccessTokenRequestBody(String username, String password) {}
 

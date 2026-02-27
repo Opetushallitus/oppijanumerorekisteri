@@ -15,7 +15,7 @@ public class SuomiFiViestitService {
   private final TiedotuspalveluProperties tiedotuspalveluProperties;
   private final LocalisationRepository localisationRepository;
 
-  public void sendSuomiFiViesti(Tiedote tiedote, SuomiFiViesti suomiFiViesti) {
+  public String sendSuomiFiViesti(Tiedote tiedote, SuomiFiViesti suomiFiViesti) {
     var title = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_OTSIKKO", "fi");
     var body = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_VIESTI", "fi");
     var request =
@@ -34,8 +34,9 @@ public class SuomiFiViestitService {
             tiedote.getId().toString(),
             new Recipient(suomiFiViesti.getHenkilotunnus()),
             new Sender(tiedotuspalveluProperties.suomifiViestit().senderServiceId()));
-    suomiFiViestitClient.send(request);
+    var messageId = suomiFiViestitClient.send(request);
     log.info(
         "Sent Suomi.fi viesti for tiedote {} to {}", tiedote.getId(), tiedote.getOppijanumero());
+    return messageId;
   }
 }

@@ -44,6 +44,7 @@ public class SendSuomiFiViestitTaskTest {
   private static final String SUOMIFI_PASSWORD = UUID.randomUUID().toString();
   private static final String SUOMIFI_SYSTEM_ID = UUID.randomUUID().toString();
   private static final String SUOMIFI_TOKEN = UUID.randomUUID().toString();
+  private static final String SUOMIFI_MESSAGE_ID = UUID.randomUUID().toString();
 
   @DynamicPropertySource
   static void registerProperties(DynamicPropertyRegistry registry) {
@@ -74,7 +75,10 @@ public class SendSuomiFiViestitTaskTest {
                             .formatted(SUOMIFI_TOKEN))));
     wireMock.stubFor(
         post(urlEqualTo("/v2/messages/electronic"))
-            .willReturn(aResponse().withStatus(200).withBody("{\"messageId\": 123}")));
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withBody("{\"messageId\": \"%s\"}".formatted(SUOMIFI_MESSAGE_ID))));
 
     var tiedote = tiedoteRepository.save(createTiedote("1.2.3"));
 
@@ -115,6 +119,7 @@ public class SendSuomiFiViestitTaskTest {
     var pastViestiUpdated = suomiFiViestiRepository.findById(pastViesti.getId()).orElseThrow();
     assertNotNull(pastViestiUpdated.getProcessedAt());
     assertEquals(0, pastViestiUpdated.getRetryCount());
+    assertEquals(SUOMIFI_MESSAGE_ID, pastViestiUpdated.getMessageId());
   }
 
   @Test
@@ -148,6 +153,7 @@ public class SendSuomiFiViestitTaskTest {
 
     var updatedViesti = suomiFiViestiRepository.findById(viesti.getId()).orElseThrow();
     assertNull(updatedViesti.getProcessedAt());
+    assertNull(updatedViesti.getMessageId());
     assertEquals(1, updatedViesti.getRetryCount());
     assertNotNull(updatedViesti.getNextRetry());
   }

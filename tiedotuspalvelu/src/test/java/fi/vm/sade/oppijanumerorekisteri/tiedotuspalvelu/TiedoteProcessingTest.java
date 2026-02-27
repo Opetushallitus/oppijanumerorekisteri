@@ -53,6 +53,7 @@ public class TiedoteProcessingTest implements ResourceReader {
   private static final String OPPIJA_CLIENT_ID = UUID.randomUUID().toString();
   private static final String OPPIJA_CLIENT_SECRET = UUID.randomUUID().toString();
   private static final String OPPIJA_TOKEN = UUID.randomUUID().toString();
+  private static final String SUOMIFI_MESSAGE_ID = UUID.randomUUID().toString();
 
   @DynamicPropertySource
   static void registerProperties(DynamicPropertyRegistry registry) {
@@ -103,6 +104,10 @@ public class TiedoteProcessingTest implements ResourceReader {
     wireMock.verify(1, postRequestedFor(urlEqualTo("/oauth2/token")));
 
     assertNotNull(tiedoteRepository.findById(tiedote.getId()).orElseThrow().getProcessedAt());
+
+    var viestit = suomiFiViestiRepository.findAll();
+    assertEquals(1, viestit.size());
+    assertEquals(SUOMIFI_MESSAGE_ID, viestit.get(0).getMessageId());
   }
 
   private void stubGettingOppija() {
@@ -124,7 +129,7 @@ public class TiedoteProcessingTest implements ResourceReader {
                 aResponse()
                     .withStatus(200)
                     .withHeader("Content-Type", "application/json")
-                    .withBody("{\"messageId\": 123}")));
+                    .withBody("{\"messageId\": \"%s\"}".formatted(SUOMIFI_MESSAGE_ID))));
   }
 
   private void stubGettingSuomiFiViestitToken() {

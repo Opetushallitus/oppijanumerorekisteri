@@ -49,6 +49,9 @@ public class SuomiFiViesti {
   private String countryCode;
 
   @Column(nullable = false)
+  private String messageId;
+
+  @Column(nullable = false)
   private OffsetDateTime processedAt;
 
   @Column(nullable = false)
