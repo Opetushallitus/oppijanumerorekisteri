@@ -64,15 +64,7 @@ public class SendSuomiFiViestitTaskTest {
 
   @Test
   public void respectsNextRetryTime() {
-    wireMock.stubFor(
-        post(urlEqualTo("/v1/token"))
-            .willReturn(
-                aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/json")
-                    .withBody(
-                        "{\"access_token\": \"%s\", \"expires_in\": 3600}"
-                            .formatted(SUOMIFI_TOKEN))));
+    stubGettingSuomiFiViestitAccessToken();
     wireMock.stubFor(
         post(urlEqualTo("/v2/messages/electronic"))
             .willReturn(
@@ -124,15 +116,7 @@ public class SendSuomiFiViestitTaskTest {
 
   @Test
   public void handlesSuomiFiFailure() {
-    wireMock.stubFor(
-        post(urlEqualTo("/v1/token"))
-            .willReturn(
-                aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/json")
-                    .withBody(
-                        "{\"access_token\": \"%s\", \"expires_in\": 3600}"
-                            .formatted(SUOMIFI_TOKEN))));
+    stubGettingSuomiFiViestitAccessToken();
     wireMock.stubFor(
         post(urlEqualTo("/v2/messages/electronic")).willReturn(aResponse().withStatus(500)));
 
@@ -156,5 +140,17 @@ public class SendSuomiFiViestitTaskTest {
     assertNull(updatedViesti.getMessageId());
     assertEquals(1, updatedViesti.getRetryCount());
     assertNotNull(updatedViesti.getNextRetry());
+  }
+
+  private void stubGettingSuomiFiViestitAccessToken() {
+    wireMock.stubFor(
+        post(urlEqualTo("/v1/token"))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        "{\"access_token\": \"%s\", \"expires_in\": 3600}"
+                            .formatted(SUOMIFI_TOKEN))));
   }
 }
