@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
+package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit;
 
 import java.util.List;
 import java.util.UUID;

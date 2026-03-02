@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
+package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;

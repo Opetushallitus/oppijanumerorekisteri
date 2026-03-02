@@ -1,5 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViesti;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViestiRepository;
 import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

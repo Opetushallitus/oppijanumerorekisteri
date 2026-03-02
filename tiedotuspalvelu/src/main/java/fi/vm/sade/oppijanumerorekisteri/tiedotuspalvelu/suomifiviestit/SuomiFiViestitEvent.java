@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
+package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,56 +13,35 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
-@Table(name = "suomifi_viesti")
-@Builder(toBuilder = true)
+@Table(name = "suomifi_viestit_event")
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SuomiFiViesti {
+public class SuomiFiViestitEvent {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private UUID id;
 
   @Column(nullable = false)
-  private UUID tiedoteId;
+  private OffsetDateTime eventTime;
 
   @Column(nullable = false)
-  private String henkilotunnus;
-
-  @Column(nullable = false)
-  private String name;
-
-  @Column(nullable = false)
-  private String streetAddress;
-
-  @Column(nullable = false)
-  private String zipCode;
-
-  @Column(nullable = false)
-  private String city;
-
-  @Column(nullable = false)
-  private String countryCode;
+  private String eventType;
 
   @Column(nullable = false)
   private String messageId;
 
-  @Column(nullable = false)
-  private OffsetDateTime processedAt;
-
-  @Column(nullable = false)
-  private OffsetDateTime nextRetry;
-
-  @Column(nullable = false)
-  private int retryCount;
+  @JdbcTypeCode(SqlTypes.JSON)
+  @Column(nullable = false, columnDefinition = "jsonb")
+  private String metadata;
 
   @Column(nullable = false, updatable = false, insertable = false)
   private OffsetDateTime created;
-
-  @Column(nullable = false, insertable = false)
-  private OffsetDateTime updated;
 }

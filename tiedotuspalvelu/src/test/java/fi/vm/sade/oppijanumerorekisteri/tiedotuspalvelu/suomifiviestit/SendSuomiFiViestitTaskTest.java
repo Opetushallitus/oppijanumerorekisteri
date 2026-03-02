@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
+package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
@@ -7,6 +7,8 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.Tiedote;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedoteRepository;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;

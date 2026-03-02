@@ -1,5 +1,7 @@
-package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
+package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit;
 
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.Tiedote;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedotuspalveluProperties;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.locale.LocalisationRepository;
 import java.util.List;
 import lombok.AllArgsConstructor;
