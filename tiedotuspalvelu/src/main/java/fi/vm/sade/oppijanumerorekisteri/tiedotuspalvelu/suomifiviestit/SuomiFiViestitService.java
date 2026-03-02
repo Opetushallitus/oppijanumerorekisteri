@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit;
 
-import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.Tiedote;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedotuspalveluProperties;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.locale.LocalisationRepository;
 import java.util.List;
@@ -17,7 +16,7 @@ public class SuomiFiViestitService {
   private final TiedotuspalveluProperties tiedotuspalveluProperties;
   private final LocalisationRepository localisationRepository;
 
-  public String sendSuomiFiViesti(Tiedote tiedote, SuomiFiViesti suomiFiViesti) {
+  public String sendSuomiFiViesti(SuomiFiViesti suomiFiViesti) {
     var title = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_OTSIKKO", "fi");
     var body = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_VIESTI", "fi");
     var request =
@@ -33,12 +32,11 @@ public class SuomiFiViestitService {
                 "No one",
                 title,
                 "Normal"),
-            tiedote.getId().toString(),
+            suomiFiViesti.getTiedoteId().toString(),
             new Recipient(suomiFiViesti.getHenkilotunnus()),
             new Sender(tiedotuspalveluProperties.suomifiViestit().senderServiceId()));
     var messageId = suomiFiViestitClient.sendElectronicMessage(request);
-    log.info(
-        "Sent Suomi.fi viesti for tiedote {} to {}", tiedote.getId(), tiedote.getOppijanumero());
+    log.info("Sent Suomi.fi viesti for tiedote {}", suomiFiViesti.getTiedoteId());
     return messageId;
   }
 }
