@@ -21,7 +21,7 @@ public class SuomiFiViestitService {
     var title = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_OTSIKKO", "fi");
     var body = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_VIESTI", "fi");
     var request =
-        new SuomiFiViestitElectronicMessageRequest(
+        new ElectronicMessageRequest(
             new ElectronicPart(
                 List.of(),
                 body,

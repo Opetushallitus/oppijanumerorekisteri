@@ -26,7 +26,7 @@ public class SuomiFiViestitClient {
   private final TiedotuspalveluProperties properties;
   private final LoggingHttpClient httpClient = new LoggingHttpClient("suomifi-viestit");
 
-  public String sendElectronicMessage(SuomiFiViestitElectronicMessageRequest request) {
+  public String sendElectronicMessage(ElectronicMessageRequest request) {
     var token = fetchAccessToken();
     try {
       var payload = objectMapper.writeValueAsString(request);

@@ -2,7 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit;
 
 import java.util.List;
 
-record SuomiFiViestitElectronicMessageRequest(
+record ElectronicMessageRequest(
     ElectronicPart electronic, String externalId, Recipient recipient, Sender sender) {}
 
 record ElectronicPart(
