@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
+package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.oppija;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

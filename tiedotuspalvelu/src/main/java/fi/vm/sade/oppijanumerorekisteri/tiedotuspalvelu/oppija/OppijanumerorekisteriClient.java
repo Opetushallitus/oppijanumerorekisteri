@@ -1,8 +1,10 @@
-package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
+package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.oppija;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.LoggingHttpClient;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedotuspalveluProperties;
 import jakarta.validation.ValidationException;
 import java.io.IOException;
 import java.net.URI;
