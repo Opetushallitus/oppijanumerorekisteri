@@ -880,6 +880,7 @@ class TiedotuspalveluStack extends cdk.Stack {
     }
     if (config.features["tiedotuspalvelu.suomifi-viestit.enabled"]) {
       this.sendSuomiFiViestitAlarm(logGroup, props.alarmTopic);
+      this.fetchSuomiFiViestitEventsAlarm(logGroup, props.alarmTopic);
     }
     this.fetchLocalisationsAlarm(logGroup, props.alarmTopic);
     this.casClientSessionCleanerAlarm(logGroup, props.alarmTopic);
@@ -1071,6 +1072,21 @@ class TiedotuspalveluStack extends cdk.Stack {
       logGroup,
       alarmTopic,
       logs.FilterPattern.literal('"Finished running SendSuomiFiViestitTask"'),
+    );
+  }
+
+  fetchSuomiFiViestitEventsAlarm(
+    logGroup: logs.LogGroup,
+    alarmTopic: sns.ITopic,
+  ) {
+    alarms.alarmIfExpectedLogLineIsMissing(
+      this,
+      sharedAccount.tiedotuspalveluPrefix("FetchSuomiFiViestitEventsTask"),
+      logGroup,
+      alarmTopic,
+      logs.FilterPattern.literal(
+        '"Finished running FetchSuomiFiViestitEventsTask"',
+      ),
     );
   }
 
