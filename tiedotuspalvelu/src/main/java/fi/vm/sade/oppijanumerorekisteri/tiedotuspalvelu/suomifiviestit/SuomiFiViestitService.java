@@ -36,7 +36,7 @@ public class SuomiFiViestitService {
             tiedote.getId().toString(),
             new Recipient(suomiFiViesti.getHenkilotunnus()),
             new Sender(tiedotuspalveluProperties.suomifiViestit().senderServiceId()));
-    var messageId = suomiFiViestitClient.send(request);
+    var messageId = suomiFiViestitClient.sendElectronicMessage(request);
     log.info(
         "Sent Suomi.fi viesti for tiedote {} to {}", tiedote.getId(), tiedote.getOppijanumero());
     return messageId;
