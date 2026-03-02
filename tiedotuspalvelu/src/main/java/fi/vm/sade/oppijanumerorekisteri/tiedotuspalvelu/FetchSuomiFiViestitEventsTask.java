@@ -10,7 +10,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Component
 @Slf4j
 @AllArgsConstructor
-public class FetchSuomiFiEventsTask {
+public class FetchSuomiFiViestitEventsTask {
 
   private final SuomiFiViestitClient suomiFiViestitClient;
   private final SuomiFiViestitEventRepository eventRepository;
@@ -19,7 +19,7 @@ public class FetchSuomiFiEventsTask {
   private final TransactionTemplate transactionTemplate;
 
   public void execute() {
-    log.info("Running FetchSuomiFiEventsTask");
+    log.info("Running FetchSuomiFiViestitEventsTask");
     var continuationToken =
         transactionTemplate.execute(
             status ->
@@ -56,7 +56,7 @@ public class FetchSuomiFiEventsTask {
         break;
       }
     }
-    log.info("Finished running FetchSuomiFiEventsTask");
+    log.info("Finished running FetchSuomiFiViestitEventsTask");
   }
 
   private String serializeMetadata(java.util.Map<String, Object> metadata) {

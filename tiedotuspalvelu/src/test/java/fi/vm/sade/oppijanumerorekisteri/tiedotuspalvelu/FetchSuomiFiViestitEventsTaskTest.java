@@ -21,9 +21,9 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @SpringBootTest
-public class FetchSuomiFiEventsTaskTest {
+public class FetchSuomiFiViestitEventsTaskTest {
 
-  @Autowired private FetchSuomiFiEventsTask fetchSuomiFiEventsTask;
+  @Autowired private FetchSuomiFiViestitEventsTask fetchSuomiFiViestitEventsTask;
   @Autowired private SuomiFiViestitEventRepository eventRepository;
   @Autowired private SuomiFiViestitEventsCursorRepository cursorRepository;
 
@@ -105,7 +105,7 @@ public class FetchSuomiFiEventsTaskTest {
                         }
                         """)));
 
-    fetchSuomiFiEventsTask.execute();
+    fetchSuomiFiViestitEventsTask.execute();
 
     var events = eventRepository.findAll();
     assertEquals(2, events.size());
@@ -164,7 +164,7 @@ public class FetchSuomiFiEventsTaskTest {
                         {"continuationToken": "final-token", "events": []}
                         """)));
 
-    fetchSuomiFiEventsTask.execute();
+    fetchSuomiFiViestitEventsTask.execute();
 
     wireMock.verify(0, getRequestedFor(urlEqualTo("/v2/events")));
     wireMock.verify(1, getRequestedFor(urlEqualTo("/v2/events?continuationToken=existing-token")));
@@ -188,7 +188,7 @@ public class FetchSuomiFiEventsTaskTest {
                         {"continuationToken": "initial-token", "events": []}
                         """)));
 
-    fetchSuomiFiEventsTask.execute();
+    fetchSuomiFiViestitEventsTask.execute();
 
     assertEquals(0, eventRepository.findAll().size());
     assertEquals(
