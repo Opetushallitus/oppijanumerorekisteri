@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit;
 
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.ApiController.Meta;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.LoggingHttpClient;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedoteRepository;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedotuspalveluProperties;
@@ -21,8 +22,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class SendSuomiFiViestitTask {
 
   private static final int _24_HOURS_IN_MINUTES = 60 * 24;
-  private final SuomiFiViestiRepository suomiFiViestiRepository;
   private final TiedoteRepository tiedoteRepository;
+  private final SuomiFiViestiRepository suomiFiViestiRepository;
   private final SuomiFiViestitClient suomiFiViestitClient;
   private final TiedotuspalveluProperties tiedotuspalveluProperties;
   private final LocalisationRepository localisationRepository;
@@ -42,6 +43,15 @@ public class SendSuomiFiViestitTask {
               viesti.setNextRetry(null);
               viesti.setRetryCount(0);
               suomiFiViestiRepository.save(viesti);
+              var tiedote =
+                  tiedoteRepository
+                      .findById(viesti.getTiedoteId())
+                      .orElseThrow(
+                          () ->
+                              new IllegalStateException(
+                                  "Tiedote not found for SuomiFiViesti " + viesti.getId()));
+              tiedote.setTiedotestateId(Meta.STATE_PROCESSED);
+              tiedoteRepository.save(tiedote);
             });
       } catch (MailboxNotInUseException e) {
         log.info("SuomiFiViesti {} mailbox not in use, switching to paper mail", viesti.getId());

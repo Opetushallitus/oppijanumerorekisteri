@@ -40,6 +40,8 @@ public class UiControllerTest {
         .oppijanumero(oppijanumero)
         .idempotencyKey(java.util.UUID.randomUUID().toString())
         .todistusUrl("https://example.com/todistus")
+        .tiedotetypeId(ApiController.Meta.TYPE_KIELITUTKINTOTODISTUS)
+        .tiedotestateId(ApiController.Meta.STATE_NEW)
         .build();
   }
 

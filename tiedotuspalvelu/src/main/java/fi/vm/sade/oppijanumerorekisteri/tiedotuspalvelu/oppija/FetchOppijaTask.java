@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.oppija;
 
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.ApiController.Meta;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedoteRepository;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViesti;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViestiRepository;
@@ -43,6 +44,7 @@ public class FetchOppijaTask {
               tiedote.setProcessedAt(OffsetDateTime.now());
               tiedote.setNextRetry(null);
               tiedote.setRetryCount(0);
+              tiedote.setTiedotestateId(Meta.STATE_SUOMIFI_VIESTI_HETULLISELLE);
               tiedoteRepository.save(tiedote);
             });
       } catch (Exception e) {

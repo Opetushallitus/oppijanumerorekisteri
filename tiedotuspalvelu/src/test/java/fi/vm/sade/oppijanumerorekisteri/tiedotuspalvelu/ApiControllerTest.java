@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -73,6 +74,15 @@ public class ApiControllerTest {
     assertEquals(saved.getId(), returnedId);
     assertEquals("1.2.246.562.99.12345678901", saved.getOppijanumero());
     assertEquals(idempotencyKey, saved.getIdempotencyKey());
+
+    mockMvc
+        .perform(get("/api/v1/tiedote/" + returnedId).with(validToken()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(returnedId.toString()))
+        .andExpect(jsonPath("$.meta.type").value("KIELITUTKINTOTODISTUS"))
+        .andExpect(jsonPath("$.meta.state").value("NEW"))
+        .andExpect(jsonPath("$.statuses[0].status").value("CREATED"))
+        .andExpect(jsonPath("$.statuses[0].timestamp").exists());
   }
 
   @Test
@@ -118,6 +128,36 @@ public class ApiControllerTest {
 
     List<Tiedote> tiedotteet = tiedoteRepository.findAll();
     assertEquals(2, tiedotteet.size());
+  }
+
+  @Test
+  public void createTiedoteReturnsEnrichedResponse() throws Exception {
+    tiedoteRepository.deleteAll();
+    String idempotencyKey = UUID.randomUUID().toString();
+    var tiedote = createTiedoteRequest(idempotencyKey);
+
+    performAuthorizedPostRequest(objectMapper.writeValueAsString(tiedote))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").exists())
+        .andExpect(jsonPath("$.meta.type").value("KIELITUTKINTOTODISTUS"))
+        .andExpect(jsonPath("$.meta.state").value("NEW"))
+        .andExpect(jsonPath("$.statuses").isArray())
+        .andExpect(jsonPath("$.statuses[0].status").value("CREATED"))
+        .andExpect(jsonPath("$.statuses[0].timestamp").exists());
+  }
+
+  @Test
+  public void getTiedoteReturns404ForUnknownId() throws Exception {
+    mockMvc
+        .perform(get("/api/v1/tiedote/" + UUID.randomUUID()).with(validToken()))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  public void getTiedoteRequiresAuthentication() throws Exception {
+    mockMvc
+        .perform(get("/api/v1/tiedote/" + UUID.randomUUID()))
+        .andExpect(status().isUnauthorized());
   }
 
   private @NonNull UUID postTiedoteRequestAndReturnTiedoteId(TiedoteRequest tiedote)

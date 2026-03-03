@@ -37,6 +37,8 @@ public class FetchOppijaTaskTest implements ResourceReader {
         .oppijanumero(oppijanumero)
         .idempotencyKey(java.util.UUID.randomUUID().toString())
         .todistusUrl("https://example.com/todistus")
+        .tiedotetypeId(ApiController.Meta.TYPE_KIELITUTKINTOTODISTUS)
+        .tiedotestateId(ApiController.Meta.STATE_NEW)
         .build();
   }
 
@@ -112,6 +114,28 @@ public class FetchOppijaTaskTest implements ResourceReader {
 
     var pastTiedoteUpdated = tiedoteRepository.findById(pastTiedote.getId()).orElseThrow();
     assertNotNull(pastTiedoteUpdated.getProcessedAt());
+  }
+
+  @Test
+  public void setsStateToSuomiFiViestiHetulliselle() {
+    stubOauthToken();
+    wireMock.stubFor(
+        get(urlPathMatching("/henkilo/.*"))
+            .withHeader("Authorization", equalTo("Bearer " + OPP_TOKEN))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        readResource("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + ".json"))));
+
+    var tiedote = tiedoteRepository.save(createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES));
+    assertEquals(ApiController.Meta.STATE_NEW, tiedote.getTiedotestateId());
+
+    fetchOppijaTask.execute();
+
+    var updated = tiedoteRepository.findById(tiedote.getId()).orElseThrow();
+    assertEquals(ApiController.Meta.STATE_SUOMIFI_VIESTI_HETULLISELLE, updated.getTiedotestateId());
   }
 
   @Test
@@ -195,5 +219,23 @@ public class FetchOppijaTaskTest implements ResourceReader {
     assertNull(updatedTiedote.getProcessedAt());
     assertEquals(1, updatedTiedote.getRetryCount());
     assertNotNull(updatedTiedote.getNextRetry());
+  }
+
+  private void stubOauthToken() {
+    wireMock.stubFor(
+        post(urlEqualTo("/oauth2/token"))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        """
+                        {
+                          "access_token": "%s",
+                          "expires_in": 3600,
+                          "token_type": "Bearer"
+                        }
+                        """
+                            .formatted(OPP_TOKEN))));
   }
 }

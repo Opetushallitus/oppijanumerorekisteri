@@ -8,6 +8,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.ApiController;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.Tiedote;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedoteRepository;
 import java.time.OffsetDateTime;
@@ -36,6 +37,8 @@ public class SendSuomiFiViestitTaskTest {
         .oppijanumero(oppijanumero)
         .idempotencyKey(UUID.randomUUID().toString())
         .todistusUrl("https://example.com/todistus")
+        .tiedotetypeId(ApiController.Meta.TYPE_KIELITUTKINTOTODISTUS)
+        .tiedotestateId(ApiController.Meta.STATE_NEW)
         .build();
   }
 
@@ -116,6 +119,9 @@ public class SendSuomiFiViestitTaskTest {
     assertNotNull(pastViestiUpdated.getProcessedAt());
     assertEquals(0, pastViestiUpdated.getRetryCount());
     assertEquals(SUOMIFI_MESSAGE_ID, pastViestiUpdated.getMessageId());
+
+    var updatedTiedote = tiedoteRepository.findById(tiedote.getId()).orElseThrow();
+    assertEquals(ApiController.Meta.STATE_PROCESSED, updatedTiedote.getTiedotestateId());
   }
 
   @Test
@@ -210,6 +216,8 @@ public class SendSuomiFiViestitTaskTest {
     var tiedote =
         tiedoteRepository.save(
             Tiedote.builder()
+                .tiedotetypeId(ApiController.Meta.TYPE_KIELITUTKINTOTODISTUS)
+                .tiedotestateId(ApiController.Meta.STATE_NEW)
                 .oppijanumero("1.2.3")
                 .idempotencyKey(UUID.randomUUID().toString())
                 .todistusUrl(wireMock.baseUrl() + "/todistus.pdf")

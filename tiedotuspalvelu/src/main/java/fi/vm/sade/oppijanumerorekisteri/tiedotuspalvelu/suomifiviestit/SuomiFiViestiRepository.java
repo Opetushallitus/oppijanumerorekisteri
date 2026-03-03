@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,4 +14,6 @@ public interface SuomiFiViestiRepository extends JpaRepository<SuomiFiViesti, UU
           "SELECT * FROM suomifi_viesti WHERE processed_at IS NULL AND (next_retry IS NULL OR next_retry <= NOW()) FOR UPDATE SKIP LOCKED",
       nativeQuery = true)
   List<SuomiFiViesti> findUnprocessed();
+
+  Optional<SuomiFiViesti> findByTiedoteId(UUID tiedoteId);
 }

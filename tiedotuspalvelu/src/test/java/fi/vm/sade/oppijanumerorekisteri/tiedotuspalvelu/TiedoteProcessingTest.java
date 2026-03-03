@@ -42,6 +42,8 @@ public class TiedoteProcessingTest implements ResourceReader {
         .oppijanumero(oppijanumero)
         .idempotencyKey(UUID.randomUUID().toString())
         .todistusUrl("https://example.com/todistus")
+        .tiedotetypeId(ApiController.Meta.TYPE_KIELITUTKINTOTODISTUS)
+        .tiedotestateId(ApiController.Meta.STATE_NEW)
         .build();
   }
 
