@@ -89,6 +89,10 @@ public class SendSuomiFiViestitTask {
     return new Recipient(suomiFiViesti.getHenkilotunnus());
   }
 
+  private String createExternalId(SuomiFiViesti suomiFiViesti) {
+    return suomiFiViesti.getTiedoteId().toString();
+  }
+
   private ElectronicPart createElectronicPart(SuomiFiViesti suomiFiViesti) {
     var title = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_OTSIKKO", "fi");
     var body = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_VIESTI", "fi");
@@ -115,10 +119,6 @@ public class SendSuomiFiViestitTask {
     var messageId = suomiFiViestitClient.sendMultichannelMessage(request);
     log.info("Sent Suomi.fi paper mail viesti for tiedote {}", suomiFiViesti.getTiedoteId());
     return messageId;
-  }
-
-  private String createExternalId(SuomiFiViesti suomiFiViesti) {
-    return suomiFiViesti.getTiedoteId().toString();
   }
 
   private PaperMailPart createPaperMailPart(SuomiFiViesti suomiFiViesti) {

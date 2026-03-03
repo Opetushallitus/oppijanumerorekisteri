@@ -42,12 +42,12 @@ public class SuomiFiViestitClient {
       if (response.statusCode() == 200 || response.statusCode() == 409) {
         var sendResponse = objectMapper.readValue(response.body(), SendResponse.class);
         return sendResponse.messageId();
-      }
-      if (response.statusCode() == 400 && response.body().contains("MAILBOX_NOT_IN_USE")) {
+      } else if (response.statusCode() == 400 && response.body().contains("MAILBOX_NOT_IN_USE")) {
         throw new MailboxNotInUseException();
+      } else {
+        throw new IllegalStateException(
+            "Suomi.fi viestit call failed with status " + response.statusCode());
       }
-      throw new IllegalStateException(
-          "Suomi.fi viestit call failed with status " + response.statusCode());
     } catch (JsonProcessingException e) {
       throw new IllegalStateException("Failed to serialize Suomi.fi viesti request", e);
     } catch (IOException e) {
