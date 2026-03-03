@@ -1,4 +1,4 @@
-FROM maven:3.9.12-amazoncorretto-21@sha256:22cd2d8f18db7e8932beab8c2870d23d157d2472ebec0aa93d4f531a3f0e52a1 AS build
+FROM maven:3.9.12-amazoncorretto-21@sha256:35184f2aace9ae2fe06d0c66525a0039f4cf8a226f89e0af8ea80a80549bd27e AS build
 WORKDIR /app
 
 COPY . .
