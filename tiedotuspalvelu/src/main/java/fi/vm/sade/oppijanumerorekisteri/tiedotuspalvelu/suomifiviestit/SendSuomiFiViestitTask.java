@@ -35,6 +35,15 @@ public class SendSuomiFiViestitTask {
               viesti.setRetryCount(0);
               suomiFiViestiRepository.save(viesti);
             });
+      } catch (MailboxNotInUseException e) {
+        log.info("SuomiFiViesti {} mailbox not in use, switching to paper mail", viesti.getId());
+        transactionTemplate.executeWithoutResult(
+            status -> {
+              viesti.setMessageType("paperMail");
+              viesti.setRetryCount(0);
+              viesti.setNextRetry(null);
+              suomiFiViestiRepository.save(viesti);
+            });
       } catch (Exception e) {
         log.error("Failed to send SuomiFiViesti {}", viesti.getId(), e);
         transactionTemplate.executeWithoutResult(
@@ -52,26 +61,95 @@ public class SendSuomiFiViestitTask {
   }
 
   private String sendSuomiFiViesti(SuomiFiViesti suomiFiViesti) {
-    var title = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_OTSIKKO", "fi");
-    var body = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_VIESTI", "fi");
+    return switch (suomiFiViesti.getMessageType()) {
+      case "electronic" -> sendElectronicMessage(suomiFiViesti);
+      case "paperMail" -> sendPaperMailMessage(suomiFiViesti);
+      default ->
+          throw new IllegalStateException("Unknown messageType: " + suomiFiViesti.getMessageType());
+    };
+  }
+
+  private String sendElectronicMessage(SuomiFiViesti suomiFiViesti) {
     var request =
         new ElectronicMessageRequest(
-            new ElectronicPart(
-                List.of(),
-                body,
-                "Text",
-                "Normal",
-                new MessageNotifications(
-                    new UnreadMessageNotification("Default reminder"),
-                    "Organisation and service name"),
-                "No one",
-                title,
-                "Normal"),
-            suomiFiViesti.getTiedoteId().toString(),
-            new Recipient(suomiFiViesti.getHenkilotunnus()),
-            new Sender(tiedotuspalveluProperties.suomifiViestit().senderServiceId()));
+            createElectronicPart(suomiFiViesti),
+            createExternalId(suomiFiViesti),
+            createRecipient(suomiFiViesti),
+            createSender());
     var messageId = suomiFiViestitClient.sendElectronicMessage(request);
-    log.info("Sent Suomi.fi viesti for tiedote {}", suomiFiViesti.getTiedoteId());
+    log.info("Sent Suomi.fi electronic viesti for tiedote {}", suomiFiViesti.getTiedoteId());
     return messageId;
+  }
+
+  private Sender createSender() {
+    return new Sender(tiedotuspalveluProperties.suomifiViestit().senderServiceId());
+  }
+
+  private Recipient createRecipient(SuomiFiViesti suomiFiViesti) {
+    return new Recipient(suomiFiViesti.getHenkilotunnus());
+  }
+
+  private ElectronicPart createElectronicPart(SuomiFiViesti suomiFiViesti) {
+    var title = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_OTSIKKO", "fi");
+    var body = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_VIESTI", "fi");
+    return new ElectronicPart(
+        List.of(),
+        body,
+        "Text",
+        "Normal",
+        new MessageNotifications(
+            new UnreadMessageNotification("Default reminder"), "Organisation and service name"),
+        "No one",
+        title,
+        "Normal");
+  }
+
+  private String sendPaperMailMessage(SuomiFiViesti suomiFiViesti) {
+    var request =
+        new MultichannelMessageRequest(
+            createElectronicPart(suomiFiViesti),
+            createExternalId(suomiFiViesti),
+            createPaperMailPart(suomiFiViesti),
+            createRecipient(suomiFiViesti),
+            createSender());
+    var messageId = suomiFiViestitClient.sendMultichannelMessage(request);
+    log.info("Sent Suomi.fi paper mail viesti for tiedote {}", suomiFiViesti.getTiedoteId());
+    return messageId;
+  }
+
+  private String createExternalId(SuomiFiViesti suomiFiViesti) {
+    return suomiFiViesti.getTiedoteId().toString();
+  }
+
+  private PaperMailPart createPaperMailPart(SuomiFiViesti suomiFiViesti) {
+    var posti = tiedotuspalveluProperties.suomifiViestit().posti();
+    var senderAddress = tiedotuspalveluProperties.suomifiViestit().senderAddress();
+
+    return new PaperMailPart(
+        List.of(),
+        true,
+        true,
+        "Normal",
+        new PrintingAndEnvelopingService(
+            new PostiMessaging(
+                posti.username(), posti.password(), new ContactDetails(posti.contactEmail()))),
+        new NewPaperMailRecipient(
+            new Address(
+                suomiFiViesti.getName(),
+                suomiFiViesti.getStreetAddress(),
+                suomiFiViesti.getZipCode(),
+                suomiFiViesti.getCity(),
+                suomiFiViesti.getCountryCode(),
+                null)),
+        false,
+        new NewPaperMailSender(
+            new Address(
+                senderAddress.name(),
+                senderAddress.streetAddress(),
+                senderAddress.zipCode(),
+                senderAddress.city(),
+                senderAddress.countryCode(),
+                null)),
+        false);
   }
 }

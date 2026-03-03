@@ -37,6 +37,7 @@ public class FetchOppijaTask {
                       .zipCode(oppija.postinumero())
                       .city(oppija.kaupunki())
                       .countryCode("FI")
+                      .messageType("electronic")
                       .build();
               suomiFiViestiRepository.save(viesti);
               tiedote.setProcessedAt(OffsetDateTime.now());

@@ -85,6 +85,7 @@ public class SendSuomiFiViestitTaskTest {
                 .zipCode("00100")
                 .city("Helsinki")
                 .countryCode("FI")
+                .messageType("electronic")
                 .nextRetry(OffsetDateTime.now().plusHours(1))
                 .retryCount(1)
                 .build());
@@ -99,6 +100,7 @@ public class SendSuomiFiViestitTaskTest {
                 .zipCode("00200")
                 .city("Espoo")
                 .countryCode("FI")
+                .messageType("electronic")
                 .nextRetry(OffsetDateTime.now().minusMinutes(1))
                 .retryCount(1)
                 .build());
@@ -132,6 +134,7 @@ public class SendSuomiFiViestitTaskTest {
                 .zipCode("00300")
                 .city("Vantaa")
                 .countryCode("FI")
+                .messageType("electronic")
                 .build());
 
     sendSuomiFiViestitTask.execute();
@@ -141,6 +144,74 @@ public class SendSuomiFiViestitTaskTest {
     assertNull(updatedViesti.getMessageId());
     assertEquals(1, updatedViesti.getRetryCount());
     assertNotNull(updatedViesti.getNextRetry());
+  }
+
+  @Test
+  public void switchesToPaperMailOnMailboxNotInUse() {
+    stubGettingSuomiFiViestitAccessToken();
+    wireMock.stubFor(
+        post(urlEqualTo("/v2/messages/electronic"))
+            .willReturn(
+                aResponse()
+                    .withStatus(400)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody("{\"errorCode\": \"MAILBOX_NOT_IN_USE\"}")));
+
+    var tiedote = tiedoteRepository.save(createTiedote("1.2.3"));
+    var viesti =
+        suomiFiViestiRepository.save(
+            SuomiFiViesti.builder()
+                .tiedoteId(tiedote.getId())
+                .henkilotunnus("010170-9999")
+                .name("Mirri Meow")
+                .streetAddress("Kissankatu 3")
+                .zipCode("00300")
+                .city("Vantaa")
+                .countryCode("FI")
+                .messageType("electronic")
+                .build());
+
+    sendSuomiFiViestitTask.execute();
+
+    var updatedViesti = suomiFiViestiRepository.findById(viesti.getId()).orElseThrow();
+    assertEquals("paperMail", updatedViesti.getMessageType());
+    assertNull(updatedViesti.getProcessedAt());
+    assertNull(updatedViesti.getNextRetry());
+    assertEquals(0, updatedViesti.getRetryCount());
+  }
+
+  @Test
+  public void sendsPaperMailMessage() {
+    stubGettingSuomiFiViestitAccessToken();
+    wireMock.stubFor(
+        post(urlEqualTo("/v2/messages"))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody("{\"messageId\": 42}")));
+
+    var tiedote = tiedoteRepository.save(createTiedote("1.2.3"));
+    var viesti =
+        suomiFiViestiRepository.save(
+            SuomiFiViesti.builder()
+                .tiedoteId(tiedote.getId())
+                .henkilotunnus("010170-9999")
+                .name("Mirri Meow")
+                .streetAddress("Kissankatu 3")
+                .zipCode("00300")
+                .city("Vantaa")
+                .countryCode("FI")
+                .messageType("paperMail")
+                .build());
+
+    sendSuomiFiViestitTask.execute();
+
+    var updatedViesti = suomiFiViestiRepository.findById(viesti.getId()).orElseThrow();
+    assertEquals("paperMail", updatedViesti.getMessageType());
+    assertNotNull(updatedViesti.getProcessedAt());
+    assertEquals("42", updatedViesti.getMessageId());
+    assertEquals(0, updatedViesti.getRetryCount());
   }
 
   private void stubGettingSuomiFiViestitAccessToken() {

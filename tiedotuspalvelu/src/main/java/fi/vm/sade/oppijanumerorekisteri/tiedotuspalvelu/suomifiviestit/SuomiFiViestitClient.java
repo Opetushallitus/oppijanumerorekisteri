@@ -43,6 +43,9 @@ public class SuomiFiViestitClient {
         var sendResponse = objectMapper.readValue(response.body(), SendResponse.class);
         return sendResponse.messageId();
       }
+      if (response.statusCode() == 400 && response.body().contains("MAILBOX_NOT_IN_USE")) {
+        throw new MailboxNotInUseException();
+      }
       throw new IllegalStateException(
           "Suomi.fi viestit call failed with status " + response.statusCode());
     } catch (JsonProcessingException e) {
@@ -52,6 +55,34 @@ public class SuomiFiViestitClient {
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       throw new IllegalStateException("Suomi.fi viestit call interrupted", e);
+    }
+  }
+
+  public String sendMultichannelMessage(MultichannelMessageRequest request) {
+    var token = fetchAccessToken();
+    try {
+      var payload = objectMapper.writeValueAsString(request);
+      var httpRequest =
+          HttpRequest.newBuilder()
+              .uri(URI.create(properties.suomifiViestit().baseUrl() + "/v2/messages"))
+              .header("Content-Type", CONTENT_TYPE_JSON)
+              .header("Authorization", "Bearer " + token)
+              .POST(HttpRequest.BodyPublishers.ofString(payload, StandardCharsets.UTF_8))
+              .build();
+      var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+      if (response.statusCode() == 200 || response.statusCode() == 409) {
+        var sendResponse = objectMapper.readValue(response.body(), MultichannelSendResponse.class);
+        return sendResponse.messageId();
+      }
+      throw new IllegalStateException(
+          "Suomi.fi viestit message call failed with status " + response.statusCode());
+    } catch (JsonProcessingException e) {
+      throw new IllegalStateException("Failed to serialize Suomi.fi message request", e);
+    } catch (IOException e) {
+      throw new IllegalStateException("Suomi.fi viestit message call failed with IO error", e);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new IllegalStateException("Suomi.fi viestit message call interrupted", e);
     }
   }
 
@@ -114,6 +145,10 @@ public class SuomiFiViestitClient {
   }
 
   record SendResponse(String messageId) {}
+
+  record AttachmentResponse(String attachmentId) {}
+
+  record MultichannelSendResponse(String messageId) {}
 
   record EventsResponse(String continuationToken, List<Event> events) {}
 

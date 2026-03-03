@@ -13,7 +13,18 @@ public record TiedotuspalveluProperties(
   public record CasProperties(String serverUrl, String serviceBaseUrl) {}
 
   public record SuomiFiViestitProperties(
-      Boolean enabled, String baseUrl, String username, String password, String senderServiceId) {}
+      Boolean enabled,
+      String baseUrl,
+      String username,
+      String password,
+      String senderServiceId,
+      PostiProperties posti,
+      SenderAddressProperties senderAddress) {}
+
+  public record PostiProperties(String username, String password, String contactEmail) {}
+
+  public record SenderAddressProperties(
+      String name, String streetAddress, String zipCode, String city, String countryCode) {}
 
   public record OppijanumerorekisteriProperties(@NotBlank String baseUrl) {}
 
