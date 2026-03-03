@@ -1,7 +1,13 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit;
 
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.LoggingHttpClient;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedoteRepository;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedotuspalveluProperties;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.locale.LocalisationRepository;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -16,10 +22,12 @@ public class SendSuomiFiViestitTask {
 
   private static final int _24_HOURS_IN_MINUTES = 60 * 24;
   private final SuomiFiViestiRepository suomiFiViestiRepository;
+  private final TiedoteRepository tiedoteRepository;
   private final SuomiFiViestitClient suomiFiViestitClient;
   private final TiedotuspalveluProperties tiedotuspalveluProperties;
   private final LocalisationRepository localisationRepository;
   private final TransactionTemplate transactionTemplate;
+  private final LoggingHttpClient todistusHttpClient = new LoggingHttpClient("todistus");
 
   public void execute() {
     log.info("Running SendSuomiFiViestitTask");
@@ -81,6 +89,46 @@ public class SendSuomiFiViestitTask {
     return messageId;
   }
 
+  private String sendPaperMailMessage(SuomiFiViesti suomiFiViesti) {
+    var tiedote =
+        tiedoteRepository
+            .findById(suomiFiViesti.getTiedoteId())
+            .orElseThrow(
+                () ->
+                    new IllegalStateException(
+                        "Tiedote not found for viesti " + suomiFiViesti.getId()));
+    var pdfBytes = fetchPdf(tiedote.getTodistusUrl());
+    var attachmentId =
+        suomiFiViestitClient.sendAttachment("todistus.pdf", "application/pdf", pdfBytes);
+    var request =
+        new MultichannelMessageRequest(
+            createElectronicPart(suomiFiViesti),
+            createExternalId(suomiFiViesti),
+            createPaperMailPart(suomiFiViesti, attachmentId),
+            createRecipient(suomiFiViesti),
+            createSender());
+    var messageId = suomiFiViestitClient.sendMultichannelMessage(request);
+    log.info("Sent Suomi.fi paper mail viesti for tiedote {}", suomiFiViesti.getTiedoteId());
+    return messageId;
+  }
+
+  private byte[] fetchPdf(String url) {
+    try {
+      var request = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
+      var response = todistusHttpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
+      if (response.statusCode() < 200 || response.statusCode() >= 300) {
+        throw new IllegalStateException(
+            "Failed to fetch PDF from " + url + " with status " + response.statusCode());
+      }
+      return response.body();
+    } catch (IOException e) {
+      throw new IllegalStateException("Failed to fetch PDF from " + url, e);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new IllegalStateException("PDF fetch interrupted", e);
+    }
+  }
+
   private Sender createSender() {
     return new Sender(tiedotuspalveluProperties.suomifiViestit().senderServiceId());
   }
@@ -108,25 +156,11 @@ public class SendSuomiFiViestitTask {
         "Normal");
   }
 
-  private String sendPaperMailMessage(SuomiFiViesti suomiFiViesti) {
-    var request =
-        new MultichannelMessageRequest(
-            createElectronicPart(suomiFiViesti),
-            createExternalId(suomiFiViesti),
-            createPaperMailPart(suomiFiViesti),
-            createRecipient(suomiFiViesti),
-            createSender());
-    var messageId = suomiFiViestitClient.sendMultichannelMessage(request);
-    log.info("Sent Suomi.fi paper mail viesti for tiedote {}", suomiFiViesti.getTiedoteId());
-    return messageId;
-  }
-
-  private PaperMailPart createPaperMailPart(SuomiFiViesti suomiFiViesti) {
+  private PaperMailPart createPaperMailPart(SuomiFiViesti suomiFiViesti, String attachmentId) {
     var posti = tiedotuspalveluProperties.suomifiViestit().posti();
     var senderAddress = tiedotuspalveluProperties.suomifiViestit().senderAddress();
-
     return new PaperMailPart(
-        List.of(),
+        List.of(new AttachmentReference(attachmentId)),
         true,
         true,
         "Normal",

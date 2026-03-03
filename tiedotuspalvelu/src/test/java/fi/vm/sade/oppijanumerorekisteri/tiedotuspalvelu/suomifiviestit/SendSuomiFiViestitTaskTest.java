@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
@@ -182,16 +183,37 @@ public class SendSuomiFiViestitTaskTest {
 
   @Test
   public void sendsPaperMailMessage() {
+    byte[] PDF_MAGIC_BYTES = {0x25, 0x50, 0x44, 0x46};
     stubGettingSuomiFiViestitAccessToken();
+    wireMock.stubFor(
+        get(urlEqualTo("/todistus.pdf"))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/pdf")
+                    .withBody(PDF_MAGIC_BYTES)));
+    wireMock.stubFor(
+        post(urlEqualTo("/v2/attachments"))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody("{\"attachmentId\": \"attach-123\"}")));
     wireMock.stubFor(
         post(urlEqualTo("/v2/messages"))
             .willReturn(
                 aResponse()
                     .withStatus(200)
                     .withHeader("Content-Type", "application/json")
-                    .withBody("{\"messageId\": 42}")));
+                    .withBody("{\"messageId\": \"msg-456\"}")));
 
-    var tiedote = tiedoteRepository.save(createTiedote("1.2.3"));
+    var tiedote =
+        tiedoteRepository.save(
+            Tiedote.builder()
+                .oppijanumero("1.2.3")
+                .idempotencyKey(UUID.randomUUID().toString())
+                .todistusUrl(wireMock.baseUrl() + "/todistus.pdf")
+                .build());
     var viesti =
         suomiFiViestiRepository.save(
             SuomiFiViesti.builder()
@@ -210,7 +232,7 @@ public class SendSuomiFiViestitTaskTest {
     var updatedViesti = suomiFiViestiRepository.findById(viesti.getId()).orElseThrow();
     assertEquals("paperMail", updatedViesti.getMessageType());
     assertNotNull(updatedViesti.getProcessedAt());
-    assertEquals("42", updatedViesti.getMessageId());
+    assertEquals("msg-456", updatedViesti.getMessageId());
     assertEquals(0, updatedViesti.getRetryCount());
   }
 

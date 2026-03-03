@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -84,6 +85,54 @@ public class SuomiFiViestitClient {
       Thread.currentThread().interrupt();
       throw new IllegalStateException("Suomi.fi viestit message call interrupted", e);
     }
+  }
+
+  public String sendAttachment(String filename, String contentType, byte[] content) {
+    var token = fetchAccessToken();
+    try {
+      var boundary = UUID.randomUUID().toString();
+      var body = buildMultipartBody(boundary, filename, contentType, content);
+      var httpRequest =
+          HttpRequest.newBuilder()
+              .uri(URI.create(properties.suomifiViestit().baseUrl() + "/v2/attachments"))
+              .header("Content-Type", "multipart/form-data; boundary=" + boundary)
+              .header("Authorization", "Bearer " + token)
+              .POST(HttpRequest.BodyPublishers.ofByteArray(body))
+              .build();
+      var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+      if (response.statusCode() == 200 || response.statusCode() == 201) {
+        var attachmentResponse = objectMapper.readValue(response.body(), AttachmentResponse.class);
+        return attachmentResponse.attachmentId();
+      }
+      throw new IllegalStateException(
+          "Suomi.fi viestit attachment call failed with status " + response.statusCode());
+    } catch (JsonProcessingException e) {
+      throw new IllegalStateException("Failed to parse Suomi.fi attachment response", e);
+    } catch (IOException e) {
+      throw new IllegalStateException("Suomi.fi viestit attachment call failed with IO error", e);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new IllegalStateException("Suomi.fi viestit attachment call interrupted", e);
+    }
+  }
+
+  private byte[] buildMultipartBody(
+      String boundary, String filename, String contentType, byte[] content) {
+    var header =
+        ("""
+            --%s\r
+            Content-Disposition: form-data; name="file"; filename="%s"\r
+            Content-Type: %s\r
+            \r
+            """
+                .formatted(boundary, filename, contentType))
+            .getBytes(StandardCharsets.UTF_8);
+    var footer = ("\r\n--" + boundary + "--\r\n").getBytes(StandardCharsets.UTF_8);
+    var body = new byte[header.length + content.length + footer.length];
+    System.arraycopy(header, 0, body, 0, header.length);
+    System.arraycopy(content, 0, body, header.length, content.length);
+    System.arraycopy(footer, 0, body, header.length + content.length, footer.length);
+    return body;
   }
 
   private String fetchAccessToken() {
