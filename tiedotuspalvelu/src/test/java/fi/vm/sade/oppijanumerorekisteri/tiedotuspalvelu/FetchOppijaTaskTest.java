@@ -50,30 +50,9 @@ public class FetchOppijaTaskTest extends TiedotuspalveluApiTest implements Resou
 
   @Test
   public void respectsNextRetryTime() throws Exception {
-    wireMock.stubFor(
-        post(urlEqualTo("/oauth2/token"))
-            .willReturn(
-                aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/json")
-                    .withBody(
-                        """
-                        {
-                          "access_token": "%s",
-                          "expires_in": 3600,
-                          "token_type": "Bearer"
-                        }
-                        """
-                            .formatted(OPP_TOKEN))));
-    wireMock.stubFor(
-        get(urlPathMatching("/henkilo/.*"))
-            .withHeader("Authorization", equalTo("Bearer " + OPP_TOKEN))
-            .willReturn(
-                aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/json")
-                    .withBody(
-                        readResource("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + ".json"))));
+    stubOppijanumerorekisteriClientCredentials();
+    stubOppijanumerorekisteriHenkilo(
+        "/henkilo/.*", readResource("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + ".json"));
 
     var futureTiedote = createTiedote("1.2.246.562.24.00000000001");
     futureTiedote.setNextRetry(java.time.OffsetDateTime.now().plusHours(1));
@@ -97,16 +76,9 @@ public class FetchOppijaTaskTest extends TiedotuspalveluApiTest implements Resou
 
   @Test
   public void setsStateToSuomiFiViestiHetulliselle() throws Exception {
-    stubOauthToken();
-    wireMock.stubFor(
-        get(urlPathMatching("/henkilo/.*"))
-            .withHeader("Authorization", equalTo("Bearer " + OPP_TOKEN))
-            .willReturn(
-                aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/json")
-                    .withBody(
-                        readResource("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + ".json"))));
+    stubOppijanumerorekisteriClientCredentials();
+    stubOppijanumerorekisteriHenkilo(
+        "/henkilo/.*", readResource("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + ".json"));
 
     var tiedote = createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES);
     assertEquals(ApiController.Meta.STATE_NEW, tiedote.getTiedotestateId());
@@ -119,28 +91,7 @@ public class FetchOppijaTaskTest extends TiedotuspalveluApiTest implements Resou
 
   @Test
   public void handlesOppijanumerorekisteriFailure() throws Exception {
-    wireMock.stubFor(
-        post(urlEqualTo("/oauth2/token"))
-            .withRequestBody(
-                equalTo(
-                    "grant_type=client_credentials"
-                        + "&client_id="
-                        + OPP_CLIENT_ID
-                        + "&client_secret="
-                        + OPP_CLIENT_SECRET))
-            .willReturn(
-                aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/json")
-                    .withBody(
-                        """
-                        {
-                          "access_token": "%s",
-                          "expires_in": 3600,
-                          "token_type": "Bearer"
-                        }
-                        """
-                            .formatted(OPP_TOKEN))));
+    stubOppijanumerorekisteriClientCredentials();
     wireMock.stubFor(
         get(urlPathMatching("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES))
             .withHeader("Authorization", equalTo("Bearer " + OPP_TOKEN))
@@ -158,6 +109,22 @@ public class FetchOppijaTaskTest extends TiedotuspalveluApiTest implements Resou
 
   @Test
   public void handlesMissingOppijaAddressData() throws Exception {
+    stubOppijanumerorekisteriClientCredentials();
+    stubOppijanumerorekisteriHenkilo(
+        "/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES,
+        readResource("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + "-no-address.json"));
+
+    var tiedote = createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES);
+
+    fetchOppijaTask.execute();
+
+    var updatedTiedote = tiedoteRepository.findById(tiedote.getId()).orElseThrow();
+    assertNull(updatedTiedote.getProcessedAt());
+    assertEquals(1, updatedTiedote.getRetryCount());
+    assertNotNull(updatedTiedote.getNextRetry());
+  }
+
+  private void stubOppijanumerorekisteriClientCredentials() {
     wireMock.stubFor(
         post(urlEqualTo("/oauth2/token"))
             .withRequestBody(
@@ -173,42 +140,6 @@ public class FetchOppijaTaskTest extends TiedotuspalveluApiTest implements Resou
                     .withHeader("Content-Type", "application/json")
                     .withBody(
                         """
-                                            {
-                                              "access_token": "%s",
-                                              "expires_in": 3600,
-                                              "token_type": "Bearer"
-                                            }
-                                            """
-                            .formatted(OPP_TOKEN))));
-    wireMock.stubFor(
-        get(urlPathMatching("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES))
-            .withHeader("Authorization", equalTo("Bearer " + OPP_TOKEN))
-            .willReturn(
-                aResponse()
-                    .withStatus(200)
-                    .withBody(
-                        readResource(
-                            "/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + "-no-address.json"))));
-
-    var tiedote = createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES);
-
-    fetchOppijaTask.execute();
-
-    var updatedTiedote = tiedoteRepository.findById(tiedote.getId()).orElseThrow();
-    assertNull(updatedTiedote.getProcessedAt());
-    assertEquals(1, updatedTiedote.getRetryCount());
-    assertNotNull(updatedTiedote.getNextRetry());
-  }
-
-  private void stubOauthToken() {
-    wireMock.stubFor(
-        post(urlEqualTo("/oauth2/token"))
-            .willReturn(
-                aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/json")
-                    .withBody(
-                        """
                         {
                           "access_token": "%s",
                           "expires_in": 3600,
@@ -216,5 +147,16 @@ public class FetchOppijaTaskTest extends TiedotuspalveluApiTest implements Resou
                         }
                         """
                             .formatted(OPP_TOKEN))));
+  }
+
+  private void stubOppijanumerorekisteriHenkilo(String urlPattern, String responseBody) {
+    wireMock.stubFor(
+        get(urlPathMatching(urlPattern))
+            .withHeader("Authorization", equalTo("Bearer " + OPP_TOKEN))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(responseBody)));
   }
 }
