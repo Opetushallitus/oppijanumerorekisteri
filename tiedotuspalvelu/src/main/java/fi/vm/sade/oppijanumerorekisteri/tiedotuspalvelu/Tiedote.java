@@ -54,4 +54,6 @@ public class Tiedote {
 
   @Column(nullable = false)
   private String tiedotestateId;
+
+  @Column private String opiskeluoikeusOid;
 }

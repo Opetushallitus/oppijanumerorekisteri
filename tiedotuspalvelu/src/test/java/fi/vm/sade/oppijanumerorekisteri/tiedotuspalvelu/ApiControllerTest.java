@@ -18,6 +18,9 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 public class ApiControllerTest extends TiedotuspalveluApiTest {
 
+  private static final String OPPIJANUMERO = OidGenerator.generateHenkiloOid();
+  private static final String OPISKELUOIKEUS_OID = OidGenerator.generateOpiskeluoikeusOid();
+
   @Test
   public void createTiedoteRequiresAuthentication() throws Exception {
     mockMvc
@@ -30,15 +33,13 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
 
   @Test
   public void createTiedoteFailsWithoutRequiredRole() throws Exception {
-    var tiedote = createTiedoteRequest();
-
     var tokenWithoutRole = createSignedJwt(Map.of());
     mockMvc
         .perform(
             post("/api/v1/tiedote/kielitutkintotodistus")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenWithoutRole)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(tiedote)))
+                .content(tiedoteJson(UUID.randomUUID().toString())))
         .andExpect(status().isForbidden());
   }
 
@@ -46,24 +47,37 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
   public void createTiedoteSucceedsWithValidData() throws Exception {
     tiedoteRepository.deleteAll();
     String idempotencyKey = UUID.randomUUID().toString();
-    var tiedote = createTiedoteRequest(idempotencyKey);
-    var returnedId = postTiedoteRequestAndReturnTiedoteId(tiedote);
+    var returnedId = postTiedoteAndReturnId(tiedoteJson(idempotencyKey));
 
     List<Tiedote> tiedotteet = tiedoteRepository.findAll();
     assertEquals(1, tiedotteet.size());
     Tiedote saved = tiedotteet.stream().filter(t -> t.getId().equals(returnedId)).findFirst().get();
     assertEquals(saved.getId(), returnedId);
-    assertEquals("1.2.246.562.99.12345678901", saved.getOppijanumero());
+    assertEquals(OPPIJANUMERO, saved.getOppijanumero());
     assertEquals(idempotencyKey, saved.getIdempotencyKey());
 
     mockMvc
         .perform(get("/api/v1/tiedote/" + returnedId).with(validToken()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(returnedId.toString()))
+        .andExpect(jsonPath("$.opiskeluoikeusOid").value(OPISKELUOIKEUS_OID))
         .andExpect(jsonPath("$.meta.type").value("KIELITUTKINTOTODISTUS"))
         .andExpect(jsonPath("$.meta.state").value("NEW"))
         .andExpect(jsonPath("$.statuses[0].status").value("CREATED"))
         .andExpect(jsonPath("$.statuses[0].timestamp").exists());
+  }
+
+  @Test
+  public void createTiedoteSucceedsWithoutOpiskeluoikeusOid() throws Exception {
+    var body =
+        """
+        {
+          "oppijanumero": "%s",
+          "idempotencyKey": "%s"
+        }
+        """
+            .formatted(OPPIJANUMERO, UUID.randomUUID().toString());
+    performAuthorizedPostRequest(body).andExpect(status().isOk());
   }
 
   @Test
@@ -85,9 +99,9 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
   public void createTiedoteWithSameIdempotencyKeyReturnsSameId() throws Exception {
     tiedoteRepository.deleteAll();
     String idempotencyKey = UUID.randomUUID().toString();
-    var tiedote = createTiedoteRequest(idempotencyKey);
-    var firstId = postTiedoteRequestAndReturnTiedoteId(tiedote);
-    var secondId = postTiedoteRequestAndReturnTiedoteId(tiedote);
+    var json = tiedoteJson(idempotencyKey);
+    var firstId = postTiedoteAndReturnId(json);
+    var secondId = postTiedoteAndReturnId(json);
 
     assertEquals(firstId, secondId);
 
@@ -99,32 +113,14 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
   @Test
   public void createTiedoteWithDifferentIdempotencyKeysCreatesDifferentRecords() throws Exception {
     tiedoteRepository.deleteAll();
-    var tiedote1 = createTiedoteRequest();
-    var tiedote2 = createTiedoteRequest();
 
-    var firstId = postTiedoteRequestAndReturnTiedoteId(tiedote1);
-    var secondId = postTiedoteRequestAndReturnTiedoteId(tiedote2);
+    var firstId = postTiedoteAndReturnId(tiedoteJson(UUID.randomUUID().toString()));
+    var secondId = postTiedoteAndReturnId(tiedoteJson(UUID.randomUUID().toString()));
 
     assertEquals(false, firstId.equals(secondId));
 
     List<Tiedote> tiedotteet = tiedoteRepository.findAll();
     assertEquals(2, tiedotteet.size());
-  }
-
-  @Test
-  public void createTiedoteReturnsEnrichedResponse() throws Exception {
-    tiedoteRepository.deleteAll();
-    String idempotencyKey = UUID.randomUUID().toString();
-    var tiedote = createTiedoteRequest(idempotencyKey);
-
-    performAuthorizedPostRequest(objectMapper.writeValueAsString(tiedote))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").exists())
-        .andExpect(jsonPath("$.meta.type").value("KIELITUTKINTOTODISTUS"))
-        .andExpect(jsonPath("$.meta.state").value("NEW"))
-        .andExpect(jsonPath("$.statuses").isArray())
-        .andExpect(jsonPath("$.statuses[0].status").value("CREATED"))
-        .andExpect(jsonPath("$.statuses[0].timestamp").exists());
   }
 
   @Test
@@ -141,10 +137,9 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
         .andExpect(status().isUnauthorized());
   }
 
-  private @NonNull UUID postTiedoteRequestAndReturnTiedoteId(TiedoteRequest tiedote)
-      throws Exception {
+  private @NonNull UUID postTiedoteAndReturnId(String json) throws Exception {
     var response =
-        performAuthorizedPostRequest(objectMapper.writeValueAsString(tiedote))
+        performAuthorizedPostRequest(json)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").exists())
             .andReturn()
@@ -154,12 +149,15 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
     return UUID.fromString(objectMapper.readTree(response).get("id").asText());
   }
 
-  private TiedoteRequest createTiedoteRequest() {
-    return createTiedoteRequest(UUID.randomUUID().toString());
-  }
-
-  private TiedoteRequest createTiedoteRequest(String idempotencyKey) {
-    return new TiedoteRequest("1.2.246.562.99.12345678901", idempotencyKey);
+  private String tiedoteJson(String idempotencyKey) {
+    return """
+        {
+          "oppijanumero": "%s",
+          "opiskeluoikeusOid": "%s",
+          "idempotencyKey": "%s"
+        }
+        """
+        .formatted(OPPIJANUMERO, OPISKELUOIKEUS_OID, idempotencyKey);
   }
 
   private @NonNull ResultActions performAuthorizedPostRequest(String content) throws Exception {
@@ -173,5 +171,3 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
         .content(content);
   }
 }
-
-record TiedoteRequest(String oppijanumero, String idempotencyKey) {}

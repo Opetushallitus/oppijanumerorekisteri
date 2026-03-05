@@ -14,10 +14,7 @@ import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import java.time.Instant;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,9 +28,8 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class TiedotuspalveluApiTest {
-  public static final String ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD =
-      "ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD";
-
+  static final String OPH_ORGANISAATIO_OID = "1.2.246.562.10.00000000001";
+  static final String PALVELUKAYTTAJA_HENKILO_OID = OidGenerator.generateHenkiloOid();
   static RSAKey rsaKey;
   static WireMockServer jwksServer;
 
@@ -69,7 +65,8 @@ public class TiedotuspalveluApiTest {
     var builder =
         new JWTClaimsSet.Builder()
             .issuer("https://test-issuer.example.com")
-            .subject("test-subject")
+            .subject(PALVELUKAYTTAJA_HENKILO_OID)
+            .audience("palvelukayttaja")
             .issueTime(Date.from(now))
             .expirationTime(Date.from(now.plusSeconds(300)));
     extraClaims.forEach(builder::claim);
@@ -89,7 +86,7 @@ public class TiedotuspalveluApiTest {
                 Map.of(
                     "roles",
                     Map.of(
-                        "1.2.246.562.10.00000000001",
+                        OPH_ORGANISAATIO_OID,
                         List.of("TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD"))));
         request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
       } catch (Exception e) {
@@ -102,7 +99,11 @@ public class TiedotuspalveluApiTest {
   protected Tiedote createTiedote(String oppijanumero) throws Exception {
     var content =
         objectMapper.writeValueAsString(
-            new ApiController.TiedoteDto(oppijanumero, UUID.randomUUID().toString(), null));
+            new ApiController.TiedoteDto(
+                oppijanumero,
+                UUID.randomUUID().toString(),
+                null,
+                Optional.of(OidGenerator.generateOpiskeluoikeusOid())));
     var response =
         mockMvc
             .perform(

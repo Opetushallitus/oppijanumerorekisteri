@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,9 +41,13 @@ public class ApiController {
   }
 
   public record TiedoteDto(
-      @NotBlank String oppijanumero, @NotBlank String idempotencyKey, String todistusUrl) {}
+      @NotBlank String oppijanumero,
+      @NotBlank String idempotencyKey,
+      String todistusUrl,
+      Optional<String> opiskeluoikeusOid) {}
 
-  public record TiedoteResponse(UUID id, Meta meta, List<StatusEntry> statuses) {}
+  public record TiedoteResponse(
+      UUID id, Optional<String> opiskeluoikeusOid, Meta meta, List<StatusEntry> statuses) {}
 
   public record Meta(String type, String state) {
     public static final String TYPE_KIELITUTKINTOTODISTUS = "KIELITUTKINTOTODISTUS";
@@ -71,6 +76,7 @@ public class ApiController {
             .idempotencyKey(tiedoteDto.idempotencyKey())
             .todistusUrl(
                 tiedoteDto.todistusUrl() != null ? tiedoteDto.todistusUrl() : "placeholder")
+            .opiskeluoikeusOid(tiedoteDto.opiskeluoikeusOid().orElse(null))
             .tiedotetypeId(Meta.TYPE_KIELITUTKINTOTODISTUS)
             .tiedotestateId(Meta.STATE_NEW)
             .build();
@@ -112,6 +118,7 @@ public class ApiController {
               }
             });
 
-    return new TiedoteResponse(tiedote.getId(), meta, statuses);
+    return new TiedoteResponse(
+        tiedote.getId(), Optional.ofNullable(tiedote.getOpiskeluoikeusOid()), meta, statuses);
   }
 }
