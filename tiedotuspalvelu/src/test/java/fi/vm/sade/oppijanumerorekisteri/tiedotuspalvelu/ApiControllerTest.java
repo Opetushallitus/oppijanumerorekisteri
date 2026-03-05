@@ -13,22 +13,14 @@ import java.util.UUID;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-public class ApiControllerTest {
-  private static final String ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD =
-      "ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD";
+public class ApiControllerTest extends TiedotuspalveluApiTest {
 
   @Autowired private MockMvc mockMvc;
 
@@ -190,13 +182,6 @@ public class ApiControllerTest {
         .with(validToken())
         .contentType(MediaType.APPLICATION_JSON)
         .content(content);
-  }
-
-  private SecurityMockMvcRequestPostProcessors.@NonNull JwtRequestPostProcessor validToken() {
-    return jwt()
-        .authorities(
-            new SimpleGrantedAuthority(
-                ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD));
   }
 }
 

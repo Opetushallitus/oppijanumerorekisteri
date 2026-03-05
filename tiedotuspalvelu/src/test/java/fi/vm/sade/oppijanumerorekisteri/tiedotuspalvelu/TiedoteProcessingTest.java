@@ -20,32 +20,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-@SpringBootTest
-public class TiedoteProcessingTest implements ResourceReader {
+public class TiedoteProcessingTest extends TiedotuspalveluApiTest implements ResourceReader {
 
   @Autowired private FetchOppijaTask fetchOppijaTask;
   @Autowired private SendSuomiFiViestitTask sendSuomiFiViestitTask;
 
-  @Autowired private TiedoteRepository tiedoteRepository;
   @Autowired private SuomiFiViestiRepository suomiFiViestiRepository;
 
   @MockitoBean private JwtDecoder jwtDecoder;
-
-  private Tiedote createTiedote(String oppijanumero) {
-    return Tiedote.builder()
-        .oppijanumero(oppijanumero)
-        .idempotencyKey(UUID.randomUUID().toString())
-        .todistusUrl("https://example.com/todistus")
-        .tiedotetypeId(ApiController.Meta.TYPE_KIELITUTKINTOTODISTUS)
-        .tiedotestateId(ApiController.Meta.STATE_NEW)
-        .build();
-  }
 
   @RegisterExtension
   static WireMockExtension wireMock =
@@ -80,13 +67,13 @@ public class TiedoteProcessingTest implements ResourceReader {
   }
 
   @Test
-  public void processesTiedote() {
+  public void processesTiedote() throws Exception {
     stubGettingOtuvaOauthToken();
     stubGettingOppija();
     stubGettingSuomiFiViestitToken();
     stubSendingSuomiFiElectronicMessage();
 
-    var tiedote = tiedoteRepository.save(createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES));
+    var tiedote = createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES);
 
     fetchOppijaTask.execute();
     sendSuomiFiViestitTask.execute();

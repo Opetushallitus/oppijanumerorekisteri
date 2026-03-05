@@ -17,30 +17,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-@SpringBootTest
-public class FetchOppijaTaskTest implements ResourceReader {
+public class FetchOppijaTaskTest extends TiedotuspalveluApiTest implements ResourceReader {
 
   @Autowired private FetchOppijaTask fetchOppijaTask;
-  @Autowired private TiedoteRepository tiedoteRepository;
   @Autowired private SuomiFiViestiRepository suomiFiViestiRepository;
 
   @MockitoBean private JwtDecoder jwtDecoder;
-
-  private Tiedote createTiedote(String oppijanumero) {
-    return Tiedote.builder()
-        .oppijanumero(oppijanumero)
-        .idempotencyKey(java.util.UUID.randomUUID().toString())
-        .todistusUrl("https://example.com/todistus")
-        .tiedotetypeId(ApiController.Meta.TYPE_KIELITUTKINTOTODISTUS)
-        .tiedotestateId(ApiController.Meta.STATE_NEW)
-        .build();
-  }
 
   @RegisterExtension
   static WireMockExtension wireMock =
@@ -66,7 +53,7 @@ public class FetchOppijaTaskTest implements ResourceReader {
   }
 
   @Test
-  public void respectsNextRetryTime() {
+  public void respectsNextRetryTime() throws Exception {
     wireMock.stubFor(
         post(urlEqualTo("/oauth2/token"))
             .willReturn(
@@ -92,19 +79,15 @@ public class FetchOppijaTaskTest implements ResourceReader {
                     .withBody(
                         readResource("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + ".json"))));
 
-    var futureTiedote =
-        tiedoteRepository.save(
-            createTiedote("1.2.246.562.24.00000000001").toBuilder()
-                .nextRetry(java.time.OffsetDateTime.now().plusHours(1))
-                .retryCount(1)
-                .build());
+    var futureTiedote = createTiedote("1.2.246.562.24.00000000001");
+    futureTiedote.setNextRetry(java.time.OffsetDateTime.now().plusHours(1));
+    futureTiedote.setRetryCount(1);
+    tiedoteRepository.save(futureTiedote);
 
-    var pastTiedote =
-        tiedoteRepository.save(
-            createTiedote("1.2.246.562.24.00000000002").toBuilder()
-                .nextRetry(java.time.OffsetDateTime.now().minusMinutes(1))
-                .retryCount(1)
-                .build());
+    var pastTiedote = createTiedote("1.2.246.562.24.00000000002");
+    pastTiedote.setNextRetry(java.time.OffsetDateTime.now().minusMinutes(1));
+    pastTiedote.setRetryCount(1);
+    tiedoteRepository.save(pastTiedote);
 
     fetchOppijaTask.execute();
 
@@ -117,7 +100,7 @@ public class FetchOppijaTaskTest implements ResourceReader {
   }
 
   @Test
-  public void setsStateToSuomiFiViestiHetulliselle() {
+  public void setsStateToSuomiFiViestiHetulliselle() throws Exception {
     stubOauthToken();
     wireMock.stubFor(
         get(urlPathMatching("/henkilo/.*"))
@@ -129,7 +112,7 @@ public class FetchOppijaTaskTest implements ResourceReader {
                     .withBody(
                         readResource("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + ".json"))));
 
-    var tiedote = tiedoteRepository.save(createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES));
+    var tiedote = createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES);
     assertEquals(ApiController.Meta.STATE_NEW, tiedote.getTiedotestateId());
 
     fetchOppijaTask.execute();
@@ -139,7 +122,7 @@ public class FetchOppijaTaskTest implements ResourceReader {
   }
 
   @Test
-  public void handlesOppijanumerorekisteriFailure() {
+  public void handlesOppijanumerorekisteriFailure() throws Exception {
     wireMock.stubFor(
         post(urlEqualTo("/oauth2/token"))
             .withRequestBody(
@@ -167,7 +150,7 @@ public class FetchOppijaTaskTest implements ResourceReader {
             .withHeader("Authorization", equalTo("Bearer " + OPP_TOKEN))
             .willReturn(aResponse().withStatus(500)));
 
-    var tiedote = tiedoteRepository.save(createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES));
+    var tiedote = createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES);
 
     fetchOppijaTask.execute();
 
@@ -178,7 +161,7 @@ public class FetchOppijaTaskTest implements ResourceReader {
   }
 
   @Test
-  public void handlesMissingOppijaAddressData() {
+  public void handlesMissingOppijaAddressData() throws Exception {
     wireMock.stubFor(
         post(urlEqualTo("/oauth2/token"))
             .withRequestBody(
@@ -211,7 +194,7 @@ public class FetchOppijaTaskTest implements ResourceReader {
                         readResource(
                             "/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + "-no-address.json"))));
 
-    var tiedote = tiedoteRepository.save(createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES));
+    var tiedote = createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES);
 
     fetchOppijaTask.execute();
 

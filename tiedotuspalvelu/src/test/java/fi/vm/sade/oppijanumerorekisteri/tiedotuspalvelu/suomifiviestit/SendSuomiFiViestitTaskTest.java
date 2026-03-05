@@ -9,38 +9,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.ApiController;
-import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.Tiedote;
-import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedoteRepository;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedotuspalveluApiTest;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-@SpringBootTest
-public class SendSuomiFiViestitTaskTest {
+public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
 
   @Autowired private SendSuomiFiViestitTask sendSuomiFiViestitTask;
-  @Autowired private TiedoteRepository tiedoteRepository;
   @Autowired private SuomiFiViestiRepository suomiFiViestiRepository;
 
   @MockitoBean private JwtDecoder jwtDecoder;
-
-  private Tiedote createTiedote(String oppijanumero) {
-    return Tiedote.builder()
-        .oppijanumero(oppijanumero)
-        .idempotencyKey(UUID.randomUUID().toString())
-        .todistusUrl("https://example.com/todistus")
-        .tiedotetypeId(ApiController.Meta.TYPE_KIELITUTKINTOTODISTUS)
-        .tiedotestateId(ApiController.Meta.STATE_NEW)
-        .build();
-  }
 
   @RegisterExtension
   static WireMockExtension wireMock =
@@ -68,7 +54,7 @@ public class SendSuomiFiViestitTaskTest {
   }
 
   @Test
-  public void respectsNextRetryTime() {
+  public void respectsNextRetryTime() throws Exception {
     stubGettingSuomiFiViestitAccessToken();
     wireMock.stubFor(
         post(urlEqualTo("/v2/messages/electronic"))
@@ -77,7 +63,7 @@ public class SendSuomiFiViestitTaskTest {
                     .withStatus(200)
                     .withBody("{\"messageId\": \"%s\"}".formatted(SUOMIFI_MESSAGE_ID))));
 
-    var tiedote = tiedoteRepository.save(createTiedote("1.2.3"));
+    var tiedote = createTiedote("1.2.3");
 
     var futureViesti =
         suomiFiViestiRepository.save(
@@ -125,12 +111,12 @@ public class SendSuomiFiViestitTaskTest {
   }
 
   @Test
-  public void handlesSuomiFiFailure() {
+  public void handlesSuomiFiFailure() throws Exception {
     stubGettingSuomiFiViestitAccessToken();
     wireMock.stubFor(
         post(urlEqualTo("/v2/messages/electronic")).willReturn(aResponse().withStatus(500)));
 
-    var tiedote = tiedoteRepository.save(createTiedote("1.2.3"));
+    var tiedote = createTiedote("1.2.3");
     var viesti =
         suomiFiViestiRepository.save(
             SuomiFiViesti.builder()
@@ -154,7 +140,7 @@ public class SendSuomiFiViestitTaskTest {
   }
 
   @Test
-  public void switchesToPaperMailOnMailboxNotInUse() {
+  public void switchesToPaperMailOnMailboxNotInUse() throws Exception {
     stubGettingSuomiFiViestitAccessToken();
     wireMock.stubFor(
         post(urlEqualTo("/v2/messages/electronic"))
@@ -164,7 +150,7 @@ public class SendSuomiFiViestitTaskTest {
                     .withHeader("Content-Type", "application/json")
                     .withBody("{\"errorCode\": \"MAILBOX_NOT_IN_USE\"}")));
 
-    var tiedote = tiedoteRepository.save(createTiedote("1.2.3"));
+    var tiedote = createTiedote("1.2.3");
     var viesti =
         suomiFiViestiRepository.save(
             SuomiFiViesti.builder()
@@ -188,7 +174,7 @@ public class SendSuomiFiViestitTaskTest {
   }
 
   @Test
-  public void sendsPaperMailMessage() {
+  public void sendsPaperMailMessage() throws Exception {
     byte[] PDF_MAGIC_BYTES = {0x25, 0x50, 0x44, 0x46};
     stubGettingSuomiFiViestitAccessToken();
     wireMock.stubFor(
@@ -213,15 +199,9 @@ public class SendSuomiFiViestitTaskTest {
                     .withHeader("Content-Type", "application/json")
                     .withBody("{\"messageId\": \"msg-456\"}")));
 
-    var tiedote =
-        tiedoteRepository.save(
-            Tiedote.builder()
-                .tiedotetypeId(ApiController.Meta.TYPE_KIELITUTKINTOTODISTUS)
-                .tiedotestateId(ApiController.Meta.STATE_NEW)
-                .oppijanumero("1.2.3")
-                .idempotencyKey(UUID.randomUUID().toString())
-                .todistusUrl(wireMock.baseUrl() + "/todistus.pdf")
-                .build());
+    var tiedote = createTiedote("1.2.3");
+    tiedote.setTodistusUrl(wireMock.baseUrl() + "/todistus.pdf");
+    tiedoteRepository.save(tiedote);
     var viesti =
         suomiFiViestiRepository.save(
             SuomiFiViesti.builder()

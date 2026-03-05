@@ -6,44 +6,21 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsService;
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-public class UiControllerTest {
-
-  @Autowired private MockMvc mockMvc;
-
-  @Autowired private ObjectMapper objectMapper;
-
-  @Autowired private TiedoteRepository tiedoteRepository;
+public class UiControllerTest extends TiedotuspalveluApiTest {
 
   @MockitoBean private JwtDecoder jwtDecoder;
-
-  private Tiedote createTiedote(String oppijanumero) {
-    return Tiedote.builder()
-        .oppijanumero(oppijanumero)
-        .idempotencyKey(java.util.UUID.randomUUID().toString())
-        .todistusUrl("https://example.com/todistus")
-        .tiedotetypeId(ApiController.Meta.TYPE_KIELITUTKINTOTODISTUS)
-        .tiedotestateId(ApiController.Meta.STATE_NEW)
-        .build();
-  }
 
   @BeforeEach
   public void setup() throws Exception {
@@ -63,9 +40,9 @@ public class UiControllerTest {
 
   @Test
   public void returnsOnlyCurrentUsersTiedotteet() throws Exception {
-    tiedoteRepository.save(createTiedote("1.2.246.562.24.00000000001"));
-    tiedoteRepository.save(createTiedote("1.2.246.562.24.00000000001"));
-    tiedoteRepository.save(createTiedote("1.2.246.562.24.00000000002"));
+    createTiedote("1.2.246.562.24.00000000001");
+    createTiedote("1.2.246.562.24.00000000001");
+    createTiedote("1.2.246.562.24.00000000002");
 
     var response =
         mockMvc
