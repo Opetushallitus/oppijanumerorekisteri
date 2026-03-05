@@ -4,6 +4,7 @@
 target/*
 oppijanumerorekisteri-service/target/*
 oppijanumerorekisteri-api/target/*
+scripts/certs
 
 # macOS
 .DS_Store
