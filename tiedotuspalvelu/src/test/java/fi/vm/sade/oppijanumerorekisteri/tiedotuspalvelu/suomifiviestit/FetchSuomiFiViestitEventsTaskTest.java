@@ -9,25 +9,20 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedotuspalveluApiTest;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-@SpringBootTest
-public class FetchSuomiFiViestitEventsTaskTest {
+public class FetchSuomiFiViestitEventsTaskTest extends TiedotuspalveluApiTest {
 
   @Autowired private FetchSuomiFiViestitEventsTask fetchSuomiFiViestitEventsTask;
   @Autowired private SuomiFiViestitEventRepository eventRepository;
   @Autowired private SuomiFiViestitEventsCursorRepository cursorRepository;
-
-  @MockitoBean private JwtDecoder jwtDecoder;
 
   @RegisterExtension
   static WireMockExtension wireMock =

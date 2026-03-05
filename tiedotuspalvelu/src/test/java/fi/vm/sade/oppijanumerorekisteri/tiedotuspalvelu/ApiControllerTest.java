@@ -1,34 +1,22 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 public class ApiControllerTest extends TiedotuspalveluApiTest {
-
-  @Autowired private MockMvc mockMvc;
-
-  @Autowired private ObjectMapper objectMapper;
-
-  @Autowired private TiedoteRepository tiedoteRepository;
-
-  @MockitoBean private JwtDecoder jwtDecoder;
 
   @Test
   public void createTiedoteRequiresAuthentication() throws Exception {
@@ -44,10 +32,11 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
   public void createTiedoteFailsWithoutRequiredRole() throws Exception {
     var tiedote = createTiedoteRequest();
 
+    var tokenWithoutRole = createSignedJwt(Map.of());
     mockMvc
         .perform(
             post("/api/v1/tiedote/kielitutkintotodistus")
-                .with(jwt())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenWithoutRole)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tiedote)))
         .andExpect(status().isForbidden());

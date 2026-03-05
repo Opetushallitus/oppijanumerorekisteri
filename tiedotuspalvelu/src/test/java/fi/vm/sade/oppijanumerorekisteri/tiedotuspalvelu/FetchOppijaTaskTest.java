@@ -17,17 +17,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 public class FetchOppijaTaskTest extends TiedotuspalveluApiTest implements ResourceReader {
 
   @Autowired private FetchOppijaTask fetchOppijaTask;
   @Autowired private SuomiFiViestiRepository suomiFiViestiRepository;
-
-  @MockitoBean private JwtDecoder jwtDecoder;
 
   @RegisterExtension
   static WireMockExtension wireMock =

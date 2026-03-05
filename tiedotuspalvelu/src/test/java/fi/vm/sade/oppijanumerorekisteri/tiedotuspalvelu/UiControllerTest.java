@@ -15,12 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 public class UiControllerTest extends TiedotuspalveluApiTest {
-
-  @MockitoBean private JwtDecoder jwtDecoder;
 
   @BeforeEach
   public void setup() throws Exception {
