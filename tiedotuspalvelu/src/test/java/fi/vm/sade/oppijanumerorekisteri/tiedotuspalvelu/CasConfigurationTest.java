@@ -24,7 +24,7 @@ public class CasConfigurationTest extends TiedotuspalveluApiTest {
             header()
                 .string(
                     "Location",
-                    "https://cas.example.com/cas/login?service=http%3A%2F%2Flocalhost%3A8080%2Fj_spring_cas_security_check"));
+                    "http://localhost:8888/realms/cas-oppija/protocol/cas/login?service=http%3A%2F%2Flocalhost%3A8080%2Fomat-viestit%2Fj_spring_cas_security_check"));
   }
 
   @Test
@@ -45,7 +45,7 @@ public class CasConfigurationTest extends TiedotuspalveluApiTest {
             header()
                 .string(
                     "Location",
-                    "https://cas.example.com/cas/login?service=http%3A%2F%2Flocalhost%3A8080%2Fj_spring_cas_security_check"));
+                    "http://localhost:8888/realms/cas-oppija/protocol/cas/login?service=http%3A%2F%2Flocalhost%3A8080%2Fomat-viestit%2Fj_spring_cas_security_check"));
   }
 
   @Test
@@ -57,7 +57,7 @@ public class CasConfigurationTest extends TiedotuspalveluApiTest {
             header()
                 .string(
                     "Location",
-                    "https://cas.example.com/cas/login?service=http%3A%2F%2Flocalhost%3A8080%2Fj_spring_cas_security_check"));
+                    "http://localhost:8888/realms/cas-oppija/protocol/cas/login?service=http%3A%2F%2Flocalhost%3A8080%2Fomat-viestit%2Fj_spring_cas_security_check"));
   }
 
   @Test
@@ -69,7 +69,7 @@ public class CasConfigurationTest extends TiedotuspalveluApiTest {
             header()
                 .string(
                     "Location",
-                    "https://cas.example.com/cas/login?service=http%3A%2F%2Flocalhost%3A8080%2Fj_spring_cas_security_check"));
+                    "http://localhost:8888/realms/cas-oppija/protocol/cas/login?service=http%3A%2F%2Flocalhost%3A8080%2Fomat-viestit%2Fj_spring_cas_security_check"));
   }
 
   @Test

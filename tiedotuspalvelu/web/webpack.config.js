@@ -14,24 +14,14 @@ module.exports = function () {
       },
       proxy: [
         {
-          context: [
-            "/omat-viestit/api",
-            "/omat-viestit/ui",
-            "/omat-viestit/swagger-ui",
-            "/omat-viestit/v3/api-docs",
-            "/omat-viestit/logout",
-            "/omat-viestit/j_spring_cas_security_check",
-          ],
+          // Everything under /omat-viestit goes to Spring, except static assets
+          context: ["/omat-viestit"],
           target: "http://localhost:8085",
           changeOrigin: true,
         },
         {
-          context: ["/oppija-raamit"],
-          target: "https://testiopintopolku.fi",
-          changeOrigin: true,
-        },
-        {
-          context: ["/koski"],
+          // Shared-domain paths that exist in prod but are separate services
+          context: ["/oppija-raamit", "/koski"],
           target: "https://testiopintopolku.fi",
           changeOrigin: true,
         },

@@ -7,24 +7,10 @@
     </encoder>
   </appender>
 
-  <appender name="LOCAL-FILE" class="ch.qos.logback.core.FileAppender">
-    <file>tiedotuspalvelu/local.log</file>
-    <append>false</append>
-    <encoder>
-      <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
-    </encoder>
-  </appender>
-
   <logger
       name="fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.LoggingHttpClient"
       level="INFO"
       additivity="false">
     <appender-ref ref="JSON-CONSOLE"/>
   </logger>
-
-  <springProfile name="local">
-    <root>
-      <appender-ref ref="LOCAL-FILE"/>
-    </root>
-  </springProfile>
 </configuration>

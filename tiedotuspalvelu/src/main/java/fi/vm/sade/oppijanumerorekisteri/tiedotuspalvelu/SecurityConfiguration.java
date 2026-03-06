@@ -2,6 +2,8 @@ package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
 import fi.vm.sade.JdbcSessionMappingStorage;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsService;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -210,15 +212,21 @@ public class SecurityConfiguration {
 
   @Bean
   AuthenticationSuccessHandler authenticationSuccessHandler() {
-    var handler = new SimpleUrlAuthenticationSuccessHandler("/");
+    var tiedotuspalveluReturnUrl = properties.cas().serviceBaseUrl() + "/";
+    var handler = new SimpleUrlAuthenticationSuccessHandler(tiedotuspalveluReturnUrl);
     handler.setAlwaysUseDefaultTargetUrl(true);
     return handler;
   }
 
   @Bean
   LogoutSuccessHandler logoutSuccessHandler() {
+    var tiedotuspalveluReturnUrl = properties.cas().serviceBaseUrl() + "/";
+    var casLogoutUrl =
+        properties.cas().serverUrl()
+            + "/logout?service="
+            + URLEncoder.encode(tiedotuspalveluReturnUrl, StandardCharsets.UTF_8);
     var handler = new SimpleUrlLogoutSuccessHandler();
-    handler.setDefaultTargetUrl("/");
+    handler.setDefaultTargetUrl(casLogoutUrl);
     handler.setAlwaysUseDefaultTargetUrl(true);
     return handler;
   }

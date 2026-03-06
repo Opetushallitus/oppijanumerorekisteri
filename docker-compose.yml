@@ -61,7 +61,7 @@ services:
       retries: 5
   keycloak:
     container_name: oph-tiedotuspalvelu-keycloak
-    image: quay.io/keycloak/keycloak:26.5.5@sha256:a7b0cb7a43a1235a61872883414d3f1d9a3ceac9df6e5907bd12202778a6265c
+    build: ./keycloak
     environment:
       - KC_BOOTSTRAP_ADMIN_USERNAME=admin
       - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
@@ -69,12 +69,15 @@ services:
       - 8888:8080
     volumes:
       - ./keycloak/tiedotuspalvelu-realm.json:/opt/keycloak/data/import/tiedotuspalvelu-realm.json
-    command: ["start-dev", "--import-realm"]
+      - ./keycloak/cas-oppija-realm.json:/opt/keycloak/data/import/cas-oppija-realm.json
+      - ./keycloak/themes/dev-quicklogin:/opt/keycloak/themes/dev-quicklogin
+    command: ["start-dev", "--import-realm", "--health-enabled=true"]
     healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9000"]
       interval: 10s
       timeout: 5s
       retries: 12
+      start_period: 30s
   nginx:
     image: nginx:1.29.5-alpine@sha256:1d13701a5f9f3fb01aaa88cef2344d65b6b5bf6b7d9fa4cf0dca557a8d7702ba
     ports:
