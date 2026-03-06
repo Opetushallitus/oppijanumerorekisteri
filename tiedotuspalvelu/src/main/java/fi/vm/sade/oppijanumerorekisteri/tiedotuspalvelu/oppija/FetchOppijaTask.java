@@ -31,7 +31,7 @@ public class FetchOppijaTask {
               var oppija = oppijanumerorekisteriClient.getOppija(tiedote.getOppijanumero());
               var viesti =
                   SuomiFiViesti.builder()
-                      .tiedoteId(tiedote.getId())
+                      .tiedote(tiedote)
                       .henkilotunnus(oppija.hetu())
                       .name(oppija.etunimet() + " " + oppija.sukunimi())
                       .streetAddress(oppija.katuosoite())

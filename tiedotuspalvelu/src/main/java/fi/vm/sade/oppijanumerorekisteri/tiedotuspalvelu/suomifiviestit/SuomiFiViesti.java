@@ -1,10 +1,14 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit;
 
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.Tiedote;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -27,8 +31,9 @@ public class SuomiFiViesti {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private UUID id;
 
-  @Column(nullable = false)
-  private UUID tiedoteId;
+  @ManyToOne(fetch = FetchType.EAGER, optional = false)
+  @JoinColumn(name = "tiedote_id", nullable = false)
+  private Tiedote tiedote;
 
   @Column(nullable = false)
   private String henkilotunnus;

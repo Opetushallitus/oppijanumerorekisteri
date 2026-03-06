@@ -64,7 +64,7 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
     var futureViesti =
         suomiFiViestiRepository.save(
             SuomiFiViesti.builder()
-                .tiedoteId(tiedote.getId())
+                .tiedote(tiedote)
                 .henkilotunnus("010170-9999")
                 .name("Kissa Minou")
                 .streetAddress("Kissankuja 1")
@@ -79,7 +79,7 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
     var pastViesti =
         suomiFiViestiRepository.save(
             SuomiFiViesti.builder()
-                .tiedoteId(tiedote.getId())
+                .tiedote(tiedote)
                 .henkilotunnus("010170-9998")
                 .name("Katti Purr")
                 .streetAddress("Kissatie 2")
@@ -116,7 +116,7 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
     var viesti =
         suomiFiViestiRepository.save(
             SuomiFiViesti.builder()
-                .tiedoteId(tiedote.getId())
+                .tiedote(tiedote)
                 .henkilotunnus("010170-9999")
                 .name("Mirri Meow")
                 .streetAddress("Kissankatu 3")
@@ -150,7 +150,7 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
     var viesti =
         suomiFiViestiRepository.save(
             SuomiFiViesti.builder()
-                .tiedoteId(tiedote.getId())
+                .tiedote(tiedote)
                 .henkilotunnus("010170-9999")
                 .name("Mirri Meow")
                 .streetAddress("Kissankatu 3")
@@ -201,7 +201,7 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
     var viesti =
         suomiFiViestiRepository.save(
             SuomiFiViesti.builder()
-                .tiedoteId(tiedote.getId())
+                .tiedote(tiedote)
                 .henkilotunnus("010170-9999")
                 .name("Mirri Meow")
                 .streetAddress("Kissankatu 3")

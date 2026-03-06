@@ -43,13 +43,7 @@ public class SendSuomiFiViestitTask {
               viesti.setNextRetry(null);
               viesti.setRetryCount(0);
               suomiFiViestiRepository.save(viesti);
-              var tiedote =
-                  tiedoteRepository
-                      .findById(viesti.getTiedoteId())
-                      .orElseThrow(
-                          () ->
-                              new IllegalStateException(
-                                  "Tiedote not found for SuomiFiViesti " + viesti.getId()));
+              var tiedote = viesti.getTiedote();
               tiedote.setTiedotestateId(Meta.STATE_PROCESSED);
               tiedoteRepository.save(tiedote);
             });
@@ -95,19 +89,12 @@ public class SendSuomiFiViestitTask {
             createRecipient(suomiFiViesti),
             createSender());
     var messageId = suomiFiViestitClient.sendElectronicMessage(request);
-    log.info("Sent Suomi.fi electronic viesti for tiedote {}", suomiFiViesti.getTiedoteId());
+    log.info("Sent Suomi.fi electronic viesti for tiedote {}", suomiFiViesti.getTiedote().getId());
     return messageId;
   }
 
   private String sendPaperMailMessage(SuomiFiViesti suomiFiViesti) {
-    var tiedote =
-        tiedoteRepository
-            .findById(suomiFiViesti.getTiedoteId())
-            .orElseThrow(
-                () ->
-                    new IllegalStateException(
-                        "Tiedote not found for viesti " + suomiFiViesti.getId()));
-    var pdfBytes = fetchPdf(tiedote.getTodistusUrl());
+    var pdfBytes = fetchPdf(suomiFiViesti.getTiedote().getTodistusUrl());
     var attachmentId =
         suomiFiViestitClient.sendAttachment("todistus.pdf", "application/pdf", pdfBytes);
     var request =
@@ -118,7 +105,7 @@ public class SendSuomiFiViestitTask {
             createRecipient(suomiFiViesti),
             createSender());
     var messageId = suomiFiViestitClient.sendMultichannelMessage(request);
-    log.info("Sent Suomi.fi paper mail viesti for tiedote {}", suomiFiViesti.getTiedoteId());
+    log.info("Sent Suomi.fi paper mail viesti for tiedote {}", suomiFiViesti.getTiedote().getId());
     return messageId;
   }
 
@@ -148,7 +135,7 @@ public class SendSuomiFiViestitTask {
   }
 
   private String createExternalId(SuomiFiViesti suomiFiViesti) {
-    return suomiFiViesti.getTiedoteId().toString();
+    return suomiFiViesti.getTiedote().getId().toString();
   }
 
   private ElectronicPart createElectronicPart(SuomiFiViesti suomiFiViesti) {
