@@ -63,30 +63,14 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
 
     var futureViesti =
         suomiFiViestiRepository.save(
-            SuomiFiViesti.builder()
-                .tiedote(tiedote)
-                .henkilotunnus("010170-9999")
-                .name("Kissa Minou")
-                .streetAddress("Kissankuja 1")
-                .zipCode("00100")
-                .city("Helsinki")
-                .countryCode("FI")
-                .messageType("electronic")
+            getSuomiFiViestiBuilder(tiedote)
                 .nextRetry(OffsetDateTime.now().plusHours(1))
                 .retryCount(1)
                 .build());
 
     var pastViesti =
         suomiFiViestiRepository.save(
-            SuomiFiViesti.builder()
-                .tiedote(tiedote)
-                .henkilotunnus("010170-9998")
-                .name("Katti Purr")
-                .streetAddress("Kissatie 2")
-                .zipCode("00200")
-                .city("Espoo")
-                .countryCode("FI")
-                .messageType("electronic")
+            getSuomiFiViestiBuilder(tiedote)
                 .nextRetry(OffsetDateTime.now().minusMinutes(1))
                 .retryCount(1)
                 .build());
@@ -113,18 +97,7 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
         post(urlEqualTo("/v2/messages/electronic")).willReturn(aResponse().withStatus(500)));
 
     var tiedote = createTiedote("1.2.3");
-    var viesti =
-        suomiFiViestiRepository.save(
-            SuomiFiViesti.builder()
-                .tiedote(tiedote)
-                .henkilotunnus("010170-9999")
-                .name("Mirri Meow")
-                .streetAddress("Kissankatu 3")
-                .zipCode("00300")
-                .city("Vantaa")
-                .countryCode("FI")
-                .messageType("electronic")
-                .build());
+    var viesti = suomiFiViestiRepository.save(getSuomiFiViestiBuilder(tiedote).build());
 
     sendSuomiFiViestitTask.execute();
 
@@ -147,18 +120,7 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
                     .withBody("{\"errorCode\": \"MAILBOX_NOT_IN_USE\"}")));
 
     var tiedote = createTiedote("1.2.3");
-    var viesti =
-        suomiFiViestiRepository.save(
-            SuomiFiViesti.builder()
-                .tiedote(tiedote)
-                .henkilotunnus("010170-9999")
-                .name("Mirri Meow")
-                .streetAddress("Kissankatu 3")
-                .zipCode("00300")
-                .city("Vantaa")
-                .countryCode("FI")
-                .messageType("electronic")
-                .build());
+    var viesti = suomiFiViestiRepository.save(getSuomiFiViestiBuilder(tiedote).build());
 
     sendSuomiFiViestitTask.execute();
 
@@ -200,16 +162,7 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
     tiedoteRepository.save(tiedote);
     var viesti =
         suomiFiViestiRepository.save(
-            SuomiFiViesti.builder()
-                .tiedote(tiedote)
-                .henkilotunnus("010170-9999")
-                .name("Mirri Meow")
-                .streetAddress("Kissankatu 3")
-                .zipCode("00300")
-                .city("Vantaa")
-                .countryCode("FI")
-                .messageType("paperMail")
-                .build());
+            getSuomiFiViestiBuilder(tiedote).messageType("paperMail").build());
 
     sendSuomiFiViestitTask.execute();
 
@@ -230,5 +183,17 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
                     .withBody(
                         "{\"access_token\": \"%s\", \"expires_in\": 3600}"
                             .formatted(SUOMIFI_TOKEN))));
+  }
+
+  private SuomiFiViesti.SuomiFiViestiBuilder getSuomiFiViestiBuilder(Tiedote tiedote) {
+    return SuomiFiViesti.builder()
+        .tiedote(tiedote)
+        .henkilotunnus("010170-9998")
+        .name("Katti Purr")
+        .streetAddress("Kissatie 2")
+        .zipCode("00200")
+        .city("Espoo")
+        .countryCode("FI")
+        .messageType("electronic");
   }
 }
