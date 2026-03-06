@@ -5,11 +5,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "tiedotuspalvelu")
 public record TiedotuspalveluProperties(
+    String baseUrl,
+    String apiBaseUrl,
     String opintopolkuHost,
     CasProperties cas,
     SuomiFiViestitProperties suomifiViestit,
     OppijanumerorekisteriProperties oppijanumerorekisteri,
-    Oauth2Properties oauth2) {
+    OtuvaProperties otuva,
+    SwaggerUiProperties swaggerUi) {
   public record CasProperties(String serverUrl, String serviceBaseUrl) {}
 
   public record SuomiFiViestitProperties(
@@ -28,6 +31,10 @@ public record TiedotuspalveluProperties(
 
   public record OppijanumerorekisteriProperties(@NotBlank String baseUrl) {}
 
-  public record Oauth2Properties(
-      @NotBlank String tokenUrl, @NotBlank String clientId, @NotBlank String clientSecret) {}
+  public record OtuvaProperties(
+      @NotBlank String oauth2TokenUrl,
+      @NotBlank String oauth2ClientId,
+      @NotBlank String oauth2ClientSecret) {}
+
+  public record SwaggerUiProperties(@NotBlank String oauth2TokenUrl) {}
 }

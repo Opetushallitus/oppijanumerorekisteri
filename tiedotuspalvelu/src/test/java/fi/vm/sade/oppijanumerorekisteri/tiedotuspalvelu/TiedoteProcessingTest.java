@@ -49,9 +49,10 @@ public class TiedoteProcessingTest extends TiedotuspalveluApiTest implements Res
     registry.add("tiedotuspalvelu.suomifi-viestit.password", () -> SUOMIFI_PASSWORD);
     registry.add("tiedotuspalvelu.suomifi-viestit.sender-service-id", () -> SUOMIFI_SYSTEM_ID);
     registry.add("tiedotuspalvelu.oppijanumerorekisteri.base-url", wireMock::baseUrl);
-    registry.add("tiedotuspalvelu.oauth2.token-url", () -> wireMock.baseUrl() + "/oauth2/token");
-    registry.add("tiedotuspalvelu.oauth2.client-id", () -> OPPIJA_CLIENT_ID);
-    registry.add("tiedotuspalvelu.oauth2.client-secret", () -> OPPIJA_CLIENT_SECRET);
+    registry.add(
+        "tiedotuspalvelu.otuva.oauth2-token-url", () -> wireMock.baseUrl() + "/oauth2/token");
+    registry.add("tiedotuspalvelu.otuva.oauth2-client-id", () -> OPPIJA_CLIENT_ID);
+    registry.add("tiedotuspalvelu.otuva.oauth2-client-secret", () -> OPPIJA_CLIENT_SECRET);
   }
 
   @BeforeEach

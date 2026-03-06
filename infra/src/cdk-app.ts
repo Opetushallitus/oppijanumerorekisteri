@@ -912,31 +912,34 @@ class TiedotuspalveluStack extends cdk.Stack {
         ENV: getEnvironment(),
         "server.port": appPort.toString(),
         "tiedotuspalvelu.base-url": `https://${config.opintopolkuHost}`,
+        "tiedotuspalvelu.api-base-url": `https://${domainForNginxForwarding}`,
         "tiedotuspalvelu.opintopolku-host": config.opintopolkuHost,
         "tiedotuspalvelu.oppijanumerorekisteri.base-url": `https://${getEnvironment()}.oppijanumerorekisteri.opintopolku.fi/oppijanumerorekisteri-service`,
         "tiedotuspalvelu.fetch-oppija.enabled": `${config.features["tiedotuspalvelu.fetch-oppija.enabled"]}`,
         "tiedotuspalvelu.suomifi-viestit.enabled": `${config.features["tiedotuspalvelu.suomifi-viestit.enabled"]}`,
         "tiedotuspalvelu.suomifi-viestit.base-url": `${config.features["tiedotuspalvelu.suomifi-viestit.base-url"]}`,
-        "tiedotuspalvelu.oauth2.token-url": `https://${getEnvironment()}.otuva.opintopolku.fi/kayttooikeus-service/oauth2/token`,
+        "tiedotuspalvelu.otuva.oauth2-token-url": `https://${getEnvironment()}.otuva.opintopolku.fi/kayttooikeus-service/oauth2/token`,
+        "tiedotuspalvelu.swagger-ui.oauth2-token-url": `https://${getEnvironment()}.otuva.opintopolku.fi/kayttooikeus-service/oauth2/token`,
         "spring.security.oauth2.resourceserver.jwt.issuer-uri": `https://${getEnvironment()}.otuva.opintopolku.fi/kayttooikeus-service`,
         "spring.security.oauth2.resourceserver.jwt.jwk-set-uri": `https://${getEnvironment()}.otuva.opintopolku.fi/kayttooikeus-service/oauth2/jwks`,
         "spring.datasource.url": `jdbc:postgresql://${props.database.clusterEndpoint.hostname}:${props.database.clusterEndpoint.port}/tiedotuspalvelu`,
       },
       secrets: {
-        "tiedotuspalvelu.oauth2.client-id": ecs.Secret.fromSsmParameter(
+        "tiedotuspalvelu.otuva.oauth2-client-id": ecs.Secret.fromSsmParameter(
           ssm.StringParameter.fromSecureStringParameterAttributes(
             this,
             "TiedotuspalveluOauth2ClientId",
             { parameterName: "/tiedotuspalvelu/oauth2/client-id" },
           ),
         ),
-        "tiedotuspalvelu.oauth2.client-secret": ecs.Secret.fromSsmParameter(
-          ssm.StringParameter.fromSecureStringParameterAttributes(
-            this,
-            "TiedotuspalveluOauth2ClientSecret",
-            { parameterName: "/tiedotuspalvelu/oauth2/client-secret" },
+        "tiedotuspalvelu.otuva.oauth2-client-secret":
+          ecs.Secret.fromSsmParameter(
+            ssm.StringParameter.fromSecureStringParameterAttributes(
+              this,
+              "TiedotuspalveluOauth2ClientSecret",
+              { parameterName: "/tiedotuspalvelu/oauth2/client-secret" },
+            ),
           ),
-        ),
         "tiedotuspalvelu.suomifi-viestit.username": ecs.Secret.fromSsmParameter(
           ssm.StringParameter.fromSecureStringParameterAttributes(
             this,

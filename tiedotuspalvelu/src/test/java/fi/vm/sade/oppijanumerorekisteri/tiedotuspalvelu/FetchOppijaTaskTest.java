@@ -36,9 +36,10 @@ public class FetchOppijaTaskTest extends TiedotuspalveluApiTest implements Resou
   @DynamicPropertySource
   static void registerProperties(DynamicPropertyRegistry registry) {
     registry.add("tiedotuspalvelu.oppijanumerorekisteri.base-url", wireMock::baseUrl);
-    registry.add("tiedotuspalvelu.oauth2.token-url", () -> wireMock.baseUrl() + "/oauth2/token");
-    registry.add("tiedotuspalvelu.oauth2.client-id", () -> OPP_CLIENT_ID);
-    registry.add("tiedotuspalvelu.oauth2.client-secret", () -> OPP_CLIENT_SECRET);
+    registry.add(
+        "tiedotuspalvelu.otuva.oauth2-token-url", () -> wireMock.baseUrl() + "/oauth2/token");
+    registry.add("tiedotuspalvelu.otuva.oauth2-client-id", () -> OPP_CLIENT_ID);
+    registry.add("tiedotuspalvelu.otuva.oauth2-client-secret", () -> OPP_CLIENT_SECRET);
   }
 
   @BeforeEach

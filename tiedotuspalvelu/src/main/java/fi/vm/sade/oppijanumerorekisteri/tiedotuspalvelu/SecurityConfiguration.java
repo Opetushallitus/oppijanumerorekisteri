@@ -53,7 +53,12 @@ public class SecurityConfiguration {
   @Bean
   @Order(1)
   SecurityFilterChain publicSecurityFilterChain(HttpSecurity http) throws Exception {
-    http.securityMatcher("/actuator/health", "/ui/localisations")
+    http.securityMatcher(
+            "/actuator/health",
+            "/ui/localisations",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html")
         .csrf(CsrfConfigurer::disable)
         .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
 

@@ -71,4 +71,14 @@ public class CasConfigurationTest extends TiedotuspalveluApiTest {
                     "Location",
                     "https://cas.example.com/cas/login?service=http%3A%2F%2Flocalhost%3A8080%2Fj_spring_cas_security_check"));
   }
+
+  @Test
+  public void swaggerUiIsPublic() throws Exception {
+    mockMvc.perform(get("/swagger-ui/index.html")).andExpect(status().isOk());
+  }
+
+  @Test
+  public void openApiDocsArePublic() throws Exception {
+    mockMvc.perform(get("/v3/api-docs")).andExpect(status().isOk());
+  }
 }

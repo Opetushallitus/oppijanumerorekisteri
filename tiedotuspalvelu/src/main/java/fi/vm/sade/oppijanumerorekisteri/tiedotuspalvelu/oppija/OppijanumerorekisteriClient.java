@@ -54,12 +54,13 @@ public class OppijanumerorekisteriClient {
   }
 
   private String fetchAccessToken() {
-    var config = properties.oauth2();
-    var requestBody = buildClientCredentialsBody(config.clientId(), config.clientSecret());
+    var otuva = properties.otuva();
+    var requestBody =
+        buildClientCredentialsBody(otuva.oauth2ClientId(), otuva.oauth2ClientSecret());
     try {
       var httpRequest =
           HttpRequest.newBuilder()
-              .uri(URI.create(config.tokenUrl()))
+              .uri(URI.create(otuva.oauth2TokenUrl()))
               .header("Content-Type", CONTENT_TYPE_FORM)
               .header("Accept", "application/json")
               .POST(HttpRequest.BodyPublishers.ofString(requestBody, StandardCharsets.UTF_8))
