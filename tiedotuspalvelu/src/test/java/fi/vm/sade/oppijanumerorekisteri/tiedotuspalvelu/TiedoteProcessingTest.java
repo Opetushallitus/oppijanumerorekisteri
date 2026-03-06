@@ -5,7 +5,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
@@ -63,7 +62,7 @@ public class TiedoteProcessingTest extends TiedotuspalveluApiTest implements Res
   }
 
   @Test
-  public void processesTiedote() throws Exception {
+  public void sendsElectronicSuomiFiViesti() throws Exception {
     stubGettingOtuvaOauthToken();
     stubGettingOppija();
     stubGettingSuomiFiViestitToken();
@@ -74,28 +73,10 @@ public class TiedoteProcessingTest extends TiedotuspalveluApiTest implements Res
     fetchOppijaTask.execute();
     sendSuomiFiViestitTask.execute();
 
-    wireMock.verify(
-        postRequestedFor(urlEqualTo("/v2/messages/electronic"))
-            .withHeader("Authorization", equalTo("Bearer " + SUOMIFI_TOKEN))
-            .withRequestBody(matchingJsonPath("$.externalId", equalTo(tiedote.getId().toString())))
-            .withRequestBody(matchingJsonPath("$.recipient.id", equalTo("041157-998B")))
-            .withRequestBody(matchingJsonPath("$.sender.serviceId", equalTo(SUOMIFI_SYSTEM_ID)))
-            .withRequestBody(
-                matchingJsonPath("$.electronic.title", equalTo("Huomioitavaa OmaOpintopolussa")))
-            .withRequestBody(
-                matchingJsonPath(
-                    "$.electronic.body",
-                    equalTo(
-                        "Hei\n\nSinulle on saapunut tiedote OmaOpintopolkuun\n\nTarkista tiedote kirjautumalla OmaOpintopolkuun. Voit katsoa huomioitavat\nasiat Tiedotteet-kohdasta.\n\nTietoturvan takia viestissä ei ole suoraa linkkiä palveluun.\n\nTerveisin\nOpetushallitus"))));
-    wireMock.verify(1, postRequestedFor(urlEqualTo("/v2/messages/electronic")));
-    wireMock.verify(1, postRequestedFor(urlEqualTo("/v1/token")));
-    wireMock.verify(1, postRequestedFor(urlEqualTo("/oauth2/token")));
-
-    assertNotNull(tiedoteRepository.findById(tiedote.getId()).orElseThrow().getProcessedAt());
-
-    var viestit = suomiFiViestiRepository.findAll();
-    assertEquals(1, viestit.size());
-    assertEquals(SUOMIFI_MESSAGE_ID, viestit.get(0).getMessageId());
+    var t = getTiedote(tiedote.getId());
+    assertEquals("PROCESSED", t.meta().state());
+    assertEquals("CREATED", t.statuses().get(0).status());
+    assertEquals("SENT_TO_SUOMIFI_VIESTIT", t.statuses().get(1).status());
   }
 
   private void stubGettingOppija() {

@@ -1,14 +1,12 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.ApiController;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.Tiedote;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedotuspalveluApiTest;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -47,6 +45,35 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
     suomiFiViestiRepository.deleteAll();
     tiedoteRepository.deleteAll();
     wireMock.resetAll();
+  }
+
+  @Test
+  public void sendsTheExpectedElectronicMessageToSuomiFiViestit() throws Exception {
+    stubGettingSuomiFiViestitAccessToken();
+    wireMock.stubFor(
+        post(urlEqualTo("/v2/messages/electronic"))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withBody("{\"messageId\": \"%s\"}".formatted(SUOMIFI_MESSAGE_ID))));
+    var tiedote = createTiedote("1.2.3");
+    suomiFiViestiRepository.save(getSuomiFiViestiBuilder(tiedote).build());
+
+    sendSuomiFiViestitTask.execute();
+
+    wireMock.verify(
+        postRequestedFor(urlEqualTo("/v2/messages/electronic"))
+            .withHeader("Authorization", equalTo("Bearer " + SUOMIFI_TOKEN))
+            .withRequestBody(matchingJsonPath("$.externalId", equalTo(tiedote.getId().toString())))
+            .withRequestBody(matchingJsonPath("$.recipient.id", equalTo("010170-9998")))
+            .withRequestBody(matchingJsonPath("$.sender.serviceId", equalTo(SUOMIFI_SYSTEM_ID)))
+            .withRequestBody(
+                matchingJsonPath("$.electronic.title", equalTo("Huomioitavaa OmaOpintopolussa")))
+            .withRequestBody(
+                matchingJsonPath(
+                    "$.electronic.body",
+                    equalTo(
+                        "Hei\n\nSinulle on saapunut tiedote OmaOpintopolkuun\n\nTarkista tiedote kirjautumalla OmaOpintopolkuun. Voit katsoa huomioitavat\nasiat Tiedotteet-kohdasta.\n\nTietoturvan takia viestissä ei ole suoraa linkkiä palveluun.\n\nTerveisin\nOpetushallitus"))));
   }
 
   @Test

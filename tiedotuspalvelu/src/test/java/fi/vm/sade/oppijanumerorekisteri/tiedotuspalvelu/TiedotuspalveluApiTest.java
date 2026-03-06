@@ -119,4 +119,19 @@ public class TiedotuspalveluApiTest {
     var id = UUID.fromString(objectMapper.readTree(response).get("id").asText());
     return tiedoteRepository.findById(id).orElseThrow();
   }
+
+  protected ApiController.TiedoteResponse getTiedote(UUID id) throws Exception {
+    var response =
+        mockMvc
+            .perform(
+                org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get(
+                        "/api/v1/tiedote/%s".formatted(id))
+                    .with(validToken())
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    return objectMapper.readValue(response, ApiController.TiedoteResponse.class);
+  }
 }
