@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViestiRepository;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViestitEventRepository;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
@@ -43,22 +44,29 @@ public class ApiController {
   }
 
   public record TiedoteDto(
-      @NotBlank String oppijanumero,
-      @NotBlank String idempotencyKey,
-      String todistusUrl,
-      Optional<String> opiskeluoikeusOid) {}
+      @Schema(example = "1.2.246.562.24.40036905699") @NotBlank String oppijanumero,
+      @Schema(example = "a58d44fb-f970-430b-9b51-5e7bcc6a725b") @NotBlank String idempotencyKey,
+      @Schema(example = "s3://esimerkkiampari/todistus.pdf") String todistusUrl,
+      @Schema(example = "1.2.246.562.15.44316860822") Optional<String> opiskeluoikeusOid) {}
 
   public record TiedoteResponse(
-      UUID id, Optional<String> opiskeluoikeusOid, Meta meta, List<StatusEntry> statuses) {}
+      @Schema(example = "ecd8b9b1-4876-4cb8-8f29-0760eeb2ed8a") UUID id,
+      @Schema(example = "1.2.246.562.15.44316860822") Optional<String> opiskeluoikeusOid,
+      Meta meta,
+      List<StatusEntry> statuses) {}
 
-  public record Meta(String type, String state) {
+  public record Meta(
+      @Schema(example = TYPE_KIELITUTKINTOTODISTUS) String type,
+      @Schema(example = STATE_NEW) String state) {
     public static final String TYPE_KIELITUTKINTOTODISTUS = "KIELITUTKINTOTODISTUS";
     public static final String STATE_NEW = "NEW";
     public static final String STATE_SUOMIFI_VIESTI_HETULLISELLE = "SUOMIFI_VIESTI_HETULLISELLE";
     public static final String STATE_PROCESSED = "PROCESSED";
   }
 
-  public record StatusEntry(String status, OffsetDateTime timestamp) {
+  public record StatusEntry(
+      @Schema(example = CREATED) String status,
+      @Schema(example = "2026-02-16T10:43:55.800603Z") OffsetDateTime timestamp) {
     public static final String CREATED = "CREATED";
     public static final String SENT_TO_SUOMIFI_VIESTIT = "SENT_TO_SUOMIFI_VIESTIT";
   }
