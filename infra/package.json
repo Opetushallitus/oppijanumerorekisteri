@@ -2,7 +2,7 @@
   "dependencies": {
     "@aws-sdk/client-iam": "^3.691.0",
     "@aws-sdk/client-sts": "^3.693.0",
-    "@types/node": "24.11.0",
+    "@types/node": "24.12.0",
     "aws-cdk": "2.1109.0",
     "aws-cdk-lib": "2.241.0",
     "constructs": "10.5.1",
