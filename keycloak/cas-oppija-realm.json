@@ -20,7 +20,8 @@
       "fullScopeAllowed": true,
       "rootUrl": "http://localhost:8086/omat-viestit",
       "redirectUris": [
-        "http://localhost:8086/omat-viestit/*"
+        "http://localhost:8086/omat-viestit/*",
+        "http://localhost:8080/omat-viestit/*"
       ],
       "webOrigins": ["*"],
       "protocolMappers": [
