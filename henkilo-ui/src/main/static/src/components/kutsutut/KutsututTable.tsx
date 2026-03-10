@@ -13,6 +13,7 @@ import { expanderColumn } from '../OphTable';
 import { KutsututSearchParams } from './KutsututPage';
 import { KutsututSortBy, useGetKutsututInfiniteQuery, usePutRenewKutsuMutation } from '../../api/kayttooikeus';
 import { add } from '../../slices/toastSlice';
+import { getLocalization } from '../../utilities/localisation.util';
 
 type OwnProps = {
     params: KutsututSearchParams;
@@ -68,7 +69,9 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
                 cell: ({ getValue }) => (
                     <div>
                         {getValue().organisaatiot.map((org) => (
-                            <div key={org.organisaatioOid}>{org.nimi[locale] ?? org.organisaatioOid}</div>
+                            <div key={org.organisaatioOid}>
+                                {getLocalization(org.nimi, locale) ?? org.organisaatioOid}
+                            </div>
                         ))}
                     </div>
                 ),

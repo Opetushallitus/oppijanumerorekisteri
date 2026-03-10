@@ -3,7 +3,7 @@ import { format, parseISO } from 'date-fns';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, SortingState } from '@tanstack/react-table';
 
 import { useAppDispatch } from '../../../store';
-import { defaultOrganisaatio, getOrganisationNameWithType } from '../StaticUtils';
+import { getOrganisationNameWithType } from '../StaticUtils';
 import { createEmailOptions } from '../../../utilities/henkilo.util';
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
@@ -32,7 +32,7 @@ const emptyColumns: ColumnDef<MyonnettyKayttooikeusryhma>[] = [];
 const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
     const dispatch = useAppDispatch();
     const [sorting, setSorting] = useState<SortingState>([]);
-    const { L, locale, allLocalisations } = useLocalisations();
+    const { L, locale } = useLocalisations();
     const { data: henkilo } = useGetHenkiloQuery(props.oidHenkilo);
     const { data: kayttooikeusryhmas, isLoading } = useKayttooikeusryhmas(props.isOmattiedot, props.oidHenkilo);
     const { data: organisations, isSuccess } = useGetOrganisationsQuery();
@@ -164,7 +164,7 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
                                   L,
                                   locale
                               )
-                            : defaultOrganisaatio(getValue().organisaatioOid, allLocalisations).nimi.fi}
+                            : L('ORGANISAATIO_NIMI_EI_LOYDY')}
                     </span>
                 ),
             },

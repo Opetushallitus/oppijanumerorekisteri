@@ -25,6 +25,7 @@ import { OphDsInput } from '../design-system/OphDsInput';
 import { OphDsRadioGroup } from '../design-system/OphDsRadioGroup';
 
 import './KutsututPage.css';
+import { getLocalization } from '../../utilities/localisation.util';
 
 export type KutsututSearchParams = {
     searchTerm: string;
@@ -95,7 +96,7 @@ export const KutsututPage = () => {
     const ryhmaOptions = useMemo(() => {
         return (ryhmat ?? [])
             .map((ryhma) => ({
-                label: ryhma.nimi[locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
+                label: getLocalization(ryhma.nimi, locale),
                 value: ryhma.oid,
             }))
             .sort((a, b) => a.label.localeCompare(b.label));
@@ -181,7 +182,7 @@ export const KutsututPage = () => {
                         <div>
                             {confirmDelete.organisaatiot.map((org) => (
                                 <div className="kutsuOrganisaatio" key={org.organisaatioOid}>
-                                    {org.nimi[locale]}
+                                    {getLocalization(org.nimi, locale)}
                                 </div>
                             ))}
                         </div>

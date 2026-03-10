@@ -5,6 +5,7 @@ import { Locale } from '../../types/locale.type';
 import { KutsuRead as Kutsu } from '../../types/domain/kayttooikeus/Kutsu.types';
 import OphTable from '../OphTable';
 import { useLocalisations } from '../../selectors';
+import { getLocalization } from '../../utilities/localisation.util';
 
 type Props = {
     kutsu?: Kutsu;
@@ -22,8 +23,8 @@ export const resolveInvitationRights = (
     kutsu
         ? kutsu.organisaatiot.flatMap((organisaatio) =>
               organisaatio.kayttoOikeusRyhmat.map((ryhma) => ({
-                  organisaatio: organisaatio.nimi[locale] ?? organisaatio.nimi.fi,
-                  ryhma: ryhma.nimi[locale] ?? ryhma.nimi.fi,
+                  organisaatio: getLocalization(organisaatio.nimi, locale),
+                  ryhma: getLocalization(ryhma.nimi, locale),
               }))
           )
         : [];

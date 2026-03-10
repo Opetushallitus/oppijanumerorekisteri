@@ -6,6 +6,7 @@ import { useLocalisations, useOmatRyhmat } from '../../selectors';
 import { SelectOption, selectProps } from '../../utilities/select';
 import { useGetHenkiloHakuOrganisaatiotQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { OrganisaatioWithChildren } from '../../types/domain/organisaatio/organisaatio.types';
+import { getLocalization } from '../../utilities/localisation.util';
 
 type OwnProps = {
     defaultValue?: string;
@@ -35,7 +36,10 @@ export const OphDsRyhmaSelect = (props: OwnProps) => {
                 : omatRyhmat;
         return (
             ryhmat
-                ?.map((r) => ({ label: r.nimi[locale] ?? '', value: r.oid }))
+                ?.map((r) => ({
+                    label: getLocalization(r.nimi, locale),
+                    value: r.oid,
+                }))
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? []
         );
     }, [omatRyhmat, henkilohakuOrganisaatiot, locale, props.type]);

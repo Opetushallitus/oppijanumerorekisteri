@@ -12,6 +12,7 @@ import Loader from '../icons/Loader';
 
 import './HenkiloViewOrganisationContent.css';
 import { OphDsChechbox } from '../../design-system/OphDsCheckbox';
+import { getLocalization } from '../../../utilities/localisation.util';
 
 type OrganisaatioFlat = {
     name?: string;
@@ -44,7 +45,7 @@ export const HenkiloViewOrganisationContent = (props: { henkiloOid: string }) =>
                   const organisation = apiOrganisations?.find((o) => o.oid === org.organisaatioOid);
                   const typesFlat = organisation?.tyypit?.length ? '(' + organisation?.tyypit?.join(', ') + ')' : '';
                   return {
-                      name: organisation?.nimi?.[locale],
+                      name: getLocalization(organisation?.nimi, locale),
                       typesFlat: typesFlat,
                       passive: org.passivoitu,
                       id: organisation?.oid,

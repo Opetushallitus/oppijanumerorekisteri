@@ -1,6 +1,6 @@
 import { SingleValue } from 'react-select';
 
-import { L10n, LocalisationFn } from '../../types/localisation.type';
+import { LocalisationFn } from '../../types/localisation.type';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { Locale } from '../../types/locale.type';
 import { TextGroup } from '../../types/domain/kayttooikeus/textgroup.types';
@@ -70,20 +70,12 @@ export function getOrganisaatiotyypitFlat(L: LocalisationFn, uppercase: boolean,
 }
 
 export function getOrganisationNameWithType(org: Organisaatio | undefined, L: LocalisationFn, locale: Locale) {
-    return org?.nimi?.[locale] + ' ' + getOrganisaatiotyypitFlat(L, false, org?.tyypit);
+    return (
+        (org?.nimi?.[locale] || org?.nimi?.['fi'] || org?.nimi?.['sv'] || org?.nimi?.['en'] || '') +
+        ' ' +
+        getOrganisaatiotyypitFlat(L, false, org?.tyypit)
+    );
 }
-
-export const defaultOrganisaatio = (organisaatioOid: string, l10n?: L10n): Organisaatio => ({
-    oid: organisaatioOid,
-    nimi: {
-        fi: (l10n && l10n['fi'] && l10n['fi']['ORGANISAATIO_NIMI_EI_LOYDY']) || organisaatioOid,
-        sv: (l10n && l10n['sv'] && l10n['sv']['ORGANISAATIO_NIMI_EI_LOYDY']) || organisaatioOid,
-        en: (l10n && l10n['en'] && l10n['en']['ORGANISAATIO_NIMI_EI_LOYDY']) || organisaatioOid,
-    },
-    tyypit: [],
-    parentOidPath: '',
-    status: 'PASSIIVINEN',
-});
 
 export function getLocalisedText(description: TextGroup | null | undefined, locale: Locale) {
     return description ? description.texts.filter((text) => text.lang.toLowerCase() === locale)[0]?.text : '';

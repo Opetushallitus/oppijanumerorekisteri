@@ -10,7 +10,7 @@ import OphTable from '../OphTable';
 import { useGetKayttooikeusryhmasForHenkiloQuery, useGetOrganisationsQuery } from '../../api/kayttooikeus';
 import { KAYTTOOIKEUDENTILA } from '../../globals/KayttooikeudenTila';
 import { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import { localizeTextGroup } from '../../utilities/localisation.util';
+import { getLocalization, localizeTextGroup } from '../../utilities/localisation.util';
 
 type KayttooikeusryhmaData = {
     voimassaPvm?: string;
@@ -39,10 +39,9 @@ export const AnojaKayttooikeusryhmat = ({ henkiloOid }: Props) => {
         const kayttooikeusryhmaNimi = kayttooikeusryhmaNimiTexts
             ? localizeTextGroup(kayttooikeusryhmaNimiTexts, locale) || ''
             : '';
-        const organisaatioNimi = _parseOrganisaatioNimi(myonnettyKayttooikeusryhma);
         return {
             voimassaPvm: _parseVoimassaPvm(myonnettyKayttooikeusryhma),
-            organisaatioNimi: organisaatioNimi,
+            organisaatioNimi: _parseOrganisaatioNimi(myonnettyKayttooikeusryhma),
             kayttooikeusryhmaNimi: kayttooikeusryhmaNimi,
         };
     };
@@ -51,11 +50,7 @@ export const AnojaKayttooikeusryhmat = ({ henkiloOid }: Props) => {
         const organisaatio =
             isSuccess && organisations.find((o) => o.oid === myonnettyKayttooikeusryhma.organisaatioOid);
         return organisaatio && organisaatio.nimi
-            ? organisaatio.nimi[locale] ||
-                  organisaatio.nimi['fi'] ||
-                  organisaatio.nimi['en'] ||
-                  organisaatio.nimi['sv'] ||
-                  organisaatio.oid
+            ? getLocalization(organisaatio.nimi, locale) || organisaatio.oid
             : L('HENKILO_AVOIMET_KAYTTOOIKEUDET_ORGANISAATIOTA_EI_LOYDY');
     };
 

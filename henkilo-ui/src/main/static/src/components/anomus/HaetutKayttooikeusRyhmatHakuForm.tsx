@@ -14,6 +14,7 @@ import { SelectOption, selectProps } from '../../utilities/select';
 import { OphDsInput } from '../design-system/OphDsInput';
 import { OphDsRadioGroup } from '../design-system/OphDsRadioGroup';
 import { OphDsOrganisaatioSelect } from '../design-system/OphDsOrganisaatioSelect';
+import { getLocalization } from '../../utilities/localisation.util';
 
 type OwnProps = {
     onSubmit: (criteria: Partial<GetHaetutKayttooikeusryhmatRequest>) => void;
@@ -73,7 +74,7 @@ const HaetutKayttooikeusRyhmatHakuForm = ({ onSubmit }: OwnProps) => {
     const ryhmaOptions = useMemo(() => {
         return (ryhmat ?? [])
             .map((ryhma) => ({
-                label: ryhma.nimi[locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
+                label: getLocalization(ryhma.nimi, locale),
                 value: ryhma.oid,
             }))
             .sort((a, b) => a.label.localeCompare(b.label));

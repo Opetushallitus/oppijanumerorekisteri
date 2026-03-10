@@ -21,6 +21,7 @@ import {
 } from '../../api/kayttooikeus';
 import { OrganisaatioWithChildren } from '../../types/domain/organisaatio/organisaatio.types';
 import { FastMenuList, SelectOption } from '../../utilities/select';
+import { getLocalization } from '../../utilities/localisation.util';
 
 type OwnProps = {
     ryhmaSelectionAction: (o: SingleValue<SelectOption>) => void;
@@ -76,7 +77,7 @@ const HenkilohakuFilters = (props: OwnProps) => {
             )
             .filter((organisaatio) => organisaatio.tyypit.some((tyyppi) => tyyppi === 'Ryhma'))
             .map((ryhma) => ({
-                label: ryhma.nimi[locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
+                label: getLocalization(ryhma.nimi, locale),
                 value: ryhma.oid,
             }))
             .sort((a, b) => a.label.localeCompare(b.label));

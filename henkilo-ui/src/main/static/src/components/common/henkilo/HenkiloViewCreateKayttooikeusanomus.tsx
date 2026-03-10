@@ -24,6 +24,7 @@ import { FastMenuList, SelectOption } from '../../../utilities/select';
 import { add } from '../../../slices/toastSlice';
 import { useGetHenkiloQuery } from '../../../api/oppijanumerorekisteri';
 import { Henkilo } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
+import { getLocalization } from '../../../utilities/localisation.util';
 
 import './HenkiloViewCreateKayttooikeusanomus.css';
 
@@ -55,7 +56,7 @@ export const HenkiloViewCreateKayttooikeusanomus = (props: { henkiloOid: string 
     const ryhmaOptions = useMemo(() => {
         return (ryhmat ?? [])
             .map((r) => ({
-                label: r.nimi[locale] || r.nimi['fi'] || r.nimi['sv'] || r.nimi['en'] || '',
+                label: getLocalization(r.nimi, locale),
                 value: r.oid,
             }))
             .sort((a, b) => a.label.localeCompare(b.label));
