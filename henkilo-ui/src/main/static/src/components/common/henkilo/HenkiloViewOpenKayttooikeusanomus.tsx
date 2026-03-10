@@ -322,8 +322,11 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                         }
                         selected={dates[getValue().id]?.loppupvm}
                         showYearDropdown
+                        showMonthDropdown
+                        dropdownMode="select"
                         showWeekNumbers
-                        filterDate={(date) => isBefore(date, addYears(new Date(), 1))}
+                        minDate={new Date()}
+                        maxDate={addYears(new Date(), 1)}
                         dateFormat={'d.M.yyyy'}
                     />
                 ),

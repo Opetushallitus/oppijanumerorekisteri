@@ -2,7 +2,7 @@ import React, { useId, useMemo, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { Link } from 'react-router';
 import Select, { MultiValue, SingleValue } from 'react-select';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, subYears } from 'date-fns';
 
 import { useAppDispatch } from '../../store';
 import { add } from '../../slices/toastSlice';
@@ -179,7 +179,11 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                                 className="oph-ds-input"
                                 onChange={setSyntymaaika}
                                 selected={syntymaaika}
+                                minDate={subYears(new Date(), 100)}
+                                maxDate={new Date()}
                                 showYearDropdown
+                                showMonthDropdown
+                                dropdownMode="select"
                                 showWeekNumbers
                                 dateFormat="d.M.yyyy"
                             />

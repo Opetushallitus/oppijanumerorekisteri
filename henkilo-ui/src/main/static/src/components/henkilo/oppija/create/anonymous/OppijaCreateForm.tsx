@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, subYears } from 'date-fns';
 import classNames from 'classnames';
 import ReactDatePicker from 'react-datepicker';
 
@@ -270,7 +270,11 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
                         })
                     }
                     selected={state.henkilo.syntymaaika ? parseISO(state.henkilo.syntymaaika) : null}
+                    minDate={subYears(new Date(), 100)}
+                    maxDate={new Date()}
                     showYearDropdown
+                    showMonthDropdown
+                    dropdownMode="select"
                     showWeekNumbers
                     dateFormat={'d.M.yyyy'}
                 />

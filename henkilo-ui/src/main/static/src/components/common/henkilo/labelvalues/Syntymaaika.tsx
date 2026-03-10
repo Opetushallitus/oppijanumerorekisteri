@@ -1,6 +1,6 @@
 import React, { SyntheticEvent } from 'react';
 import ReactDatePicker from 'react-datepicker';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, subYears } from 'date-fns';
 
 import type { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { useLocalisations } from '../../../../selectors';
@@ -41,7 +41,11 @@ const Syntymaaika = (props: OwnProps) => {
                         selected={
                             props.henkiloUpdate.syntymaaika ? parseISO(props.henkiloUpdate.syntymaaika) : undefined
                         }
+                        minDate={subYears(new Date(), 100)}
+                        maxDate={new Date()}
                         showYearDropdown
+                        showMonthDropdown
+                        dropdownMode="select"
                         showWeekNumbers
                         disabled={props.henkiloUpdate.yksiloityEidas || !!props.henkiloUpdate.hetu}
                         dateFormat={'d.M.yyyy'}

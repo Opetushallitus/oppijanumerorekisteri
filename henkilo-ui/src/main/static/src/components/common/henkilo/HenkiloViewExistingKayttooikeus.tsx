@@ -1,5 +1,5 @@
 import React, { MutableRefObject, useEffect, useId, useMemo, useState } from 'react';
-import { addYears, format, isBefore, parseISO } from 'date-fns';
+import { addYears, format, parseISO } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, SortingState } from '@tanstack/react-table';
 
@@ -179,10 +179,11 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                         onChange={(date) => date && loppupvmAction(date, kayttooikeus.ryhmaId)}
                         selected={dates[kayttooikeus.ryhmaId]?.loppupvm}
                         showYearDropdown
+                        showMonthDropdown
+                        dropdownMode="select"
                         showWeekNumbers
-                        filterDate={(date) =>
-                            props.isPalvelukayttaja ? true : isBefore(date, addYears(new Date(), 1))
-                        }
+                        minDate={new Date()}
+                        maxDate={addYears(new Date(), props.isPalvelukayttaja ? 100 : 1)}
                         dateFormat={'d.M.yyyy'}
                     />
                 </div>

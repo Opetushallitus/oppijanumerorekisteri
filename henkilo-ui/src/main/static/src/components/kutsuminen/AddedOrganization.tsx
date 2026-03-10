@@ -1,7 +1,7 @@
 import React from 'react';
 import { SingleValue } from 'react-select';
 import ReactDatePicker from 'react-datepicker';
-import { addYears, format, isAfter, isBefore, parseISO } from 'date-fns';
+import { addYears, format, parseISO } from 'date-fns';
 import { skipToken } from '@reduxjs/toolkit/query';
 
 import { OphDsRyhmaSelect } from '../design-system/OphDsRyhmaSelect';
@@ -155,8 +155,11 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
                         }
                         selected={addedOrg.voimassaLoppuPvm ? parseISO(addedOrg.voimassaLoppuPvm) : null}
                         showYearDropdown
+                        showMonthDropdown
+                        dropdownMode="select"
                         showWeekNumbers
-                        filterDate={(date) => isAfter(date, new Date()) && isBefore(date, addYears(new Date(), 1))}
+                        minDate={new Date()}
+                        maxDate={addYears(new Date(), 1)}
                         dateFormat={'d.M.yyyy'}
                     />
                 </div>

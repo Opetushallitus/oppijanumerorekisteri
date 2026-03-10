@@ -1,5 +1,5 @@
 import React, { useId, useState } from 'react';
-import { addDays, addYears, format, isAfter, isBefore, parseISO } from 'date-fns';
+import { addYears, format, parseISO } from 'date-fns';
 import ReactDatePicker from 'react-datepicker';
 import { SingleValue } from 'react-select';
 
@@ -21,9 +21,6 @@ type OwnProps = {
     oidHenkilo: string;
     isPalvelukayttaja?: boolean;
 };
-
-const filterDate = (date: Date, isPalvelukayttaja?: boolean) =>
-    isPalvelukayttaja ? true : isBefore(date, addYears(new Date(), 1)) && isAfter(date, addDays(new Date(), -1));
 
 const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukayttaja, oidHenkilo }: OwnProps) => {
     const { L } = useLocalisations();
@@ -119,8 +116,11 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                             onChange={(date) => setAlkupvm(date ?? new Date())}
                             selected={alkupvm}
                             showYearDropdown
+                            showMonthDropdown
+                            dropdownMode="select"
                             showWeekNumbers
-                            filterDate={(date) => filterDate(date, isPalvelukayttaja)}
+                            minDate={new Date()}
+                            maxDate={addYears(new Date(), isPalvelukayttaja ? 100 : 1)}
                             dateFormat={'d.M.yyyy'}
                         />
                     </div>
@@ -131,8 +131,11 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                             onChange={(date) => date && setLoppupvmInput(date)}
                             selected={loppupvm}
                             showYearDropdown
+                            showMonthDropdown
+                            dropdownMode="select"
                             showWeekNumbers
-                            filterDate={(date) => filterDate(date, isPalvelukayttaja)}
+                            minDate={new Date()}
+                            maxDate={addYears(new Date(), isPalvelukayttaja ? 100 : 1)}
                             dateFormat={'d.M.yyyy'}
                         />
                     </div>
