@@ -7,15 +7,10 @@ const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { createHash } = require('crypto');
 
-const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
-const imageInlineSizeLimit = parseInt(process.env.IMAGE_INLINE_SIZE_LIMIT || '10000');
-
 const isEnvDevelopment = process.env.NODE_ENV === 'development';
 const isEnvProduction = process.env.NODE_ENV === 'production';
 const isPlaywright = process.env.PLAYWRIGHT === 'true';
-const isEnvProductionProfile = isEnvProduction && process.argv.includes('--profile');
 
-const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
 
 const createEnvironmentHash = () => {
@@ -28,9 +23,8 @@ module.exports = function () {
     return {
         target: ['browserslist'],
         stats: 'errors-warnings',
-        mode: isEnvProduction ? 'production' : 'development',
         bail: isEnvProduction,
-        devtool: isEnvProduction ? (shouldUseSourceMap ? 'source-map' : false) : 'cheap-module-source-map',
+        devtool: isEnvProduction ? false : 'eval-source-map',
         devServer: {
             allowedHosts: 'all',
             headers: {
@@ -42,13 +36,9 @@ module.exports = function () {
             static: {
                 directory: path.resolve(__dirname, 'public'),
                 publicPath: ['/henkilo-ui/'],
-                watch: {
-                    ignored: {},
-                },
             },
             client: {
                 overlay: {
-                    errors: true,
                     warnings: false,
                 },
             },
@@ -117,17 +107,11 @@ module.exports = function () {
                 '.web.jsx',
                 '.jsx',
             ],
-            alias: {
-                ...(isEnvProductionProfile && {
-                    'react-dom$': 'react-dom/profiling',
-                    'scheduler/tracing': 'scheduler/tracing-profiling',
-                }),
-            },
         },
         module: {
             strictExportPresence: true,
             rules: [
-                shouldUseSourceMap && {
+                isEnvDevelopment && {
                     enforce: 'pre',
                     test: /\.(js|mjs|jsx|ts|tsx|css)$/,
                     loader: 'source-map-loader',
@@ -137,11 +121,6 @@ module.exports = function () {
                         {
                             test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
                             type: 'asset',
-                            parser: {
-                                dataUrlCondition: {
-                                    maxSize: imageInlineSizeLimit,
-                                },
-                            },
                         },
                         { test: /\.svg/, type: 'asset/inline' },
                         {
@@ -157,17 +136,9 @@ module.exports = function () {
                             ],
                         },
                         {
-                            test: cssRegex,
+                            test: /\.css$/,
                             exclude: cssModuleRegex,
-                            use: [
-                                'style-loader',
-                                {
-                                    loader: 'css-loader',
-                                    options: {
-                                        esModule: false,
-                                    },
-                                },
-                            ],
+                            use: ['style-loader', 'css-loader'],
                             sideEffects: true,
                         },
                         {
@@ -237,7 +208,7 @@ module.exports = function () {
                 typescript: {
                     configOverwrite: {
                         compilerOptions: {
-                            sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
+                            sourceMap: isEnvDevelopment,
                             noEmit: true,
                             incremental: true,
                             tsBuildInfoFile: path.resolve(__dirname, 'node_modules', '.cache', 'tsconfig.tsbuildinfo'),
