@@ -38,6 +38,8 @@ function main {
   tmux splitw -v
   tmux send-keys "$repo/scripts/run-tiedotuspalvelu.sh" C-m
 
+  open "http://localhost:8086/omat-viestit/"
+
   tmux attach-session -t "$session"
 }
 
