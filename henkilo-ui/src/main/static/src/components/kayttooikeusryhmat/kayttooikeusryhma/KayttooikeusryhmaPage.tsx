@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { SingleValue } from 'react-select';
 import { format, parseISO } from 'date-fns';
+import { skipToken } from '@reduxjs/toolkit/query';
 
 import './KayttooikeusryhmaPage.css';
 import KayttooikeusryhmanOrganisaatiorajoite from './KayttooikeusryhmanOrganisaatiorajoite';
@@ -69,22 +70,18 @@ const initialKayttooikeusryhmaForm: KayttooikeusryhmaForm = {
     sallittuKayttajatyyppi: null,
 };
 
-export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) => {
+export const KayttooikeusryhmaPage = ({ kayttooikeusryhmaId }: { kayttooikeusryhmaId?: string }) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { L, locale } = useLocalisations();
     const { data: oppilaitostyyppiKoodisto } = useGetOppilaitostyypitQuery();
     const { data: organisaatiotyyppiKoodisto } = useGetOrganisaatiotyypitQuery();
-    const { data: kayttooikeusryhma } = useGetKayttooikeusryhmaQuery(props.kayttooikeusryhmaId, {
-        skip: !props.kayttooikeusryhmaId,
-    });
-    const { data: kayttooikeusryhmaMyontoviite } = useGetKayttooikeusryhmaMyontoviiteQuery(props.kayttooikeusryhmaId, {
-        skip: !props.kayttooikeusryhmaId,
-    });
+    const { data: kayttooikeusryhma } = useGetKayttooikeusryhmaQuery(kayttooikeusryhmaId ?? skipToken);
+    const { data: kayttooikeusryhmaMyontoviite } = useGetKayttooikeusryhmaMyontoviiteQuery(
+        kayttooikeusryhmaId ?? skipToken
+    );
     const { data: organisations } = useGetOrganisationsQuery();
-    const { data: palvelutRoolit } = useGetKayttooikeusryhmaRoolisQuery(props.kayttooikeusryhmaId, {
-        skip: !props.kayttooikeusryhmaId,
-    });
+    const { data: palvelutRoolit } = useGetKayttooikeusryhmaRoolisQuery(kayttooikeusryhmaId ?? skipToken);
     const [postKayttooikeusryhma] = usePostKayttooikeusryhmaMutation();
     const [putKayttooikeusryhma] = usePutKayttooikeusryhmaMutation();
     const [kayttooikeusryhmaForm, setKayttooikeusryhmaForm] =
@@ -96,7 +93,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
     const [toggleTallenna, setToggleTallenna] = useState(false);
 
     useEffect(() => {
-        if (props.kayttooikeusryhmaId && palvelutRoolit) {
+        if (kayttooikeusryhmaId && palvelutRoolit) {
             const newKayttooikeusryhmaForm = _parseExistingKayttooikeusryhmaData();
             const organisaatioSelections = _parseExistingOrganisaatioData();
             const organisaatioViitteet = kayttooikeusryhma?.organisaatioViite || [];
@@ -107,7 +104,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
             setRyhmaRestrictionViite(newRyhmaRestrictionViite);
             setIsPassivoitu(!!kayttooikeusryhma?.passivoitu);
         }
-    }, [props.kayttooikeusryhmaId, kayttooikeusryhma, kayttooikeusryhmaMyontoviite, palvelutRoolit, organisations]);
+    }, [kayttooikeusryhmaId, kayttooikeusryhma, kayttooikeusryhmaMyontoviite, palvelutRoolit, organisations]);
 
     const _parseExistingKayttooikeusryhmaData = (): KayttooikeusryhmaForm => {
         return {
@@ -501,21 +498,23 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
 
     async function updateKayttooikeusryhma() {
         setToggleTallenna(true);
-        await putKayttooikeusryhma({ id: props.kayttooikeusryhmaId, body: parsePayload() })
-            .unwrap()
-            .then(() => {
-                navigate('/kayttooikeusryhmat');
-            })
-            .catch((error) => {
-                dispatch(
-                    add({
-                        id: `update-kayttooikeusryhma-${props.kayttooikeusryhmaId}-${Math.random()}`,
-                        type: 'error',
-                        header: L('KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'),
-                    })
-                );
-                throw error;
-            });
+        if (kayttooikeusryhmaId) {
+            await putKayttooikeusryhma({ id: kayttooikeusryhmaId, body: parsePayload() })
+                .unwrap()
+                .then(() => {
+                    navigate('/kayttooikeusryhmat');
+                })
+                .catch((error) => {
+                    dispatch(
+                        add({
+                            id: `update-kayttooikeusryhma-${kayttooikeusryhmaId}-${Math.random()}`,
+                            type: 'error',
+                            header: L('KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'),
+                        })
+                    );
+                    throw error;
+                });
+        }
     }
 
     function getStatusString() {
@@ -586,7 +585,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
                     disabled={!_validateKayttooikeusryhmaInputs()}
                     className="oph-button oph-button-primary"
                     onClick={() => {
-                        return props.kayttooikeusryhmaId ? updateKayttooikeusryhma() : createNewKayttooikeusryhma();
+                        return kayttooikeusryhmaId ? updateKayttooikeusryhma() : createNewKayttooikeusryhma();
                     }}
                 >
                     <SpinnerInButton show={toggleTallenna}></SpinnerInButton> {L('TALLENNA')}
@@ -599,7 +598,7 @@ export const KayttooikeusryhmaPage = (props: { kayttooikeusryhmaId: string }) =>
                 >
                     {L('PERUUTA')}
                 </button>
-                <ToggleKayttooikeusryhmaStateModal kayttooikeusryhmaId={props.kayttooikeusryhmaId} />
+                <ToggleKayttooikeusryhmaStateModal kayttooikeusryhmaId={kayttooikeusryhmaId} />
                 <span>
                     {L('MUOKATTU')}: {renderKayttooikeusryhmaMuokattu()}
                 </span>

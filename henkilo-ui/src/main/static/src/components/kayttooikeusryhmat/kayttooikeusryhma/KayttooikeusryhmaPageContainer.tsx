@@ -20,7 +20,7 @@ export const KayttooikeusryhmaPageContainer = () => {
     useTitle(L('TITLE_KAYTTO_OIKEUSRYHMA'));
     useNavigation([], true);
 
-    return !params.id || isKayttooikeusryhmaLoading || isKayttooikeusryhmaMyontoviiteLoading ? (
+    return isKayttooikeusryhmaLoading || isKayttooikeusryhmaMyontoviiteLoading ? (
         <Loader />
     ) : (
         <KayttooikeusryhmaPage kayttooikeusryhmaId={params.id} />

@@ -11,21 +11,20 @@ import {
     usePutPassivoiKayttooikeusryhmaMutation,
 } from '../../../api/kayttooikeus';
 import { add } from '../../../slices/toastSlice';
+import { skipToken } from '@reduxjs/toolkit/query';
 
 type OwnProps = {
-    kayttooikeusryhmaId: string;
+    kayttooikeusryhmaId?: string;
 };
 
 /**
  * Napit ja modal käyttöoikeusryhmän tilan muuttamiseen passiiviseksi ja aktiiviseksi.
  */
-const ToggleKayttooikeusryhmaStateModal = (props: OwnProps) => {
+const ToggleKayttooikeusryhmaStateModal = ({ kayttooikeusryhmaId }: OwnProps) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { L } = useLocalisations();
-    const { data: kayttooikeusryhma } = useGetKayttooikeusryhmaQuery(props.kayttooikeusryhmaId, {
-        skip: !props.kayttooikeusryhmaId,
-    });
+    const { data: kayttooikeusryhma } = useGetKayttooikeusryhmaQuery(kayttooikeusryhmaId ?? skipToken);
     const [isPassivoitu, setIsPassivoitu] = useState(false);
     const [isWaitingRequest, setIsWaitingRequest] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -34,14 +33,17 @@ const ToggleKayttooikeusryhmaStateModal = (props: OwnProps) => {
 
     useEffect(() => {
         setIsPassivoitu(kayttooikeusryhma?.passivoitu ?? false);
-    }, [props, kayttooikeusryhma]);
+    }, [kayttooikeusryhma]);
 
     useEffect(() => {
         setIsWaitingRequest(aktivoiProps.isLoading || passivoiProps.isLoading);
     }, [aktivoiProps, passivoiProps]);
 
     const passivoi = async () => {
-        passivoiKayttooikeusryhma(props.kayttooikeusryhmaId)
+        if (!kayttooikeusryhmaId) {
+            return;
+        }
+        passivoiKayttooikeusryhma(kayttooikeusryhmaId)
             .unwrap()
             .then(() => {
                 setShowModal(false);
@@ -59,7 +61,10 @@ const ToggleKayttooikeusryhmaStateModal = (props: OwnProps) => {
     };
 
     const aktivoi = async () => {
-        aktivoiKayttooikeusryhma(props.kayttooikeusryhmaId)
+        if (!kayttooikeusryhmaId) {
+            return;
+        }
+        aktivoiKayttooikeusryhma(kayttooikeusryhmaId)
             .unwrap()
             .then(() => {
                 setShowModal(false);
