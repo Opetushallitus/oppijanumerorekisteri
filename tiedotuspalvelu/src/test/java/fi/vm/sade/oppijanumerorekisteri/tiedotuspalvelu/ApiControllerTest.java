@@ -7,11 +7,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -33,11 +31,10 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
 
   @Test
   public void createTiedoteFailsWithoutRequiredRole() throws Exception {
-    var tokenWithoutRole = createSignedJwt(Map.of());
     mockMvc
         .perform(
             post("/api/v1/tiedote/kielitutkintotodistus")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenWithoutRole)
+                .with(tokenFor(OIKEUDETON))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(tiedoteJson(UUID.randomUUID().toString())))
         .andExpect(status().isForbidden());
@@ -57,7 +54,7 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
     assertEquals(idempotencyKey, saved.getIdempotencyKey());
 
     mockMvc
-        .perform(get("/api/v1/tiedote/" + returnedId).with(validToken()))
+        .perform(get("/api/v1/tiedote/" + returnedId).with(tokenFor(KIELITUTKINNOSTA_TIEDOTTAJA)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(returnedId.toString()))
         .andExpect(jsonPath("$.opiskeluoikeusOid").value(OPISKELUOIKEUS_OID))
@@ -126,7 +123,8 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
   @Test
   public void getTiedoteReturns404ForUnknownId() throws Exception {
     mockMvc
-        .perform(get("/api/v1/tiedote/" + UUID.randomUUID()).with(validToken()))
+        .perform(
+            get("/api/v1/tiedote/" + UUID.randomUUID()).with(tokenFor(KIELITUTKINNOSTA_TIEDOTTAJA)))
         .andExpect(status().isNotFound());
   }
 
@@ -166,7 +164,7 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
 
   private @NonNull MockHttpServletRequestBuilder createAuthorizedPostRequest(String content) {
     return post("/api/v1/tiedote/kielitutkintotodistus")
-        .with(validToken())
+        .with(tokenFor(KIELITUTKINNOSTA_TIEDOTTAJA))
         .contentType(MediaType.APPLICATION_JSON)
         .content(content);
   }

@@ -1,22 +1,28 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import com.github.tomakehurst.wiremock.matching.MatchResult;
+import com.github.tomakehurst.wiremock.matching.ValueMatcher;
+import com.nimbusds.jose.crypto.RSASSAVerifier;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jwt.SignedJWT;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.oppija.FetchOppijaTask;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViestiRepository;
-import java.util.UUID;
+import java.net.URL;
+import java.util.Date;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
@@ -25,21 +31,16 @@ public class FetchOppijaTaskTest extends TiedotuspalveluApiTest implements Resou
   @Autowired private FetchOppijaTask fetchOppijaTask;
   @Autowired private SuomiFiViestiRepository suomiFiViestiRepository;
 
+  @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
+  private String jwksUri;
+
   @RegisterExtension
   static WireMockExtension wireMock =
       WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()).build();
 
-  private static final String OPP_CLIENT_ID = UUID.randomUUID().toString();
-  private static final String OPP_CLIENT_SECRET = UUID.randomUUID().toString();
-  private static final String OPP_TOKEN = UUID.randomUUID().toString();
-
   @DynamicPropertySource
   static void registerProperties(DynamicPropertyRegistry registry) {
     registry.add("tiedotuspalvelu.oppijanumerorekisteri.base-url", wireMock::baseUrl);
-    registry.add(
-        "tiedotuspalvelu.otuva.oauth2-token-url", () -> wireMock.baseUrl() + "/oauth2/token");
-    registry.add("tiedotuspalvelu.otuva.oauth2-client-id", () -> OPP_CLIENT_ID);
-    registry.add("tiedotuspalvelu.otuva.oauth2-client-secret", () -> OPP_CLIENT_SECRET);
   }
 
   @BeforeEach
@@ -51,8 +52,7 @@ public class FetchOppijaTaskTest extends TiedotuspalveluApiTest implements Resou
 
   @Test
   public void respectsNextRetryTime() throws Exception {
-    stubOppijanumerorekisteriClientCredentials();
-    stubOppijanumerorekisteriHenkilo(
+    stubOppijanumerorekisteri(
         "/henkilo/.*", readResource("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + ".json"));
 
     var futureTiedote = createTiedote("1.2.246.562.24.00000000001");
@@ -77,8 +77,7 @@ public class FetchOppijaTaskTest extends TiedotuspalveluApiTest implements Resou
 
   @Test
   public void setsStateToSuomiFiViestiHetulliselle() throws Exception {
-    stubOppijanumerorekisteriClientCredentials();
-    stubOppijanumerorekisteriHenkilo(
+    stubOppijanumerorekisteri(
         "/henkilo/.*", readResource("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + ".json"));
 
     var tiedote = createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES);
@@ -92,10 +91,8 @@ public class FetchOppijaTaskTest extends TiedotuspalveluApiTest implements Resou
 
   @Test
   public void handlesOppijanumerorekisteriFailure() throws Exception {
-    stubOppijanumerorekisteriClientCredentials();
     wireMock.stubFor(
         get(urlPathMatching("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES))
-            .withHeader("Authorization", equalTo("Bearer " + OPP_TOKEN))
             .willReturn(aResponse().withStatus(500)));
 
     var tiedote = createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES);
@@ -110,8 +107,7 @@ public class FetchOppijaTaskTest extends TiedotuspalveluApiTest implements Resou
 
   @Test
   public void handlesMissingOppijaAddressData() throws Exception {
-    stubOppijanumerorekisteriClientCredentials();
-    stubOppijanumerorekisteriHenkilo(
+    stubOppijanumerorekisteri(
         "/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES,
         readResource("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + "-no-address.json"));
 
@@ -125,39 +121,37 @@ public class FetchOppijaTaskTest extends TiedotuspalveluApiTest implements Resou
     assertNotNull(updatedTiedote.getNextRetry());
   }
 
-  private void stubOppijanumerorekisteriClientCredentials() {
-    wireMock.stubFor(
-        post(urlEqualTo("/oauth2/token"))
-            .withRequestBody(
-                equalTo(
-                    "grant_type=client_credentials"
-                        + "&client_id="
-                        + OPP_CLIENT_ID
-                        + "&client_secret="
-                        + OPP_CLIENT_SECRET))
-            .willReturn(
-                aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/json")
-                    .withBody(
-                        """
-                        {
-                          "access_token": "%s",
-                          "expires_in": 3600,
-                          "token_type": "Bearer"
-                        }
-                        """
-                            .formatted(OPP_TOKEN))));
-  }
-
-  private void stubOppijanumerorekisteriHenkilo(String urlPattern, String responseBody) {
+  private void stubOppijanumerorekisteri(String urlPattern, String responseBody) {
     wireMock.stubFor(
         get(urlPathMatching(urlPattern))
-            .withHeader("Authorization", equalTo("Bearer " + OPP_TOKEN))
+            .andMatching(validBearerToken())
             .willReturn(
                 aResponse()
                     .withStatus(200)
                     .withHeader("Content-Type", "application/json")
                     .withBody(responseBody)));
+  }
+
+  private ValueMatcher<Request> validBearerToken() {
+    return request -> {
+      var auth = request.getHeader("Authorization");
+      if (auth == null || !auth.startsWith("Bearer ")) {
+        return MatchResult.noMatch();
+      }
+      try {
+        var token = auth.substring("Bearer ".length());
+        var jwt = SignedJWT.parse(token);
+        var jwkSet = JWKSet.load(new URL(jwksUri));
+        var jwk = jwkSet.getKeyByKeyId(jwt.getHeader().getKeyID());
+        if (jwk == null) return MatchResult.noMatch();
+        var verifier = new RSASSAVerifier(((RSAKey) jwk).toRSAPublicKey());
+        if (!jwt.verify(verifier)) return MatchResult.noMatch();
+        var expiration = jwt.getJWTClaimsSet().getExpirationTime();
+        if (expiration == null || expiration.before(new Date())) return MatchResult.noMatch();
+        return MatchResult.exactMatch();
+      } catch (Exception e) {
+        return MatchResult.noMatch();
+      }
+    };
   }
 }

@@ -1,6 +1,7 @@
 {
   "realm": "cas-oppija",
   "enabled": true,
+  "sslRequired": "none",
   "loginTheme": "dev-quicklogin",
   "requiredActions": [
     {

@@ -3,25 +3,18 @@ package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.crypto.RSASSASigner;
-import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.SignedJWT;
-import java.time.Instant;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
@@ -29,71 +22,47 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 @AutoConfigureMockMvc
 public class TiedotuspalveluApiTest {
   static final String OPH_ORGANISAATIO_OID = "1.2.246.562.10.00000000001";
-  static final String PALVELUKAYTTAJA_HENKILO_OID = OidGenerator.generateHenkiloOid();
-  static RSAKey rsaKey;
-  static WireMockServer jwksServer;
-
-  static {
-    try {
-      rsaKey = new RSAKeyGenerator(2048).keyID("test-key").generate();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-    jwksServer = new WireMockServer(WireMockConfiguration.wireMockConfig().dynamicPort());
-    jwksServer.start();
-    jwksServer.stubFor(
-        WireMock.get(WireMock.urlEqualTo("/.well-known/jwks.json"))
-            .willReturn(
-                WireMock.aResponse()
-                    .withHeader("Content-Type", "application/json")
-                    .withBody("{\"keys\":[" + rsaKey.toPublicJWK().toJSONString() + "]}")));
-  }
+  static final String KIELITUTKINNOSTA_TIEDOTTAJA = "kielitutkinnosta-tiedottaja";
+  static final String KIELITUTKINNOSTA_TIEDOTTAJA_OID = "1.2.246.562.24.43006465835";
+  static final String TOINEN_TIEDOTTAJA = "toinen-tiedottaja";
+  static final String TOINEN_TIEDOTTAJA_OID = "1.2.246.562.24.21832615757";
+  static final String OIKEUDETON = "oikeudeton";
 
   @Autowired protected ObjectMapper objectMapper;
   @Autowired protected MockMvc mockMvc;
   @Autowired protected TiedoteRepository tiedoteRepository;
 
-  @DynamicPropertySource
-  static void registerJwksProperties(DynamicPropertyRegistry registry) {
-    registry.add(
-        "spring.security.oauth2.resourceserver.jwt.jwk-set-uri",
-        () -> jwksServer.baseUrl() + "/.well-known/jwks.json");
+  // Use the JWKS URI to derive the token URL — this always points to the real
+  // Keycloak, even when subclasses override otuva.oauth2-token-url for WireMock.
+  @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
+  private String jwksUri;
+
+  protected String fetchToken(String clientId) throws Exception {
+    var tokenUrl = jwksUri.replace("/certs", "/token");
+    var body = "grant_type=client_credentials&client_id=" + clientId + "&client_secret=" + clientId;
+    var request =
+        HttpRequest.newBuilder()
+            .uri(URI.create(tokenUrl))
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .POST(HttpRequest.BodyPublishers.ofString(body, StandardCharsets.UTF_8))
+            .build();
+    var response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+    return new ObjectMapper().readTree(response.body()).get("access_token").asText();
   }
 
-  protected String createSignedJwt(Map<String, Object> extraClaims) throws Exception {
-    var now = Instant.now();
-    var builder =
-        new JWTClaimsSet.Builder()
-            .issuer("https://test-issuer.example.com")
-            .subject(PALVELUKAYTTAJA_HENKILO_OID)
-            .audience("palvelukayttaja")
-            .issueTime(Date.from(now))
-            .expirationTime(Date.from(now.plusSeconds(300)));
-    extraClaims.forEach(builder::claim);
-    var signedJWT =
-        new SignedJWT(
-            new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(rsaKey.getKeyID()).build(),
-            builder.build());
-    signedJWT.sign(new RSASSASigner(rsaKey));
-    return signedJWT.serialize();
-  }
-
-  protected RequestPostProcessor validToken() {
+  protected RequestPostProcessor tokenFor(String clientId) {
     return request -> {
       try {
-        var token =
-            createSignedJwt(
-                Map.of(
-                    "roles",
-                    Map.of(
-                        OPH_ORGANISAATIO_OID,
-                        List.of("TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD"))));
-        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + fetchToken(clientId));
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
       return request;
     };
+  }
+
+  protected RequestPostProcessor validToken() {
+    return tokenFor(KIELITUTKINNOSTA_TIEDOTTAJA);
   }
 
   protected Tiedote createTiedote(String oppijanumero) throws Exception {

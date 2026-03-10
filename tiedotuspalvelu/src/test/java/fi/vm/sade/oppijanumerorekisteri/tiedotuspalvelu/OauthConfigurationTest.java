@@ -31,7 +31,7 @@ public class OauthConfigurationTest extends TiedotuspalveluApiTest {
 
   @Test
   public void apiEndpointRejectsTokenWithoutRequiredRole() throws Exception {
-    var token = createSignedJwt(Map.of());
+    var token = fetchToken(OIKEUDETON);
     mockMvc
         .perform(
             get("/api/v1/tiedote/" + UUID.randomUUID())
@@ -62,7 +62,7 @@ public class OauthConfigurationTest extends TiedotuspalveluApiTest {
 
   @Test
   public void postEndpointRejectsTokenWithoutRequiredRole() throws Exception {
-    var token = createSignedJwt(Map.of());
+    var token = fetchToken(OIKEUDETON);
     var content =
         """
         {"oppijanumero": "1.2.246.562.24.00000000001", "idempotencyKey": "%s"}"""
@@ -93,7 +93,7 @@ public class OauthConfigurationTest extends TiedotuspalveluApiTest {
 
   @Test
   public void uiEndpointRedirectsToCasWithBearerToken() throws Exception {
-    var token = createSignedJwt(Map.of());
+    var token = fetchToken(OIKEUDETON);
     mockMvc
         .perform(get("/ui/tiedotteet").header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
         .andExpect(status().isFound())
@@ -119,10 +119,11 @@ public class OauthConfigurationTest extends TiedotuspalveluApiTest {
                     "1.2.246.562.10.00000000001",
                     List.of("TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD")))
             .build();
+    var unknownKey = new RSAKeyGenerator(2048).keyID("expired-test-key").generate();
     var signedJWT =
         new SignedJWT(
-            new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(rsaKey.getKeyID()).build(), claims);
-    signedJWT.sign(new RSASSASigner(rsaKey));
+            new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(unknownKey.getKeyID()).build(), claims);
+    signedJWT.sign(new RSASSASigner(unknownKey));
     mockMvc
         .perform(
             post("/api/v1/tiedote/kielitutkintotodistus")

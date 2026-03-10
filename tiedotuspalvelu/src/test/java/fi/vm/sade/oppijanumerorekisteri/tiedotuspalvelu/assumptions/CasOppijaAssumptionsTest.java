@@ -22,9 +22,6 @@ class CasOppijaAssumptionsTest {
 
   @Autowired TiedotuspalveluProperties properties;
 
-  static final String SERVICE_URL =
-      "http://localhost:8080/omat-viestit/j_spring_cas_security_check";
-
   @Test
   void assumeCasOppijaWouldReturnHetuPrefixedUsername() throws Exception {
     var assertion = authenticateAndValidate("suomi.fi,210281-9988", "210281-9988");
@@ -66,9 +63,10 @@ class CasOppijaAssumptionsTest {
 
   private Assertion authenticateAndValidate(String username, String password) throws Exception {
     var casServerUrl = properties.cas().serverUrl();
+    var serviceUrl = properties.cas().serviceBaseUrl();
     var ticket = obtainServiceTicket(casServerUrl, username, password);
     var validator = new Cas30ServiceTicketValidator(casServerUrl);
-    return validator.validate(ticket, SERVICE_URL);
+    return validator.validate(ticket, serviceUrl);
   }
 
   /**
@@ -81,7 +79,9 @@ class CasOppijaAssumptionsTest {
 
     // GET the login page to get the form action URL and session cookies
     var loginPageUrl =
-        casServerUrl + "/login?service=" + URLEncoder.encode(SERVICE_URL, StandardCharsets.UTF_8);
+        casServerUrl
+            + "/login?service="
+            + URLEncoder.encode(properties.cas().serviceBaseUrl(), StandardCharsets.UTF_8);
     var loginPageResponse =
         httpClient.send(
             HttpRequest.newBuilder().uri(URI.create(loginPageUrl)).GET().build(),
