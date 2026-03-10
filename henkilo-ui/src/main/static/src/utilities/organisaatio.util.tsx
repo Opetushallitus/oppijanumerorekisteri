@@ -77,7 +77,7 @@ const mapOrganisaatioLevelsRecursively = (
 const resolveParentNames = (parentOidPath: string, orgNames: OrganisaatioNameLookup, locale: Locale): string[] => {
     const path = parentOidPath.split('/');
     path.shift();
-    return path.map((oid) => orgNames[oid]?.[locale] || oid);
+    return path.map((oid) => getLocalization(orgNames[oid], locale) || oid);
 };
 
 const createOrganisaatioSelectObject = (

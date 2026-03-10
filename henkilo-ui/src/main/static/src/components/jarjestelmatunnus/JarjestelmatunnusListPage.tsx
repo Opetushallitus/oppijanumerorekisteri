@@ -21,6 +21,7 @@ import { Koodi, koodiLabel, useGetOrganisaatiotyypitQuery } from '../../api/kood
 import PropertySingleton from '../../globals/PropertySingleton';
 import { selectProps } from '../../utilities/select';
 import { getLocalisedText } from '../common/StaticUtils';
+import { getLocalization } from '../../utilities/localisation.util';
 
 import styles from './JarjestelmatunnusListPage.module.css';
 
@@ -118,7 +119,7 @@ export const JarjestelmatunnusListPage = () => {
                     <ul key={`orgs-${d.kayttajatunnus}`} className="oph-ds-ul">
                         {d.organisaatioNimiList.map((o) => (
                             <li key={o.identifier}>
-                                {`${o.localisedLabels[locale] ?? o.identifier} (${o.tyypit
+                                {`${getLocalization(o.localisedLabels) || o.identifier} (${o.tyypit
                                     .map((t) => koodiLabel(organisaatiotyyppiMap[t], locale))
                                     .join(',')
                                     .toUpperCase()})`}

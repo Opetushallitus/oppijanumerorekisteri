@@ -20,6 +20,7 @@ import { useGetHenkiloHakuCountQuery, useGetHenkiloHakuInfiniteQuery } from '../
 import { useDebounce } from '../../useDebounce';
 import { SelectOption } from '../../utilities/select';
 import { HenkilohakuState, setFilters } from '../../slices/henkilohakuSlice';
+import { getLocalization } from '../../utilities/localisation.util';
 
 const emptyData: HenkilohakuResult[] = [];
 const emptyColumns: ColumnDef<HenkilohakuResult>[] = [];
@@ -88,7 +89,7 @@ const HenkilohakuPage = () => {
                     <ul>
                         {getValue().organisaatioNimiList.map((organisaatio, idx2) => (
                             <li key={idx2}>
-                                {(organisaatio.localisedLabels[locale] ?? organisaatio.identifier) +
+                                {(getLocalization(organisaatio.localisedLabels, locale) || organisaatio.identifier) +
                                     ' ' +
                                     getOrganisaatiotyypitFlat(L, true, organisaatio.tyypit)}
                             </li>

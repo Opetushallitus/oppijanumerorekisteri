@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const resolve = require('resolve');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
