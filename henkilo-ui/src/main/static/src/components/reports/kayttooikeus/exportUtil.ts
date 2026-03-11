@@ -2,14 +2,14 @@ import { unparse } from 'papaparse';
 import { format, parseISO } from 'date-fns';
 
 import { LocalisationFn } from '../../../types/localisation.type';
-import { AccessRightsReportRow } from '../../../api/kayttooikeus';
+import { KayttooikeusraporttiRow } from '../../../api/kayttooikeus';
 
 const BOM = '\ufeff';
 const DELIMITER = ';';
 
 const formatDate = (date: string) => format(parseISO(date), 'd.M.yyyy');
 
-export const createCSV = (data: AccessRightsReportRow[], L: LocalisationFn) =>
+export const createCSV = (data: KayttooikeusraporttiRow[], L: LocalisationFn) =>
     unparse(
         {
             data: data.map((row) => ({
@@ -52,6 +52,6 @@ export const downloadCSV = (csv: string) => {
     link.click();
 };
 
-export const exportReport = (data: AccessRightsReportRow[], L: LocalisationFn) => downloadCSV(createCSV(data, L));
+export const exportReport = (data: KayttooikeusraporttiRow[], L: LocalisationFn) => downloadCSV(createCSV(data, L));
 
 export default exportReport;

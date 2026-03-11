@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { skipToken } from '@reduxjs/toolkit/query/react';
 
 import Loader from '../../common/icons/Loader';
-import Controls from './AccessRightsReportControls';
-import Report from './AccessRightsReportData';
+import { KayttooikeusraporttiControls } from './KayttooikeusraporttiControls';
+import { KayttooikeusraporttiData } from './KayttooikeusraporttiData';
 import exportReport from './exportUtil';
 import { useLocalisations } from '../../../selectors';
 import { useGetAccessRightReportQuery } from '../../../api/kayttooikeus';
@@ -11,7 +11,7 @@ import { useTitle } from '../../../useTitle';
 import { useNavigation } from '../../../useNavigation';
 import { mainNavigation } from '../../navigation/navigationconfigurations';
 
-export const AccessRightsReport = () => {
+export const Kayttooikeusraportti = () => {
     const [oid, setOid] = useState<string | undefined>(undefined);
     const [filter, setFilter] = useState<string | undefined>(undefined);
     const [filterValues, setFilterValues] = useState<string[]>([]);
@@ -32,7 +32,7 @@ export const AccessRightsReport = () => {
             <div className="flex-horizontal">
                 <span className="oph-h2 oph-bold henkilohaku-main-header">{L('KAYTTOOIKEUSRAPORTTI_TITLE')}</span>
             </div>
-            <Controls
+            <KayttooikeusraporttiControls
                 disabled={isFetching}
                 filterValues={filterValues}
                 filter={filter}
@@ -41,9 +41,7 @@ export const AccessRightsReport = () => {
                 dataExport={oid && report?.length ? () => exportReport(report, L) : undefined}
             />
             {isFetching && <Loader />}
-            {report && oid && <Report report={report} />}
+            {report && oid && <KayttooikeusraporttiData report={report} />}
         </div>
     );
 };
-
-export default AccessRightsReport;

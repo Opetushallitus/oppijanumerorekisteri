@@ -9,24 +9,24 @@ import {
 } from '@tanstack/react-table';
 import { format, parseISO } from 'date-fns';
 
-import './AccessRightsReportData.css';
+import './KayttooikeusraporttiData.css';
 import { useLocalisations } from '../../../selectors';
 import OphTable from '../../OphTable';
-import { AccessRightsReportRow } from '../../../api/kayttooikeus';
+import { KayttooikeusraporttiRow } from '../../../api/kayttooikeus';
 
 type Props = {
-    report: AccessRightsReportRow[];
+    report: KayttooikeusraporttiRow[];
 };
 
-const emptyData: AccessRightsReportRow[] = [];
-const emptyColumns: ColumnDef<AccessRightsReportRow>[] = [];
+const emptyData: KayttooikeusraporttiRow[] = [];
+const emptyColumns: ColumnDef<KayttooikeusraporttiRow>[] = [];
 
 const formatDate = (d: string) => format(parseISO(d), 'd.M.yyyy');
 
-export const AccessRightsReport = ({ report }: Props) => {
+export const KayttooikeusraporttiData = ({ report }: Props) => {
     const { L } = useLocalisations();
 
-    const columns = useMemo<ColumnDef<AccessRightsReportRow, AccessRightsReportRow>[]>(
+    const columns = useMemo<ColumnDef<KayttooikeusraporttiRow, KayttooikeusraporttiRow>[]>(
         () => [
             {
                 accessorFn: (row) => row.personName,
@@ -101,5 +101,3 @@ export const AccessRightsReport = ({ report }: Props) => {
         </div>
     );
 };
-
-export default AccessRightsReport;

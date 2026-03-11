@@ -82,7 +82,7 @@ export type PostHenkilohakuRequest = {
     kayttooikeusryhmaId?: number;
 };
 
-export type AccessRightsReportRow = {
+export type KayttooikeusraporttiRow = {
     id: number;
     personName: string;
     personOid: string;
@@ -190,7 +190,7 @@ export const kayttooikeusApi = createApi({
         'omatorganisaatiot',
         'henkiloorganisaatiot',
         'kutsuByToken',
-        'accessRightReport',
+        'kayttooikeusraportti',
         'kayttajatiedot',
         'hakatunnisteet',
         'palvelukayttaja',
@@ -298,9 +298,9 @@ export const kayttooikeusApi = createApi({
             query: (token) => `kutsu/token/${token}`,
             providesTags: ['kutsuByToken'],
         }),
-        getAccessRightReport: builder.query<AccessRightsReportRow[], string>({
+        getAccessRightReport: builder.query<KayttooikeusraporttiRow[], string>({
             query: (oid) => `reports/accessrights/${oid}`,
-            providesTags: ['accessRightReport'],
+            providesTags: ['kayttooikeusraportti'],
         }),
         getKayttajatiedot: builder.query<KayttajatiedotRead, string>({
             query: (oid) => `henkilo/${oid}/kayttajatiedot`,

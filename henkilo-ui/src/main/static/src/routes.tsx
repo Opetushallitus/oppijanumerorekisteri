@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Route, Routes } from 'react-router';
 import App from './containers/App';
-import AccessRightReport from './components/reports/accessrights/AccessRightsReport';
+import { Kayttooikeusraportti } from './components/reports/kayttooikeus/Kayttooikeusraportti';
 import { KutsututPage } from './components/kutsutut/KutsututPage';
 import KutsuminenPage from './components/kutsuminen/KutsuminenPage';
 import AnomusPage from './components/anomus/AnomusPage';
@@ -31,7 +31,7 @@ export const AppRoutes = () => (
     <Routes>
         <Route element={<App />}>
             <Route path="/palvelukayttajainfo" element={<PalvelukayttajaInfo />} />
-            <Route path="/raportit/kayttooikeudet" element={<AccessRightReport />} />
+            <Route path="/raportit/kayttooikeudet" element={<Kayttooikeusraportti />} />
             <Route path="/anomukset" element={<AnomusPage />} />
             <Route path="/kutsutut" element={<KutsututPage />} />
             <Route path="/kutsulomake" element={<KutsuminenPage />} />

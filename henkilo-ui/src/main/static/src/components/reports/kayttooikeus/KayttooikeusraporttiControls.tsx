@@ -8,7 +8,7 @@ import DownloadIcon from '../../common/icons/DownloadIcon';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import { useLocalisations } from '../../../selectors';
 
-import './AccessRightsReportControls.css';
+import './KayttooikeusraporttiControls.css';
 
 type Props = {
     disabled: boolean;
@@ -19,7 +19,7 @@ type Props = {
     dataExport?: () => void;
 };
 
-const AccessRightsReportControls: React.FC<Props> = ({
+export const KayttooikeusraporttiControls: React.FC<Props> = ({
     disabled,
     setOid,
     filter,
@@ -50,7 +50,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
                 </div>
             </div>
             {filterOptions.length > 1 && (
-                <div className="flex-horizontal access-right-report-controls-row">
+                <div className="flex-horizontal kayttooikeus-report-controls-row">
                     <div className="flex-item-1 ">
                         <Select
                             options={filterOptions}
@@ -63,7 +63,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
                 </div>
             )}
             {dataExport && (
-                <div className="flex-horizontal access-right-report-controls-row">
+                <div className="flex-horizontal kayttooikeus-report-controls-row">
                     <div className="flex-item-1 ">
                         <Button action={dataExport}>
                             {L('KAYTTOOIKEUSRAPORTTI_EXPORT')}
@@ -75,5 +75,3 @@ const AccessRightsReportControls: React.FC<Props> = ({
         </div>
     );
 };
-
-export default AccessRightsReportControls;
