@@ -1,14 +1,15 @@
-package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
+package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.security;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedotuspalveluApiTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.test.context.support.WithMockUser;
 
-public class CasConfigurationTest extends TiedotuspalveluApiTest {
+public class CasOppijaConfigurationTest extends TiedotuspalveluApiTest {
 
   @Test
   public void actuatorHealthIsPublic() throws Exception {
@@ -18,7 +19,7 @@ public class CasConfigurationTest extends TiedotuspalveluApiTest {
   @Test
   public void uiTiedotteetRequiresCASAuthentication() throws Exception {
     mockMvc
-        .perform(get("/ui/tiedotteet"))
+        .perform(get("/omat-viestit/ui/tiedotteet"))
         .andExpect(status().isFound())
         .andExpect(
             header()
@@ -31,7 +32,7 @@ public class CasConfigurationTest extends TiedotuspalveluApiTest {
   @WithMockUser
   public void uiTiedotteetIsAccessibleWhenAuthenticated() throws Exception {
     mockMvc
-        .perform(get("/ui/tiedotteet"))
+        .perform(get("/omat-viestit/ui/tiedotteet"))
         .andExpect(status().isOk())
         .andExpect(content().json("[]"));
   }
@@ -39,7 +40,7 @@ public class CasConfigurationTest extends TiedotuspalveluApiTest {
   @Test
   public void uiMeRequiresCASAuthentication() throws Exception {
     mockMvc
-        .perform(get("/ui/me"))
+        .perform(get("/omat-viestit/ui/me"))
         .andExpect(status().isFound())
         .andExpect(
             header()
@@ -49,9 +50,9 @@ public class CasConfigurationTest extends TiedotuspalveluApiTest {
   }
 
   @Test
-  public void indexHtmlRequiresCASAuthentication() throws Exception {
+  public void oppijaIndexHtmlRequiresCASAuthentication() throws Exception {
     mockMvc
-        .perform(get("/index.html"))
+        .perform(get("/omat-viestit/index.html"))
         .andExpect(status().isFound())
         .andExpect(
             header()
@@ -61,9 +62,9 @@ public class CasConfigurationTest extends TiedotuspalveluApiTest {
   }
 
   @Test
-  public void rootRequiresCASAuthentication() throws Exception {
+  public void oppijaRootRequiresCASAuthentication() throws Exception {
     mockMvc
-        .perform(get("/"))
+        .perform(get("/omat-viestit/"))
         .andExpect(status().isFound())
         .andExpect(
             header()
@@ -74,11 +75,11 @@ public class CasConfigurationTest extends TiedotuspalveluApiTest {
 
   @Test
   public void swaggerUiIsPublic() throws Exception {
-    mockMvc.perform(get("/swagger-ui/index.html")).andExpect(status().isOk());
+    mockMvc.perform(get("/omat-viestit/swagger-ui/index.html")).andExpect(status().isOk());
   }
 
   @Test
   public void openApiDocsArePublic() throws Exception {
-    mockMvc.perform(get("/v3/api-docs")).andExpect(status().isOk());
+    mockMvc.perform(get("/omat-viestit/v3/api-docs")).andExpect(status().isOk());
   }
 }

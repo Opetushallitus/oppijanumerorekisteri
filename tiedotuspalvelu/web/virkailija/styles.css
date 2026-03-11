@@ -1,0 +1,157 @@
+body {
+  font-family: "Open Sans", Arial, sans-serif;
+  color: #1d1d1d;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.tp__container {
+  margin: 0 auto;
+  max-width: 1600px;
+  padding: 40px 16px;
+}
+
+.tp__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.tp__title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  margin: 0;
+}
+
+.tp__user {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Two-pane layout */
+.tp__panes {
+  display: flex;
+  gap: 24px;
+}
+
+.tp__list-pane {
+  flex: 3;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.tp__detail-pane {
+  flex: 2;
+  min-width: 0;
+}
+
+/* Table */
+.tp__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tp__table th,
+.tp__table td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tp__table th {
+  font-weight: 700;
+  background-color: #f9fafb;
+}
+
+.tp__table tbody tr {
+  cursor: pointer;
+}
+
+.tp__table tbody tr:hover {
+  background-color: #f3f4f6;
+}
+
+.tp__table-row--selected {
+  background-color: #dbeafe;
+}
+
+.tp__table-row--selected:hover {
+  background-color: #bfdbfe;
+}
+
+/* Detail pane */
+.tp__detail {
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: #f9fafb;
+}
+
+.tp__detail-placeholder {
+  padding: 48px 16px;
+  text-align: center;
+  color: #9ca3af;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+}
+
+.tp__detail-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 16px;
+}
+
+.tp__detail-subtitle {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 24px 0 12px;
+}
+
+.tp__detail-fields {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 16px;
+  margin: 0;
+}
+
+.tp__detail-fields dt {
+  font-weight: 600;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.tp__detail-fields dd {
+  margin: 0;
+  word-break: break-all;
+}
+
+/* Timeline */
+.tp__timeline {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tp__timeline-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tp__timeline-item:last-child {
+  border-bottom: none;
+}
+
+.tp__timeline-status {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.tp__timeline-time {
+  font-size: 13px;
+  color: #6b7280;
+}

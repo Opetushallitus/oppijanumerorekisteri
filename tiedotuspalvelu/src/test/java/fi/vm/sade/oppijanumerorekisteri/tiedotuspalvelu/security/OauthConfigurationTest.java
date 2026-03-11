@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
+package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.security;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -11,6 +11,7 @@ import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedotuspalveluApiTest;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -25,7 +26,7 @@ public class OauthConfigurationTest extends TiedotuspalveluApiTest {
   @Test
   public void apiEndpointRejectsUnauthenticatedRequests() throws Exception {
     mockMvc
-        .perform(get("/api/v1/tiedote/" + UUID.randomUUID()))
+        .perform(get("/omat-viestit/api/v1/tiedote/" + UUID.randomUUID()))
         .andExpect(status().isUnauthorized());
   }
 
@@ -34,7 +35,7 @@ public class OauthConfigurationTest extends TiedotuspalveluApiTest {
     var token = fetchToken(OIKEUDETON);
     mockMvc
         .perform(
-            get("/api/v1/tiedote/" + UUID.randomUUID())
+            get("/omat-viestit/api/v1/tiedote/" + UUID.randomUUID())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
         .andExpect(status().isForbidden());
   }
@@ -42,7 +43,7 @@ public class OauthConfigurationTest extends TiedotuspalveluApiTest {
   @Test
   public void apiEndpointIsAccessibleWithValidTokenAndRole() throws Exception {
     mockMvc
-        .perform(get("/api/v1/tiedote/" + UUID.randomUUID()).with(validToken()))
+        .perform(get("/omat-viestit/api/v1/tiedote/" + UUID.randomUUID()).with(validToken()))
         .andExpect(status().isNotFound());
   }
 
@@ -54,7 +55,7 @@ public class OauthConfigurationTest extends TiedotuspalveluApiTest {
             .formatted(UUID.randomUUID().toString());
     mockMvc
         .perform(
-            post("/api/v1/tiedote/kielitutkintotodistus")
+            post("/omat-viestit/api/v1/tiedote/kielitutkintotodistus")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
         .andExpect(status().isUnauthorized());
@@ -69,7 +70,7 @@ public class OauthConfigurationTest extends TiedotuspalveluApiTest {
             .formatted(UUID.randomUUID().toString());
     mockMvc
         .perform(
-            post("/api/v1/tiedote/kielitutkintotodistus")
+            post("/omat-viestit/api/v1/tiedote/kielitutkintotodistus")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
@@ -84,7 +85,7 @@ public class OauthConfigurationTest extends TiedotuspalveluApiTest {
             .formatted(UUID.randomUUID().toString());
     mockMvc
         .perform(
-            post("/api/v1/tiedote/kielitutkintotodistus")
+            post("/omat-viestit/api/v1/tiedote/kielitutkintotodistus")
                 .with(validToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
@@ -95,7 +96,8 @@ public class OauthConfigurationTest extends TiedotuspalveluApiTest {
   public void uiEndpointRedirectsToCasWithBearerToken() throws Exception {
     var token = fetchToken(OIKEUDETON);
     mockMvc
-        .perform(get("/ui/tiedotteet").header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+        .perform(
+            get("/omat-viestit/ui/tiedotteet").header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
         .andExpect(status().isFound())
         .andExpect(
             header()
@@ -126,7 +128,7 @@ public class OauthConfigurationTest extends TiedotuspalveluApiTest {
     signedJWT.sign(new RSASSASigner(unknownKey));
     mockMvc
         .perform(
-            post("/api/v1/tiedote/kielitutkintotodistus")
+            post("/omat-viestit/api/v1/tiedote/kielitutkintotodistus")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + signedJWT.serialize())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
@@ -158,7 +160,7 @@ public class OauthConfigurationTest extends TiedotuspalveluApiTest {
     signedJWT.sign(new RSASSASigner(wrongKey));
     mockMvc
         .perform(
-            post("/api/v1/tiedote/kielitutkintotodistus")
+            post("/omat-viestit/api/v1/tiedote/kielitutkintotodistus")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + signedJWT.serialize())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(

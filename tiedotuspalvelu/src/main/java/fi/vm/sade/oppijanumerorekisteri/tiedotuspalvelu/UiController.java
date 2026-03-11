@@ -1,9 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
-import static fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsService.ATTRIBUTE_KOKO_NIMI;
+import static fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.security.CasOppijaUserDetailsService.ATTRIBUTE_KOKO_NIMI;
 
-import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsService;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.locale.LocalisationRepository;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.security.CasOppijaUserDetailsService;
 import io.swagger.v3.oas.annotations.Hidden;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Hidden
 @RestController
-@RequestMapping("/ui/")
+@RequestMapping("/omat-viestit/ui/")
 @RequiredArgsConstructor
 @Slf4j
 public class UiController {
@@ -54,7 +54,7 @@ public class UiController {
   @PreAuthorize("isAuthenticated()")
   public MeResponse me() {
     var auth = SecurityContextHolder.getContext().getAuthentication();
-    var principal = (CasUserDetailsService.CasAuthenticatedUser) auth.getPrincipal();
+    var principal = (CasOppijaUserDetailsService.CasAuthenticatedUser) auth.getPrincipal();
     var attributes = principal.getAttributes();
     return new MeResponse(attributes.get(ATTRIBUTE_KOKO_NIMI).get(0));
   }
@@ -67,7 +67,7 @@ public class UiController {
       return Optional.empty();
     }
 
-    if (auth.getPrincipal() instanceof CasUserDetailsService.CasAuthenticatedUser principal) {
+    if (auth.getPrincipal() instanceof CasOppijaUserDetailsService.CasAuthenticatedUser principal) {
       Map<String, List<String>> attributes = principal.getAttributes();
       return attributes.getOrDefault("personOid", List.of()).stream().findFirst();
     }

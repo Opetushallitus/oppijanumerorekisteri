@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsService;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.security.CasOppijaUserDetailsService;
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +42,7 @@ public class UiControllerTest extends TiedotuspalveluApiTest {
 
     var response =
         mockMvc
-            .perform(get("/ui/tiedotteet"))
+            .perform(get("/omat-viestit/ui/tiedotteet"))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -59,10 +59,10 @@ public class UiControllerTest extends TiedotuspalveluApiTest {
     }
   }
 
-  private static CasUserDetailsService.CasAuthenticatedUser casPrincipal(
+  private static CasOppijaUserDetailsService.CasAuthenticatedUser casPrincipal(
       String username, Map<String, List<String>> attributes) throws Exception {
-    Constructor<CasUserDetailsService.CasAuthenticatedUser> constructor =
-        CasUserDetailsService.CasAuthenticatedUser.class.getDeclaredConstructor(
+    Constructor<CasOppijaUserDetailsService.CasAuthenticatedUser> constructor =
+        CasOppijaUserDetailsService.CasAuthenticatedUser.class.getDeclaredConstructor(
             String.class, Map.class);
     constructor.setAccessible(true);
     return constructor.newInstance(username, attributes);

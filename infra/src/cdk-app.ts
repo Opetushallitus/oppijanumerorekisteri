@@ -911,7 +911,8 @@ class TiedotuspalveluStack extends cdk.Stack {
       environment: {
         ENV: getEnvironment(),
         "server.port": appPort.toString(),
-        "tiedotuspalvelu.base-url": `https://${config.opintopolkuHost}`,
+        "tiedotuspalvelu.oppija-origin": `https://${config.opintopolkuHost}`,
+        "tiedotuspalvelu.virkailija-origin": `https://${config.virkailijaHost}`,
         "tiedotuspalvelu.api-base-url": `https://${domainForNginxForwarding}`,
         "tiedotuspalvelu.opintopolku-host": config.opintopolkuHost,
         "tiedotuspalvelu.oppijanumerorekisteri.base-url": `https://${getEnvironment()}.oppijanumerorekisteri.opintopolku.fi/oppijanumerorekisteri-service`,

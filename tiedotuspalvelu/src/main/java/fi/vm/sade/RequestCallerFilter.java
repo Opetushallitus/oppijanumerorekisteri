@@ -1,6 +1,6 @@
 package fi.vm.sade;
 
-import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas.CasUserDetailsService;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.security.CasOppijaUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -53,12 +53,12 @@ public class RequestCallerFilter extends GenericFilterBean {
     return Optional.empty();
   }
 
-  private Optional<CasUserDetailsService.CasAuthenticatedUser> getUserDetails(
+  private Optional<CasOppijaUserDetailsService.CasAuthenticatedUser> getUserDetails(
       ServletRequest servletRequest) {
     if (servletRequest instanceof HttpServletRequest request) {
       if (request.getUserPrincipal() instanceof CasAuthenticationToken token) {
         if (token.getUserDetails()
-            instanceof CasUserDetailsService.CasAuthenticatedUser casUserDetails) {
+            instanceof CasOppijaUserDetailsService.CasAuthenticatedUser casUserDetails) {
           return Optional.of(casUserDetails);
         }
       }

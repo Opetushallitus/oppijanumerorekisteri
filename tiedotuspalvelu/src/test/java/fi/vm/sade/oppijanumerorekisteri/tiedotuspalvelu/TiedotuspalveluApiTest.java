@@ -21,12 +21,12 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class TiedotuspalveluApiTest {
-  static final String OPH_ORGANISAATIO_OID = "1.2.246.562.10.00000000001";
-  static final String KIELITUTKINNOSTA_TIEDOTTAJA = "kielitutkinnosta-tiedottaja";
-  static final String KIELITUTKINNOSTA_TIEDOTTAJA_OID = "1.2.246.562.24.43006465835";
-  static final String TOINEN_TIEDOTTAJA = "toinen-tiedottaja";
-  static final String TOINEN_TIEDOTTAJA_OID = "1.2.246.562.24.21832615757";
-  static final String OIKEUDETON = "oikeudeton";
+  protected static final String OPH_ORGANISAATIO_OID = "1.2.246.562.10.00000000001";
+  protected static final String KIELITUTKINNOSTA_TIEDOTTAJA = "kielitutkinnosta-tiedottaja";
+  protected static final String KIELITUTKINNOSTA_TIEDOTTAJA_OID = "1.2.246.562.24.43006465835";
+  protected static final String TOINEN_TIEDOTTAJA = "toinen-tiedottaja";
+  protected static final String TOINEN_TIEDOTTAJA_OID = "1.2.246.562.24.21832615757";
+  protected static final String OIKEUDETON = "oikeudeton";
 
   @Autowired protected ObjectMapper objectMapper;
   @Autowired protected MockMvc mockMvc;
@@ -77,7 +77,7 @@ public class TiedotuspalveluApiTest {
         mockMvc
             .perform(
                 org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post(
-                        "/api/v1/tiedote/kielitutkintotodistus")
+                        "/omat-viestit/api/v1/tiedote/kielitutkintotodistus")
                     .with(validToken())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(content))
@@ -94,7 +94,7 @@ public class TiedotuspalveluApiTest {
         mockMvc
             .perform(
                 org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get(
-                        "/api/v1/tiedote/%s".formatted(id))
+                        "/omat-viestit/api/v1/tiedote/%s".formatted(id))
                     .with(validToken())
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())

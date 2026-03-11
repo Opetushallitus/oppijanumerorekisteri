@@ -3,6 +3,9 @@
   "enabled": true,
   "sslRequired": "none",
   "loginTheme": "dev-quicklogin",
+  "attributes": {
+    "quickLoginUsers": "[{\"label\":\"Nordea Demo (210281-9988)\",\"username\":\"suomi.fi,210281-9988\",\"password\":\"210281-9988\"},{\"label\":\"Leon Elias Germany (eIDAS)\",\"username\":\"suomi.fi,DE/FI/366193B0E55D436B494769486A9284D04E0A1DCFDBF8B9EDA63E5BF4C3CFE6F5\",\"password\":\"eidas\"}]"
+  },
   "requiredActions": [
     {
       "alias": "VERIFY_PROFILE",

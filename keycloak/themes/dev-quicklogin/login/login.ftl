@@ -35,16 +35,10 @@
                 </form>
             </#if>
 
+            <#if realm.attributes?? && realm.attributes.quickLoginUsers??>
             <div style="margin-top: 1.5rem; padding: 1rem; background: #f0f0f0; border-radius: 8px;">
                 <p style="margin: 0 0 0.5rem; font-weight: bold; font-size: 0.9rem; color: #555;">Quick login (dev only)</p>
-                <button type="button" onclick="quickLogin('suomi.fi,210281-9988', '210281-9988')"
-                        style="width: 100%; padding: 0.5rem; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; background: white; margin-bottom: 0.5rem;">
-                    Nordea Demo (210281-9988)
-                </button>
-                <button type="button" onclick="quickLogin('suomi.fi,DE/FI/366193B0E55D436B494769486A9284D04E0A1DCFDBF8B9EDA63E5BF4C3CFE6F5', 'eidas')"
-                        style="width: 100%; padding: 0.5rem; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; background: white;">
-                    Leon Elias Germany (eIDAS)
-                </button>
+                <div id="quick-login-buttons"></div>
             </div>
             <script>
                 function quickLogin(username, password) {
@@ -52,7 +46,18 @@
                     document.getElementById('password').value = password;
                     document.getElementById('kc-form-login').submit();
                 }
+                var users = ${realm.attributes.quickLoginUsers?no_esc};
+                var container = document.getElementById('quick-login-buttons');
+                users.forEach(function(u) {
+                    var btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.textContent = u.label;
+                    btn.style = 'width: 100%; padding: 0.5rem; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; background: white; margin-bottom: 0.5rem;';
+                    btn.onclick = function() { quickLogin(u.username, u.password); };
+                    container.appendChild(btn);
+                });
             </script>
+            </#if>
 
             </div>
         </div>

@@ -32,7 +32,7 @@ public class OpenApiConfiguration {
     var securitySchemeName = "oauth2-client-credentials";
     return new OpenAPI()
         .info(new Info().title("Tiedotuspalvelu").description("Tiedotuspalvelun API"))
-        .servers(List.of(new Server().url(properties.apiBaseUrl() + "/omat-viestit")))
+        .servers(List.of(new Server().url(properties.apiBaseUrl() + "/")))
         .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
         .components(
             new Components()

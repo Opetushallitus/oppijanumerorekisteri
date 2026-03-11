@@ -1,0 +1,129 @@
+{
+  "realm": "cas-virkailija",
+  "enabled": true,
+  "sslRequired": "none",
+  "loginTheme": "dev-quicklogin",
+  "attributes": {
+    "quickLoginUsers": "[{\"label\":\"Whiskers Meowington\",\"username\":\"whiskers\",\"password\":\"whiskers\"},{\"label\":\"Mittens Purrsworth\",\"username\":\"mittens\",\"password\":\"mittens\"}]"
+  },
+  "requiredActions": [
+    {
+      "alias": "VERIFY_PROFILE",
+      "name": "Verify Profile",
+      "providerId": "VERIFY_PROFILE",
+      "enabled": false,
+      "defaultAction": false
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "tiedotuspalvelu-virkailija",
+      "enabled": true,
+      "protocol": "cas",
+      "publicClient": true,
+      "fullScopeAllowed": true,
+      "rootUrl": "http://localhost:8086/tiedotuspalvelu",
+      "redirectUris": [
+        "http://localhost:8086/tiedotuspalvelu/*",
+        "http://localhost:8080/tiedotuspalvelu/*"
+      ],
+      "webOrigins": [
+        "*"
+      ],
+      "protocolMappers": [
+        {
+          "name": "oidHenkilo",
+          "protocol": "cas",
+          "protocolMapper": "cas-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "oidHenkilo",
+            "claim.name": "oidHenkilo"
+          }
+        },
+        {
+          "name": "kayttajaTyyppi",
+          "protocol": "cas",
+          "protocolMapper": "cas-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "kayttajaTyyppi",
+            "claim.name": "kayttajaTyyppi"
+          }
+        },
+        {
+          "name": "idpEntityId",
+          "protocol": "cas",
+          "protocolMapper": "cas-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "idpEntityId",
+            "claim.name": "idpEntityId"
+          }
+        },
+        {
+          "name": "roles",
+          "protocol": "cas",
+          "protocolMapper": "cas-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "roles",
+            "claim.name": "roles",
+            "multivalued": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "whiskers",
+      "enabled": true,
+      "firstName": "Whiskers",
+      "lastName": "Meowington",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "whiskers",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "oidHenkilo": [
+          "1.2.246.562.24.52606915412"
+        ],
+        "kayttajaTyyppi": [
+          "VIRKAILIJA"
+        ],
+        "idpEntityId": [
+          "usernamePassword"
+        ],
+        "roles": [
+          "ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD",
+          "ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD_1.2.246.562.10.00000000001"
+        ]
+      }
+    },
+    {
+      "username": "mittens",
+      "enabled": true,
+      "firstName": "Mittens",
+      "lastName": "Purrsworth",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "mittens",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "oidHenkilo": [
+          "1.2.246.562.24.38583027941"
+        ],
+        "kayttajaTyyppi": [
+          "VIRKAILIJA"
+        ],
+        "idpEntityId": [
+          "usernamePassword"
+        ],
+        "roles": []
+      }
+    }
+  ]
+}

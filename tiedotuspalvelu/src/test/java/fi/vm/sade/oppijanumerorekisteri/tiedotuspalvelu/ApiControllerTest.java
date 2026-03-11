@@ -23,7 +23,7 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
   public void createTiedoteRequiresAuthentication() throws Exception {
     mockMvc
         .perform(
-            post("/api/v1/tiedote/kielitutkintotodistus")
+            post("/omat-viestit/api/v1/tiedote/kielitutkintotodistus")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}"))
         .andExpect(status().isUnauthorized());
@@ -33,7 +33,7 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
   public void createTiedoteFailsWithoutRequiredRole() throws Exception {
     mockMvc
         .perform(
-            post("/api/v1/tiedote/kielitutkintotodistus")
+            post("/omat-viestit/api/v1/tiedote/kielitutkintotodistus")
                 .with(tokenFor(OIKEUDETON))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(tiedoteJson(UUID.randomUUID().toString())))
@@ -54,7 +54,9 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
     assertEquals(idempotencyKey, saved.getIdempotencyKey());
 
     mockMvc
-        .perform(get("/api/v1/tiedote/" + returnedId).with(tokenFor(KIELITUTKINNOSTA_TIEDOTTAJA)))
+        .perform(
+            get("/omat-viestit/api/v1/tiedote/" + returnedId)
+                .with(tokenFor(KIELITUTKINNOSTA_TIEDOTTAJA)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(returnedId.toString()))
         .andExpect(jsonPath("$.opiskeluoikeusOid").value(OPISKELUOIKEUS_OID))
@@ -124,14 +126,15 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
   public void getTiedoteReturns404ForUnknownId() throws Exception {
     mockMvc
         .perform(
-            get("/api/v1/tiedote/" + UUID.randomUUID()).with(tokenFor(KIELITUTKINNOSTA_TIEDOTTAJA)))
+            get("/omat-viestit/api/v1/tiedote/" + UUID.randomUUID())
+                .with(tokenFor(KIELITUTKINNOSTA_TIEDOTTAJA)))
         .andExpect(status().isNotFound());
   }
 
   @Test
   public void getTiedoteRequiresAuthentication() throws Exception {
     mockMvc
-        .perform(get("/api/v1/tiedote/" + UUID.randomUUID()))
+        .perform(get("/omat-viestit/api/v1/tiedote/" + UUID.randomUUID()))
         .andExpect(status().isUnauthorized());
   }
 
@@ -163,7 +166,7 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
   }
 
   private @NonNull MockHttpServletRequestBuilder createAuthorizedPostRequest(String content) {
-    return post("/api/v1/tiedote/kielitutkintotodistus")
+    return post("/omat-viestit/api/v1/tiedote/kielitutkintotodistus")
         .with(tokenFor(KIELITUTKINNOSTA_TIEDOTTAJA))
         .contentType(MediaType.APPLICATION_JSON)
         .content(content);

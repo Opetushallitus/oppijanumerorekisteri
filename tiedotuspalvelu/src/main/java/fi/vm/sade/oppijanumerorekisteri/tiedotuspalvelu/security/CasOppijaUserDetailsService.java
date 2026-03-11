@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.cas;
+package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.security;
 
 import java.io.Serial;
 import java.util.*;
@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.AuthenticationUserDetailsSe
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-public class CasUserDetailsService
+public class CasOppijaUserDetailsService
     implements AuthenticationUserDetailsService<CasAssertionAuthenticationToken> {
 
   public static final String ATTRIBUTE_KOKO_NIMI = "displayName";

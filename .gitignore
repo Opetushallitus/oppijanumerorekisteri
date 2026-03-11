@@ -1,9 +1,7 @@
 .idea
 .metals
 *.iml
-target/*
-oppijanumerorekisteri-service/target/*
-oppijanumerorekisteri-api/target/*
+target/
 scripts/certs
 
 # macOS
