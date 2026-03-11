@@ -13,7 +13,7 @@ export type Oauth2ClientCredential = {
     clientId: string;
     created: string;
     updated: string;
-    kasittelija: Kasittelija;
+    kasittelija?: Kasittelija;
 };
 
 export type Kasittelija = {

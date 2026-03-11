@@ -126,9 +126,13 @@ export const JarjestelmatunnusPerustiedot = () => {
                                     <div data-test-id="oauth2clientid">{o.clientId}</div>
                                     <div>{format(parseISO(o.created), 'd.M.yyyy H:mm')}</div>
                                     <div data-test-id="kasittelija">
-                                        <Link to={`/virkailija/${o.kasittelija.oid}`} className="oph-ds-link">
-                                            {o.kasittelija.kutsumanimi + ' ' + o.kasittelija.sukunimi}
-                                        </Link>
+                                        {o.kasittelija ? (
+                                            <Link to={`/virkailija/${o.kasittelija.oid}`} className="oph-ds-link">
+                                                {o.kasittelija.kutsumanimi + ' ' + o.kasittelija.sukunimi}
+                                            </Link>
+                                        ) : (
+                                            '-'
+                                        )}
                                     </div>
                                 </React.Fragment>
                             ))}
