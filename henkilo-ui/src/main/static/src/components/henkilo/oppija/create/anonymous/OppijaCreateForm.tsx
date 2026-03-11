@@ -270,7 +270,7 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
                         })
                     }
                     selected={state.henkilo.syntymaaika ? parseISO(state.henkilo.syntymaaika) : null}
-                    minDate={subYears(new Date(), 100)}
+                    minDate={subYears(new Date(), 120)}
                     maxDate={new Date()}
                     showYearDropdown
                     showMonthDropdown

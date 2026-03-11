@@ -41,7 +41,7 @@ const Syntymaaika = (props: OwnProps) => {
                         selected={
                             props.henkiloUpdate.syntymaaika ? parseISO(props.henkiloUpdate.syntymaaika) : undefined
                         }
-                        minDate={subYears(new Date(), 100)}
+                        minDate={subYears(new Date(), 120)}
                         maxDate={new Date()}
                         showYearDropdown
                         showMonthDropdown

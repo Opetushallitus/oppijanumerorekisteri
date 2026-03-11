@@ -178,7 +178,7 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                                 id="syntymaaika"
                                 onChange={setSyntymaaika}
                                 selected={syntymaaika}
-                                minDate={subYears(new Date(), 100)}
+                                minDate={subYears(new Date(), 120)}
                                 maxDate={new Date()}
                             />
                         </div>
