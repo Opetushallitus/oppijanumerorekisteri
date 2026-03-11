@@ -263,7 +263,7 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
                 <div />
                 <ReactDatePicker
                     className={`oph-input ${isSubmittedAndHasError('syntymaaika') ? 'oph-input-has-error' : ''}`}
-                    onChange={(date) =>
+                    onChange={(date: Date | null) =>
                         onHenkiloChange({
                             name: 'syntymaaika',
                             value: date ? format(date, 'yyyy-MM-dd') : null,

@@ -113,7 +113,7 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                         <span className="oph-h5">{L('HENKILO_LISAA_KAYTTOOIKEUDET_ALKAA')}</span>
                         <ReactDatePicker
                             className="oph-input"
-                            onChange={(date) => setAlkupvm(date ?? new Date())}
+                            onChange={(date: Date | null) => setAlkupvm(date ?? new Date())}
                             selected={alkupvm}
                             showYearDropdown
                             showMonthDropdown
@@ -128,7 +128,7 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                         <span className="oph-h5">{L('HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY')}</span>
                         <ReactDatePicker
                             className="oph-input"
-                            onChange={(date) => date && setLoppupvmInput(date)}
+                            onChange={(date: Date | null) => date && setLoppupvmInput(date)}
                             selected={loppupvm}
                             showYearDropdown
                             showMonthDropdown

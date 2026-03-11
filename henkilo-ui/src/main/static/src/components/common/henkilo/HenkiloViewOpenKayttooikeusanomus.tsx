@@ -311,7 +311,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 cell: ({ getValue }) => (
                     <DatePicker
                         className="oph-input"
-                        onChange={(value) =>
+                        onChange={(value: Date | null) =>
                             setDates({
                                 ...dates,
                                 [getValue().id]: {

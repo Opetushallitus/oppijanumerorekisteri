@@ -30,7 +30,7 @@ const Syntymaaika = (props: OwnProps) => {
                 ) : (
                     <ReactDatePicker
                         className="oph-input"
-                        onChange={(value) => {
+                        onChange={(value: Date | null) => {
                             props.updateDateFieldAction({
                                 target: {
                                     value: value ? format(value, 'yyyy-MM-dd') : undefined,

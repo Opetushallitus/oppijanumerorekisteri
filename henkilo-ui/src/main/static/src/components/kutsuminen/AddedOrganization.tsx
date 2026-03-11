@@ -150,7 +150,7 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
                 <div>
                     <ReactDatePicker
                         className="oph-input"
-                        onChange={(value) =>
+                        onChange={(value: Date | null) =>
                             value ? selectVoimassaLoppuPvm(format(value, 'yyyy-MM-dd')) : selectVoimassaLoppuPvm(null)
                         }
                         selected={addedOrg.voimassaLoppuPvm ? parseISO(addedOrg.voimassaLoppuPvm) : null}
