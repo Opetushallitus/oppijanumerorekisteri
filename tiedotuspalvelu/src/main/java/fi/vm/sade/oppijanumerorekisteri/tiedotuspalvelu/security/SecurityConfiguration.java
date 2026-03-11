@@ -34,7 +34,7 @@ public class SecurityConfiguration {
   @Order(1)
   SecurityFilterChain publicSecurityFilterChain(HttpSecurity http) throws Exception {
     http.securityMatcher(
-            "/actuator/health",
+            "/omat-viestit/actuator/health",
             "/omat-viestit/ui/localisations",
             "/omat-viestit/swagger-ui/**",
             "/omat-viestit/v3/api-docs/**")

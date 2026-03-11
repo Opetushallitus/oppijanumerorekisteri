@@ -13,7 +13,7 @@ public class CasOppijaConfigurationTest extends TiedotuspalveluApiTest {
 
   @Test
   public void actuatorHealthIsPublic() throws Exception {
-    mockMvc.perform(get("/actuator/health")).andExpect(status().isOk());
+    mockMvc.perform(get("/omat-viestit/actuator/health")).andExpect(status().isOk());
   }
 
   @Test
