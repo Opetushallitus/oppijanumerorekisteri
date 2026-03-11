@@ -13,7 +13,6 @@ public class PathRoutingCookieSerializer implements CookieSerializer {
   private final DefaultCookieSerializer oppija;
   private final DefaultCookieSerializer virkailija;
   private final DefaultCookieSerializer fallback;
-  private final DefaultCookieSerializer fakes;
 
   public PathRoutingCookieSerializer() {
     this.oppija = new DefaultCookieSerializer();
@@ -23,10 +22,6 @@ public class PathRoutingCookieSerializer implements CookieSerializer {
     this.virkailija = new DefaultCookieSerializer();
     this.virkailija.setCookieName("VIRKAILIJA_SESSION");
     this.virkailija.setCookiePath("/tiedotuspalvelu");
-
-    this.fakes = new DefaultCookieSerializer();
-    this.fakes.setCookieName("FAKES_SESSION");
-    this.fakes.setCookiePath("/");
 
     this.fallback = new DefaultCookieSerializer();
     this.fallback.setCookieName("UNKNOWN_SESSION");
@@ -50,9 +45,6 @@ public class PathRoutingCookieSerializer implements CookieSerializer {
     }
     if (uri.startsWith("/tiedotuspalvelu")) {
       return virkailija;
-    }
-    if (uri.startsWith("/kayttooikeus-service")) {
-      return fakes;
     }
     log.warn("Unexpected session cookie access from path: {}", uri);
     return fallback;
