@@ -15,6 +15,8 @@ const icon = (
 export const OphDsDatepicker = (props: DatePickerProps) => {
     return (
         <ReactDatepicker
+            isClearable
+            clearButtonClassName="oph-ds-datepicker-clear"
             showIcon
             icon={icon}
             className="oph-ds-input"
@@ -23,6 +25,7 @@ export const OphDsDatepicker = (props: DatePickerProps) => {
             showMonthDropdown
             dropdownMode="select"
             showWeekNumbers
+            placeholderText="pp.kk.vvvv"
             {...props}
         />
     );

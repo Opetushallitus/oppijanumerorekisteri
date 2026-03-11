@@ -10,7 +10,7 @@ export type HenkiloDuplicate = {
     sukunimi?: string;
     sukupuoli?: '1' | '2';
     hetu?: string;
-    syntymaaika?: string;
+    syntymaaika?: string | null;
     passivoitu?: boolean;
     email?: string | null;
     emails?: string[];

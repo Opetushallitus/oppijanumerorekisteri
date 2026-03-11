@@ -33,7 +33,7 @@ export const OppijaCreateAnonymousContainer = ({ goBack }: OwnProps) => {
                 etunimet: oppija.etunimet,
                 kutsumanimi: oppija.kutsumanimi,
                 sukunimi: oppija.sukunimi,
-                syntymaaika: oppija.syntymaaika,
+                syntymaaika: oppija.syntymaaika ?? undefined,
             }).unwrap();
             if (duplikaatit.length > 0) {
                 setOppija(oppija);

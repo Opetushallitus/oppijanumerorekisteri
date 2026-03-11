@@ -898,3 +898,15 @@
     border-radius: 2px;
     padding: 6px;
 }
+
+.oph-ds-datepicker-clear {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIHZpZXdCb3g9IjAgMCAxNCAxNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE0IDEuNDFMMTIuNTkgMEw3IDUuNTlMMS40MSAwTDAgMS40MUw1LjU5IDdMMCAxMi41OUwxLjQxIDE0TDcgOC40MUwxMi41OSAxNEwxNCAxMi41OUw4LjQxIDdMMTQgMS40MVoiIGZpbGw9IiMxRDFEMUQiLz4KPC9zdmc+Cg==');
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 20px;
+    margin-right: 2.5rem;
+}
+
+.react-datepicker__close-icon::after {
+    display: none;
+}

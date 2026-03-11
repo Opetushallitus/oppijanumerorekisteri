@@ -84,7 +84,7 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
             sukunimi,
             kutsumanimi,
             hetu,
-            syntymaaika: syntymaaika ? format(syntymaaika, 'yyyy-MM-dd') : undefined,
+            syntymaaika: syntymaaika ? format(syntymaaika, 'yyyy-MM-dd') : null,
             kansalaisuus: kansalaisuus.map((k) => ({ kansalaisuusKoodi: k.value })),
             aidinkieli: kieliOptions
                 .filter((k) => k.value === aidinkieli?.value)

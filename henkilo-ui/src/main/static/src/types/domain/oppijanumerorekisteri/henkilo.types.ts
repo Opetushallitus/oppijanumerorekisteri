@@ -19,7 +19,7 @@ export type Henkilo = {
     kielisyys: Kielisyys[];
     kansalaisuus: Kansalaisuus[];
     kasittelijaOid: string;
-    syntymaaika: string;
+    syntymaaika: string | null;
     sukupuoli: '1' | '2';
     oppijanumero: string;
     turvakielto: boolean;
@@ -52,7 +52,7 @@ export type HenkiloCreate = {
     sukunimi?: string;
     aidinkieli?: Kielisyys;
     kansalaisuus?: Kansalaisuus[];
-    syntymaaika?: string;
+    syntymaaika?: string | null;
     sukupuoli?: '1' | '2';
     passinumerot: string[] | null;
     yhteystiedotRyhma: YhteystietoRyhma[] | null;
