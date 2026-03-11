@@ -1,5 +1,4 @@
 import React, { useId, useMemo, useState } from 'react';
-import DatePicker from 'react-datepicker';
 import { Link } from 'react-router';
 import Select, { MultiValue, SingleValue } from 'react-select';
 import { format, parseISO, subYears } from 'date-fns';
@@ -44,6 +43,7 @@ import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types'
 import { SelectOption, selectStyles } from '../../utilities/select';
 
 import styles from './OppijaPerustiedot.module.css';
+import { OphDsDatepicker } from '../design-system/OphDsDatePicker';
 
 const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; closeForm: () => void }) => {
     const { L, locale } = useLocalisations();
@@ -174,18 +174,12 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                             <label className="oph-ds-label" htmlFor="syntymaaika">
                                 {L('HENKILO_SYNTYMAAIKA')}
                             </label>
-                            <DatePicker
+                            <OphDsDatepicker
                                 id="syntymaaika"
-                                className="oph-ds-input"
                                 onChange={setSyntymaaika}
                                 selected={syntymaaika}
                                 minDate={subYears(new Date(), 100)}
                                 maxDate={new Date()}
-                                showYearDropdown
-                                showMonthDropdown
-                                dropdownMode="select"
-                                showWeekNumbers
-                                dateFormat="d.M.yyyy"
                             />
                         </div>
                         <div style={{ width: '300px' }}>
