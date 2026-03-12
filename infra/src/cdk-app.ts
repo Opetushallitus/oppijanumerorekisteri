@@ -912,7 +912,7 @@ class TiedotuspalveluStack extends cdk.Stack {
         ENV: getEnvironment(),
         "server.port": appPort.toString(),
         "tiedotuspalvelu.oppija-origin": `https://${config.opintopolkuHost}`,
-        "tiedotuspalvelu.virkailija-origin": `https://${config.virkailijaHost}`,
+        "tiedotuspalvelu.virkailija-origin": `https://${config.tiedotuspalveluDomain}`,
         "tiedotuspalvelu.api-base-url": `https://${domainForNginxForwarding}`,
         "tiedotuspalvelu.opintopolku-host": config.opintopolkuHost,
         "tiedotuspalvelu.oppijanumerorekisteri.base-url": `https://${getEnvironment()}.oppijanumerorekisteri.opintopolku.fi/oppijanumerorekisteri-service`,
@@ -1021,6 +1021,13 @@ class TiedotuspalveluStack extends cdk.Stack {
       },
     );
 
+    new route53.ARecord(this, "ARecord", {
+      zone: props.hostedZone,
+      recordName: config.tiedotuspalveluDomain,
+      target: route53.RecordTarget.fromAlias(
+        new route53_targets.LoadBalancerTarget(alb),
+      ),
+    });
     new route53.ARecord(this, "NginxARecord", {
       zone: props.hostedZone,
       recordName: domainForNginxForwarding,
@@ -1034,6 +1041,7 @@ class TiedotuspalveluStack extends cdk.Stack {
       "AlbNginxCertificate",
       {
         domainName: domainForNginxForwarding,
+        subjectAlternativeNames: [config.tiedotuspalveluDomain],
         validation: certificatemanager.CertificateValidation.fromDns(
           props.hostedZone,
         ),
