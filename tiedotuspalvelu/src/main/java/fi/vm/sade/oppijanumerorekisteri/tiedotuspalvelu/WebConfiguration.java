@@ -17,9 +17,9 @@ public class WebConfiguration implements WebMvcConfigurer {
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
     registry
         .addResourceHandler("/omat-viestit/**")
-        .addResourceLocations("classpath:static/web-build/omat-viestit/");
+        .addResourceLocations("classpath:static/omat-viestit");
     registry
         .addResourceHandler("/tiedotuspalvelu/**")
-        .addResourceLocations("classpath:static/web-build/tiedotuspalvelu/");
+        .addResourceLocations("classpath:static/tiedotuspalvelu");
   }
 }

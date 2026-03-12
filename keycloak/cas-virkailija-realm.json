@@ -22,9 +22,9 @@
       "protocol": "cas",
       "publicClient": true,
       "fullScopeAllowed": true,
-      "rootUrl": "http://localhost:8086/tiedotuspalvelu",
+      "rootUrl": "http://localhost:8087/tiedotuspalvelu",
       "redirectUris": [
-        "http://localhost:8086/tiedotuspalvelu/*",
+        "http://localhost:8087/tiedotuspalvelu/*",
         "http://localhost:8080/tiedotuspalvelu/*"
       ],
       "webOrigins": [

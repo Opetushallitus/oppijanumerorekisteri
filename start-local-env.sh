@@ -39,6 +39,7 @@ function main {
   tmux send-keys "$repo/scripts/run-tiedotuspalvelu.sh" C-m
 
   open "http://localhost:8086/omat-viestit/"
+  open "http://localhost:8087/tiedotuspalvelu/"
 
   tmux attach-session -t "$session"
 }
