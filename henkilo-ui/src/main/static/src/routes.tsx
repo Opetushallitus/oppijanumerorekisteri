@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Route, Routes } from 'react-router';
 import App from './containers/App';
-import { Kayttooikeusraportti } from './components/reports/kayttooikeus/Kayttooikeusraportti';
+import { Kayttooikeusraportti } from './components/kayttooikeusraportti/Kayttooikeusraportti';
 import { KutsututPage } from './components/kutsutut/KutsututPage';
 import KutsuminenPage from './components/kutsuminen/KutsuminenPage';
 import AnomusPage from './components/anomus/AnomusPage';

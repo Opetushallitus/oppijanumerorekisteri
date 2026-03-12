@@ -1,8 +1,8 @@
 import { unparse } from 'papaparse';
 import { format, parseISO } from 'date-fns';
 
-import { LocalisationFn } from '../../../types/localisation.type';
-import { KayttooikeusraporttiRow } from '../../../api/kayttooikeus';
+import { LocalisationFn } from '../../types/localisation.type';
+import { KayttooikeusraporttiRow } from '../../api/kayttooikeus';
 
 const BOM = '\ufeff';
 const DELIMITER = ';';

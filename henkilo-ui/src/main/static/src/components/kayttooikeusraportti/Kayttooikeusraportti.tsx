@@ -5,15 +5,15 @@ import { Link } from 'react-router';
 import { format, parseISO } from 'date-fns';
 
 import exportReport from './exportUtil';
-import { useLocalisations } from '../../../selectors';
-import { useGetAccessRightReportQuery } from '../../../api/kayttooikeus';
-import { useTitle } from '../../../useTitle';
-import { useNavigation } from '../../../useNavigation';
-import { mainNavigation } from '../../navigation/navigationconfigurations';
-import { OphDsPage } from '../../design-system/OphDsPage';
-import { SelectOption, selectStyles } from '../../../utilities/select';
-import { OphDsOrganisaatioSelect } from '../../design-system/OphDsOrganisaatioSelect';
-import { OphDsTable, PageProps, SortOrder } from '../../design-system/OphDsTable';
+import { useLocalisations } from '../../selectors';
+import { useGetAccessRightReportQuery } from '../../api/kayttooikeus';
+import { useTitle } from '../../useTitle';
+import { useNavigation } from '../../useNavigation';
+import { mainNavigation } from '../navigation/navigationconfigurations';
+import { OphDsPage } from '../design-system/OphDsPage';
+import { SelectOption, selectStyles } from '../../utilities/select';
+import { OphDsOrganisaatioSelect } from '../design-system/OphDsOrganisaatioSelect';
+import { OphDsTable, PageProps, SortOrder } from '../design-system/OphDsTable';
 
 const formatDate = (d: string) => format(parseISO(d), 'd.M.yyyy');
 
