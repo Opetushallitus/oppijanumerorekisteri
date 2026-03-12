@@ -13,7 +13,7 @@ import { mainNavigation } from '../../navigation/navigationconfigurations';
 import { OphDsPage } from '../../design-system/OphDsPage';
 import { SelectOption, selectStyles } from '../../../utilities/select';
 import { OphDsOrganisaatioSelect } from '../../design-system/OphDsOrganisaatioSelect';
-import { OphDsTable, SortOrder } from '../../design-system/OphDsTable';
+import { OphDsTable, PageProps, SortOrder } from '../../design-system/OphDsTable';
 
 const formatDate = (d: string) => format(parseISO(d), 'd.M.yyyy');
 
@@ -21,6 +21,8 @@ export const Kayttooikeusraportti = () => {
     const [oid, setOid] = useState<string | undefined>(undefined);
     const [filter, setFilter] = useState<string | undefined>(undefined);
     const [sortOrder, setSortOrder] = useState<SortOrder>();
+    const [page, setPage] = useState<number>(0);
+    const [paging, setPaging] = useState<PageProps>();
     const [ryhmaOptions, setRyhmaOptions] = useState<SelectOption[]>([]);
     const ref = useRef<SelectInstance>(null);
     const { L } = useLocalisations();
@@ -85,8 +87,23 @@ export const Kayttooikeusraportti = () => {
                     break;
             }
         }
-        return filteredData;
-    }, [data, sortOrder, filter]);
+        if (filteredData && filteredData.length > 1000) {
+            setPaging({
+                page: {
+                    number: page,
+                    size: 100,
+                    totalElements: filteredData.length,
+                    totalPages: Math.ceil(filteredData.length / 100),
+                },
+                setPage,
+            });
+            return filteredData.slice(page * 100, (page + 1) * 100);
+        } else {
+            setPage(0);
+            setPaging(undefined);
+            return filteredData;
+        }
+    }, [data, sortOrder, filter, page]);
     const dataExport = () => exportReport(report ?? [], L);
 
     return (
@@ -131,6 +148,7 @@ export const Kayttooikeusraportti = () => {
                         L('HENKILO_KAYTTOOIKEUS_ALKUPVM'),
                         L('HENKILO_KAYTTOOIKEUS_LOPPUPVM'),
                     ]}
+                    page={paging}
                     sortOrder={sortOrder}
                     setSortOrder={setSortOrder}
                     isFetching={isFetching}

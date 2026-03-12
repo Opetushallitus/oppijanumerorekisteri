@@ -14,7 +14,7 @@ type TableProps = {
     setSortOrder?: (sortOrder?: SortOrder) => void;
 };
 
-type PageProps = {
+export type PageProps = {
     page: SpringPageModel;
     setPage: (p: number) => void;
 };
