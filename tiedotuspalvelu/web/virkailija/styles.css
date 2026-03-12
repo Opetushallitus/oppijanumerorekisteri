@@ -25,6 +25,22 @@ body {
   margin: 0;
 }
 
+.tp__csv-download {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #2563eb;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.tp__csv-download:hover {
+  background-color: #1d4ed8;
+}
+
 .tp__user {
   font-size: 14px;
   color: #6b7280;

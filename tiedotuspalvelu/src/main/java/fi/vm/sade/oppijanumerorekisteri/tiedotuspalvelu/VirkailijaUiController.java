@@ -4,11 +4,13 @@ import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.security.CasVirkailijaUs
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViestiRepository;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViestitEventRepository;
 import io.swagger.v3.oas.annotations.Hidden;
+import java.io.ByteArrayOutputStream;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import lombok.RequiredArgsConstructor;
+import org.postgresql.PGConnection;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -53,6 +55,42 @@ public class VirkailijaUiController {
                 rs.getString("tiedotetype_id"),
                 rs.getString("tiedotestate_id"),
                 rs.getObject("created", OffsetDateTime.class).toString()));
+  }
+
+  @GetMapping("/tiedotteet/csv")
+  @PreAuthorize("hasRole('APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD')")
+  public ResponseEntity<byte[]> tiedotteetCsv() {
+    var csvBytes =
+        jdbcTemplate.execute(
+            (java.sql.Connection conn) -> {
+              try {
+                var pgConn = conn.unwrap(PGConnection.class);
+                var out = new ByteArrayOutputStream();
+                pgConn
+                    .getCopyAPI()
+                    .copyOut(
+                        """
+                        COPY (
+                          SELECT t.id, t.oppijanumero, t.tiedotetype_id, t.tiedotestate_id,
+                                 t.opiskeluoikeus_oid, t.todistus_url, t.created,
+                                 v.message_type, v.name, v.street_address, v.zip_code,
+                                 v.city, v.country_code, v.message_id, v.processed_at
+                          FROM tiedote t
+                          LEFT JOIN suomifi_viesti v ON v.tiedote_id = t.id
+                          ORDER BY t.created DESC
+                        ) TO STDOUT WITH (FORMAT CSV, HEADER, DELIMITER ';', NULL '')
+                        """,
+                        out);
+                return out.toByteArray();
+              } catch (java.io.IOException e) {
+                throw new java.io.UncheckedIOException(e);
+              }
+            });
+
+    return ResponseEntity.ok()
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"tiedotteet.csv\"")
+        .contentType(MediaType.parseMediaType("text/csv"))
+        .body(csvBytes);
   }
 
   @GetMapping("/tiedotteet/{id}")

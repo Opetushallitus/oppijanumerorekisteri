@@ -55,10 +55,7 @@ export function App() {
   const content = meQuery.isSuccess ? <RealApp /> : <LoginScreen />;
   return (
     <div className="tp">
-      <div className="tp__container">
-        <h1 className="tp__title">Tiedotuspalvelu — Raportointi</h1>
-        {content}
-      </div>
+      <div className="tp__container">{content}</div>
     </div>
   );
 }
@@ -81,11 +78,7 @@ function LoginScreen() {
   );
 }
 function Title() {
-  return (
-    <h1 className="tp__title">
-      Tiedotuspalvelun rapsanäkymä; tuoreimmat tiedotteet
-    </h1>
-  );
+  return <h1 className="tp__title">Tiedotuspalvelun rapsanäkymä</h1>;
 }
 function RealApp() {
   const meQuery = useGetMeQuery();
@@ -95,6 +88,12 @@ function RealApp() {
     <>
       <header className="tp__header">
         <Title />
+        <a
+          href="/tiedotuspalvelu/ui/tiedotteet/csv"
+          className="tp__csv-download"
+        >
+          Lataa CSV
+        </a>
         {meQuery.isSuccess && (
           <>
             <span className="tp__user">{meQuery.data.nimi}</span>

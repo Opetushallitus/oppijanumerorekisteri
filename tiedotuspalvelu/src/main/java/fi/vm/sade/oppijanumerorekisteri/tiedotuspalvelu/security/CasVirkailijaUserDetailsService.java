@@ -4,6 +4,7 @@ import java.io.Serial;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.Builder;
 import org.springframework.security.cas.authentication.CasAssertionAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -46,6 +47,7 @@ public class CasVirkailijaUserDetailsService
     return new CasAuthenticatedUser(username, allAttributes, roleAuthorities);
   }
 
+  @Builder
   public static final class CasAuthenticatedUser implements UserDetails {
     @Serial private static final long serialVersionUID = 1L;
 
