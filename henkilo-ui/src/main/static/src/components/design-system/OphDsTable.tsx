@@ -10,11 +10,18 @@ type TableProps = {
     page?: PageProps;
     rows: ReactNode[][];
     rowDescriptionPartitive?: string;
+    sortOrder?: SortOrder;
+    setSortOrder?: (sortOrder?: SortOrder) => void;
 };
 
 type PageProps = {
     page: SpringPageModel;
     setPage: (p: number) => void;
+};
+
+export type SortOrder = {
+    sortBy: string;
+    asc: boolean;
 };
 
 const getRenderedPageRange = (page?: SpringPageModel) => {
@@ -84,11 +91,35 @@ const Pagination = ({ page, setPage }: PageProps) => {
     );
 };
 
-export const OphDsTable = ({ headers, isFetching, page, rows, rowDescriptionPartitive }: TableProps) => {
+export const OphDsTable = ({
+    headers,
+    isFetching,
+    page,
+    rows,
+    rowDescriptionPartitive,
+    sortOrder,
+    setSortOrder,
+}: TableProps) => {
     const { L } = useLocalisations();
     const totalElements = page ? page?.page.totalElements : rows.length;
+
+    const sortBy = (header: string) => {
+        if (!setSortOrder) {
+            return;
+        }
+        if (header !== sortOrder?.sortBy) {
+            setSortOrder({ sortBy: header, asc: true });
+        } else if (sortOrder.asc === undefined) {
+            setSortOrder({ sortBy: header, asc: true });
+        } else if (sortOrder.asc === true) {
+            setSortOrder({ sortBy: header, asc: false });
+        } else {
+            setSortOrder(undefined);
+        }
+    };
+
     return (
-        <div>
+        <div style={{ width: '100%', overflowY: 'scroll' }}>
             {rowDescriptionPartitive && (
                 <h2
                     className="oph-ds-table-results"
@@ -103,7 +134,18 @@ export const OphDsTable = ({ headers, isFetching, page, rows, rowDescriptionPart
                 <thead>
                     <tr>
                         {headers.map((h, i) => (
-                            <th key={`${h}-${i}`}>{h}</th>
+                            <th key={`${h}-${i}`}>
+                                {setSortOrder ? (
+                                    <button className="oph-ds-table-header-button" onClick={() => sortBy(h)}>
+                                        <span>{h}</span>
+                                        <span
+                                            className={`oph-ds-table-header-button-${sortOrder?.sortBy === h && sortOrder.asc ? 'asc' : sortOrder?.sortBy === h && sortOrder.asc === false ? 'desc' : 'unsorted'}`}
+                                        ></span>
+                                    </button>
+                                ) : (
+                                    h
+                                )}
+                            </th>
                         ))}
                     </tr>
                 </thead>
