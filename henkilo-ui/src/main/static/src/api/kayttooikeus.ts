@@ -84,7 +84,7 @@ export type PostHenkilohakuRequest = {
 
 export type KayttooikeusraporttiRow = {
     id: number;
-    personName: string;
+    personName: string | null;
     personOid: string;
     organisationName: string;
     organisationOid: string;
