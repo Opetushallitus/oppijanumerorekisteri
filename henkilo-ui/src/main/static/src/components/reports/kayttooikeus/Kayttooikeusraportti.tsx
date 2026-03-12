@@ -149,6 +149,7 @@ export const Kayttooikeusraportti = () => {
                             {formatDate(d.endDate)}
                         </div>,
                     ])}
+                    rowDescriptionPartitive={L('VIRKAILIJAA')}
                 />
             )}
         </OphDsPage>
