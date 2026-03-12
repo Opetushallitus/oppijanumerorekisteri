@@ -29,6 +29,9 @@ function main {
   tmux select-pane -t 1
   tmux splitw -v
   tmux send-keys "$repo/scripts/run-tiedotuspalvelu-ui.sh" C-m
+  tmux select-pane -t 1
+  tmux splitw -v
+  tmux send-keys "$repo/scripts/run-omat-viestit-ui.sh" C-m
 
   tmux select-pane -t 1
   tmux splitw -v

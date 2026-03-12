@@ -10,7 +10,7 @@ function main {
   local -r jvm_args=(
     "--add-opens=java.base/java.lang=ALL-UNNAMED"
     "-Dnet.bytebuddy.experimental=true"
-    "-Dspring.profiles.active=local"
+    "-Dspring.profiles.active=${1:-local}"
   )
 
   ../mvnw clean install -DskipTests

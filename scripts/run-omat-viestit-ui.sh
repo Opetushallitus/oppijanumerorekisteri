@@ -6,7 +6,7 @@ function main {
   cd "${repo}/tiedotuspalvelu/web"
   init_nodejs
   npm_ci_if_needed
-  npx webpack serve --config-name tiedotuspalvelu
+  npx webpack serve --config-name omat-viestit
 }
 
 main "$@"

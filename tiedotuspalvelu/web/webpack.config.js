@@ -30,6 +30,7 @@ module.exports = function () {
 
   return [
     {
+      name: "omat-viestit",
       mode: "development",
       entry: {
         oppija: path.resolve(__dirname, "oppija", "index.tsx"),
@@ -37,7 +38,7 @@ module.exports = function () {
       devServer: {
         port: 8086,
         devMiddleware: {
-          publicPath: "/omat-viestit",
+          publicPath: "/",
         },
         proxy: [
           {
@@ -63,10 +64,12 @@ module.exports = function () {
           filename: "omat-viestit/index.html",
           template: path.resolve(__dirname, "oppija", "index.html"),
           chunks: ["oppija"],
+          publicPath: "/",
         }),
       ],
     },
     {
+      name: "tiedotuspalvelu",
       mode: "development",
       entry: {
         virkailija: path.resolve(__dirname, "virkailija", "index.tsx"),
@@ -74,7 +77,7 @@ module.exports = function () {
       devServer: {
         port: 8087,
         devMiddleware: {
-          publicPath: "/tiedotuspalvelu",
+          publicPath: "/",
         },
         proxy: [
           {
@@ -86,6 +89,7 @@ module.exports = function () {
       output: {
         filename: "tiedotuspalvelu/[name].js",
         path: path.resolve(__dirname, "../src/main/resources/static"),
+        publicPath: "/",
       },
       resolve: commonResolve,
       module: { rules: commonRules },
