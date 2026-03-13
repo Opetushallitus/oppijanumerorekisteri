@@ -2,103 +2,89 @@ import React, { useId, useMemo, useState } from 'react';
 
 import { useLocalisations } from '../../../selectors';
 import ConfirmButton from '../button/ConfirmButton';
-import Button from '../button/Button';
 import {
     useDeleteHenkiloOrganisationMutation,
     useGetHenkiloOrganisaatiotQuery,
     useGetOrganisationsQuery,
 } from '../../../api/kayttooikeus';
-import Loader from '../icons/Loader';
-
-import './HenkiloViewOrganisationContent.css';
 import { OphDsChechbox } from '../../design-system/OphDsCheckbox';
 import { getLocalization } from '../../../utilities/localisation.util';
+import { OphDsTable } from '../../design-system/OphDsTable';
 
 type OrganisaatioFlat = {
     name?: string;
     typesFlat: string;
     passive: boolean;
-    id?: string;
+    id: string;
 };
 
-export const HenkiloViewOrganisationContent = (props: { henkiloOid: string }) => {
+export const HenkiloViewOrganisationContent = ({ henkiloOid }: { henkiloOid: string }) => {
     const { L, locale } = useLocalisations();
     const [showPassive, setShowPassive] = useState(false);
-    const {
-        data: apiOrganisations,
-        isSuccess: isApiOrgsSuccess,
-        isLoading: isApiOrgsLoading,
-    } = useGetOrganisationsQuery();
-    const { data: henkiloOrgs, isLoading, isSuccess } = useGetHenkiloOrganisaatiotQuery(props.henkiloOid);
+    const { data: apiOrganisations, isLoading: isApiOrgsLoading } = useGetOrganisationsQuery();
+    const { data: henkiloOrgs, isLoading } = useGetHenkiloOrganisaatiotQuery(henkiloOid);
     const [deleteHenkiloOrganisation] = useDeleteHenkiloOrganisationMutation();
 
-    function passivoiHenkiloOrganisation(organisationOid?: string) {
+    function passivoiHenkiloOrganisation(organisationOid: string) {
         if (!organisationOid) {
             return;
         }
-        deleteHenkiloOrganisation({ henkiloOid: props.henkiloOid, organisationOid });
+        deleteHenkiloOrganisation({ henkiloOid, organisationOid });
     }
 
     const flatOrganisations: OrganisaatioFlat[] = useMemo(() => {
-        return isSuccess && isApiOrgsSuccess && henkiloOrgs
-            ? henkiloOrgs?.map((org) => {
-                  const organisation = apiOrganisations?.find((o) => o.oid === org.organisaatioOid);
-                  const typesFlat = organisation?.tyypit?.length ? '(' + organisation?.tyypit?.join(', ') + ')' : '';
-                  return {
-                      name: getLocalization(organisation?.nimi, locale),
-                      typesFlat: typesFlat,
-                      passive: org.passivoitu,
-                      id: organisation?.oid,
-                  };
-              })
+        return henkiloOrgs && apiOrganisations
+            ? henkiloOrgs
+                  .map((org) => {
+                      const organisation = apiOrganisations?.find((o) => o.oid === org.organisaatioOid);
+                      return {
+                          name: getLocalization(organisation?.nimi, locale),
+                          typesFlat: organisation?.tyypit?.length ? '(' + organisation?.tyypit?.join(', ') + ')' : '',
+                          passive: org.passivoitu,
+                          id: org.organisaatioOid,
+                      };
+                  })
+                  .filter((o) => showPassive || !o.passive)
             : [];
-    }, [isApiOrgsSuccess, isSuccess, apiOrganisations, henkiloOrgs]);
+    }, [apiOrganisations, henkiloOrgs, showPassive]);
 
     const sectionLabelId = useId();
 
     return (
         <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
             <h2 id={sectionLabelId}>{L('HENKILO_ORGANISAATIOT_OTSIKKO')}</h2>
-            <OphDsChechbox
-                id="showPassive"
-                label={L('HENKILO_NAYTA_PASSIIVISET_TEKSTI')}
-                checked={showPassive}
-                onChange={() => setShowPassive(!showPassive)}
+            <div>
+                <OphDsChechbox
+                    id="showPassive"
+                    label={L('HENKILO_NAYTA_PASSIIVISET_TEKSTI')}
+                    checked={showPassive}
+                    onChange={() => setShowPassive(!showPassive)}
+                />
+            </div>
+            <OphDsTable
+                headers={[L('HENKILOHAKU_ORGANISAATIO'), L('HENKILO_ORGTUNNISTE'), '']}
+                rows={flatOrganisations.map((o, idx) => [
+                    <span key={`oname-${idx}`} style={{ fontWeight: showPassive && !o.passive ? 600 : 400 }}>
+                        {o.name} {o.typesFlat}
+                    </span>,
+                    <span key={`ooid-${idx}`} style={{ fontWeight: showPassive && !o.passive ? 600 : 400 }}>
+                        {o.id}
+                    </span>,
+                    <span key={`oremove-${idx}`}>
+                        {!o.passive ? (
+                            <ConfirmButton
+                                className="oph-ds-button oph-ds-button-bordered"
+                                action={() => passivoiHenkiloOrganisation(o.id)}
+                                confirmLabel={L('HENKILO_ORG_PASSIVOI_CONFIRM')}
+                                normalLabel={L('HENKILO_ORG_PASSIVOI')}
+                            />
+                        ) : (
+                            <span>{L('HENKILO_ORG_PASSIVOITU')}</span>
+                        )}
+                    </span>,
+                ])}
+                isFetching={isLoading || isApiOrgsLoading}
             />
-            {isLoading || isApiOrgsLoading ? (
-                <Loader />
-            ) : (
-                <div className="organisationContentWrapper">
-                    {flatOrganisations.map((values, idx) =>
-                        !values.passive || showPassive ? (
-                            <div key={idx}>
-                                <div>
-                                    <span className="oph-bold">
-                                        {values.name} {values.typesFlat}
-                                    </span>
-                                </div>
-                                <div className="labelValue">
-                                    <span className="oph-bold">{L('HENKILO_ORGTUNNISTE')}:</span>
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <span>{values.id}</span>
-                                </div>
-                                <div className="labelValue">
-                                    {!values.passive ? (
-                                        <ConfirmButton
-                                            key="passivoiOrg"
-                                            action={() => passivoiHenkiloOrganisation(values.id)}
-                                            confirmLabel={L('HENKILO_ORG_PASSIVOI_CONFIRM')}
-                                            normalLabel={L('HENKILO_ORG_PASSIVOI')}
-                                        />
-                                    ) : (
-                                        <Button disabled>{L('HENKILO_ORG_PASSIVOITU')}</Button>
-                                    )}
-                                </div>
-                            </div>
-                        ) : null
-                    )}
-                </div>
-            )}
         </section>
     );
 };
