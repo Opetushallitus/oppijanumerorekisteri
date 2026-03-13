@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
-import Button from './Button';
+
 import { ValidationMessage } from '../../../types/validation.type';
+import { OphDsBanner } from '../../design-system/OphDsBanner';
 
 type Props = {
     children: ReactNode;
@@ -14,28 +15,31 @@ type Props = {
 const ValidationMessageButton = (props: Props) => {
     return (
         <div>
-            <div className="haeButtonWrapper">
-                <Button
+            <div>
+                <button
+                    className="oph-ds-button"
                     disabled={
                         !!props.disabled ||
                         Object.keys(props.validationMessages).some((key) => !props.validationMessages[key]?.isValid)
                     }
-                    action={props.buttonAction}
+                    onClick={props.buttonAction}
                 >
                     {props.children}
-                </Button>
+                </button>
             </div>
-            {Object.keys(props.validationMessages).length > 0 && (
-                <div className="haeButtonWrapper">
-                    <ul>
-                        {Object.keys(props.validationMessages)
-                            .filter((key) => !props.validationMessages[key]?.isValid)
-                            .map((key, idx) => (
-                                <li key={idx} className="oph-h5">
-                                    ! {props.validationMessages[key]?.labelLocalised}
-                                </li>
-                            ))}
-                    </ul>
+            {Object.values(props.validationMessages).filter((m) => !m.isValid).length > 0 && (
+                <div style={{ marginTop: '1rem' }}>
+                    <OphDsBanner type="error">
+                        <ul style={{ marginLeft: '1rem' }}>
+                            {Object.keys(props.validationMessages)
+                                .filter((key) => !props.validationMessages[key]?.isValid)
+                                .map((key, idx) => (
+                                    <li key={idx} style={{ listStyleType: 'disc' }}>
+                                        {props.validationMessages[key]?.labelLocalised}
+                                    </li>
+                                ))}
+                        </ul>
+                    </OphDsBanner>
                 </div>
             )}
         </div>

@@ -1,0 +1,46 @@
+.kayttooikeusFormGrid {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 16px;
+}
+
+.kayttooikeusFormOrganisationSelection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.kayttooikeusFormOrganisationSelection > div {
+    min-width: 700px;
+}
+
+.dateSelection {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.dateSelection > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.selectedKayttooikeus {
+    margin-top: 0.5rem;
+}
+
+.selectedKayttooikeus > div {
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
+    width: 700px;
+    padding: 0.5rem;
+}
+
+.selectedKayttooikeus > div:nth-child(even) {
+    background-color: rgba(0,0,0,0.03);
+}
+
+.selectedKayttooikeus > div:hover {
+    background: var(--Table-cell-Background-Hover-or-selected, #C1EAFF);
+}

@@ -1,20 +1,27 @@
 import React, { useId, useState } from 'react';
 import { addYears, format, parseISO } from 'date-fns';
-import ReactDatePicker from 'react-datepicker';
 import { SingleValue } from 'react-select';
+import { skipToken } from '@reduxjs/toolkit/query';
 
-import CKKayttooikeudet, { ValittuKayttooikeusryhma } from './createkayttooikeus/CreateKayttooikeusSection';
 import { useLocalisations } from '../../../selectors';
 import { SelectOption } from '../../../utilities/select';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
+import { OphDsDatepicker } from '../../design-system/OphDsDatePicker';
 import { OphDsOrganisaatioSelect } from '../../design-system/OphDsOrganisaatioSelect';
 import { OphDsRyhmaSelect } from '../../design-system/OphDsRyhmaSelect';
 import ValidationMessageButton from '../button/ValidationMessageButton';
-import { usePutKayttooikeusryhmaForHenkiloMutation } from '../../../api/kayttooikeus';
+import {
+    useGetAllowedKayttooikeusryhmasForOrganisationQuery,
+    usePutKayttooikeusryhmaForHenkiloMutation,
+} from '../../../api/kayttooikeus';
 import { add } from '../../../slices/toastSlice';
 import { useAppDispatch } from '../../../store';
+import { myonnettyToKayttooikeusryhma } from '../../../utils/KayttooikeusryhmaUtils';
+import OphModal from '../modal/OphModal';
+import KayttooikeusryhmaSelect from '../select/KayttooikeusryhmaSelect';
+import { localizeTextGroup } from '../../../utilities/localisation.util';
 
-import './HenkiloViewCreateKayttooikeus.css';
+import styles from './HenkiloViewCreateKayttooikeus.module.css';
 
 type OwnProps = {
     existingKayttooikeusRef: React.RefObject<HTMLDivElement>;
@@ -23,16 +30,25 @@ type OwnProps = {
 };
 
 const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukayttaja, oidHenkilo }: OwnProps) => {
-    const { L } = useLocalisations();
+    const { L, locale } = useLocalisations();
     const dispatch = useAppDispatch();
     const [putKayttooikeusryhma] = usePutKayttooikeusryhmaForHenkiloMutation();
-    const [selectedList, setSelectedList] = useState<ValittuKayttooikeusryhma[]>([]);
+    const [selectedList, setSelectedList] = useState<{ label: string; value: number }[]>([]);
     const [organisationSelection, setOrganisationSelection] = useState<SingleValue<OrganisaatioSelectObject>>();
     const [ryhmaSelection, setRyhmaSelection] = useState<SingleValue<SelectOption>>(null);
     const [alkupvm, setAlkupvm] = useState<Date>(new Date());
     const defaultLoppupvm = isPalvelukayttaja ? parseISO('2099-12-31') : addYears(new Date(), 1);
     const [loppupvmInput, setLoppupvmInput] = useState<Date>();
     const loppupvm = loppupvmInput ?? defaultLoppupvm;
+    const oidOrganisaatio = organisationSelection?.oid ?? ryhmaSelection?.value;
+    const { data, isLoading } = useGetAllowedKayttooikeusryhmasForOrganisationQuery(
+        oidOrganisaatio ? { oidHenkilo, oidOrganisaatio } : skipToken
+    );
+    const kayttooikeusryhmat =
+        data
+            ?.filter((myonnetty) => selectedList.every((selected) => selected.value !== myonnetty.ryhmaId))
+            .map(myonnettyToKayttooikeusryhma) ?? [];
+    const [visible, setVisible] = useState(false);
 
     const selectRyhma = (selection: SingleValue<SelectOption>) => {
         setOrganisationSelection(undefined);
@@ -94,9 +110,9 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
     return (
         <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
             <h2 id={sectionLabelId}>{L('HENKILO_LISAA_KAYTTOOIKEUDET_OTSIKKO')}</h2>
-            <div className="kayttooikeus-form-grid">
-                <div className="oph-bold">{L('HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE')}</div>
-                <div className="kayttooikeus-form-organisation-selection">
+            <div className={styles.kayttooikeusFormGrid}>
+                <div className="oph-ds-label">{L('HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE')}</div>
+                <div className={styles.kayttooikeusFormOrganisationSelection}>
                     <OphDsOrganisaatioSelect
                         disabled={!!ryhmaSelection || !!selectedList?.length}
                         onChange={selectOrganisation}
@@ -107,50 +123,80 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                         disabled={!!organisationSelection || !!selectedList?.length}
                     />
                 </div>
-                <div className="oph-bold">{L('HENKILO_LISAA_KAYTTOOIKEUDET_KESTO')}</div>
-                <div>
-                    <div className="kayttooikeus-input-container">
-                        <span className="oph-h5">{L('HENKILO_LISAA_KAYTTOOIKEUDET_ALKAA')}</span>
-                        <ReactDatePicker
-                            className="oph-input"
+                <div className="oph-ds-label">{L('HENKILO_LISAA_KAYTTOOIKEUDET_KESTO')}</div>
+                <div className={styles.dateSelection}>
+                    <div>
+                        <label className="oph-ds-label" htmlFor="lisaa-kayttooikeus-alkupvm">
+                            {L('HENKILO_LISAA_KAYTTOOIKEUDET_ALKAA')}
+                        </label>
+                        <OphDsDatepicker
+                            id="lisaa-kayttooikeus-alkupvm"
                             onChange={(date: Date | null) => setAlkupvm(date ?? new Date())}
                             selected={alkupvm}
-                            showYearDropdown
-                            showMonthDropdown
-                            dropdownMode="select"
-                            showWeekNumbers
                             minDate={new Date()}
                             maxDate={addYears(new Date(), isPalvelukayttaja ? 100 : 1)}
-                            dateFormat={'d.M.yyyy'}
+                            isClearable={false}
                         />
                     </div>
-                    <div className="kayttooikeus-input-container">
-                        <span className="oph-h5">{L('HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY')}</span>
-                        <ReactDatePicker
-                            className="oph-input"
+                    <div>
+                        <label className="oph-ds-label" htmlFor="lisaa-kayttooikeus-loppupvm">
+                            {L('HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY')}
+                        </label>
+                        <OphDsDatepicker
+                            id="lisaa-kayttooikeus-loppupvm"
                             onChange={(date: Date | null) => date && setLoppupvmInput(date)}
                             selected={loppupvm}
-                            showYearDropdown
-                            showMonthDropdown
-                            dropdownMode="select"
-                            showWeekNumbers
                             minDate={new Date()}
                             maxDate={addYears(new Date(), isPalvelukayttaja ? 100 : 1)}
-                            dateFormat={'d.M.yyyy'}
+                            isClearable={false}
                         />
                     </div>
                 </div>
-                <div className="oph-bold">{L('HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT')}</div>
-                <div>
-                    <CKKayttooikeudet
-                        selectedList={selectedList}
-                        removeKayttooikeus={(id) =>
-                            setSelectedList(selectedList.filter((selected) => selected.value !== id))
-                        }
-                        addKayttooikeus={(value) => setSelectedList([...selectedList, value])}
-                        selectedOrganisationOid={organisationSelection?.oid ?? ryhmaSelection?.value}
-                        isPalvelukayttaja={isPalvelukayttaja}
-                    />
+                <div className="oph-ds-label">{L('HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT')}</div>
+                <div className={styles.kayttooikeusSelection}>
+                    <div>
+                        {visible && (
+                            <OphModal onClose={() => setVisible(false)} onOverlayClick={() => setVisible(false)}>
+                                <KayttooikeusryhmaSelect
+                                    kayttooikeusryhmat={kayttooikeusryhmat}
+                                    onSelect={(k) =>
+                                        setSelectedList([
+                                            ...selectedList,
+                                            {
+                                                value: k.id,
+                                                label: localizeTextGroup(k.nimi.texts, locale),
+                                            },
+                                        ])
+                                    }
+                                    sallittuKayttajatyyppi={isPalvelukayttaja ? 'PALVELU' : 'VIRKAILIJA'}
+                                />
+                            </OphModal>
+                        )}
+                        <div>
+                            <button
+                                className="oph-ds-button"
+                                disabled={isLoading || !oidOrganisaatio}
+                                onClick={() => setVisible(true)}
+                            >
+                                {L('OMATTIEDOT_VALITSE_KAYTTOOIKEUSRYHMA')}
+                            </button>
+                        </div>
+                    </div>
+                    <div className={styles.selectedKayttooikeus}>
+                        {selectedList.map((selected, idx) => (
+                            <div key={idx}>
+                                <span>{selected.label}</span>
+                                <button
+                                    title={L('POISTA')}
+                                    className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
+                                    disabled={!oidOrganisaatio}
+                                    onClick={() =>
+                                        setSelectedList(selectedList.filter((s) => selected.value !== s.value))
+                                    }
+                                ></button>
+                            </div>
+                        ))}
+                    </div>
                 </div>
                 <div></div>
                 <div>
