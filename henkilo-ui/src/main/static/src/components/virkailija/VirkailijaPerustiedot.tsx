@@ -95,7 +95,7 @@ export const VirkailijaPerustiedot = ({ oid }: { oid: string }) => {
     const sectionId = useId();
 
     return (
-        <section aria-labelledby={sectionId} className="henkiloViewUserContentWrapper">
+        <section aria-labelledby={sectionId} className="henkiloViewUserContentWrapper" style={{ marginBottom: '2rem' }}>
             {haka && (
                 <OphModal title={L('HAKATUNNISTEET')} onClose={() => setHaka(false)}>
                     <HakatunnistePopupContent henkiloOid={oid} />
@@ -127,17 +127,20 @@ export const VirkailijaPerustiedot = ({ oid }: { oid: string }) => {
                             <div data-testid="email">{emails}</div>
                         </div>
                         <div className={styles.buttonRow}>
-                            <button className="oph-ds-button" onClick={() => setMuokkaa(true)}>
+                            <button className="oph-ds-button oph-ds-button-bordered" onClick={() => setMuokkaa(true)}>
                                 {L('MUOKKAA')}
                             </button>
-                            <button className="oph-ds-button" onClick={() => setHaka(true)}>
+                            <button className="oph-ds-button oph-ds-button-bordered" onClick={() => setHaka(true)}>
                                 {L('LISAA_HAKA_LINKKI')}
                             </button>
-                            <button className="oph-ds-button" onClick={() => setPassword(true)}>
+                            <button className="oph-ds-button oph-ds-button-bordered" onClick={() => setPassword(true)}>
                                 {L('SALASANA_ASETA')}
                             </button>
                             {isOnrRekisterinpitaja(omattiedot?.organisaatiot) && (
-                                <PoistaKayttajatunnusButton className="oph-ds-button" henkiloOid={oid} />
+                                <PoistaKayttajatunnusButton
+                                    className="oph-ds-button oph-ds-button-bordered"
+                                    henkiloOid={oid}
+                                />
                             )}
                         </div>
                     </>

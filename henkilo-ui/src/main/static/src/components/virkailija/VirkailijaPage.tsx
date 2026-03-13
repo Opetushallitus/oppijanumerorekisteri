@@ -48,9 +48,7 @@ export const VirkailijaPage = () => {
 
     return (
         <OphDsPage header={L('TITLE_VIRKAILIJA')}>
-            <OphDsCard>
-                <VirkailijaPerustiedot oid={oid} />
-            </OphDsCard>
+            <VirkailijaPerustiedot oid={oid} />
             <OphDsCard>
                 <Mfa henkiloOid={oid} view="virkailija" />
             </OphDsCard>
