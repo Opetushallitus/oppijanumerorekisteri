@@ -388,18 +388,22 @@ const OppijaPerustiedotView = ({ oid, openForm }: { oid: string; openForm: () =>
                     <PuraHetuttomanYksilointiButton className="oph-ds-button" henkiloOid={oid} />
                 )}
                 {omattiedot?.isAdmin && !henkilo?.passivoitu && (
-                    <PassivoiButton className="oph-ds-button" henkiloOid={oid} passivoitu={false} />
+                    <PassivoiButton
+                        className="oph-ds-button oph-ds-button-bordered"
+                        henkiloOid={oid}
+                        passivoitu={false}
+                    />
                 )}
                 {omattiedot?.isAdmin && henkilo?.passivoitu && (
-                    <AktivoiButton className="oph-ds-button" oidHenkilo={oid} />
+                    <AktivoiButton className="oph-ds-button oph-ds-button-bordered" oidHenkilo={oid} />
                 )}
                 {omattiedot?.isAdmin && (
-                    <button className="oph-ds-button" onClick={() => setPassport(true)}>
+                    <button className="oph-ds-button oph-ds-button-bordered" onClick={() => setPassport(true)}>
                         {L('HALLITSE_PASSINUMEROITA')}
                     </button>
                 )}
                 {omattiedot?.isAdmin && !henkilo?.duplicate && !henkilo?.passivoitu && (
-                    <VtjOverrideButton className="oph-ds-button" henkiloOid={oid} />
+                    <VtjOverrideButton className="oph-ds-button oph-ds-button-bordered" henkiloOid={oid} />
                 )}
             </div>
         </>
@@ -437,7 +441,7 @@ export const OppijaPerustiedot = ({ oid }: { oid: string }) => {
     }, [henkilo]);
 
     return (
-        <section aria-labelledby={sectionId} className="henkiloViewUserContentWrapper">
+        <section aria-labelledby={sectionId} className="henkiloViewUserContentWrapper" style={{ marginBottom: '2rem' }}>
             <h2 id={sectionId}>{L('OPPIJAN_PERUSTIEDOT') + yksilointiTranslation}</h2>
             <div className={styles.perustiedotContent}>
                 {isLoading ? (

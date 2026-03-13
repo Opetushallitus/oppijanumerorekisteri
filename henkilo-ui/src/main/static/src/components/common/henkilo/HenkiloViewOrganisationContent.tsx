@@ -73,7 +73,7 @@ export const HenkiloViewOrganisationContent = ({ henkiloOid }: { henkiloOid: str
                     <span key={`oremove-${idx}`}>
                         {!o.passive ? (
                             <ConfirmButton
-                                className="oph-ds-button oph-ds-button-bordered"
+                                className="oph-ds-button oph-ds-button-transparent"
                                 action={() => passivoiHenkiloOrganisation(o.id)}
                                 confirmLabel={L('HENKILO_ORG_PASSIVOI_CONFIRM')}
                                 normalLabel={L('HENKILO_ORG_PASSIVOI')}

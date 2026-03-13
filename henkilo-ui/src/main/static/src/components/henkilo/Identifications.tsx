@@ -93,7 +93,7 @@ export const Identifications = ({ oid }: Props) => {
                                 <span key={`entity-${d.identifier}`}>{d.idpEntityId}</span>,
                                 <div key={`button-${d.identifier}`} style={{ textAlign: 'right' }}>
                                     <button
-                                        className="oph-ds-button oph-ds-button-bordered oph-ds-button-icon oph-ds-icon-button-delete"
+                                        className="oph-ds-button oph-ds-button-transparent oph-ds-button-icon oph-ds-icon-button-delete"
                                         onClick={() => removeIdentification(d)}
                                         disabled={isDeleteLoading}
                                         data-test-id="identification-remove-button"
@@ -106,7 +106,7 @@ export const Identifications = ({ oid }: Props) => {
                     </div>
                 )}
                 <button
-                    className="oph-ds-button"
+                    className="oph-ds-button oph-ds-button-bordered"
                     onClick={() => setShowAddModal(true)}
                     disabled={isTunnistetyypitLoading}
                     data-test-id="identification-add-button"

@@ -229,7 +229,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
             <div>
                 {!editing && hasHenkiloReadUpdateRights && (
                     <button
-                        className="oph-ds-button"
+                        className="oph-ds-button oph-ds-button-bordered"
                         disabled={henkilo?.passivoitu || henkilo?.duplicate}
                         onClick={() => setEditing(true)}
                     >

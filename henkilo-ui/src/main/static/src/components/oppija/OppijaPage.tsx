@@ -46,9 +46,7 @@ export const OppijaPage = () => {
                 header={henkilo ? `${henkilo?.sukunimi}, ${henkilo?.etunimet}` : '...'}
                 tabs={<OppijaTabs oid={oid} />}
             >
-                <OphDsCard>
-                    <OppijaPerustiedot oid={oid} />
-                </OphDsCard>
+                <OppijaPerustiedot oid={oid} />
                 {isOnrRekisterinpitaja(omattiedot?.organisaatiot) && (
                     <OphDsCard>
                         <Identifications oid={oid} />
