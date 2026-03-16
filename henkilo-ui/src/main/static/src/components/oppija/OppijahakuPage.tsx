@@ -15,6 +15,8 @@ import { OppijahakuCriteria, usePostOppijahakuQuery } from '../../api/oppijanume
 import { RootState, useAppDispatch } from '../../store';
 import { setState as _setState } from '../../slices/oppijahakuSlice';
 
+import styles from './OppijahakuPage.module.css';
+
 export const OppijahakuPage = () => {
     const { L } = useLocalisations();
     useTitle('Oppijahaku');
@@ -39,13 +41,18 @@ export const OppijahakuPage = () => {
     return (
         <OphDsPage header={L('OPPIJAHAKU')}>
             {L('OPPIJAHAKU_SELITE') && <p>{L('OPPIJAHAKU_SELITE')}</p>}
-            <OphDsInput
-                id="query"
-                label={L('OPPIJAHAKU_HAKUTERMI')}
-                onChange={setQuery}
-                defaultValue={criteria.query}
-                debounceTimeout={400}
-            />
+            <div className={styles.oppijahakuInputs}>
+                <OphDsInput
+                    id="query"
+                    label={L('OPPIJAHAKU_HAKUTERMI')}
+                    placeholder={L('HAE')}
+                    icon="search"
+                    isClearable
+                    onChange={setQuery}
+                    defaultValue={criteria.query}
+                    debounceTimeout={400}
+                />
+            </div>
             <div>
                 <OphDsChechbox
                     id="passive"
@@ -56,6 +63,7 @@ export const OppijahakuPage = () => {
             </div>
             <OphDsTable
                 headers={[L('HENKILO_NIMI'), L('HENKILO_SYNTYMAAIKA')]}
+                placeholder={data ? undefined : L('HAE_OPPIJOITA')}
                 isFetching={isFetching}
                 rows={((!skip && data?.content) || []).map((d) => [
                     <Link key={`nimi-${d.oid}`} to={`/oppija2/${d.oid}`} className="oph-ds-link">

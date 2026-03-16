@@ -154,7 +154,7 @@ export const VirkailijahakuPage = () => {
                 </div>
             </div>
             <OphDsTable
-                placeholder={data ? undefined : 'Hae virkailijoita tai valitse suodatin'}
+                placeholder={data ? undefined : L('HAE_VIRKAILIJOITA')}
                 headers={[L('HENKILO_NIMI'), L('USERNAME'), L('HENKILOHAKU_ORGANISAATIO')]}
                 isFetching={isFetching}
                 rows={renderedData.map((d) => [
