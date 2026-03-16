@@ -70,12 +70,12 @@ class CdkApp extends cdk.App {
           `https://${config.virkailijaHost}/oppijanumerorekisteri-service/actuator/health`,
         ),
       },
-      {
+      ...(config.tiedotuspalveluCapacity.max > 0 [{
         name: "Tiedotuspalvelu",
         url: new URL(
           `https://${config.opintopolkuHost}/omat-viestit/actuator/health`,
         ),
-      },
+      }] : []),
     ]);
 
     new OppijanumerorekisteriApplicationStack(
@@ -875,15 +875,17 @@ class TiedotuspalveluStack extends cdk.Stack {
       retention: logs.RetentionDays.INFINITE,
     });
 
-    if (config.features["tiedotuspalvelu.fetch-oppija.enabled"]) {
-      this.fetchOppijaAlarm(logGroup, props.alarmTopic);
+    if (config.tiedotuspalveluCapacity.max > 0] {
+      if (config.features["tiedotuspalvelu.fetch-oppija.enabled"]) {
+        this.fetchOppijaAlarm(logGroup, props.alarmTopic);
+      }
+      if (config.features["tiedotuspalvelu.suomifi-viestit.enabled"]) {
+        this.sendSuomiFiViestitAlarm(logGroup, props.alarmTopic);
+        this.fetchSuomiFiViestitEventsAlarm(logGroup, props.alarmTopic);
+      }
+      this.fetchLocalisationsAlarm(logGroup, props.alarmTopic);
+      this.casClientSessionCleanerAlarm(logGroup, props.alarmTopic);
     }
-    if (config.features["tiedotuspalvelu.suomifi-viestit.enabled"]) {
-      this.sendSuomiFiViestitAlarm(logGroup, props.alarmTopic);
-      this.fetchSuomiFiViestitEventsAlarm(logGroup, props.alarmTopic);
-    }
-    this.fetchLocalisationsAlarm(logGroup, props.alarmTopic);
-    this.casClientSessionCleanerAlarm(logGroup, props.alarmTopic);
 
     const dockerImage = new ecr_assets.DockerImageAsset(this, "AppImage", {
       directory: path.join(__dirname, "../../tiedotuspalvelu"),
