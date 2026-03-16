@@ -4,7 +4,7 @@ import { gotoJarjestelmatunnushaku } from './locators/jarjestelmatunnushaku-page
 
 import { type HenkilohakuResult } from '../../src/types/domain/kayttooikeus/HenkilohakuResult.types';
 
-test.describe('virkailijahaku', () => {
+test.describe('järjestelmätunnushaku', () => {
     const mockVirkailijahaku = async (
         page: Page,
         validator: (criteria: any) => boolean,
@@ -23,7 +23,7 @@ test.describe('virkailijahaku', () => {
 
     test('haku by name', async ({ page }) => {
         const { filters, results } = await gotoJarjestelmatunnushaku(page);
-        await expect(results.count).toHaveText('Hakutulos (0 järjestelmätunnusta)');
+        await expect(results.count).toHaveText('0 järjestelmätunnusta');
 
         await mockVirkailijahaku(page, (c) => c.nameQuery === 'pasi', [
             {
@@ -51,7 +51,7 @@ test.describe('virkailijahaku', () => {
         ]);
 
         await filters.nameQuery.fill('pasi');
-        await expect(results.count).toHaveText('Hakutulos (2 järjestelmätunnusta)');
+        await expect(results.count).toHaveText('2 järjestelmätunnusta');
 
         await expect(results.get(1).name).toHaveText('pasilan autopesu');
         await expect(results.get(1).name).toHaveAttribute(
@@ -72,7 +72,7 @@ test.describe('virkailijahaku', () => {
 
     test('haku by organisaatio', async ({ page }) => {
         const { filters, results } = await gotoJarjestelmatunnushaku(page);
-        await expect(results.count).toHaveText('Hakutulos (0 järjestelmätunnusta)');
+        await expect(results.count).toHaveText('0 järjestelmätunnusta');
 
         await test.step('excluding suborganisations', async () => {
             await mockVirkailijahaku(
@@ -90,7 +90,7 @@ test.describe('virkailijahaku', () => {
 
             await expect(filters.subOrganisationsCheckbox).toBeDisabled();
             await filters.organisaatioSelect.select('aliorg');
-            await expect(results.count).toHaveText('Hakutulos (1 järjestelmätunnusta)');
+            await expect(results.count).toHaveText('1 järjestelmätunnusta');
 
             await expect(results.get(1).name).toHaveText('koulun exceli');
             await expect(results.get(1).name).toHaveAttribute(
@@ -123,7 +123,7 @@ test.describe('virkailijahaku', () => {
 
             await expect(filters.subOrganisationsCheckbox).toBeEnabled();
             await filters.subOrganisationsLabel.click();
-            await expect(results.count).toHaveText('Hakutulos (2 järjestelmätunnusta)');
+            await expect(results.count).toHaveText('2 järjestelmätunnusta');
 
             await expect(results.get(1).name).toHaveText('valintapalvelu');
             await expect(results.get(1).name).toHaveAttribute(
@@ -145,7 +145,7 @@ test.describe('virkailijahaku', () => {
 
     test('haku by käyttöoikeusryhmä', async ({ page }) => {
         const { filters, results } = await gotoJarjestelmatunnushaku(page);
-        await expect(results.count).toHaveText('Hakutulos (0 järjestelmätunnusta)');
+        await expect(results.count).toHaveText('0 järjestelmätunnusta');
 
         await mockVirkailijahaku(page, (c) => c.kayttooikeusryhmaId === 4056628, [
             {
@@ -157,7 +157,7 @@ test.describe('virkailijahaku', () => {
         ]);
 
         await filters.kayttooikeusryhma.select('kuvaus3');
-        await expect(results.count).toHaveText('Hakutulos (1 järjestelmätunnusta)');
+        await expect(results.count).toHaveText('1 järjestelmätunnusta');
 
         await expect(results.get(1).name).toHaveText('opetushalinto');
         await expect(results.get(1).name).toHaveAttribute(
@@ -170,7 +170,7 @@ test.describe('virkailijahaku', () => {
 
     test('suborganisations is disabled if root organisation is chosen', async ({ page }) => {
         const { filters, results } = await gotoJarjestelmatunnushaku(page);
-        await expect(results.count).toHaveText('Hakutulos (0 järjestelmätunnusta)');
+        await expect(results.count).toHaveText('0 järjestelmätunnusta');
 
         await mockVirkailijahaku(
             page,
@@ -187,7 +187,7 @@ test.describe('virkailijahaku', () => {
 
         await expect(filters.subOrganisationsCheckbox).toBeDisabled();
         await filters.organisaatioSelect.select('root');
-        await expect(results.count).toHaveText('Hakutulos (1 järjestelmätunnusta)');
+        await expect(results.count).toHaveText('1 järjestelmätunnusta');
 
         await expect(filters.subOrganisationsCheckbox).toBeDisabled();
     });

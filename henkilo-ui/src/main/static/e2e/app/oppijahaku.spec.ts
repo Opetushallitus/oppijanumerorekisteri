@@ -22,7 +22,7 @@ test.describe('oppijahaku', () => {
 
     test('haku by name and passivoidut', async ({ page }) => {
         const { filters, results } = await gotoOppijahaku(page);
-        await expect(results.count).toHaveText('Hakutulos (0 oppijaa)');
+        await expect(results.count).toHaveText('0 oppijaa');
 
         await mockOppijahaku(page, (c) => c.query === 'pasi' && c.page === 0 && c.passive === false, {
             content: [
@@ -42,7 +42,7 @@ test.describe('oppijahaku', () => {
         });
 
         await filters.query.fill('pasi');
-        await expect(results.count).toHaveText('Hakutulos (1 oppijaa)');
+        await expect(results.count).toHaveText('1 oppijaa');
 
         await expect(results.get(1).name).toHaveText('la, pasi ville');
         await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/oppija2/1.2.246.562.99.45262572456');
@@ -72,7 +72,7 @@ test.describe('oppijahaku', () => {
         });
 
         await filters.passivoidut.click();
-        await expect(results.count).toHaveText('Hakutulos (2 oppijaa)');
+        await expect(results.count).toHaveText('2 oppijaa');
 
         await expect(results.get(1).name).toHaveText('la, pasi ville');
         await expect(results.get(1).name).toHaveAttribute('href', '/henkilo-ui/oppija2/1.2.246.562.99.45262572456');
@@ -85,7 +85,7 @@ test.describe('oppijahaku', () => {
 
     test('pagination', async ({ page }) => {
         const { filters, results, pagination } = await gotoOppijahaku(page);
-        await expect(results.count).toHaveText('Hakutulos (0 oppijaa)');
+        await expect(results.count).toHaveText('0 oppijaa');
 
         await test.step('first page', async () => {
             await mockOppijahaku(page, (c) => c.query === 'pasi' && c.page === 0 && c.passive === false, {
@@ -106,7 +106,7 @@ test.describe('oppijahaku', () => {
             });
 
             await filters.query.fill('pasi');
-            await expect(results.count).toHaveText('Hakutulos (50 oppijaa)');
+            await expect(results.count).toHaveText('50 oppijaa');
 
             await expect(pagination.page(1)).toHaveAttribute('aria-current', 'page');
             await expect(pagination.previous).toBeDisabled();

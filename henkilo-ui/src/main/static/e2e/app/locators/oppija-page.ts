@@ -21,7 +21,7 @@ export async function gotoOppija(page: Page, oid: string) {
         },
         form: {
             kutsumanimi: page.getByLabel('Kutsumanimi'),
-            kutsumanimiError: page.locator('input[name="kutsumanimi"] + span'),
+            kutsumanimiError: page.getByTestId('input-error-kutsumanimi'),
             asiointikieliSelect: selectLocator(page, '#asiointikieli-select'),
             etunimet: page.getByLabel('Etunimet'),
             sukunimi: page.getByLabel('Sukunimi'),

@@ -13,7 +13,7 @@ export async function gotoVirkailija(page: Page, oid: string) {
         },
         form: {
             username: page.getByLabel('Käyttäjätunnus'),
-            usernameError: page.locator('input[name="username"] + span'),
+            usernameError: page.getByTestId('input-error-username'),
             submit: page.getByRole('button', { name: 'Tallenna', exact: true }),
             cancel: page.getByRole('button', { name: 'Peruuta' }),
         },
@@ -38,9 +38,9 @@ export async function gotoVirkailija(page: Page, oid: string) {
         },
         password: {
             password: page.getByLabel('Uusi salasana'),
-            passwordError: page.locator('input[name="password"] + span'),
+            passwordError: page.getByTestId('input-error-password'),
             passwordConfirmed: page.getByLabel('Vahvista salasana'),
-            passwordConfirmedError: page.locator('input[name="passwordConfirmed"] + span'),
+            passwordConfirmedError: page.getByTestId('input-error-passwordConfirmed'),
             submit: page
                 .getByRole('dialog', { name: 'Aseta salasana' })
                 .getByRole('button', { name: 'Aseta salasana' }),

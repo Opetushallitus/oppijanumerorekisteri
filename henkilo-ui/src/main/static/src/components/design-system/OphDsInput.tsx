@@ -43,6 +43,11 @@ export const OphDsInput = ({
         }
     }, [debounced, debounceTimeout]);
 
+    const nondebouncedSetValue = (v: string) => {
+        setValue(v);
+        onChange(v);
+    };
+
     const handleClear = () => {
         setValue('');
         inputRef.current?.focus();
@@ -60,7 +65,9 @@ export const OphDsInput = ({
                     name={id}
                     type={type ?? 'text'}
                     value={value}
-                    onChange={(e) => (debounceTimeout ? setValue(e.target.value) : onChange(e.target.value))}
+                    onChange={(e) =>
+                        debounceTimeout ? setValue(e.target.value) : nondebouncedSetValue(e.target.value)
+                    }
                     className={`oph-ds-input ${iconClass} ${clearButtonClass} ${error !== undefined ? 'oph-ds-input-error' : ''}`}
                     disabled={disabled}
                     autoComplete="false"
@@ -92,7 +99,11 @@ export const OphDsInput = ({
                     </button>
                 )}
             </div>
-            {error && <span className="oph-ds-error">{error}</span>}
+            {error && (
+                <span className="oph-ds-error" data-testid={`input-error-${id}`}>
+                    {error}
+                </span>
+            )}
         </div>
     );
 };
