@@ -155,6 +155,10 @@
     box-shadow: 2px 2px 8px 0px #00000026;
 }
 
+.oph-ds-input-container {
+    position: relative;
+}
+
 .oph-ds-input {
     display: flex;
     height: 40px;
@@ -184,6 +188,45 @@
 .oph-ds-input-error {
     color: #CC3300;
     border: 1px solid #CC3300;
+}
+
+.oph-ds-input-icon-search {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjIiIGhlaWdodD0iMjIiIHZpZXdCb3g9IjAgMCAyMiAyMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNC4yMDgzIDEyLjgzMzNIMTMuNDg0MkwxMy4yMjc1IDEyLjU4NThDMTQuMTI1OCAxMS41NDA4IDE0LjY2NjcgMTAuMTg0MiAxNC42NjY3IDguNzA4MzNDMTQuNjY2NyA1LjQxNzUgMTEuOTk5MiAyLjc1IDguNzA4MzMgMi43NUM1LjQxNzUgMi43NSAyLjc1IDUuNDE3NSAyLjc1IDguNzA4MzNDMi43NSAxMS45OTkyIDUuNDE3NSAxNC42NjY3IDguNzA4MzMgMTQuNjY2N0MxMC4xODQyIDE0LjY2NjcgMTEuNTQwOCAxNC4xMjU4IDEyLjU4NTggMTMuMjI3NUwxMi44MzMzIDEzLjQ4NDJWMTQuMjA4M0wxNy40MTY3IDE4Ljc4MjVMMTguNzgyNSAxNy40MTY3TDE0LjIwODMgMTIuODMzM1pNOC43MDgzMyAxMi44MzMzQzYuNDI1ODMgMTIuODMzMyA0LjU4MzMzIDEwLjk5MDggNC41ODMzMyA4LjcwODMzQzQuNTgzMzMgNi40MjU4MyA2LjQyNTgzIDQuNTgzMzMgOC43MDgzMyA0LjU4MzMzQzEwLjk5MDggNC41ODMzMyAxMi44MzMzIDYuNDI1ODMgMTIuODMzMyA4LjcwODMzQzEyLjgzMzMgMTAuOTkwOCAxMC45OTA4IDEyLjgzMzMgOC43MDgzMyAxMi44MzMzWiIgZmlsbD0iI0NDQ0NDQyIvPgo8L3N2Zz4K');
+    background-position: right 10px center;
+    background-repeat: no-repeat;
+    padding-right: 36px;
+}
+
+.oph-ds-input-clear-button {
+    position: absolute;
+    border: none;
+    background: transparent;
+    top: 7px;
+    right: 6px;
+}
+
+.oph-ds-input-clear-button-with-icon {
+    right: 36px;
+}
+
+.oph-ds-input-clearable {
+    padding-right: 36px;
+}
+
+.oph-ds-input-clearable.oph-ds-input-icon {
+    padding-right: 72px;
+}
+
+.oph-ds-hidden-aria-label {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1;
+    margin: -1;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1;
+    white-space: nowrap;
 }
 
 .oph-ds-error {
@@ -673,10 +716,6 @@
     color: #666666;
 }
 
-.oph-ds-table-results {
-    height: 40px;
-}
-
 .oph-ds-table {
     width: 100%;
 }
@@ -759,6 +798,13 @@
     border-top: 2px solid #000;
     display: block;
     transform: rotate(135deg);
+}
+
+.oph-ds-table-placeholder {
+    width: 100%;
+    text-align: center;
+    font-size: 20px;
+    line-height: 26px;
 }
 
 .oph-ds-toasts {
