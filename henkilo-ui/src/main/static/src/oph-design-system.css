@@ -273,7 +273,7 @@
     padding-right: 6px;
 }
 
-.oph-ds-label:has(+ div > input),
+.oph-ds-label:has(+ .oph-ds-input-container),
 .oph-ds-label:has(+ .react-datepicker-wrapper),
 .oph-ds-label:has(+ .oph-ds-select-container),
 .oph-ds-label:has(+ .oph-ds-select-container-focused) {
