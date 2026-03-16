@@ -25,7 +25,8 @@ function main {
   start_backend
 
   cd "${repo}/tiedotuspalvelu/web"
-  npx playwright install --with-deps chromium
+  npx playwright install-deps
+  npx playwright install chromium
   npx playwright test "$@"
 }
 
