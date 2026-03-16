@@ -81,9 +81,9 @@ test.describe('oppijan perustiedot', () => {
         await form.etunimet.fill('etu nimi');
         await form.sukunimi.fill('suku-nimi');
         await form.kutsumanimi.fill('nimi');
-        await form.hetu.fill('010123-123H');
         await form.syntymaaika.fill('1.1.2023');
         await form.sukupuoliSelect.select('mies');
+        await form.hetu.fill('010123-123H');
         await form.aidinkieliSelect.select('ruotsi');
         await form.kansalaisuusSelect.select('Entinen Sudan');
         await form.kansalaisuusSelect.select('Norja');
@@ -143,6 +143,16 @@ test.describe('oppijan perustiedot', () => {
         await expect(perustiedot.kansalaisuus).toHaveText('Entinen Sudan, Norja');
         await expect(perustiedot.asiointikieli).toHaveText('englanti');
         await expect(perustiedot.aidinkieli).toHaveText('ruotsi');
+    });
+
+    test('syntymaaika and sukupuoli is disabled when hetu is set', async ({ page }) => {
+        const { buttons, form, perustiedot } = await gotoOppija(page, yksiloityHetutonOid);
+        await expect(perustiedot.sukunimi).toHaveText('Henkilö');
+
+        await buttons.muokkaa.click();
+        await form.hetu.fill('010123-123H');
+        await expect(form.syntymaaika).toBeDisabled();
+        await expect(form.sukupuoliSelect.locator).toBeDisabled();
     });
 
     test('edits passinumerot', async ({ page }) => {

@@ -180,6 +180,7 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                                 selected={syntymaaika}
                                 minDate={subYears(new Date(), 120)}
                                 maxDate={new Date()}
+                                disabled={!!hetu}
                             />
                         </div>
                         <div style={{ width: '300px' }}>
@@ -220,6 +221,7 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
                                 value={sukupuoli}
                                 onChange={setSukupuoli}
                                 placeholder={L('HENKILO_SUKUPUOLI')}
+                                isDisabled={!!hetu}
                             />
                         </div>
                     </div>

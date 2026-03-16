@@ -208,14 +208,18 @@
     align-items: center;
 }
 
-.oph-ds-input:focus {
+.oph-ds-input:disabled {
+    border-color: #B2B2B2;
+}
+
+.oph-ds-input:focus:not(:disabled) {
     border: 2px solid var(--OPH-Input-Stroke, #0041DC);
     border-radius: 2px;
     outline-offset: 2px;
     outline: 2px solid #000;
 }
 
-.oph-ds-input:hover {
+.oph-ds-input:hover:not(:disabled) {
     border: 2px solid var(--OPH-Input-Stroke, #0041DC);
 }
 
