@@ -15,12 +15,13 @@ function main {
     docker compose up -d
   fi
 
-  wait_for_container_to_be_healthy oph-tiedotuspalvelu-test-db
-
   cd "${repo}/tiedotuspalvelu/web"
   init_nodejs
   npm_ci_if_needed
   npx webpack build
+
+  wait_for_container_to_be_healthy oph-tiedotuspalvelu-test-db
+  wait_for_container_to_be_healthy oph-tiedotuspalvelu-keycloak
 
   start_backend
 
