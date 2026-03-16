@@ -49,7 +49,7 @@ public class CsvExportTest extends TiedotuspalveluApiTest implements ResourceRea
 
   private final CasVirkailijaUserDetailsService.CasAuthenticatedUser VIRKAILIJA_WITH_CRUD_ROLE =
       CasVirkailijaUserDetailsService.CasAuthenticatedUser.builder()
-          .username("whiskers")
+          .username("tiinatiedottaja")
           .attributes(
               Map.of(
                   "oidHenkilo",
@@ -68,7 +68,7 @@ public class CsvExportTest extends TiedotuspalveluApiTest implements ResourceRea
 
   private final CasVirkailijaUserDetailsService.CasAuthenticatedUser VIRKAILIJA_WITHOUT_ROLES =
       CasVirkailijaUserDetailsService.CasAuthenticatedUser.builder()
-          .username("mittens")
+          .username("emmieioikkia")
           .attributes(
               Map.of(
                   "oidHenkilo",

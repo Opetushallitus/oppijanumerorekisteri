@@ -20,7 +20,7 @@ test("Kielitutkintotodistus happy path", async ({ page, request }) => {
 
   await test.step("Virkailija näkee tiedoteen rapsasivulla", async () => {
     await page.goto("/tiedotuspalvelu/");
-    await page.getByRole("button", { name: "Whiskers Meowington" }).click();
+    await page.getByRole("button", { name: "Tiina Tiedottaja" }).click();
     await expect(page.locator("span.tp__user")).toBeVisible();
 
     const table = page.locator("table.tp__table");

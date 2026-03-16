@@ -4,7 +4,7 @@
   "sslRequired": "none",
   "loginTheme": "dev-quicklogin",
   "attributes": {
-    "quickLoginUsers": "[{\"label\":\"Whiskers Meowington\",\"username\":\"whiskers\",\"password\":\"whiskers\"},{\"label\":\"Mittens Purrsworth\",\"username\":\"mittens\",\"password\":\"mittens\"}]"
+    "quickLoginUsers": "[{\"label\":\"Tiina Tiedottaja\",\"username\":\"tiinatiedottaja\",\"password\":\"tiinatiedottaja\"},{\"label\":\"Emmi Ei-Oikkia\",\"username\":\"emmieioikkia\",\"password\":\"emmieioikkia\"}]"
   },
   "requiredActions": [
     {
@@ -74,14 +74,14 @@
   ],
   "users": [
     {
-      "username": "whiskers",
+      "username": "tiinatiedottaja",
       "enabled": true,
-      "firstName": "Whiskers",
-      "lastName": "Meowington",
+      "firstName": "Tiina",
+      "lastName": "Tiedottaja",
       "credentials": [
         {
           "type": "password",
-          "value": "whiskers",
+          "value": "tiinatiedottaja",
           "temporary": false
         }
       ],
@@ -102,14 +102,14 @@
       }
     },
     {
-      "username": "mittens",
+      "username": "emmieioikkia",
       "enabled": true,
-      "firstName": "Mittens",
-      "lastName": "Purrsworth",
+      "firstName": "Emmi",
+      "lastName": "Ei-Oikkia",
       "credentials": [
         {
           "type": "password",
-          "value": "mittens",
+          "value": "emmieioikkia",
           "temporary": false
         }
       ],

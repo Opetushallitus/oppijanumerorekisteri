@@ -15,41 +15,41 @@ class CasVirkailijaAssumptionsTest extends CasAssumptionsTestBase {
 
   @Test
   void assumeCasVirkailijaReturnsKäyttäjätunnusAsUsername() throws Exception {
-    var assertion = authenticateAndValidate("whiskers", "whiskers");
-    assertThat(assertion.getPrincipal().getName()).isEqualTo("whiskers");
+    var assertion = authenticateAndValidate("tiinatiedottaja", "tiinatiedottaja");
+    assertThat(assertion.getPrincipal().getName()).isEqualTo("tiinatiedottaja");
   }
 
   @Test
   void assumeCasVirkailijaReturnsHenkiloOid() throws Exception {
-    var assertion = authenticateAndValidate("whiskers", "whiskers");
+    var assertion = authenticateAndValidate("tiinatiedottaja", "tiinatiedottaja");
     assertThat(assertion.getPrincipal().getAttributes().get("oidHenkilo"))
         .isEqualTo("1.2.246.562.24.52606915412");
   }
 
   @Test
   void assumeCasVirkailijaReturnsKayttajaTyyppi() throws Exception {
-    var assertion = authenticateAndValidate("whiskers", "whiskers");
+    var assertion = authenticateAndValidate("tiinatiedottaja", "tiinatiedottaja");
     assertThat(assertion.getPrincipal().getAttributes().get("kayttajaTyyppi"))
         .isEqualTo("VIRKAILIJA");
   }
 
   @Test
   void assumeCasVirkailijaReturnsIdpEntityId() throws Exception {
-    var assertion = authenticateAndValidate("whiskers", "whiskers");
+    var assertion = authenticateAndValidate("tiinatiedottaja", "tiinatiedottaja");
     assertThat(assertion.getPrincipal().getAttributes().get("idpEntityId"))
         .isEqualTo("usernamePassword");
   }
 
   @Test
   void assumeCasVirkailijaReturnsKnownFields() throws Exception {
-    var assertion = authenticateAndValidate("whiskers", "whiskers");
+    var assertion = authenticateAndValidate("tiinatiedottaja", "tiinatiedottaja");
     assertThat(assertion.getPrincipal().getAttributes().keySet())
         .containsExactlyInAnyOrder("oidHenkilo", "kayttajaTyyppi", "idpEntityId", "roles");
   }
 
   @Test
   void assumeCasVirkailijaReturnsRoles() throws Exception {
-    var assertion = authenticateAndValidate("whiskers", "whiskers");
+    var assertion = authenticateAndValidate("tiinatiedottaja", "tiinatiedottaja");
     assertThat((List<String>) assertion.getPrincipal().getAttributes().get("roles"))
         .containsExactlyInAnyOrder(
             "ROLE_APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD",
