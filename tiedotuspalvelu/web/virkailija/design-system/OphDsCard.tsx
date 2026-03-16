@@ -1,9 +1,9 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode } from "react";
 
 type PageProps = {
-    children: ReactNode;
+  children: ReactNode;
 };
 
 export const OphDsCard = ({ children }: PageProps) => {
-    return <div className="oph-ds-card">{children}</div>;
+  return <div className="oph-ds-card">{children}</div>;
 };
