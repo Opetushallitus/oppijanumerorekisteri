@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import Select from 'react-select';
 import { useSelector } from 'react-redux';
+import ReactMarkdown from 'react-markdown';
 
 import { RootState, useAppDispatch } from '../../store';
 import { setFilters as _setFilters, VirkailijahakuFilters } from '../../slices/virkailijahakuSlice';
@@ -77,11 +78,18 @@ export const VirkailijahakuPage = () => {
 
     return (
         <OphDsPage header={L('VIRKAILIJAHAKU')}>
-            {L('VIRKAILIJAHAKU_SELITE') && <p>{L('VIRKAILIJAHAKU_SELITE')}</p>}
+            {L('VIRKAILIJAHAKU_SELITE') && (
+                <div>
+                    <ReactMarkdown>{L('VIRKAILIJAHAKU_SELITE')}</ReactMarkdown>
+                </div>
+            )}
             <div className={styles.formGrid}>
                 <OphDsInput
                     id="nameQuery"
                     label={L('HAKUTERMI')}
+                    placeholder={L('HAE')}
+                    icon="search"
+                    isClearable
                     onChange={(nameQuery) => setFilters({ ...filters, nameQuery })}
                     defaultValue={filters.nameQuery}
                     debounceTimeout={400}
@@ -146,6 +154,7 @@ export const VirkailijahakuPage = () => {
                 </div>
             </div>
             <OphDsTable
+                placeholder={data ? undefined : 'Hae virkailijoita tai valitse suodatin'}
                 headers={[L('HENKILO_NIMI'), L('USERNAME'), L('HENKILOHAKU_ORGANISAATIO')]}
                 isFetching={isFetching}
                 rows={renderedData.map((d) => [

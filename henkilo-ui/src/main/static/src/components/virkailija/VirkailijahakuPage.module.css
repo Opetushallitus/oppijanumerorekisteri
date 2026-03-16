@@ -9,3 +9,7 @@
         grid-template-columns: 1fr;
     }
 }
+
+.formGrid input {
+    width: 100%;
+}
