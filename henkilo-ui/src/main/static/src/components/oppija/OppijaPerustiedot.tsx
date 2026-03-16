@@ -381,13 +381,13 @@ const OppijaPerustiedotView = ({ oid, openForm }: { oid: string; openForm: () =>
                     !henkilo?.duplicate &&
                     !henkilo?.passivoitu && (
                         <YksiloiHetutonButton
-                            className="oph-ds-button"
+                            className="oph-ds-button oph-ds-button-bordered"
                             henkiloOid={oid}
                             disabled={henkilo?.duplicate || henkilo?.passivoitu}
                         />
                     )}
                 {omattiedot?.isAdmin && henkilo?.yksiloity && !isVahvastiYksiloity(henkilo) && !henkilo?.hetu && (
-                    <PuraHetuttomanYksilointiButton className="oph-ds-button" henkiloOid={oid} />
+                    <PuraHetuttomanYksilointiButton className="oph-ds-button oph-ds-button-bordered" henkiloOid={oid} />
                 )}
                 {omattiedot?.isAdmin && !henkilo?.passivoitu && (
                     <PassivoiButton
