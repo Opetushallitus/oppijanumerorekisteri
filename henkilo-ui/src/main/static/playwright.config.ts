@@ -1,11 +1,7 @@
 import type { PlaywrightTestConfig } from '@playwright/test';
 import { devices } from '@playwright/test';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// require('dotenv').config();
+const isCI = !!process.env.CODEBUILD_BUILD_ID || !!process.env.GITHUB_ACTIONS;
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -24,11 +20,11 @@ const config: PlaywrightTestConfig = {
     /* Run tests in files in parallel */
     fullyParallel: true,
     /* Fail the build on CI if you accidentally left test.only in the source code. */
-    forbidOnly: !!process.env.CI,
+    forbidOnly: isCI,
     /* Retry on CI only */
-    retries: process.env.CI ? 2 : 0,
+    retries: isCI ? 2 : 0,
     /* Opt out of parallel tests on CI. */
-    workers: process.env.CI ? 1 : 4,
+    workers: isCI ? 1 : 4,
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */
     reporter: [
         ['list', { printSteps: true }],
@@ -43,8 +39,8 @@ const config: PlaywrightTestConfig = {
     use: {
         actionTimeout: 0,
         baseURL: 'http://localhost:8686',
-        headless: !!process.env.CI,
-        trace: process.env.CI ? 'on-first-retry' : 'on',
+        headless: isCI,
+        trace: isCI ? 'on-first-retry' : 'on',
     },
 
     /* Configure projects for major browsers */

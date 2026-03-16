@@ -3,7 +3,7 @@ import { devices } from "@playwright/test";
 
 const backendPort = Number(process.env.SERVER_PORT);
 
-const isCI = !!process.env.CI;
+const isCI = !!process.env.CODEBUILD_BUILD_ID || !!process.env.GITHUB_ACTIONS;
 
 const config: PlaywrightTestConfig = {
   testDir: "./e2e",

@@ -12,7 +12,7 @@ function main {
   npm run lint
   npm run ci:install-deps
   npm run ci:chromium
-  CI=true npm run test
+  npm run test
 }
 
 main "$@"
