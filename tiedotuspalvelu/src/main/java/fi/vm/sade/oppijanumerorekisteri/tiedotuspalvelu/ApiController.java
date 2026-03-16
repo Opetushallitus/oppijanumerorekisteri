@@ -61,6 +61,8 @@ public class ApiController {
     public static final String TYPE_KIELITUTKINTOTODISTUS = "KIELITUTKINTOTODISTUS";
     public static final String STATE_NEW = "NEW";
     public static final String STATE_SUOMIFI_VIESTI_HETULLISELLE = "SUOMIFI_VIESTI_HETULLISELLE";
+    public static final String STATE_PAPERIPOSTI_HETULLISELLE = "PAPERIPOSTI_HETULLISELLE";
+    public static final String STATE_PAPERIPOSTI_HETUTTOMALLE = "PAPERIPOSTI_HETUTTOMALLE";
     public static final String STATE_PROCESSED = "PROCESSED";
   }
 

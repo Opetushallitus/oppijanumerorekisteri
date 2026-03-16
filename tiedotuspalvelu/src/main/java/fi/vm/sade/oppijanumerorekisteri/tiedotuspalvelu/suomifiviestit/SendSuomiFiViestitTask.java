@@ -51,6 +51,9 @@ public class SendSuomiFiViestitTask {
         log.info("SuomiFiViesti {} mailbox not in use, switching to paper mail", viesti.getId());
         transactionTemplate.executeWithoutResult(
             status -> {
+              var tiedote = viesti.getTiedote();
+              tiedote.setTiedotestateId(Meta.STATE_PAPERIPOSTI_HETULLISELLE);
+              tiedoteRepository.save(tiedote);
               viesti.setMessageType("paperMail");
               viesti.setRetryCount(0);
               viesti.setNextRetry(null);

@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
@@ -156,6 +157,9 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
     assertNull(updatedViesti.getProcessedAt());
     assertNull(updatedViesti.getNextRetry());
     assertEquals(0, updatedViesti.getRetryCount());
+    var updatedTiedote = getTiedote(tiedote.getId());
+    assertThat(updatedTiedote.meta().state())
+        .isEqualTo(ApiController.Meta.STATE_PAPERIPOSTI_HETULLISELLE);
   }
 
   @Test
