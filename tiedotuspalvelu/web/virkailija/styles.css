@@ -3,12 +3,21 @@ body {
   color: #1d1d1d;
   font-size: 16px;
   line-height: 24px;
+  margin: 0;
+}
+
+.tp {
+  max-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .tp__container {
-  margin: 0 auto;
-  max-width: 1600px;
-  padding: 40px 16px;
+  padding: 24px 16px 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .tp__header {
@@ -50,17 +59,21 @@ body {
 .tp__panes {
   display: flex;
   gap: 24px;
+  flex: 1;
+  min-height: 0;
 }
 
 .tp__list-pane {
   flex: 3;
   min-width: 0;
   overflow-x: auto;
+  overflow-y: auto;
 }
 
 .tp__detail-pane {
   flex: 2;
   min-width: 0;
+  overflow-y: auto;
 }
 
 /* Table */
@@ -74,6 +87,12 @@ body {
   text-align: left;
   padding: 8px 12px;
   border-bottom: 1px solid #e5e7eb;
+}
+
+.tp__table thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .tp__table th {
