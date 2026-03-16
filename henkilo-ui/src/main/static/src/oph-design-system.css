@@ -674,6 +674,10 @@
     padding: 6px 12px;
 }
 
+.oph-ds-select-control:hover {
+    border: 2px solid var(--OPH-Input-Stroke, #0033CC);
+}
+
 .oph-ds-select-control-focused {
     border: 2px solid var(--OPH-Input-Stroke, #0041DC);
     min-height: 40px !important;
