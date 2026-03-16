@@ -21,9 +21,11 @@ test("Kielitutkintotodistus happy path", async ({ page, request }) => {
   await test.step("Virkailija näkee tiedoteen rapsasivulla", async () => {
     await page.goto("/tiedotuspalvelu/");
     await page.getByRole("button", { name: "Tiina Tiedottaja" }).click();
-    await expect(page.locator("span.tp__user")).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Kirjaudu ulos" }),
+    ).toBeVisible();
 
-    const table = page.locator("table.tp__table");
+    const table = page.locator("table");
     await expect(
       table.locator("tbody tr", { hasText: OPPIJANUMERO_NORDEA_DEMO }),
     ).toBeVisible();

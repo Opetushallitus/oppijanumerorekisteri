@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 
 import "./styles.css";
+import "./design-system/oph-design-system.css";
 import { store } from "./store";
 import { App } from "./App";
 

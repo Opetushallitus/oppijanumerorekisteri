@@ -1,0 +1,126 @@
+.oph-ds-button {
+  display: inline-flex;
+  padding: 8px 16px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  color: var(--OPH-Button-Primary-variant-Text, #fff);
+  border-radius: 2px;
+  background-color: var(--OPH-Button-Primary-variant-Background, #03c);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  margin: 0;
+  outline: none;
+  cursor: pointer;
+  border: 0;
+}
+
+.oph-ds-button-narrow {
+  padding: 0 16px;
+}
+
+.oph-ds-button-transparent {
+  color: #0033cc;
+  background-color: inherit;
+}
+
+.oph-ds-button-bordered {
+  color: var(--OPH-Button-Primary-variant-Background, #03c);
+  box-sizing: border-box;
+  padding: 6px 14px;
+  border-radius: 2px;
+  border: var(--OPH-Button-Secondary-variant-Stroke-width, 2px) solid
+    var(--OPH-Button-Secondary-variant-Stroke, #03c);
+  background-color: var(--OPH-Button-Secondary-variant-Background, #fff);
+}
+
+.oph-ds-button:hover {
+  background-color: #0041dc;
+}
+
+.oph-ds-button:focus {
+  background-color: #0041dc;
+  outline-offset: 2px;
+  outline: 2px solid #000;
+}
+
+.oph-ds-button:active {
+  background-color: #006;
+}
+
+.oph-ds-button:disabled {
+  background-color: #b2b2b2;
+}
+
+.oph-ds-button-transparent:hover {
+  background-color: inherit;
+  color: #0041dc;
+}
+
+.oph-ds-button-transparent:focus {
+  background-color: inherit;
+  color: #0041dc;
+}
+
+.oph-ds-button-transparent:active {
+  background-color: inherit;
+  color: #006;
+}
+
+.oph-ds-button-transparent:disabled {
+  background-color: inherit;
+  color: #b2b2b2;
+}
+
+.oph-ds-button-bordered:hover {
+  background-color: #fff;
+  border: var(--OPH-Button-Secondary-variant-Stroke-width, 2px) solid #0041dc;
+  color: #0041dc;
+}
+
+.oph-ds-button-bordered:focus {
+  background-color: #fff;
+  border: var(--OPH-Button-Secondary-variant-Stroke-width, 2px) solid #0041dc;
+  color: #0041dc;
+  outline-offset: 2px;
+  outline: 2px solid #000;
+}
+
+.oph-ds-button-bordered:active {
+  background-color: #fff;
+  border: var(--OPH-Button-Secondary-variant-Stroke-width, 2px) solid #006;
+  color: #006;
+}
+
+.oph-ds-button-bordered:disabled {
+  background-color: #fff;
+  border: var(--OPH-Button-Secondary-variant-Stroke-width, 2px) solid #b2b2b2;
+  color: #b2b2b2;
+}
+
+.oph-ds-button-icon {
+  padding-left: 40px;
+  background-repeat: no-repeat;
+  background-size: 20px;
+  background-position-x: 16px;
+  background-position-y: center;
+}
+
+.oph-ds-button-icon-copy {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjUiIGhlaWdodD0iMjUiIHZpZXdCb3g9IjAgMCAyNSAyNSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNi43NTYgMS4wMTU3NUg0Ljc1NTk4QzMuNjU1OTggMS4wMTU3NSAyLjc1NTk4IDEuOTE1NzUgMi43NTU5OCAzLjAxNTc1VjE3LjAxNTdINC43NTU5OFYzLjAxNTc1SDE2Ljc1NlYxLjAxNTc1Wk0xNS43NTYgNS4wMTU3NUg4Ljc1NTk4QzcuNjU1OTggNS4wMTU3NSA2Ljc2NTk4IDUuOTE1NzUgNi43NjU5OCA3LjAxNTc1TDYuNzU1OTggMjEuMDE1N0M2Ljc1NTk4IDIyLjExNTcgNy42NDU5OCAyMy4wMTU3IDguNzQ1OTggMjMuMDE1N0gxOS43NTZDMjAuODU2IDIzLjAxNTcgMjEuNzU2IDIyLjExNTcgMjEuNzU2IDIxLjAxNTdWMTEuMDE1N0wxNS43NTYgNS4wMTU3NVpNOC43NTU5OCAyMS4wMTU3VjcuMDE1NzVIMTQuNzU2VjEyLjAxNTdIMTkuNzU2VjIxLjAxNTdIOC43NTU5OFoiIGZpbGw9IiNmZmZmZmYiLz4KPC9zdmc+Cg==");
+}
+
+.oph-ds-button-icon-plus {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE5IDEzSDEzVjE5SDExVjEzSDVWMTFIMTFWNUgxM1YxMUgxOVYxM1oiIGZpbGw9IiNGRkZGRkYiLz4KPC9zdmc+Cg==");
+}
+
+.oph-ds-icon-button {
+  padding: 12px;
+  background-repeat: no-repeat;
+  background-position-y: center;
+}
+
+.oph-ds-icon-button-delete {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE2IDlWMTlIOFY5SDE2Wk0xNC41IDNIOS41TDguNSA0SDVWNkgxOVY0SDE1LjVMMTQuNSAzWk0xOCA3SDZWMTlDNiAyMC4xIDYuOSAyMSA4IDIxSDE2QzE3LjEgMjEgMTggMjAuMSAxOCAxOVY3WiIgZmlsbD0iIzAwMzNDQyIvPgo8L3N2Zz4K");
+}
