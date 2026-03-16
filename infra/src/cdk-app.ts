@@ -70,12 +70,16 @@ class CdkApp extends cdk.App {
           `https://${config.virkailijaHost}/oppijanumerorekisteri-service/actuator/health`,
         ),
       },
-      ...(config.tiedotuspalveluCapacity.max > 0 [{
-        name: "Tiedotuspalvelu",
-        url: new URL(
-          `https://${config.opintopolkuHost}/omat-viestit/actuator/health`,
-        ),
-      }] : []),
+      ...(config.tiedotuspalveluCapacity.max > 0
+        ? [
+            {
+              name: "Tiedotuspalvelu",
+              url: new URL(
+                `https://${config.opintopolkuHost}/omat-viestit/actuator/health`,
+              ),
+            },
+          ]
+        : []),
     ]);
 
     new OppijanumerorekisteriApplicationStack(
@@ -875,7 +879,7 @@ class TiedotuspalveluStack extends cdk.Stack {
       retention: logs.RetentionDays.INFINITE,
     });
 
-    if (config.tiedotuspalveluCapacity.max > 0] {
+    if (config.tiedotuspalveluCapacity.max > 0) {
       if (config.features["tiedotuspalvelu.fetch-oppija.enabled"]) {
         this.fetchOppijaAlarm(logGroup, props.alarmTopic);
       }
