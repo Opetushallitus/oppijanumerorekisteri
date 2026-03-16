@@ -11,11 +11,11 @@ import { Identifications } from '../henkilo/Identifications';
 import { OppijaPerustiedot } from './OppijaPerustiedot';
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent';
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
-import Loader from '../common/icons/Loader';
 import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { useGetHenkiloQuery } from '../../api/oppijanumerorekisteri';
 import { isOnrRekisterinpitaja } from '../../utilities/palvelurooli.util';
 import { OppijaTabs } from './OppijaTabs';
+import { OphDsSpinner } from '../design-system/OphDsSpinner';
 
 export const OppijaPage = () => {
     const { oid } = useParams();
@@ -37,7 +37,7 @@ export const OppijaPage = () => {
     }, [omattiedot, oid]);
 
     if (isHenkiloLoading || isLoading) {
-        return <Loader />;
+        return <OphDsSpinner />;
     } else if (henkilo?.henkiloKayttoEstetty) {
         return <VirheKayttoEstetty L={L} />;
     } else {

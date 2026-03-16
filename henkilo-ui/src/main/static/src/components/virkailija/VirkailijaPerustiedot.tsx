@@ -9,14 +9,14 @@ import PoistaKayttajatunnusButton from '../common/henkilo/buttons/PoistaKayttaja
 import { isOnrRekisterinpitaja } from '../../utilities/palvelurooli.util';
 import { isApiError } from '../../api/common';
 import { isValidKayttajatunnus } from '../../validation/KayttajatunnusValidator';
-import Loader from '../common/icons/Loader';
 import OphModal from '../common/modal/OphModal';
 import HakatunnistePopupContent from '../common/button/HakaPopupContent';
 import PasswordPopupContent from '../common/button/PasswordPopupContent';
-
-import styles from './VirkailijaPerustiedot.module.css';
 import { useGetHenkiloQuery } from '../../api/oppijanumerorekisteri';
 import { parseWorkEmails } from '../../utilities/henkilo.util';
+import { OphDsSpinner } from '../design-system/OphDsSpinner';
+
+import styles from './VirkailijaPerustiedot.module.css';
 
 const VirkailijaPerustiedotForm = ({ oid, closeForm }: { oid: string; closeForm: () => void }) => {
     const { L } = useLocalisations();
@@ -109,7 +109,7 @@ export const VirkailijaPerustiedot = ({ oid }: { oid: string }) => {
             <h2 id={sectionId}>{L('VIRKAILIJAN_TIEDOT_OTSIKKO')}</h2>
             <div className={styles.perustiedotContent}>
                 {isLoading ? (
-                    <Loader />
+                    <OphDsSpinner />
                 ) : muokkaa ? (
                     <VirkailijaPerustiedotForm oid={oid} closeForm={() => setMuokkaa(false)} />
                 ) : (

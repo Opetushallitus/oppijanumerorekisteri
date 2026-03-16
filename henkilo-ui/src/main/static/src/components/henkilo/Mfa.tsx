@@ -10,11 +10,11 @@ import {
 } from '../../api/kayttooikeus';
 import appleStore from '../../img/apple_store.svg';
 import googlePlay from '../../img/google_play.svg';
-import Loader from '../common/icons/Loader';
 import { View } from '../../types/constants';
 import { useLocalisations } from '../../selectors';
 import { useAppDispatch } from '../../store';
 import { add } from '../../slices/toastSlice';
+import { OphDsSpinner } from '../design-system/OphDsSpinner';
 
 import styles from './Mfa.module.css';
 
@@ -208,7 +208,7 @@ const MfaSetup = ({ setMfaSetup }: MfaSetupProps) => {
     const pinInput = useRef<PinInput>(null);
 
     if (isGetLoading) {
-        return <Loader />;
+        return <OphDsSpinner />;
     }
     if (!isSuccess) {
         return (

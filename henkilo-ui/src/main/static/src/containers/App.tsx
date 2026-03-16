@@ -6,13 +6,13 @@ import { skipToken } from '@reduxjs/toolkit/query/react';
 
 import { useAppDispatch } from '../store';
 import { TopNavigation } from '../components/navigation/TopNavigation';
-import Loader from '../components/common/icons/Loader';
 import { useLocalisations } from '../selectors';
 import { useGetOmatOrganisaatiotQuery, useGetOmattiedotQuery, useGetOtuvaPrequelQuery } from '../api/kayttooikeus';
 import { useGetLocaleQuery, useGetOnrPrequelQuery } from '../api/oppijanumerorekisteri';
 import { useGetLocalisationsQuery } from '../api/lokalisointi';
 import { OphDsToasts } from '../components/design-system/OphDsToast';
 import { add } from '../slices/toastSlice';
+import { OphDsSpinner } from '../components/design-system/OphDsSpinner';
 
 registerLocale('fi', fi);
 setDefaultLocale('fi');
@@ -21,7 +21,7 @@ const App = () => {
     const { isSuccess: isOnrPrequelSuccess } = useGetOnrPrequelQuery(undefined, { pollingInterval: 30000 });
     const { isSuccess: isOtuvaPrequelSuccess } = useGetOtuvaPrequelQuery(undefined, { pollingInterval: 30000 });
     if (!isOnrPrequelSuccess || !isOtuvaPrequelSuccess) {
-        return <Loader />;
+        return <OphDsSpinner />;
     } else {
         return <PostPrequelApp />;
     }
@@ -62,7 +62,7 @@ const PostPrequelApp = () => {
             <Outlet />
         </div>
     ) : (
-        <Loader />
+        <OphDsSpinner />
     );
 };
 

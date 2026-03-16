@@ -35,15 +35,15 @@ import VtjOverrideButton from '../common/henkilo/buttons/VtjOverrideButton';
 import PuraHetuttomanYksilointiButton from '../common/henkilo/buttons/PuraHetuttomanYksilointi';
 import OphModal from '../common/modal/OphModal';
 import PassinumeroPopupContent from '../common/henkilo/buttons/PassinumeroPopupContent';
-import Loader from '../common/icons/Loader';
 import { OphDsInput } from '../design-system/OphDsInput';
 import { isValidHetu } from '../../validation/YksilointiValidator';
 import { isValidKutsumanimi } from '../../validation/KutsumanimiValidator';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { SelectOption, selectStyles } from '../../utilities/select';
+import { OphDsDatepicker } from '../design-system/OphDsDatePicker';
+import { OphDsSpinner } from '../design-system/OphDsSpinner';
 
 import styles from './OppijaPerustiedot.module.css';
-import { OphDsDatepicker } from '../design-system/OphDsDatePicker';
 
 const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; closeForm: () => void }) => {
     const { L, locale } = useLocalisations();
@@ -445,7 +445,7 @@ export const OppijaPerustiedot = ({ oid }: { oid: string }) => {
             <h2 id={sectionId}>{L('OPPIJAN_PERUSTIEDOT') + yksilointiTranslation}</h2>
             <div className={styles.perustiedotContent}>
                 {isLoading ? (
-                    <Loader />
+                    <OphDsSpinner />
                 ) : isForm && henkilo ? (
                     <OppijaPerustiedotForm henkilo={henkilo} closeForm={() => setForm(false)} />
                 ) : (

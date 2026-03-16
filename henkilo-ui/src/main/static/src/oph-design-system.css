@@ -142,6 +142,40 @@
     padding: 16px 24px;
 }
 
+
+.oph-ds-spinner {
+    width: 40px;
+    height: 40px;
+    color: #0033CC;
+    animation: oph-ds-rotate 1.4s linear infinite;
+}
+
+.oph-ds-spinner-circle {
+    stroke-dasharray: 80, 200;
+    stroke-dashoffset: 0;
+    stroke-linecap: round;
+    animation: oph-ds-dash 1.4s ease-in-out infinite;
+}
+
+@keyframes oph-ds-rotate {
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes oph-ds-dash {
+    0% {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+    }
+    50% {
+        stroke-dasharray: 100, 200;
+        stroke-dashoffset: -15px;
+    }
+    100% {
+        stroke-dasharray: 100, 200;
+        stroke-dashoffset: -125px;
+    }
+}
+
 .oph-ds-card {
     padding: 24px;
     border-radius: 4px;
@@ -805,6 +839,7 @@
     text-align: center;
     font-size: 20px;
     line-height: 26px;
+    padding: 2rem;
 }
 
 .oph-ds-toasts {

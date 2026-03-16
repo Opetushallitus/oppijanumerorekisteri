@@ -17,7 +17,7 @@ import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpen
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
 import { OphDsCard } from '../design-system/OphDsCard';
 import { GenericErrorPage } from '../GenericErrorPage';
-import Loader from '../common/icons/Loader';
+import { OphDsSpinner } from '../design-system/OphDsSpinner';
 
 export const VirkailijaPage = () => {
     const { oid } = useParams();
@@ -34,7 +34,7 @@ export const VirkailijaPage = () => {
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
 
     if (isLoading) {
-        return <Loader />;
+        return <OphDsSpinner />;
     }
 
     if (error) {

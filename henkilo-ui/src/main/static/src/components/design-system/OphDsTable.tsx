@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 
 import { useLocalisations } from '../../selectors';
 import { SpringPageModel } from '../../api/oppijanumerorekisteri';
-import Loader from '../common/icons/Loader';
+import { OphDsSpinner } from './OphDsSpinner';
 
 type TableProps = {
     headers: string[];
@@ -161,8 +161,11 @@ export const OphDsTable = ({
                 </tbody>
             </table>
             <div style={{ padding: '16px' }}>
-                {isFetching ? <Loader /> : <div style={{ padding: '12px' }}></div>}
-                {placeholder && !isFetching && (
+                {isFetching ? (
+                    <div style={{ display: 'flex', justifyContent: 'center', width: '100%', padding: '2rem' }}>
+                        <OphDsSpinner />
+                    </div>
+                ) : placeholder ? (
                     <div className="oph-ds-table-placeholder">
                         <svg width="55" height="54" viewBox="0 0 55 54" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <ellipse cx="27.0641" cy="26.7489" rx="27.0641" ry="26.7489" fill="#F6F6F6" />
@@ -173,7 +176,7 @@ export const OphDsTable = ({
                         </svg>
                         <div>{placeholder}</div>
                     </div>
-                )}
+                ) : undefined}
             </div>
             {page && page.page.totalPages > 1 && <Pagination page={page.page} setPage={page.setPage} />}
         </div>

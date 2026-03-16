@@ -12,8 +12,8 @@ import { useGetKayttajatiedotQuery, useGetOmattiedotQuery } from '../../../api/k
 import { KayttajatiedotRead } from '../../../types/domain/kayttooikeus/KayttajatiedotRead';
 import { useGetHenkiloQuery, useUpdateHenkiloMutation } from '../../../api/oppijanumerorekisteri';
 import { add } from '../../../slices/toastSlice';
-import Loader from '../icons/Loader';
 import { OphDsInput } from '../../design-system/OphDsInput';
+import { OphDsSpinner } from '../../design-system/OphDsSpinner';
 
 type OwnProps = {
     henkiloOid: string;
@@ -215,7 +215,7 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
     };
 
     if (isHenkiloLoading) {
-        return <Loader />;
+        return <OphDsSpinner />;
     }
     return (
         <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
