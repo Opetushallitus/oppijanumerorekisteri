@@ -25,6 +25,7 @@
       "rootUrl": "http://localhost:8087/tiedotuspalvelu",
       "redirectUris": [
         "http://localhost:8087/tiedotuspalvelu/*",
+        "http://localhost:8088/tiedotuspalvelu/*",
         "http://localhost:8080/tiedotuspalvelu/*"
       ],
       "webOrigins": [
