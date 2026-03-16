@@ -8,6 +8,7 @@ type TableProps = {
     headers: string[];
     isFetching: boolean;
     page?: PageProps;
+    placeholder?: string;
     rows: ReactNode[][];
     rowDescriptionPartitive?: string;
     sortOrder?: SortOrder;
@@ -95,12 +96,12 @@ export const OphDsTable = ({
     headers,
     isFetching,
     page,
+    placeholder,
     rows,
     rowDescriptionPartitive,
     sortOrder,
     setSortOrder,
 }: TableProps) => {
-    const { L } = useLocalisations();
     const totalElements = page ? page?.page.totalElements : rows.length;
 
     const sortBy = (header: string) => {
@@ -121,14 +122,14 @@ export const OphDsTable = ({
     return (
         <div style={{ width: '100%', overflowY: 'scroll' }}>
             {rowDescriptionPartitive && (
-                <h2
-                    className="oph-ds-table-results"
+                <p
                     aria-live="polite"
                     aria-atomic="true"
                     data-testid={`${rowDescriptionPartitive}-count`}
+                    style={{ marginBottom: '1rem' }}
                 >
-                    {L('HENKILOHAKU_HAKUTULOKSET') + ` (${totalElements} ${rowDescriptionPartitive})`}
-                </h2>
+                    {`${totalElements} ${rowDescriptionPartitive}`}
+                </p>
             )}
             <table className="oph-ds-table">
                 <thead>
@@ -159,7 +160,21 @@ export const OphDsTable = ({
                     ))}
                 </tbody>
             </table>
-            <div style={{ padding: '16px' }}>{isFetching ? <Loader /> : <div style={{ padding: '12px' }}></div>}</div>
+            <div style={{ padding: '16px' }}>
+                {isFetching ? <Loader /> : <div style={{ padding: '12px' }}></div>}
+                {placeholder && !isFetching && (
+                    <div className="oph-ds-table-placeholder">
+                        <svg width="55" height="54" viewBox="0 0 55 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <ellipse cx="27.0641" cy="26.7489" rx="27.0641" ry="26.7489" fill="#F6F6F6" />
+                            <path
+                                d="M26.3066 21.2109H32.3773V23.2109H26.3066V21.2109ZM26.3066 25.2109H32.3773V27.2109H26.3066V25.2109ZM26.3066 29.2109H32.3773V31.2109H26.3066V29.2109ZM22.2594 21.2109H24.283V23.2109H22.2594V21.2109ZM22.2594 25.2109H24.283V27.2109H22.2594V25.2109ZM22.2594 29.2109H24.283V31.2109H22.2594V29.2109ZM35.5138 17.2109H19.1229C18.617 17.2109 18.2123 17.6109 18.2123 18.1109V34.3109C18.2123 34.7109 18.617 35.2109 19.1229 35.2109H35.5138C35.9185 35.2109 36.4244 34.7109 36.4244 34.3109V18.1109C36.4244 17.6109 35.9185 17.2109 35.5138 17.2109ZM34.4009 33.2109H20.2359V19.2109H34.4009V33.2109Z"
+                                fill="#4C4C4C"
+                            />
+                        </svg>
+                        <div>{placeholder}</div>
+                    </div>
+                )}
+            </div>
             {page && page.page.totalPages > 1 && <Pagination page={page.page} setPage={page.setPage} />}
         </div>
     );
