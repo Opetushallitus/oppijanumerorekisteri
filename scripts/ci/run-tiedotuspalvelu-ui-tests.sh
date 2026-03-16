@@ -11,7 +11,7 @@ function main {
 
   cd "$repo"
 
-  if is_running_on_codebuild || is_running_on_github_actions; then
+  if is_running_on_ci; then
     docker compose up -d
   fi
 
@@ -67,7 +67,7 @@ function cleanup {
     wait "$backend_pid" 2>/dev/null || true
   fi
 
-  if is_running_on_codebuild || is_running_on_github_actions; then
+  if is_running_on_ci; then
     docker compose down
   fi
 }

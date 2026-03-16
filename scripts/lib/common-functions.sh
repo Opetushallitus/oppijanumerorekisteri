@@ -13,6 +13,10 @@ function require_command {
   fi
 }
 
+function is_running_on_ci {
+  is_running_on_codebuild || is_running_on_github_actions
+}
+
 function is_running_on_codebuild {
   [ -n "${CODEBUILD_BUILD_ID:-}" ]
 }

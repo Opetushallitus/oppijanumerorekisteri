@@ -9,7 +9,7 @@ function main {
 
   cd "${repo}/tiedotuspalvelu"
 
-  if is_running_on_codebuild || is_running_on_github_actions; then
+  if is_running_on_ci; then
     docker compose up -d
   fi
 
@@ -20,7 +20,7 @@ function main {
 }
 
 function cleanup {
-  if is_running_on_codebuild || is_running_on_github_actions; then
+  if is_running_on_ci; then
     docker compose down
   fi
 }
