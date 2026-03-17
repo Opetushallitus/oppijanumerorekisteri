@@ -6,11 +6,11 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.ApiController;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.Tiedote;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedotuspalveluApiTest;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+import java.util.function.Consumer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -21,7 +21,6 @@ import org.springframework.test.context.DynamicPropertySource;
 public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
 
   @Autowired private SendSuomiFiViestitTask sendSuomiFiViestitTask;
-  @Autowired private SuomiFiViestiRepository suomiFiViestiRepository;
 
   @RegisterExtension
   static WireMockExtension wireMock =
@@ -43,8 +42,7 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
 
   @BeforeEach
   public void setup() {
-    suomiFiViestiRepository.deleteAll();
-    tiedoteRepository.deleteAll();
+    clearDatabase();
     wireMock.resetAll();
   }
 
@@ -57,10 +55,7 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
                 aResponse()
                     .withStatus(200)
                     .withBody("{\"messageId\": \"%s\"}".formatted(SUOMIFI_MESSAGE_ID))));
-    var tiedote = createTiedote("1.2.3");
-    suomiFiViestiRepository.save(getSuomiFiViestiBuilder(tiedote).build());
-
-    sendSuomiFiViestitTask.execute();
+    var tiedote = createTiedoteAndRunTask();
 
     wireMock.verify(
         postRequestedFor(urlEqualTo("/v2/messages/electronic"))
@@ -79,7 +74,7 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
   }
 
   @Test
-  public void respectsNextRetryTime() throws Exception {
+  public void respectsNextRetryTimeInFuture() throws Exception {
     stubGettingSuomiFiViestitAccessToken();
     wireMock.stubFor(
         post(urlEqualTo("/v2/messages/electronic"))
@@ -88,35 +83,38 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
                     .withStatus(200)
                     .withBody("{\"messageId\": \"%s\"}".formatted(SUOMIFI_MESSAGE_ID))));
 
-    var tiedote = createTiedote("1.2.3");
+    var tiedote =
+        createTiedoteAndRunTask(
+            t -> {
+              t.setRetryCount(1);
+              t.setNextRetry(OffsetDateTime.now().plusHours(1));
+            });
 
-    var futureViesti =
-        suomiFiViestiRepository.save(
-            getSuomiFiViestiBuilder(tiedote)
-                .nextRetry(OffsetDateTime.now().plusHours(1))
-                .retryCount(1)
-                .build());
+    assertEquals(1, tiedote.getRetryCount());
+    assertThat(tiedote.getNextRetry()).isAfter(OffsetDateTime.now());
+    assertThat(tiedote.getViesti().getProcessedAt()).isNull();
+  }
 
-    var pastViesti =
-        suomiFiViestiRepository.save(
-            getSuomiFiViestiBuilder(tiedote)
-                .nextRetry(OffsetDateTime.now().minusMinutes(1))
-                .retryCount(1)
-                .build());
+  @Test
+  public void respectsNextRetryTimeInPast() throws Exception {
+    stubGettingSuomiFiViestitAccessToken();
+    wireMock.stubFor(
+        post(urlEqualTo("/v2/messages/electronic"))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withBody("{\"messageId\": \"%s\"}".formatted(SUOMIFI_MESSAGE_ID))));
 
-    sendSuomiFiViestitTask.execute();
+    var tiedote =
+        createTiedoteAndRunTask(
+            t -> {
+              t.setRetryCount(1);
+              t.setNextRetry(OffsetDateTime.now().minusDays(10));
+            });
 
-    var futureViestiUpdated = suomiFiViestiRepository.findById(futureViesti.getId()).orElseThrow();
-    assertNull(futureViestiUpdated.getProcessedAt());
-    assertEquals(1, futureViestiUpdated.getRetryCount());
-
-    var pastViestiUpdated = suomiFiViestiRepository.findById(pastViesti.getId()).orElseThrow();
-    assertNotNull(pastViestiUpdated.getProcessedAt());
-    assertEquals(0, pastViestiUpdated.getRetryCount());
-    assertEquals(SUOMIFI_MESSAGE_ID, pastViestiUpdated.getMessageId());
-
-    var updatedTiedote = tiedoteRepository.findById(tiedote.getId()).orElseThrow();
-    assertEquals(ApiController.Meta.STATE_PROCESSED, updatedTiedote.getTiedotestateId());
+    assertEquals(0, tiedote.getRetryCount());
+    assertThat(tiedote.getNextRetry()).isNull();
+    assertThat(tiedote.getViesti().getProcessedAt()).isNotNull();
   }
 
   @Test
@@ -125,20 +123,32 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
     wireMock.stubFor(
         post(urlEqualTo("/v2/messages/electronic")).willReturn(aResponse().withStatus(500)));
 
+    var updatedTiedote = createTiedoteAndRunTask();
+    assertNull(updatedTiedote.getViesti().getProcessedAt());
+    assertNull(updatedTiedote.getViesti().getMessageId());
+    assertEquals(1, updatedTiedote.getRetryCount());
+    assertNotNull(updatedTiedote.getNextRetry());
+  }
+
+  private Tiedote createTiedoteAndRunTask() throws Exception {
+    return createTiedoteAndRunTask(t -> {});
+  }
+
+  private Tiedote createTiedoteAndRunTask(Consumer<Tiedote> modify) throws Exception {
     var tiedote = createTiedote("1.2.3");
-    var viesti = suomiFiViestiRepository.save(getSuomiFiViestiBuilder(tiedote).build());
+    tiedote.setState(Tiedote.STATE_SUOMIFI_VIESTIN_LÄHETYS);
+    tiedote.setViesti(getSuomiFiViestiBuilder(tiedote).build());
+    modify.accept(tiedote);
+    tiedote = tiedoteRepository.save(tiedote);
 
     sendSuomiFiViestitTask.execute();
 
-    var updatedViesti = suomiFiViestiRepository.findById(viesti.getId()).orElseThrow();
-    assertNull(updatedViesti.getProcessedAt());
-    assertNull(updatedViesti.getMessageId());
-    assertEquals(1, updatedViesti.getRetryCount());
-    assertNotNull(updatedViesti.getNextRetry());
+    return tiedoteRepository.findById(tiedote.getId()).orElseThrow();
   }
 
   @Test
-  public void switchesToPaperMailOnMailboxNotInUse() throws Exception {
+  public void switchesToKielitutkintotodistuksenNoutoForPaperMailingOnMailboxNotInUse()
+      throws Exception {
     stubGettingSuomiFiViestitAccessToken();
     wireMock.stubFor(
         post(urlEqualTo("/v2/messages/electronic"))
@@ -148,19 +158,16 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
                     .withHeader("Content-Type", "application/json")
                     .withBody("{\"errorCode\": \"MAILBOX_NOT_IN_USE\"}")));
 
-    var tiedote = createTiedote("1.2.3");
-    var viesti = suomiFiViestiRepository.save(getSuomiFiViestiBuilder(tiedote).build());
+    var tiedote = createTiedoteAndRunTask();
 
     sendSuomiFiViestitTask.execute();
 
-    var updatedViesti = suomiFiViestiRepository.findById(viesti.getId()).orElseThrow();
-    assertEquals("paperMail", updatedViesti.getMessageType());
-    assertNull(updatedViesti.getProcessedAt());
-    assertNull(updatedViesti.getNextRetry());
-    assertEquals(0, updatedViesti.getRetryCount());
-    var updatedTiedote = getTiedote(tiedote.getId());
-    assertThat(updatedTiedote.meta().state())
-        .isEqualTo(ApiController.Meta.STATE_PAPERIPOSTI_HETULLISELLE);
+    var updatedTiedote = tiedoteRepository.findById(tiedote.getId()).orElseThrow();
+    assertEquals("paperMail", updatedTiedote.getViesti().getMessageType());
+    assertNull(updatedTiedote.getViesti().getProcessedAt());
+    assertNull(updatedTiedote.getNextRetry());
+    assertEquals(0, updatedTiedote.getRetryCount());
+    assertThat(updatedTiedote.getState()).isEqualTo(Tiedote.STATE_KIELITUTKINTOTODISTUKSEN_NOUTO);
   }
 
   @Test
@@ -189,20 +196,18 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
                     .withHeader("Content-Type", "application/json")
                     .withBody("{\"messageId\": \"msg-456\"}")));
 
-    var tiedote = createTiedote("1.2.3");
-    tiedote.setTodistusUrl(wireMock.baseUrl() + "/todistus.pdf");
-    tiedoteRepository.save(tiedote);
-    var viesti =
-        suomiFiViestiRepository.save(
-            getSuomiFiViestiBuilder(tiedote).messageType("paperMail").build());
+    var updatedTiedote =
+        createTiedoteAndRunTask(
+            t -> {
+              t.setState(Tiedote.STATE_SUOMIFI_VIESTIN_LÄHETYS_PAPERIPOSTIOPTIOLLA);
+              t.setTodistusUrl(wireMock.baseUrl() + "/todistus.pdf");
+              t.getViesti().setMessageType("paperMail");
+            });
 
-    sendSuomiFiViestitTask.execute();
-
-    var updatedViesti = suomiFiViestiRepository.findById(viesti.getId()).orElseThrow();
-    assertEquals("paperMail", updatedViesti.getMessageType());
-    assertNotNull(updatedViesti.getProcessedAt());
-    assertEquals("msg-456", updatedViesti.getMessageId());
-    assertEquals(0, updatedViesti.getRetryCount());
+    assertEquals("paperMail", updatedTiedote.getViesti().getMessageType());
+    assertNotNull(updatedTiedote.getViesti().getProcessedAt());
+    assertEquals("msg-456", updatedTiedote.getViesti().getMessageId());
+    assertEquals(0, updatedTiedote.getRetryCount());
   }
 
   private void stubGettingSuomiFiViestitAccessToken() {

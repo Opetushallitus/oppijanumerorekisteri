@@ -45,8 +45,7 @@ public class FetchSuomiFiViestitEventsTaskTest extends TiedotuspalveluApiTest {
 
   @BeforeEach
   public void setup() {
-    eventRepository.deleteAll();
-    cursorRepository.deleteAll();
+    clearDatabase();
     wireMock.resetAll();
   }
 

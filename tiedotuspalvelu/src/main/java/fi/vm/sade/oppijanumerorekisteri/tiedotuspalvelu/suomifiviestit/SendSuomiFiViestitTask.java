@@ -1,7 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit;
 
-import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.ApiController.Meta;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.LoggingHttpClient;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.Tiedote;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedoteRepository;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedotuspalveluProperties;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.locale.LocalisationRepository;
@@ -23,7 +23,6 @@ public class SendSuomiFiViestitTask {
 
   private static final int _24_HOURS_IN_MINUTES = 60 * 24;
   private final TiedoteRepository tiedoteRepository;
-  private final SuomiFiViestiRepository suomiFiViestiRepository;
   private final SuomiFiViestitClient suomiFiViestitClient;
   private final TiedotuspalveluProperties tiedotuspalveluProperties;
   private final LocalisationRepository localisationRepository;
@@ -32,10 +31,15 @@ public class SendSuomiFiViestitTask {
 
   public void execute() {
     log.info("Running SendSuomiFiViestitTask");
-    var unprocessed = suomiFiViestiRepository.findUnprocessed();
+    var unprocessed =
+        tiedoteRepository.findForProcessingByState(
+            List.of(
+                Tiedote.STATE_SUOMIFI_VIESTIN_LÄHETYS,
+                Tiedote.STATE_SUOMIFI_VIESTIN_LÄHETYS_PAPERIPOSTIOPTIOLLA));
     var otsikko = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_OTSIKKO", "fi");
     var sisalto = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_VIESTI", "fi");
-    for (var viesti : unprocessed) {
+    for (var tiedote : unprocessed) {
+      var viesti = tiedote.getViesti();
       try {
         transactionTemplate.executeWithoutResult(
             status -> {
@@ -44,35 +48,32 @@ public class SendSuomiFiViestitTask {
               var messageId = sendSuomiFiViesti(viesti);
               viesti.setMessageId(messageId);
               viesti.setProcessedAt(OffsetDateTime.now());
-              viesti.setNextRetry(null);
-              viesti.setRetryCount(0);
-              suomiFiViestiRepository.save(viesti);
-              var tiedote = viesti.getTiedote();
-              tiedote.setTiedotestateId(Meta.STATE_PROCESSED);
+              tiedote.setNextRetry(null);
+              tiedote.setRetryCount(0);
+              tiedote.setState(Tiedote.STATE_TIEDOTE_KÄSITELTY);
               tiedoteRepository.save(tiedote);
             });
       } catch (MailboxNotInUseException e) {
         log.info("SuomiFiViesti {} mailbox not in use, switching to paper mail", viesti.getId());
         transactionTemplate.executeWithoutResult(
             status -> {
-              var tiedote = viesti.getTiedote();
-              tiedote.setTiedotestateId(Meta.STATE_PAPERIPOSTI_HETULLISELLE);
-              tiedoteRepository.save(tiedote);
+              tiedote.setState(Tiedote.STATE_KIELITUTKINTOTODISTUKSEN_NOUTO);
+              tiedote.setRetryCount(0);
+              tiedote.setNextRetry(null);
               viesti.setMessageType("paperMail");
-              viesti.setRetryCount(0);
-              viesti.setNextRetry(null);
-              suomiFiViestiRepository.save(viesti);
+              tiedoteRepository.save(tiedote);
             });
       } catch (Exception e) {
-        log.error("Failed to send SuomiFiViesti {}", viesti.getId(), e);
+        log.error(
+            "Failed to send SuomiFiViesti {} for tiedote {}", viesti.getId(), tiedote.getId(), e);
         transactionTemplate.executeWithoutResult(
             status -> {
-              var v = suomiFiViestiRepository.findById(viesti.getId()).orElse(viesti);
-              v.setRetryCount(v.getRetryCount() + 1);
+              var t = tiedoteRepository.findById(tiedote.getId()).orElse(tiedote);
+              t.setRetryCount(t.getRetryCount() + 1);
               long delayInMinutes =
-                  (long) Math.min(Math.pow(2, v.getRetryCount() - 1), _24_HOURS_IN_MINUTES);
-              v.setNextRetry(OffsetDateTime.now().plusMinutes(delayInMinutes));
-              suomiFiViestiRepository.save(v);
+                  (long) Math.min(Math.pow(2, t.getRetryCount() - 1), _24_HOURS_IN_MINUTES);
+              t.setNextRetry(OffsetDateTime.now().plusMinutes(delayInMinutes));
+              tiedoteRepository.save(t);
             });
       }
     }

@@ -15,7 +15,6 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.SignedJWT;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.oppija.FetchOppijaTask;
-import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViestiRepository;
 import java.net.URL;
 import java.util.Date;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +28,6 @@ import org.springframework.test.context.DynamicPropertySource;
 public class FetchOppijaTaskTest extends TiedotuspalveluApiTest implements ResourceReader {
 
   @Autowired private FetchOppijaTask fetchOppijaTask;
-  @Autowired private SuomiFiViestiRepository suomiFiViestiRepository;
 
   @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
   private String jwksUri;
@@ -45,8 +43,7 @@ public class FetchOppijaTaskTest extends TiedotuspalveluApiTest implements Resou
 
   @BeforeEach
   public void setup() {
-    suomiFiViestiRepository.deleteAll();
-    tiedoteRepository.deleteAll();
+    clearDatabase();
     wireMock.resetAll();
   }
 
@@ -81,12 +78,12 @@ public class FetchOppijaTaskTest extends TiedotuspalveluApiTest implements Resou
         "/henkilo/.*", readResource("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + ".json"));
 
     var tiedote = createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES);
-    assertEquals(ApiController.Meta.STATE_NEW, tiedote.getTiedotestateId());
+    assertEquals(Tiedote.STATE_OPPIJAN_VALIDOINTI, tiedote.getState());
 
     fetchOppijaTask.execute();
 
     var updated = tiedoteRepository.findById(tiedote.getId()).orElseThrow();
-    assertEquals(ApiController.Meta.STATE_SUOMIFI_VIESTI_HETULLISELLE, updated.getTiedotestateId());
+    assertEquals(Tiedote.STATE_SUOMIFI_VIESTIN_LÄHETYS, updated.getState());
   }
 
   @Test

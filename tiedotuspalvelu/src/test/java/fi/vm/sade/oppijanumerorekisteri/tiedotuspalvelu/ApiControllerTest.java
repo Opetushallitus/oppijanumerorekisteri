@@ -42,7 +42,7 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
 
   @Test
   public void createTiedoteSucceedsWithValidData() throws Exception {
-    tiedoteRepository.deleteAll();
+    clearDatabase();
     String idempotencyKey = UUID.randomUUID().toString();
     var returnedId = postTiedoteAndReturnId(tiedoteJson(idempotencyKey));
 
@@ -61,7 +61,7 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
         .andExpect(jsonPath("$.id").value(returnedId.toString()))
         .andExpect(jsonPath("$.opiskeluoikeusOid").value(OPISKELUOIKEUS_OID))
         .andExpect(jsonPath("$.meta.type").value("KIELITUTKINTOTODISTUS"))
-        .andExpect(jsonPath("$.meta.state").value("NEW"))
+        .andExpect(jsonPath("$.meta.state").value("OPPIJAN_VALIDOINTI"))
         .andExpect(jsonPath("$.statuses[0].status").value("CREATED"))
         .andExpect(jsonPath("$.statuses[0].timestamp").exists());
   }
@@ -96,7 +96,7 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
 
   @Test
   public void createTiedoteWithSameIdempotencyKeyReturnsSameId() throws Exception {
-    tiedoteRepository.deleteAll();
+    clearDatabase();
     String idempotencyKey = UUID.randomUUID().toString();
     var json = tiedoteJson(idempotencyKey);
     var firstId = postTiedoteAndReturnId(json);
@@ -111,7 +111,7 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
 
   @Test
   public void createTiedoteWithDifferentIdempotencyKeysCreatesDifferentRecords() throws Exception {
-    tiedoteRepository.deleteAll();
+    clearDatabase();
 
     var firstId = postTiedoteAndReturnId(tiedoteJson(UUID.randomUUID().toString()));
     var secondId = postTiedoteAndReturnId(tiedoteJson(UUID.randomUUID().toString()));

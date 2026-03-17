@@ -20,7 +20,7 @@ public class UiControllerTest extends TiedotuspalveluApiTest {
 
   @BeforeEach
   public void setup() throws Exception {
-    tiedoteRepository.deleteAll();
+    clearDatabase();
 
     var principal =
         casPrincipal(

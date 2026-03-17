@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
-import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViestiRepository;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViestitEventRepository;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,17 +27,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApiController {
 
   private final TiedoteRepository tiedoteRepository;
-  private final SuomiFiViestiRepository suomiFiViestiRepository;
   private final SuomiFiViestitEventRepository suomiFiViestitEventRepository;
   private final EntityManager entityManager;
 
   public ApiController(
       TiedoteRepository tiedoteRepository,
-      SuomiFiViestiRepository suomiFiViestiRepository,
       SuomiFiViestitEventRepository suomiFiViestitEventRepository,
       EntityManager entityManager) {
     this.tiedoteRepository = tiedoteRepository;
-    this.suomiFiViestiRepository = suomiFiViestiRepository;
     this.suomiFiViestitEventRepository = suomiFiViestitEventRepository;
     this.entityManager = entityManager;
   }
@@ -57,15 +53,8 @@ public class ApiController {
       List<StatusEntry> statuses) {}
 
   public record Meta(
-      @Schema(example = TYPE_KIELITUTKINTOTODISTUS) String type,
-      @Schema(example = STATE_NEW) String state) {
-    public static final String TYPE_KIELITUTKINTOTODISTUS = "KIELITUTKINTOTODISTUS";
-    public static final String STATE_NEW = "NEW";
-    public static final String STATE_SUOMIFI_VIESTI_HETULLISELLE = "SUOMIFI_VIESTI_HETULLISELLE";
-    public static final String STATE_PAPERIPOSTI_HETULLISELLE = "PAPERIPOSTI_HETULLISELLE";
-    public static final String STATE_PAPERIPOSTI_HETUTTOMALLE = "PAPERIPOSTI_HETUTTOMALLE";
-    public static final String STATE_PROCESSED = "PROCESSED";
-  }
+      @Schema(example = Tiedote.TYPE_KIELITUTKINTOTODISTUS) String type,
+      @Schema(example = Tiedote.STATE_OPPIJAN_VALIDOINTI) String state) {}
 
   public record StatusEntry(
       @Schema(example = CREATED) String status,
@@ -90,8 +79,8 @@ public class ApiController {
             .todistusUrl(
                 tiedoteDto.todistusUrl() != null ? tiedoteDto.todistusUrl() : "placeholder")
             .opiskeluoikeusOid(tiedoteDto.opiskeluoikeusOid().orElse(null))
-            .tiedotetypeId(Meta.TYPE_KIELITUTKINTOTODISTUS)
-            .tiedotestateId(Meta.STATE_NEW)
+            .type(Tiedote.TYPE_KIELITUTKINTOTODISTUS)
+            .state(Tiedote.STATE_OPPIJAN_VALIDOINTI)
             .build();
     tiedoteRepository.saveAndFlush(tiedote);
     entityManager.refresh(tiedote);
@@ -109,12 +98,11 @@ public class ApiController {
   }
 
   private TiedoteResponse buildTiedoteResponse(Tiedote tiedote) {
-    var meta = new Meta(tiedote.getTiedotetypeId(), tiedote.getTiedotestateId());
+    var meta = new Meta(tiedote.getType(), tiedote.getState());
     var statuses = new ArrayList<StatusEntry>();
     statuses.add(new StatusEntry(StatusEntry.CREATED, tiedote.getCreated()));
 
-    suomiFiViestiRepository
-        .findByTiedoteId(tiedote.getId())
+    Optional.ofNullable(tiedote.getViesti())
         .ifPresent(
             viesti -> {
               if (viesti.getProcessedAt() != null) {

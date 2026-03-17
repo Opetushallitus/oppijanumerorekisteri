@@ -1,11 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViesti;
+import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -22,6 +18,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Tiedote {
+  public static final String TYPE_KIELITUTKINTOTODISTUS = "KIELITUTKINTOTODISTUS";
+
+  public static final String STATE_OPPIJAN_VALIDOINTI = "OPPIJAN_VALIDOINTI";
+  public static final String STATE_SUOMIFI_VIESTIN_LÄHETYS = "SUOMIFI_VIESTIN_LÄHETYS";
+  public static final String STATE_KIELITUTKINTOTODISTUKSEN_NOUTO =
+      "KIELITUTKINTOTODISTUKSEN_NOUTO";
+  public static final String STATE_SUOMIFI_VIESTIN_LÄHETYS_PAPERIPOSTIOPTIOLLA =
+      "SUOMIFI_VIESTIN_LÄHETYS_PAPERIPOSTIOPTIOLLA";
+  public static final String STATE_TIEDOTE_KÄSITELTY = "TIEDOTE_KÄSITELTY";
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -49,11 +54,18 @@ public class Tiedote {
   @Column(nullable = false, unique = true)
   private String idempotencyKey;
 
-  @Column(nullable = false)
-  private String tiedotetypeId;
+  @Column(name = "tiedotetype_id", nullable = false)
+  private String type;
 
-  @Column(nullable = false)
-  private String tiedotestateId;
+  @Column(name = "tiedotestate_id", nullable = false)
+  private String state;
 
   @Column private String opiskeluoikeusOid;
+
+  @OneToOne(
+      mappedBy = "tiedote",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER)
+  private SuomiFiViesti viesti;
 }

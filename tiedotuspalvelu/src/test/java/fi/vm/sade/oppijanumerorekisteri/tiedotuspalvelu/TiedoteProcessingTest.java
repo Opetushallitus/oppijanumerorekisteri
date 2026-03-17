@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.oppija.FetchOppijaTask;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SendSuomiFiViestitTask;
-import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViestiRepository;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,8 +25,6 @@ public class TiedoteProcessingTest extends TiedotuspalveluApiTest implements Res
 
   @Autowired private FetchOppijaTask fetchOppijaTask;
   @Autowired private SendSuomiFiViestitTask sendSuomiFiViestitTask;
-
-  @Autowired private SuomiFiViestiRepository suomiFiViestiRepository;
 
   @RegisterExtension
   static WireMockExtension wireMock =
@@ -57,8 +54,7 @@ public class TiedoteProcessingTest extends TiedotuspalveluApiTest implements Res
 
   @BeforeEach
   public void setup() {
-    suomiFiViestiRepository.deleteAll();
-    tiedoteRepository.deleteAll();
+    clearDatabase();
     wireMock.resetAll();
   }
 
@@ -75,7 +71,7 @@ public class TiedoteProcessingTest extends TiedotuspalveluApiTest implements Res
     sendSuomiFiViestitTask.execute();
 
     var t = getTiedote(tiedote.getId());
-    assertEquals("PROCESSED", t.meta().state());
+    assertEquals("TIEDOTE_KÄSITELTY", t.meta().state());
     assertEquals("CREATED", t.statuses().get(0).status());
     assertEquals("SENT_TO_SUOMIFI_VIESTIT", t.statuses().get(1).status());
   }

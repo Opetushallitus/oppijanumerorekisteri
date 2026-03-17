@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.security.CasVirkailijaUserDetailsService;
-import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViestiRepository;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViestitEventRepository;
 import io.swagger.v3.oas.annotations.Hidden;
 import java.io.ByteArrayOutputStream;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class VirkailijaUiController {
   private final JdbcTemplate jdbcTemplate;
   private final TiedoteRepository tiedoteRepository;
-  private final SuomiFiViestiRepository suomiFiViestiRepository;
   private final SuomiFiViestitEventRepository suomiFiViestitEventRepository;
 
   @GetMapping("/me")
@@ -121,8 +119,7 @@ public class VirkailijaUiController {
     var statuses = new ArrayList<StatusEntry>();
     statuses.add(new StatusEntry("CREATED", tiedote.getCreated().toString()));
 
-    suomiFiViestiRepository
-        .findByTiedoteId(tiedote.getId())
+    Optional.ofNullable(tiedote.getViesti())
         .ifPresent(
             viesti -> {
               if (viesti.getProcessedAt() != null) {
@@ -143,8 +140,8 @@ public class VirkailijaUiController {
     return new TiedoteDetail(
         tiedote.getId().toString(),
         tiedote.getOppijanumero(),
-        tiedote.getTiedotetypeId(),
-        tiedote.getTiedotestateId(),
+        tiedote.getType(),
+        tiedote.getState(),
         tiedote.getOpiskeluoikeusOid(),
         tiedote.getCreated().toString(),
         statuses);

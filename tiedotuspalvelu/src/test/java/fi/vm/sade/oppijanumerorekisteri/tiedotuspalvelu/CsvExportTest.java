@@ -6,18 +6,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.security.CasVirkailijaUserDetailsService;
-import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViestiRepository;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 public class CsvExportTest extends TiedotuspalveluApiTest implements ResourceReader {
-
-  @Autowired private SuomiFiViestiRepository suomiFiViestiRepository;
-
   @Test
   void csvEndpointRequiresAuthentication() throws Exception {
     mockMvc.perform(get("/tiedotuspalvelu/ui/tiedotteet/csv")).andExpect(status().isFound());
@@ -43,8 +38,7 @@ public class CsvExportTest extends TiedotuspalveluApiTest implements ResourceRea
 
   @BeforeEach
   void setup() {
-    suomiFiViestiRepository.deleteAll();
-    tiedoteRepository.deleteAll();
+    clearDatabase();
   }
 
   private final CasVirkailijaUserDetailsService.CasAuthenticatedUser VIRKAILIJA_WITH_CRUD_ROLE =

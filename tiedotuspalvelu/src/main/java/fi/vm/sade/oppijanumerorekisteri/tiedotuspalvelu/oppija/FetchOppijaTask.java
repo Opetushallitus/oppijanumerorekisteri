@@ -1,10 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.oppija;
 
-import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.ApiController.Meta;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.Tiedote;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedoteRepository;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViesti;
-import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViestiRepository;
 import java.time.OffsetDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -17,19 +17,18 @@ public class FetchOppijaTask {
 
   private static final int _24_HOURS_IN_MINUTES = 60 * 24;
   private final TiedoteRepository tiedoteRepository;
-  private final SuomiFiViestiRepository suomiFiViestiRepository;
   private final OppijanumerorekisteriClient oppijanumerorekisteriClient;
   private final TransactionTemplate transactionTemplate;
 
   public void execute() {
     log.info("Running FetchOppijaTask");
-    var unprocessed = tiedoteRepository.findUnprocessed();
-    for (var tiedote : unprocessed) {
+    for (var tiedote :
+        tiedoteRepository.findForProcessingByState(List.of(Tiedote.STATE_OPPIJAN_VALIDOINTI))) {
       try {
         transactionTemplate.executeWithoutResult(
             status -> {
               var oppija = oppijanumerorekisteriClient.getOppija(tiedote.getOppijanumero());
-              var viesti =
+              tiedote.setViesti(
                   SuomiFiViesti.builder()
                       .tiedote(tiedote)
                       .henkilotunnus(oppija.hetu())
@@ -39,12 +38,11 @@ public class FetchOppijaTask {
                       .city(oppija.kaupunki())
                       .countryCode("FI")
                       .messageType("electronic")
-                      .build();
-              suomiFiViestiRepository.save(viesti);
+                      .build());
               tiedote.setProcessedAt(OffsetDateTime.now());
               tiedote.setNextRetry(null);
               tiedote.setRetryCount(0);
-              tiedote.setTiedotestateId(Meta.STATE_SUOMIFI_VIESTI_HETULLISELLE);
+              tiedote.setState(Tiedote.STATE_SUOMIFI_VIESTIN_LÄHETYS);
               tiedoteRepository.save(tiedote);
             });
       } catch (Exception e) {

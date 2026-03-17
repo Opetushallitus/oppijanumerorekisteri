@@ -19,8 +19,8 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @AllArgsConstructor
 public class DbSchedulerConfiguration {
-
   private final FetchOppijaTask fetchOppijaTask;
+  private final KielitutkintotodistuksenNoutoTask kielitutkintotodistuksenNoutoTask;
   private final SendSuomiFiViestitTask sendSuomiFiViestitTask;
   private final FetchSuomiFiViestitEventsTask fetchSuomiFiViestitEventsTask;
   private final FetchLocalisationsTask fetchLocalisationsTask;
@@ -39,6 +39,16 @@ public class DbSchedulerConfiguration {
     return Tasks.recurring(
             "send-suomi-fi-viestit-task", Schedules.fixedDelay(Duration.ofSeconds(10)))
         .execute((inst, ctx) -> sendSuomiFiViestitTask.execute());
+  }
+
+  @Bean
+  @ConditionalOnProperty(
+      name = "tiedotuspalvelu.kielitutkintotodistuksen-nouto.enabled",
+      havingValue = "true")
+  public Task<Void> kielitutkintotodistuksenNoutoTaskBean() {
+    return Tasks.recurring(
+            "kielitutkintotodistuksen-nouto-task", Schedules.fixedDelay(Duration.ofSeconds(10)))
+        .execute((inst, ctx) -> kielitutkintotodistuksenNoutoTask.execute());
   }
 
   @Bean
