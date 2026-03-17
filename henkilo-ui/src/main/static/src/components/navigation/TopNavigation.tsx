@@ -15,7 +15,7 @@ import './TopNavigation.css';
 export const isNewNavi =
     window.location.hostname.includes('virkailija.hahtuvaopintopolku.fi') ||
     window.location.hostname.includes('virkailija.untuvaopintopolku.fi') ||
-    window.location.hostname.includes('localhost');
+    window.location.host.includes('localhost:8080');
 
 export const TopNavigation = () => {
     const { L } = useLocalisations();
