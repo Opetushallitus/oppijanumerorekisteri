@@ -1,0 +1,206 @@
+[
+    {
+        "ryhmaId": 343453,
+        "myonnettyTapahtumaId": null,
+        "organisaatioOid": null,
+        "ryhmaTunniste": "Virkailijan kutsuminen",
+        "ryhmaNames": {
+            "id": 13451346,
+            "texts": [
+                {
+                    "text": "Virkailijan kutsuminen",
+                    "lang": "EN"
+                },
+                {
+                    "text": "Virkailijan kutsuminen",
+                    "lang": "FI"
+                },
+                {
+                    "text": "Virkailijan kutsuminen",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "ryhmaKuvaus": {
+            "id": 1234564135,
+            "texts": [
+                {
+                    "text": "Virkailijan kutsuminen",
+                    "lang": "EN"
+                },
+                {
+                    "text": "Virkailijan kutsuminen",
+                    "lang": "FI"
+                },
+                {
+                    "text": "Virkailijan kutsuminen",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "tila": null,
+        "tyyppi": "KORyhma",
+        "alkuPvm": null,
+        "voimassaPvm": null,
+        "kasitelty": null,
+        "kasittelijaOid": null,
+        "kasittelijaNimi": null,
+        "selected": false,
+        "removed": false,
+        "muutosSyy": null,
+        "sallittuKayttajatyyppi": "PALVELU"
+    },
+    {
+        "ryhmaId": 245642561,
+        "myonnettyTapahtumaId": null,
+        "organisaatioOid": null,
+        "ryhmaTunniste": "koulutustoimijan vastuukäyttäjä_1658299852822",
+        "ryhmaNames": {
+            "id": 134564256,
+            "texts": [
+                {
+                    "text": "koulutustoimijan vastuukäyttäjä",
+                    "lang": "EN"
+                },
+                {
+                    "text": "koulutustoimijan vastuukäyttäjä",
+                    "lang": "FI"
+                },
+                {
+                    "text": "koulutustoimijan vastuukäyttäjä",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "ryhmaKuvaus": {
+            "id": 23452624563,
+            "texts": [
+                {
+                    "text": "",
+                    "lang": "EN"
+                },
+                {
+                    "text": "koulutustoimijan vastuukäyttäjä",
+                    "lang": "FI"
+                },
+                {
+                    "text": "koulutustoimijan vastuukäyttäjä",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "tila": null,
+        "tyyppi": "KORyhma",
+        "alkuPvm": null,
+        "voimassaPvm": null,
+        "kasitelty": null,
+        "kasittelijaOid": null,
+        "kasittelijaNimi": null,
+        "selected": false,
+        "removed": false,
+        "muutosSyy": null,
+        "sallittuKayttajatyyppi": null
+    },
+    {
+        "ryhmaId": 5475674262,
+        "myonnettyTapahtumaId": null,
+        "organisaatioOid": null,
+        "ryhmaTunniste": "tallentaja_1588591732621",
+        "ryhmaNames": {
+            "id": 34563457436,
+            "texts": [
+                {
+                    "text": "tallentaja",
+                    "lang": "EN"
+                },
+                {
+                    "text": "tallentaja",
+                    "lang": "FI"
+                },
+                {
+                    "text": "tallentaja",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "ryhmaKuvaus": {
+            "id": 3456753465,
+            "texts": [
+                {
+                    "text": "",
+                    "lang": "EN"
+                },
+                {
+                    "text": "Voi tallentaa",
+                    "lang": "FI"
+                },
+                {
+                    "text": "Voi tallentaa",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "tila": null,
+        "tyyppi": "KORyhma",
+        "alkuPvm": null,
+        "voimassaPvm": null,
+        "kasitelty": null,
+        "kasittelijaOid": null,
+        "kasittelijaNimi": null,
+        "selected": false,
+        "removed": false,
+        "muutosSyy": null,
+        "sallittuKayttajatyyppi": null
+    },
+    {
+        "ryhmaId": 23452624365,
+        "myonnettyTapahtumaId": null,
+        "organisaatioOid": null,
+        "ryhmaTunniste": "rajapintakäyttäjä",
+        "ryhmaNames": {
+            "id": 43563457435,
+            "texts": [
+                {
+                    "text": "API user",
+                    "lang": "EN"
+                },
+                {
+                    "text": "rajapintakäyttäjä ",
+                    "lang": "FI"
+                },
+                {
+                    "text": "API användare",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "ryhmaKuvaus": {
+            "id": 3456347536,
+            "texts": [
+                {
+                    "text": "rajapintakäyttäjä",
+                    "lang": "EN"
+                },
+                {
+                    "text": "rajapintakäyttäjä",
+                    "lang": "FI"
+                },
+                {
+                    "text": "rajapintakäyttäjä",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "tila": null,
+        "tyyppi": "KORyhma",
+        "alkuPvm": null,
+        "voimassaPvm": null,
+        "kasitelty": null,
+        "kasittelijaOid": null,
+        "kasittelijaNimi": null,
+        "selected": false,
+        "removed": false,
+        "muutosSyy": null,
+        "sallittuKayttajatyyppi": null
+    }
+]
