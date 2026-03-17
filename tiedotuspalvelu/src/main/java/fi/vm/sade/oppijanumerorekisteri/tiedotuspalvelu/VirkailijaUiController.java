@@ -71,10 +71,22 @@ public class VirkailijaUiController {
                     .copyOut(
                         """
                         COPY (
-                          SELECT t.id, t.oppijanumero, t.tiedotetype_id, t.tiedotestate_id,
-                                 t.opiskeluoikeus_oid, t.todistus_url, t.created,
-                                 v.message_type, v.name, v.street_address, v.zip_code,
-                                 v.city, v.country_code, v.message_id, v.processed_at
+                          SELECT
+                              t.id as "Tiedotteen ID",
+                              (t.created at time zone 'Europe/Helsinki') as "Tiedotteen luontiaika",
+                              t.tiedotetype_id as "Tiedotteen tyyppi",
+                              t.oppijanumero as "Tiedotteen vastaanottajan oppijanumero",
+                              t.opiskeluoikeus_oid as "Tiedotteeseen littyvän opiskeluoikeuden OID",
+                              t.tiedotestate_id as "Tiedotteen käsittelyn tila tiedotuspalvelussa",
+                              t.todistus_url as "Kielitutkintotodistuksen URL",
+
+                              v.message_id as "Viestin ID",
+                              v.message_type as "Viestin tyyppi",
+                              v.name as "Vastaanottaja",
+                              concat(v.street_address, ' ', v.zip_code, ' ', v.city, ' ', v.country_code)
+                                  as "Vastaanottajan osoite",
+                              coalesce((v.processed_at at time zone 'Europe/Helsinki')::text, concat('Ei välitetty; yritetty ', coalesce(v.retry_count, 0), ' kertaa'))
+                                  as "Viesti välitetty Suomi.fi-viestit palveluun"
                           FROM tiedote t
                           LEFT JOIN suomifi_viesti v ON v.tiedote_id = t.id
                           ORDER BY t.created DESC
