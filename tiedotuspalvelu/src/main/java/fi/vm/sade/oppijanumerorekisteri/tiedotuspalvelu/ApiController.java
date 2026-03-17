@@ -44,13 +44,14 @@ public class ApiController {
   }
 
   public record TiedoteDto(
-      @Schema(example = "1.2.246.562.24.40036905699") @NotBlank String oppijanumero,
+      @Schema(example = "1.2.246.562.24.73833272757") @NotBlank String oppijanumero,
       @Schema(example = "a58d44fb-f970-430b-9b51-5e7bcc6a725b") @NotBlank String idempotencyKey,
       @Schema(example = "s3://esimerkkiampari/todistus.pdf") String todistusUrl,
       @Schema(example = "1.2.246.562.15.44316860822") Optional<String> opiskeluoikeusOid) {}
 
   public record TiedoteResponse(
       @Schema(example = "ecd8b9b1-4876-4cb8-8f29-0760eeb2ed8a") UUID id,
+      @Schema(example = "1.2.246.562.24.73833272757") String oppijanumero,
       @Schema(example = "1.2.246.562.15.44316860822") Optional<String> opiskeluoikeusOid,
       Meta meta,
       List<StatusEntry> statuses) {}
@@ -131,6 +132,10 @@ public class ApiController {
             });
 
     return new TiedoteResponse(
-        tiedote.getId(), Optional.ofNullable(tiedote.getOpiskeluoikeusOid()), meta, statuses);
+        tiedote.getId(),
+        tiedote.getOppijanumero(),
+        Optional.ofNullable(tiedote.getOpiskeluoikeusOid()),
+        meta,
+        statuses);
   }
 }
