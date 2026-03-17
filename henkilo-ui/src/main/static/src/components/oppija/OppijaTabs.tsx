@@ -39,7 +39,7 @@ export const OppijaTabs = ({ oid }: OppijaTabsProps) => {
     return (
         <>
             <NavLink className={({ isActive }) => (isActive ? 'active' : 'inactive')} to={`/oppija2/${oid}`} end>
-                {'Oppijan tiedot'}
+                {L('OPPIJAN_TIEDOT')}
             </NavLink>
             {isDuplicateViewEnabled ? (
                 <NavLink
