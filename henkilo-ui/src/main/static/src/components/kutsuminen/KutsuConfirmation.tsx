@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { addYears, format } from 'date-fns';
 
-import Button from '../common/button/Button';
 import { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
 import OphModal from '../common/modal/OphModal';
@@ -9,6 +9,7 @@ import { usePutKutsuMutation } from '../../api/kayttooikeus';
 import { useAppDispatch } from '../../store';
 import { add } from '../../slices/toastSlice';
 import { localizeTextGroup } from '../../utilities/localisation.util';
+import { OphDsSpinner } from '../design-system/OphDsSpinner';
 
 type Props = {
     addedOrgs: readonly KutsuOrganisaatio[];
@@ -17,31 +18,28 @@ type Props = {
     resetFormValues: () => void;
 };
 
-export const KutsuConfirmation = (props: Props) => {
+export const KutsuConfirmation = ({ addedOrgs, basicInfo, modalCloseFn, resetFormValues }: Props) => {
     const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
     const [sent, setSent] = useState(false);
     const [putKutsu, { isLoading }] = usePutKutsuMutation();
 
     function onClose(e: React.SyntheticEvent<HTMLElement>) {
-        props.resetFormValues();
-        props.modalCloseFn(e);
+        resetFormValues();
+        modalCloseFn(e);
         setSent(false);
     }
 
-    async function sendInvitation(e: React.SyntheticEvent<HTMLElement>) {
-        e.preventDefault();
-
-        const sahkoposti = props.basicInfo.email && props.basicInfo.email.trim();
+    async function sendInvitation() {
         const payload = {
-            etunimi: props.basicInfo.etunimi,
-            sukunimi: props.basicInfo.sukunimi,
-            sahkoposti,
-            asiointikieli: props.basicInfo.languageCode,
-            saate: props.basicInfo.saate ? props.basicInfo.saate : undefined,
-            organisaatiot: props.addedOrgs.map((addedOrg) => ({
+            etunimi: basicInfo.etunimi,
+            sukunimi: basicInfo.sukunimi,
+            sahkoposti: basicInfo.email && basicInfo.email.trim(),
+            asiointikieli: basicInfo.languageCode,
+            saate: basicInfo.saate || undefined,
+            organisaatiot: addedOrgs.map((addedOrg) => ({
                 organisaatioOid: addedOrg.organisation.oid,
-                voimassaLoppuPvm: addedOrg.voimassaLoppuPvm!,
+                voimassaLoppuPvm: addedOrg.voimassaLoppuPvm ?? format(addYears(new Date(), 1), 'yyyy-MM-dd'),
                 kayttoOikeusRyhmat: addedOrg.selectedPermissions.map((selectedPermission) => ({
                     id: selectedPermission.ryhmaId,
                 })),
@@ -70,33 +68,39 @@ export const KutsuConfirmation = (props: Props) => {
                 );
             });
     }
+
     return (
-        <OphModal onClose={props.modalCloseFn} onOverlayClick={props.modalCloseFn}>
-            <h2>{L('VIRKAILIJAN_LISAYS_ESIKATSELU_OTSIKKO')}</h2>
-            <p>
-                {L('VIRKAILIJAN_LISAYS_ESIKATSELU_TEKSTI')} {props.basicInfo.email}
-            </p>
-            <h3>{L('VIRKAILIJAN_LISAYS_ESIKATSELU_ALAOTSIKKO')}</h3>
-            {props.addedOrgs.map((org) => (
-                <div key={org.organisation.oid}>
-                    <span className="oph-h3 oph-strong">{org.organisation.name}</span>
-                    {org.selectedPermissions.map((permission) => (
-                        <div key={permission.ryhmaId}>
-                            <span className="oph-h4 oph-strong">
+        <OphModal onClose={modalCloseFn} onOverlayClick={modalCloseFn}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <h2>{L('VIRKAILIJAN_LISAYS_ESIKATSELU_OTSIKKO')}</h2>
+                <p>
+                    {L('VIRKAILIJAN_LISAYS_ESIKATSELU_TEKSTI')} {basicInfo.email}
+                </p>
+                <h3>{L('VIRKAILIJAN_LISAYS_ESIKATSELU_ALAOTSIKKO')}</h3>
+                {addedOrgs.map((org) => (
+                    <div key={org.organisation.oid}>
+                        <h4>{org.organisation.name}</h4>
+                        {org.selectedPermissions.map((permission) => (
+                            <div key={permission.ryhmaId}>
                                 {localizeTextGroup(permission.ryhmaNames?.texts, locale)}
-                            </span>
-                        </div>
-                    ))}
+                            </div>
+                        ))}
+                    </div>
+                ))}
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                    {sent ? (
+                        <button className="oph-ds-button" onClick={onClose}>
+                            {L('VIRKAILIJAN_LISAYS_LAHETETTY')}
+                        </button>
+                    ) : (
+                        <>
+                            <button className="oph-ds-button" onClick={sendInvitation}>
+                                {L('VIRKAILIJAN_LISAYS_TALLENNA')}
+                            </button>
+                            {isLoading && <OphDsSpinner />}
+                        </>
+                    )}
                 </div>
-            ))}
-            <div className="row">
-                {sent ? (
-                    <Button action={onClose}>{L('VIRKAILIJAN_LISAYS_LAHETETTY')}</Button>
-                ) : (
-                    <Button action={sendInvitation} loading={isLoading}>
-                        {L('VIRKAILIJAN_LISAYS_TALLENNA')}
-                    </Button>
-                )}
             </div>
         </OphModal>
     );

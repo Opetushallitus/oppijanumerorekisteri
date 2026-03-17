@@ -16,6 +16,7 @@ type OwnProps = {
     placeholder?: string;
     disabled?: boolean;
     type?: 'HENKILOHAKU';
+    inputId?: string;
 };
 
 export const OphDsRyhmaSelect = (props: OwnProps) => {
@@ -53,7 +54,7 @@ export const OphDsRyhmaSelect = (props: OwnProps) => {
             )}
             <Select
                 {...selectProps}
-                inputId="ryhma-select"
+                inputId={props.inputId ?? 'ryhma-select'}
                 defaultValue={options.find((o) => o.value === props.defaultValue)}
                 className="oph-ds-ryhma-select"
                 options={options}

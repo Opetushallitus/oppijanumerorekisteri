@@ -27,7 +27,10 @@ const KayttooikeusryhmaSelectModal = (props: Props) => {
     const { L } = useLocalisations();
 
     const isValid =
-        !props.isOrganisaatioSelected || !!props.kayttooikeusryhmat.length || props.kayttooikeusryhmaValittu;
+        props.loading ||
+        !props.isOrganisaatioSelected ||
+        !!props.kayttooikeusryhmat.length ||
+        props.kayttooikeusryhmaValittu;
     const validationMessage: ValidationMessage = {
         id: 'KAYTTOOIKEUSRYHMA_VALINTA_EI_SALLITTUJA',
         isValid,

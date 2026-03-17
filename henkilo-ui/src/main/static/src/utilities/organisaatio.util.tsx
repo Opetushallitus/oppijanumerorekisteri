@@ -102,11 +102,14 @@ const isRyhma = (organisaatio: OrganisaatioSelectObject): boolean =>
  * Apufunktio kutsumaan findOrganisaatioOrRyhmaByOid:a käyttöoikeuspalvelusta haetuilla omilla organisaatioilla
  */
 export const findOmattiedotOrganisatioOrRyhmaByOid = (
-    oid: string,
-    organisaatiot: OrganisaatioHenkilo[],
-    orgNames: OrganisaatioNameLookup,
-    locale: Locale
+    locale: Locale,
+    oid?: string,
+    organisaatiot?: OrganisaatioHenkilo[],
+    orgNames?: OrganisaatioNameLookup
 ): OrganisaatioSelectObject | null | undefined => {
+    if (!oid || !organisaatiot || !orgNames) {
+        return;
+    }
     const omatOrganisaatiot = organisaatiot.map((o) => o.organisaatio);
     const allOrganisaatioSelectObjects: OrganisaatioSelectObject[] =
         organisaatiot.length > 0

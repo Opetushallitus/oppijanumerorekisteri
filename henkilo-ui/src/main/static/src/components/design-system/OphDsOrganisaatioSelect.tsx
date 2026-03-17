@@ -17,10 +17,12 @@ import { containsSearchword, filterAndSortOrganisaatios } from '../common/select
 type OwnProps = {
     defaultValue?: string;
     onChange: (organisaatio: SingleValue<OrganisaatioSelectObject>) => void;
+    selectedOrganisaatioOid?: string;
     disabled?: boolean;
     type?: 'HENKILOHAKU';
     placeholder?: string;
     label?: string;
+    inputId?: string;
 };
 
 const OrganisationMenuList = (props: MenuListProps<OrganisaatioSelectObject, false>) => {
@@ -37,7 +39,16 @@ const OrganisationMenuList = (props: MenuListProps<OrganisaatioSelectObject, fal
     );
 };
 
-export const OphDsOrganisaatioSelect = ({ defaultValue, disabled, label, onChange, type, placeholder }: OwnProps) => {
+export const OphDsOrganisaatioSelect = ({
+    defaultValue,
+    disabled,
+    label,
+    onChange,
+    type,
+    placeholder,
+    selectedOrganisaatioOid,
+    inputId,
+}: OwnProps) => {
     const { L, locale } = useLocalisations();
     const { data: organisationNames } = useGetOrganisationNamesQuery();
     const omattiedotOrganisations = useOmatOrganisaatiot();
@@ -97,7 +108,8 @@ export const OphDsOrganisaatioSelect = ({ defaultValue, disabled, label, onChang
             <Select
                 {...selectStyles}
                 defaultValue={allOrganisations.find((o) => o.oid === defaultValue)}
-                inputId="organisaatio-select"
+                value={allOrganisations.find((o) => o.oid === selectedOrganisaatioOid)}
+                inputId={inputId ?? 'organisaatio-select'}
                 className="oph-ds-select-org"
                 isDisabled={disabled}
                 options={allOrganisations}
