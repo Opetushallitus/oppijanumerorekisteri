@@ -5,12 +5,12 @@ import type { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/Org
 import type { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import { useLocalisations, useOmatOrganisaatiot } from '../../../selectors';
 import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../../utilities/organisaatio.util';
-import ValidationMessageButton from '../button/ValidationMessageButton';
 import { SpinnerInButton } from '../icons/SpinnerInButton';
 import OphModal from '../modal/OphModal';
 import { useGetOrganisationNamesQuery } from '../../../api/kayttooikeus';
 
 import './OrganisaatioSelect.css';
+import Button from '../button/Button';
 
 type OwnProps = {
     organisaatiot?: OrganisaatioHenkilo[];
@@ -96,14 +96,10 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
 
     return (
         <>
-            <ValidationMessageButton
-                disabled={isDisabled}
-                validationMessages={{}}
-                buttonAction={() => setModalVisible(true)}
-            >
+            <Button disabled={isDisabled} action={() => setModalVisible(true)}>
                 <SpinnerInButton show={!(props.organisaatiot ?? omattiedotOrganisations)?.length} />{' '}
                 {L('OMATTIEDOT_VALITSE_ORGANISAATIO')}
-            </ValidationMessageButton>
+            </Button>
             {isModalVisible && (
                 <OphModal onClose={() => setModalVisible(false)}>
                     <div className="organisaatio-select">

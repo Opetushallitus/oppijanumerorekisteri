@@ -146,53 +146,51 @@ const KutsuminenPage = () => {
         return (
             <div className="mainContent wrapper">
                 <h1>{L('VIRKAILIJAN_LISAYS_OTSIKKO')}</h1>
-                <form>
-                    <LocalNotification type="error" title={L('KUTSU_ESTETTY')} toggle={disabled}>
-                        {L('KUTSU_ESTETTY_SYY')}
-                    </LocalNotification>
-                    <BasicInfoForm
-                        disabled={disabled}
-                        basicInfo={basicInfo}
-                        setBasicInfo={setBasicAndValidateInfo}
-                        locale={locale}
-                    />
+                <LocalNotification type="error" title={L('KUTSU_ESTETTY')} toggle={disabled}>
+                    {L('KUTSU_ESTETTY_SYY')}
+                </LocalNotification>
+                <BasicInfoForm
+                    disabled={disabled}
+                    basicInfo={basicInfo}
+                    setBasicInfo={setBasicAndValidateInfo}
+                    locale={locale}
+                />
 
-                    <fieldset className="add-to-organisation">
-                        <h2>{L('VIRKAILIJAN_LISAYS_ORGANISAATIOON_OTSIKKO')}</h2>
-                        <div>
-                            {kutsuOrganisaatios.map((selection, i) => (
-                                <AddedOrganization
-                                    key={selection.organisation.oid + i}
-                                    addedOrg={selection}
-                                    updateOrganisation={(newOrg) => updateOrganisation(newOrg, i)}
-                                    removeOrganisation={() => removeOrganisation(i)}
-                                />
-                            ))}
-                        </div>
-                        <div className="row">
-                            <Button href="#" action={addEmptyOrganization}>
-                                {L('VIRKAILIJAN_KUTSU_LISAA_ORGANISAATIO_LINKKI')}
-                            </Button>
-                        </div>
-                    </fieldset>
-
-                    <div className="kutsuFormFooter row">
-                        <ValidationMessageButton
-                            buttonAction={openConfirmationModal}
-                            validationMessages={validationMessages}
-                        >
-                            {L('VIRKAILIJAN_LISAYS_TALLENNA')}
-                        </ValidationMessageButton>
+                <fieldset className="add-to-organisation">
+                    <h2>{L('VIRKAILIJAN_LISAYS_ORGANISAATIOON_OTSIKKO')}</h2>
+                    <div>
+                        {kutsuOrganisaatios.map((selection, i) => (
+                            <AddedOrganization
+                                key={selection.organisation.oid + i}
+                                addedOrg={selection}
+                                updateOrganisation={(newOrg) => updateOrganisation(newOrg, i)}
+                                removeOrganisation={() => removeOrganisation(i)}
+                            />
+                        ))}
                     </div>
-                    {modalOpen && (
-                        <KutsuConfirmation
-                            addedOrgs={kutsuOrganisaatios}
-                            modalCloseFn={modalCloseFn}
-                            basicInfo={basicInfo}
-                            resetFormValues={resetFormValues}
-                        />
-                    )}
-                </form>
+                    <div className="row">
+                        <Button href="#" action={addEmptyOrganization}>
+                            {L('VIRKAILIJAN_KUTSU_LISAA_ORGANISAATIO_LINKKI')}
+                        </Button>
+                    </div>
+                </fieldset>
+
+                <div className="kutsuFormFooter row">
+                    <ValidationMessageButton
+                        buttonAction={openConfirmationModal}
+                        validationMessages={validationMessages}
+                    >
+                        {L('VIRKAILIJAN_LISAYS_TALLENNA')}
+                    </ValidationMessageButton>
+                </div>
+                {modalOpen && (
+                    <KutsuConfirmation
+                        addedOrgs={kutsuOrganisaatios}
+                        modalCloseFn={modalCloseFn}
+                        basicInfo={basicInfo}
+                        resetFormValues={resetFormValues}
+                    />
+                )}
             </div>
         );
     }

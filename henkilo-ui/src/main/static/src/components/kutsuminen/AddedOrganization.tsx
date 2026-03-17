@@ -129,20 +129,20 @@ const AddedOrganization = ({ addedOrg, updateOrganisation, removeOrganisation }:
                     />
                 </div>
 
-                <ul className="kutsuminen-selected-permissions">
+                <div className="kutsuminen-selected-permissions">
                     {addedOrg.selectedPermissions.map((permission) => {
                         return (
-                            <li key={permission.ryhmaId}>
+                            <div key={permission.ryhmaId}>
                                 {localizeTextGroup(permission.ryhmaNames?.texts, locale)}
                                 <i
                                     className="fa fa-times-circle right remove-icon"
                                     onClick={(e) => removePermission(permission, e)}
                                     aria-hidden="true"
                                 />
-                            </li>
+                            </div>
                         );
                     })}
-                </ul>
+                </div>
 
                 <div className="clear" />
 
