@@ -69,12 +69,13 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
             .withRequestBody(matchingJsonPath("$.recipient.id", equalTo("010170-9998")))
             .withRequestBody(matchingJsonPath("$.sender.serviceId", equalTo(SUOMIFI_SYSTEM_ID)))
             .withRequestBody(
-                matchingJsonPath("$.electronic.title", equalTo("Huomioitavaa OmaOpintopolussa")))
+                matchingJsonPath(
+                    "$.electronic.title", equalTo("Sinulle on uusi viesti Oma Opintopolussa")))
             .withRequestBody(
                 matchingJsonPath(
                     "$.electronic.body",
                     equalTo(
-                        "Hei\n\nSinulle on saapunut tiedote OmaOpintopolkuun\n\nTarkista tiedote kirjautumalla OmaOpintopolkuun. Voit katsoa huomioitavat\nasiat Tiedotteet-kohdasta.\n\nTietoturvan takia viestissä ei ole suoraa linkkiä palveluun.\n\nTerveisin\nOpetushallitus"))));
+                        "Hei!\n\nSinulle on saapunut uusi viesti Oma Opintopolku-palvelussa. \n\nVoit lukea viestin kirjautumalla Oma Opintopolku-palveluun. Kun olet kirjautunut sisään, voit lukea viestisi Viestini-sivulta.\n\nTietoturvasyistä tässä viestissä ei ole suoraa linkkiä palveluun. \n\nYstävällisin terveisin,\nOpetushallitus"))));
   }
 
   @Test

@@ -144,16 +144,18 @@ public class SendSuomiFiViestitTask {
   private ElectronicPart createElectronicPart(SuomiFiViesti suomiFiViesti) {
     var title = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_OTSIKKO", "fi");
     var body = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_VIESTI", "fi");
-    return new ElectronicPart(
-        List.of(),
-        body,
-        "Text",
-        "Normal",
-        new MessageNotifications(
-            new UnreadMessageNotification("Default reminder"), "Organisation and service name"),
-        "No one",
-        title,
-        "Normal");
+    return ElectronicPart.builder()
+        .attachments(List.of())
+        .title(title)
+        .body(body)
+        .bodyFormat("Text")
+        .messageServiceType("Normal")
+        .notifications(
+            new MessageNotifications(
+                new UnreadMessageNotification("Default reminder"), "Organisation and service name"))
+        .replyAllowedBy("No one")
+        .visibility("Normal")
+        .build();
   }
 
   private PaperMailPart createPaperMailPart(SuomiFiViesti suomiFiViesti, String attachmentId) {

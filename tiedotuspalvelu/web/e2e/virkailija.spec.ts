@@ -54,12 +54,15 @@ test("Kielitutkintotodistus happy path", async ({ page, request }) => {
       .click();
     await expect(
       page.getByText(
-        "Olet suorittanut kielitutkinnon, voit ladata todistuksen täältä",
+        "Opetushallitus on myöntänyt sinulle todistuksen yleisestä kielitutkinnosta",
+        { exact: false },
       ),
     ).toBeVisible();
 
     await test.step("todistuslinkki vie Kosken omat tiedot näkymään", async () => {
-      const linkki = page.getByRole("link", { name: "täältä" });
+      const linkki = page.getByRole("link", {
+        name: "https://opintopolku.fi/koski/omattiedot",
+      });
       const hreffi = await linkki.getAttribute("href");
       await expect(hreffi).toBe("/koski/omattiedot");
     });

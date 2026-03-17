@@ -1,10 +1,12 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit;
 
 import java.util.List;
+import lombok.Builder;
 
 record ElectronicMessageRequest(
     ElectronicPart electronic, String externalId, Recipient recipient, Sender sender) {}
 
+@Builder
 record ElectronicPart(
     List<AttachmentReference> attachments,
     String body,
