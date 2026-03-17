@@ -18,7 +18,7 @@ type Props = {
     resetFormValues: () => void;
 };
 
-export const KutsuConfirmation = ({ addedOrgs, basicInfo, modalCloseFn, resetFormValues }: Props) => {
+export const KutsuminenConfirmation = ({ addedOrgs, basicInfo, modalCloseFn, resetFormValues }: Props) => {
     const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
     const [sent, setSent] = useState(false);

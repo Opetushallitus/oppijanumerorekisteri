@@ -24,7 +24,7 @@ import { SelectOption } from '../../utilities/select';
 import { localizeTextGroup } from '../../utilities/localisation.util';
 import { emptyOrganisation } from './KutsuminenPage';
 
-import styles from './AddedOrganization.module.css';
+import styles from './KutsuminenOrganisation.module.css';
 
 type OwnProps = {
     index: number;
@@ -33,7 +33,7 @@ type OwnProps = {
     removeOrganisation: () => void;
 };
 
-const AddedOrganization = ({ addedOrg, index, updateOrganisation, removeOrganisation }: OwnProps) => {
+export const KutsuminenOrganisation = ({ addedOrg, index, updateOrganisation, removeOrganisation }: OwnProps) => {
     const { L, locale } = useLocalisations();
     const { data: omattiedot } = useGetOmattiedotQuery();
     const oid = omattiedot?.oidHenkilo;
@@ -173,5 +173,3 @@ const AddedOrganization = ({ addedOrg, index, updateOrganisation, removeOrganisa
         </OphDsCard>
     );
 };
-
-export default AddedOrganization;

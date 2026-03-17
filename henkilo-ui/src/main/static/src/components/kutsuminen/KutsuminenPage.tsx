@@ -3,12 +3,12 @@ import { addYears, format } from 'date-fns';
 import Select from 'react-select';
 import { skipToken } from '@reduxjs/toolkit/query/react';
 
-import { KutsuConfirmation } from './KutsuConfirmation';
+import { KutsuminenConfirmation } from './KutsuminenConfirmation';
 import { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
 import { validateEmail } from '../../validation/EmailValidator';
 import { useAsiointikielet, useLocalisations } from '../../selectors';
-import AddedOrganization from './AddedOrganization';
+import { KutsuminenOrganisation } from './KutsuminenOrganisation';
 import { useGetOmattiedotQuery, useGetOrganisaatioRyhmatQuery } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
@@ -145,7 +145,7 @@ const KutsuminenPage = () => {
                 <h2>{L('VIRKAILIJAN_LISAYS_ORGANISAATIOON_OTSIKKO')}</h2>
                 <div>
                     {kutsuOrganisaatios.map((selection, i) => (
-                        <AddedOrganization
+                        <KutsuminenOrganisation
                             key={`added-org-${selection.id}`}
                             index={i}
                             addedOrg={selection}
@@ -187,7 +187,7 @@ const KutsuminenPage = () => {
                     </div>
                 </div>
                 {modalOpen && (
-                    <KutsuConfirmation
+                    <KutsuminenConfirmation
                         addedOrgs={kutsuOrganisaatios}
                         modalCloseFn={() => setModalOpen(false)}
                         basicInfo={basicInfo}
