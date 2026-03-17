@@ -35,6 +35,12 @@ public class SuomiFiViesti {
   @JoinColumn(name = "tiedote_id", nullable = false)
   private Tiedote tiedote;
 
+  @Column(name = "otsikko", nullable = false)
+  private String otsikko;
+
+  @Column(name = "sisalto", nullable = false)
+  private String sisalto;
+
   @Column(nullable = false)
   private String henkilotunnus;
 

@@ -33,10 +33,14 @@ public class SendSuomiFiViestitTask {
   public void execute() {
     log.info("Running SendSuomiFiViestitTask");
     var unprocessed = suomiFiViestiRepository.findUnprocessed();
+    var otsikko = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_OTSIKKO", "fi");
+    var sisalto = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_VIESTI", "fi");
     for (var viesti : unprocessed) {
       try {
         transactionTemplate.executeWithoutResult(
             status -> {
+              viesti.setOtsikko(otsikko);
+              viesti.setSisalto(sisalto);
               var messageId = sendSuomiFiViesti(viesti);
               viesti.setMessageId(messageId);
               viesti.setProcessedAt(OffsetDateTime.now());
