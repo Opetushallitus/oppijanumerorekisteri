@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.oppija;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -97,7 +98,10 @@ public class OppijanumerorekisteriClient {
   private Oppija mapToHenkilotieto(HenkiloDto dto) throws ValidationException {
     var oppijanumero = dto.oppijanumero();
     var yhteystiedot =
-        dto.yhteystiedotRyhma().stream().flatMap(ryhma -> ryhma.yhteystieto().stream()).toList();
+        dto.yhteystiedotRyhma().stream()
+            .filter(YhteystiedotRyhmaDto::isVtjVakinainenKotimainenOsoite)
+            .flatMap(ryhma -> ryhma.yhteystieto().stream())
+            .toList();
 
     var katuosoite = findYhteystietoArvo(oppijanumero, yhteystiedot, "YHTEYSTIETO_KATUOSOITE");
     var postinumero = findYhteystietoArvo(oppijanumero, yhteystiedot, "YHTEYSTIETO_POSTINUMERO");
@@ -136,7 +140,17 @@ public class OppijanumerorekisteriClient {
       List<YhteystiedotRyhmaDto> yhteystiedotRyhma) {}
 
   @JsonIgnoreProperties(ignoreUnknown = true)
-  private record YhteystiedotRyhmaDto(List<YhteystietoDto> yhteystieto) {}
+  private record YhteystiedotRyhmaDto(
+      @JsonProperty("ryhmaKuvaus") String yhteystietotyypitKoodiarvo,
+      List<YhteystietoDto> yhteystieto) {
+    public static final String YHTEYSTIETOTYYPIT_VTJ_VAKINAINEN_KOTIMAINEN_OSOITE =
+        "yhteystietotyyppi4";
+
+    @JsonIgnore
+    public boolean isVtjVakinainenKotimainenOsoite() {
+      return YHTEYSTIETOTYYPIT_VTJ_VAKINAINEN_KOTIMAINEN_OSOITE.equals(yhteystietotyypitKoodiarvo);
+    }
+  }
 
   @JsonIgnoreProperties(ignoreUnknown = true)
   private record YhteystietoDto(String yhteystietoTyyppi, String yhteystietoArvo) {}

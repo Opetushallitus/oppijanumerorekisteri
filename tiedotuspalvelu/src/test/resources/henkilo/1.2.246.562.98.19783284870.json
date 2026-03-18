@@ -38,6 +38,34 @@
   "vtjsynced": null,
   "yhteystiedotRyhma": [
     {
+      "id": 166116231,
+      "ryhmaKuvaus": "yhteystietotyyppi2",
+      "ryhmaAlkuperaTieto": "alkupera2",
+      "readOnly": false,
+      "yhteystieto": [
+        {
+          "yhteystietoTyyppi": "YHTEYSTIETO_SAHKOPOSTI",
+          "yhteystietoArvo": "hellin.duunimaili@example.com"
+        },
+        {
+          "yhteystietoTyyppi": "YHTEYSTIETO_MATKAPUHELINNUMERO",
+          "yhteystietoArvo": ""
+        },
+        {
+          "yhteystietoTyyppi": "YHTEYSTIETO_KATUOSOITE",
+          "yhteystietoArvo": ""
+        },
+        {
+          "yhteystietoTyyppi": "YHTEYSTIETO_POSTINUMERO",
+          "yhteystietoArvo": ""
+        },
+        {
+          "yhteystietoTyyppi": "YHTEYSTIETO_KAUPUNKI",
+          "yhteystietoArvo": ""
+        }
+      ]
+    },
+    {
       "id": 166116230,
       "ryhmaKuvaus": "yhteystietotyyppi4",
       "ryhmaAlkuperaTieto": "alkupera1",

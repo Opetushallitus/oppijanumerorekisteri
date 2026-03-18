@@ -4,6 +4,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.http.Request;
@@ -84,6 +85,22 @@ public class FetchOppijaTaskTest extends TiedotuspalveluApiTest implements Resou
 
     var updated = tiedoteRepository.findById(tiedote.getId()).orElseThrow();
     assertEquals(Tiedote.STATE_SUOMIFI_VIESTIN_LÄHETYS, updated.getState());
+  }
+
+  @Test
+  public void usesVtjVakinainenKotimainenOsoiteForViesti() throws Exception {
+    stubOppijanumerorekisteri(
+        "/henkilo/.*", readResource("/henkilo/" + OPPIJANUMERO_HELLIN_SEVILLANTES + ".json"));
+
+    var before = createTiedote(OPPIJANUMERO_HELLIN_SEVILLANTES);
+    assertEquals(Tiedote.STATE_OPPIJAN_VALIDOINTI, before.getState());
+    fetchOppijaTask.execute();
+
+    var after = tiedoteRepository.findById(before.getId()).orElseThrow();
+    assertEquals(Tiedote.STATE_SUOMIFI_VIESTIN_LÄHETYS, after.getState());
+    assertThat(after.getViesti().getStreetAddress()).isEqualTo("Klemetinkatu 9 A 2");
+    assertThat(after.getViesti().getZipCode()).isEqualTo("65100");
+    assertThat(after.getViesti().getCity()).isEqualTo("VAASA");
   }
 
   @Test
