@@ -38,7 +38,7 @@ export const Kayttooikeusraportti = () => {
         );
     }, [data]);
 
-    const report = useMemo(() => {
+    const [tableData, reportData] = useMemo(() => {
         const filteredData = data?.filter((row) => !filter || row.accessRightName === filter);
         if (sortOrder) {
             const { sortBy, asc } = sortOrder;
@@ -98,14 +98,13 @@ export const Kayttooikeusraportti = () => {
                 },
                 setPage,
             });
-            return filteredData.slice(page * 100, (page + 1) * 100);
+            return [filteredData.slice(page * 100, (page + 1) * 100), filteredData];
         } else {
             setPage(0);
             setPaging(undefined);
-            return filteredData;
+            return [filteredData, filteredData];
         }
     }, [data, sortOrder, filter, page]);
-    const dataExport = () => exportReport(report ?? [], L);
 
     return (
         <OphDsPage header={L('KAYTTOOIKEUSRAPORTTI_TITLE')}>
@@ -132,7 +131,7 @@ export const Kayttooikeusraportti = () => {
                         />
                     </div>
                     <div>
-                        <button className="oph-ds-button" onClick={dataExport}>
+                        <button className="oph-ds-button" onClick={() => exportReport(reportData ?? [], L)}>
                             {L('KAYTTOOIKEUSRAPORTTI_EXPORT')}
                         </button>
                     </div>
@@ -153,7 +152,7 @@ export const Kayttooikeusraportti = () => {
                     sortOrder={sortOrder}
                     setSortOrder={setSortOrder}
                     isFetching={isFetching}
-                    rows={(report ?? []).map((d) => [
+                    rows={(tableData ?? []).map((d) => [
                         <span key={`name-${d.personOid}`}>{d.personName}</span>,
                         <Link key={`link-${d.personOid}`} to={`/virkailija/${d.personOid}`} target="_blank">
                             {d.personOid}
