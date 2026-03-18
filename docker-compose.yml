@@ -40,7 +40,7 @@ services:
       - 5436:5432
     command: ["postgres", "-c", "log_statement=all"]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U oph -d tiedotuspalvelu"]
+      test: ["CMD-SHELL", "pg_isready -U tiedotuspalvelu -d tiedotuspalvelu"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -55,7 +55,7 @@ services:
       - 5437:5432
     command: ["postgres", "-c", "log_statement=all"]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U oph -d tiedotuspalvelu"]
+      test: ["CMD-SHELL", "pg_isready -U tiedotuspalvelu -d tiedotuspalvelu"]
       interval: 10s
       timeout: 5s
       retries: 5
