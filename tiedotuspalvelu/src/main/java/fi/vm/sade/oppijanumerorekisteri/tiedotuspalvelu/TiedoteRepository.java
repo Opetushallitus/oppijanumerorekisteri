@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TiedoteRepository extends JpaRepository<Tiedote, UUID> {
-  List<Tiedote> findByOppijanumeroOrderByIdAsc(String oppijanumero);
+  List<Tiedote> findByOppijanumeroOrderByCreatedDesc(String oppijanumero);
 
   Optional<Tiedote> findByIdempotencyKey(String idempotencyKey);
 

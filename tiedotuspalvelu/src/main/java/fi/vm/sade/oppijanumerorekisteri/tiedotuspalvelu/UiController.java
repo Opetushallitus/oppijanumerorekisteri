@@ -32,14 +32,14 @@ public class UiController {
   public record TiedoteDto(UUID id, OffsetDateTime createdAt) {}
 
   @GetMapping("/tiedotteet")
-  @PreAuthorize("isAuthenticated()")
+  @PreAuthorize("hasRole('OPPIJA')")
   List<TiedoteDto> getTiedotteetForCurrentUser() {
     var oppijanumero = currentUserOppijanumero();
     log.info("Fetching tiedotteet for oppijanumero: {}", oppijanumero.orElse("<none>"));
     return oppijanumero
         .map(
             s ->
-                tiedoteRepository.findByOppijanumeroOrderByIdAsc(s).stream()
+                tiedoteRepository.findByOppijanumeroOrderByCreatedDesc(s).stream()
                     .map(t -> TiedoteDto.builder().id(t.getId()).createdAt(t.getCreated()).build())
                     .toList())
         .orElseGet(List::of);
@@ -51,7 +51,7 @@ public class UiController {
   }
 
   @GetMapping("/me")
-  @PreAuthorize("isAuthenticated()")
+  @PreAuthorize("hasRole('OPPIJA')")
   public MeResponse me() {
     var auth = SecurityContextHolder.getContext().getAuthentication();
     var principal = (CasOppijaUserDetailsService.CasAuthenticatedUser) auth.getPrincipal();

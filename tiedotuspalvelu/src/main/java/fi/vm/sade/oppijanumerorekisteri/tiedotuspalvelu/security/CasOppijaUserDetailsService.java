@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.security;
 
 import java.io.Serial;
 import java.util.*;
+import lombok.Builder;
 import org.springframework.security.cas.authentication.CasAssertionAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,7 +20,7 @@ public class CasOppijaUserDetailsService
   public static final String ATTRIBUTE_OPPIJANUMERO = "personOid";
 
   private static final List<GrantedAuthority> DEFAULT_AUTHORITIES =
-      List.of(new SimpleGrantedAuthority("ROLE_USER"));
+      List.of(new SimpleGrantedAuthority("ROLE_OPPIJA"));
 
   @Override
   public UserDetails loadUserDetails(CasAssertionAuthenticationToken token)
@@ -42,6 +43,7 @@ public class CasOppijaUserDetailsService
     return new CasAuthenticatedUser(username, allAttributes);
   }
 
+  @Builder
   public static final class CasAuthenticatedUser implements UserDetails {
     @Serial private static final long serialVersionUID = 1233976289493556161L;
 
