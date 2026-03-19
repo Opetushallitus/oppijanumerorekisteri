@@ -5,11 +5,11 @@ import { useLocalisations, useRedirectByUser } from '../../selectors';
 import { OphDsPage } from '../design-system/OphDsPage';
 import HenkiloViewCreateKayttooikeus from '../common/henkilo/HenkiloViewCreateKayttooikeus';
 import { HenkiloViewOrganisationContent } from '../common/henkilo/HenkiloViewOrganisationContent';
-import HenkiloViewExpiredKayttooikeus from '../common/henkilo/HenkiloViewExpiredKayttooikeus';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { jarjestelmatunnusNavigation } from '../navigation/navigationconfigurations';
 import { JarjestelmatunnusPerustiedot } from './JarjestelmatunnusPerustiedot';
+import { SulkeutuneetKayttooikeudet } from '../virkailija/SulkeutuneetKayttooikeudet';
 import { VoimassaolevatKayttooikeudet } from '../virkailija/VoimassaolevatKayttooikeudet';
 import { OphDsCard } from '../design-system/OphDsCard';
 
@@ -43,7 +43,7 @@ export const JarjestelmatunnusEditPage = () => {
                 />
             </OphDsCard>
             <OphDsCard>
-                <HenkiloViewExpiredKayttooikeus oidHenkilo={params.oid} isOmattiedot={false} />
+                <SulkeutuneetKayttooikeudet oidHenkilo={params.oid} />
             </OphDsCard>
             <OphDsCard>
                 <HenkiloViewCreateKayttooikeus

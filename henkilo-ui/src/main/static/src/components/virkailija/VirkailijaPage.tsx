@@ -9,10 +9,10 @@ import { useLocalisations, useRedirectByUser } from '../../selectors';
 import { OphDsPage } from '../design-system/OphDsPage';
 import { VirkailijaPerustiedot } from './VirkailijaPerustiedot';
 import Mfa from '../henkilo/Mfa';
+import { SulkeutuneetKayttooikeudet } from './SulkeutuneetKayttooikeudet';
 import { VoimassaolevatKayttooikeudet } from './VoimassaolevatKayttooikeudet';
 import HenkiloViewCreateKayttooikeus from '../common/henkilo/HenkiloViewCreateKayttooikeus';
 import { HenkiloViewOrganisationContent } from '../common/henkilo/HenkiloViewOrganisationContent';
-import HenkiloViewExpiredKayttooikeus from '../common/henkilo/HenkiloViewExpiredKayttooikeus';
 import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
 import { OphDsCard } from '../design-system/OphDsCard';
@@ -62,7 +62,7 @@ export const VirkailijaPage = () => {
                 <HenkiloViewOpenKayttooikeusanomus anomukset={anomukset ?? []} isOmattiedot={false} />
             </OphDsCard>
             <OphDsCard>
-                <HenkiloViewExpiredKayttooikeus oidHenkilo={oid} isOmattiedot={false} />
+                <SulkeutuneetKayttooikeudet oidHenkilo={oid} />
             </OphDsCard>
             <OphDsCard>
                 <HenkiloViewCreateKayttooikeus oidHenkilo={oid} existingKayttooikeusRef={existingKayttooikeusRef} />

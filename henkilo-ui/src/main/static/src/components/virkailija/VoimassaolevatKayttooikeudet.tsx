@@ -172,7 +172,7 @@ export const VoimassaolevatKayttooikeudet = (props: OwnProps) => {
             }
         }
         return renderedData;
-    }, [kayttooikeusryhmas, isSuccess, sortOrder]);
+    }, [kayttooikeusryhmas, organisations, isSuccess, sortOrder]);
 
     const sectionLabelId = useId();
     return (
