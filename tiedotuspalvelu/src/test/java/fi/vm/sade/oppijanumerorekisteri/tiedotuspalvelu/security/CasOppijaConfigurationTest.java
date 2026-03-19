@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.security;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -7,7 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedotuspalveluApiTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.test.context.support.WithMockUser;
 
 public class CasOppijaConfigurationTest extends TiedotuspalveluApiTest {
 
@@ -29,10 +29,9 @@ public class CasOppijaConfigurationTest extends TiedotuspalveluApiTest {
   }
 
   @Test
-  @WithMockUser
   public void uiTiedotteetIsAccessibleWhenAuthenticated() throws Exception {
     mockMvc
-        .perform(get("/omat-viestit/ui/tiedotteet"))
+        .perform(get("/omat-viestit/ui/tiedotteet").with(user(OPPIJA_NORDEA_DEMO)))
         .andExpect(status().isOk())
         .andExpect(content().json("[]"));
   }

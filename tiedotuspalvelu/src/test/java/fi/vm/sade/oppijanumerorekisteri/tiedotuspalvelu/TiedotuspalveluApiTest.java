@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.security.CasOppijaUserDetailsService;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -112,4 +113,17 @@ public class TiedotuspalveluApiTest {
             .getContentAsString();
     return objectMapper.readValue(response, ApiController.TiedoteResponse.class);
   }
+
+  public static final String OPPIJANUMERO_NORDEA_DEMO = "1.2.246.562.24.73833272757";
+  public final CasOppijaUserDetailsService.CasAuthenticatedUser OPPIJA_NORDEA_DEMO =
+      CasOppijaUserDetailsService.CasAuthenticatedUser.builder()
+          .username("suomi.fi,210281-9988")
+          .attributes(
+              Map.of(
+                  "displayName", List.of("Nordea Demo"),
+                  "givenName", List.of("Nordea"),
+                  "sn", List.of("Demo"),
+                  "nationalIdentificationNumber", List.of("210281-9988"),
+                  "personOid", List.of(OPPIJANUMERO_NORDEA_DEMO)))
+          .build();
 }
