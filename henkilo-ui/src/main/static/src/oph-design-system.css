@@ -208,6 +208,9 @@
 }
 
 .oph-ds-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     padding: 24px;
     border-radius: 4px;
     border-top: 5px solid var(--Link-Text-Default, #0033CC);
@@ -513,6 +516,11 @@
     border-radius: 2px;
     border: var(--OPH-Button-Secondary-variant-Stroke-width, 2px) solid var(--OPH-Button-Secondary-variant-Stroke, #03C);
     background-color: var(--OPH-Button-Secondary-variant-Background, #FFF);
+}
+
+.oph-ds-button-text-link {
+    text-align: left;
+    padding: 0px;
 }
 
 .oph-ds-button:hover {
@@ -863,6 +871,7 @@
     text-align: left;
     border: 0;
     cursor: pointer;
+    padding: 0;
 }
 
 .oph-ds-table-header-button-asc,
@@ -870,8 +879,7 @@
 .oph-ds-table-header-button-unsorted {
     display: flex;
     flex-direction: column;
-    gap: -19px;
-    margin-left: 0.5rem;
+    margin-left: 1rem;
 }
 
 .oph-ds-table-header-button-asc::before,
@@ -1084,6 +1092,10 @@
     font-family: "Open Sans";
     border-radius: 2px;
     padding: 6px;
+}
+
+.oph-ds-datepicker-tiny {
+    width: 120px;
 }
 
 .oph-ds-datepicker-clear {

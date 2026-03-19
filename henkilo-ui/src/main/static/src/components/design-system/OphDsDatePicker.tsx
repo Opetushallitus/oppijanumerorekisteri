@@ -12,14 +12,18 @@ const icon = (disabled?: boolean) => (
     </svg>
 );
 
-export const OphDsDatepicker = (props: DatePickerProps) => {
+type CustomProps = {
+    tiny?: boolean;
+};
+
+export const OphDsDatepicker = (props: DatePickerProps & CustomProps) => {
     return (
         <ReactDatepicker
-            isClearable={!props.disabled}
+            isClearable={!props.disabled && !props?.tiny}
             clearButtonClassName="oph-ds-datepicker-clear"
             showIcon
             icon={icon(props.disabled)}
-            className="oph-ds-input"
+            className={`oph-ds-input ${props?.tiny ? 'oph-ds-datepicker-tiny' : ''}`}
             dateFormat="d.M.yyyy"
             showYearDropdown
             showMonthDropdown
