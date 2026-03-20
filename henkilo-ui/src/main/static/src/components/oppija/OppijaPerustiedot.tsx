@@ -399,7 +399,7 @@ const OppijaPerustiedotView = ({ oid, openForm }: { oid: string; openForm: () =>
                 {omattiedot?.isAdmin && henkilo?.passivoitu && (
                     <AktivoiButton className="oph-ds-button oph-ds-button-bordered" oidHenkilo={oid} />
                 )}
-                {omattiedot?.isAdmin && (
+                {omattiedot?.isAdmin && !henkilo?.passivoitu && (
                     <button className="oph-ds-button oph-ds-button-bordered" onClick={() => setPassport(true)}>
                         {L('HALLITSE_PASSINUMEROITA')}
                     </button>
