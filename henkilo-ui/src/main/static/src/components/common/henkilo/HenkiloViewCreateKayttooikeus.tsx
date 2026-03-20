@@ -6,10 +6,10 @@ import { skipToken } from '@reduxjs/toolkit/query';
 import { useLocalisations } from '../../../selectors';
 import { SelectOption } from '../../../utilities/select';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
+import { OphDsBanner } from '../../design-system/OphDsBanner';
 import { OphDsDatepicker } from '../../design-system/OphDsDatePicker';
 import { OphDsOrganisaatioSelect } from '../../design-system/OphDsOrganisaatioSelect';
 import { OphDsRyhmaSelect } from '../../design-system/OphDsRyhmaSelect';
-import ValidationMessageButton from '../button/ValidationMessageButton';
 import {
     useGetAllowedKayttooikeusryhmasForOrganisationQuery,
     usePutKayttooikeusryhmaForHenkiloMutation,
@@ -200,23 +200,29 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                 </div>
                 <div></div>
                 <div>
-                    <ValidationMessageButton
-                        validationMessages={{
-                            organisation: {
-                                id: 'organisation',
-                                labelLocalised: L('HENKILO_LISAA_KAYTTOOIKEUDET_ORGANISAATIO_VALID'),
-                                isValid: !!organisationSelection || !!ryhmaSelection,
-                            },
-                            kayttooikeus: {
-                                id: 'kayttooikeus',
-                                labelLocalised: L('HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID'),
-                                isValid: !!selectedList?.length,
-                            },
-                        }}
-                        buttonAction={createKayttooikeusAction}
-                    >
-                        {L('HENKILO_LISAA_KAYTTOOIKEUDET_HAE_BUTTON')}
-                    </ValidationMessageButton>
+                    {((!organisationSelection && !ryhmaSelection) || !selectedList?.length) && (
+                        <div style={{ marginBottom: '1rem' }}>
+                            <OphDsBanner type="warning">
+                                <ul>
+                                    {!organisationSelection && !ryhmaSelection && (
+                                        <li>{L('HENKILO_LISAA_KAYTTOOIKEUDET_ORGANISAATIO_VALID')}</li>
+                                    )}
+                                    {!selectedList?.length && (
+                                        <li>{L('HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID')}</li>
+                                    )}
+                                </ul>
+                            </OphDsBanner>
+                        </div>
+                    )}
+                    <div>
+                        <button
+                            className="oph-ds-button"
+                            disabled={(!organisationSelection && !ryhmaSelection) || !selectedList?.length}
+                            onClick={() => createKayttooikeusAction()}
+                        >
+                            {L('HENKILO_LISAA_KAYTTOOIKEUDET_HAE_BUTTON')}
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
