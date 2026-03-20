@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router';
 import OppijaCreateForm from './OppijaCreateForm';
 import { HenkiloCreate } from '../../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import OppijaCreateDuplikaatit from './OppijaCreateDuplikaatit';
-import CloseButton from '../../../../common/button/CloseButton';
 import { useAppDispatch } from '../../../../../store';
 import { useLocalisations } from '../../../../../selectors';
 import { add } from '../../../../../slices/toastSlice';
@@ -66,12 +65,9 @@ export const OppijaCreateAnonymousContainer = ({ goBack }: OwnProps) => {
 
     return (
         <div className="mainContent wrapper">
-            <span className="oph-h2 oph-bold">{L('OPPIJAN_LUONTI_OTSIKKO')}</span>
-            <span style={{ float: 'right' }}>
-                <CloseButton closeAction={goBack} />
-            </span>
+            <h2>{L('OPPIJAN_LUONTI_OTSIKKO')}</h2>
             {naytaDuplikaatit === false ? (
-                <OppijaCreateForm tallenna={tallenna} />
+                <OppijaCreateForm tallenna={tallenna} peruuta={goBack} />
             ) : (
                 <OppijaCreateDuplikaatit
                     tallenna={luoOppijaJaNavigoi}

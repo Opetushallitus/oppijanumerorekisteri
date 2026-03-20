@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 
-import CloseButton from '../../../../common/button/CloseButton';
 import { useLocalisations } from '../../../../../selectors';
 import Button from '../../../../common/button/Button';
 import { SpinnerInButton } from '../../../../common/icons/SpinnerInButton';
@@ -103,10 +102,7 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
 
     return (
         <div className="mainContent wrapper">
-            <span className="oph-h2 oph-bold">{L('OPPIJAN_LUONTI_OTSIKKO')}</span>
-            <span className="float-right">
-                <CloseButton closeAction={goBack} />
-            </span>
+            <h2>{L('OPPIJAN_LUONTI_OTSIKKO')}</h2>
             <div className="oph-field">
                 {createOid && (
                     <>
@@ -186,6 +182,9 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
                             </Button>
                             <Button className="margin-left" action={() => resetState()} disabled={isLoading}>
                                 {L('TYHJENNA')}
+                            </Button>
+                            <Button className="margin-left" cancel={true} action={() => goBack()}>
+                                {L('PERUUTA')}
                             </Button>
                         </div>
                     </form>

@@ -12,7 +12,7 @@ import OppijoidenTuontiContainer from './components/oppijoidentuonti/OppijoidenT
 import { VtjVertailuPage } from './components/henkilo/vtjvertailu/VtjVertailuPage';
 import { KayttooikeusryhmaPageContainer } from './components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPageContainer';
 import { KayttooikeusryhmatPage } from './components/kayttooikeusryhmat/listaus/KayttooikeusryhmatPage';
-import FormSwitch from './components/henkilo/oppija/create/form/FormSwitch';
+import { OppijaCreate } from './components/henkilo/oppija/create/OppijaCreate';
 import { VirkailijaCreateContainer } from './components/henkilo/VirkailijaCreateContainer';
 import { PalvelukayttajaInfo } from './containers/PalvelukayttajaInfo';
 import { JarjestelmatunnusCreatePage } from './components/jarjestelmatunnus/JarjestelmatunnusCreatePage';
@@ -36,9 +36,8 @@ export const AppRoutes = () => (
             <Route path="/kutsutut" element={<KutsututPage />} />
             <Route path="/kutsulomake" element={<KutsuminenPage />} />
             <Route path="/henkilohaku" element={<HenkilohakuContainer />} />
-            <Route path="/virkailija/luonti" element={<VirkailijaCreateContainer />} />
-            <Route path="/oppija/luonti" element={<FormSwitch />} />
             <Route path="/oppijahaku" element={<OppijahakuPage />} />
+            <Route path="/oppija/luonti" element={<OppijaCreate />} />
             <Route path="/oppija/:oid" element={<OppijaViewPage />} />
             <Route path="/oppija/:oid/vtjvertailu" element={<VtjVertailuPage henkiloType="oppija" />} />
             <Route path="/oppija/:oid/duplikaatit" element={<DuplikaatitContainer henkiloType="oppija" />} />
@@ -46,6 +45,7 @@ export const AppRoutes = () => (
             <Route path="/oppija2/:oid/duplikaatit" element={<OppijaDuplicatesPage />} />
             <Route path="/oppija2/:oid/vtjvertailu" element={<OppijaVtjVertailuPage />} />
             <Route path="/virkailijahaku" element={<VirkailijahakuPage />} />
+            <Route path="/virkailija/luonti" element={<VirkailijaCreateContainer />} />
             <Route path="/virkailija/:oid" element={<VirkailijaViewPage />} />
             <Route path="/virkailija2/:oid" element={<VirkailijaPage />} />
             <Route path="/virkailija/:oid/vtjvertailu" element={<VtjVertailuPage henkiloType="virkailija" />} />

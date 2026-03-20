@@ -30,6 +30,7 @@ type Form = {
 
 type OppijaCreateFormProps = {
     tallenna: (arg0: HenkiloCreate) => Promise<void>;
+    peruuta: () => void;
 };
 
 type State = {
@@ -365,9 +366,18 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
             </div>
             <div className="oph-field">
                 {!state.loading ? (
-                    <button type="submit" className="oph-button oph-button-primary" disabled={state.disabled}>
-                        {L('TALLENNA_LINKKI')}
-                    </button>
+                    <>
+                        <button type="submit" className="oph-button oph-button-primary" disabled={state.disabled}>
+                            {L('TALLENNA_LINKKI')}
+                        </button>
+                        <button
+                            type="button"
+                            className="margin-left oph-button oph-button-cancel"
+                            onClick={() => props.peruuta()}
+                        >
+                            {L('PERUUTA')}
+                        </button>
+                    </>
                 ) : (
                     <div style={{ display: 'inline-block' }}>
                         <Loader />
