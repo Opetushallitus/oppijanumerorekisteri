@@ -241,13 +241,7 @@ const HenkiloViewExistingKayttooikeus = (props: OwnProps) => {
                 header: () => L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) =>
-                    isSuccess
-                        ? getOrganisationNameWithType(
-                              organisations?.find((o) => o.oid === getValue().organisaatioOid),
-                              L,
-                              locale
-                          )
-                        : '...',
+                    getOrganisationNameWithType(organisations, getValue().organisaatioOid, L, locale),
             },
             {
                 id: 'kayttooikeus',

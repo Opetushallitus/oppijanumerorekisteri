@@ -129,17 +129,19 @@ const KutsuminenPage = () => {
                             onChange={(s) => s && setBasicInfo({ ...basicInfo, languageCode: s?.value })}
                         />
                     </div>
-                    <label className="oph-ds-label" htmlFor="saate">
-                        {L('VIRKAILIJAN_TIEDOT_SAATE')}
-                    </label>
-                    <textarea
-                        id="saate"
-                        className="oph-ds-textarea"
-                        rows={3}
-                        value={basicInfo.saate}
-                        placeholder={L('VALINNAINEN_SAATE')}
-                        onChange={(s) => setBasicInfo({ ...basicInfo, saate: s.target.value })}
-                    />
+                    <div style={{ width: '300px' }}>
+                        <label className="oph-ds-label" htmlFor="saate">
+                            {L('VIRKAILIJAN_TIEDOT_SAATE')}
+                        </label>
+                        <textarea
+                            id="saate"
+                            className="oph-ds-textarea"
+                            rows={3}
+                            value={basicInfo.saate}
+                            placeholder={L('VALINNAINEN_SAATE')}
+                            onChange={(s) => setBasicInfo({ ...basicInfo, saate: s.target.value })}
+                        />
+                    </div>
                 </div>
                 <div>{L('VIRKAILIJAN_LISAYS_ASIOINTIKIELI_TARKENNE')}</div>
                 <h2>{L('VIRKAILIJAN_LISAYS_ORGANISAATIOON_OTSIKKO')}</h2>

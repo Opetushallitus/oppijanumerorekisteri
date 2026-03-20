@@ -132,13 +132,7 @@ export const VoimassaolevatKayttooikeudet = (props: OwnProps) => {
     const renderedData: RenderedData = useMemo(() => {
         const renderedData = (kayttooikeusryhmas ?? []).filter(_filterExpiredKayttooikeus).map((k) => ({
             ...k,
-            organisaatioNimi: isSuccess
-                ? getOrganisationNameWithType(
-                      organisations?.find((o) => o.oid === k.organisaatioOid),
-                      L,
-                      locale
-                  )
-                : k.organisaatioOid,
+            organisaatioNimi: getOrganisationNameWithType(organisations, k.organisaatioOid, L, locale),
             ryhmaNimi: k.ryhmaNames?.texts.filter((text) => text.lang === locale.toUpperCase())[0]?.text ?? '',
             kasittely: format(parseISO(k.kasitelty), 'd.M.yyyy') + ' / ' + (k.kasittelijaNimi || k.kasittelijaOid),
         }));
@@ -184,7 +178,7 @@ export const VoimassaolevatKayttooikeudet = (props: OwnProps) => {
                     onClose={() => setKayttooikeus(undefined)}
                     onOverlayClick={() => setKayttooikeus(undefined)}
                 >
-                    <div className="accessRightDescription">{kayttooikeus.description}</div>
+                    <p>{kayttooikeus.description}</p>
                 </OphModal>
             )}
             {isError ? (

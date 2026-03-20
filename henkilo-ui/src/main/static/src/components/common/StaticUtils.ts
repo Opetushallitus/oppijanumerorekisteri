@@ -8,6 +8,7 @@ import { Organisaatio } from '../../types/domain/organisaatio/organisaatio.types
 import { NamedMultiSelectOption, NamedSelectOption } from '../../utilities/select';
 import { Koodi, Koodisto } from '../../api/koodisto';
 import type { HenkiloDuplicate } from '../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
+import { getLocalization } from '../../utilities/localisation.util';
 
 // Example fieldpath: organisaatio.nimet.0.nimiValue
 export function updateFieldByDotAnnotation<T extends Record<string, any>>(
@@ -69,12 +70,16 @@ export function getOrganisaatiotyypitFlat(L: LocalisationFn, uppercase: boolean,
         : '';
 }
 
-export function getOrganisationNameWithType(org: Organisaatio | undefined, L: LocalisationFn, locale: Locale) {
-    return (
-        (org?.nimi?.[locale] || org?.nimi?.['fi'] || org?.nimi?.['sv'] || org?.nimi?.['en'] || '') +
-        ' ' +
-        getOrganisaatiotyypitFlat(L, false, org?.tyypit)
-    );
+export function getOrganisationNameWithType(
+    organisations: Organisaatio[] | undefined,
+    oid: string,
+    L: LocalisationFn,
+    locale: Locale
+): string {
+    const org = organisations?.find((o) => o.oid === oid);
+    const name = getLocalization(org?.nimi, locale);
+    const types = getOrganisaatiotyypitFlat(L, false, org?.tyypit);
+    return name ? `${name} ${types}` : oid;
 }
 
 export function getLocalisedText(description: TextGroup | null | undefined, locale: Locale) {

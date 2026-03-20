@@ -8,73 +8,51 @@ import { getOrganisationNameWithType } from '../common/StaticUtils';
 import { useGetOrganisationsQuery } from '../../api/kayttooikeus';
 
 type Props = {
-    updateHaettuKayttooikeusryhma: (arg0: number, arg1: KayttooikeudenTila, arg3: HenkilonNimi, arg4: string) => void;
-    kayttooikeusryhma: HaettuKayttooikeusryhma;
+    handleAnomus: (anomusId: number, tila: KayttooikeudenTila, kasittelija: HenkilonNimi, peruste: string) => void;
+    anomus: HaettuKayttooikeusryhma;
 };
 
-const AnomusHylkaysPopup = ({ kayttooikeusryhma, updateHaettuKayttooikeusryhma }: Props) => {
+const AnomusHylkaysPopup = ({ anomus, handleAnomus }: Props) => {
     const [peruste, setPeruste] = useState('');
-    const { data: organisations, isSuccess } = useGetOrganisationsQuery();
+    const { data: organisations } = useGetOrganisationsQuery();
     const { L, locale } = useLocalisations();
-    const henkilo = kayttooikeusryhma.anomus.henkilo;
-    const { organisaatioOid } = kayttooikeusryhma.anomus;
+    const henkilo = anomus.anomus.henkilo;
+    const { organisaatioOid } = anomus.anomus;
     return (
-        <div className="anomus-hylkays-popup">
-            <table style={{ margin: '1rem 0' }}>
-                <tbody>
-                    <tr>
-                        <td style={{ fontWeight: 'bold', paddingRight: '0.5rem' }}>
-                            {L('HENKILO_KAYTTOOIKEUS_NIMI')}:
-                        </td>
-                        <td>{henkilo.etunimet + ' ' + henkilo.sukunimi}</td>
-                    </tr>
-                    <tr>
-                        <td style={{ fontWeight: 'bold', paddingRight: '0.5rem' }}>
-                            {L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO')}:
-                        </td>
-                        <td>
-                            {isSuccess
-                                ? getOrganisationNameWithType(
-                                      organisations?.find((o) => o.oid === organisaatioOid),
-                                      L,
-                                      locale
-                                  )
-                                : '...'}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style={{ fontWeight: 'bold', paddingRight: '0.5rem' }}>
-                            {L('HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA')}:
-                        </td>
-                        <td>
-                            {
-                                kayttooikeusryhma.kayttoOikeusRyhma.nimi.texts.filter(
-                                    (text) => text.lang === locale.toUpperCase()
-                                )[0]?.text
-                            }
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <textarea
-                className="oph-input"
-                placeholder={L('HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYSPERUSTE')}
-                name="hylkaysperuste"
-                id="hylkaysperuste"
-                value={peruste}
-                cols={20}
-                rows={10}
-                onChange={(event) => setPeruste(event.target.value)}
-            />
-            <button
-                className="oph-button oph-button-confirm"
-                style={{ textAlign: 'left', marginTop: '15px' }}
-                onClick={() =>
-                    updateHaettuKayttooikeusryhma(kayttooikeusryhma.id, KAYTTOOIKEUDENTILA.HYLATTY, henkilo, peruste)
-                }
-            >
-                {L('HENKILO_KAYTTOOIKEUSANOMUS_VAHVISTA_HYLKAYS')}
-            </button>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div>
+                <div style={{ fontWeight: 'bold' }}>{L('HENKILO_KAYTTOOIKEUS_NIMI')}:</div>
+                <div>{henkilo.etunimet + ' ' + henkilo.sukunimi}</div>
+                <div style={{ fontWeight: 'bold' }}>{L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO')}:</div>
+                <div>{getOrganisationNameWithType(organisations, organisaatioOid, L, locale)}</div>
+                <div style={{ fontWeight: 'bold' }}>{L('HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA')}:</div>
+                <div>
+                    {anomus.kayttoOikeusRyhma.nimi.texts.filter((text) => text.lang === locale.toUpperCase())[0]?.text}
+                </div>
+            </div>
+            <div>
+                <label className="oph-ds-label" htmlFor="hylkaysperuste">
+                    {L('HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYSPERUSTE')}
+                </label>
+                <textarea
+                    className="oph-ds-textarea"
+                    placeholder={L('HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYSPERUSTE')}
+                    name="hylkaysperuste"
+                    id="hylkaysperuste"
+                    value={peruste}
+                    cols={20}
+                    rows={10}
+                    onChange={(event) => setPeruste(event.target.value)}
+                />
+            </div>
+            <div>
+                <button
+                    className="oph-ds-button"
+                    onClick={() => handleAnomus(anomus.id, KAYTTOOIKEUDENTILA.HYLATTY, henkilo, peruste)}
+                >
+                    {L('HENKILO_KAYTTOOIKEUSANOMUS_VAHVISTA_HYLKAYS')}
+                </button>
+            </div>
         </div>
     );
 };

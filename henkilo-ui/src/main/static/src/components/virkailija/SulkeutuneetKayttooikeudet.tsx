@@ -52,14 +52,7 @@ export const SulkeutuneetKayttooikeudet = (props: OwnProps) => {
     const renderedData: RenderedData = useMemo(() => {
         const renderedData = (kayttooikeusryhmas ?? []).filter(_filterExistingKayttooikeus).map((k) => ({
             ...k,
-            organisaatioNimi:
-                (isSuccess &&
-                    getOrganisationNameWithType(
-                        organisations.find((o) => o.oid === k.organisaatioOid),
-                        L,
-                        locale
-                    )?.trim()) ||
-                k.organisaatioOid,
+            organisaatioNimi: getOrganisationNameWithType(organisations, k.organisaatioOid, L, locale),
             ryhmaNimi: k.ryhmaNames?.texts.filter((text) => text.lang === locale.toUpperCase())[0]?.text ?? '',
             tilaTxt: L(k.tila),
             kasittely: format(parseISO(k.kasitelty), 'd.M.yyyy') + ' / ' + (k.kasittelijaNimi || k.kasittelijaOid),
@@ -104,7 +97,7 @@ export const SulkeutuneetKayttooikeudet = (props: OwnProps) => {
                     onClose={() => setKayttooikeus(undefined)}
                     onOverlayClick={() => setKayttooikeus(undefined)}
                 >
-                    <div className="accessRightDescription">{kayttooikeus.description}</div>
+                    <p>{kayttooikeus.description}</p>
                 </OphModal>
             )}
             {!isLoading && renderedData.length === 0 ? (

@@ -253,13 +253,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 header: () => L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO'),
                 accessorFn: (row) => row,
                 cell: ({ getValue }) =>
-                    isSuccess
-                        ? getOrganisationNameWithType(
-                              organisations.find((o) => o.oid === getValue().anomus.organisaatioOid),
-                              L,
-                              locale
-                          )
-                        : '...',
+                    getOrganisationNameWithType(organisations, getValue().anomus.organisaatioOid, L, locale),
                 enableSorting: false,
             },
             {
@@ -389,10 +383,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                     onClose={() => setHylkaaAnomus(undefined)}
                     onOverlayClick={() => setHylkaaAnomus(undefined)}
                 >
-                    <AnomusHylkaysPopup
-                        kayttooikeusryhma={hylattyKayttooikeusryhma}
-                        updateHaettuKayttooikeusryhma={handleAnomus}
-                    />
+                    <AnomusHylkaysPopup anomus={hylattyKayttooikeusryhma} handleAnomus={handleAnomus} />
                 </OphModal>
             )}
             {accessRight && <AccessRightDetails {...accessRight} />}

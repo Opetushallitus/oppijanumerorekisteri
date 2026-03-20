@@ -156,17 +156,8 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
                 id: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO',
                 header: () => L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO'),
                 accessorFn: (row) => row,
-                cell: ({ getValue }) => (
-                    <span>
-                        {isSuccess
-                            ? getOrganisationNameWithType(
-                                  organisations.find((o) => o.oid === getValue().organisaatioOid),
-                                  L,
-                                  locale
-                              )
-                            : L('ORGANISAATIO_NIMI_EI_LOYDY')}
-                    </span>
-                ),
+                cell: ({ getValue }) =>
+                    getOrganisationNameWithType(organisations, getValue().organisaatioOid, L, locale),
             },
             {
                 id: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS',

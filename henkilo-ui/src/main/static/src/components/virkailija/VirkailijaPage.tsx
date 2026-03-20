@@ -4,16 +4,16 @@ import { useParams } from 'react-router';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { virkailijaNavigation } from '../navigation/navigationconfigurations';
-import { useGetKayttajatiedotQuery, useGetKayttooikeusAnomuksetForHenkiloQuery } from '../../api/kayttooikeus';
+import { useGetKayttajatiedotQuery } from '../../api/kayttooikeus';
 import { useLocalisations, useRedirectByUser } from '../../selectors';
 import { OphDsPage } from '../design-system/OphDsPage';
 import { VirkailijaPerustiedot } from './VirkailijaPerustiedot';
 import Mfa from '../henkilo/Mfa';
+import { AvoimetKayttooikeusanomukset } from './AvoimetKayttooikeushakemukset';
 import { SulkeutuneetKayttooikeudet } from './SulkeutuneetKayttooikeudet';
 import { VoimassaolevatKayttooikeudet } from './VoimassaolevatKayttooikeudet';
 import HenkiloViewCreateKayttooikeus from '../common/henkilo/HenkiloViewCreateKayttooikeus';
 import { HenkiloViewOrganisationContent } from '../common/henkilo/HenkiloViewOrganisationContent';
-import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
 import { OphDsCard } from '../design-system/OphDsCard';
 import { GenericErrorPage } from '../GenericErrorPage';
@@ -30,7 +30,6 @@ export const VirkailijaPage = () => {
     useTitle(L('TITLE_VIRKAILIJA'));
     useNavigation(virkailijaNavigation, false);
     const { isLoading, error } = useGetKayttajatiedotQuery(oid);
-    const { data: anomukset } = useGetKayttooikeusAnomuksetForHenkiloQuery(oid);
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
 
     if (isLoading) {
@@ -59,7 +58,7 @@ export const VirkailijaPage = () => {
                 <VoimassaolevatKayttooikeudet existingKayttooikeusRef={existingKayttooikeusRef} oidHenkilo={oid} />
             </OphDsCard>
             <OphDsCard>
-                <HenkiloViewOpenKayttooikeusanomus anomukset={anomukset ?? []} isOmattiedot={false} />
+                <AvoimetKayttooikeusanomukset oidHenkilo={oid} />
             </OphDsCard>
             <OphDsCard>
                 <SulkeutuneetKayttooikeudet oidHenkilo={oid} />
