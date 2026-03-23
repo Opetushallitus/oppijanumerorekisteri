@@ -6,6 +6,7 @@ import { KutsututPage } from './components/kutsutut/KutsututPage';
 import KutsuminenPage from './components/kutsuminen/KutsuminenPage';
 import AnomusPage from './components/anomus/AnomusPage';
 import { OmattiedotPage } from './components/omattiedot/OmattiedotPage';
+import { Omattiedot2Page } from './components/omattiedot/Omattiedot2Page';
 import { DuplikaatitContainer } from './components/henkilo/duplikaatit/DuplikaatitContainer';
 import HenkilohakuContainer from './components/henkilohaku/HenkilohakuContainer';
 import OppijoidenTuontiContainer from './components/oppijoidentuonti/OppijoidenTuontiContainer';
@@ -60,6 +61,7 @@ export const AppRoutes = () => (
                 element={isNewNavi ? undefined : <DuplikaatitContainer henkiloType="virkailija" />}
             />
             <Route path="/omattiedot" element={<OmattiedotPage />} />
+            <Route path="/omattiedot2" element={<Omattiedot2Page />} />
             <Route path="/oppijoidentuonti" element={<OppijoidenTuontiContainer />} />
             <Route path="/kayttooikeusryhmat" element={<KayttooikeusryhmatPage />} />
             <Route path="/kayttooikeusryhmat/lisaa" element={<KayttooikeusryhmaPageContainer />} />

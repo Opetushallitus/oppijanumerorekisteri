@@ -10,16 +10,19 @@ import {
     useGetHenkiloHakuOrganisaatiotQuery,
     useGetOmattiedotQuery,
     useGetOrganisationNamesQuery,
+    useGetRootOrganisationQuery,
 } from '../../api/kayttooikeus';
 import { selectStyles } from '../../utilities/select';
 import { containsSearchword, filterAndSortOrganisaatios } from '../common/select/OrganisaatioSelectModal';
+import { OrganisaatioWithChildren } from '../../types/domain/organisaatio/organisaatio.types';
+import { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 
 type OwnProps = {
     defaultValue?: string;
     onChange: (organisaatio: SingleValue<OrganisaatioSelectObject>) => void;
     selectedOrganisaatioOid?: string;
     disabled?: boolean;
-    type?: 'HENKILOHAKU';
+    type?: 'HENKILOHAKU' | 'ROOT_ORGANISATION';
     placeholder?: string;
     label?: string;
     inputId?: string;
@@ -39,6 +42,10 @@ const OrganisationMenuList = (props: MenuListProps<OrganisaatioSelectObject, fal
     );
 };
 
+function flatten(root?: OrganisaatioWithChildren): OrganisaatioHenkilo[] {
+    return root ? [{ organisaatio: root }, ...root.children.flatMap((node) => flatten(node))] : [];
+}
+
 export const OphDsOrganisaatioSelect = ({
     defaultValue,
     disabled,
@@ -50,17 +57,23 @@ export const OphDsOrganisaatioSelect = ({
     inputId,
 }: OwnProps) => {
     const { L, locale } = useLocalisations();
-    const { data: organisationNames } = useGetOrganisationNamesQuery();
-    const omattiedotOrganisations = useOmatOrganisaatiot();
     const { data: omattiedot } = useGetOmattiedotQuery();
-    const { data: henkilohakuOrganisaatiot } = useGetHenkiloHakuOrganisaatiotQuery(
+    const { data: organisationNames } = useGetOrganisationNamesQuery();
+    const omattiedotOrgs = useOmatOrganisaatiot();
+    const { data: henkilohakuOrgs } = useGetHenkiloHakuOrganisaatiotQuery(
         omattiedot && type === 'HENKILOHAKU' ? omattiedot.oidHenkilo : skipToken
     );
+    const { data: rootOrgs } = useGetRootOrganisationQuery(type === 'ROOT_ORGANISATION' ? undefined : skipToken);
     const [searchWord, setSearchWord] = useState<string>('');
 
     const allOrganisations = useMemo(() => {
         if (organisationNames) {
-            const organisations = type === 'HENKILOHAKU' ? henkilohakuOrganisaatiot : omattiedotOrganisations;
+            const organisations =
+                type === 'HENKILOHAKU'
+                    ? henkilohakuOrgs
+                    : type === 'ROOT_ORGANISATION'
+                      ? flatten(rootOrgs)
+                      : omattiedotOrgs;
             const options = omattiedotOrganisaatiotToOrganisaatioSelectObject(
                 organisations ?? [],
                 organisationNames,
@@ -71,7 +84,7 @@ export const OphDsOrganisaatioSelect = ({
         } else {
             return [];
         }
-    }, [omattiedotOrganisations, henkilohakuOrganisaatiot, organisationNames, locale, searchWord, type]);
+    }, [omattiedotOrgs, henkilohakuOrgs, rootOrgs, organisationNames, locale, searchWord, type]);
 
     const OrganisationOption = (o: OptionProps<OrganisaatioSelectObject>) => (
         <components.Option {...o}>

@@ -4,7 +4,11 @@ import { skipToken } from '@reduxjs/toolkit/query';
 
 import { useLocalisations, useOmatRyhmat } from '../../selectors';
 import { SelectOption, selectProps } from '../../utilities/select';
-import { useGetHenkiloHakuOrganisaatiotQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
+import {
+    useGetHenkiloHakuOrganisaatiotQuery,
+    useGetOmattiedotQuery,
+    useGetOrganisaatioRyhmatQuery,
+} from '../../api/kayttooikeus';
 import { OrganisaatioWithChildren } from '../../types/domain/organisaatio/organisaatio.types';
 import { getLocalization } from '../../utilities/localisation.util';
 
@@ -15,16 +19,19 @@ type OwnProps = {
     label?: string;
     placeholder?: string;
     disabled?: boolean;
-    type?: 'HENKILOHAKU';
+    type?: 'HENKILOHAKU' | 'ROOT_ORGANISATION';
     inputId?: string;
 };
 
 export const OphDsRyhmaSelect = (props: OwnProps) => {
     const { L, locale } = useLocalisations();
-    const omatRyhmat = !props.type ? useOmatRyhmat() : [];
     const { data: omattiedot } = useGetOmattiedotQuery();
+    const omatRyhmat = !props.type ? useOmatRyhmat() : [];
     const { data: henkilohakuOrganisaatiot } = useGetHenkiloHakuOrganisaatiotQuery(
         omattiedot && props.type === 'HENKILOHAKU' ? omattiedot.oidHenkilo : skipToken
+    );
+    const { data: rootRyhmat } = useGetOrganisaatioRyhmatQuery(
+        props.type === 'ROOT_ORGANISATION' ? undefined : skipToken
     );
     const options = useMemo(() => {
         const ryhmat =
@@ -34,7 +41,9 @@ export const OphDsRyhmaSelect = (props: OwnProps) => {
                           OrganisaatioWithChildren[]
                       >((acc, o) => acc.concat([o.organisaatio], o.organisaatio.children), [])
                       .filter((o) => o.tyypit.some((t) => t === 'Ryhma'))
-                : omatRyhmat;
+                : props.type === 'ROOT_ORGANISATION'
+                  ? rootRyhmat
+                  : omatRyhmat;
         return (
             ryhmat
                 ?.map((r) => ({
