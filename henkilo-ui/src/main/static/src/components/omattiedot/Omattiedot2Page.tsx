@@ -1,12 +1,10 @@
 import React from 'react';
-import { skipToken } from '@reduxjs/toolkit/query/react';
 
-import { useGetKayttooikeusAnomuksetForHenkiloQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
+import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent';
 import HenkiloViewExistingKayttooikeus from '../common/henkilo/HenkiloViewExistingKayttooikeus';
-import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
 import HenkiloViewExpiredKayttooikeus from '../common/henkilo/HenkiloViewExpiredKayttooikeus';
 import { OmattiedotPerustiedot } from './OmattiedotPerustiedot';
 import { Mfa } from './Mfa';
@@ -14,11 +12,11 @@ import { KayttooikeudenAnominen } from './KayttooikeudenAnominen';
 import { OphDsPage } from '../design-system/OphDsPage';
 import { OphDsCard } from '../design-system/OphDsCard';
 import { OphDsSpinner } from '../design-system/OphDsSpinner';
+import { AvoimetKayttooikeusanomukset } from './AvoimetKayttooikeusanomukset';
 
 export const Omattiedot2Page = () => {
     const { data: omattiedot, isSuccess: isOmattiedotSuccess } = useGetOmattiedotQuery();
     const { L } = useLocalisations();
-    const { data: anomukset } = useGetKayttooikeusAnomuksetForHenkiloQuery(omattiedot?.oidHenkilo ?? skipToken);
 
     useTitle(L('TITLE_OMAT_TIEDOT'));
 
@@ -38,7 +36,7 @@ export const Omattiedot2Page = () => {
                     <HenkiloViewExistingKayttooikeus oidHenkilo={omattiedot.oidHenkilo} isOmattiedot={true} />
                 </OphDsCard>
                 <OphDsCard>
-                    <HenkiloViewOpenKayttooikeusanomus anomukset={anomukset ?? []} isOmattiedot={true} />
+                    <AvoimetKayttooikeusanomukset oidHenkilo={omattiedot.oidHenkilo} />
                 </OphDsCard>
                 <OphDsCard>
                     <HenkiloViewExpiredKayttooikeus oidHenkilo={omattiedot.oidHenkilo} isOmattiedot={true} />

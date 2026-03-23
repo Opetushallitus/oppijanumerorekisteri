@@ -9,7 +9,7 @@ import { useLocalisations, useRedirectByUser } from '../../selectors';
 import { OphDsPage } from '../design-system/OphDsPage';
 import { VirkailijaPerustiedot } from './VirkailijaPerustiedot';
 import { VirkailijaMfa } from './VirkailijaMfa';
-import { AvoimetKayttooikeusanomukset } from './AvoimetKayttooikeushakemukset';
+import { AvoimetKayttooikeusanomukset } from './AvoimetKayttooikeusanomukset';
 import { SulkeutuneetKayttooikeudet } from './SulkeutuneetKayttooikeudet';
 import { VoimassaolevatKayttooikeudet } from './VoimassaolevatKayttooikeudet';
 import HenkiloViewCreateKayttooikeus from '../common/henkilo/HenkiloViewCreateKayttooikeus';
