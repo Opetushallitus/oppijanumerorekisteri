@@ -104,11 +104,11 @@ const MfaRegistered = ({ idpEntityId }: MfaRegisteredProps) => {
             </div>
             <div>
                 <p className={styles.infoText}>{L('MFA_REKISTEROITY_INFO')}</p>
-                <div>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                     {isMfaSetupEnabled(idpEntityId) ? (
                         <>
                             <button
-                                className={`oph-button oph-button-primary ${styles.setupButton}`}
+                                className="oph-ds-button"
                                 onClick={handleMfaDisable}
                                 data-test-id="disable-mfa"
                                 disabled={isLoading}
@@ -120,7 +120,7 @@ const MfaRegistered = ({ idpEntityId }: MfaRegisteredProps) => {
                     ) : (
                         <>
                             <a
-                                className={`oph-button oph-button-primary ${styles.setupButton}`}
+                                className="oph-ds-button"
                                 href="/service-provider-app/saml/logout"
                                 data-test-id="login-suomifi"
                             >
@@ -149,10 +149,10 @@ const MfaUnregistered = ({ setMfaSetup, idpEntityId }: MfaUnregisteredProps) => 
             </div>
             <div>
                 <p className={styles.infoText}>{L('MFA_OTA_KAYTTOON_INFO')}</p>
-                <div>
+                <div style={{ display: 'flex', gap: '1rem' }}>
                     {isMfaSetupEnabled(idpEntityId) ? (
                         <button
-                            className={`oph-button oph-button-primary ${styles.setupButton}`}
+                            className="oph-ds-button"
                             onClick={() => setMfaSetup(true)}
                             data-test-id="start-mfa-setup"
                         >
@@ -161,7 +161,7 @@ const MfaUnregistered = ({ setMfaSetup, idpEntityId }: MfaUnregisteredProps) => 
                     ) : (
                         <>
                             <a
-                                className={`oph-button oph-button-primary ${styles.setupButton}`}
+                                className="oph-ds-button"
                                 href="/service-provider-app/saml/logout"
                                 data-test-id="login-suomifi"
                             >
