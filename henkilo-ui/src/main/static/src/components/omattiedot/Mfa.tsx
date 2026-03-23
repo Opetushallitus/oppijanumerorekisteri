@@ -2,7 +2,6 @@ import React, { ReactNode, useId, useRef, useState } from 'react';
 import PinInput from 'react-pin-input';
 
 import {
-    useGetKayttajatiedotQuery,
     useGetMfaSetupQuery,
     useGetOmattiedotQuery,
     usePostMfaDisableMutation,
@@ -10,7 +9,6 @@ import {
 } from '../../api/kayttooikeus';
 import appleStore from '../../img/apple_store.svg';
 import googlePlay from '../../img/google_play.svg';
-import { View } from '../../types/constants';
 import { useLocalisations } from '../../selectors';
 import { useAppDispatch } from '../../store';
 import { add } from '../../slices/toastSlice';
@@ -343,15 +341,9 @@ const MfaSetup = ({ setMfaSetup }: MfaSetupProps) => {
     );
 };
 
-type MfaProps = {
-    henkiloOid: string;
-    view: View;
-};
-
-const Mfa = ({ view, henkiloOid }: MfaProps) => {
+export const Mfa = () => {
     const { data: omattiedot } = useGetOmattiedotQuery();
-    const { data: kayttajatiedot } = useGetKayttajatiedotQuery(henkiloOid);
-    const userMfaProvider = view === 'omattiedot' ? omattiedot?.mfaProvider : kayttajatiedot?.mfaProvider;
+    const userMfaProvider = omattiedot?.mfaProvider;
     const { L } = useLocalisations();
     const [isMfaSetup, setMfaSetup] = useState(false);
     const mfaSectionLabelId = useId();
@@ -380,9 +372,7 @@ const Mfa = ({ view, henkiloOid }: MfaProps) => {
                     </span>
                 )}
             </div>
-            {view === 'omattiedot' && mfaStateComponent}
+            {mfaStateComponent}
         </section>
     );
 };
-
-export default Mfa;

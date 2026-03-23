@@ -15,7 +15,7 @@ import {
 } from '../../api/oppijanumerorekisteri';
 import { UserContentContainer } from '../common/henkilo/usercontent/UserContentContainer';
 import { Identifications } from './Identifications';
-import Mfa from './Mfa';
+import { VirkailijaMfa } from '../virkailija/VirkailijaMfa';
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent';
 import { HenkiloViewOrganisationContent } from '../common/henkilo/HenkiloViewOrganisationContent';
 import HenkiloViewExistingKayttooikeus from '../common/henkilo/HenkiloViewExistingKayttooikeus';
@@ -77,7 +77,7 @@ export const VirkailijaViewPage = () => {
                     </div>
                 )}
                 <div className="wrapper">
-                    <Mfa henkiloOid={oid} view={view} />
+                    <VirkailijaMfa henkiloOid={oid} />
                 </div>
                 <div className="wrapper">
                     <HenkiloViewContactContent henkiloOid={oid} />

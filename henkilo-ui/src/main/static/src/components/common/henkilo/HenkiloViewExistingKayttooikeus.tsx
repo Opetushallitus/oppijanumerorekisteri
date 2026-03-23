@@ -28,7 +28,7 @@ type OwnProps = {
     oidHenkilo: string;
     isOmattiedot: boolean;
     isPalvelukayttaja?: boolean;
-    existingKayttooikeusRef: MutableRefObject<HTMLDivElement | null>;
+    existingKayttooikeusRef?: MutableRefObject<HTMLDivElement | null>;
 };
 
 const emptyData: MyonnettyKayttooikeusryhma[] = [];

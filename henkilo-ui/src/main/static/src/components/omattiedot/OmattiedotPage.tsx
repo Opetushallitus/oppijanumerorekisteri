@@ -6,7 +6,7 @@ import { useGetKayttooikeusAnomuksetForHenkiloQuery, useGetOmattiedotQuery } fro
 import { useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
 import { UserContentContainer } from '../common/henkilo/usercontent/UserContentContainer';
-import Mfa from '../henkilo/Mfa';
+import { Mfa } from './Mfa';
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent';
 import HenkiloViewExistingKayttooikeus from '../common/henkilo/HenkiloViewExistingKayttooikeus';
 import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
@@ -35,7 +35,7 @@ export const OmattiedotPage = () => {
                     <UserContentContainer oidHenkilo={omattiedot.oidHenkilo} view="omattiedot" />
                 </div>
                 <div className="wrapper">
-                    <Mfa henkiloOid={omattiedot.oidHenkilo} view="omattiedot" />
+                    <Mfa />
                 </div>
                 <div className="wrapper">
                     <HenkiloViewContactContent henkiloOid={omattiedot.oidHenkilo} isOmattiedot />

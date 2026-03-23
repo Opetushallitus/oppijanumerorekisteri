@@ -8,7 +8,7 @@ import { useGetKayttajatiedotQuery } from '../../api/kayttooikeus';
 import { useLocalisations, useRedirectByUser } from '../../selectors';
 import { OphDsPage } from '../design-system/OphDsPage';
 import { VirkailijaPerustiedot } from './VirkailijaPerustiedot';
-import Mfa from '../henkilo/Mfa';
+import { VirkailijaMfa } from './VirkailijaMfa';
 import { AvoimetKayttooikeusanomukset } from './AvoimetKayttooikeushakemukset';
 import { SulkeutuneetKayttooikeudet } from './SulkeutuneetKayttooikeudet';
 import { VoimassaolevatKayttooikeudet } from './VoimassaolevatKayttooikeudet';
@@ -49,7 +49,7 @@ export const VirkailijaPage = () => {
         <OphDsPage header={L('TITLE_VIRKAILIJA')}>
             <VirkailijaPerustiedot oid={oid} />
             <OphDsCard>
-                <Mfa henkiloOid={oid} view="virkailija" />
+                <VirkailijaMfa henkiloOid={oid} />
             </OphDsCard>
             <OphDsCard>
                 <HenkiloViewOrganisationContent henkiloOid={oid} />
