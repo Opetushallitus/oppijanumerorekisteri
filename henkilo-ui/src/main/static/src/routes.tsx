@@ -26,6 +26,7 @@ import { VirkailijaPage } from './components/virkailija/VirkailijaPage';
 import { OppijaPage } from './components/oppija/OppijaPage';
 import { OppijaDuplicatesPage } from './components/oppija/OppijaDuplicatesPage';
 import { OppijaVtjVertailuPage } from './components/oppija/OppijaVtjVertailuPage';
+import { isNewNavi } from './components/navigation/TopNavigation';
 
 export const AppRoutes = () => (
     <Routes>
@@ -38,18 +39,26 @@ export const AppRoutes = () => (
             <Route path="/henkilohaku" element={<HenkilohakuContainer />} />
             <Route path="/oppijahaku" element={<OppijahakuPage />} />
             <Route path="/oppija/luonti" element={<OppijaCreate />} />
-            <Route path="/oppija/:oid" element={<OppijaViewPage />} />
-            <Route path="/oppija/:oid/vtjvertailu" element={<VtjVertailuPage henkiloType="oppija" />} />
-            <Route path="/oppija/:oid/duplikaatit" element={<DuplikaatitContainer henkiloType="oppija" />} />
-            <Route path="/oppija2/:oid" element={<OppijaPage />} />
-            <Route path="/oppija2/:oid/duplikaatit" element={<OppijaDuplicatesPage />} />
-            <Route path="/oppija2/:oid/vtjvertailu" element={<OppijaVtjVertailuPage />} />
+            <Route path="/oppija/:oid" element={isNewNavi ? <OppijaPage /> : <OppijaViewPage />} />
+            <Route
+                path="/oppija/:oid/vtjvertailu"
+                element={isNewNavi ? <OppijaVtjVertailuPage /> : <VtjVertailuPage henkiloType="oppija" />}
+            />
+            <Route
+                path="/oppija/:oid/duplikaatit"
+                element={isNewNavi ? <OppijaDuplicatesPage /> : <DuplikaatitContainer henkiloType="oppija" />}
+            />
             <Route path="/virkailijahaku" element={<VirkailijahakuPage />} />
             <Route path="/virkailija/luonti" element={<VirkailijaCreateContainer />} />
-            <Route path="/virkailija/:oid" element={<VirkailijaViewPage />} />
-            <Route path="/virkailija2/:oid" element={<VirkailijaPage />} />
-            <Route path="/virkailija/:oid/vtjvertailu" element={<VtjVertailuPage henkiloType="virkailija" />} />
-            <Route path="/virkailija/:oid/duplikaatit" element={<DuplikaatitContainer henkiloType="virkailija" />} />
+            <Route path="/virkailija/:oid" element={isNewNavi ? <VirkailijaPage /> : <VirkailijaViewPage />} />
+            <Route
+                path="/virkailija/:oid/vtjvertailu"
+                element={isNewNavi ? undefined : <VtjVertailuPage henkiloType="virkailija" />}
+            />
+            <Route
+                path="/virkailija/:oid/duplikaatit"
+                element={isNewNavi ? undefined : <DuplikaatitContainer henkiloType="virkailija" />}
+            />
             <Route path="/omattiedot" element={<OmattiedotPage />} />
             <Route path="/oppijoidentuonti" element={<OppijoidenTuontiContainer />} />
             <Route path="/kayttooikeusryhmat" element={<KayttooikeusryhmatPage />} />

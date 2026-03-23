@@ -329,7 +329,7 @@ const OppijaPerustiedotView = ({ oid, openForm }: { oid: string; openForm: () =>
                                         <div key={`duplicate-${d.oidHenkilo}`}>
                                             <Link
                                                 className="oph-ds-link"
-                                                to={`/oppija2/${d.oidHenkilo}`}
+                                                to={`/oppija/${d.oidHenkilo}`}
                                             >{`${d.sukunimi}, ${d.kutsumanimi}`}</Link>
                                             {hasLinkitetytPermission && (
                                                 <button
@@ -353,7 +353,7 @@ const OppijaPerustiedotView = ({ oid, openForm }: { oid: string; openForm: () =>
                             <div data-testid="master">
                                 <Link
                                     className="oph-ds-link"
-                                    to={`/oppija2/${master.oidHenkilo}`}
+                                    to={`/oppija/${master.oidHenkilo}`}
                                 >{`${master.sukunimi}, ${master.kutsumanimi}`}</Link>
                                 {hasLinkitetytPermission && (
                                     <button

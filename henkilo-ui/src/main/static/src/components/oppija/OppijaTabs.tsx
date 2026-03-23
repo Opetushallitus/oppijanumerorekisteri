@@ -38,13 +38,13 @@ export const OppijaTabs = ({ oid }: OppijaTabsProps) => {
 
     return (
         <>
-            <NavLink className={({ isActive }) => (isActive ? 'active' : 'inactive')} to={`/oppija2/${oid}`} end>
+            <NavLink className={({ isActive }) => (isActive ? 'active' : 'inactive')} to={`/oppija/${oid}`} end>
                 {L('OPPIJAN_TIEDOT')}
             </NavLink>
             {isDuplicateViewEnabled ? (
                 <NavLink
                     className={({ isActive }) => (isActive ? 'active' : 'inactive')}
-                    to={`/oppija2/${oid}/duplikaatit`}
+                    to={`/oppija/${oid}/duplikaatit`}
                     end
                 >
                     {L('NAVI_HAE_DUPLIKAATIT')}
@@ -55,7 +55,7 @@ export const OppijaTabs = ({ oid }: OppijaTabsProps) => {
             {isVtjVertailuEnabled ? (
                 <NavLink
                     className={({ isActive }) => (isActive ? 'active' : 'inactive')}
-                    to={`/oppija2/${oid}/vtjvertailu`}
+                    to={`/oppija/${oid}/vtjvertailu`}
                     end
                 >
                     {L('NAVI_VTJ_VERTAILU')}

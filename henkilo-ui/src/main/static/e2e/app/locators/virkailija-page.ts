@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
 
 export async function gotoVirkailija(page: Page, oid: string) {
-    await page.goto(`/henkilo-ui/virkailija2/${oid}`);
+    await page.goto(`/henkilo-ui/virkailija/${oid}`);
 
     return {
         perustiedot: {

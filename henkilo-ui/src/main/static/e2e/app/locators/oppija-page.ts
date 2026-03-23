@@ -2,7 +2,7 @@ import { Page } from '@playwright/test';
 import { selectLocator } from '../../locators';
 
 export async function gotoOppija(page: Page, oid: string) {
-    await page.goto(`/henkilo-ui/oppija2/${oid}`);
+    await page.goto(`/henkilo-ui/oppija/${oid}`);
 
     return {
         perustiedot: {
