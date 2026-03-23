@@ -4,11 +4,11 @@ import { skipToken } from '@reduxjs/toolkit/query/react';
 import { useGetKayttooikeusAnomuksetForHenkiloQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
-import { UserContentContainer } from '../common/henkilo/usercontent/UserContentContainer';
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent';
 import HenkiloViewExistingKayttooikeus from '../common/henkilo/HenkiloViewExistingKayttooikeus';
 import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
 import HenkiloViewExpiredKayttooikeus from '../common/henkilo/HenkiloViewExpiredKayttooikeus';
+import { OmattiedotPerustiedot } from './OmattiedotPerustiedot';
 import { Mfa } from './Mfa';
 import { KayttooikeudenAnominen } from './KayttooikeudenAnominen';
 import { OphDsPage } from '../design-system/OphDsPage';
@@ -27,7 +27,7 @@ export const Omattiedot2Page = () => {
     } else {
         return (
             <OphDsPage header={L('TITLE_OMAT_TIEDOT')}>
-                <UserContentContainer oidHenkilo={omattiedot.oidHenkilo} view="omattiedot" />
+                <OmattiedotPerustiedot oid={omattiedot.oidHenkilo} />
                 <OphDsCard>
                     <Mfa />
                 </OphDsCard>

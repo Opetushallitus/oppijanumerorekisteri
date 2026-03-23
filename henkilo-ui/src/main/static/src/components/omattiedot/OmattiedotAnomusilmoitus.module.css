@@ -1,0 +1,21 @@
+.modalContent {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.anomusilmoitusRow {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem;
+}
+
+.anomusilmoitusRow:nth-child(2n) {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.buttons {
+    display: flex;
+    gap: 0.5rem;
+}

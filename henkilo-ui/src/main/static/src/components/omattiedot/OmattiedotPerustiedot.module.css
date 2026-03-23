@@ -1,0 +1,27 @@
+.perustiedotContent {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.perustiedotRows {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 500px);
+    gap: 8px;
+}
+
+.perustiedotGrid {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    align-content: start;
+    gap: 8px;
+}
+
+.perustiedotGrid > div:nth-child(odd) {
+    font-weight: bold;
+}
+
+.buttonRow {
+    display: flex;
+    gap: 16px;
+}
