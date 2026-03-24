@@ -1,10 +1,16 @@
 import React, { useEffect, useId, useMemo, useState } from 'react';
+import { Link } from 'react-router';
 
 import { OphDsInput } from '../design-system/OphDsInput';
 import { add } from '../../slices/toastSlice';
 import { useAppDispatch } from '../../store';
 import { useLocalisations } from '../../selectors';
-import { useGetKayttajatiedotQuery, useGetOmattiedotQuery, usePutKayttajatiedotMutation } from '../../api/kayttooikeus';
+import {
+    useGetHenkiloLinkityksetQuery,
+    useGetKayttajatiedotQuery,
+    useGetOmattiedotQuery,
+    usePutKayttajatiedotMutation,
+} from '../../api/kayttooikeus';
 import PoistaKayttajatunnusButton from '../common/henkilo/buttons/PoistaKayttajatunnusButton';
 import { isOnrRekisterinpitaja } from '../../utilities/palvelurooli.util';
 import { isApiError } from '../../api/common';
@@ -84,6 +90,7 @@ export const VirkailijaPerustiedot = ({ oid }: { oid: string }) => {
     const { data: kayttajatiedot, isLoading } = useGetKayttajatiedotQuery(oid);
     const { data: henkilo } = useGetHenkiloQuery(oid);
     const { data: omattiedot } = useGetOmattiedotQuery();
+    const { data: linkitykset } = useGetHenkiloLinkityksetQuery(oid);
     const [muokkaa, setMuokkaa] = useState(false);
     const [haka, setHaka] = useState(false);
     const [password, setPassword] = useState(false);
@@ -125,6 +132,38 @@ export const VirkailijaPerustiedot = ({ oid }: { oid: string }) => {
                             <div data-testid="username">{kayttajatiedot?.username}</div>
                             <div>{L('HENKILO_TYOSAHKOPOSTI')}</div>
                             <div data-testid="email">{emails}</div>
+                            {(linkitykset?.henkiloVarmennettavas ?? []).length > 0 && (
+                                <>
+                                    <div>{L('HENKILO_VARMENNETTAVA')}</div>
+                                    <div className={styles.linkitetyt} data-testid="varmennettava">
+                                        {linkitykset?.henkiloVarmennettavas?.map((h) => (
+                                            <Link
+                                                className="oph-ds-link"
+                                                key={`varmennettava-${h}`}
+                                                to={`/virkailija/${h}`}
+                                            >
+                                                {h}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                            {(linkitykset?.henkiloVarmentajas ?? []).length > 0 && (
+                                <>
+                                    <div>{L('HENKILO_VARMENTAJA')}</div>
+                                    <div className={styles.linkitetyt} data-testid="varmentaja">
+                                        {linkitykset?.henkiloVarmentajas?.map((h) => (
+                                            <Link
+                                                className="oph-ds-link"
+                                                key={`varmentaja-${h}`}
+                                                to={`/virkailija/${h}`}
+                                            >
+                                                {h}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
                         </div>
                         <div className={styles.buttonRow}>
                             <button className="oph-ds-button oph-ds-button-bordered" onClick={() => setMuokkaa(true)}>

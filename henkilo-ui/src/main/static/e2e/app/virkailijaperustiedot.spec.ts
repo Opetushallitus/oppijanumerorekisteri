@@ -13,6 +13,10 @@ test.describe('virkailijan perustiedot', () => {
         await expect(perustiedot.oid).toHaveText(oid);
         await expect(perustiedot.username).toHaveText('username');
         await expect(perustiedot.email).toHaveText('etu@suku.fi');
+        await expect(perustiedot.varmennettava.locator('a')).toHaveAttribute(
+            'href',
+            '/henkilo-ui/virkailija/1.2.246.562.24.17520645815'
+        );
     });
 
     test('changes username', async ({ page }) => {

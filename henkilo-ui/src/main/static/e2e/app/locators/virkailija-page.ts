@@ -10,6 +10,8 @@ export async function gotoVirkailija(page: Page, oid: string) {
             oid: page.getByTestId('oid'),
             username: page.getByTestId('username'),
             email: page.getByTestId('email'),
+            varmennettava: page.getByTestId('varmennettava'),
+            varmentaja: page.getByTestId('varmentaja'),
         },
         form: {
             username: page.getByLabel('Käyttäjätunnus'),

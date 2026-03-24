@@ -1,10 +1,11 @@
 import React, { useId, useMemo, useState } from 'react';
 import Select, { SingleValue } from 'react-select';
 import { format, parseISO } from 'date-fns';
+import { Link } from 'react-router';
 
 import { useAppDispatch } from '../../store';
 import { add } from '../../slices/toastSlice';
-import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
+import { useGetHenkiloLinkityksetQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import {
     useGetHenkiloMasterQuery,
     useGetHenkiloQuery,
@@ -115,6 +116,7 @@ const OmattiedotPerustiedotView = ({ oid, openForm }: { oid: string; openForm: (
     const { data: sukupuoliKoodisto } = useGetSukupuoletQuery();
     const { data: kieliKoodisto } = useGetKieletQuery();
     const { data: kansalaisuusKoodisto } = useGetKansalaisuudetQuery();
+    const { data: linkitykset } = useGetHenkiloLinkityksetQuery(oid);
     const [password, setPassword] = useState(false);
     const [anomusilmoitus, setAnomusilmoitus] = useState(false);
 
@@ -178,6 +180,30 @@ const OmattiedotPerustiedotView = ({ oid, openForm }: { oid: string; openForm: (
                     <div data-testid="oppijanumero">{master?.oidHenkilo}</div>
                     <div>{L('HENKILO_OID')}</div>
                     <div data-testid="oid">{oid}</div>
+                    {(linkitykset?.henkiloVarmennettavas ?? []).length > 0 && (
+                        <>
+                            <div>{L('HENKILO_VARMENNETTAVA')}</div>
+                            <div className={styles.linkitetyt} data-testid="varmennettava">
+                                {linkitykset?.henkiloVarmennettavas?.map((h) => (
+                                    <Link className="oph-ds-link" key={`varmennettava-${h}`} to={`/virkailija/${h}`}>
+                                        {h}
+                                    </Link>
+                                ))}
+                            </div>
+                        </>
+                    )}
+                    {(linkitykset?.henkiloVarmentajas ?? []).length > 0 && (
+                        <>
+                            <div>{L('HENKILO_VARMENTAJA')}</div>
+                            <div className={styles.linkitetyt} data-testid="varmentaja">
+                                {linkitykset?.henkiloVarmentajas?.map((h) => (
+                                    <Link className="oph-ds-link" key={`varmentaja-${h}`} to={`/virkailija/${h}`}>
+                                        {h}
+                                    </Link>
+                                ))}
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
             <div className={styles.buttonRow}>

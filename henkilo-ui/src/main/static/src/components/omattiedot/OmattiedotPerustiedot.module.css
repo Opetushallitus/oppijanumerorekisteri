@@ -25,3 +25,8 @@
     display: flex;
     gap: 16px;
 }
+
+.linkitetyt {
+    display: flex;
+    flex-direction: column;
+}
