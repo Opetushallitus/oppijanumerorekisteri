@@ -5,12 +5,12 @@ import { Link } from 'react-router';
 
 import { useAppDispatch } from '../../store';
 import { add } from '../../slices/toastSlice';
-import { useGetHenkiloLinkityksetQuery, useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import {
-    useGetHenkiloMasterQuery,
-    useGetHenkiloQuery,
-    useUpdateHenkiloMutation,
-} from '../../api/oppijanumerorekisteri';
+    useGetHenkiloLinkityksetQuery,
+    useGetKayttajatiedotQuery,
+    useGetOmattiedotQuery,
+} from '../../api/kayttooikeus';
+import { useGetHenkiloQuery, useUpdateHenkiloMutation } from '../../api/oppijanumerorekisteri';
 import {
     koodiLabelByKoodiarvo,
     useGetKansalaisuudetQuery,
@@ -112,11 +112,11 @@ const OmattiedotPerustiedotView = ({ oid, openForm }: { oid: string; openForm: (
     const { L, locale } = useLocalisations();
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: henkilo } = useGetHenkiloQuery(oid);
-    const { data: master } = useGetHenkiloMasterQuery(oid);
     const { data: sukupuoliKoodisto } = useGetSukupuoletQuery();
     const { data: kieliKoodisto } = useGetKieletQuery();
     const { data: kansalaisuusKoodisto } = useGetKansalaisuudetQuery();
     const { data: linkitykset } = useGetHenkiloLinkityksetQuery(oid);
+    const { data: kayttajatiedot } = useGetKayttajatiedotQuery(oid);
     const [password, setPassword] = useState(false);
     const [anomusilmoitus, setAnomusilmoitus] = useState(false);
 
@@ -162,6 +162,8 @@ const OmattiedotPerustiedotView = ({ oid, openForm }: { oid: string; openForm: (
                     </div>
                 </div>
                 <div className={styles.perustiedotGrid}>
+                    <div>{L('HENKILO_KAYTTAJANIMI')}</div>
+                    <div data-testid="username">{kayttajatiedot?.username}</div>
                     <div>{L('HENKILO_KANSALAISUUS')}</div>
                     <div data-testid="kansalaisuus">
                         {henkilo?.kansalaisuus
@@ -177,9 +179,7 @@ const OmattiedotPerustiedotView = ({ oid, openForm }: { oid: string; openForm: (
                         {koodiLabelByKoodiarvo(sukupuoliKoodisto, henkilo?.sukupuoli, locale)}
                     </div>
                     <div>{L('HENKILO_OPPIJANUMERO')}</div>
-                    <div data-testid="oppijanumero">{master?.oidHenkilo}</div>
-                    <div>{L('HENKILO_OID')}</div>
-                    <div data-testid="oid">{oid}</div>
+                    <div data-testid="oppijanumero">{oid}</div>
                     {(linkitykset?.henkiloVarmennettavas ?? []).length > 0 && (
                         <>
                             <div>{L('HENKILO_VARMENNETTAVA')}</div>
@@ -231,7 +231,7 @@ export const OmattiedotPerustiedot = ({ oid }: { oid: string }) => {
     const sectionId = useId();
     return (
         <section aria-labelledby={sectionId} className="henkiloViewUserContentWrapper" style={{ marginBottom: '2rem' }}>
-            <h2 id={sectionId}>{L('OPPIJAN_PERUSTIEDOT')}</h2>
+            <h2 id={sectionId}>{L('HENKILO_PERUSTIEDOT_OTSIKKO')}</h2>
             <div className={styles.perustiedotContent}>
                 {isLoading ? (
                     <OphDsSpinner />

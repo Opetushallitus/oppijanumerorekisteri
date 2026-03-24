@@ -184,5 +184,5 @@
     "idpEntityId": "vetuma",
     "isAdmin": true,
     "isMiniAdmin": true,
-    "anomusilmoitus": []
+    "anomusilmoitus": [123]
 }

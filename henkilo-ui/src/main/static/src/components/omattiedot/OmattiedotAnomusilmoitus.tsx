@@ -56,12 +56,13 @@ export const OmattiedotAnomusilmoitus = ({ onClose }: Props) => {
         <div className={styles.modalContent}>
             <Select
                 {...selectStyles}
+                inputId="anomusilmoitusSelect"
                 placeholder={L('HENKILO_ANOMUSILMOITUKSET')}
                 options={options}
                 onChange={(a) => a && setAnomusilmoitus([...anomusilmoitus, a?.value])}
             />
             {anomusilmoitus.length > 0 && (
-                <div>
+                <div className="anomusilmoitus-rows">
                     {anomusilmoitus
                         .map((a) => vastuukayttajaRyhmat?.find((v) => v.id === a))
                         .map((v) => (
