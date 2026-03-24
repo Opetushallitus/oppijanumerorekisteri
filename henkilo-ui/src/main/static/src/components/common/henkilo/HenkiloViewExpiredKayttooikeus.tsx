@@ -8,7 +8,7 @@ import { createEmailOptions } from '../../../utilities/henkilo.util';
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
-import { localizeTextGroup } from '../../../utilities/localisation.util';
+import { getTextGroupLocalisation } from '../../../utilities/localisation.util';
 import { useKayttooikeusryhmas, useLocalisations } from '../../../selectors';
 import OphTable from '../../OphTable';
 import {
@@ -49,11 +49,8 @@ const HenkiloViewExpiredKayttooikeus = (props: OwnProps) => {
 
     function showAccessRightGroupDetails(kayttooikeusRyhma: MyonnettyKayttooikeusryhma) {
         const accessRight: AccessRight = {
-            name: localizeTextGroup(kayttooikeusRyhma.ryhmaNames.texts, locale),
-            description: localizeTextGroup(
-                [...(kayttooikeusRyhma.ryhmaKuvaus?.texts || []), ...kayttooikeusRyhma.ryhmaNames.texts],
-                locale
-            ),
+            name: getTextGroupLocalisation(kayttooikeusRyhma.ryhmaNames, locale),
+            description: getTextGroupLocalisation(kayttooikeusRyhma.ryhmaKuvaus, locale),
             onClose: () => setAccessRight(undefined),
         };
         setAccessRight(accessRight);

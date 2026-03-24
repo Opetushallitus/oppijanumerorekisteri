@@ -14,7 +14,6 @@ import {
 } from '../../api/kayttooikeus';
 import { useDebounce } from '../../useDebounce';
 import { KutsuView } from './KutsuViews';
-import { getLocalisedText } from '../common/StaticUtils';
 import { SelectOption, selectProps } from '../../utilities/select';
 import OphModal from '../common/modal/OphModal';
 import { useTitle } from '../../useTitle';
@@ -23,10 +22,10 @@ import { mainNavigation, virkailijaNavigation } from '../navigation/navigationco
 import { OphDsOrganisaatioSelect } from '../design-system/OphDsOrganisaatioSelect';
 import { OphDsInput } from '../design-system/OphDsInput';
 import { OphDsRadioGroup } from '../design-system/OphDsRadioGroup';
+import { getLocalization, getTextGroupLocalisation } from '../../utilities/localisation.util';
+import { isNewNavi } from '../navigation/TopNavigation';
 
 import './KutsututPage.css';
-import { getLocalization } from '../../utilities/localisation.util';
-import { isNewNavi } from '../navigation/TopNavigation';
 
 export type KutsututSearchParams = {
     searchTerm: string;
@@ -68,7 +67,8 @@ export const KutsututPage = () => {
             kayttooikeusryhmat
                 ?.map((kayttooikeusryhma) => ({
                     value: '' + kayttooikeusryhma.id,
-                    label: getLocalisedText(kayttooikeusryhma.description, locale) ?? String(kayttooikeusryhma.id),
+                    label:
+                        getTextGroupLocalisation(kayttooikeusryhma.description, locale) ?? String(kayttooikeusryhma.id),
                 }))
                 .sort((a, b) => (a.label && b.label ? a.label.localeCompare(b.label) : 1)) ?? []
         );

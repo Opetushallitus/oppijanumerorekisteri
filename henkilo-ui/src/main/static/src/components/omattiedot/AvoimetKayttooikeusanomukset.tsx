@@ -2,7 +2,7 @@ import React, { useMemo, useState, useId, ReactNode } from 'react';
 import { format, parseISO } from 'date-fns';
 
 import { Kayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import { localizeTextGroup } from '../../utilities/localisation.util';
+import { getTextGroupLocalisation } from '../../utilities/localisation.util';
 import { useAppDispatch } from '../../store';
 import { useLocalisations } from '../../selectors';
 import { HaettuKayttooikeusryhma } from '../../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
@@ -30,15 +30,8 @@ export const AvoimetKayttooikeusanomukset = ({ oidHenkilo }: OwnProps) => {
 
     function showKayttooikeusDetails(kayttooikeusRyhma: Kayttooikeusryhma) {
         setModal({
-            title: localizeTextGroup(kayttooikeusRyhma.nimi.texts, locale),
-            content: (
-                <p>
-                    {localizeTextGroup(
-                        [...(kayttooikeusRyhma.kuvaus?.texts || []), ...kayttooikeusRyhma.nimi.texts],
-                        locale
-                    )}
-                </p>
-            ),
+            title: getTextGroupLocalisation(kayttooikeusRyhma.nimi, locale),
+            content: <p>{getTextGroupLocalisation(kayttooikeusRyhma.kuvaus, locale)}</p>,
         });
     }
 

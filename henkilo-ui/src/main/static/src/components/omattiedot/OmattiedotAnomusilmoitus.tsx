@@ -8,7 +8,7 @@ import {
 } from '../../api/kayttooikeus';
 import { useLocalisations } from '../../selectors';
 import { selectStyles } from '../../utilities/select';
-import { getLocalisedText } from '../common/StaticUtils';
+import { getTextGroupLocalisation } from '../../utilities/localisation.util';
 
 import styles from './OmattiedotAnomusilmoitus.module.css';
 
@@ -28,7 +28,7 @@ export const OmattiedotAnomusilmoitus = ({ onClose }: Props) => {
             vastuukayttajaRyhmat
                 ?.map((vastuukayttajaRyhma) => ({
                     value: vastuukayttajaRyhma.id,
-                    label: getLocalisedText(vastuukayttajaRyhma.nimi, locale),
+                    label: getTextGroupLocalisation(vastuukayttajaRyhma.nimi, locale),
                 }))
                 .filter((o) => !anomusilmoitus.includes(o.value))
                 .sort((a, b) => (a.label ?? '').localeCompare(b.label ?? '')) ?? [],
@@ -66,7 +66,7 @@ export const OmattiedotAnomusilmoitus = ({ onClose }: Props) => {
                         .map((a) => vastuukayttajaRyhmat?.find((v) => v.id === a))
                         .map((v) => (
                             <div className={styles.anomusilmoitusRow} key={v?.id}>
-                                <span>{getLocalisedText(v?.nimi, locale)}</span>
+                                <span>{getTextGroupLocalisation(v?.nimi, locale)}</span>
                                 <button
                                     className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
                                     title={L('POISTA')}

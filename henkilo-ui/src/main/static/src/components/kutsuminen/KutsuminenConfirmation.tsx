@@ -8,7 +8,7 @@ import { useLocalisations } from '../../selectors';
 import { usePutKutsuMutation } from '../../api/kayttooikeus';
 import { useAppDispatch } from '../../store';
 import { add } from '../../slices/toastSlice';
-import { localizeTextGroup } from '../../utilities/localisation.util';
+import { getTextGroupLocalisation } from '../../utilities/localisation.util';
 import { OphDsSpinner } from '../design-system/OphDsSpinner';
 
 type Props = {
@@ -82,7 +82,7 @@ export const KutsuminenConfirmation = ({ addedOrgs, basicInfo, modalCloseFn, res
                         <h4>{org.organisation.name}</h4>
                         {org.selectedPermissions.map((permission) => (
                             <div key={permission.ryhmaId}>
-                                {localizeTextGroup(permission.ryhmaNames?.texts, locale)}
+                                {getTextGroupLocalisation(permission.ryhmaNames, locale)}
                             </div>
                         ))}
                     </div>

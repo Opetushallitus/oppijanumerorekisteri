@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { SallitutKayttajatyypit } from '../../kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage';
 import { useLocalisations } from '../../../selectors';
-import { localizeTextGroup } from '../../../utilities/localisation.util';
+import { getTextGroupLocalisation } from '../../../utilities/localisation.util';
 
 import './KayttooikeusryhmaSelect.css';
 
@@ -42,8 +42,8 @@ const KayttooikeusryhmaSelect = (props: Props) => {
         const kayttooikeusryhmat = sallitut
             .map((s) => ({
                 id: s.id,
-                nimi: localizeTextGroup(s.nimi?.texts, locale),
-                kuvaus: localizeTextGroup(s.kuvaus?.texts, locale),
+                nimi: getTextGroupLocalisation(s.nimi, locale),
+                kuvaus: getTextGroupLocalisation(s.kuvaus, locale),
             }))
             .sort((a, b) => a.nimi.localeCompare(b.nimi));
         const newNaytettavat = kayttooikeusryhmat.filter(

@@ -3,7 +3,6 @@ import { SingleValue } from 'react-select';
 import { LocalisationFn } from '../../types/localisation.type';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { Locale } from '../../types/locale.type';
-import { TextGroup } from '../../types/domain/kayttooikeus/textgroup.types';
 import { Organisaatio } from '../../types/domain/organisaatio/organisaatio.types';
 import { NamedMultiSelectOption, NamedSelectOption } from '../../utilities/select';
 import { Koodi, Koodisto } from '../../api/koodisto';
@@ -80,10 +79,6 @@ export function getOrganisationNameWithType(
     const name = getLocalization(org?.nimi, locale);
     const types = getOrganisaatiotyypitFlat(L, false, org?.tyypit);
     return name ? `${name} ${types}` : oid;
-}
-
-export function getLocalisedText(description: TextGroup | null | undefined, locale: Locale) {
-    return description ? description.texts.filter((text) => text.lang.toLowerCase() === locale)[0]?.text : '';
 }
 
 export function getKoodiNimi(koodiArvo: string, koodisto: Koodisto, locale: Locale) {

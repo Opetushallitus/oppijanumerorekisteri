@@ -12,7 +12,7 @@ import MyonnettavatKayttooikeusryhmat from './MyonnettavatKayttooikeusryhmat';
 import KayttooikeusryhmatPalvelutJaKayttooikeudet from './KayttooikeusryhmatPalvelutJaKayttooikeudet';
 import { TextGroupModify } from '../../../types/domain/kayttooikeus/textgroup.types';
 import { PalveluRooliModify } from '../../../types/domain/kayttooikeus/PalveluRooliModify.types';
-import { Text } from '../../../types/domain/kayttooikeus/text.types';
+import { Text } from '../../../types/domain/kayttooikeus/textgroup.types';
 import { SpinnerInButton } from '../../common/icons/SpinnerInButton';
 import { LocalNotification } from '../../common/Notification/LocalNotification';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';

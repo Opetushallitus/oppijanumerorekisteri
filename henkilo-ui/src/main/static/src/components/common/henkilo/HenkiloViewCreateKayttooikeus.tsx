@@ -19,7 +19,7 @@ import { useAppDispatch } from '../../../store';
 import { myonnettyToKayttooikeusryhma } from '../../../utils/KayttooikeusryhmaUtils';
 import OphModal from '../modal/OphModal';
 import KayttooikeusryhmaSelect from '../select/KayttooikeusryhmaSelect';
-import { localizeTextGroup } from '../../../utilities/localisation.util';
+import { getTextGroupLocalisation } from '../../../utilities/localisation.util';
 
 import styles from './HenkiloViewCreateKayttooikeus.module.css';
 
@@ -164,7 +164,7 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                                             ...selectedList,
                                             {
                                                 value: k.id,
-                                                label: localizeTextGroup(k.nimi.texts, locale),
+                                                label: getTextGroupLocalisation(k.nimi, locale),
                                             },
                                         ])
                                     }

@@ -8,7 +8,7 @@ import { useAppDispatch } from '../../store';
 import { getOrganisationNameWithType } from '../common/StaticUtils';
 import { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { KAYTTOOIKEUDENTILA } from '../../globals/KayttooikeudenTila';
-import { localizeTextGroup } from '../../utilities/localisation.util';
+import { getTextGroupLocalisation } from '../../utilities/localisation.util';
 import { useLocalisations } from '../../selectors';
 import {
     useDeleteKayttooikeusryhmaForHenkiloMutation,
@@ -80,11 +80,8 @@ export const VoimassaolevatKayttooikeudet = (props: OwnProps) => {
 
     function showKayttooikeusDetails(kayttooikeusRyhma: MyonnettyKayttooikeusryhma) {
         setKayttooikeus({
-            name: localizeTextGroup(kayttooikeusRyhma.ryhmaNames?.texts, locale),
-            description: localizeTextGroup(
-                [...(kayttooikeusRyhma.ryhmaKuvaus?.texts || []), ...(kayttooikeusRyhma.ryhmaNames?.texts || [])],
-                locale
-            ),
+            name: getTextGroupLocalisation(kayttooikeusRyhma.ryhmaNames, locale),
+            description: getTextGroupLocalisation(kayttooikeusRyhma.ryhmaKuvaus, locale),
         });
     }
 

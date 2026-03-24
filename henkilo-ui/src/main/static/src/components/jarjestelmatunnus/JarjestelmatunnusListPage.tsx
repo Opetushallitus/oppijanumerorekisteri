@@ -20,8 +20,7 @@ import { jarjestelmatunnusNavigation } from '../navigation/navigationconfigurati
 import { Koodi, koodiLabel, useGetOrganisaatiotyypitQuery } from '../../api/koodisto';
 import PropertySingleton from '../../globals/PropertySingleton';
 import { selectProps } from '../../utilities/select';
-import { getLocalisedText } from '../common/StaticUtils';
-import { getLocalization } from '../../utilities/localisation.util';
+import { getLocalization, getTextGroupLocalisation } from '../../utilities/localisation.util';
 
 import styles from './JarjestelmatunnusListPage.module.css';
 
@@ -50,7 +49,7 @@ export const JarjestelmatunnusListPage = () => {
 
     const kayttooikeusryhmaOptions = useMemo(() => {
         return (kayttooikeusryhmas ?? [])
-            .map((k) => ({ value: `${k.id}`, label: getLocalisedText(k.description, locale) ?? '' }))
+            .map((k) => ({ value: `${k.id}`, label: getTextGroupLocalisation(k.description, locale) ?? '' }))
             .sort((a, b) => (a.label && b.label ? a.label.localeCompare(b.label) : 1));
     }, [kayttooikeusryhmas]);
 

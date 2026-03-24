@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import Select from 'react-select';
 
-import { localizeTextGroup } from '../../../../utilities/localisation.util';
+import { getTextGroupLocalisation } from '../../../../utilities/localisation.util';
 import { NamedMultiSelectOption } from '../../../../utilities/select';
 import { FieldlessLabelValue } from './FieldlessLabelValue';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
@@ -35,7 +35,7 @@ export const AnomusIlmoitus = (props: OwnProps) => {
         return (
             vastuukayttajaRyhmat?.map((vastuukayttajaRyhma) => ({
                 value: vastuukayttajaRyhma.id,
-                label: localizeTextGroup(vastuukayttajaRyhma.nimi?.texts, locale),
+                label: getTextGroupLocalisation(vastuukayttajaRyhma.nimi, locale),
                 optionsName: 'anomusilmoitus',
             })) ?? []
         );

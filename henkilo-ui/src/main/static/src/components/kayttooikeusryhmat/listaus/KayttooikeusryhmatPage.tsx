@@ -12,7 +12,7 @@ import {
     useGetPalvelutQuery,
 } from '../../../api/kayttooikeus';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import { localizeTextGroup } from '../../../utilities/localisation.util';
+import { getTextGroupLocalisation } from '../../../utilities/localisation.util';
 import { OphDsPage } from '../../design-system/OphDsPage';
 import { OphDsInput } from '../../design-system/OphDsInput';
 import { OphDsChechbox } from '../../design-system/OphDsCheckbox';
@@ -37,8 +37,8 @@ const nimiFilter = (filter: string, locale: string) => (item: Kayttooikeusryhma)
 };
 
 const nimiSort = (locale: Locale) => (a: Kayttooikeusryhma, b: Kayttooikeusryhma) => {
-    const nameA = (localizeTextGroup(a?.nimi?.texts ?? [], locale) ?? '').toLowerCase();
-    const nameB = (localizeTextGroup(b?.nimi?.texts ?? [], locale) ?? '').toLowerCase();
+    const nameA = getTextGroupLocalisation(a?.nimi ?? [], locale).toLowerCase();
+    const nameB = getTextGroupLocalisation(b?.nimi ?? [], locale).toLowerCase();
     if (nameA < nameB) {
         return -1;
     }
@@ -115,7 +115,7 @@ export const KayttooikeusryhmatPage = () => {
         return visibleKayttooikeusryhmas.map((item) => {
             const statusString = item.passivoitu ? ` (${L('KAYTTOOIKEUSRYHMAT_PASSIVOITU')})` : '';
             return {
-                header: `${localizeTextGroup(item?.nimi?.texts, locale)} ${statusString}`,
+                header: `${getTextGroupLocalisation(item?.nimi, locale)} ${statusString}`,
                 children: (show: boolean) => (
                     <KayttooikeusryhmaTiedot muokkausoikeus={muokkausoikeus} show={show} item={item} />
                 ),

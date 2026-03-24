@@ -4,7 +4,7 @@ import Select from 'react-select';
 import { useLocalisations } from '../../selectors';
 import { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { selectStyles } from '../../utilities/select';
-import { getLocalisedText } from '../common/StaticUtils';
+import { getTextGroupLocalisation } from '../../utilities/localisation.util';
 import { useGetHenkiloQuery } from '../../api/oppijanumerorekisteri';
 import { parseWorkEmails } from '../../utilities/henkilo.util';
 
@@ -33,7 +33,7 @@ export const HaeJatkoaikaa = ({ anomus, oid, onCancel, onCreate }: HaeJatkoaikaa
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <p>{L('HAE_JATKOAIKAA_SELITE')}</p>
             <p>
-                {L('HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA')}: {getLocalisedText(anomus.ryhmaNames, locale)}
+                {L('HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA')}: {getTextGroupLocalisation(anomus.ryhmaNames, locale)}
             </p>
             <div>
                 <label className="oph-ds-label" htmlFor="jatkoaikaEmail">

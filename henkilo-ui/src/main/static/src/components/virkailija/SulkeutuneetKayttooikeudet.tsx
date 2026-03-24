@@ -4,7 +4,7 @@ import { format, parseISO } from 'date-fns';
 import { getOrganisationNameWithType } from '../common/StaticUtils';
 import { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { KAYTTOOIKEUDENTILA } from '../../globals/KayttooikeudenTila';
-import { localizeTextGroup } from '../../utilities/localisation.util';
+import { getTextGroupLocalisation } from '../../utilities/localisation.util';
 import { useLocalisations } from '../../selectors';
 import { useGetKayttooikeusryhmasForHenkiloQuery, useGetOrganisationsQuery } from '../../api/kayttooikeus';
 import OphModal from '../common/modal/OphModal';
@@ -35,11 +35,8 @@ export const SulkeutuneetKayttooikeudet = (props: OwnProps) => {
 
     function showKayttooikeusDetails(kayttooikeusRyhma: MyonnettyKayttooikeusryhma) {
         setKayttooikeus({
-            name: localizeTextGroup(kayttooikeusRyhma.ryhmaNames.texts, locale),
-            description: localizeTextGroup(
-                [...(kayttooikeusRyhma.ryhmaKuvaus?.texts || []), ...kayttooikeusRyhma.ryhmaNames.texts],
-                locale
-            ),
+            name: getTextGroupLocalisation(kayttooikeusRyhma.ryhmaNames, locale),
+            description: getTextGroupLocalisation(kayttooikeusRyhma.ryhmaKuvaus, locale),
         });
     }
 

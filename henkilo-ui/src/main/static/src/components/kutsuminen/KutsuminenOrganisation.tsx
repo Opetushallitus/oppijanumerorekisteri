@@ -21,7 +21,7 @@ import {
     useGetOrganisationNamesQuery,
 } from '../../api/kayttooikeus';
 import { SelectOption } from '../../utilities/select';
-import { localizeTextGroup } from '../../utilities/localisation.util';
+import { getTextGroupLocalisation } from '../../utilities/localisation.util';
 import { emptyOrganisation } from './KutsuminenPage';
 
 import styles from './KutsuminenOrganisation.module.css';
@@ -144,7 +144,7 @@ export const KutsuminenOrganisation = ({ addedOrg, index, updateOrganisation, re
                             {addedOrg.selectedPermissions.map((permission) => {
                                 return (
                                     <div key={permission.ryhmaId}>
-                                        {localizeTextGroup(permission.ryhmaNames?.texts, locale)}
+                                        {getTextGroupLocalisation(permission.ryhmaNames, locale)}
                                         <button
                                             className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
                                             onClick={() => removePermission(permission)}

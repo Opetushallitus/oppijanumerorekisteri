@@ -3,7 +3,7 @@ import { addYears, format, parseISO } from 'date-fns';
 
 import AnomusHylkaysPopup from '../anomus/AnomusHylkaysPopup';
 import { Kayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import { localizeTextGroup } from '../../utilities/localisation.util';
+import { getTextGroupLocalisation } from '../../utilities/localisation.util';
 import { KAYTTOOIKEUDENTILA, KayttooikeudenTila } from '../../globals/KayttooikeudenTila';
 import { HenkilonNimi } from '../../types/domain/kayttooikeus/HenkilonNimi';
 import { useAppDispatch } from '../../store';
@@ -116,15 +116,8 @@ export const AvoimetKayttooikeusanomukset = ({ oidHenkilo }: OwnProps) => {
 
     function showKayttooikeusDetails(kayttooikeusRyhma: Kayttooikeusryhma) {
         setModal({
-            title: localizeTextGroup(kayttooikeusRyhma.nimi.texts, locale),
-            content: (
-                <p>
-                    {localizeTextGroup(
-                        [...(kayttooikeusRyhma.kuvaus?.texts || []), ...kayttooikeusRyhma.nimi.texts],
-                        locale
-                    )}
-                </p>
-            ),
+            title: getTextGroupLocalisation(kayttooikeusRyhma.nimi, locale),
+            content: <p>{getTextGroupLocalisation(kayttooikeusRyhma.kuvaus, locale)}</p>,
         });
     }
 

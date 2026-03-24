@@ -7,7 +7,6 @@ import SubOrganisationCheckbox from './criterias/SubOrganisationCheckbox';
 import NoOrganisationCheckbox from './criterias/NoOrganisationCheckbox';
 import PassiivisetOrganisationCheckbox from './criterias/PassiivisetOrganisationCheckbox';
 import DuplikaatitOrganisationCheckbox from './criterias/DuplikaatitOrganisationCheckbox';
-import { getLocalisedText } from '../common/StaticUtils';
 import CloseButton from '../common/button/CloseButton';
 import { HenkilohakuCriteria } from '../../types/domain/kayttooikeus/HenkilohakuCriteria.types';
 import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
@@ -21,7 +20,7 @@ import {
 } from '../../api/kayttooikeus';
 import { OrganisaatioWithChildren } from '../../types/domain/organisaatio/organisaatio.types';
 import { FastMenuList, SelectOption } from '../../utilities/select';
-import { getLocalization } from '../../utilities/localisation.util';
+import { getLocalization, getTextGroupLocalisation } from '../../utilities/localisation.util';
 
 type OwnProps = {
     ryhmaSelectionAction: (o: SingleValue<SelectOption>) => void;
@@ -54,7 +53,7 @@ const HenkilohakuFilters = (props: OwnProps) => {
         return (allKayttooikeusryhmas ?? [])
             .map((kayttooikeusryhma) => ({
                 value: `${kayttooikeusryhma.id}`,
-                label: getLocalisedText(kayttooikeusryhma.description, locale) ?? '',
+                label: getTextGroupLocalisation(kayttooikeusryhma.description, locale) ?? '',
             }))
             .sort((a, b) => (a.label && b.label ? a.label.localeCompare(b.label) : 1));
     }, [allKayttooikeusryhmas]);

@@ -9,7 +9,7 @@ import PopupButton from '../button/PopupButton';
 import AnomusHylkaysPopup from '../../anomus/AnomusHylkaysPopup';
 import { AnojaKayttooikeusryhmat } from '../../anomus/AnojaKayttooikeusryhmat';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import { localizeTextGroup } from '../../../utilities/localisation.util';
+import { getTextGroupLocalisation } from '../../../utilities/localisation.util';
 import { KAYTTOOIKEUDENTILA, KayttooikeudenTila } from '../../../globals/KayttooikeudenTila';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 import { HenkilonNimi } from '../../../types/domain/kayttooikeus/HenkilonNimi';
@@ -220,11 +220,8 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
 
     function showAccessRightGroupDetails(kayttooikeusRyhma: Kayttooikeusryhma) {
         const accessRight: AccessRight = {
-            name: localizeTextGroup(kayttooikeusRyhma.nimi.texts, locale),
-            description: localizeTextGroup(
-                [...(kayttooikeusRyhma.kuvaus?.texts || []), ...kayttooikeusRyhma.nimi.texts],
-                locale
-            ),
+            name: getTextGroupLocalisation(kayttooikeusRyhma.nimi, locale),
+            description: getTextGroupLocalisation(kayttooikeusRyhma.kuvaus, locale),
             onClose: () => setAccessRight(undefined),
         };
         setAccessRight(accessRight);

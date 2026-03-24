@@ -15,7 +15,7 @@ import { OphDsBanner } from '../design-system/OphDsBanner';
 import { OphDsOrganisaatioSelect } from '../design-system/OphDsOrganisaatioSelect';
 import { OphDsRyhmaSelect } from '../design-system/OphDsRyhmaSelect';
 import { OphDsSpinner } from '../design-system/OphDsSpinner';
-import { getLocalisedText } from '../common/StaticUtils';
+import { getTextGroupLocalisation } from '../../utilities/localisation.util';
 
 const Kayttooikeus = ({ kayttooikeus, onRemove }: { kayttooikeus: Kayttooikeusryhma; onRemove: () => void }) => {
     const { L, locale } = useLocalisations();
@@ -32,7 +32,7 @@ const Kayttooikeus = ({ kayttooikeus, onRemove }: { kayttooikeus: Kayttooikeusry
                     backgroundColor: '#C1EAFF',
                 }}
             >
-                {getLocalisedText(kayttooikeus.nimi, locale)}
+                {getTextGroupLocalisation(kayttooikeus.nimi, locale)}
                 <button
                     className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
                     title={L('POISTA')}
@@ -50,7 +50,7 @@ const Kayttooikeus = ({ kayttooikeus, onRemove }: { kayttooikeus: Kayttooikeusry
                     borderRight: '1px solid #82D4FF',
                 }}
             >
-                {getLocalisedText(kayttooikeus.kuvaus, locale) ?? '-'}
+                {getTextGroupLocalisation(kayttooikeus.kuvaus, locale) ?? '-'}
             </div>
         </div>
     );

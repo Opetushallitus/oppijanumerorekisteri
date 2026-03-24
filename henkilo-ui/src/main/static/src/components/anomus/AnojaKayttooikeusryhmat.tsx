@@ -10,7 +10,7 @@ import OphTable from '../OphTable';
 import { useGetKayttooikeusryhmasForHenkiloQuery, useGetOrganisationsQuery } from '../../api/kayttooikeus';
 import { KAYTTOOIKEUDENTILA } from '../../globals/KayttooikeudenTila';
 import { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import { getLocalization, localizeTextGroup } from '../../utilities/localisation.util';
+import { getLocalization, getTextGroupLocalisation } from '../../utilities/localisation.util';
 
 type KayttooikeusryhmaData = {
     voimassaPvm?: string;
@@ -34,11 +34,7 @@ export const AnojaKayttooikeusryhmat = ({ henkiloOid }: Props) => {
     const { data: organisations, isSuccess } = useGetOrganisationsQuery();
 
     const _parseAnojaKayttooikeus = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): KayttooikeusryhmaData => {
-        const kayttooikeusryhmaNimiTexts =
-            myonnettyKayttooikeusryhma.ryhmaNames && myonnettyKayttooikeusryhma.ryhmaNames.texts;
-        const kayttooikeusryhmaNimi = kayttooikeusryhmaNimiTexts
-            ? localizeTextGroup(kayttooikeusryhmaNimiTexts, locale) || ''
-            : '';
+        const kayttooikeusryhmaNimi = getTextGroupLocalisation(myonnettyKayttooikeusryhma.ryhmaNames, locale);
         return {
             voimassaPvm: _parseVoimassaPvm(myonnettyKayttooikeusryhma),
             organisaatioNimi: _parseOrganisaatioNimi(myonnettyKayttooikeusryhma),

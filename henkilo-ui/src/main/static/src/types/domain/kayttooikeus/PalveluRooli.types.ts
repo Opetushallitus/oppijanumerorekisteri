@@ -1,4 +1,4 @@
-import { Text } from './text.types';
+import { Text } from './textgroup.types';
 
 export type PalveluRooli = {
     palveluName: string;

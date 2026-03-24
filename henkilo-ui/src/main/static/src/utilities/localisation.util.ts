@@ -1,8 +1,8 @@
 import { Locale } from '../types/locale.type';
-import { Text } from '../types/domain/kayttooikeus/text.types';
+import { TextGroup } from '../types/domain/kayttooikeus/textgroup.types';
 
-export const localizeTextGroup = (textGroups: Text[] = [], lang: Locale): string =>
-    textGroups.find((t) => t.lang.toUpperCase() === lang.toUpperCase())?.text ?? '';
+export const getTextGroupLocalisation = (textGroup: TextGroup | null | undefined, locale: Locale) =>
+    textGroup?.texts.find((t) => t.lang.toUpperCase() === locale.toUpperCase())?.text ?? '';
 
 export const getLocalization = (localization?: { fi?: string; sv?: string; en?: string }, l?: Locale): string => {
     const locale = l ?? 'fi';
