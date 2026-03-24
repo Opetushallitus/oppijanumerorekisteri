@@ -4,6 +4,8 @@ import type { Locale } from '../types/locale.type';
 import type { OrganisaatioSelectObject } from '../types/organisaatioselectobject.types';
 import { getLocalization } from './localisation.util';
 
+export const ROOT_ORGANISATION_OID = '1.2.246.562.10.00000000001';
+
 /*
  * Apufunktio kutsumaan organisaatioHierarkiaToOrganisaatioSelectObject:a käyttöoikeuspalvelusta haetuilla omilla organisaatioilla
  */

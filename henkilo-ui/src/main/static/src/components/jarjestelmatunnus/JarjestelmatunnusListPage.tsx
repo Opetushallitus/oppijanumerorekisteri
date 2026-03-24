@@ -18,11 +18,11 @@ import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
 import { jarjestelmatunnusNavigation } from '../navigation/navigationconfigurations';
 import { Koodi, koodiLabel, useGetOrganisaatiotyypitQuery } from '../../api/koodisto';
-import PropertySingleton from '../../globals/PropertySingleton';
 import { selectProps } from '../../utilities/select';
 import { getLocalization, getTextGroupLocalisation } from '../../utilities/localisation.util';
 
 import styles from './JarjestelmatunnusListPage.module.css';
+import { ROOT_ORGANISATION_OID } from '../../utilities/organisaatio.util';
 
 const defaultCriteria: PostHenkilohakuRequest = {
     nameQuery: undefined,
@@ -95,10 +95,7 @@ export const JarjestelmatunnusListPage = () => {
                         checked={!!criteria.subOrganisation}
                         id="subOrganisations"
                         label={L('HENKILOHAKU_FILTERS_ALIORGANISAATIOISTA')}
-                        disabled={
-                            !criteria.organisaatioOids ||
-                            criteria.organisaatioOids[0] === PropertySingleton.state.rootOrganisaatioOid
-                        }
+                        disabled={!criteria.organisaatioOids || criteria.organisaatioOids[0] === ROOT_ORGANISATION_OID}
                         onChange={() => setCriteria({ ...criteria, subOrganisation: !criteria.subOrganisation })}
                     />
                 </div>

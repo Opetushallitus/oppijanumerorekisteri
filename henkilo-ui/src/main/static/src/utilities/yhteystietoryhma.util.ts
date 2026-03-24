@@ -2,6 +2,10 @@ import { YhteystietoRyhma } from '../types/domain/oppijanumerorekisteri/yhteysti
 import { Yhteystieto } from '../types/domain/oppijanumerorekisteri/yhteystieto.types';
 import { validateEmail } from '../validation/EmailValidator';
 
+export const YHTEYSTIETO_TYYPPI_KOTIOSOITE = 'yhteystietotyyppi1';
+export const YHTEYSTIETO_ALKUPERA_VTJ = 'alkupera1';
+export const YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI = 'alkupera2';
+
 /*
  * Palauttaa true jos kaikki sähköpostikentät YhteystiedotRyhma-listassa ovat valideja sähköpostiosoitteita
  */

@@ -22,11 +22,11 @@ import { useNavigation } from '../../useNavigation';
 import { virkailijaNavigation } from '../navigation/navigationconfigurations';
 import { OphDsRyhmaSelect } from '../design-system/OphDsRyhmaSelect';
 import { selectProps } from '../../utilities/select';
-import PropertySingleton from '../../globals/PropertySingleton';
 import { Koodi, koodiLabel, useGetOrganisaatiotyypitQuery } from '../../api/koodisto';
 import { getLocalization, getTextGroupLocalisation } from '../../utilities/localisation.util';
 
 import styles from './VirkailijahakuPage.module.css';
+import { ROOT_ORGANISATION_OID } from '../../utilities/organisaatio.util';
 
 const mapFilters = (filters: VirkailijahakuFilters): PostHenkilohakuRequest => {
     return {
@@ -103,10 +103,7 @@ export const VirkailijahakuPage = () => {
                         setFilters({
                             ...filters,
                             organisaatioOid: o?.oid,
-                            subOrganisation:
-                                !o || o.oid === PropertySingleton.state.rootOrganisaatioOid
-                                    ? false
-                                    : filters.subOrganisation,
+                            subOrganisation: !o || o.oid === ROOT_ORGANISATION_OID ? false : filters.subOrganisation,
                         })
                     }
                 />
@@ -125,10 +122,7 @@ export const VirkailijahakuPage = () => {
                         id="subOrganisations"
                         checked={!!filters.subOrganisation}
                         label={L('HENKILOHAKU_FILTERS_ALIORGANISAATIOISTA')}
-                        disabled={
-                            !filters.organisaatioOid ||
-                            filters.organisaatioOid === PropertySingleton.state.rootOrganisaatioOid
-                        }
+                        disabled={!filters.organisaatioOid || filters.organisaatioOid === ROOT_ORGANISATION_OID}
                         onChange={() => setFilters({ ...filters, subOrganisation: !filters.subOrganisation })}
                     />
                 </div>

@@ -4,9 +4,11 @@ import { useNavigate } from 'react-router';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
 import Button from '../../components/common/button/Button';
 import { YhteystietoRyhma } from '../../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
-import { validateYhteystiedotRyhmaEmails } from '../../utilities/yhteystietoryhma.util';
+import {
+    validateYhteystiedotRyhmaEmails,
+    YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI,
+} from '../../utilities/yhteystietoryhma.util';
 import { Yhteystieto } from '../../types/domain/oppijanumerorekisteri/yhteystieto.types';
-import PropertySingleton from '../../globals/PropertySingleton';
 import { WORK_ADDRESS, EMAIL } from '../../types/constants';
 import { Localisations } from '../../types/localisation.type';
 import { toSupportedLocale } from '../../selectors';
@@ -42,7 +44,7 @@ const getYhteystiedotRyhmaWithEmail = (henkilo: Partial<Henkilo>) => {
         // niin lisätään uusi tyhjä yhteystietoryhmä ja tyhjä sähköposti-yhteystieto
         if (!yhteystiedotRyhma?.[0]?.yhteystieto || yhteystiedotRyhma?.[0]?.yhteystieto?.length >= 1) {
             const yhteystietoRyhma: YhteystietoRyhma = {
-                ryhmaAlkuperaTieto: PropertySingleton.state.YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI,
+                ryhmaAlkuperaTieto: YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI,
                 ryhmaKuvaus: WORK_ADDRESS,
                 yhteystieto: [emptyEmailYhteystieto],
             };

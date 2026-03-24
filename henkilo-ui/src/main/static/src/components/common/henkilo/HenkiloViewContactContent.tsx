@@ -1,6 +1,5 @@
 import React, { useEffect, useId, useMemo, useState } from 'react';
 
-import PropertySingleton from '../../../globals/PropertySingleton';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { validateEmail } from '../../../validation/EmailValidator';
 import { WORK_ADDRESS, VTJ_VAKINAINEN_KOTIMAINEN_OSOITE, VTJ_SAHKOINEN_OSOITE, EMAIL } from '../../../types/constants';
@@ -14,6 +13,7 @@ import { useGetHenkiloQuery, useUpdateHenkiloMutation } from '../../../api/oppij
 import { add } from '../../../slices/toastSlice';
 import { OphDsInput } from '../../design-system/OphDsInput';
 import { OphDsSpinner } from '../../design-system/OphDsSpinner';
+import { YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI, YHTEYSTIETO_ALKUPERA_VTJ } from '../../../utilities/yhteystietoryhma.util';
 
 type OwnProps = {
     henkiloOid: string;
@@ -25,8 +25,7 @@ const isWorkMail = (y?: YhteystietoRyhma) =>
 const isLastWorkEmail = (yhteystiedot: YhteystietoRyhma[], idx: number): boolean =>
     isWorkMail(yhteystiedot[idx]) && yhteystiedot.filter((y) => !!y.id && isWorkMail(y)).length < 2;
 const isVirkailija = (kayttaja?: KayttajatiedotRead): boolean => kayttaja?.kayttajaTyyppi === 'VIRKAILIJA';
-const isFromVTJ = (group: YhteystietoRyhma): boolean =>
-    group.ryhmaAlkuperaTieto === PropertySingleton.state.YHTEYSTIETO_ALKUPERA_VTJ;
+const isFromVTJ = (group: YhteystietoRyhma): boolean => group.ryhmaAlkuperaTieto === YHTEYSTIETO_ALKUPERA_VTJ;
 
 const contactInfoTemplate: { yhteystietoTyyppi: string }[] = [
     { yhteystietoTyyppi: 'YHTEYSTIETO_KATUOSOITE' },
@@ -39,7 +38,7 @@ const contactInfoTemplate: { yhteystietoTyyppi: string }[] = [
 
 const newYhteystiedotRyhma: YhteystietoRyhma = {
     readOnly: false,
-    ryhmaAlkuperaTieto: PropertySingleton.state.YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI,
+    ryhmaAlkuperaTieto: YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI,
     ryhmaKuvaus: WORK_ADDRESS,
     yhteystieto: contactInfoTemplate.map((template) => ({
         yhteystietoTyyppi: template.yhteystietoTyyppi,

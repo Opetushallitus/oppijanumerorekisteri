@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import ReactDatePicker from 'react-datepicker';
 
 import { HenkiloCreate } from '../../../../../types/domain/oppijanumerorekisteri/henkilo.types';
-import PropertySingleton from '../../../../../globals/PropertySingleton';
 import { isValidKutsumanimi } from '../../../../../validation/KutsumanimiValidator';
 import { EMAIL } from '../../../../../types/constants';
 import { Kielisyys } from '../../../../../types/domain/oppijanumerorekisteri/kielisyys.types';
@@ -17,6 +16,10 @@ import {
 } from '../../../../../selectors';
 import { Kansalaisuus } from '../../../../../types/domain/oppijanumerorekisteri/kansalaisuus.types';
 import Loader from '../../../../common/icons/Loader';
+import {
+    YHTEYSTIETO_TYYPPI_KOTIOSOITE,
+    YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI,
+} from '../../../../../utilities/yhteystietoryhma.util';
 
 type Error = {
     name: string;
@@ -197,15 +200,14 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
 
     // palauttaa lomakkeelta henkilön kaikki tiedot valmiina lähetettäväksi
     const getHenkilo = (): HenkiloCreate => {
-        const properties = PropertySingleton.getState();
         return {
             ...state.henkilo,
             passinumerot: state.form.passinumero ? [state.form.passinumero] : null,
             yhteystiedotRyhma: state.form.sahkoposti
                 ? [
                       {
-                          ryhmaKuvaus: properties.KOTIOSOITE ?? '',
-                          ryhmaAlkuperaTieto: properties.YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI,
+                          ryhmaKuvaus: YHTEYSTIETO_TYYPPI_KOTIOSOITE ?? '',
+                          ryhmaAlkuperaTieto: YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI,
                           yhteystieto: [
                               {
                                   yhteystietoTyyppi: EMAIL,
