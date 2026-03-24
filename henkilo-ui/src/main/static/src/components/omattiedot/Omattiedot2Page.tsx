@@ -4,15 +4,15 @@ import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent';
-import HenkiloViewExistingKayttooikeus from '../common/henkilo/HenkiloViewExistingKayttooikeus';
 import HenkiloViewExpiredKayttooikeus from '../common/henkilo/HenkiloViewExpiredKayttooikeus';
-import { OmattiedotPerustiedot } from './OmattiedotPerustiedot';
-import { Mfa } from './Mfa';
-import { KayttooikeudenAnominen } from './KayttooikeudenAnominen';
 import { OphDsPage } from '../design-system/OphDsPage';
 import { OphDsCard } from '../design-system/OphDsCard';
 import { OphDsSpinner } from '../design-system/OphDsSpinner';
+import { OmattiedotPerustiedot } from './OmattiedotPerustiedot';
+import { Mfa } from './Mfa';
 import { AvoimetKayttooikeusanomukset } from './AvoimetKayttooikeusanomukset';
+import { VoimassaolevatKayttooikeudet } from './VoimassaolevatKayttooikeudet';
+import { KayttooikeudenAnominen } from './KayttooikeudenAnominen';
 
 export const Omattiedot2Page = () => {
     const { data: omattiedot, isSuccess: isOmattiedotSuccess } = useGetOmattiedotQuery();
@@ -33,7 +33,7 @@ export const Omattiedot2Page = () => {
                     <HenkiloViewContactContent henkiloOid={omattiedot.oidHenkilo} isOmattiedot />
                 </OphDsCard>
                 <OphDsCard>
-                    <HenkiloViewExistingKayttooikeus oidHenkilo={omattiedot.oidHenkilo} isOmattiedot={true} />
+                    <VoimassaolevatKayttooikeudet oidHenkilo={omattiedot.oidHenkilo} />
                 </OphDsCard>
                 <OphDsCard>
                     <AvoimetKayttooikeusanomukset oidHenkilo={omattiedot.oidHenkilo} />

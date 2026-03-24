@@ -162,7 +162,7 @@ export const KayttooikeudenAnominen = ({ henkiloOid }: { henkiloOid: string }) =
             {henkilo && emails.length < 1 && (
                 <OphDsBanner type="error">{L('OMATTIEDOT_PUUTTUVA_SAHKOPOSTI_UUSI_ANOMUS')}</OphDsBanner>
             )}
-            <div style={{ display: 'grid', gridTemplateColumns: '250px 700px', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '250px 1fr', gap: '1rem' }}>
                 <div>
                     <label className="oph-ds-label" htmlFor="anomusOrganisaatio">
                         {L('OMATTIEDOT_ORGANISAATIO_TAI_RYHMA')}*
@@ -221,7 +221,7 @@ export const KayttooikeudenAnominen = ({ henkiloOid }: { henkiloOid: string }) =
                 {kayttooikeusSelection.length > 0 && (
                     <>
                         <div></div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxWidth: '700px' }}>
                             {kayttooikeusSelection.map((k) => (
                                 <Kayttooikeus
                                     key={`k-${k.id}`}

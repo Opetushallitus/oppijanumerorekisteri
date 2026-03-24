@@ -1,5 +1,6 @@
-import { AnomusTyyppi } from './AnomusTyyppi.types';
 import { HenkilonNimi } from './HenkilonNimi';
+
+export type AnomusTyyppi = 'UUSI' | 'JATKO';
 
 export type Anomus = {
     organisaatioOid: string;
