@@ -5,8 +5,10 @@ import { OphDsBanner } from '../design-system/OphDsBanner';
 import { OphDsTable, SortOrder } from '../design-system/OphDsTable';
 import { useAppDispatch } from '../../store';
 import { getOrganisationNameWithType } from '../common/StaticUtils';
-import { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import { KAYTTOOIKEUDENTILA } from '../../globals/KayttooikeudenTila';
+import {
+    KAYTTOOIKEUDENTILA,
+    MyonnettyKayttooikeusryhma,
+} from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { getTextGroupLocalisation } from '../../utilities/localisation.util';
 import { useLocalisations } from '../../selectors';
 import {

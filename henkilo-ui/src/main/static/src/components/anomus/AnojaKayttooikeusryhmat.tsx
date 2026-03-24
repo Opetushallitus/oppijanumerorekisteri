@@ -8,8 +8,10 @@ import { LocalNotification } from '../common/Notification/LocalNotification';
 import { useLocalisations } from '../../selectors';
 import OphTable from '../OphTable';
 import { useGetKayttooikeusryhmasForHenkiloQuery, useGetOrganisationsQuery } from '../../api/kayttooikeus';
-import { KAYTTOOIKEUDENTILA } from '../../globals/KayttooikeudenTila';
-import { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
+import {
+    KAYTTOOIKEUDENTILA,
+    MyonnettyKayttooikeusryhma,
+} from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { getLocalization, getTextGroupLocalisation } from '../../utilities/localisation.util';
 
 type KayttooikeusryhmaData = {

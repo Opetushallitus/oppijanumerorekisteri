@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { KAYTTOOIKEUDENTILA, KayttooikeudenTila } from '../../globals/KayttooikeudenTila';
+import { KAYTTOOIKEUDENTILA, KayttooikeudenTila } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { HenkilonNimi } from '../../types/domain/kayttooikeus/HenkilonNimi';
 import { useLocalisations } from '../../selectors';
 import { HaettuKayttooikeusryhma } from '../../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';

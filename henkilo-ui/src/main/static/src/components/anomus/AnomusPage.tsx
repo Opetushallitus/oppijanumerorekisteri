@@ -3,7 +3,7 @@ import { SortingState } from '@tanstack/react-table';
 
 import HaetutKayttooikeusRyhmatHakuForm from './HaetutKayttooikeusRyhmatHakuForm';
 import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
-import { KAYTTOOIKEUDENTILA } from '../../globals/KayttooikeudenTila';
+import { KAYTTOOIKEUDENTILA } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { useLocalisations } from '../../selectors';
 import {
     GetHaetutKayttooikeusryhmatRequest,

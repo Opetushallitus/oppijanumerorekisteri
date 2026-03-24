@@ -6,8 +6,10 @@ import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, SortingSt
 import { useAppDispatch } from '../../../store';
 import { getOrganisationNameWithType } from '../StaticUtils';
 import { createEmailOptions } from '../../../utilities/henkilo.util';
-import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
+import {
+    KAYTTOOIKEUDENTILA,
+    MyonnettyKayttooikeusryhma,
+} from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 import { getTextGroupLocalisation } from '../../../utilities/localisation.util';
 import { useKayttooikeusryhmas, useLocalisations } from '../../../selectors';

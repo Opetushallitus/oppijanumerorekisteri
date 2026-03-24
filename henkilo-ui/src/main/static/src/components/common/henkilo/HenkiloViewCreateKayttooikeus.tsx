@@ -16,7 +16,7 @@ import {
 } from '../../../api/kayttooikeus';
 import { add } from '../../../slices/toastSlice';
 import { useAppDispatch } from '../../../store';
-import { myonnettyToKayttooikeusryhma } from '../../../utils/KayttooikeusryhmaUtils';
+import { myonnettyToKayttooikeusryhma } from '../../../utilities/kayttooikeusryhma.utils';
 import OphModal from '../modal/OphModal';
 import KayttooikeusryhmaSelect from '../select/KayttooikeusryhmaSelect';
 import { getTextGroupLocalisation } from '../../../utilities/localisation.util';

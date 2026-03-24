@@ -8,9 +8,12 @@ import Button from '../button/Button';
 import PopupButton from '../button/PopupButton';
 import AnomusHylkaysPopup from '../../anomus/AnomusHylkaysPopup';
 import { AnojaKayttooikeusryhmat } from '../../anomus/AnojaKayttooikeusryhmat';
-import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { getTextGroupLocalisation } from '../../../utilities/localisation.util';
-import { KAYTTOOIKEUDENTILA, KayttooikeudenTila } from '../../../globals/KayttooikeudenTila';
+import {
+    KAYTTOOIKEUDENTILA,
+    Kayttooikeusryhma,
+    KayttooikeudenTila,
+} from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 import { HenkilonNimi } from '../../../types/domain/kayttooikeus/HenkilonNimi';
 import { useAppDispatch } from '../../../store';

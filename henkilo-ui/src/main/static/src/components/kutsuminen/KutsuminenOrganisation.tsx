@@ -10,7 +10,7 @@ import { OphDsCard } from '../design-system/OphDsCard';
 import { findOmattiedotOrganisatioOrRyhmaByOid } from '../../utilities/organisaatio.util';
 import { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import KayttooikeusryhmaSelectModal from '../common/select/KayttooikeusryhmaSelectModal';
-import { myonnettyToKayttooikeusryhma } from '../../utils/KayttooikeusryhmaUtils';
+import { myonnettyToKayttooikeusryhma } from '../../utilities/kayttooikeusryhma.utils';
 import { Kayttooikeusryhma, MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { useLocalisations } from '../../selectors';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';

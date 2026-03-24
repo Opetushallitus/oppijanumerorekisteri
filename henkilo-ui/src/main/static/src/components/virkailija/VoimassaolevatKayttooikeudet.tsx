@@ -6,8 +6,10 @@ import { OphDsDatepicker } from '../design-system/OphDsDatePicker';
 import { OphDsTable, SortOrder } from '../design-system/OphDsTable';
 import { useAppDispatch } from '../../store';
 import { getOrganisationNameWithType } from '../common/StaticUtils';
-import { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import { KAYTTOOIKEUDENTILA } from '../../globals/KayttooikeudenTila';
+import {
+    MyonnettyKayttooikeusryhma,
+    KAYTTOOIKEUDENTILA,
+} from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { getTextGroupLocalisation } from '../../utilities/localisation.util';
 import { useLocalisations } from '../../selectors';
 import {

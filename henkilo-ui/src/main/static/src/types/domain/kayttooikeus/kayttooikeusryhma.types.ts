@@ -2,7 +2,18 @@ import { TextGroup } from './textgroup.types';
 import { PalveluRooliModify } from './PalveluRooliModify.types';
 import { OrganisaatioViite } from './organisaatioviite.types';
 import { SallitutKayttajatyypit } from '../../../components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage';
-import { KayttooikeudenTila } from '../../../globals/KayttooikeudenTila';
+
+export const KAYTTOOIKEUDENTILA = {
+    HYLATTY: 'HYLATTY',
+    UUSITTU: 'UUSITTU',
+    ANOTTU: 'ANOTTU',
+    SULJETTU: 'SULJETTU',
+    MYONNETTY: 'MYONNETTY',
+    PERUUTETTU: 'PERUUTETTU',
+    VANHENTUNUT: 'VANHENTUNUT',
+} as const;
+
+export type KayttooikeudenTila = keyof typeof KAYTTOOIKEUDENTILA;
 
 export type Kayttooikeusryhma = {
     id: number;

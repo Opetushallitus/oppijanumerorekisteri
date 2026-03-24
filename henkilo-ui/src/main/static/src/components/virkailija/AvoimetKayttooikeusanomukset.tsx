@@ -2,9 +2,12 @@ import React, { useEffect, useMemo, useState, useId, ReactNode } from 'react';
 import { addYears, format, parseISO } from 'date-fns';
 
 import AnomusHylkaysPopup from '../anomus/AnomusHylkaysPopup';
-import { Kayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { getTextGroupLocalisation } from '../../utilities/localisation.util';
-import { KAYTTOOIKEUDENTILA, KayttooikeudenTila } from '../../globals/KayttooikeudenTila';
+import {
+    KAYTTOOIKEUDENTILA,
+    Kayttooikeusryhma,
+    KayttooikeudenTila,
+} from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { HenkilonNimi } from '../../types/domain/kayttooikeus/HenkilonNimi';
 import { useAppDispatch } from '../../store';
 import { useLocalisations } from '../../selectors';
