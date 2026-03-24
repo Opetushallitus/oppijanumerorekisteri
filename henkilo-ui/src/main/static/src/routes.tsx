@@ -41,6 +41,7 @@ export const AppRoutes = () => (
             <Route path="/oppijahaku" element={<OppijahakuPage />} />
             <Route path="/oppija/luonti" element={<OppijaCreate />} />
             <Route path="/oppija/:oid" element={isNewNavi ? <OppijaPage /> : <OppijaViewPage />} />
+            <Route path="/oppija2/:oid" element={<OppijaPage />} />
             <Route
                 path="/oppija/:oid/vtjvertailu"
                 element={isNewNavi ? <OppijaVtjVertailuPage /> : <VtjVertailuPage henkiloType="oppija" />}
@@ -52,6 +53,7 @@ export const AppRoutes = () => (
             <Route path="/virkailijahaku" element={<VirkailijahakuPage />} />
             <Route path="/virkailija/luonti" element={<VirkailijaCreateContainer />} />
             <Route path="/virkailija/:oid" element={isNewNavi ? <VirkailijaPage /> : <VirkailijaViewPage />} />
+            <Route path="/virkailija2/:oid" element={<VirkailijaPage />} />
             <Route
                 path="/virkailija/:oid/vtjvertailu"
                 element={isNewNavi ? undefined : <VtjVertailuPage henkiloType="virkailija" />}
