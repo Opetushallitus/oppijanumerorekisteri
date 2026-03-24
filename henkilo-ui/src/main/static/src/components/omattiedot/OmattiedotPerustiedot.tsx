@@ -4,6 +4,7 @@ import { format, parseISO } from 'date-fns';
 
 import { useAppDispatch } from '../../store';
 import { add } from '../../slices/toastSlice';
+import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import {
     useGetHenkiloMasterQuery,
     useGetHenkiloQuery,
@@ -18,10 +19,11 @@ import {
 import { useAsiointikielet, useLocalisations } from '../../selectors';
 import OphModal from '../common/modal/OphModal';
 import { OphDsInput } from '../design-system/OphDsInput';
+import { OphDsSpinner } from '../design-system/OphDsSpinner';
 import { isValidKutsumanimi } from '../../validation/KutsumanimiValidator';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { SelectOption, selectStyles } from '../../utilities/select';
-import { OphDsSpinner } from '../design-system/OphDsSpinner';
+import { hasAnyPalveluRooli } from '../../utilities/palvelurooli.util';
 import PasswordPopupContent from '../common/button/PasswordPopupContent';
 import { OmattiedotAnomusilmoitus } from './OmattiedotAnomusilmoitus';
 
@@ -107,6 +109,7 @@ const OmattiedotPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; c
 
 const OmattiedotPerustiedotView = ({ oid, openForm }: { oid: string; openForm: () => void }) => {
     const { L, locale } = useLocalisations();
+    const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: henkilo } = useGetHenkiloQuery(oid);
     const { data: master } = useGetHenkiloMasterQuery(oid);
     const { data: sukupuoliKoodisto } = useGetSukupuoletQuery();
@@ -114,6 +117,10 @@ const OmattiedotPerustiedotView = ({ oid, openForm }: { oid: string; openForm: (
     const { data: kansalaisuusKoodisto } = useGetKansalaisuudetQuery();
     const [password, setPassword] = useState(false);
     const [anomusilmoitus, setAnomusilmoitus] = useState(false);
+
+    const showAnomusIlmoitus = useMemo(() => {
+        return hasAnyPalveluRooli(omattiedot?.organisaatiot, ['KAYTTOOIKEUS_REKISTERINPITAJA']);
+    }, [omattiedot]);
 
     return (
         <>
@@ -180,9 +187,11 @@ const OmattiedotPerustiedotView = ({ oid, openForm }: { oid: string; openForm: (
                 <button className="oph-ds-button oph-ds-button-bordered" onClick={() => setPassword(true)}>
                     {L('SALASANA_ASETA')}
                 </button>
-                <button className="oph-ds-button oph-ds-button-bordered" onClick={() => setAnomusilmoitus(true)}>
-                    {L('HENKILO_ANOMUSILMOITUKSET')}
-                </button>
+                {showAnomusIlmoitus && (
+                    <button className="oph-ds-button oph-ds-button-bordered" onClick={() => setAnomusilmoitus(true)}>
+                        {L('HENKILO_ANOMUSILMOITUKSET')}
+                    </button>
+                )}
             </div>
         </>
     );
