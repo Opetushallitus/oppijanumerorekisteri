@@ -1,22 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Select from 'react-select';
 
 import { useLocalisations } from '../../selectors';
 import { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { selectStyles } from '../../utilities/select';
 import { getLocalisedText } from '../common/StaticUtils';
+import { useGetHenkiloQuery } from '../../api/oppijanumerorekisteri';
+import { parseWorkEmails } from '../../utilities/henkilo.util';
 
 type HaeJatkoaikaaProps = {
     anomus: MyonnettyKayttooikeusryhma;
-    emails: string[];
+    oid: string;
     onCancel: () => void;
     onCreate: (email: string) => void;
 };
 
-export const HaeJatkoaikaa = ({ anomus, emails, onCancel, onCreate }: HaeJatkoaikaaProps) => {
+export const HaeJatkoaikaa = ({ anomus, oid, onCancel, onCreate }: HaeJatkoaikaaProps) => {
     const { L, locale } = useLocalisations();
-    const [email, setEmail] = useState<string>(emails[0] ?? '');
-    const options = emails.map((e) => ({ label: e, value: e }));
+    const { data: henkilo } = useGetHenkiloQuery(oid);
+    const [emails, setEmails] = useState<string[]>([]);
+    const [email, setEmail] = useState<string>();
+
+    useEffect(() => {
+        setEmails(parseWorkEmails(henkilo?.yhteystiedotRyhma));
+    }, [henkilo]);
+
+    const options = useMemo(() => {
+        return emails.map((e) => ({ label: e, value: e }));
+    }, [emails]);
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <p>{L('HAE_JATKOAIKAA_SELITE')}</p>
@@ -30,13 +42,14 @@ export const HaeJatkoaikaa = ({ anomus, emails, onCancel, onCreate }: HaeJatkoai
                 <Select
                     {...selectStyles}
                     inputId="jatkoaikaEmail"
+                    placeholder={L('OMATTIEDOT_VAATIMUS_EMAIL')}
                     options={options}
                     value={options.find((o) => o.value === email)}
                     onChange={(o) => o && setEmail(o.value)}
                 />
             </div>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button className="oph-ds-button" onClick={() => onCreate(email)}>
+                <button className="oph-ds-button" onClick={() => email && onCreate(email)} disabled={!email}>
                     {L('TALLENNA')}
                 </button>
                 <button className="oph-ds-button oph-ds-button-bordered" onClick={() => onCancel()}>

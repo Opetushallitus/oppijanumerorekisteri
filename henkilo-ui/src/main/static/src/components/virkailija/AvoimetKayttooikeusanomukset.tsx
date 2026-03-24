@@ -158,7 +158,6 @@ export const AvoimetKayttooikeusanomukset = ({ oidHenkilo }: OwnProps) => {
                         L('HENKILO_KAYTTOOIKEUSANOMUS_PERUSTELU'),
                         L('HENKILO_KAYTTOOIKEUS_ALKUPVM'),
                         L('HENKILO_KAYTTOOIKEUS_LOPPUPVM'),
-                        L('HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI'),
                         '',
                     ]}
                     rows={renderedData.map((a) => {
@@ -202,7 +201,6 @@ export const AvoimetKayttooikeusanomukset = ({ oidHenkilo }: OwnProps) => {
                                 maxDate={addYears(new Date(), 1)}
                                 tiny
                             />,
-                            L(a.anomus.anomusTyyppi),
                             <div key={`buttons-${a.id}`} style={{ display: 'flex', gap: '0.5rem' }}>
                                 <ConfirmButton
                                     className="oph-ds-button"

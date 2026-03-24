@@ -84,7 +84,6 @@ export const AvoimetKayttooikeusanomukset = ({ oidHenkilo }: OwnProps) => {
                         L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO'),
                         L('HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA'),
                         L('HENKILO_KAYTTOOIKEUSANOMUS_PERUSTELU'),
-                        L('HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI'),
                         '',
                     ]}
                     rows={renderedData.map((a) => {
@@ -110,7 +109,6 @@ export const AvoimetKayttooikeusanomukset = ({ oidHenkilo }: OwnProps) => {
                             >
                                 {L('AVAA')}
                             </button>,
-                            L(a.anomus.anomusTyyppi),
                             <button key={`cancel-${a.id}`} className="oph-ds-button" onClick={() => cancelAnomus(a)}>
                                 {L('HENKILO_KAYTTOOIKEUSANOMUS_PERU')}
                             </button>,

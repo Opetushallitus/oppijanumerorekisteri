@@ -1,9 +1,6 @@
-import React, { MutableRefObject, useEffect, useId, useMemo, useState } from 'react';
+import React, { useEffect, useId, useMemo, useState } from 'react';
 import { format, parseISO } from 'date-fns';
 
-import { OphDsBanner } from '../design-system/OphDsBanner';
-import { OphDsTable, SortOrder } from '../design-system/OphDsTable';
-import { useAppDispatch } from '../../store';
 import { getOrganisationNameWithType } from '../common/StaticUtils';
 import { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { KAYTTOOIKEUDENTILA } from '../../globals/KayttooikeudenTila';
@@ -14,16 +11,17 @@ import {
     useGetOrganisationsQuery,
     usePostKayttooikeusAnomusMutation,
 } from '../../api/kayttooikeus';
-import ConfirmButton from '../common/button/ConfirmButton';
-import { add } from '../../slices/toastSlice';
 import OphModal from '../common/modal/OphModal';
-import { HaeJatkoaikaa } from './HaeJatkoaikaa';
-import { parseWorkEmails } from '../../utilities/henkilo.util';
+import { OphDsTable, SortOrder } from '../design-system/OphDsTable';
+import ConfirmButton from '../common/button/ConfirmButton';
+import { useAppDispatch } from '../../store';
+import { add } from '../../slices/toastSlice';
 import { useGetHenkiloQuery } from '../../api/oppijanumerorekisteri';
+import { parseWorkEmails } from '../../utilities/henkilo.util';
+import { HaeJatkoaikaa } from './HaeJatkoaikaa';
 
 type OwnProps = {
     oidHenkilo: string;
-    existingKayttooikeusRef?: MutableRefObject<HTMLDivElement | null>;
 };
 
 type KayttooikeusDetails = {
@@ -31,22 +29,23 @@ type KayttooikeusDetails = {
     description: string;
 };
 
-type RenderedData = MyonnettyKayttooikeusryhma & {
+type RenderedData = (MyonnettyKayttooikeusryhma & {
     organisaatioNimi: string;
     ryhmaNimi: string;
+    tilaTxt: string;
     kasittely: string;
-};
+})[];
 
-export const VoimassaolevatKayttooikeudet = (props: OwnProps) => {
+export const SulkeutuneetKayttooikeudet = (props: OwnProps) => {
     const { L, locale } = useLocalisations();
     const dispatch = useAppDispatch();
-    const { data: organisations, isSuccess } = useGetOrganisationsQuery();
-    const { data: kayttooikeusryhmas, isLoading, isError } = useGetKayttooikeusryhmasForHenkiloQuery(props.oidHenkilo);
+    const { data: kayttooikeusryhmas, isLoading } = useGetKayttooikeusryhmasForHenkiloQuery(props.oidHenkilo);
     const { data: henkilo } = useGetHenkiloQuery(props.oidHenkilo);
+    const { data: organisations, isSuccess } = useGetOrganisationsQuery();
     const [postKayttooikeusAnomus] = usePostKayttooikeusAnomusMutation();
-    const [kayttooikeus, setKayttooikeus] = useState<KayttooikeusDetails>();
     const [sortOrder, setSortOrder] = useState<SortOrder>();
     const [jatkoaikaAnomus, setJatkoaikaAnomus] = useState<MyonnettyKayttooikeusryhma>();
+    const [kayttooikeus, setKayttooikeus] = useState<KayttooikeusDetails>();
     const [emails, setEmails] = useState<string[]>([]);
 
     useEffect(() => {
@@ -55,17 +54,17 @@ export const VoimassaolevatKayttooikeudet = (props: OwnProps) => {
 
     function showKayttooikeusDetails(kayttooikeusRyhma: MyonnettyKayttooikeusryhma) {
         setKayttooikeus({
-            name: localizeTextGroup(kayttooikeusRyhma.ryhmaNames?.texts, locale),
+            name: localizeTextGroup(kayttooikeusRyhma.ryhmaNames.texts, locale),
             description: localizeTextGroup(
-                [...(kayttooikeusRyhma.ryhmaKuvaus?.texts || []), ...(kayttooikeusRyhma.ryhmaNames?.texts || [])],
+                [...(kayttooikeusRyhma.ryhmaKuvaus?.texts || []), ...kayttooikeusRyhma.ryhmaNames.texts],
                 locale
             ),
         });
     }
 
-    function _filterExpiredKayttooikeus(kayttooikeus: MyonnettyKayttooikeusryhma) {
+    function _filterExistingKayttooikeus(kayttooikeus: MyonnettyKayttooikeusryhma) {
         return (
-            kayttooikeus.tila !== KAYTTOOIKEUDENTILA.SULJETTU && kayttooikeus.tila !== KAYTTOOIKEUDENTILA.VANHENTUNUT
+            kayttooikeus.tila === KAYTTOOIKEUDENTILA.SULJETTU || kayttooikeus.tila === KAYTTOOIKEUDENTILA.VANHENTUNUT
         );
     }
 
@@ -99,17 +98,18 @@ export const VoimassaolevatKayttooikeudet = (props: OwnProps) => {
             });
     }
 
-    const renderedData: RenderedData[] = useMemo(() => {
-        const renderedData = (kayttooikeusryhmas ?? []).filter(_filterExpiredKayttooikeus).map((k) => ({
+    const renderedData: RenderedData = useMemo(() => {
+        const renderedData = (kayttooikeusryhmas ?? []).filter(_filterExistingKayttooikeus).map((k) => ({
             ...k,
             organisaatioNimi: getOrganisationNameWithType(organisations, k.organisaatioOid, L, locale),
             ryhmaNimi: k.ryhmaNames?.texts.filter((text) => text.lang === locale.toUpperCase())[0]?.text ?? '',
+            tilaTxt: L(k.tila),
             kasittely: format(parseISO(k.kasitelty), 'd.M.yyyy') + ' / ' + (k.kasittelijaNimi || k.kasittelijaOid),
         }));
         if (sortOrder) {
             const { sortBy, asc } = sortOrder;
             switch (sortBy) {
-                case L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA'):
+                case L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO'):
                     renderedData?.sort((a, b) =>
                         asc
                             ? a.organisaatioNimi.localeCompare(b.organisaatioNimi)
@@ -121,16 +121,14 @@ export const VoimassaolevatKayttooikeudet = (props: OwnProps) => {
                         asc ? a.ryhmaNimi.localeCompare(b.ryhmaNimi) : b.ryhmaNimi.localeCompare(a.ryhmaNimi)
                     );
                     break;
-                case L('HENKILO_KAYTTOOIKEUS_ALKUPVM'):
+                case L('HENKILO_KAYTTOOIKEUS_TILA'):
                     renderedData?.sort((a, b) =>
-                        asc
-                            ? (a.alkuPvm ?? '').localeCompare(b.alkuPvm ?? '')
-                            : (b.alkuPvm ?? '').localeCompare(a.alkuPvm ?? '')
+                        asc ? a.tilaTxt.localeCompare(b.tilaTxt) : b.tilaTxt.localeCompare(a.tilaTxt)
                     );
                     break;
                 case L('HENKILO_KAYTTOOIKEUS_KASITTELIJA'):
                     renderedData?.sort((a, b) =>
-                        asc ? a.kasittely.localeCompare(b.kasittely) : b.kasittely.localeCompare(a.kasittely)
+                        asc ? a.kasitelty.localeCompare(b.kasitelty) : b.kasitelty.localeCompare(a.kasitelty)
                     );
                     break;
             }
@@ -141,7 +139,7 @@ export const VoimassaolevatKayttooikeudet = (props: OwnProps) => {
     const sectionLabelId = useId();
     return (
         <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
-            <h2 id={sectionLabelId}>{L('HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO')}</h2>
+            <h2 id={sectionLabelId}>{L('HENKILO_VANHAT_KAYTTOOIKEUDET_OTSIKKO')}</h2>
             {kayttooikeus && (
                 <OphModal
                     title={kayttooikeus.name}
@@ -165,18 +163,14 @@ export const VoimassaolevatKayttooikeudet = (props: OwnProps) => {
                     />
                 </OphModal>
             )}
-            {isError ? (
-                <OphDsBanner type="error">
-                    <p>{L('KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE')}</p>
-                </OphDsBanner>
-            ) : !isLoading && renderedData.length === 0 ? (
-                <p>{L('HENKILO_KAYTTOOIKEUS_VOIMASSAOLEVAT_TYHJA')}</p>
+            {!isLoading && renderedData.length === 0 ? (
+                <p>{L('EI_SULKEUTUNEITA_KAYTTOOIKEUKSIA')}</p>
             ) : (
                 <OphDsTable
                     headers={[
-                        L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA'),
+                        L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO'),
                         L('HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS'),
-                        L('HENKILO_KAYTTOOIKEUS_ALKUPVM'),
+                        L('HENKILO_KAYTTOOIKEUS_TILA'),
                         L('HENKILO_KAYTTOOIKEUS_KASITTELIJA'),
                         L('OMATTIEDOT_HAE_JATKOAIKAA'),
                     ]}
@@ -189,7 +183,7 @@ export const VoimassaolevatKayttooikeudet = (props: OwnProps) => {
                         >
                             {k.ryhmaNimi}
                         </button>,
-                        k.alkuPvm && format(parseISO(k.alkuPvm), 'd.M.yyyy'),
+                        k.tilaTxt,
                         k.kasittely,
                         <div key={`m-${k.ryhmaId}`}>
                             {emails.length === 1 ? (
@@ -206,9 +200,9 @@ export const VoimassaolevatKayttooikeudet = (props: OwnProps) => {
                             )}
                         </div>,
                     ])}
-                    isFetching={isLoading}
                     sortOrder={sortOrder}
                     setSortOrder={setSortOrder}
+                    isFetching={isLoading}
                 />
             )}
         </section>
