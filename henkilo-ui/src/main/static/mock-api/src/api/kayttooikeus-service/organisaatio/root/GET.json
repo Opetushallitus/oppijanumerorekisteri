@@ -1,5 +1,17 @@
 {
-    "children": [],
+    "children": [
+        {
+            "oid": "1.2.246.562.10.00000000123",
+            "parentOidPath": "1.2.246.562.10.00000000001",
+            "nimi": {
+                "fi": "Opetusorganisaatio",
+                "sv": "Utbildningsorganisatioon",
+                "en": "Organisation for Education"
+            },
+            "tyypit": ["MUU_ORGANISAATIO"],
+            "children": []
+        }
+    ],
     "oid": "1.2.246.562.10.00000000001",
     "parentOidPath": "",
     "nimi": {

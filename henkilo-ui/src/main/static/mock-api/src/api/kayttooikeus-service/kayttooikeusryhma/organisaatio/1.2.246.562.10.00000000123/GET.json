@@ -1,0 +1,350 @@
+[
+    {
+        "id": 69101599,
+        "tunniste": "kayttooikeus_1594098916062",
+        "rooliRajoite": null,
+        "organisaatioViite": [
+            {
+                "id": 69176670,
+                "organisaatioTyyppi": "organisaatiotyyppi_07"
+            },
+            {
+                "id": 69176671,
+                "organisaatioTyyppi": "organisaatiotyyppi_08"
+            }
+        ],
+        "nimi": {
+            "id": 69228199,
+            "texts": [
+                {
+                    "text": "kayttooikeus1",
+                    "lang": "EN"
+                },
+                {
+                    "text": "kayttooikeus2",
+                    "lang": "FI"
+                },
+                {
+                    "text": "kayttooikeus3",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "kuvaus": {
+            "id": 69101600,
+            "texts": [
+                {
+                    "text": "Tällä käyttöoikeudella voi muokata",
+                    "lang": "EN"
+                },
+                {
+                    "text": "Tällä käyttöoikeudella voi muokata",
+                    "lang": "FI"
+                },
+                {
+                    "text": "Med denna användarrättighet kan man redigera",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "passivoitu": false,
+        "ryhmaRestriction": false,
+        "sallittuKayttajatyyppi": null,
+        "muokattu": null,
+        "muokkaaja": null,
+        "name": "kayttooikeus_1594098916062",
+        "description": {
+            "id": 69228199,
+            "texts": [
+                {
+                    "text": "tallentaja",
+                    "lang": "EN"
+                },
+                {
+                    "text": "tallentaja",
+                    "lang": "FI"
+                },
+                {
+                    "text": "fortbildningar",
+                    "lang": "SV"
+                }
+            ]
+        }
+    },
+    {
+        "id": 68525071,
+        "tunniste": "kutsuminen_1566892524878",
+        "rooliRajoite": null,
+        "organisaatioViite": [
+            {
+                "id": 68995767,
+                "organisaatioTyyppi": "organisaatiotyyppi_03"
+            },
+            {
+                "id": 68995769,
+                "organisaatioTyyppi": "organisaatiotyyppi_02"
+            },
+            {
+                "id": 68995772,
+                "organisaatioTyyppi": "organisaatiotyyppi_06"
+            },
+            {
+                "id": 68995783,
+                "organisaatioTyyppi": "organisaatiotyyppi_01"
+            },
+            {
+                "id": 68995786,
+                "organisaatioTyyppi": "organisaatiotyyppi_07"
+            },
+            {
+                "id": 68995792,
+                "organisaatioTyyppi": "organisaatiotyyppi_08"
+            },
+            {
+                "id": 68995794,
+                "organisaatioTyyppi": "organisaatiotyyppi_05"
+            },
+            {
+                "id": 68995801,
+                "organisaatioTyyppi": "organisaatiotyyppi_04"
+            },
+            {
+                "id": 68995768,
+                "organisaatioTyyppi": "oppilaitostyyppi_43"
+            },
+            {
+                "id": 68995770,
+                "organisaatioTyyppi": "oppilaitostyyppi_41"
+            },
+            {
+                "id": 68995771,
+                "organisaatioTyyppi": "oppilaitostyyppi_21"
+            },
+            {
+                "id": 68995773,
+                "organisaatioTyyppi": "oppilaitostyyppi_46"
+            },
+            {
+                "id": 68995774,
+                "organisaatioTyyppi": "oppilaitostyyppi_12"
+            },
+            {
+                "id": 68995775,
+                "organisaatioTyyppi": "oppilaitostyyppi_66"
+            },
+            {
+                "id": 68995776,
+                "organisaatioTyyppi": "oppilaitostyyppi_62"
+            },
+            {
+                "id": 68995777,
+                "organisaatioTyyppi": "oppilaitostyyppi_63"
+            },
+            {
+                "id": 68995778,
+                "organisaatioTyyppi": "oppilaitostyyppi_24"
+            },
+            {
+                "id": 68995779,
+                "organisaatioTyyppi": "oppilaitostyyppi_15"
+            },
+            {
+                "id": 68995780,
+                "organisaatioTyyppi": "oppilaitostyyppi_93"
+            },
+            {
+                "id": 68995781,
+                "organisaatioTyyppi": "oppilaitostyyppi_61"
+            },
+            {
+                "id": 68995782,
+                "organisaatioTyyppi": "oppilaitostyyppi_29"
+            },
+            {
+                "id": 68995784,
+                "organisaatioTyyppi": "oppilaitostyyppi_99"
+            },
+            {
+                "id": 68995785,
+                "organisaatioTyyppi": "oppilaitostyyppi_xx"
+            },
+            {
+                "id": 68995787,
+                "organisaatioTyyppi": "oppilaitostyyppi_01"
+            },
+            {
+                "id": 68995788,
+                "organisaatioTyyppi": "oppilaitostyyppi_65"
+            },
+            {
+                "id": 68995789,
+                "organisaatioTyyppi": "oppilaitostyyppi_64"
+            },
+            {
+                "id": 68995790,
+                "organisaatioTyyppi": "oppilaitostyyppi_28"
+            },
+            {
+                "id": 68995791,
+                "organisaatioTyyppi": "oppilaitostyyppi_11"
+            },
+            {
+                "id": 68995793,
+                "organisaatioTyyppi": "oppilaitostyyppi_92"
+            },
+            {
+                "id": 68995795,
+                "organisaatioTyyppi": "oppilaitostyyppi_22"
+            },
+            {
+                "id": 68995796,
+                "organisaatioTyyppi": "oppilaitostyyppi_91"
+            },
+            {
+                "id": 68995797,
+                "organisaatioTyyppi": "oppilaitostyyppi_23"
+            },
+            {
+                "id": 68995798,
+                "organisaatioTyyppi": "oppilaitostyyppi_45"
+            },
+            {
+                "id": 68995799,
+                "organisaatioTyyppi": "oppilaitostyyppi_42"
+            },
+            {
+                "id": 68995800,
+                "organisaatioTyyppi": "oppilaitostyyppi_19"
+            }
+        ],
+        "nimi": {
+            "id": 68525076,
+            "texts": [
+                {
+                    "text": "kutsuminen",
+                    "lang": "EN"
+                },
+                {
+                    "text": "kutsuminen",
+                    "lang": "FI"
+                },
+                {
+                    "text": "kutsuminen",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "kuvaus": {
+            "id": 68525072,
+            "texts": [
+                {
+                    "text": "Virkailijan kutsuminen",
+                    "lang": "EN"
+                },
+                {
+                    "text": "Virkailijan kutsuminen",
+                    "lang": "FI"
+                },
+                {
+                    "text": "Virkailijan kutsuminen",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "passivoitu": false,
+        "ryhmaRestriction": false,
+        "sallittuKayttajatyyppi": "PALVELU",
+        "muokattu": null,
+        "muokkaaja": null,
+        "name": "Virkailijan kutsuminen_1566892524878",
+        "description": {
+            "id": 68525076,
+            "texts": [
+                {
+                    "text": "Virkailijan kutsuminen",
+                    "lang": "EN"
+                },
+                {
+                    "text": "Virkailijan kutsuminen",
+                    "lang": "FI"
+                },
+                {
+                    "text": "Virkailijan kutsuminen",
+                    "lang": "SV"
+                }
+            ]
+        }
+    },
+    {
+        "id": 69318716,
+        "tunniste": "pääkäyttäjä_1638358631471",
+        "rooliRajoite": null,
+        "organisaatioViite": [
+            {
+                "id": 69379204,
+                "organisaatioTyyppi": "organisaatiotyyppi_09"
+            },
+            {
+                "id": 69379205,
+                "organisaatioTyyppi": "organisaatiotyyppi_07"
+            }
+        ],
+        "nimi": {
+            "id": 69318721,
+            "texts": [
+                {
+                    "text": "pääkäyttäjä (kunta)",
+                    "lang": "EN"
+                },
+                {
+                    "text": "pääkäyttäjä (kunta)",
+                    "lang": "FI"
+                },
+                {
+                    "text": "huvudanvändaren (i en kommun)",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "kuvaus": {
+            "id": 69318717,
+            "texts": [
+                {
+                    "text": "vastuukäyttäjältä tai",
+                    "lang": "EN"
+                },
+                {
+                    "text": "vastuukäyttäjältä tai",
+                    "lang": "FI"
+                },
+                {
+                    "text": "den ansvariga användaren",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "passivoitu": false,
+        "ryhmaRestriction": false,
+        "sallittuKayttajatyyppi": null,
+        "muokattu": null,
+        "muokkaaja": null,
+        "name": "pääkäyttäjä_1638358631471",
+        "description": {
+            "id": 69318721,
+            "texts": [
+                {
+                    "text": "pääkäyttäjä (kunta)",
+                    "lang": "EN"
+                },
+                {
+                    "text": "pääkäyttäjä (kunta)",
+                    "lang": "FI"
+                },
+                {
+                    "text": "huvudanvändaren (i en kommun)",
+                    "lang": "SV"
+                }
+            ]
+        }
+    }
+]

@@ -24,7 +24,72 @@
     "created": 1676552488795,
     "modified": 1679053310248,
     "vtjsynced": null,
-    "yhteystiedotRyhma": [],
+    "yhteystiedotRyhma": [
+        {
+            "id": 1666,
+            "ryhmaKuvaus": "yhteystietotyyppi2",
+            "ryhmaAlkuperaTieto": "alkupera2",
+            "readOnly": false,
+            "yhteystieto": [
+                {
+                    "yhteystietoTyyppi": "YHTEYSTIETO_POSTINUMERO",
+                    "yhteystietoArvo": ""
+                },
+                {
+                    "yhteystietoTyyppi": "YHTEYSTIETO_KATUOSOITE",
+                    "yhteystietoArvo": ""
+                },
+                {
+                    "yhteystietoTyyppi": "YHTEYSTIETO_PUHELINNUMERO",
+                    "yhteystietoArvo": ""
+                },
+                {
+                    "yhteystietoTyyppi": "YHTEYSTIETO_SAHKOPOSTI",
+                    "yhteystietoArvo": "testiposti@postitesti.fi"
+                },
+                {
+                    "yhteystietoTyyppi": "YHTEYSTIETO_MATKAPUHELINNUMERO",
+                    "yhteystietoArvo": ""
+                },
+                {
+                    "yhteystietoTyyppi": "YHTEYSTIETO_KUNTA",
+                    "yhteystietoArvo": ""
+                }
+            ]
+        },
+        {
+            "id": 1667,
+            "ryhmaKuvaus": "yhteystietotyyppi2",
+            "ryhmaAlkuperaTieto": "alkupera2",
+            "readOnly": false,
+            "yhteystieto": [
+                {
+                    "yhteystietoTyyppi": "YHTEYSTIETO_MATKAPUHELINNUMERO",
+                    "yhteystietoArvo": "123123123"
+                },
+                {
+                    "yhteystietoTyyppi": "YHTEYSTIETO_PUHELINNUMERO",
+                    "yhteystietoArvo": ""
+                },
+                {
+                    "yhteystietoTyyppi": "YHTEYSTIETO_KATUOSOITE",
+                    "yhteystietoArvo": ""
+                },
+                {
+                    "yhteystietoTyyppi": "YHTEYSTIETO_SAHKOPOSTI",
+                    "yhteystietoArvo": "virheellin@skogpost.fi"
+                },
+                {
+                    "yhteystietoTyyppi": "YHTEYSTIETO_POSTINUMERO",
+                    "yhteystietoArvo": ""
+                },
+                {
+                    "yhteystietoTyyppi": "YHTEYSTIETO_KUNTA",
+                    "yhteystietoArvo": ""
+                }
+            ]
+        }
+    ],
     "yksilointivirheet": [],
     "kielisyys": []
 }

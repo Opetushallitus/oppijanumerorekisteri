@@ -31,6 +31,7 @@ const Kayttooikeus = ({ kayttooikeus, onRemove }: { kayttooikeus: Kayttooikeusry
                     border,
                     backgroundColor: '#C1EAFF',
                 }}
+                data-testid={`selected-${kayttooikeus.nimi}`}
             >
                 {getTextGroupLocalisation(kayttooikeus.nimi, locale)}
                 <button

@@ -48,5 +48,18 @@ export async function gotoOmattiedot(page: Page) {
             tallenna: page.getByRole('button', { name: 'Tallenna' }),
             peruuta: page.getByRole('button', { name: 'Peruuta' }),
         },
+        kayttooikeudenAnominen: {
+            organisaatioSelect: selectLocator(page, '#anomusOrganisaatio'),
+            ryhmaSelect: selectLocator(page, '#ryhma-select'),
+            emailSelect: selectLocator(page, '#email'),
+            kayttooikeusButton: page.getByRole('button', { name: 'Valitse käyttöoikeus' }),
+            kayttooikeusModal: {
+                kayttooikeus: (name: string) => page.getByRole('button', { name }),
+                closeButton: page.locator('button[title="Close"]'),
+                lisaaButton: page.getByRole('button', { name: 'Lisää haettaviin käyttöoikeuksiin' }),
+            },
+            perustelut: page.locator('#perustelut'),
+            haeButton: page.getByRole('button', { name: 'Hae käyttöoikeutta' }),
+        },
     };
 }
