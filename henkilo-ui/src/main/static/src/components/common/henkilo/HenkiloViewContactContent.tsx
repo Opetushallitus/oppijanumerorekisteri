@@ -213,51 +213,54 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
         );
     };
 
-    if (isHenkiloLoading) {
-        return <OphDsSpinner />;
-    }
     return (
         <section aria-labelledby={sectionLabelId} className="henkiloViewUserContentWrapper">
             <h2 id={sectionLabelId}>{L('HENKILO_YHTEYSTIEDOT_OTSIKKO')}</h2>
-            {henkilo?.turvakielto ? <h3>{L('YHTEYSTIETO_TURVAKIELTO')}</h3> : null}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
-                {yhteystiedot
-                    .filter((c) => omattiedot?.isAdmin || !isVirkailija(kayttajatiedot) || !isFromVTJ(c))
-                    .map((ryhma, idx) => renderYhteystieto(ryhma, idx))}
-            </div>
-            <div>
-                {!editing && hasHenkiloReadUpdateRights && (
-                    <button
-                        className="oph-ds-button oph-ds-button-bordered"
-                        disabled={henkilo?.passivoitu || henkilo?.duplicate}
-                        onClick={() => setEditing(true)}
-                    >
-                        {L('MUOKKAA_LINKKI')}
-                    </button>
-                )}
-                {editing && (
-                    <div>
-                        <button
-                            className="oph-ds-button oph-ds-button-icon oph-ds-button-icon-plus"
-                            style={{ marginRight: '1rem' }}
-                            onClick={() => setYhteystiedot([...yhteystiedot, { ...newYhteystiedotRyhma }])}
-                        >
-                            {L('HENKILO_LUOYHTEYSTIETO')}
-                        </button>
-                        <button
-                            className="oph-ds-button"
-                            style={{ marginRight: '1rem' }}
-                            disabled={!isValid}
-                            onClick={update}
-                        >
-                            {L('TALLENNA_LINKKI')}
-                        </button>
-                        <button className="oph-ds-button oph-ds-button-bordered" onClick={discard}>
-                            {L('PERUUTA_LINKKI')}
-                        </button>
+            {henkilo?.turvakielto && <h3>{L('YHTEYSTIETO_TURVAKIELTO')}</h3>}
+            {isHenkiloLoading ? (
+                <OphDsSpinner />
+            ) : (
+                <>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
+                        {yhteystiedot
+                            .filter((c) => omattiedot?.isAdmin || !isVirkailija(kayttajatiedot) || !isFromVTJ(c))
+                            .map((ryhma, idx) => renderYhteystieto(ryhma, idx))}
                     </div>
-                )}
-            </div>
+                    <div>
+                        {!editing && hasHenkiloReadUpdateRights && (
+                            <button
+                                className="oph-ds-button oph-ds-button-bordered"
+                                disabled={henkilo?.passivoitu || henkilo?.duplicate}
+                                onClick={() => setEditing(true)}
+                            >
+                                {L('MUOKKAA_LINKKI')}
+                            </button>
+                        )}
+                        {editing && (
+                            <div>
+                                <button
+                                    className="oph-ds-button oph-ds-button-icon oph-ds-button-icon-plus"
+                                    style={{ marginRight: '1rem' }}
+                                    onClick={() => setYhteystiedot([...yhteystiedot, { ...newYhteystiedotRyhma }])}
+                                >
+                                    {L('HENKILO_LUOYHTEYSTIETO')}
+                                </button>
+                                <button
+                                    className="oph-ds-button"
+                                    style={{ marginRight: '1rem' }}
+                                    disabled={!isValid}
+                                    onClick={update}
+                                >
+                                    {L('TALLENNA_LINKKI')}
+                                </button>
+                                <button className="oph-ds-button oph-ds-button-bordered" onClick={discard}>
+                                    {L('PERUUTA_LINKKI')}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </>
+            )}
         </section>
     );
 }
