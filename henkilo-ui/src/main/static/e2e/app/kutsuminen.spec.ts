@@ -40,16 +40,16 @@ test.describe('kutsuminen', () => {
         await organisations.add.click();
         await organisations.get(0).organisaatio.select('aliorg');
         await organisations.get(0).kayttooikeus.click();
-        await organisations.get(0).modal.valittava('rajapintakäyttäjä').click();
+        await organisations.get(0).modal.kayttooikeus('rajapintakäyttäjä').click();
         await organisations.get(0).modal.lisaa.click();
-        await organisations.get(0).modal.valittava('tallentaja').click();
+        await organisations.get(0).modal.kayttooikeus('tallentaja').click();
         await organisations.get(0).modal.lisaa.click();
         await organisations.get(0).modal.close.click();
 
         await organisations.add.click();
         await organisations.get(1).ryhma.select('ryhma');
         await organisations.get(1).kayttooikeus.click();
-        await organisations.get(1).modal.valittava('tallentaja').click();
+        await organisations.get(1).modal.kayttooikeus('tallentaja').click();
         await organisations.get(1).modal.lisaa.click();
         await organisations.get(1).modal.close.click();
 

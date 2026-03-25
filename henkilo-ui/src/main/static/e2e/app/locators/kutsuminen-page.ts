@@ -22,7 +22,7 @@ export async function gotoKutsuminen(page: Page) {
                     kayttooikeus: org.getByRole('button', { name: 'Valitse käyttöoikeus' }),
                     voimassa: org.locator(`voimassa-${i}`),
                     modal: {
-                        valittava: (t: string) => page.locator('.valittavat').getByText(t),
+                        kayttooikeus: (name: string) => page.getByRole('button', { name }),
                         close: page.locator('.oph-button-close'),
                         lisaa: page.getByRole('button', { name: 'Lisää haettaviin käyttöoikeuksiin' }),
                     },
