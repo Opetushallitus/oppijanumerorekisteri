@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { selectLocator } from '../../locators';
+import { kayttooikeusryhmaSelectModal, selectLocator } from '../../locators';
 
 export async function gotoOmattiedot(page: Page) {
     await page.goto('/henkilo-ui/omattiedot2');
@@ -53,11 +53,7 @@ export async function gotoOmattiedot(page: Page) {
             ryhmaSelect: selectLocator(page, '#ryhma-select'),
             emailSelect: selectLocator(page, '#email'),
             kayttooikeusButton: page.getByRole('button', { name: 'Valitse käyttöoikeus' }),
-            kayttooikeusModal: {
-                kayttooikeus: (name: string) => page.getByRole('button', { name }),
-                closeButton: page.locator('button[title="Close"]'),
-                lisaaButton: page.getByRole('button', { name: 'Lisää haettaviin käyttöoikeuksiin' }),
-            },
+            kayttooikeusModal: kayttooikeusryhmaSelectModal(page),
             perustelut: page.locator('#perustelut'),
             haeButton: page.getByRole('button', { name: 'Hae käyttöoikeutta' }),
         },

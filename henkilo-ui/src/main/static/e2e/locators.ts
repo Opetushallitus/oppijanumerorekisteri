@@ -12,3 +12,11 @@ export const selectLocator = (page: Page, id: string) => {
         },
     };
 };
+
+export const kayttooikeusryhmaSelectModal = (page: Page) => {
+    return {
+        kayttooikeus: (name: string) => page.getByRole('button', { name }),
+        close: page.locator('button[title="Close"]'),
+        lisaa: page.getByRole('button', { name: 'Lisää haettaviin käyttöoikeuksiin' }),
+    };
+};

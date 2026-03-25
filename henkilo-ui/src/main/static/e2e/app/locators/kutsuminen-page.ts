@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { selectLocator } from '../../locators';
+import { selectLocator, kayttooikeusryhmaSelectModal } from '../../locators';
 
 export async function gotoKutsuminen(page: Page) {
     await page.goto('/henkilo-ui/kutsulomake');
@@ -21,11 +21,7 @@ export async function gotoKutsuminen(page: Page) {
                     ryhma: selectLocator(page, `#ryhma-${i}`),
                     kayttooikeus: org.getByRole('button', { name: 'Valitse käyttöoikeus' }),
                     voimassa: org.locator(`voimassa-${i}`),
-                    modal: {
-                        kayttooikeus: (name: string) => page.getByRole('button', { name }),
-                        close: page.locator('.oph-button-close'),
-                        lisaa: page.getByRole('button', { name: 'Lisää haettaviin käyttöoikeuksiin' }),
-                    },
+                    modal: kayttooikeusryhmaSelectModal(page),
                 };
             },
         },

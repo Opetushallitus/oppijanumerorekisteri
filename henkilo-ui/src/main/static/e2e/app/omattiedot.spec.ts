@@ -156,8 +156,8 @@ test.describe('omattiedot', () => {
 
             await kayttooikeudenAnominen.kayttooikeusButton.click();
             await kayttooikeudenAnominen.kayttooikeusModal.kayttooikeus('kayttooikeus2').click();
-            await kayttooikeudenAnominen.kayttooikeusModal.lisaaButton.click();
-            await kayttooikeudenAnominen.kayttooikeusModal.closeButton.click();
+            await kayttooikeudenAnominen.kayttooikeusModal.lisaa.click();
+            await kayttooikeudenAnominen.kayttooikeusModal.close.click();
             await expect(kayttooikeudenAnominen.haeButton).toBeDisabled();
 
             await page.route(`/kayttooikeus-service/kayttooikeusanomus/${oid}`, async (route, request) => {
