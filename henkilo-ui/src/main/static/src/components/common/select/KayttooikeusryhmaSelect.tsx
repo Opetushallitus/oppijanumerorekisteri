@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import classNames from 'classnames';
+
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { SallitutKayttajatyypit } from '../../kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage';
 import { useLocalisations } from '../../../selectors';
 import { getTextGroupLocalisation } from '../../../utilities/localisation.util';
 
-import './KayttooikeusryhmaSelect.css';
+import styles from './KayttooikeusryhmaSelect.module.css';
 
 type KielistettyKayttooikeusryhma = {
     id: number;
@@ -70,49 +70,37 @@ const KayttooikeusryhmaSelect = (props: Props) => {
     };
 
     return (
-        <div className="flex-horizontal KayttooikeusryhmaSelect">
-            <div className="flex-1 flex-same-size">
+        <div className={styles.kayttooikeusryhmaSelect}>
+            <div>
                 <input
-                    className="oph-input"
+                    className="oph-ds-input"
                     placeholder={L('OMATTIEDOT_RAJAA_LISTAUSTA')}
                     type="text"
                     value={hakutermi}
                     onChange={(event) => setHakutermi(event.target.value)}
                 />
-                {naytettavat.length === 0 ? (
-                    <div className="valittavat-tyhja"></div>
-                ) : (
-                    <div className="valittavat">
-                        {naytettavat.map((n) => (
-                            <div
-                                key={n.id}
-                                role="button"
-                                tabIndex={0}
-                                className={classNames({
-                                    valittu: valittu === n,
-                                    valittava: true,
-                                })}
-                                onClick={(event) => onSelect(event, n)}
-                            >
-                                {n.nimi}
-                            </div>
-                        ))}
-                    </div>
-                )}
+                <div className={styles.valittavat}>
+                    {naytettavat.map((n) => (
+                        <button
+                            key={n.id}
+                            className={valittu === n ? styles.valittu : ''}
+                            onClick={(event) => onSelect(event, n)}
+                        >
+                            {n.nimi}
+                        </button>
+                    ))}
+                </div>
             </div>
-            <div className="flex-1 flex-same-size valinta">
-                {valittu && (
-                    <div>
-                        <div className="oph-bold">{valittu.nimi}</div>
-                        <div>{valittu.kuvaus}</div>
-                    </div>
-                )}
-                <button
-                    type="button"
-                    className="oph-button oph-button-primary lisaa"
-                    onClick={onSubmit}
-                    disabled={!valittu}
-                >
+            <div className={styles.valinta}>
+                <div>
+                    {valittu && (
+                        <>
+                            <div style={{ fontWeight: 'bold' }}>{valittu.nimi}</div>
+                            <div>{valittu.kuvaus}</div>
+                        </>
+                    )}
+                </div>
+                <button type="button" className="oph-ds-button" onClick={onSubmit} disabled={!valittu}>
                     {L('OMATTIEDOT_LISAA_HAETTAVIIN_KAYTTOOIKEUSRYHMIIN')}
                 </button>
             </div>

@@ -17,8 +17,7 @@ import {
 import { add } from '../../../slices/toastSlice';
 import { useAppDispatch } from '../../../store';
 import { myonnettyToKayttooikeusryhma } from '../../../utilities/kayttooikeusryhma.utils';
-import OphModal from '../modal/OphModal';
-import KayttooikeusryhmaSelect from '../select/KayttooikeusryhmaSelect';
+import KayttooikeusryhmaSelectModal from '../select/KayttooikeusryhmaSelectModal';
 import { getTextGroupLocalisation } from '../../../utilities/localisation.util';
 
 import styles from './HenkiloViewCreateKayttooikeus.module.css';
@@ -48,7 +47,6 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
         data
             ?.filter((myonnetty) => selectedList.every((selected) => selected.value !== myonnetty.ryhmaId))
             .map(myonnettyToKayttooikeusryhma) ?? [];
-    const [visible, setVisible] = useState(false);
 
     const selectRyhma = (selection: SingleValue<SelectOption>) => {
         setOrganisationSelection(undefined);
@@ -155,32 +153,23 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                 <div className="oph-ds-label">{L('HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT')}</div>
                 <div className={styles.kayttooikeusSelection}>
                     <div>
-                        {visible && (
-                            <OphModal onClose={() => setVisible(false)} onOverlayClick={() => setVisible(false)}>
-                                <KayttooikeusryhmaSelect
-                                    kayttooikeusryhmat={kayttooikeusryhmat}
-                                    onSelect={(k) =>
-                                        setSelectedList([
-                                            ...selectedList,
-                                            {
-                                                value: k.id,
-                                                label: getTextGroupLocalisation(k.nimi, locale),
-                                            },
-                                        ])
-                                    }
-                                    sallittuKayttajatyyppi={isPalvelukayttaja ? 'PALVELU' : 'VIRKAILIJA'}
-                                />
-                            </OphModal>
-                        )}
-                        <div>
-                            <button
-                                className="oph-ds-button"
-                                disabled={isLoading || !oidOrganisaatio}
-                                onClick={() => setVisible(true)}
-                            >
-                                {L('OMATTIEDOT_VALITSE_KAYTTOOIKEUSRYHMA')}
-                            </button>
-                        </div>
+                        <KayttooikeusryhmaSelectModal
+                            kayttooikeusryhmat={kayttooikeusryhmat}
+                            kayttooikeusryhmaValittu={selectedList.length > 0}
+                            onSelect={(k) =>
+                                setSelectedList([
+                                    ...selectedList,
+                                    {
+                                        value: k.id,
+                                        label: getTextGroupLocalisation(k.nimi, locale),
+                                    },
+                                ])
+                            }
+                            disabled={isLoading || !oidOrganisaatio}
+                            loading={isLoading}
+                            isOrganisaatioSelected={!!oidOrganisaatio}
+                            sallittuKayttajatyyppi={isPalvelukayttaja ? 'PALVELU' : 'VIRKAILIJA'}
+                        />
                     </div>
                     <div className={styles.selectedKayttooikeus}>
                         {selectedList.map((selected, idx) => (

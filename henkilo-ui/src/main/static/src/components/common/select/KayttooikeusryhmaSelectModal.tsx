@@ -18,9 +18,6 @@ type Props = {
     sallittuKayttajatyyppi: SallitutKayttajatyypit;
 };
 
-/**
- * Käyttöoikeusryhmän valintakomponentti modalissa.
- */
 const KayttooikeusryhmaSelectModal = (props: Props) => {
     const [visible, setVisible] = useState(false);
     const { L } = useLocalisations();

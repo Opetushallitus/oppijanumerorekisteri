@@ -1,0 +1,45 @@
+.kayttooikeusryhmaSelect {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.kayttooikeusryhmaSelect input {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.valittavat {
+    height: 400px;
+    width: 300px;
+    overflow-y: scroll;
+    box-sizing: border-box;
+    border: 1px solid #aeaeae;
+    border-top: none;
+    user-select: none;
+}
+
+.valittavat button {
+    padding: 8px;
+    width: 100%;
+    text-align: center;
+    background-color: #fff;
+    border: 0;
+    cursor: pointer;
+}
+
+.valittavat button:hover {
+    background-color: #e2e2e2;
+}
+
+.valittu {
+    background-color: #0033CC !important;
+    color: #ffffff;
+}
+
+.valinta {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
