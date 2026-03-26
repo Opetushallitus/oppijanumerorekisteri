@@ -34,7 +34,7 @@ function main {
 function start_backend {
   info "Building tiedotuspalvelu backend"
   cd "${repo}/tiedotuspalvelu"
-  "${repo}"/mvnw --batch-mode package -DskipTests
+  mvn --batch-mode package -DskipTests
 
   info "Starting tiedotuspalvelu backend"
   local -r port=8088

@@ -28,7 +28,7 @@ function run_prettier_check {
 function run_java_check {
   cd "$repo/tiedotuspalvelu"
   select_java_version 21
-  ../mvnw fmt:check
+  mvn fmt:check
 }
 
 main "$@"
