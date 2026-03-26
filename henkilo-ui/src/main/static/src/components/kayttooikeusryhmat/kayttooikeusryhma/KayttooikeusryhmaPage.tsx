@@ -10,9 +10,8 @@ import KayttooikeusryhmatNimi from './KayttooikeusryhmatNimi';
 import KayttooikeusryhmatKuvaus from './KayttooikeusryhmatKuvaus';
 import MyonnettavatKayttooikeusryhmat from './MyonnettavatKayttooikeusryhmat';
 import KayttooikeusryhmatPalvelutJaKayttooikeudet from './KayttooikeusryhmatPalvelutJaKayttooikeudet';
-import { TextGroupModify } from '../../../types/domain/kayttooikeus/textgroup.types';
+import { Text, TextGroupModify } from '../../../types/domain/kayttooikeus/textgroup.types';
 import { PalveluRooliModify } from '../../../types/domain/kayttooikeus/PalveluRooliModify.types';
-import { Text } from '../../../types/domain/kayttooikeus/textgroup.types';
 import { SpinnerInButton } from '../../common/icons/SpinnerInButton';
 import { LocalNotification } from '../../common/Notification/LocalNotification';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
@@ -113,21 +112,11 @@ export const KayttooikeusryhmaPage = ({ kayttooikeusryhmaId }: { kayttooikeusryh
             organisaatioSelections: _parseExistingOrganisaatioData(),
             oppilaitostyypitSelections: _parseExistingOppilaitostyyppiData(),
             organisaatiotyypitSelections: _parseExistingOrganisaatiotyyppiData(),
-            ryhmaRestriction: _parseExistingRyhmaRestriction(),
+            ryhmaRestriction: kayttooikeusryhma?.ryhmaRestriction ?? false,
             kayttooikeusryhmaSelections: _parseExistingKayttooikeusryhmaSelections(),
             palveluJaKayttooikeusSelections: _parseExistingPalvelutRoolitData(),
             sallittuKayttajatyyppi: kayttooikeusryhma?.sallittuKayttajatyyppi ?? null,
         };
-    };
-
-    const _parseExistingRyhmaRestriction = () => {
-        const organisaatioViitteet = kayttooikeusryhma?.organisaatioViite || [];
-        const organisaatioViiteRyhmaRestriction: boolean =
-            organisaatioViitteet.length > 0
-                ? organisaatioViitteet.some((organisaatioviite) => _isRyhmaOid(organisaatioviite.organisaatioTyyppi))
-                : false;
-        const ryhmaRestriction = kayttooikeusryhma?.ryhmaRestriction;
-        return !!(organisaatioViiteRyhmaRestriction || ryhmaRestriction);
     };
 
     const _parseExistingKayttooikeusryhmaSelections = (): SelectOption[] => {
