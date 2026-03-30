@@ -7,16 +7,22 @@ import * as sharedAccount from "./shared-account";
 export class DependencyManagementStack extends cdk.Stack {
   readonly domainName = sharedAccount.prefix("-domain").toLowerCase();
   readonly repositoryName = sharedAccount.prefix("-maven").toLowerCase();
-  readonly upstreamRepositoryName = sharedAccount.prefix("-maven-central-upstream").toLowerCase();
+  readonly upstreamRepositoryName = sharedAccount
+    .prefix("-maven-central-upstream")
+    .toLowerCase();
   readonly githubUsernameSsmPath = "/mvn/settings/github/username";
   readonly githubPasswordSsmPath = "/mvn/settings/github/password";
 
   constructor(scope: constructs.Construct, id: string, props: cdk.StackProps) {
     super(scope, id, props);
 
-    const domain = new codeartifact.CfnDomain(this, sharedAccount.prefix("Domain"), {
-      domainName: this.domainName
-    });
+    const domain = new codeartifact.CfnDomain(
+      this,
+      sharedAccount.prefix("Domain"),
+      {
+        domainName: this.domainName,
+      },
+    );
 
     const mavenCentralUpstream = new codeartifact.CfnRepository(
       this,
@@ -24,16 +30,20 @@ export class DependencyManagementStack extends cdk.Stack {
       {
         domainName: this.domainName,
         repositoryName: this.upstreamRepositoryName,
-        externalConnections: ["public:maven-central"]
-      }
+        externalConnections: ["public:maven-central"],
+      },
     );
     mavenCentralUpstream.addDependency(domain);
 
-    const repo = new codeartifact.CfnRepository(this, sharedAccount.prefix("Repository"), {
-      domainName: this.domainName,
-      repositoryName: this.repositoryName,
-      upstreams: [this.upstreamRepositoryName]
-    });
+    const repo = new codeartifact.CfnRepository(
+      this,
+      sharedAccount.prefix("Repository"),
+      {
+        domainName: this.domainName,
+        repositoryName: this.repositoryName,
+        upstreams: [this.upstreamRepositoryName],
+      },
+    );
     repo.addDependency(mavenCentralUpstream);
   }
 
@@ -43,25 +53,25 @@ export class DependencyManagementStack extends cdk.Stack {
       actions: [
         "codeartifact:GetAuthorizationToken",
         "codeartifact:GetRepositoryEndpoint",
-        "codeartifact:ReadFromRepository"
+        "codeartifact:ReadFromRepository",
       ],
       resourceArns: [
         `arn:aws:codeartifact:${this.region}:${this.account}:domain/${this.domainName}`,
-        `arn:aws:codeartifact:${this.region}:${this.account}:repository/${this.domainName}/${this.repositoryName}`
-      ]
+        `arn:aws:codeartifact:${this.region}:${this.account}:repository/${this.domainName}/${this.repositoryName}`,
+      ],
     });
     iam.Grant.addToPrincipal({
       grantee,
       actions: ["sts:GetServiceBearerToken"],
-      resourceArns: ["*"]
+      resourceArns: ["*"],
     });
     iam.Grant.addToPrincipal({
       grantee,
       actions: ["ssm:GetParameter"],
       resourceArns: [
         `arn:aws:ssm:${this.region}:${this.account}:parameter${this.githubUsernameSsmPath}`,
-        `arn:aws:ssm:${this.region}:${this.account}:parameter${this.githubPasswordSsmPath}`
-      ]
+        `arn:aws:ssm:${this.region}:${this.account}:parameter${this.githubPasswordSsmPath}`,
+      ],
     });
   }
 
@@ -96,7 +106,7 @@ export class DependencyManagementStack extends cdk.Stack {
     </mirror>
   </mirrors>
 </settings>
-EOF`
+EOF`,
     ];
   }
 }

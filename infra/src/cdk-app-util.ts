@@ -16,20 +16,20 @@ class CdkAppUtil extends cdk.App {
 
     const env = {
       account: process.env.CDK_DEFAULT_ACCOUNT,
-      region: process.env.CDK_DEFAULT_REGION
+      region: process.env.CDK_DEFAULT_REGION,
     };
     const dependencyManagement = new dm.DependencyManagementStack(
       this,
       sharedAccount.prefix("DependencyManagementStack"),
-      { env }
+      { env },
     );
     new ContinousDeploymentStack(
       this,
       sharedAccount.prefix("ContinuousDeploymentStack"),
       dependencyManagement,
       {
-        env
-      }
+        env,
+      },
     );
   }
 }
@@ -39,7 +39,7 @@ class ContinousDeploymentStack extends cdk.Stack {
     scope: constructs.Construct,
     id: string,
     dependencyManagement: dm.DependencyManagementStack,
-    props: cdk.StackProps
+    props: cdk.StackProps,
   ) {
     super(scope, id, props);
 
@@ -50,10 +50,10 @@ class ContinousDeploymentStack extends cdk.Stack {
       {
         owner: "Opetushallitus",
         name: "oppijanumerorekisteri",
-        branch: "master"
+        branch: "master",
       },
       dependencyManagement,
-      props
+      props,
     );
     new ContinousDeploymentPipelineStack(
       this,
@@ -62,10 +62,10 @@ class ContinousDeploymentStack extends cdk.Stack {
       {
         owner: "Opetushallitus",
         name: "oppijanumerorekisteri",
-        branch: "green-hahtuva"
+        branch: "green-hahtuva",
       },
       dependencyManagement,
-      props
+      props,
     );
     new ContinousDeploymentPipelineStack(
       this,
@@ -74,10 +74,10 @@ class ContinousDeploymentStack extends cdk.Stack {
       {
         owner: "Opetushallitus",
         name: "oppijanumerorekisteri",
-        branch: "green-dev"
+        branch: "green-dev",
       },
       dependencyManagement,
-      props
+      props,
     );
     new ContinousDeploymentPipelineStack(
       this,
@@ -86,10 +86,10 @@ class ContinousDeploymentStack extends cdk.Stack {
       {
         owner: "Opetushallitus",
         name: "oppijanumerorekisteri",
-        branch: "green-qa"
+        branch: "green-qa",
       },
       dependencyManagement,
-      props
+      props,
     );
   }
 }
@@ -109,7 +109,7 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
     env: EnvironmentName,
     repository: Repository,
     dependencyManagement: dm.DependencyManagementStack,
-    props: cdk.StackProps
+    props: cdk.StackProps,
   ) {
     super(scope, id, props);
     const capitalizedEnv = capitalize(env);
@@ -119,25 +119,25 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
       `Deploy${capitalizedEnv}Pipeline`,
       {
         pipelineName: sharedAccount.prefix(`Deploy${capitalizedEnv}`),
-        pipelineType: PipelineType.V1
-      }
+        pipelineType: PipelineType.V1,
+      },
     );
     cdk.Tags.of(pipeline).add(
       "Repository",
       `${repository.owner}/${repository.name}`,
-      { includeResourceTypes: ["AWS::CodePipeline::Pipeline"] }
+      { includeResourceTypes: ["AWS::CodePipeline::Pipeline"] },
     );
     cdk.Tags.of(pipeline).add("FromBranch", repository.branch, {
-      includeResourceTypes: ["AWS::CodePipeline::Pipeline"]
+      includeResourceTypes: ["AWS::CodePipeline::Pipeline"],
     });
     cdk.Tags.of(pipeline).add("ToBranch", `green-${env}`, {
-      includeResourceTypes: ["AWS::CodePipeline::Pipeline"]
+      includeResourceTypes: ["AWS::CodePipeline::Pipeline"],
     });
 
     const connectionArn = ssm.StringParameter.fromStringParameterName(
       this,
       "CodeStarConnectionArn",
-      sharedAccount.CODE_STAR_CONNECTION_ARN_PARAMETER_NAME
+      sharedAccount.CODE_STAR_CONNECTION_ARN_PARAMETER_NAME,
     ).stringValue;
     const sourceOutput = new codepipeline.Artifact();
     const sourceAction =
@@ -149,7 +149,7 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
         repo: repository.name,
         branch: repository.branch,
         output: sourceOutput,
-        triggerOnPush: ["hahtuva", "dev", "qa"].includes(env)
+        triggerOnPush: ["hahtuva", "dev", "qa"].includes(env),
       });
     const sourceStage = pipeline.addStage({ stageName: "Source" });
     sourceStage.addAction(sourceAction);
@@ -167,9 +167,9 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
             "TestOppijanumerorekisteri",
             ["scripts/ci/run-oppijanumerorekisteri-tests.sh"],
             "corretto21",
-            dependencyManagement
-          )
-        })
+            dependencyManagement,
+          ),
+        }),
       );
       testStage.addAction(
         new codepipeline_actions.CodeBuildAction({
@@ -181,36 +181,48 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
             "TestTiedotuspalvelu",
             ["scripts/ci/run-tiedotuspalvelu-tests.sh"],
             "corretto21",
-            dependencyManagement
-          )
-        })
+            dependencyManagement,
+          ),
+        }),
       );
       testStage.addAction(
         new codepipeline_actions.CodeBuildAction({
           actionName: "TestTiedotuspalveluUi",
           input: sourceOutput,
-          project: makeUbuntuTestProject(this, env, "TestTiedotuspalveluUi", [
-            "scripts/ci/run-tiedotuspalvelu-ui-tests.sh"
-          ], dependencyManagement)
-        })
+          project: makeUbuntuTestProject(
+            this,
+            env,
+            "TestTiedotuspalveluUi",
+            ["scripts/ci/run-tiedotuspalvelu-ui-tests.sh"],
+            dependencyManagement,
+          ),
+        }),
       );
       testStage.addAction(
         new codepipeline_actions.CodeBuildAction({
           actionName: "TestHenkiloUi",
           input: sourceOutput,
-          project: makeUbuntuTestProject(this, env, "TestHenkiloUi", [
-            "scripts/ci/run-henkilo-ui-tests.sh"
-          ], dependencyManagement)
-        })
+          project: makeUbuntuTestProject(
+            this,
+            env,
+            "TestHenkiloUi",
+            ["scripts/ci/run-henkilo-ui-tests.sh"],
+            dependencyManagement,
+          ),
+        }),
       );
       testStage.addAction(
         new codepipeline_actions.CodeBuildAction({
           actionName: "Prettier",
           input: sourceOutput,
-          project: makeUbuntuTestProject(this, env, "CheckCodeFormat", [
-            "scripts/ci/run-code-format-checks.sh"
-          ], dependencyManagement)
-        })
+          project: makeUbuntuTestProject(
+            this,
+            env,
+            "CheckCodeFormat",
+            ["scripts/ci/run-code-format-checks.sh"],
+            dependencyManagement,
+          ),
+        }),
       );
     }
 
@@ -223,60 +235,60 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
         environment: {
           buildImage: codebuild.LinuxArmBuildImage.AMAZON_LINUX_2_STANDARD_3_0,
           computeType: codebuild.ComputeType.SMALL,
-          privileged: true
+          privileged: true,
         },
         environmentVariables: {
           CDK_DEPLOY_TARGET_ACCOUNT: {
             type: codebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
-            value: `/env/${env}/account_id`
+            value: `/env/${env}/account_id`,
           },
           CDK_DEPLOY_TARGET_REGION: {
             type: codebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
-            value: `/env/${env}/region`
+            value: `/env/${env}/region`,
           },
           DOCKER_USERNAME: {
             type: codebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
-            value: "/docker/username"
+            value: "/docker/username",
           },
           DOCKER_PASSWORD: {
             type: codebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
-            value: "/docker/password"
+            value: "/docker/password",
           },
           SLACK_NOTIFICATIONS_CHANNEL_WEBHOOK_URL: {
             type: codebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
-            value: `/env/${env}/slack-notifications-channel-webhook`
-          }
+            value: `/env/${env}/slack-notifications-channel-webhook`,
+          },
         },
         buildSpec: codebuild.BuildSpec.fromObject({
           version: "0.2",
           env: {
-            "git-credential-helper": "yes"
+            "git-credential-helper": "yes",
           },
           phases: {
             pre_build: {
               commands: [
                 "sudo yum install -y perl-Digest-SHA", // for shasum command
                 ...dependencyManagement.createMavenSettingsXmlCommands(),
-                "cp codebuild-mvn-settings.xml ./henkilo-ui/codebuild-mvn-settings.xml"
-              ]
+                "cp codebuild-mvn-settings.xml ./henkilo-ui/codebuild-mvn-settings.xml",
+              ],
             },
             build: {
               commands: [
-                `./deploy-${env}.sh && ./scripts/ci/tag-green-build-${env}.sh && ./scripts/ci/publish-release-notes-${env}.sh`
-              ]
-            }
-          }
-        })
-      }
+                `./deploy-${env}.sh && ./scripts/ci/tag-green-build-${env}.sh && ./scripts/ci/publish-release-notes-${env}.sh`,
+              ],
+            },
+          },
+        }),
+      },
     );
 
     const deploymentTargetAccount = ssm.StringParameter.valueFromLookup(
       this,
-      `/env/${env}/account_id`
+      `/env/${env}/account_id`,
     );
     const deploymentTargetRegion = ssm.StringParameter.valueFromLookup(
       this,
-      `/env/${env}/region`
+      `/env/${env}/region`,
     );
 
     const targetRegions = [deploymentTargetRegion, ROUTE53_HEALTH_CHECK_REGION];
@@ -290,17 +302,17 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
               `arn:aws:iam::${deploymentTargetAccount}:role/cdk-${sharedAccount.CDK_QUALIFIER}-lookup-role-${deploymentTargetAccount}-${targetRegion}`,
               `arn:aws:iam::${deploymentTargetAccount}:role/cdk-${sharedAccount.CDK_QUALIFIER}-file-publishing-role-${deploymentTargetAccount}-${targetRegion}`,
               `arn:aws:iam::${deploymentTargetAccount}:role/cdk-${sharedAccount.CDK_QUALIFIER}-image-publishing-role-${deploymentTargetAccount}-${targetRegion}`,
-              `arn:aws:iam::${deploymentTargetAccount}:role/cdk-${sharedAccount.CDK_QUALIFIER}-deploy-role-${deploymentTargetAccount}-${targetRegion}`
-            ])
-          })
-        ]
-      })
+              `arn:aws:iam::${deploymentTargetAccount}:role/cdk-${sharedAccount.CDK_QUALIFIER}-deploy-role-${deploymentTargetAccount}-${targetRegion}`,
+            ]),
+          }),
+        ],
+      }),
     );
     dependencyManagement.grantRead(deployProject);
     const deployAction = new codepipeline_actions.CodeBuildAction({
       actionName: "Deploy",
       input: sourceOutput,
-      project: deployProject
+      project: deployProject,
     });
     const deployStage = pipeline.addStage({ stageName: "Deploy" });
     deployStage.addAction(deployAction);
@@ -313,7 +325,7 @@ function makeTestProject(
   name: string,
   testCommands: string[],
   javaVersion: "corretto11" | "corretto21",
-  dependencyManagement: dm.DependencyManagementStack
+  dependencyManagement: dm.DependencyManagementStack,
 ): codebuild.PipelineProject {
   const project = new codebuild.PipelineProject(
     scope,
@@ -324,42 +336,42 @@ function makeTestProject(
       environment: {
         buildImage: codebuild.LinuxArmBuildImage.AMAZON_LINUX_2_STANDARD_3_0,
         computeType: codebuild.ComputeType.SMALL,
-        privileged: true
+        privileged: true,
       },
       environmentVariables: {
         DOCKER_USERNAME: {
           type: codebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
-          value: "/docker/username"
+          value: "/docker/username",
         },
         DOCKER_PASSWORD: {
           type: codebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
-          value: "/docker/password"
-        }
+          value: "/docker/password",
+        },
       },
       buildSpec: codebuild.BuildSpec.fromObject({
         version: "0.2",
         env: {
-          "git-credential-helper": "yes"
+          "git-credential-helper": "yes",
         },
         phases: {
           install: {
             "runtime-versions": {
-              java: javaVersion
-            }
+              java: javaVersion,
+            },
           },
           pre_build: {
             commands: [
               "docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD",
               "sudo yum install -y perl-Digest-SHA", // for shasum command
-              ...dependencyManagement.createMavenSettingsXmlCommands()
-            ]
+              ...dependencyManagement.createMavenSettingsXmlCommands(),
+            ],
           },
           build: {
-            commands: testCommands
-          }
-        }
-      })
-    }
+            commands: testCommands,
+          },
+        },
+      }),
+    },
   );
   dependencyManagement.grantRead(project);
   return project;
@@ -370,7 +382,7 @@ function makeUbuntuTestProject(
   env: string,
   name: string,
   testCommands: string[],
-  dependencyManagement: dm.DependencyManagementStack
+  dependencyManagement: dm.DependencyManagementStack,
 ): codebuild.PipelineProject {
   const project = new codebuild.PipelineProject(
     scope,
@@ -380,32 +392,32 @@ function makeUbuntuTestProject(
       environment: {
         buildImage: codebuild.LinuxBuildImage.STANDARD_7_0,
         computeType: codebuild.ComputeType.MEDIUM,
-        privileged: true
+        privileged: true,
       },
       environmentVariables: {
         DOCKER_USERNAME: {
           type: codebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
-          value: "/docker/username"
+          value: "/docker/username",
         },
         DOCKER_PASSWORD: {
           type: codebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
-          value: "/docker/password"
+          value: "/docker/password",
         },
         TZ: {
           type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
-          value: "Europe/Helsinki"
-        }
+          value: "Europe/Helsinki",
+        },
       },
       buildSpec: codebuild.BuildSpec.fromObject({
         version: "0.2",
         env: {
-          "git-credential-helper": "yes"
+          "git-credential-helper": "yes",
         },
         phases: {
           install: {
             "runtime-versions": {
-              java: "corretto21"
-            }
+              java: "corretto21",
+            },
           },
           pre_build: {
             commands: [
@@ -413,15 +425,15 @@ function makeUbuntuTestProject(
               "sudo apt-get update -y",
               "sudo apt-get install -y netcat", // for nc command
               "sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb", // For Cypress/Chromium
-              ...dependencyManagement.createMavenSettingsXmlCommands()
-            ]
+              ...dependencyManagement.createMavenSettingsXmlCommands(),
+            ],
           },
           build: {
-            commands: testCommands
-          }
-        }
-      })
-    }
+            commands: testCommands,
+          },
+        },
+      }),
+    },
   );
   dependencyManagement.grantRead(project);
   return project;
@@ -433,7 +445,7 @@ function capitalize(s: string) {
 
 const app = new CdkAppUtil({
   defaultStackSynthesizer: new cdk.DefaultStackSynthesizer({
-    qualifier: sharedAccount.CDK_QUALIFIER
-  })
+    qualifier: sharedAccount.CDK_QUALIFIER,
+  }),
 });
 app.synth();
