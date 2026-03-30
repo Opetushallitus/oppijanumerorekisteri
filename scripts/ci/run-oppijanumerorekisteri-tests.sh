@@ -14,7 +14,7 @@ function main {
   fi
 
   if is_running_on_codebuild; then
-    mvn --batch-mode clean install -s ./settings.xml
+    mvn --batch-mode clean install -s ./codebuild-mvn-settings.xml
   else
     mvn --batch-mode clean install
   fi
