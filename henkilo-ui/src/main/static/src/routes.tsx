@@ -37,7 +37,7 @@ export const AppRoutes = () => (
             <Route path="/anomukset" element={<AnomusPage />} />
             <Route path="/kutsutut" element={<KutsututPage />} />
             <Route path="/kutsulomake" element={<KutsuminenPage />} />
-            <Route path="/henkilohaku" element={<HenkilohakuContainer />} />
+            <Route path="/henkilohaku" element={isNewNavi ? undefined : <HenkilohakuContainer />} />
             <Route path="/oppijahaku" element={<OppijahakuPage />} />
             <Route path="/oppija/luonti" element={<OppijaCreate />} />
             <Route path="/oppija/:oid" element={isNewNavi ? <OppijaPage /> : <OppijaViewPage />} />
