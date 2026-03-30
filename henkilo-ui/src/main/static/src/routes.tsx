@@ -62,7 +62,7 @@ export const AppRoutes = () => (
                 path="/virkailija/:oid/duplikaatit"
                 element={isNewNavi ? undefined : <DuplikaatitContainer henkiloType="virkailija" />}
             />
-            <Route path="/omattiedot" element={<OmattiedotPage />} />
+            <Route path="/omattiedot" element={isNewNavi ? <Omattiedot2Page /> : <OmattiedotPage />} />
             <Route path="/omattiedot2" element={<Omattiedot2Page />} />
             <Route path="/oppijoidentuonti" element={<OppijoidenTuontiContainer />} />
             <Route path="/kayttooikeusryhmat" element={<KayttooikeusryhmatPage />} />
