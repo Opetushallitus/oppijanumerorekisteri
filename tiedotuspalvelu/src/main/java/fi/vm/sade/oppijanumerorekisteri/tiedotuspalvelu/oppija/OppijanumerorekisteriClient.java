@@ -1,11 +1,12 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.oppija;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.LoggingHttpClient;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedotuspalveluProperties;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.oppija.schema.AccessTokenResponse;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.oppija.schema.HenkiloDto;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.oppija.schema.YhteystiedotRyhmaDto;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.oppija.schema.YhteystietoDto;
 import jakarta.validation.ValidationException;
 import java.io.IOException;
 import java.net.URI;
@@ -129,37 +130,5 @@ public class OppijanumerorekisteriClient {
             "No yhteystieto found for type " + tyyppi + " for oppijanumero " + oppijanumero);
       }
     };
-  }
-
-  @JsonIgnoreProperties(ignoreUnknown = true)
-  private record HenkiloDto(
-      String oppijanumero,
-      String hetu,
-      String etunimet,
-      String sukunimi,
-      List<YhteystiedotRyhmaDto> yhteystiedotRyhma) {}
-
-  @JsonIgnoreProperties(ignoreUnknown = true)
-  private record YhteystiedotRyhmaDto(
-      @JsonProperty("ryhmaKuvaus") String yhteystietotyypitKoodiarvo,
-      List<YhteystietoDto> yhteystieto) {
-    public static final String YHTEYSTIETOTYYPIT_VTJ_VAKINAINEN_KOTIMAINEN_OSOITE =
-        "yhteystietotyyppi4";
-
-    @JsonIgnore
-    public boolean isVtjVakinainenKotimainenOsoite() {
-      return YHTEYSTIETOTYYPIT_VTJ_VAKINAINEN_KOTIMAINEN_OSOITE.equals(yhteystietotyypitKoodiarvo);
-    }
-  }
-
-  @JsonIgnoreProperties(ignoreUnknown = true)
-  private record YhteystietoDto(String yhteystietoTyyppi, String yhteystietoArvo) {}
-
-  private record AccessTokenResponse(@JsonProperty("access_token") String accessToken) {
-    AccessTokenResponse {
-      if (accessToken == null || accessToken.isBlank()) {
-        throw new IllegalArgumentException("access_token is required");
-      }
-    }
   }
 }

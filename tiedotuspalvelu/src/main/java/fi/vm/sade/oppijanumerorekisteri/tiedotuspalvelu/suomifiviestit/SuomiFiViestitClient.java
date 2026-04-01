@@ -1,18 +1,15 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.LoggingHttpClient;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedotuspalveluProperties;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.schema.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -190,26 +187,6 @@ public class SuomiFiViestitClient {
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       throw new IllegalStateException("Suomi.fi events call interrupted", e);
-    }
-  }
-
-  record SendResponse(String messageId) {}
-
-  record AttachmentResponse(String attachmentId) {}
-
-  record MultichannelSendResponse(String messageId) {}
-
-  record EventsResponse(String continuationToken, List<Event> events) {}
-
-  record Event(String type, OffsetDateTime eventTime, Map<String, Object> metadata) {}
-
-  private record AccessTokenRequestBody(String username, String password) {}
-
-  private record AccessTokenResponse(@JsonProperty("access_token") String accessToken) {
-    AccessTokenResponse {
-      if (accessToken == null || accessToken.isBlank()) {
-        throw new IllegalArgumentException("access_token is required");
-      }
     }
   }
 }

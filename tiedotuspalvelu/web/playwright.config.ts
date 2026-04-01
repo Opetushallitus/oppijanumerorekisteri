@@ -14,9 +14,10 @@ const config: PlaywrightTestConfig = {
   fullyParallel: true,
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
-  workers: isCI ? 1 : 4,
+  workers: 1,
   reporter: [
     ["list", { printSteps: true }],
+    ["html", { open: isCI ? "never" : "always" }],
     [
       "junit",
       {

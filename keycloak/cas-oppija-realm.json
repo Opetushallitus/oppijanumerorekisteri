@@ -4,7 +4,7 @@
   "sslRequired": "none",
   "loginTheme": "dev-quicklogin",
   "attributes": {
-    "quickLoginUsers": "[{\"label\":\"Nordea Demo (210281-9988)\",\"username\":\"suomi.fi,210281-9988\",\"password\":\"210281-9988\"},{\"label\":\"Leon Elias Germany (eIDAS)\",\"username\":\"suomi.fi,DE/FI/366193B0E55D436B494769486A9284D04E0A1DCFDBF8B9EDA63E5BF4C3CFE6F5\",\"password\":\"eidas\"}]"
+    "quickLoginUsers": "[{\"label\":\"Nordea Demo (210281-9988)\",\"username\":\"suomi.fi,210281-9988\",\"password\":\"210281-9988\"},{\"label\":\"Hennakaarina Sevillantes (181064-998C)\",\"username\":\"suomi.fi,181064-998C\",\"password\":\"181064-998C\"},{\"label\":\"Leon Elias Germany (eIDAS)\",\"username\":\"suomi.fi,DE/FI/366193B0E55D436B494769486A9284D04E0A1DCFDBF8B9EDA63E5BF4C3CFE6F5\",\"password\":\"eidas\"}]"
   },
   "requiredActions": [
     {
@@ -28,7 +28,9 @@
         "http://localhost:8088/omat-viestit/*",
         "http://localhost:8080/omat-viestit/*"
       ],
-      "webOrigins": ["*"],
+      "webOrigins": [
+        "*"
+      ],
       "protocolMappers": [
         {
           "name": "displayName",
@@ -92,11 +94,51 @@
         }
       ],
       "attributes": {
-        "displayName": ["Nordea Demo"],
-        "givenName": ["Nordea"],
-        "sn": ["Demo"],
-        "nationalIdentificationNumber": ["210281-9988"],
-        "personOid": ["1.2.246.562.24.73833272757"]
+        "displayName": [
+          "Nordea Demo"
+        ],
+        "givenName": [
+          "Nordea"
+        ],
+        "sn": [
+          "Demo"
+        ],
+        "nationalIdentificationNumber": [
+          "210281-9988"
+        ],
+        "personOid": [
+          "1.2.246.562.24.73833272757"
+        ]
+      }
+    },
+    {
+      "username": "suomi.fi,181064-998C",
+      "enabled": true,
+      "firstName": "Hennakaarina",
+      "lastName": "Sevillantes",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "181064-998C",
+          "temporary": false
+        }
+      ],
+      "attributes": {
+        "displayName": [
+          "Hennakaarina Sevillantes"
+        ],
+        "givenName": [
+          "Hennakaarina"
+        ],
+        "sn": [
+          "Sevillantes"
+        ],
+        "nationalIdentificationNumber": [
+          "181064-998C"
+        ],
+        "personOid": [
+          "1.2.246.562.98.77340099611"
+        ]
       }
     },
     {
@@ -112,10 +154,18 @@
         }
       ],
       "attributes": {
-        "displayName": ["Leon Elias Germany"],
-        "givenName": ["Leon Elias"],
-        "sn": ["Germany"],
-        "personOid": ["1.2.246.562.24.92212175391"]
+        "displayName": [
+          "Leon Elias Germany"
+        ],
+        "givenName": [
+          "Leon Elias"
+        ],
+        "sn": [
+          "Germany"
+        ],
+        "personOid": [
+          "1.2.246.562.24.92212175391"
+        ]
       }
     }
   ]

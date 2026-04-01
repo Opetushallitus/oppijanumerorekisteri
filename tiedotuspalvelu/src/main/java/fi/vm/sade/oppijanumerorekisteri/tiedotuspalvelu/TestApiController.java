@@ -1,5 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.oppija.FetchOppijaTask;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SendSuomiFiViestitTask;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
@@ -45,6 +47,21 @@ public class TestApiController {
     return ResponseEntity.noContent().build();
   }
 
+  private final FetchOppijaTask fetchOppijaTask;
+  private final SendSuomiFiViestitTask sendSuomiFiViestitTask;
+
+  @PostMapping("/test/runFetchOppijaTask")
+  public ResponseEntity<Void> runFetchOppijaTask() {
+    fetchOppijaTask.execute();
+    return ResponseEntity.noContent().build();
+  }
+
+  @PostMapping("/test/runSendSuomiFiViestitTask")
+  public ResponseEntity<Void> runSendSuomiFiViestitTask() {
+    sendSuomiFiViestitTask.execute();
+    return ResponseEntity.noContent().build();
+  }
+
   @PostMapping("/test/generateHenkiloOid")
   public OidResponse generateHenkiloOid() {
     return new OidResponse(OidGenerator.generateHenkiloOid());
@@ -56,5 +73,4 @@ public class TestApiController {
   }
 
   public record OidResponse(String oid) {}
-  ;
 }
