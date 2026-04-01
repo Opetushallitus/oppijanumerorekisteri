@@ -105,6 +105,7 @@ public class SecurityConfiguration {
                     .requestMatchers("/actuator/**").permitAll()
                     .requestMatchers("/favicon.ico").permitAll()
                     .requestMatchers("/static/**").permitAll()
+                    .requestMatchers("/rekisteroityminen").permitAll()
                     .requestMatchers("/kayttaja/**").permitAll()
                     .requestMatchers("/kayttaja.html").permitAll()
                     .anyRequest().authenticated())
