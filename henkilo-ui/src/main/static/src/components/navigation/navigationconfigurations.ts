@@ -60,12 +60,16 @@ export const oppijaNavigation = [
     {
         path: '/oppija/luonti',
         label: 'NAVI_OPPIJAN_LUONTI',
-        sallitutRoolit: ['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI', 'OPPIJANUMEROREKISTERI_YLEISTUNNISTE_LUONTI'],
+        sallitutRoolit: [
+            'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
+            'OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI',
+            'OPPIJANUMEROREKISTERI_YLEISTUNNISTE_LUONTI',
+        ],
     },
     {
         path: '/oppijoidentuonti',
         label: 'NAVI_OPPIJOIDEN_TUONTI',
-        sallitutRoolit: ['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI'],
+        sallitutRoolit: ['OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI'],
     },
 ];
 
@@ -74,9 +78,7 @@ export const virkailijaNavigation = [
         path: '/virkailijahaku',
         label: 'VIRKAILIJAHAKU',
         sallitutRoolit: [
-            'OPPIJANUMEROREKISTERI_READ',
-            'OPPIJANUMEROREKISTERI_HENKILON_RU',
-            'OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',
+            'KAYTTOOIKEUS_REKISTERINPITAJA',
             'KAYTTOOIKEUS_READ',
             'KAYTTOOIKEUS_CRUD',
             'KAYTTOOIKEUS_ACCESS_RIGHTS_REPORT',
@@ -85,28 +87,22 @@ export const virkailijaNavigation = [
     {
         path: '/anomukset',
         label: 'NAVI_KAYTTOOIKEUSANOMUKSET',
-        sallitutRoolit: [
-            'OPPIJANUMEROREKISTERI_READ',
-            'OPPIJANUMEROREKISTERI_HENKILON_RU',
-            'OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',
-            'KAYTTOOIKEUS_READ',
-            'KAYTTOOIKEUS_CRUD',
-        ],
+        sallitutRoolit: ['KAYTTOOIKEUS_REKISTERINPITAJA', 'KAYTTOOIKEUS_READ', 'KAYTTOOIKEUS_CRUD'],
     },
     {
         path: '/kutsutut',
         label: 'NAVI_KUTSUTUT',
-        sallitutRoolit: ['KAYTTOOIKEUS_READ', 'KAYTTOOIKEUS_CRUD'],
+        sallitutRoolit: ['KAYTTOOIKEUS_REKISTERINPITAJA', 'KAYTTOOIKEUS_READ', 'KAYTTOOIKEUS_CRUD'],
     },
     {
         path: '/kutsulomake',
         label: 'NAVI_VIRKAILIJAN_KUTSUMINEN',
-        sallitutRoolit: ['KAYTTOOIKEUS_READ', 'KAYTTOOIKEUS_CRUD'],
+        sallitutRoolit: ['KAYTTOOIKEUS_REKISTERINPITAJA', 'KAYTTOOIKEUS_READ', 'KAYTTOOIKEUS_CRUD'],
     },
     {
         path: '/raportit/kayttooikeudet',
         label: 'KAYTTOOIKEUSRAPORTTI_TITLE',
-        sallitutRoolit: ['KAYTTOOIKEUS_ACCESS_RIGHTS_REPORT'],
+        sallitutRoolit: ['KAYTTOOIKEUS_REKISTERINPITAJA', 'KAYTTOOIKEUS_ACCESS_RIGHTS_REPORT'],
     },
 ];
 
