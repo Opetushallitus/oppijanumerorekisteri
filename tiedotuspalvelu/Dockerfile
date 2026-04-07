@@ -1,4 +1,4 @@
-FROM maven:3.9.14-amazoncorretto-21-al2023@sha256:b44c10a65ca15fb36264057c03cb09a92f1e6e83813a12722f1b9537c1df24a6 AS build
+FROM maven:3.9.14-amazoncorretto-21-al2023@sha256:528f268dc321c72e08d27f2f68cce27f108182f8db1de5195155fecf0d1e4b1a AS build
 
 RUN dnf install -y nodejs24 \
   && alternatives --install /usr/bin/node node /usr/bin/node-24 90 \
