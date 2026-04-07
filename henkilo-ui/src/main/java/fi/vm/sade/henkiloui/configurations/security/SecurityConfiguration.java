@@ -40,7 +40,7 @@ public class SecurityConfiguration {
         ServiceProperties serviceProperties = new ServiceProperties();
         serviceProperties.setService(casProperties.getService() + SPRING_CAS_SECURITY_CHECK_PATH);
         serviceProperties.setSendRenew(false);
-        serviceProperties.setAuthenticateAllArtifacts(true);
+        serviceProperties.setAuthenticateAllArtifacts(false);
         return serviceProperties;
     }
 
