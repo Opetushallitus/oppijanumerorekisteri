@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Outlet, useParams } from 'react-router';
+import { Outlet } from 'react-router';
 
 import Loader from '../components/common/icons/Loader';
 import background from '../img/unauthenticated_background.jpg';
-import { useLocalisations } from '../selectors';
 import ophLogo from '../img/logo_oph.svg';
 import okmLogo from '../img/logo_okm.png';
 import { useGetLocalisationsQuery } from '../api/lokalisointi';
 import { useGetOmattiedotQuery } from '../api/kayttooikeus';
-import VirhePage from './VirhePage';
 import { OphDsToasts } from '../components/design-system/OphDsToast';
+import { KirjauduUlosVirhe } from './KirjauduUlosVirhe';
 
 const App = () => {
     const [isInitialized, setIsInitialized] = useState(false);
-    const { getLocalisations } = useLocalisations();
-    const params = useParams();
     const { isSuccess: isLocalisationsSuccess } = useGetLocalisationsQuery('henkilo-ui');
     const { data: omattiedot, isSuccess: isOmattiedotSuccess } = useGetOmattiedotQuery();
-    const L = getLocalisations(params.locale) ?? {};
 
     useEffect(() => {
         window.document.body.style.backgroundImage = `url('${background}')`;
@@ -37,12 +33,7 @@ const App = () => {
     return !isInitialized ? (
         <Loader />
     ) : isOmattiedotSuccess && omattiedot?.oidHenkilo ? (
-        <VirhePage>
-            <p className="oph-bold">{L['KAYTTAJA_ULOSKIRJAUTUMISEN_PAKOTUS']}</p>
-            <p className="oph-bold">
-                <a href="/cas/logout">{L['KAYTTAJA_ULOSKIRJAUTUMISEN_LINKKI']}</a>
-            </p>
-        </VirhePage>
+        <KirjauduUlosVirhe />
     ) : (
         <div className="oph-typography mainContainer">
             <OphDsToasts />
