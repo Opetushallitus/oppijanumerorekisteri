@@ -28,6 +28,7 @@ import { OppijaPage } from './components/oppija/OppijaPage';
 import { OppijaDuplicatesPage } from './components/oppija/OppijaDuplicatesPage';
 import { OppijaVtjVertailuPage } from './components/oppija/OppijaVtjVertailuPage';
 import { isNewNavi } from './components/navigation/TopNavigation';
+import { RekisteroityminenPage } from './kayttaja/RekisteroityminenPage';
 
 export const AppRoutes = () => (
     <Routes>
@@ -71,6 +72,7 @@ export const AppRoutes = () => (
             <Route path="/jarjestelmatunnus" element={<JarjestelmatunnusListPage />} />
             <Route path="/jarjestelmatunnus/luonti" element={<JarjestelmatunnusCreatePage />} />
             <Route path="/jarjestelmatunnus/:oid" element={<JarjestelmatunnusEditPage />} />
+            <Route path="/rekisteroityminen" element={<RekisteroityminenPage />} />
         </Route>
     </Routes>
 );
