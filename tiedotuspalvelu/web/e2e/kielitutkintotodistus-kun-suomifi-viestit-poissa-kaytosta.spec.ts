@@ -8,6 +8,7 @@ import {
   runSendSuomiFiViestitTask,
   runFetchOppijaTask,
   downloadReportAndFindLine,
+  runFetchKielitutkintotodistusTask,
 } from "./test-helpers";
 
 test.beforeAll(async ({ request }) => {
@@ -22,7 +23,8 @@ test("Kielitutkintotodistus - Suomi.fi-viestit ei käytössä", async ({
     return await createTiedote(request, {
       oppijanumero: OPPIJANUMERO_SEVILLANTES_HENNAKARINA,
       idempotencyKey: randomUUID(),
-      todistusUrl: `s3://bucket/${randomUUID()}.pdf`,
+      todistusBucket: "bucket",
+      todistusKey: `${randomUUID()}/todistus.pdf`,
       opiskeluoikeusOid: await generateOpiskeluoikeusOid(request),
     });
   });
@@ -48,6 +50,10 @@ test("Kielitutkintotodistus - Suomi.fi-viestit ei käytössä", async ({
     expect(
       await downloadReportAndFindLine(page, tiedoteApiResponse.id),
     ).toContain("KIELITUTKINTOTODISTUKSEN_NOUTO");
+    await runFetchKielitutkintotodistusTask(request);
+    expect(
+      await downloadReportAndFindLine(page, tiedoteApiResponse.id),
+    ).toContain("SUOMIFI_VIESTIN_LÄHETYS_PAPERIPOSTIOPTIOLLA");
   });
 
   await test.step("Oppija näkee tiedotteen omat-viestit sivulla", async () => {

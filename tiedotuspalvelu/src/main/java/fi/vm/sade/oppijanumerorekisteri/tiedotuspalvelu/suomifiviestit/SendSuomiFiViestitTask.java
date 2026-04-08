@@ -1,15 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit;
 
-import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.LoggingHttpClient;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.Tiedote;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedoteRepository;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedotuspalveluProperties;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.locale.LocalisationRepository;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.schema.*;
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -28,7 +23,6 @@ public class SendSuomiFiViestitTask {
   private final TiedotuspalveluProperties tiedotuspalveluProperties;
   private final LocalisationRepository localisationRepository;
   private final TransactionTemplate transactionTemplate;
-  private final LoggingHttpClient todistusHttpClient = new LoggingHttpClient("todistus");
 
   public void execute() {
     log.info("Running SendSuomiFiViestitTask");
@@ -103,7 +97,7 @@ public class SendSuomiFiViestitTask {
   }
 
   private String sendPaperMailMessage(SuomiFiViesti suomiFiViesti) {
-    var pdfBytes = fetchPdf(suomiFiViesti.getTiedote().getTodistusUrl());
+    var pdfBytes = suomiFiViesti.getTiedote().getKielitutkintotodistusPdf().getContent();
     var attachmentId =
         suomiFiViestitClient.sendAttachment("todistus.pdf", "application/pdf", pdfBytes);
     var request =
@@ -116,23 +110,6 @@ public class SendSuomiFiViestitTask {
     var messageId = suomiFiViestitClient.sendMultichannelMessage(request);
     log.info("Sent Suomi.fi paper mail viesti for tiedote {}", suomiFiViesti.getTiedote().getId());
     return messageId;
-  }
-
-  private byte[] fetchPdf(String url) {
-    try {
-      var request = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
-      var response = todistusHttpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
-      if (response.statusCode() < 200 || response.statusCode() >= 300) {
-        throw new IllegalStateException(
-            "Failed to fetch PDF from " + url + " with status " + response.statusCode());
-      }
-      return response.body();
-    } catch (IOException e) {
-      throw new IllegalStateException("Failed to fetch PDF from " + url, e);
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new IllegalStateException("PDF fetch interrupted", e);
-    }
   }
 
   private Sender createSender() {

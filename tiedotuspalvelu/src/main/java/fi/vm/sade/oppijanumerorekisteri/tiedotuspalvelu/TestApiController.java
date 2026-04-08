@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.koski.FetchKielitutkintotodistusTask;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.oppija.FetchOppijaTask;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SendSuomiFiViestitTask;
 import java.util.List;
@@ -23,6 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class TestApiController {
   private final JdbcTemplate jdbcTemplate;
+  private final FetchOppijaTask fetchOppijaTask;
+  private final SendSuomiFiViestitTask sendSuomiFiViestitTask;
+  private final FetchKielitutkintotodistusTask fetchKielitutkintotodistusTask;
 
   @Bean
   @Order(0)
@@ -47,9 +51,6 @@ public class TestApiController {
     return ResponseEntity.noContent().build();
   }
 
-  private final FetchOppijaTask fetchOppijaTask;
-  private final SendSuomiFiViestitTask sendSuomiFiViestitTask;
-
   @PostMapping("/test/runFetchOppijaTask")
   public ResponseEntity<Void> runFetchOppijaTask() {
     fetchOppijaTask.execute();
@@ -59,6 +60,12 @@ public class TestApiController {
   @PostMapping("/test/runSendSuomiFiViestitTask")
   public ResponseEntity<Void> runSendSuomiFiViestitTask() {
     sendSuomiFiViestitTask.execute();
+    return ResponseEntity.noContent().build();
+  }
+
+  @PostMapping("/test/runFetchKielitutkintotodistusTask")
+  public ResponseEntity<Void> runFetchKielitutkintotodistusTask() {
+    fetchKielitutkintotodistusTask.execute();
     return ResponseEntity.noContent().build();
   }
 

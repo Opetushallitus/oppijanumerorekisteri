@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.KielitutkintotodistusPdf;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.SuomiFiViesti;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
@@ -35,8 +36,14 @@ public class Tiedote {
   @Column(nullable = false)
   private String oppijanumero;
 
-  @Column(nullable = false)
+  @Column(nullable = true)
   private String todistusUrl;
+
+  @Column(name = "todistusbucketname", nullable = true)
+  private String todistusBucketName;
+
+  @Column(name = "todistusobjectkey", nullable = true)
+  private String todistusObjectKey;
 
   @Column(nullable = false, updatable = false, insertable = false)
   private OffsetDateTime created;
@@ -61,6 +68,9 @@ public class Tiedote {
   private String state;
 
   @Column private String opiskeluoikeusOid;
+
+  @OneToOne(mappedBy = "tiedote", cascade = CascadeType.ALL, orphanRemoval = true)
+  private KielitutkintotodistusPdf kielitutkintotodistusPdf;
 
   @OneToOne(
       mappedBy = "tiedote",

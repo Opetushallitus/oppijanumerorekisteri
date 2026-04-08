@@ -6,6 +6,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.ResourceReader;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.Tiedote;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedotuspalveluApiTest;
 import java.time.OffsetDateTime;
@@ -18,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
-public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
+public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest implements ResourceReader {
 
   @Autowired private SendSuomiFiViestitTask sendSuomiFiViestitTask;
 
@@ -172,15 +173,7 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
 
   @Test
   public void sendsPaperMailMessage() throws Exception {
-    byte[] PDF_MAGIC_BYTES = {0x25, 0x50, 0x44, 0x46};
     stubGettingSuomiFiViestitAccessToken();
-    wireMock.stubFor(
-        get(urlEqualTo("/todistus.pdf"))
-            .willReturn(
-                aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/pdf")
-                    .withBody(PDF_MAGIC_BYTES)));
     wireMock.stubFor(
         post(urlEqualTo("/v2/attachments"))
             .willReturn(
@@ -200,7 +193,13 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest {
         createTiedoteAndRunTask(
             t -> {
               t.setState(Tiedote.STATE_SUOMIFI_VIESTIN_LÄHETYS_PAPERIPOSTIOPTIOLLA);
-              t.setTodistusUrl(wireMock.baseUrl() + "/todistus.pdf");
+              t.setTodistusBucketName("bucketName");
+              t.setTodistusObjectKey("objectKey");
+              t.setKielitutkintotodistusPdf(
+                  KielitutkintotodistusPdf.builder()
+                      .tiedote(t)
+                      .content(readBytes("/fakekielitutkintotodistus.pdf"))
+                      .build());
               t.getViesti().setMessageType("paperMail");
             });
 

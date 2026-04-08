@@ -68,14 +68,17 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
 
   @Test
   public void createTiedoteSucceedsWithoutOpiskeluoikeusOid() throws Exception {
+    var idempotencyKey = UUID.randomUUID().toString();
     var body =
         """
         {
           "oppijanumero": "%s",
+          "todistusBucket": "bucket",
+          "todistusKey": "%s/todistus.pdf",
           "idempotencyKey": "%s"
         }
         """
-            .formatted(OPPIJANUMERO, UUID.randomUUID().toString());
+            .formatted(OPPIJANUMERO, idempotencyKey, idempotencyKey);
     performAuthorizedPostRequest(body).andExpect(status().isOk());
   }
 
@@ -155,10 +158,12 @@ public class ApiControllerTest extends TiedotuspalveluApiTest {
         {
           "oppijanumero": "%s",
           "opiskeluoikeusOid": "%s",
+          "todistusBucket": "bucket",
+          "todistusKey": "%s/todistus.pdf",
           "idempotencyKey": "%s"
         }
         """
-        .formatted(OPPIJANUMERO, OPISKELUOIKEUS_OID, idempotencyKey);
+        .formatted(OPPIJANUMERO, OPISKELUOIKEUS_OID, idempotencyKey, idempotencyKey);
   }
 
   private @NonNull ResultActions performAuthorizedPostRequest(String content) throws Exception {

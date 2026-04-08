@@ -22,7 +22,8 @@ test("Kielitutkintotodistus - Suomi.fi-viestit käytössä", async ({
     return await createTiedote(request, {
       oppijanumero: OPPIJANUMERO_NORDEA_DEMO,
       idempotencyKey: randomUUID(),
-      todistusUrl: `s3://bucket/${randomUUID()}.pdf`,
+      todistusBucket: "bucket",
+      todistusKey: `${randomUUID()}/todistus.pdf`,
       opiskeluoikeusOid: await generateOpiskeluoikeusOid(request),
     });
   });

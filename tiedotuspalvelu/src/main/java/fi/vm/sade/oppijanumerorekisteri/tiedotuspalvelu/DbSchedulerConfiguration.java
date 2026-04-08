@@ -4,6 +4,7 @@ import com.github.kagkarlsson.scheduler.task.Task;
 import com.github.kagkarlsson.scheduler.task.helper.Tasks;
 import com.github.kagkarlsson.scheduler.task.schedule.Schedules;
 import fi.vm.sade.JdbcSessionMappingStorage;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.koski.FetchKielitutkintotodistusTask;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.locale.FetchLocalisationsTask;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.oppija.FetchOppijaTask;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.FetchSuomiFiViestitEventsTask;
@@ -20,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
 @AllArgsConstructor
 public class DbSchedulerConfiguration {
   private final FetchOppijaTask fetchOppijaTask;
-  private final KielitutkintotodistuksenNoutoTask kielitutkintotodistuksenNoutoTask;
+  private final FetchKielitutkintotodistusTask kielitutkintotodistuksenNoutoTask;
   private final SendSuomiFiViestitTask sendSuomiFiViestitTask;
   private final FetchSuomiFiViestitEventsTask fetchSuomiFiViestitEventsTask;
   private final FetchLocalisationsTask fetchLocalisationsTask;

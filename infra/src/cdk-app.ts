@@ -909,6 +909,10 @@ class TiedotuspalveluStack extends cdk.Stack {
         },
       },
     );
+    const koskiRoleArn = ssm.StringParameter.valueFromLookup(
+      this,
+      "/tiedotuspalvelu/koski-role-arn",
+    );
 
     const appPort = 8080;
     taskDefinition.addContainer("AppContainer", {
@@ -930,6 +934,7 @@ class TiedotuspalveluStack extends cdk.Stack {
         "spring.security.oauth2.resourceserver.jwt.issuer-uri": `https://${getEnvironment()}.otuva.opintopolku.fi/kayttooikeus-service`,
         "spring.security.oauth2.resourceserver.jwt.jwk-set-uri": `https://${getEnvironment()}.otuva.opintopolku.fi/kayttooikeus-service/oauth2/jwks`,
         "spring.datasource.url": `jdbc:postgresql://${props.database.clusterEndpoint.hostname}:${props.database.clusterEndpoint.port}/tiedotuspalvelu`,
+        "tiedotuspalvelu.koski-role-arn": koskiRoleArn,
       },
       secrets: {
         "tiedotuspalvelu.otuva.oauth2-client-id": ecs.Secret.fromSsmParameter(
@@ -989,6 +994,13 @@ class TiedotuspalveluStack extends cdk.Stack {
         },
       ],
     });
+
+    taskDefinition.addToTaskRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["sts:AssumeRole"],
+        resources: [koskiRoleArn],
+      }),
+    );
 
     const service = new ecs.FargateService(this, "Service", {
       cluster: props.ecsCluster,

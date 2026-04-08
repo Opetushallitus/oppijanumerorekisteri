@@ -19,11 +19,20 @@ export async function runSendSuomiFiViestitTask(request: APIRequestContext) {
   const response = await request.post("/test/runSendSuomiFiViestitTask");
   expect(response.ok()).toBeTruthy();
 }
+export async function runFetchKielitutkintotodistusTask(
+  request: APIRequestContext,
+) {
+  const response = await request.post(
+    "/test/runFetchKielitutkintotodistusTask",
+  );
+  expect(response.ok()).toBeTruthy();
+}
 
 export type TiedoteDto = {
   oppijanumero: string;
   idempotencyKey: string;
-  todistusUrl: string;
+  todistusBucket: string;
+  todistusKey: string;
   opiskeluoikeusOid: string;
 };
 

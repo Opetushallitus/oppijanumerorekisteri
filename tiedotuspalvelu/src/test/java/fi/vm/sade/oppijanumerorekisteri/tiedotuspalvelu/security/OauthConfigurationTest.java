@@ -64,10 +64,17 @@ public class OauthConfigurationTest extends TiedotuspalveluApiTest {
   @Test
   public void postEndpointRejectsTokenWithoutRequiredRole() throws Exception {
     var token = fetchToken(OIKEUDETON);
+    var uuid = UUID.randomUUID().toString();
     var content =
         """
-        {"oppijanumero": "1.2.246.562.24.00000000001", "idempotencyKey": "%s"}"""
-            .formatted(UUID.randomUUID().toString());
+        {
+          "oppijanumero": "1.2.246.562.24.00000000001",
+          "todistusBucket": "bucket",
+          "todistusKey": "%s/todistus.pdf",
+          "idempotencyKey": "%s"
+        }
+        """
+            .formatted(uuid, uuid);
     mockMvc
         .perform(
             post("/omat-viestit/api/v1/tiedote/kielitutkintotodistus")
@@ -79,10 +86,17 @@ public class OauthConfigurationTest extends TiedotuspalveluApiTest {
 
   @Test
   public void postEndpointIsAccessibleWithValidTokenAndRole() throws Exception {
+    var uuid = UUID.randomUUID().toString();
     var content =
         """
-        {"oppijanumero": "1.2.246.562.24.00000000001", "idempotencyKey": "%s"}"""
-            .formatted(UUID.randomUUID().toString());
+        {
+          "oppijanumero": "1.2.246.562.24.00000000001",
+          "todistusBucket": "bucket",
+          "todistusKey": "%s/todistus.pdf",
+          "idempotencyKey": "%s"
+        }
+        """
+            .formatted(uuid, uuid);
     mockMvc
         .perform(
             post("/omat-viestit/api/v1/tiedote/kielitutkintotodistus")

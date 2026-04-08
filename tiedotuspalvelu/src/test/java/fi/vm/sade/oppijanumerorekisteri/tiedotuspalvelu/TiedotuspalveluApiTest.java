@@ -3,6 +3,8 @@ package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.api.TiedoteDto;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.api.TiedoteResponse;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.security.CasOppijaUserDetailsService;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -10,6 +12,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.Consumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -76,13 +79,21 @@ public class TiedotuspalveluApiTest {
   }
 
   protected Tiedote createTiedote(String oppijanumero) throws Exception {
-    var content =
-        objectMapper.writeValueAsString(
-            new ApiController.TiedoteDto(
-                oppijanumero,
-                UUID.randomUUID().toString(),
-                null,
-                Optional.of(OidGenerator.generateOpiskeluoikeusOid())));
+    return createTiedote(builder -> builder.oppijanumero(oppijanumero));
+  }
+
+  protected Tiedote createTiedote(Consumer<TiedoteDto.TiedoteDtoBuilder> requestModifier)
+      throws Exception {
+    var builder =
+        TiedoteDto.builder()
+            .oppijanumero(OidGenerator.generateHenkiloOid())
+            .idempotencyKey(UUID.randomUUID().toString())
+            .todistusBucketName("koski-tiedotuspalvelu")
+            .todistusObjectKey("2d08a8dc-378e-40aa-a3ce-5d987795e619/tiedote.pdf")
+            .opiskeluoikeusOid(Optional.of(OidGenerator.generateOpiskeluoikeusOid()));
+    requestModifier.accept(builder);
+
+    var content = objectMapper.writeValueAsString(builder.build());
     var response =
         mockMvc
             .perform(
@@ -99,7 +110,7 @@ public class TiedotuspalveluApiTest {
     return tiedoteRepository.findById(id).orElseThrow();
   }
 
-  protected ApiController.TiedoteResponse getTiedote(UUID id) throws Exception {
+  protected TiedoteResponse getTiedote(UUID id) throws Exception {
     var response =
         mockMvc
             .perform(
@@ -111,7 +122,7 @@ public class TiedotuspalveluApiTest {
             .andReturn()
             .getResponse()
             .getContentAsString();
-    return objectMapper.readValue(response, ApiController.TiedoteResponse.class);
+    return objectMapper.readValue(response, TiedoteResponse.class);
   }
 
   public static final String OPPIJANUMERO_NORDEA_DEMO = "1.2.246.562.24.73833272757";
