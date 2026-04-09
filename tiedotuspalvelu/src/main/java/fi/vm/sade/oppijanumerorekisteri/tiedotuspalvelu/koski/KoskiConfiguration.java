@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.koski;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.AwsConfiguration;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
@@ -13,6 +14,7 @@ import software.amazon.awssdk.services.sts.auth.StsAssumeRoleCredentialsProvider
 import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
 
 @Configuration
+@ConditionalOnProperty(name = "tiedotuspalvelu.koski-role-arn")
 public class KoskiConfiguration {
   public static final String QUALIFIER = "koski";
   private static final Region REGION = Region.EU_WEST_1;
