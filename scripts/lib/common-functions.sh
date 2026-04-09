@@ -107,7 +107,7 @@ function init_nodejs {
   export NVM_DIR="${NVM_DIR:-$HOME/.cache/nvm}"
   set +o errexit
   source "$repo/scripts/lib/nvm.sh"
-  nvm use "${node_version}" || nvm install "${node_version}"
+  nvm use "${node_version}" || nvm install -b "${node_version}"
   set -o errexit
 }
 
