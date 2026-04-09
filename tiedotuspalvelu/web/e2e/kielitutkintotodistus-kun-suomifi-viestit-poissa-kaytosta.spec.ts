@@ -1,4 +1,4 @@
-import { expect, Page, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { randomUUID } from "crypto";
 import {
   createTiedote,
@@ -54,6 +54,10 @@ test("Kielitutkintotodistus - Suomi.fi-viestit ei käytössä", async ({
     expect(
       await downloadReportAndFindLine(page, tiedoteApiResponse.id),
     ).toContain("SUOMIFI_VIESTIN_LÄHETYS_PAPERIPOSTIOPTIOLLA");
+    await runSendSuomiFiViestitTask(request);
+    expect(
+      await downloadReportAndFindLine(page, tiedoteApiResponse.id),
+    ).toContain("TIEDOTE_KÄSITELTY");
   });
 
   await test.step("Oppija näkee tiedotteen omat-viestit sivulla", async () => {
@@ -77,16 +81,3 @@ test("Kielitutkintotodistus - Suomi.fi-viestit ei käytössä", async ({
     });
   });
 });
-
-async function assertTiedoteState(
-  page: Page,
-  oppijanumero: string,
-  tiedoteState: string,
-) {
-  const table = page.locator("table");
-  const row = table.locator("tbody tr", {
-    hasText: oppijanumero,
-  });
-  await expect(row).toBeVisible();
-  await expect(row).toContainText(tiedoteState);
-}
