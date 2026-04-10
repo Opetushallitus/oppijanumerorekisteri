@@ -1,78 +1,73 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit;
 
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.Tiedote;
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedoteProcessingTask;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedoteRepository;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.TiedotuspalveluProperties;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.locale.LocalisationRepository;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.suomifiviestit.schema.*;
 import java.time.OffsetDateTime;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @Component
 @Slf4j
-@AllArgsConstructor
-public class SendSuomiFiViestitTask {
+public class SendSuomiFiViestitTask extends TiedoteProcessingTask {
 
-  private static final int _24_HOURS_IN_MINUTES = 60 * 24;
-  private final TiedoteRepository tiedoteRepository;
   private final SuomiFiViestitClient suomiFiViestitClient;
   private final TiedotuspalveluProperties tiedotuspalveluProperties;
   private final LocalisationRepository localisationRepository;
-  private final TransactionTemplate transactionTemplate;
 
-  public void execute() {
-    log.info("Running SendSuomiFiViestitTask");
-    var unprocessed =
-        tiedoteRepository.findForProcessingByState(
-            List.of(
-                Tiedote.STATE_SUOMIFI_VIESTIN_LÄHETYS,
-                Tiedote.STATE_SUOMIFI_VIESTIN_LÄHETYS_PAPERIPOSTIOPTIOLLA));
+  public SendSuomiFiViestitTask(
+      TiedoteRepository tiedoteRepository,
+      SuomiFiViestitClient suomiFiViestitClient,
+      TiedotuspalveluProperties tiedotuspalveluProperties,
+      LocalisationRepository localisationRepository,
+      TransactionTemplate transactionTemplate) {
+    super(transactionTemplate, tiedoteRepository);
+    this.suomiFiViestitClient = suomiFiViestitClient;
+    this.tiedotuspalveluProperties = tiedotuspalveluProperties;
+    this.localisationRepository = localisationRepository;
+  }
+
+  @Override
+  protected List<String> statesToProcess() {
+    return List.of(
+        Tiedote.STATE_SUOMIFI_VIESTIN_LÄHETYS,
+        Tiedote.STATE_SUOMIFI_VIESTIN_LÄHETYS_PAPERIPOSTIOPTIOLLA);
+  }
+
+  @Override
+  protected void processTiedote(Tiedote tiedote) {
+    var viesti = tiedote.getViesti();
     var otsikko = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_OTSIKKO", "fi");
     var sisalto = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_VIESTI", "fi");
-    for (var tiedote : unprocessed) {
+    viesti.setOtsikko(otsikko);
+    viesti.setSisalto(sisalto);
+    var messageId = sendSuomiFiViesti(viesti);
+    viesti.setMessageId(messageId);
+    viesti.setProcessedAt(OffsetDateTime.now());
+    tiedote.setState(Tiedote.STATE_TIEDOTE_KÄSITELTY);
+  }
+
+  @Override
+  protected void handleError(Tiedote tiedote, Exception e) {
+    if (e instanceof MailboxNotInUseException || e.getCause() instanceof MailboxNotInUseException) {
       var viesti = tiedote.getViesti();
-      try {
-        transactionTemplate.executeWithoutResult(
-            status -> {
-              viesti.setOtsikko(otsikko);
-              viesti.setSisalto(sisalto);
-              var messageId = sendSuomiFiViesti(viesti);
-              viesti.setMessageId(messageId);
-              viesti.setProcessedAt(OffsetDateTime.now());
-              tiedote.setNextRetry(null);
-              tiedote.setRetryCount(0);
-              tiedote.setState(Tiedote.STATE_TIEDOTE_KÄSITELTY);
-              tiedoteRepository.save(tiedote);
-            });
-      } catch (MailboxNotInUseException e) {
-        log.info("SuomiFiViesti {} mailbox not in use, switching to paper mail", viesti.getId());
-        transactionTemplate.executeWithoutResult(
-            status -> {
-              tiedote.setState(Tiedote.STATE_KIELITUTKINTOTODISTUKSEN_NOUTO);
-              tiedote.setRetryCount(0);
-              tiedote.setNextRetry(null);
-              viesti.setMessageType("paperMail");
-              tiedoteRepository.save(tiedote);
-            });
-      } catch (Exception e) {
-        log.error(
-            "Failed to send SuomiFiViesti {} for tiedote {}", viesti.getId(), tiedote.getId(), e);
-        transactionTemplate.executeWithoutResult(
-            status -> {
-              var t = tiedoteRepository.findById(tiedote.getId()).orElse(tiedote);
-              t.setRetryCount(t.getRetryCount() + 1);
-              long delayInMinutes =
-                  (long) Math.min(Math.pow(2, t.getRetryCount() - 1), _24_HOURS_IN_MINUTES);
-              t.setNextRetry(OffsetDateTime.now().plusMinutes(delayInMinutes));
-              tiedoteRepository.save(t);
-            });
-      }
+      log.info("SuomiFiViesti {} mailbox not in use, switching to paper mail", viesti.getId());
+      transactionTemplate.executeWithoutResult(
+          status -> {
+            tiedote.setState(Tiedote.STATE_KIELITUTKINTOTODISTUKSEN_NOUTO);
+            tiedote.setRetryCount(0);
+            tiedote.setNextRetry(null);
+            viesti.setMessageType("paperMail");
+            tiedoteRepository.save(tiedote);
+          });
+      return;
     }
-    log.info("Finished running SendSuomiFiViestitTask");
+    super.handleError(tiedote, e);
   }
 
   private String sendSuomiFiViesti(SuomiFiViesti suomiFiViesti) {
