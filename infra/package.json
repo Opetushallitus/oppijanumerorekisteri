@@ -3,7 +3,7 @@
     "@aws-sdk/client-iam": "^3.691.0",
     "@aws-sdk/client-sts": "^3.693.0",
     "@types/node": "24.12.2",
-    "aws-cdk": "2.1117.0",
+    "aws-cdk": "2.1118.0",
     "aws-cdk-lib": "2.248.0",
     "constructs": "10.6.0",
     "ts-node": "10.9.2",
