@@ -20,6 +20,8 @@ public interface TiedoteRepository extends JpaRepository<Tiedote, UUID> {
           SELECT * FROM tiedote
           WHERE tiedotestate_id IN :states
           AND (next_retry IS NULL OR next_retry <= NOW())
+          ORDER BY COALESCE(next_retry, created)
+          LIMIT 100
           FOR UPDATE SKIP LOCKED
           """,
       nativeQuery = true)
