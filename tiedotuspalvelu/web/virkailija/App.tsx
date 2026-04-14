@@ -29,7 +29,6 @@ function LoginScreen() {
   );
 }
 function RealApp() {
-  const meQuery = useGetMeQuery();
   const tiedotteetQuery = useGetTiedotteetQuery();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -37,7 +36,6 @@ function RealApp() {
     <OphDsPage header="Tiedotuspalvelun rapsanäkymä">
       <header className="rapsa-header">
         <CsvButton />
-        {meQuery.isSuccess && <LogoutButton />}
       </header>
 
       <div className="rapsa">
@@ -99,17 +97,6 @@ function CsvButton() {
     </OphDsButton>
   );
 }
-function LogoutButton() {
-  return (
-    <OphDsButton
-      variant="bordered"
-      onClick={() => (window.location.pathname = "/tiedotuspalvelu/logout")}
-    >
-      Kirjaudu ulos
-    </OphDsButton>
-  );
-}
-
 function TiedoteDetailPane({ id }: { id: string }) {
   const { data, isLoading, isError } = useGetTiedoteQuery(id);
 
