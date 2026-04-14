@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.TuontiApi;
@@ -66,7 +66,6 @@ public class OppijaTuontiServiceImplTest {
         oppijaTuontiServiceImpl.handleOppijaTuontiIlmoitus();
 
         assertThat(tuonti1.isIlmoitustarveKasitelty() && tuonti2.isIlmoitustarveKasitelty() && tuonti3.isIlmoitustarveKasitelty() && tuonti4.isIlmoitustarveKasitelty()).isTrue();
-
         ArgumentCaptor<Set<String>> emailCaptor = ArgumentCaptor.forClass(Set.class);
         verify(emailService).sendTuontiKasiteltyWithErrorsEmail(emailCaptor.capture());
         assertThat(emailCaptor.getValue()).hasSize(3);

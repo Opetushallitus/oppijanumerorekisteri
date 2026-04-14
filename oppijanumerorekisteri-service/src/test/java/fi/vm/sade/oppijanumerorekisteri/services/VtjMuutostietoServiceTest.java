@@ -7,8 +7,11 @@ import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.*;
 
 import java.io.File;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
@@ -52,12 +55,13 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
     @BeforeEach
     public void before() throws Exception {
         defaultKoodistoMocks(koodistoService);
+        var date = LocalDateTime.ofInstant(Instant.now().truncatedTo(ChronoUnit.MILLIS), ZoneId.of("UTC"));
         muutostietos = List.of(
-                new VtjMuutostieto("123456-111A", LocalDateTime.now(), objectMapper.readTree(
+                new VtjMuutostieto("123456-111A", date, objectMapper.readTree(
                         "[{\"tietoryhma\": \"TURVAKIELTO\", \"muutosattribuutti\": \"LISATTY\", \"turvakieltoAktiivinen\": true}]"),
                         null,
                         false),
-                new VtjMuutostieto("101010-010B", LocalDateTime.now(), objectMapper.readTree(
+                new VtjMuutostieto("101010-010B", date, objectMapper.readTree(
                         "[{\"tietoryhma\": \"TURVAKIELTO\", \"turvaLoppuPv\": {\"arvo\": \"2024-10-01\", \"tarkkuus\": \"PAIVA\"}, \"muutosattribuutti\": \"LISATTY\", \"turvakieltoAktiivinen\": true}]"),
                         null,
                         false));
@@ -306,7 +310,7 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
         assertThat(ajanTasalla).isTrue();
 
         verify(kirjausavainRepository, times(1)).save(any());
-        assertThat(muutostietoRepository.findAll()).containsExactlyInAnyOrderElementsOf(muutostietos);
+        assertMuutostiedotEqualIgnoringJsonFormatting(muutostietoRepository.findAll(), muutostietos);
     }
 
     @Test
@@ -322,7 +326,7 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
         assertThat(ajanTasalla).isFalse();
 
         verify(kirjausavainRepository, times(2)).save(any());
-        assertThat(muutostietoRepository.findAll()).containsExactlyInAnyOrderElementsOf(muutostietos);
+        assertMuutostiedotEqualIgnoringJsonFormatting(muutostietoRepository.findAll(), muutostietos);
     }
 
     @Test
@@ -408,6 +412,32 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
 
     private Predicate<VtjMuutostieto> wasNotProcessed() {
         return m -> Boolean.FALSE == m.getError() && m.getProcessed() == null;
+    }
+
+    private void assertMuutostiedotEqualIgnoringJsonFormatting(List<VtjMuutostieto> actual, List<VtjMuutostieto> expected) {
+        assertThat(actual)
+                .extracting(
+                        VtjMuutostieto::getHenkilotunnus,
+                        VtjMuutostieto::getMuutospv,
+                        muutostieto -> normalizeJson(muutostieto.getTietoryhmat()),
+                        VtjMuutostieto::getProcessed,
+                        VtjMuutostieto::getError)
+                .containsExactlyInAnyOrderElementsOf(expected.stream()
+                        .map(muutostieto -> tuple(
+                                muutostieto.getHenkilotunnus(),
+                                muutostieto.getMuutospv(),
+                                normalizeJson(muutostieto.getTietoryhmat()),
+                                muutostieto.getProcessed(),
+                                muutostieto.getError()))
+                        .toList());
+    }
+
+    private String normalizeJson(String json) {
+        try {
+            return objectMapper.writeValueAsString(objectMapper.readTree(json));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to normalize JSON in test", e);
+        }
     }
 
     private void failToProcessMuutostietoNumber(int n) {

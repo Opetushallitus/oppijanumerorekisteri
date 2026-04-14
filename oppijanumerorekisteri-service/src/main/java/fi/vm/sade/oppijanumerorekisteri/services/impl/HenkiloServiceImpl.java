@@ -22,7 +22,6 @@ import fi.vm.sade.oppijanumerorekisteri.util.batchprocessing.BatchProcessor;
 import fi.vm.sade.oppijanumerorekisteri.util.batchprocessing.BatchingProcess;
 import lombok.RequiredArgsConstructor;
 import ma.glasnost.orika.MapperFacade;
-import ma.glasnost.orika.metadata.TypeBuilder;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

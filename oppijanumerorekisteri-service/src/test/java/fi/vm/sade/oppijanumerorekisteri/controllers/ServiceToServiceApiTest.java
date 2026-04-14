@@ -1,13 +1,12 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import tools.jackson.databind.type.TypeFactory;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriApiTest;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuCriteriaDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
-import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,7 @@ public class ServiceToServiceApiTest extends OppijanumerorekisteriApiTest {
 
   @BeforeEach
   public void before() {
-    val now = ZonedDateTime.now();
+    var now = ZonedDateTime.now();
     oid = oidGenerator.generateOID();
 
     henkiloRepository.save(
@@ -60,7 +59,7 @@ public class ServiceToServiceApiTest extends OppijanumerorekisteriApiTest {
   @UserRekisterinpitaja
   public void henkiloPerustiedotAsAdmin() throws Exception {
     var arrayType =
-        TypeFactory.defaultInstance().constructCollectionType(List.class, HenkiloDto.class);
+        TypeFactory.createDefaultInstance().constructCollectionType(List.class, HenkiloDto.class);
     var criteria = new HenkiloHakuCriteriaDto();
     criteria.setHenkiloOids(Set.of(oid));
 

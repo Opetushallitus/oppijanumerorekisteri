@@ -1,41 +1,44 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import tools.jackson.databind.JsonNode;
 
-import org.hibernate.annotations.Type;
-
-import com.fasterxml.jackson.databind.JsonNode;
-
-import io.hypersistence.utils.hibernate.type.json.JsonType;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@Entity
-@Table(name = "vtj_muutostieto")
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class VtjMuutostieto extends IdentifiableAndVersionedEntity {
-    @Column(nullable = false)
-    public String henkilotunnus;
+    private String henkilotunnus;
+    private LocalDateTime muutospv;
+    private String tietoryhmat;
+    private LocalDateTime processed;
+    private Boolean error;
 
-    @Column(nullable = false)
-    public LocalDateTime muutospv;
+    public VtjMuutostieto(String henkilotunnus, LocalDateTime muutospv, JsonNode tietoryhmat, LocalDateTime processed, Boolean error) {
+        this.henkilotunnus = henkilotunnus;
+        this.muutospv = muutospv;
+        this.tietoryhmat = tietoryhmat != null ? tietoryhmat.toString() : null;
+        this.processed = processed;
+        this.error = error;
+    }
 
-    @Type(JsonType.class)
-    @Column(nullable = false, columnDefinition = "jsonb")
-    public JsonNode tietoryhmat;
+    public void setTietoryhmat(String tietoryhmat) {
+        this.tietoryhmat = tietoryhmat;
+    }
 
-    @Column(nullable = true)
-    public LocalDateTime processed;
-
-    @Column(nullable = false)
-    public Boolean error;
+    @JsonSetter("tietoryhmat")
+    public void setTietoryhmat(JsonNode tietoryhmat) {
+        this.tietoryhmat = tietoryhmat != null ? tietoryhmat.toString() : null;
+    }
 }
