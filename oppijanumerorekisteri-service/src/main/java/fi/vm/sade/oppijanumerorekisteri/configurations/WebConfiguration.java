@@ -5,7 +5,6 @@ import org.joda.time.LocalDate;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -20,11 +19,6 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new String2JodaDateTimeConverter());
-    }
-
-    @Override
-    public void configurePathMatch(PathMatchConfigurer configurer) {
-      configurer.setUseTrailingSlashMatch(true);
     }
 
     /*

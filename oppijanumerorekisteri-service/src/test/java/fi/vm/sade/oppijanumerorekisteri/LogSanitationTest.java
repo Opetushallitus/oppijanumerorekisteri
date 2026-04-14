@@ -7,9 +7,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestContextManager;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,20 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Verifies that finnish ssn:s are masked in application log
  */
-@WebAppConfiguration
 @SpringBootTest
-@ContextConfiguration(classes = {})
 public class LogSanitationTest {
-
     private static final Logger logger = LoggerFactory.getLogger(LogSanitationTest.class);
     private final PrintStream original = System.out;
     private ByteArrayOutputStream output;
-    private final TestContextManager testContextManager;
-
-    public LogSanitationTest() throws Exception {
-        this.testContextManager = new TestContextManager(getClass());
-        this.testContextManager.prepareTestInstance(this);
-    }
 
     static Stream<Arguments> parameters() {
         return Stream.of(

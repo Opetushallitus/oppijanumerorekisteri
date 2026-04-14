@@ -13,7 +13,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;

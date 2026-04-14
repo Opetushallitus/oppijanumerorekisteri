@@ -16,7 +16,6 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.utils.TextUtils;
 import fi.vm.sade.oppijanumerorekisteri.vtjkysely.api.YksiloityHenkilo;
-import ma.glasnost.orika.MapperFacade;
 import nl.altindag.log.LogCaptor;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,8 +66,6 @@ public class YksilointiServiceImplTest {
     private KielisyysRepository kielisyysRepository;
     @MockitoBean
     private KansalaisuusRepository kansalaisuusRepository;
-    @MockitoBean
-    private MapperFacade orikaConfiguration;
     @MockitoBean
     private DuplicateService duplicateService;
     private final Gson gson = new Gson();

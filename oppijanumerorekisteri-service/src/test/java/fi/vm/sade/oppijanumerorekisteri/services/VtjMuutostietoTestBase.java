@@ -1,7 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.clients.SlackClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjMuutostietoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.impl.AwsSnsHenkiloModifiedTopic;
@@ -156,7 +156,7 @@ abstract public class VtjMuutostietoTestBase implements KoodistoMock {
 
     protected Henkilo applyPerustieto(VtjPerustieto perustieto) {
         muutostietoService.savePerustieto(perustieto);
-        return henkiloRepository.findByHetu(perustieto.henkilotunnus).get();
+        return henkiloRepository.findByHetu(perustieto.getHenkilotunnus()).get();
     }
 
     protected Henkilo applyMuutostieto(VtjMuutostieto muutostieto) {

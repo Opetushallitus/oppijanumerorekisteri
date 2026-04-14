@@ -1,9 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.services.export;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,9 +39,12 @@ public class ExportService {
     private final OppijanumerorekisteriProperties properties;
     private final S3AsyncClient onrS3Client;
     private final S3AsyncClient lampiS3Client;
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    private final ObjectMapper objectMapper = JsonMapper
+            .builder()
+            .changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL))
+            .changeDefaultPropertyInclusion(incl -> incl.withContentInclusion(JsonInclude.Include.NON_NULL))
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
 
     @Transactional
     public void createSchema() {
@@ -335,7 +338,7 @@ public class ExportService {
         }
     }
 
-    private void writeManifest(String objectKey, ExportManifest manifest) throws JsonProcessingException {
+    private void writeManifest(String objectKey, ExportManifest manifest) {
         var lampiBucketName = properties.getTasks().getExport().getLampiBucketName();
         var manifestJson = objectMapper.writeValueAsString(manifest);
         var response = lampiS3Client.putObject(

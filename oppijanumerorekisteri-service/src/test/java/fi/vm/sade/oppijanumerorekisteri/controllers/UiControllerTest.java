@@ -11,15 +11,15 @@ import org.skyscreamer.jsonassert.comparator.CustomComparator;
 import org.skyscreamer.jsonassert.comparator.JSONComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import java.nio.charset.StandardCharsets;
 
@@ -100,7 +100,7 @@ class UiControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         assertThat(result).contains("""
-            "content":[{"oid":"1.2.3.4.6","etunimet":"tuontietu1","sukunimi":"tuontisuku1","syntymaaika":"1963-09-12"},{"oid":"1.2.3.4.77","etunimet":"tuontietu2","sukunimi":"tuontisuku2","syntymaaika":"1998-11-14"}]""");
+            "content":[{"etunimet":"tuontietu1","oid":"1.2.3.4.6","sukunimi":"tuontisuku1","syntymaaika":"1963-09-12"},{"etunimet":"tuontietu2","oid":"1.2.3.4.77","sukunimi":"tuontisuku2","syntymaaika":"1998-11-14"}]""");
     }
 
     @Test
@@ -113,7 +113,7 @@ class UiControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         assertThat(result).contains("""
-            "content":[{"oid":"1.2.3.4.6","etunimet":"tuontietu1","sukunimi":"tuontisuku1","syntymaaika":"1963-09-12"},{"oid":"1.2.3.4.888","etunimet":"tuontietu1","sukunimi":"tuontisuku3","syntymaaika":"1977-07-07"}]""");
+            "content":[{"etunimet":"tuontietu1","oid":"1.2.3.4.6","sukunimi":"tuontisuku1","syntymaaika":"1963-09-12"},{"etunimet":"tuontietu1","oid":"1.2.3.4.888","sukunimi":"tuontisuku3","syntymaaika":"1977-07-07"}]""");
     }
 
     @Test
@@ -126,7 +126,7 @@ class UiControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         assertThat(result).contains("""
-            "content":[{"oid":"1.2.3.4.6","etunimet":"tuontietu1","sukunimi":"tuontisuku1","syntymaaika":"1963-09-12"}]""");
+            "content":[{"etunimet":"tuontietu1","oid":"1.2.3.4.6","sukunimi":"tuontisuku1","syntymaaika":"1963-09-12"}]""");
     }
 
     @Test
@@ -139,7 +139,7 @@ class UiControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         assertThat(result).contains("""
-            "content":[{"oid":"1.2.3.4.6","etunimet":"tuontietu1","sukunimi":"tuontisuku1","syntymaaika":"1963-09-12"}]""");
+            "content":[{"etunimet":"tuontietu1","oid":"1.2.3.4.6","sukunimi":"tuontisuku1","syntymaaika":"1963-09-12"}]""");
     }
 
     @Test
@@ -152,7 +152,7 @@ class UiControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         assertThat(result).contains("""
-            "content":[{"oid":"1.2.3.4.6","etunimet":"tuontietu1","sukunimi":"tuontisuku1","syntymaaika":"1963-09-12"}]""");
+            "content":[{"etunimet":"tuontietu1","oid":"1.2.3.4.6","sukunimi":"tuontisuku1","syntymaaika":"1963-09-12"}]""");
     }
 
     @Test
@@ -165,6 +165,6 @@ class UiControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         assertThat(result).contains("""
-            "content":[{"oid":"1.2.3.4.6","etunimet":"tuontietu1","sukunimi":"tuontisuku1","syntymaaika":"1963-09-12"}]""");
+            "content":[{"etunimet":"tuontietu1","oid":"1.2.3.4.6","sukunimi":"tuontisuku1","syntymaaika":"1963-09-12"}]""");
     }
 }

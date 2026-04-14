@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAtLeastOneNotNull;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 import lombok.Setter;
 import lombok.*;
 
@@ -48,32 +49,32 @@ public class OppijaTuontiRiviCreateDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class OppijaTuontiRiviHenkiloCreateDto {
 
-        @Schema(description = "Vähintään yksi yksilöivä tunniste vaaditaan", required = true)
+        @Schema(description = "Vähintään yksi yksilöivä tunniste vaaditaan", requiredMode = RequiredMode.REQUIRED)
         @Size(min = 1)
         private String oid;
 
-        @Schema(description = "Vähintään yksi yksilöivä tunniste vaaditaan", required = true)
+        @Schema(description = "Vähintään yksi yksilöivä tunniste vaaditaan", requiredMode = RequiredMode.REQUIRED)
         @ValidateHetu
         private String hetu;
 
-        @Schema(description = "Vähintään yksi yksilöivä tunniste vaaditaan", required = true)
+        @Schema(description = "Vähintään yksi yksilöivä tunniste vaaditaan", requiredMode = RequiredMode.REQUIRED)
         @Size(min = 1)
         private String passinumero;
 
-        @Schema(description = "Vähintään yksi yksilöivä tunniste vaaditaan", required = true)
+        @Schema(description = "Vähintään yksi yksilöivä tunniste vaaditaan", requiredMode = RequiredMode.REQUIRED)
         @Size(min = 1)
         @Email
         private String sahkoposti;
 
-        @Schema(required = true)
+        @Schema(requiredMode = RequiredMode.REQUIRED)
         @NotEmpty
         private String etunimet;
 
-        @Schema(description = "Kutsumanimen tulee olla yksi etunimistä", required = true)
+        @Schema(description = "Kutsumanimen tulee olla yksi etunimistä", requiredMode = RequiredMode.REQUIRED)
         @NotEmpty
         private String kutsumanimi;
 
-        @Schema(required = true)
+        @Schema(requiredMode = RequiredMode.REQUIRED)
         @NotEmpty
         private String sukunimi;
 
@@ -87,7 +88,7 @@ public class OppijaTuontiRiviCreateDto {
         @Valid
         private KoodiUpdateDto aidinkieli;
 
-        @Schema(description = "Koodisto 'maatjavaltiot2'", required = true)
+        @Schema(description = "Koodisto 'maatjavaltiot2'", requiredMode = RequiredMode.REQUIRED)
         @NotEmpty
         private Collection<@Valid @NotNull KoodiUpdateDto> kansalaisuus;
     }

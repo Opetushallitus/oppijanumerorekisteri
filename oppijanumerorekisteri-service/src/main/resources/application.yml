@@ -9,9 +9,6 @@ spring:
   main:
     banner-mode: "off"
     allow-circular-references: true # HuoltajaCreateDtoMapper
-  jackson:
-    serialization:
-      write-dates-as-timestamps: true
   cache:
     jcache:
       config: classpath:ehcache.xml

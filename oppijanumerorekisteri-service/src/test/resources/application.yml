@@ -2,9 +2,6 @@ spring:
   main:
     allow-bean-definition-overriding: true
     allow-circular-references: true # HuoltajaCreateDtoMapper
-  jackson:
-    serialization:
-      write-dates-as-timestamps: true
   autoconfigure:
     exclude: org.spring
   cache:
