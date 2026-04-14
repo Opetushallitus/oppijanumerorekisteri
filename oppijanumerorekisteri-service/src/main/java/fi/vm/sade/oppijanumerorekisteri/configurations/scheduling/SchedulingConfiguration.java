@@ -136,7 +136,7 @@ public class SchedulingConfiguration {
                         datantuontiExportService.createSchema();
                         datantuontiExportService.generateExportFiles();
                         log.info("Oppijanumerorekisteri datantuonti export task completed");
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 });

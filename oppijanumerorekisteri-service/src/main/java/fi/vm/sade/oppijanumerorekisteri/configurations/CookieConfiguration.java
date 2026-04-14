@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations;
 
-import org.springframework.boot.autoconfigure.session.DefaultCookieSerializerCustomizer;
+import org.springframework.boot.session.autoconfigure.DefaultCookieSerializerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
