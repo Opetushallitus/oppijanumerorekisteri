@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.vtjkysely.VtjKyselyClient;
 import fi.vm.sade.oppijanumerorekisteri.vtjkysely.api.YksiloityHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.vtjkysely.jaxb.TeeHenkilonTunnusKyselyResponse;
@@ -8,6 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.vtjkysely.jaxb.VTJHenkiloVastaussanoma;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-@IntegrationTest
+@SpringBootTest
 public class VtjServiceTest {
     @MockitoBean
     private VtjKyselyClient vtjKyselyClient;

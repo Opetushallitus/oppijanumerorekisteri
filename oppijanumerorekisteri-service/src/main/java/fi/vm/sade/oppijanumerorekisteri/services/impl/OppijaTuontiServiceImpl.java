@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
@@ -26,7 +25,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindException;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -73,7 +71,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         final byte[] data;
         try {
             data = objectMapper.writeValueAsBytes(dto);
-        } catch (JsonProcessingException ex) {
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
         TuontiData tuontiData = new TuontiData();
@@ -108,7 +106,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         final OppijaTuontiCreateDto dto;
         try {
             dto = objectMapper.readValue(tuonti.getData().getData(), OppijaTuontiCreateDto.class);
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
 

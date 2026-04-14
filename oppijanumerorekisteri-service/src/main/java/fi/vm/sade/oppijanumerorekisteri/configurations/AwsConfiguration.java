@@ -36,7 +36,7 @@ public class AwsConfiguration {
 
     @Bean(ONR_CREDENTIALS_PROVIDER)
     AwsCredentialsProvider onrCredentialsProvider() {
-        return DefaultCredentialsProvider.create();
+        return DefaultCredentialsProvider.builder().build();
     }
 
     @Bean

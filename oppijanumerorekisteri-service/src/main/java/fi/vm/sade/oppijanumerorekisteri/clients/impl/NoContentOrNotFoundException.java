@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import org.springframework.web.client.RestClientException;
 
 public class NoContentOrNotFoundException extends RestClientException {

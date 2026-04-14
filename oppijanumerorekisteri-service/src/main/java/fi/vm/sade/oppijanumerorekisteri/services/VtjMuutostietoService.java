@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import fi.vm.sade.oppijanumerorekisteri.clients.SlackClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjMuutostietoClient;
@@ -48,6 +49,7 @@ public class VtjMuutostietoService {
     private final SlackClient slackClient;
     private final PerustietoMapper perustietoMapper;
     private final MuutostietoMapper muutostietoMapper;
+    private final ObjectMapper objectMapper;
 
     @Autowired
     private TransactionTemplate transaction;
@@ -135,10 +137,15 @@ public class VtjMuutostietoService {
         return false;
     }
 
+    private JsonNode parseTietoryhmat(String tietoryhmat) {
+        return objectMapper.readTree(tietoryhmat);
+    }
+
     protected Void savePerustieto(VtjPerustieto perustieto) {
-        henkiloRepository.findByHetu(perustieto.henkilotunnus).ifPresent(henkilo -> {
+        JsonNode tietoryhmat = parseTietoryhmat(perustieto.getTietoryhmat());
+        henkiloRepository.findByHetu(perustieto.getHenkilotunnus()).ifPresent(henkilo -> {
             try {
-                if (isHenkilotunnusKorjaus(perustieto.tietoryhmat, henkilo)) {
+                if (isHenkilotunnusKorjaus(tietoryhmat, henkilo)) {
                     slackClient.sendToSlack(String.format(
                             "VTJ-perustietojen tallennus käyttäjälle %s estetty HENKILOTUNNUS_KORJAUS-tietoryhmän vuoksi",
                             henkilo.getOidHenkilo()), null);
@@ -147,14 +154,14 @@ public class VtjMuutostietoService {
 
                 log.info("Transforming VTJ perustieto into Henkilo changes");
                 HenkiloForceReadDto read = mapper.map(henkilo, HenkiloForceReadDto.class);
-                HenkiloForceUpdateDto update = mapToUpdateDto(read, perustieto.tietoryhmat, perustietoMapper);
+                HenkiloForceUpdateDto update = mapToUpdateDto(read, tietoryhmat, perustietoMapper);
                 henkiloModificationService.forceUpdateHenkilo(update);
                 henkilo.setVtjBucket(henkilo.getId() % 100);
                 henkiloRepository.save(henkilo);
 
                 log.info("Transforming VTJ perustieto into Kotikuntahistoria changes");
                 kotikuntaHistoriaRepository.deleteAllByHenkiloId(henkilo.getId());
-                var kotikuntahistoriaChanges = perustietoMapper.mapToKotikuntahistoriaChanges(henkilo, perustieto.tietoryhmat, new ArrayList<>());
+                var kotikuntahistoriaChanges = perustietoMapper.mapToKotikuntahistoriaChanges(henkilo, tietoryhmat, new ArrayList<>());
                 kotikuntaHistoriaRepository.saveAll(kotikuntahistoriaChanges.updates());
                 kotikuntaHistoriaRepository.deleteAll(kotikuntahistoriaChanges.deletes());
 
@@ -168,7 +175,8 @@ public class VtjMuutostietoService {
     }
 
     protected Void updateHenkilo(VtjMuutostieto muutostieto) {
-        henkiloRepository.findByHetu(muutostieto.henkilotunnus).ifPresent(henkilo -> {
+        JsonNode tietoryhmat = parseTietoryhmat(muutostieto.getTietoryhmat());
+        henkiloRepository.findByHetu(muutostieto.getHenkilotunnus()).ifPresent(henkilo -> {
             if (henkilo.isPassivoitu()) {
                 log.debug("did not update passivoitu henkilö {} with VTJ muutostieto", henkilo.getOidHenkilo());
                 return;
@@ -177,13 +185,13 @@ public class VtjMuutostietoService {
             try {
                 log.info("Transforming VTJ muutostieto into Henkilo changes");
                 HenkiloForceReadDto read = mapper.map(henkilo, HenkiloForceReadDto.class);
-                HenkiloForceUpdateDto update = mapToUpdateDto(read, muutostieto.tietoryhmat, muutostietoMapper);
+                HenkiloForceUpdateDto update = mapToUpdateDto(read, tietoryhmat, muutostietoMapper);
                 henkiloModificationService.forceUpdateHenkilo(update);
                 henkiloRepository.save(henkilo);
 
                 log.info("Transforming VTJ muutostieto into Kotikuntahistoria changes");
                 var kotikuntahistoria = kotikuntaHistoriaRepository.findAllByHenkiloId(henkilo.getId());
-                var kotikuntahistoriaChanges = muutostietoMapper.mapToKotikuntahistoriaChanges(henkilo, muutostieto.tietoryhmat, kotikuntahistoria);
+                var kotikuntahistoriaChanges = muutostietoMapper.mapToKotikuntahistoriaChanges(henkilo, tietoryhmat, kotikuntahistoria);
                 kotikuntaHistoriaRepository.saveAll(kotikuntahistoriaChanges.updates());
                 kotikuntaHistoriaRepository.deleteAll(kotikuntahistoriaChanges.deletes());
 
@@ -206,7 +214,7 @@ public class VtjMuutostietoService {
 
     private void reportMissingPerustieto(List<String> requestedHetus, List<VtjPerustieto> receivedPerustietos) {
         Set<String> requested = new HashSet<>(requestedHetus);
-        Set<String> received = new HashSet<>(receivedPerustietos.stream().map(perustieto -> perustieto.henkilotunnus).toList());
+        Set<String> received = new HashSet<>(receivedPerustietos.stream().map(VtjPerustieto::getHenkilotunnus).toList());
         requested.removeAll(received);
         if (!requested.isEmpty()) {
             log.warn("did not get perustieto for all hetus");
@@ -273,7 +281,7 @@ public class VtjMuutostietoService {
         var skipSet = new HashSet<String>();
         muutostietos.stream().forEach(muutostieto -> {
             try {
-                if (skipSet.contains(muutostieto.henkilotunnus)) {
+                if (skipSet.contains(muutostieto.getHenkilotunnus())) {
                     log.info("skipping muutostieto " + muutostieto.getId() + " because of a prior error");
                 } else {
                     if (Boolean.TRUE == muutostieto.getError()) {
@@ -285,11 +293,11 @@ public class VtjMuutostietoService {
                     transaction.execute(status -> updateHenkilo(muutostieto));
 
                     if (Boolean.TRUE == muutostieto.getError()) {
-                        skipSet.add(muutostieto.henkilotunnus);
+                        skipSet.add(muutostieto.getHenkilotunnus());
                     }
                 }
             } catch (Exception e) {
-                skipSet.add(muutostieto.henkilotunnus);
+                skipSet.add(muutostieto.getHenkilotunnus());
                 muutostieto.setError(true);
                 muutostieto.setProcessed(LocalDateTime.now());
                 muutostietoRepository.save(muutostieto);
