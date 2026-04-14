@@ -189,7 +189,12 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.5</version>
                 <configuration>
-                        <argLine>--add-opens java.base/java.lang=ALL-UNNAMED -Dnet.bytebuddy.experimental=true</argLine>
+                        <argLine>
+                            @{argLine}
+                            -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
+                            --add-opens java.base/java.lang=ALL-UNNAMED
+                            -Dnet.bytebuddy.experimental=true
+                        </argLine>
                 </configuration>
             </plugin>
             <plugin>
