@@ -9,22 +9,21 @@ import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doReturn;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class YksilointiServiceImplUnitTest {
 
     @InjectMocks
@@ -57,14 +56,17 @@ public class YksilointiServiceImplUnitTest {
     @Mock
     private OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
 
-    @Before
-    public void setUp() {
+    private void stubEtunimiThreshold() {
         doReturn(0.85f).when(oppijanumerorekisteriProperties).getEtunimiThreshold();
+    }
+
+    private void stubSukunimiThreshold() {
         doReturn(0.85f).when(oppijanumerorekisteriProperties).getSukunimiThreshold();
     }
 
     @Test
     public void tarkistaNimetOK() {
+        stubSukunimiThreshold();
         String[][] fixtures = new String[][]{
                 new String[]{"Testi", "Testi", "Testi", "Testi"},
                 new String[]{"Sukunimi", "Kutsumanimi", "Kutsumanimi", "Sukunimi"},         // onrSukunimi === vtjSukunimi && onrKutsumanimi === vtjEtunimi
@@ -82,6 +84,7 @@ public class YksilointiServiceImplUnitTest {
 
     @Test
     public void tarkistaNimetNOK() {
+        stubSukunimiThreshold();
         String[][] fixtures = new String[][]{
                 new String[]{"onrSukunimi", "onrKutsumanimi", "vtjEtunimi", "vtjSukunimi"}
         };
@@ -118,12 +121,13 @@ public class YksilointiServiceImplUnitTest {
             String input = fixture[0];
             String result = yksilointiService.normalize(input);
             String expected = fixture[1];
-            assertEquals("Unexpected result after normalization", expected, result);
+            assertEquals(expected, result, "Unexpected result after normalization");
         });
     }
 
     @Test
     public void tarkistaSukunimiOK() {
+        stubSukunimiThreshold();
         String[][] fixtures = new String[][]{
                 new String[]{" ", " "},
                 new String[]{"test", "test"},
@@ -137,6 +141,7 @@ public class YksilointiServiceImplUnitTest {
 
     @Test
     public void tarkistaSukunimiNOK() {
+        stubSukunimiThreshold();
         String[][] fixtures = new String[][]{
                 new String[]{"", ""},
                 new String[]{"test", "t"},
@@ -156,18 +161,19 @@ public class YksilointiServiceImplUnitTest {
                 new String[]{"virhe", "luultavastivirhe"}, // ? (contains)
         };
         Arrays.asList(fixtures).forEach(fixture -> {
-            assertTrue("Etunimi should match " + fixture[0], yksilointiService.tarkistaEtunimi(fixture[0], fixture[1]));
+            assertTrue(yksilointiService.tarkistaEtunimi(fixture[0], fixture[1]), "Etunimi should match " + fixture[0]);
         });
     }
 
     @Test
     public void tarkistaEtunimiNOK() {
+        stubEtunimiThreshold();
         String[][] fixtures = new String[][]{
                 new String[]{"a", "b"},
                 new String[]{"a", "b c d e f"},
         };
         Arrays.asList(fixtures).forEach(fixture -> {
-            assertFalse("Etunimi should NOT match " + fixture[0], yksilointiService.tarkistaEtunimi(fixture[0], fixture[1]));
+            assertFalse(yksilointiService.tarkistaEtunimi(fixture[0], fixture[1]), "Etunimi should NOT match " + fixture[0]);
         });
     }
 }

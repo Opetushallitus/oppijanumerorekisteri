@@ -17,11 +17,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import software.amazon.awssdk.services.sns.SnsClient;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -33,12 +31,12 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @Sql("/sql/truncate_data.sql")
 public class OppijaServiceTest {
@@ -76,7 +74,7 @@ public class OppijaServiceTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Before
+    @BeforeEach
     public void setup() {
         when(userDetailsHelper.findCurrentUserOid()).thenReturn(Optional.of("user1"));
         when(permissionChecker.getOrganisaatioOids(any(), any())).thenReturn(singleton("1.2.3.4"));
@@ -537,7 +535,7 @@ public class OppijaServiceTest {
         assertPublished(objectMapper, snsClient, 1, henkilo.getOidHenkilo());
     }
 
-    @Test(expected = UnprocessableEntityException.class)
+    @Test
     public void requiresHetuIfNationalityIsFinnish() {
         given(koodistoService.list(MAAT_JA_VALTIOT_2)).willReturn(new KoodiTypeListBuilder(Koodisto.MAAT_JA_VALTIOT_2).koodi(Kansalaisuus.SUOMI).build());
         OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
@@ -552,7 +550,7 @@ public class OppijaServiceTest {
                                 .build())
                         .collect(toList()))
                 .build();
-        create(createDto);
+        assertThrows(UnprocessableEntityException.class, () -> create(createDto));
     }
 
     @Test

@@ -15,14 +15,12 @@ import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HuoltajaCreatePostValidator;
 import org.assertj.core.groups.Tuple;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.google.common.collect.Lists;
@@ -43,7 +41,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {OrikaConfiguration.class, KoodistoServiceMock.class})
 public class HenkiloModificationServiceImplTest {
     @Autowired
@@ -107,7 +104,7 @@ public class HenkiloModificationServiceImplTest {
     @Mock
     private AuditlogAspectHelper auditlogAspectHelper;
 
-    @Before
+    @BeforeEach
     public void setup() {
         ReflectionTestUtils.setField(this.service, "mapper", this.mapper);
     }

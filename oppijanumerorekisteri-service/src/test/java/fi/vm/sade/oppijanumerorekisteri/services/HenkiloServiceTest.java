@@ -18,9 +18,8 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.HenkiloServiceImpl;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -28,7 +27,6 @@ import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
@@ -43,13 +41,13 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {OrikaConfiguration.class, KoodistoServiceMock.class})
 public class HenkiloServiceTest {
 
@@ -94,7 +92,7 @@ public class HenkiloServiceTest {
     @MockitoBean
     private KansalaisuusRepository kansalaisuusRepository;
 
-    @Before
+    @BeforeEach
     public void setup() {
         ReflectionTestUtils.setField(this.service, "mapper", this.mapper);
     }
@@ -208,10 +206,10 @@ public class HenkiloServiceTest {
         assertThat(this.service.getOidByHetu("1.2.3.4.5")).isEqualTo("123456-9999");
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void getOidByHetuNotFound() {
         given(this.henkiloDataRepositoryMock.findOidByHetu("1.2.3.4.5")).willReturn(Optional.empty());
-        this.service.getOidByHetu("1.2.3.4.5");
+        assertThrows(NotFoundException.class, () -> this.service.getOidByHetu("1.2.3.4.5"));
     }
 
     @Test

@@ -12,12 +12,10 @@ import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.function.Consumer;
@@ -25,7 +23,6 @@ import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 class TurvaKieltoTest {
     @Autowired
@@ -34,7 +31,7 @@ class TurvaKieltoTest {
     private HenkiloService henkiloService;
     @Autowired
     private OppijaService oppijaService;
-    @MockBean
+    @MockitoBean
     private KoodistoService koodistoService;
 
 

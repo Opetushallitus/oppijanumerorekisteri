@@ -12,12 +12,10 @@ import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import org.springframework.boot.test.context.SpringBootTest;
 import software.amazon.awssdk.services.sns.SnsClient;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityManager;
@@ -31,8 +29,8 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @Sql("/sql/truncate_data.sql")
 @Sql("/sql/yksilointi-test2.sql")
@@ -113,12 +111,13 @@ public class IdentificationServiceIntegrationTests {
     }
 
     // Hetu already used by other virkailija
-    @Test(expected = RuntimeException.class)
+    @Test
     public void setStrongIdentifiedHetu() {
         HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto =
                 new HenkiloVahvaTunnistusDto("111111-1235");
 
-        this.identificationService.setStrongIdentifiedHetu("EverythingOK", henkiloVahvaTunnistusDto);
+        assertThrows(RuntimeException.class,
+                () -> this.identificationService.setStrongIdentifiedHetu("EverythingOK", henkiloVahvaTunnistusDto));
         assertPublished(objectMapper, snsClient, 0);
     }
 

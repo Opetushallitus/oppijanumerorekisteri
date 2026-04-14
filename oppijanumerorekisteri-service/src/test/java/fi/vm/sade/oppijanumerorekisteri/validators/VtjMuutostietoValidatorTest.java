@@ -5,13 +5,13 @@ import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.Collections;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
@@ -24,7 +24,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import static fi.vm.sade.oppijanumerorekisteri.validators.VtjMuutostietoValidator.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class VtjMuutostietoValidatorTest {
     @InjectMocks
     private VtjMuutostietoValidator validator;

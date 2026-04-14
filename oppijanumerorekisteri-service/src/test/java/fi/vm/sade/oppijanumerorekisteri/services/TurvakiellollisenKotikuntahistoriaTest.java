@@ -1,17 +1,13 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.models.KotikuntaHistoria;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.mockito.Mockito.*;
 
 public class TurvakiellollisenKotikuntahistoriaTest extends VtjMuutostietoTestBase {
     private static final String KUNTA_HELSINKI = "091";
@@ -20,7 +16,7 @@ public class TurvakiellollisenKotikuntahistoriaTest extends VtjMuutostietoTestBa
     @Autowired
     private HenkiloService henkiloService;
 
-    @Before
+    @BeforeEach
     public void before() {
         defaultKoodistoMocks(koodistoService);
     }

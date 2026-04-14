@@ -20,13 +20,11 @@ import fi.vm.sade.oppijanumerorekisteri.utils.TextUtils;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 import nl.altindag.log.LogCaptor;
 import org.assertj.core.groups.Tuple;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.InputStreamReader;
 import java.time.LocalDate;
@@ -36,12 +34,12 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @Sql("/sql/truncate_data.sql")
 public class YksilointiServiceImplTest {
@@ -78,7 +76,7 @@ public class YksilointiServiceImplTest {
     private final Gson gson = new Gson();
     private Henkilo henkilo;
 
-    @Before
+    @BeforeEach
     public void setup() {
         when(koodistoService.list(eq(Koodisto.KIELI)))
                 .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI).koodi("FI").koodi("SV").build());
@@ -165,14 +163,15 @@ public class YksilointiServiceImplTest {
         verify(this.yksilointitietoRepository, times(0)).save(any());
     }
 
-    @Test(expected = SuspendableIdentificationException.class)
+    @Test
     public void yksiloiVtjError() {
 
         doReturn(Optional.empty()).when(vtjService).teeHenkiloKysely(any());
 
         when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
-        this.yksilointiService.yksiloiManuaalisesti(this.henkiloOid);
+        assertThrows(SuspendableIdentificationException.class,
+                () -> this.yksilointiService.yksiloiManuaalisesti(this.henkiloOid));
 
         verify(this.yksilointitietoRepository, times(0)).save(any());
     }
@@ -461,12 +460,12 @@ public class YksilointiServiceImplTest {
         assertThat(fromSpecial).isEqualTo(fromNormal);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void existsNotFound() {
         when(henkiloRepository.findByHetu(any())).thenReturn(Optional.empty());
         when(vtjService.teeHenkiloKysely(any())).thenReturn(Optional.empty());
 
-        yksilointiService.exists(existenceCheckDto());
+        assertThrows(NotFoundException.class, () -> yksilointiService.exists(existenceCheckDto()));
     }
 
     @Test
@@ -484,7 +483,7 @@ public class YksilointiServiceImplTest {
         verifyNoInteractions(vtjService);
     }
 
-    @Test(expected = ConflictException.class)
+    @Test
     public void existsInOnrButConflicts() {
         Henkilo henkilo = mock(Henkilo.class);
         when(henkilo.getEtunimet()).thenReturn("very different name");
@@ -493,7 +492,7 @@ public class YksilointiServiceImplTest {
 
         when(henkiloRepository.findByHetu(any())).thenReturn(Optional.of(henkilo));
 
-        yksilointiService.exists(existenceCheckDto());
+        assertThrows(ConflictException.class, () -> yksilointiService.exists(existenceCheckDto()));
     }
 
     @Test

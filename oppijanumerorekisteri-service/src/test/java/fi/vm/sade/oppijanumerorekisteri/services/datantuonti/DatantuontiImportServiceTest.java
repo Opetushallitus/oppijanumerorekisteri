@@ -7,15 +7,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.impl.AwsSnsHenkiloModifiedTopic;
@@ -25,7 +23,6 @@ import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 
-@RunWith(SpringRunner.class)
 @Sql("/sql/truncate_data.sql")
 @Sql("/sql/test_data.sql")
 @SpringBootTest
@@ -43,7 +40,7 @@ public class DatantuontiImportServiceTest {
     @MockitoBean
     private KayttooikeusClient kayttooikeusClient;
 
-    @Before
+    @BeforeEach
     public void insertDatantuonti() throws Exception {
         importService.createTableForDatantuontiData();
         jdbcTemplate.execute("""

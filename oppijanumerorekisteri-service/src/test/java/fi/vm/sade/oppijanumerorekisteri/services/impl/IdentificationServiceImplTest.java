@@ -9,7 +9,6 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.models.KoodiType;
-import fi.vm.sade.oppijanumerorekisteri.models.Yksilointivirhe;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
@@ -18,16 +17,14 @@ import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -42,7 +39,7 @@ import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class IdentificationServiceImplTest {
     @InjectMocks
     private IdentificationServiceImpl identificationService;
@@ -125,14 +122,7 @@ public class IdentificationServiceImplTest {
         given(identificationRepository.findIdentical(any(IdentificationDto.class))).willReturn(List.of(identification));
 
         var personOid = "1.2.3.4.5";
-        var person = Henkilo.builder()
-                .oidHenkilo(personOid)
-                .hetu("hetu1")
-                .identifications(Set.of(identification))
-                .build();
-        given(henkiloRepository.findByIdentification(eq(personOid), any())).willReturn(Optional.of(person));
-
-        assertThrows(Exception.class, () -> {
+        assertThrows(ValidationException.class, () -> {
             identificationService.create(personOid, IdentificationDto.of(
                     identification.getIdpEntityId(),
                     identification.getIdentifier()
@@ -152,23 +142,7 @@ public class IdentificationServiceImplTest {
         given(identificationRepository.findIdentical(any(IdentificationDto.class))).willReturn(List.of(identification));
 
         var personOid = "1.2.3.4.5";
-        var person = Henkilo.builder()
-                .oidHenkilo(personOid)
-                .hetu("hetu1")
-                .identifications(Set.of())
-                .build();
-        given(henkiloRepository.findByIdentification(eq(personOid), any())).willReturn(Optional.of(person));
-
-        // Person 2 has the identification
-        var person2Oid = "1.2.3.4.6";
-        var person2 = Henkilo.builder()
-                .oidHenkilo(person2Oid)
-                .hetu("hetu2")
-                .identifications(Set.of(identification))
-                .build();
-        given(henkiloRepository.findByIdentification(eq(person2Oid), any())).willReturn(Optional.of(person2));
-
-        assertThrows(Exception.class, () -> {
+        assertThrows(ValidationException.class, () -> {
             identificationService.create(personOid, IdentificationDto.of(
                     identification.getIdpEntityId(),
                     identification.getIdentifier()
@@ -185,11 +159,7 @@ public class IdentificationServiceImplTest {
                 .identifier("testi.testaaja@testi.fi")
                 .idpEntityId(IdpEntityId.oppijaToken)
                 .build();
-        var identificationDto = IdentificationDto.of(
-                identification.getIdpEntityId(),
-                identification.getIdentifier()
-        );
-        given(identificationRepository.findIdentical(eq(identificationDto))).willReturn(List.of(identification));
+        given(identificationRepository.findIdentical(any(IdentificationDto.class))).willReturn(List.of());
 
         var personOid = "1.2.3.4.5";
         var person = Henkilo.builder()
@@ -224,32 +194,12 @@ public class IdentificationServiceImplTest {
     }
 
     @Test
-    public void retriableYksilointivirheIsRespected() {
-        Henkilo henkilo = Henkilo.builder()
-                .oidHenkilo("1.2.3.4.5")
-                .hetu("nonfakehetu")
-                .build();
-        LocalDateTime localDateTime = LocalDateTime.now().minusDays(1);
-        Yksilointivirhe yksilointivirhe = Yksilointivirhe.builder()
-                .uudelleenyritysMaara(0)
-                .uudelleenyritysAikaleima(Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant()))
-                .build();
-
-        given(this.yksilointivirheRepository.findByHenkilo(henkilo)).willReturn(Optional.of(yksilointivirhe));
-        this.identificationService.identifyHenkilos(List.of(henkilo.getOidHenkilo()), 1L);
-
-        verify(this.yksilointiService, times(1)).yksiloiAutomaattisesti(eq("1.2.3.4.5"));
-    }
-
-    @Test
     public void noYksilointivirheIsRespected() {
         Henkilo henkilo = Henkilo.builder()
                 .oidHenkilo("1.2.3.4.5")
                 .hetu("nonfakehetu")
                 .build();
-        given(this.yksilointivirheRepository.findByHenkilo(henkilo)).willReturn(Optional.empty());
         this.identificationService.identifyHenkilos(List.of(henkilo.getOidHenkilo()), 1L);
-
         verify(this.yksilointiService, times(1)).yksiloiAutomaattisesti(eq("1.2.3.4.5"));
     }
 
@@ -259,7 +209,6 @@ public class IdentificationServiceImplTest {
                 .oidHenkilo("1.2.3.4.5")
                 .hetu("fakehet9")
                 .build();
-        given(this.yksilointivirheRepository.findByHenkilo(henkilo)).willReturn(Optional.empty());
         willThrow(SuspendableIdentificationException.class).given(this.yksilointiService).yksiloiAutomaattisesti(eq("1.2.3.4.5"));
         this.identificationService.identifyHenkilos(List.of(henkilo.getOidHenkilo()), 1L);
         verify(this.yksilointiService, times(1)).yksiloiAutomaattisesti(eq("1.2.3.4.5"));

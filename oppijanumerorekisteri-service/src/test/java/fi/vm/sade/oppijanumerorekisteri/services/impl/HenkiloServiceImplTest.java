@@ -20,11 +20,11 @@ import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.joda.time.DateTime;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
@@ -33,10 +33,11 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class HenkiloServiceImplTest {
 
     @InjectMocks
@@ -164,9 +165,9 @@ public class HenkiloServiceImplTest {
         assertThat(result).hasSize(0);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void setPassportNumbersNotFoundTest() {
-        impl.setPassportNumbers("oid", Set.of("makkara"));
+        assertThrows(NotFoundException.class, () -> impl.setPassportNumbers("oid", Set.of("makkara")));
     }
 
     @Test

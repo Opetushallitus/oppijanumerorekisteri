@@ -3,12 +3,12 @@ package fi.vm.sade.oppijanumerorekisteri.validators;
 import fi.vm.sade.oppijanumerorekisteri.models.KoodiType;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
 
 import java.util.Arrays;
@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class KoodiValidatorTest {
 
     private KoodiValidator koodistoValidator;
@@ -32,7 +32,7 @@ public class KoodiValidatorTest {
     @Mock
     private Errors errors;
 
-    @Before
+    @BeforeEach
     public void setup() {
         koodistoValidator = new KoodiValidator(koodistoService, errors);
     }

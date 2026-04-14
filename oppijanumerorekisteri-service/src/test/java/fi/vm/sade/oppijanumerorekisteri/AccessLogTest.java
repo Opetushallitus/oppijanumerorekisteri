@@ -3,7 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri;
 import ch.qos.logback.access.common.PatternLayout;
 import ch.qos.logback.access.common.spi.IAccessEvent;
 import ch.qos.logback.core.ContextBase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Proxy;
@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AccessLogTest {
 

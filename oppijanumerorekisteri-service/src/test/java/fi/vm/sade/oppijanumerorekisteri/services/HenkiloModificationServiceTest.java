@@ -19,12 +19,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import software.amazon.awssdk.services.sns.SnsClient;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.net.http.HttpRequest;
 import java.util.List;
@@ -36,10 +34,10 @@ import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @Sql("/sql/truncate_data.sql")
 public class HenkiloModificationServiceTest {
@@ -263,26 +261,32 @@ public class HenkiloModificationServiceTest {
         assertThat(slaves).containsExactly(slave.getOidHenkilo());
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     @WithMockUser
     public void testForceLinkSlaveVtjYksiloity() {
         Henkilo master = Henkilo.builder().etunimet("master").kutsumanimi("master").sukunimi("master").sukupuoli(null).build();
         master = henkiloModificationService.createHenkilo(master);
         Henkilo slave = Henkilo.builder().etunimet("slave").kutsumanimi("slave").sukunimi("slave").sukupuoli(null).yksiloityVTJ(true).build();
         slave = henkiloModificationService.createHenkilo(slave);
+        final String masterOid = master.getOidHenkilo();
+        final String slaveOid = slave.getOidHenkilo();
 
-        henkiloModificationService.forceLinkHenkilos(master.getOidHenkilo(), asList(slave.getOidHenkilo()));
+        assertThrows(ValidationException.class,
+                () -> henkiloModificationService.forceLinkHenkilos(masterOid, asList(slaveOid)));
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     @WithMockUser
     public void testForceLinkSlaveHasHetu() {
         Henkilo master = Henkilo.builder().etunimet("master").kutsumanimi("master").sukunimi("master").sukupuoli(null).build();
         master = henkiloModificationService.createHenkilo(master);
         Henkilo slave = Henkilo.builder().etunimet("slave").kutsumanimi("slave").sukunimi("slave").sukupuoli(null).hetu("fakehetu").build();
         slave = henkiloModificationService.createHenkilo(slave);
+        final String masterOid = master.getOidHenkilo();
+        final String slaveOid = slave.getOidHenkilo();
 
-        henkiloModificationService.forceLinkHenkilos(master.getOidHenkilo(), asList(slave.getOidHenkilo()));
+        assertThrows(ValidationException.class,
+                () -> henkiloModificationService.forceLinkHenkilos(masterOid, asList(slaveOid)));
     }
 
     @Test

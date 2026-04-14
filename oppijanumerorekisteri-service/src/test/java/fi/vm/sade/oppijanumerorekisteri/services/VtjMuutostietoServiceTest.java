@@ -17,14 +17,12 @@ import java.util.stream.IntStream;
 
 import fi.vm.sade.oppijanumerorekisteri.services.impl.KoodistoMock;
 import jakarta.transaction.Transactional;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.validation.BindException;
 
 import fi.vm.sade.oppijanumerorekisteri.clients.model.VtjMuutostietoResponse;
@@ -39,7 +37,6 @@ import fi.vm.sade.oppijanumerorekisteri.models.VtjPerustieto;
 import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @Sql("/sql/truncate_data.sql")
 @Sql("/sql/test_data.sql")
@@ -52,7 +49,7 @@ public class VtjMuutostietoServiceTest extends VtjMuutostietoTestBase {
     VtjPerustieto foreign;
     VtjPerustieto henkilotunnusKorjaus;
 
-    @Before
+    @BeforeEach
     public void before() throws Exception {
         defaultKoodistoMocks(koodistoService);
         muutostietos = List.of(

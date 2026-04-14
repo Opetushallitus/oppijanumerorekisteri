@@ -14,12 +14,10 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import jakarta.persistence.EntityManager;
 import org.joda.time.DateTime;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -35,10 +33,10 @@ import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.HenkiloPop
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.TuontiPopulator.tuonti;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
 @Sql({"/turvakielto/truncate_data.sql"})
@@ -104,11 +102,11 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         assertThat(hetu).isEmpty();
     }
 
-    @Test(expected = PersistenceException.class)
+    @Test
     public void createUserWithNullOid() {
         Henkilo henkiloWithNullOid = createHenkilo("arpa", "arpa", "kuutio", "123456-9999", null, false,
                 "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi", LocalDate.of(1970, Month.OCTOBER, 10));
-        this.persistHenkilo(henkiloWithNullOid);
+        assertThrows(PersistenceException.class, () -> this.persistHenkilo(henkiloWithNullOid));
     }
 
     @Test
@@ -370,16 +368,16 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         dataRepository.saveAndFlush(testiHenkilo);
 
         List<HenkiloMunicipalDobDto> henkilos = dataRepository.findByMunicipalAndBirthdate(kunta, dob, Long.MAX_VALUE, 0L);
-        assertEquals("Incorrect result size", 1, henkilos.size());
+        assertEquals(1, henkilos.size(), "Incorrect result size");
 
         henkilos = dataRepository.findByMunicipalAndBirthdate("bar", dob, Long.MAX_VALUE, 0L);
-        assertTrue("Result should be empty (municipality)", henkilos.isEmpty());
+        assertTrue(henkilos.isEmpty(), "Result should be empty (municipality)");
 
         henkilos = dataRepository.findByMunicipalAndBirthdate(kunta, dob.plusDays(1), Long.MAX_VALUE, 0L);
-        assertTrue("Result should be empty (dob)", henkilos.isEmpty());
+        assertTrue(henkilos.isEmpty(), "Result should be empty (dob)");
 
         henkilos = dataRepository.findByMunicipalAndBirthdate(kunta, dob, Long.MAX_VALUE, 1L);
-        assertTrue("Result should be empty (offset)", henkilos.isEmpty());
+        assertTrue(henkilos.isEmpty(), "Result should be empty (offset)");
     }
 
     @Test
@@ -401,7 +399,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         dataRepository.saveAndFlush(testiHenkilo);
 
         Collection<Henkilo> henkilos = dataRepository.findDeadWithIncompleteCleanup(CleanupStep.INITIATED);
-        assertEquals("Incorrect result size", 1, henkilos.size());
+        assertEquals(1, henkilos.size(), "Incorrect result size");
     }
 
     @Test
@@ -424,7 +422,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         dataRepository.saveAndFlush(testiHenkilo);
 
         Collection<Henkilo> henkilos = dataRepository.findDeadWithIncompleteCleanup(CleanupStep.INITIATED);
-        assertTrue("Incorrect result size", henkilos.isEmpty());
+        assertTrue(henkilos.isEmpty(), "Incorrect result size");
     }
 
     @Test
@@ -446,7 +444,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         dataRepository.saveAndFlush(testiHenkilo);
 
         Collection<Henkilo> henkilos = dataRepository.findDeadWithIncompleteCleanup(CleanupStep.INITIATED);
-        assertTrue("Incorrect result size", henkilos.isEmpty());
+        assertTrue(henkilos.isEmpty(), "Incorrect result size");
     }
 
     @Test

@@ -20,13 +20,11 @@ import software.amazon.awssdk.services.sns.SnsClient;
 
 import org.assertj.core.groups.Tuple;
 import org.jresearch.orika.spring.OrikaSpringMapper;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -44,7 +42,6 @@ import static org.mockito.Mockito.when;
 
 // Non-transactional in order to emulate how the real method call works. Thus db is not rolled back after tests.
 // See IdentificationServiceIntegrationTests if you want to add more tests.
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @Sql("/sql/truncate_data.sql")
 @Sql("/sql/yksilointi-test.sql")
@@ -78,7 +75,7 @@ public class IdentificationServiceIntegrationTest {
 
     private final Gson gson = new Gson();
 
-    @Before
+    @BeforeEach
     public void setup() {
         given(this.koodistoClient.getKoodisForKoodisto(anyString(), anyInt(), anyBoolean()))
                 .willReturn(new KoodiTypeListBuilder(Koodisto.MAAT_JA_VALTIOT_2).koodi("752").koodi("246").build());

@@ -8,8 +8,8 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
@@ -30,7 +30,7 @@ public class ServiceToServiceApiTest extends OppijanumerorekisteriApiTest {
 
   String oid;
 
-  @Before
+  @BeforeEach
   public void before() {
     val now = ZonedDateTime.now();
     oid = oidGenerator.generateOID();

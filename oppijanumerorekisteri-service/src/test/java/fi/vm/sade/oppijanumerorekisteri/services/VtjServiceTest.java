@@ -5,22 +5,20 @@ import fi.vm.sade.oppijanumerorekisteri.vtjkysely.VtjKyselyClient;
 import fi.vm.sade.oppijanumerorekisteri.vtjkysely.jaxb.TeeHenkilonTunnusKyselyResponse;
 import fi.vm.sade.oppijanumerorekisteri.vtjkysely.jaxb.VTJHenkiloVastaussanoma;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
 @IntegrationTest
 public class VtjServiceTest {
     @MockitoBean
@@ -114,8 +112,7 @@ public class VtjServiceTest {
         when(vtjKyselyClient.teeHenkilonTunnusKysely(newHetu))
                 .thenReturn(newResult);
 
-        VtjService vtjService = new VtjService(vtjKyselyClient);
-        vtjService = spy(vtjService);
+        final VtjService vtjService = spy(new VtjService(vtjKyselyClient));
 
         YksiloityHenkilo yksiloityHenkilo = vtjService.teeHenkiloKysely(oldHetu).get();
 
@@ -126,7 +123,7 @@ public class VtjServiceTest {
         assertEquals(yksiloityHenkilo.getHetu(), newHetu);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testHenkilonTunnusKysely0002NewActiveHetuQueryProducesAnotherNewActiveHetu() {
         String oldHetu = "111111-1111";
         String newHetu = "222222-2222";
@@ -147,17 +144,16 @@ public class VtjServiceTest {
         when(vtjKyselyClient.teeHenkilonTunnusKysely(newHetu))
                 .thenReturn(result);
 
-        VtjService vtjService = new VtjService(vtjKyselyClient);
-        vtjService = spy(vtjService);
+        final VtjService vtjService = spy(new VtjService(vtjKyselyClient));
 
-        vtjService.teeHenkiloKysely(oldHetu);
+        assertThrows(RuntimeException.class, () -> vtjService.teeHenkiloKysely(oldHetu));
 
         verify(vtjService, times(1)).teeHenkiloKysely(oldHetu);
         verify(vtjService, times(1)).getVtjHenkiloVastaussanoma(oldHetu, false);
         verify(vtjService, times(1)).getVtjHenkiloVastaussanoma(newHetu, true);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testHenkilonTunnusKyselyTuntematon() {
         TeeHenkilonTunnusKyselyResponse result =
                 Mockito.mock(TeeHenkilonTunnusKyselyResponse.class);
@@ -171,7 +167,7 @@ public class VtjServiceTest {
                 .thenReturn(result);
 
         VtjService vtjService = new VtjService(vtjKyselyClient);
-        vtjService.teeHenkiloKysely("111111-1111");
+        assertThrows(RuntimeException.class, () -> vtjService.teeHenkiloKysely("111111-1111"));
     }
 
     private VTJHenkiloVastaussanoma createVastausSanomaWithPaluukoodi(String tuntematon) {
@@ -277,4 +273,3 @@ public class VtjServiceTest {
         return vtjHenkiloVastaussanoma;
     }
 }
-

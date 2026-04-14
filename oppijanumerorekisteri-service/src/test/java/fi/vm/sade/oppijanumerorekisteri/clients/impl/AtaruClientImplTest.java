@@ -4,22 +4,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.javautils.http.OphHttpClient;
 import fi.vm.sade.oppijanumerorekisteri.FilesystemHelper;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
+@ExtendWith(MockitoExtension.class)
 public class AtaruClientImplTest {
 
     private AtaruClientImpl client;
-    @MockitoBean
+    @Mock
     private OphHttpClient ophHttpClient;
     private ObjectMapper objectMapper;
-    @MockitoBean
+    @Mock
     private UrlConfiguration urlConfiguration;
 
-    @Before
+    @BeforeEach
     public void setup() {
         objectMapper = new ObjectMapper();
         client = new AtaruClientImpl(ophHttpClient, urlConfiguration, objectMapper);
