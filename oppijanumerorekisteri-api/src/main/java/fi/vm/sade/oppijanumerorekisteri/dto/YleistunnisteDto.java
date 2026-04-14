@@ -2,11 +2,11 @@ package fi.vm.sade.oppijanumerorekisteri.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Generated;
+import lombok.RequiredArgsConstructor;
 
-@Generated
 @Data
 @Builder
+@RequiredArgsConstructor
 public class YleistunnisteDto {
 
     private final String oid;

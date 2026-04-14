@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.clients.viestinvalitys;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import fi.vm.sade.oppijanumerorekisteri.clients.cas.CasClient;
 import fi.vm.sade.properties.OphProperties;

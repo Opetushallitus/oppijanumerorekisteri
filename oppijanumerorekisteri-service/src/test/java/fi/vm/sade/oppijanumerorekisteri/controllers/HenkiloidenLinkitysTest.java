@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import tools.jackson.databind.type.TypeFactory;
 import com.google.gson.JsonObject;
 import fi.vm.sade.auditlog.Target;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriApiTest;
@@ -73,7 +73,7 @@ public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
                 List.of("1.2.246.562.24.90017362330")
         )).andExpect(status().isOk()).andReturn();
         List<String> response = objectMapper.readValue(result.getResponse().getContentAsString(),
-                TypeFactory.defaultInstance().constructCollectionType(List.class, String.class));
+                TypeFactory.createDefaultInstance().constructCollectionType(List.class, String.class));
         assertThat(response).containsExactlyInAnyOrder("1.2.246.562.24.90017362330");
 
         assertFalse(henkiloRepository.findByOidHenkilo("1.2.246.562.24.30171449858").get().isDuplicate());

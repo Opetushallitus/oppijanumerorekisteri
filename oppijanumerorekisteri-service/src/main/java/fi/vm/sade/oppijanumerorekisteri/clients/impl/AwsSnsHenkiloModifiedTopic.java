@@ -4,8 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.model.PublishRequest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.clients.HenkiloModifiedTopic;
 import fi.vm.sade.oppijanumerorekisteri.configurations.AwsConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -51,7 +50,7 @@ public class AwsSnsHenkiloModifiedTopic implements HenkiloModifiedTopic {
                     .topicArn(topicArn)
                     .build();
                 opintopolkuSnsClient.publish(request);
-            } catch (JsonProcessingException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }

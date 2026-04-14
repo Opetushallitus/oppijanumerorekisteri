@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.security.cas.authentication.CasAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import fi.vm.sade.oppijanumerorekisteri.configurations.security.cas.OpintopolkuUserDetailsService;
@@ -17,7 +16,6 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.security.cas.OpintopolkuU
 import java.io.IOException;
 import java.util.Optional;
 
-@Component
 @Slf4j
 public class RequestCallerFilter extends GenericFilterBean {
     public static final String CALLER_HENKILO_OID_ATTRIBUTE = RequestCallerFilter.class.getName() + ".callerHenkiloOid";

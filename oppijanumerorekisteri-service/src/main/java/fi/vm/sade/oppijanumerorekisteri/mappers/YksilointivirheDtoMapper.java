@@ -1,14 +1,11 @@
 package fi.vm.sade.oppijanumerorekisteri.mappers;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaListDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiVirheDto;
 import fi.vm.sade.oppijanumerorekisteri.enums.YksilointivirheTila;
 import fi.vm.sade.oppijanumerorekisteri.models.Yksilointivirhe;
-import ma.glasnost.orika.CustomConverter;
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
-import ma.glasnost.orika.metadata.Type;
 import org.springframework.stereotype.Component;
 
 import dev.akkinoc.spring.boot.orika.OrikaMapperFactoryConfigurer;

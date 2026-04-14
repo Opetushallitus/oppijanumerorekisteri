@@ -1,14 +1,4 @@
-spring:
-  main:
-    allow-bean-definition-overriding: true
-    allow-circular-references: true # HuoltajaCreateDtoMapper
-  jackson:
-    serialization:
-      write-dates-as-timestamps: true
-  autoconfigure:
-    exclude: org.spring
-  cache:
-    type: NONE
+spring.cache.type: NONE
 
 spring.datasource.driver-class-name: org.postgresql.Driver
 spring.datasource.url: jdbc:postgresql://localhost:5435/oppijanumerorekisteri

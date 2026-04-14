@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 
 @Getter
 @Setter
@@ -25,7 +26,7 @@ public class OppijaTuontiCreateDto {
 
     @NotEmpty
     @Valid
-    @Schema(required = true)
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     private List<OppijaTuontiRiviCreateDto> henkilot;
 
 }
