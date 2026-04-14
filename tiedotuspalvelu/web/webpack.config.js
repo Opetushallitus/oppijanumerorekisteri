@@ -84,6 +84,11 @@ module.exports = function () {
             context: ["/tiedotuspalvelu"],
             target: backendUrl,
           },
+          {
+            context: ["/virkailija-raamit"],
+            target: "https://virkailija.testiopintopolku.fi",
+            changeOrigin: true,
+          },
         ],
       },
       output: {
