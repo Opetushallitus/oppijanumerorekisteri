@@ -5954,6 +5954,22 @@
     {
         "id": null,
         "namespace": "henkilo-ui",
+        "key": "MUOKKAA_VIRKAILIJAN_TIETOJA",
+        "locale": "fi",
+        "value": "Muokkaa",
+        "createdBy": null,
+        "accesscount": null,
+        "modifiedBy": null,
+        "modified": null,
+        "force": null,
+        "category": "henkilo-ui",
+        "accessed": null,
+        "created": null,
+        "description": null
+    },
+    {
+        "id": null,
+        "namespace": "henkilo-ui",
         "key": "MUOKKAA_LINKKI",
         "locale": "fi",
         "value": "Muokkaa",

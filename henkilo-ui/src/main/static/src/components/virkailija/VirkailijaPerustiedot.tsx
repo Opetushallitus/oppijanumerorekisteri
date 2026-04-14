@@ -167,7 +167,7 @@ export const VirkailijaPerustiedot = ({ oid }: { oid: string }) => {
                         </div>
                         <div className={styles.buttonRow}>
                             <button className="oph-ds-button oph-ds-button-bordered" onClick={() => setMuokkaa(true)}>
-                                {L('MUOKKAA')}
+                                {L('MUOKKAA_VIRKAILIJAN_TIETOJA')}
                             </button>
                             <button className="oph-ds-button oph-ds-button-bordered" onClick={() => setHaka(true)}>
                                 {L('LISAA_HAKA_LINKKI')}
