@@ -7,7 +7,6 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
-import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
 import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
@@ -19,6 +18,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSortFactor
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.MapperFacade;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -46,7 +46,7 @@ public class OppijaServiceImpl implements OppijaService {
     private final OppijaTuontiAsyncService oppijaTuontiAsyncService;
     private final HenkiloModificationService henkiloModificationService;
     private final OrganisaatioService organisaatioService;
-    private final OrikaConfiguration mapper;
+    private final MapperFacade mapper;
     private final HenkiloRepository henkiloRepository;
     private final TuontiRepository tuontiRepository;
     private final OrganisaatioRepository organisaatioRepository;
@@ -382,7 +382,7 @@ public class OppijaServiceImpl implements OppijaService {
     private static class HenkiloToMasterDto implements Function<Henkilo, MasterHenkiloDto<OppijaReadDto>> {
 
         private final Map<String, Henkilo> mastersBySlaveOid;
-        private final OrikaConfiguration mapper;
+        private final MapperFacade mapper;
 
         @Override
         public MasterHenkiloDto<OppijaReadDto> apply(Henkilo slave) {

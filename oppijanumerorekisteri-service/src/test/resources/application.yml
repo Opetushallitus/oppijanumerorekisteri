@@ -29,7 +29,8 @@ spring.flyway.table: schema_table_onr
 
 spring.security.oauth2.resourceserver.jwt.issuer-uri: "http://localhost/issuer-uri"
 spring.security.oauth2.resourceserver.jwt.jwk-set-uri: "http://localhost/jwk-set-uri"
-
+orika.enabled: true
+orika.map-nulls: false
 host:
   host-cas: localhost
   host-virkailija: localhost

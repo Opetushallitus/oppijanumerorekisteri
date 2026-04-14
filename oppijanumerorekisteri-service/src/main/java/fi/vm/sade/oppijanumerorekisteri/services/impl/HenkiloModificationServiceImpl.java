@@ -10,7 +10,6 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnauthorizedException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
-import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.EidasTunniste;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
@@ -24,6 +23,8 @@ import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HuoltajaCreatePostValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.MapperFacade;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,7 +67,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
     private final HenkiloModifiedTopic henkiloModifiedTopic;
 
-    private final OrikaConfiguration mapper;
+    private final MapperFacade mapper;
     private final UserDetailsHelper userDetailsHelper;
     private final OidGenerator oidGenerator;
 
@@ -301,7 +302,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     private void henkiloUpdateSetReusableFields(HenkiloUpdateDto henkiloUpdateDto, Henkilo henkiloSaved,
             boolean overwriteReadOnly) {
         YhteystietoryhmaUtils.updateYhteystiedot(henkiloUpdateDto.getYhteystiedotRyhma(),
-                henkiloSaved.getYhteystiedotRyhma(), overwriteReadOnly, this.mapper);
+                henkiloSaved.getYhteystiedotRyhma(), overwriteReadOnly);
         henkiloUpdateDto.setYhteystiedotRyhma(null);
 
         if (henkiloUpdateDto.getAidinkieli() != null && henkiloUpdateDto.getAidinkieli().getKieliKoodi() != null) {

@@ -12,12 +12,12 @@ import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ConflictException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.SuspendableIdentificationException;
-import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.utils.TextUtils;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
+import ma.glasnost.orika.MapperFacade;
 import nl.altindag.log.LogCaptor;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
@@ -70,7 +70,7 @@ public class YksilointiServiceImplTest {
     @Spy
     private OppijanumerorekisteriProperties oppijanumerorekisteriProperties = new OppijanumerorekisteriProperties();
     @Mock
-    private OrikaConfiguration orikaConfiguration;
+    private MapperFacade orikaConfiguration;
     @Mock
     private DuplicateService duplicateService;
     private final Gson gson = new Gson();

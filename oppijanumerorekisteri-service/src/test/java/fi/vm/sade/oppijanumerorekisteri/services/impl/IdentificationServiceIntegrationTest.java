@@ -19,7 +19,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import software.amazon.awssdk.services.sns.SnsClient;
 
 import org.assertj.core.groups.Tuple;
-import org.jresearch.orika.spring.OrikaSpringMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +27,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import ma.glasnost.orika.MapperFacade;
 
 import java.io.InputStreamReader;
 import java.util.List;
@@ -68,7 +68,7 @@ public class IdentificationServiceIntegrationTest {
     private EntityManager entityManager;
 
     @Autowired
-    private OrikaSpringMapper mapper;
+    private MapperFacade mapper;
 
     @Autowired
     private YksilointivirheRepository yksilointivirheRepository;

@@ -8,7 +8,6 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.Oppijanumerore
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
-import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
@@ -22,6 +21,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.util.batchprocessing.BatchProcessor;
 import fi.vm.sade.oppijanumerorekisteri.util.batchprocessing.BatchingProcess;
 import lombok.RequiredArgsConstructor;
+import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.metadata.TypeBuilder;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     private final HenkiloRepository henkiloDataRepository;
     private final HenkiloViiteRepository henkiloViiteRepository;
 
-    private final OrikaConfiguration mapper;
+    private final MapperFacade mapper;
     private final UserDetailsHelper userDetailsHelper;
 
     private final OppijanumerorekisteriProperties oppijanumerorekisteriProperties;

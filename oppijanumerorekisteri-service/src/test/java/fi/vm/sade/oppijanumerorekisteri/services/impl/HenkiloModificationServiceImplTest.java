@@ -1,26 +1,24 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import fi.vm.sade.oppijanumerorekisteri.KoodistoServiceMock;
 import fi.vm.sade.oppijanumerorekisteri.aspects.AuditlogAspectHelper;
 import fi.vm.sade.oppijanumerorekisteri.clients.HenkiloModifiedTopic;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
-import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
-import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HuoltajaCreatePostValidator;
+
 import org.assertj.core.groups.Tuple;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.google.common.collect.Lists;
@@ -41,73 +39,57 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest(classes = {OrikaConfiguration.class, KoodistoServiceMock.class})
+@Sql("/sql/truncate_data.sql")
+@Sql("/sql/henkilo-controller-test.sql")
+@SpringBootTest
 public class HenkiloModificationServiceImplTest {
-    @Autowired
-    private OrikaConfiguration mapper;
-
     @MockitoBean
     private TuontiRepository tuontiRepository;
 
-    @Spy
-    @InjectMocks
-    private HenkiloModificationServiceImpl service;
+    @Autowired
+    private HenkiloModificationService service;
 
-    @Mock
+    @MockitoBean
     private HenkiloService henkiloService;
 
-    @Mock
+    @MockitoBean
     private DuplicateService duplicateService;
 
-    @Mock
+    @MockitoBean
     private HenkiloUpdatePostValidator henkiloUpdatePostValidator;
 
-    @Mock
+    @MockitoBean
     private HenkiloCreatePostValidator henkiloCreatePostValidator;
 
-    @Mock
+    @MockitoBean
     private HuoltajaCreatePostValidator huoltajaCreatePostValidator;
 
-    @Mock
+    @MockitoBean
     private HenkiloRepository henkiloDataRepositoryMock;
 
-    @Mock
-    private KielisyysRepository kielisyysRepositoryMock;
-
-    @Mock
-    private KansalaisuusRepository kansalaisuusRepositoryMock;
-
-    @Mock
+    @MockitoBean
     private YksilointitietoRepository yksilointitietoRepositoryMock;
 
-    @Mock
+    @MockitoBean
     private KayttooikeusClient kayttooikeusClient;
 
-    @Mock
+    @MockitoBean
     private PermissionChecker permissionCheckerMock;
 
-    @Mock
+    @MockitoBean
     private UserDetailsHelper userDetailsHelperMock;
 
-    @Mock
+    @MockitoBean
     private OidGenerator oidGenerator;
-
-    @Mock
-    private OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
 
     @MockitoBean
     private KansalaisuusRepository kansalaisuusRepository;
 
-    @Mock
+    @MockitoBean
     private HenkiloModifiedTopic henkiloModifiedTopic;
 
-    @Mock
+    @MockitoBean
     private AuditlogAspectHelper auditlogAspectHelper;
-
-    @BeforeEach
-    public void setup() {
-        ReflectionTestUtils.setField(this.service, "mapper", this.mapper);
-    }
 
     @Test
     public void updateHenkiloShouldSetEmptyHetuToNull() {
@@ -344,11 +326,11 @@ public class HenkiloModificationServiceImplTest {
         HenkiloPerustietoCreateDto input = HenkiloPerustietoCreateDto.builder().oidHenkilo("oid1").build();
         Henkilo henkilo = new Henkilo();
         when(henkiloDataRepositoryMock.findByOidHenkilo(any())).thenReturn(Optional.of(henkilo));
-        given(this.henkiloService.getEntityByOid(eq("oid1"))).willReturn(henkilo);
+        given(henkiloService.getEntityByOid(eq("oid1"))).willReturn(henkilo);
 
         service.findOrCreateHenkiloFromPerustietoDto(input, false);
 
-        verify(this.henkiloService).getEntityByOid(eq("oid1"));
+        verify(henkiloService).getEntityByOid(eq("oid1"));
         verify(henkiloDataRepositoryMock, never()).save(any(Henkilo.class));
     }
 
@@ -356,7 +338,7 @@ public class HenkiloModificationServiceImplTest {
     public void findOrCreateHenkiloFromPerustietoDtoShouldThrowByOid() {
         HenkiloPerustietoCreateDto input = HenkiloPerustietoCreateDto.builder().oidHenkilo("oid1").build();
         when(henkiloDataRepositoryMock.findByOidHenkilo(any())).thenReturn(Optional.empty());
-        given(this.henkiloService.getEntityByOid(eq("oid1"))).willThrow(new NotFoundException());
+        given(henkiloService.getEntityByOid(eq("oid1"))).willThrow(new NotFoundException());
 
         Throwable throwable = catchThrowable(() -> service.findOrCreateHenkiloFromPerustietoDto(input, false));
 
@@ -402,16 +384,15 @@ public class HenkiloModificationServiceImplTest {
 
     @Test
     public void generateOid() {
-        given(this.oidGenerator.generateOID()).willReturn("oid");
+        given(oidGenerator.generateOID()).willReturn("oid");
         String oid = ReflectionTestUtils.invokeMethod(service, "getFreePersonOid");
         assertThat(oid).isNotNull();
     }
 
     @Test
     public void hetullinenHuoltajaLuodaan() {
-        given(this.henkiloDataRepositoryMock.findByOidHenkilo(any())).willReturn(Optional.of(new Henkilo()));
-        doReturn(Henkilo.builder().hetu("271198-9197").build()).when(this.service).createHenkilo(any(HuoltajaCreateDto.class));
-        given(this.henkiloDataRepositoryMock.findSlavesByMasterOid(any())).willReturn(new ArrayList<>());
+        given(henkiloDataRepositoryMock.findByOidHenkilo(any())).willReturn(Optional.of(new Henkilo()));
+        given(henkiloDataRepositoryMock.findSlavesByMasterOid(any())).willReturn(new ArrayList<>());
         given(henkiloDataRepositoryMock.save(any(Henkilo.class))).willAnswer(returnsFirstArg());
 
         HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
@@ -419,16 +400,16 @@ public class HenkiloModificationServiceImplTest {
                 .build();
         HenkiloForceUpdateDto henkiloForceUpdateDto = new HenkiloForceUpdateDto();
         henkiloForceUpdateDto.setHuoltajat(Collections.singleton(huoltajaCreateDto));
-        this.service.forceUpdateHenkilo(henkiloForceUpdateDto);
-        verify(this.service, times(1)).createHenkilo(any(HuoltajaCreateDto.class), any());
+        service.forceUpdateHenkilo(henkiloForceUpdateDto);
+        verify(henkiloDataRepositoryMock, times(2)).save(any(Henkilo.class));
+        verify(auditlogAspectHelper, times(1)).logCreateHenkilo(any(), any());
     }
 
     @Test
     public void hetullinenHuoltajaLoytyyEnnestaan() {
-        given(this.henkiloDataRepositoryMock.findByOidHenkilo(any())).willReturn(Optional.of(new Henkilo()));
-        given(this.henkiloDataRepositoryMock.findByHetu(eq("271198-9197"))).willReturn(Optional.of(new Henkilo()));
-        doReturn(Henkilo.builder().hetu("271198-9197").build()).when(this.service).createHenkilo(any(HuoltajaCreateDto.class));
-        given(this.henkiloDataRepositoryMock.findSlavesByMasterOid(any())).willReturn(new ArrayList<>());
+        given(henkiloDataRepositoryMock.findByOidHenkilo(any())).willReturn(Optional.of(new Henkilo()));
+        given(henkiloDataRepositoryMock.findByHetu(eq("271198-9197"))).willReturn(Optional.of(new Henkilo()));
+        given(henkiloDataRepositoryMock.findSlavesByMasterOid(any())).willReturn(new ArrayList<>());
         given(henkiloDataRepositoryMock.save(any(Henkilo.class))).willAnswer(returnsFirstArg());
 
         HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
@@ -436,15 +417,15 @@ public class HenkiloModificationServiceImplTest {
                 .build();
         HenkiloForceUpdateDto henkiloForceUpdateDto = new HenkiloForceUpdateDto();
         henkiloForceUpdateDto.setHuoltajat(Collections.singleton(huoltajaCreateDto));
-        this.service.forceUpdateHenkilo(henkiloForceUpdateDto);
-        verify(this.henkiloDataRepositoryMock, times(1)).findByHetu(eq("271198-9197"));
-        verify(this.service, times(0)).createHenkilo(any(HuoltajaCreateDto.class));
+        service.forceUpdateHenkilo(henkiloForceUpdateDto);
+        verify(henkiloDataRepositoryMock, times(1)).findByHetu(eq("271198-9197"));
+        verify(auditlogAspectHelper, times(0)).logCreateHenkilo(any(), any());
     }
 
     @Test
     public void hetullinenHuoltajaOnYksiloity() {
-        given(this.henkiloDataRepositoryMock.findByOidHenkilo(any())).willReturn(Optional.of(new Henkilo()));
-        given(this.henkiloDataRepositoryMock.findByHetu(eq("271198-9197"))).willReturn(Optional.of(Henkilo.builder().oidHenkilo("oid").build()));
+        given(henkiloDataRepositoryMock.findByOidHenkilo(any())).willReturn(Optional.of(new Henkilo()));
+        given(henkiloDataRepositoryMock.findByHetu(eq("271198-9197"))).willReturn(Optional.of(Henkilo.builder().oidHenkilo("oid").build()));
         given(henkiloDataRepositoryMock.save(any(Henkilo.class))).willAnswer(returnsFirstArg());
 
         HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
@@ -455,9 +436,9 @@ public class HenkiloModificationServiceImplTest {
                 .yksiloityVTJ(true)
                 .build();
         Henkilo lapsi = Mockito.mock(Henkilo.class);
-        Henkilo huoltaja = this.service.findOrCreateHuoltaja(huoltajaCreateDto, lapsi);
-        verify(this.henkiloDataRepositoryMock, times(1)).findByHetu(eq("271198-9197"));
-        verify(this.service, times(0)).createHenkilo(any(HuoltajaCreateDto.class));
+        Henkilo huoltaja = service.findOrCreateHuoltaja(huoltajaCreateDto, lapsi);
+        verify(henkiloDataRepositoryMock, times(1)).findByHetu(eq("271198-9197"));
+        verify(auditlogAspectHelper, times(0)).logCreateHenkilo(any(), any());
         verifyNoInteractions(lapsi);
         assertThat(huoltaja)
                 .extracting(Henkilo::getEtunimet, Henkilo::getKutsumanimi, Henkilo::getSukunimi, Henkilo::getHetu, Henkilo::isYksiloityVTJ, Henkilo::getOidHenkilo, Henkilo::getSyntymaaika, Henkilo::getSukupuoli)
@@ -466,9 +447,8 @@ public class HenkiloModificationServiceImplTest {
 
     @Test
     public void hetutonHuoltajaLuodaan() {
-        given(this.henkiloDataRepositoryMock.findByOidHenkilo(any())).willReturn(Optional.of(new Henkilo()));
-        doReturn(Henkilo.builder().etunimet("etunimi").sukunimi("sukunimi").build()).when(this.service).createHenkilo(any(HuoltajaCreateDto.class));
-        given(this.henkiloDataRepositoryMock.findSlavesByMasterOid(any())).willReturn(new ArrayList<>());
+        given(henkiloDataRepositoryMock.findByOidHenkilo(any())).willReturn(Optional.of(new Henkilo()));
+        given(henkiloDataRepositoryMock.findSlavesByMasterOid(any())).willReturn(new ArrayList<>());
         given(henkiloDataRepositoryMock.save(any(Henkilo.class))).willAnswer(returnsFirstArg());
 
         HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
@@ -477,8 +457,8 @@ public class HenkiloModificationServiceImplTest {
                 .build();
         HenkiloForceUpdateDto henkiloForceUpdateDto = new HenkiloForceUpdateDto();
         henkiloForceUpdateDto.setHuoltajat(Collections.singleton(huoltajaCreateDto));
-        this.service.forceUpdateHenkilo(henkiloForceUpdateDto);
-        verify(this.service, times(1)).createHenkilo(any(HuoltajaCreateDto.class), any());
+        service.forceUpdateHenkilo(henkiloForceUpdateDto);
+        verify(auditlogAspectHelper, times(1)).logCreateHenkilo(any(), any());
     }
 
     @Test
@@ -491,9 +471,8 @@ public class HenkiloModificationServiceImplTest {
                         .sukunimi("sukunimi")
                         .build())
                 .build()));
-        given(this.henkiloDataRepositoryMock.findByOidHenkilo(any())).willReturn(Optional.of(henkiloResult));
-        doReturn(Henkilo.builder().etunimet("etunimi").sukunimi("sukunimi").build()).when(this.service).createHenkilo(any(HuoltajaCreateDto.class));
-        given(this.henkiloDataRepositoryMock.findSlavesByMasterOid(any())).willReturn(new ArrayList<>());
+        given(henkiloDataRepositoryMock.findByOidHenkilo(any())).willReturn(Optional.of(henkiloResult));
+        given(henkiloDataRepositoryMock.findSlavesByMasterOid(any())).willReturn(new ArrayList<>());
         given(henkiloDataRepositoryMock.save(any(Henkilo.class))).willAnswer(returnsFirstArg());
 
         HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
@@ -504,12 +483,12 @@ public class HenkiloModificationServiceImplTest {
                 .build();
         HenkiloForceUpdateDto henkiloForceUpdateDto = new HenkiloForceUpdateDto();
         henkiloForceUpdateDto.setHuoltajat(Collections.singleton(huoltajaCreateDto));
-        this.service.forceUpdateHenkilo(henkiloForceUpdateDto);
+        service.forceUpdateHenkilo(henkiloForceUpdateDto);
         assertThat(henkiloResult.getHuoltajat().stream().map(HenkiloHuoltajaSuhde::getHuoltaja).collect(Collectors.toList()))
                 .extracting(Henkilo::getEtunimet, Henkilo::getSyntymaaika)
                 .containsExactly(Tuple.tuple("etunimi", LocalDate.of(2000, 2, 2)));
-        verify(this.henkiloDataRepositoryMock, times(0)).findByHetu(any());
-        verify(this.service, times(0)).createHenkilo(any(HuoltajaCreateDto.class));
+        verify(henkiloDataRepositoryMock, times(0)).findByHetu(any());
+        verify(auditlogAspectHelper, times(0)).logCreateHenkilo(any(), any());
     }
 
 }

@@ -5,7 +5,6 @@ import fi.vm.sade.oppijanumerorekisteri.clients.impl.NoContentOrNotFoundExceptio
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.*;
-import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YksilointitietoCriteria;
@@ -19,6 +18,8 @@ import fi.vm.sade.rajapinnat.vtj.api.Huoltaja;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.MapperFacade;
+
 import org.apache.lucene.search.spell.JaroWinklerDistance;
 import org.apache.lucene.search.spell.StringDistance;
 import org.slf4j.Logger;
@@ -65,7 +66,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     private final YhteystietoRepository yhteystietoRepository;
     private final YksilointitietoRepository yksilointitietoRepository;
     private final YksilointivirheRepository yksilointivirheRepository;
-    private final OrikaConfiguration mapper;
+    private final MapperFacade mapper;
 
     private final VtjService vtjService;
     private final KayttooikeusClient kayttooikeusClient;

@@ -12,9 +12,11 @@ import fi.vm.sade.oppijanumerorekisteri.utils.KoodistoUtils;
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
-import ma.glasnost.orika.metadata.ClassMap;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import dev.akkinoc.spring.boot.orika.OrikaMapperFactoryConfigurer;
 
 import java.util.List;
 import java.util.Objects;
@@ -24,12 +26,16 @@ import java.util.function.BiConsumer;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-@Configuration
-public class OppijaMappers {
+@Component
+public class OppijaMappers implements OrikaMapperFactoryConfigurer {
+    @Autowired
+    TuontiRepository tuontiRepository;
+    @Autowired
+    KoodistoService koodistoService;
 
-    @Bean
-    public ClassMap<Henkilo, OppijaListDto> oppijaListDtoClassMap(MapperFactory mapperFactory, TuontiRepository tuontiRepository) {
-        return mapperFactory.classMap(Henkilo.class, OppijaListDto.class)
+    @Override
+    public void configure(MapperFactory orikaMapperFactory) {
+        orikaMapperFactory.classMap(Henkilo.class, OppijaListDto.class)
                 .byDefault()
                 .field("oidHenkilo", "oid")
                 .field("created", "luotu")
@@ -43,12 +49,9 @@ public class OppijaMappers {
                         });
                     }
                 })
-                .toClassMap();
-    }
+                .register();
 
-    @Bean
-    public ClassMap<Henkilo, HenkiloDto> henkiloDtoClassMap(MapperFactory mapperFactory) {
-        return mapperFactory.classMap(Henkilo.class, HenkiloDto.class)
+        orikaMapperFactory.classMap(Henkilo.class, HenkiloDto.class)
                 .byDefault()
                 .customize(customMapper((Henkilo henkilo, HenkiloDto dto) -> {
                     if (henkilo.getTurvakielto()) {
@@ -58,12 +61,9 @@ public class OppijaMappers {
                         dto.setYksilointivirheet(null);
                     }
                 }))
-                .toClassMap();
-    }
+                .register();
 
-    @Bean
-    public ClassMap<Henkilo, OppijaReadDto> oppijaReadDtoClassMap(MapperFactory mapperFactory, KoodistoService koodistoService) {
-        return mapperFactory.classMap(Henkilo.class, OppijaReadDto.class)
+        orikaMapperFactory.classMap(Henkilo.class, OppijaReadDto.class)
                 .byDefault()
                 .field("oidHenkilo", "oid")
                 .field("created", "luotu")
@@ -97,12 +97,9 @@ public class OppijaMappers {
                         }
                     }
                 })
-                .toClassMap();
-    }
+                .register();
 
-    @Bean
-    public ClassMap<OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto, Henkilo> oppijaCreateDtoClassMap(MapperFactory mapperFactory) {
-        return mapperFactory.classMap(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.class, Henkilo.class)
+        orikaMapperFactory.classMap(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.class, Henkilo.class)
                 .byDefault()
                 .customize(new CustomMapper<OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto, Henkilo>() {
                     @Override
@@ -123,7 +120,7 @@ public class OppijaMappers {
                                 .ifPresent(list -> henkilo.setKansalaisuus(list));
                     }
                 })
-                .toClassMap();
+                .register();
     }
 
     private <A, B> CustomMapper<A, B> customMapper(BiConsumer<A, B> consumer) {

@@ -1,25 +1,29 @@
 package fi.vm.sade.oppijanumerorekisteri.mappers;
 
-import fi.vm.sade.oppijanumerorekisteri.KoodistoServiceMock;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
+import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
+import ma.glasnost.orika.MapperFacade;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {OrikaConfiguration.class, KoodistoServiceMock.class})
+@SpringBootTest
 public class OppijaMappersTest {
-
     @Autowired
-    private OrikaConfiguration mapper;
+    private MapperFacade mapper;
 
     @MockitoBean
     private KansalaisuusRepository kansalaisuusRepository;
@@ -27,12 +31,16 @@ public class OppijaMappersTest {
     @MockitoBean
     private TuontiRepository tuontiRepository;
 
+    @MockitoBean
+    private KoodistoService koodistoService;
+
     @Test
     public void mapperShouldMapOid() {
         TuontiRivi entity = TuontiRivi.builder()
                 .henkilo(Henkilo.builder().oidHenkilo("oid123").passivoitu(true).build())
                 .build();
 
+        when(koodistoService.list(any())).thenReturn(List.of());
         OppijaTuontiRiviReadDto dto = mapper.map(entity, OppijaTuontiRiviReadDto.class);
 
         assertThat(dto.getHenkilo().getOid()).isEqualTo("oid123");
@@ -45,6 +53,7 @@ public class OppijaMappersTest {
                 .henkilo(Henkilo.builder().aidinkieli(new Kielisyys("fi")).build())
                 .build();
 
+        when(koodistoService.list(any())).thenReturn(List.of());
         OppijaTuontiRiviReadDto dto = mapper.map(entity, OppijaTuontiRiviReadDto.class);
 
         assertThat(dto.getHenkilo().getAidinkieli().getKoodi()).isEqualTo("FI");
@@ -55,6 +64,7 @@ public class OppijaMappersTest {
         OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto dto = new OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto();
         dto.setAidinkieli(new KoodiUpdateDto("FI"));
 
+        when(koodistoService.list(any())).thenReturn(List.of());
         Henkilo entity = mapper.map(dto, Henkilo.class);
 
         assertThat(entity.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
@@ -64,6 +74,7 @@ public class OppijaMappersTest {
     public void duplicateMapper() {
         Henkilo henkilo = getHenkilo();
 
+        when(koodistoService.list(any())).thenReturn(List.of());
         HenkiloDuplicateDto dto = mapper.map(henkilo, HenkiloDuplicateDto.class);
 
         assertThat(dto).isNotNull();

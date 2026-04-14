@@ -7,21 +7,20 @@ import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
-import ma.glasnost.orika.metadata.ClassMap;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+
+import dev.akkinoc.spring.boot.orika.OrikaMapperFactoryConfigurer;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@Configuration
-public class DuplicateMappers {
-
-    @Bean
-    public ClassMap<Henkilo, HenkiloDuplicateDto> henkiloToDuplicate(MapperFactory mapperFactory) {
-        return mapperFactory.classMap(Henkilo.class, HenkiloDuplicateDto.class)
+@Component
+public class DuplicateMappers implements OrikaMapperFactoryConfigurer {
+    @Override
+    public void configure(MapperFactory orikaMapperFactory) {
+        orikaMapperFactory.classMap(Henkilo.class, HenkiloDuplicateDto.class)
                 .byDefault()
                 .customize(new CustomMapper<>() {
                     @Override
@@ -34,10 +33,10 @@ public class DuplicateMappers {
                                 .filter(Predicate.not(String::isBlank))
                                 .collect(Collectors.toList());
                         duplicate.setEmails(emails);
+                        duplicate.setYksiloity(henkilo.isYksiloityWithAnyMethod());
                     }
                 })
-                .toClassMap();
+                .register();
     }
-
 }
 

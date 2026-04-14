@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import fi.vm.sade.oppijanumerorekisteri.KoodistoServiceMock;
 import fi.vm.sade.oppijanumerorekisteri.aspects.AuditlogAspectHelper;
 import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
@@ -9,7 +8,6 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HakemusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDuplicateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
-import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
@@ -24,6 +22,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KotikuntaHistoriaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
+import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.Test;
@@ -31,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Sets;
 
@@ -45,7 +45,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@SpringBootTest(classes = {OrikaConfiguration.class, DuplicateServiceImpl.class, KoodistoServiceMock.class})
+@SpringBootTest
 public class DuplicateServiceImplTest {
     @MockitoBean
     private TuontiRepository tuontiRepository;
@@ -80,8 +80,12 @@ public class DuplicateServiceImplTest {
     @MockitoBean
     private AuditlogAspectHelper auditlogAspectHelper;
 
+    @MockitoBean
+    private KoodistoService koodistoService;
+
     @Test
     public void getHenkiloDuplicateDtoListShouldReturnApplicationsFromAtaruAndHakuApp() {
+        given(koodistoService.list(any())).willReturn(List.of());
         Henkilo henkilo1 = createHenkilo("arpa noppa", "arpa", "kuutio", "hetu", "1.2.3.4.5", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo", LocalDate.of(1970, Month.OCTOBER, 10));
         Henkilo henkilo2 = createHenkilo("arpa2 noppa2", "arpa2", "kuutio2", "hetu2", "1.2.3.4.6", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo", LocalDate.of(1970, Month.OCTOBER, 10));
         Henkilo henkilo3 = createHenkilo("arpa3 noppa3", "arpa3", "kuutio3", "hetu3", "1.3.3.4.7", false, "fi", "FI", "2.3.34.56", new Date(), new Date(), "2.3.34.5", "arvo", LocalDate.of(1970, Month.OCTOBER, 10));
@@ -117,7 +121,9 @@ public class DuplicateServiceImplTest {
     }
 
     @Test
+    @Transactional
     public void linkHenkilosShouldMoveAllIdentificationsToNewMaster() {
+        given(koodistoService.list(any())).willReturn(List.of());
         Henkilo henkilo1 = createHenkilo("arpa noppa", "arpa", "kuutio", null, "1.2.3.4.5", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo", LocalDate.of(1970, Month.OCTOBER, 10));
         Identification arpaIdentification1 = new Identification(IdpEntityId.email, "arpa@noppa.com");
         Identification arpaIdentification2 = new Identification(IdpEntityId.google, "arpahaka");
@@ -165,7 +171,9 @@ public class DuplicateServiceImplTest {
     }
 
     @Test
+    @Transactional
     public void removeDuplicateHetuAndLinkShouldMoveHetusToNewMasterAndRemoveThemFromNewSlave() {
+        given(koodistoService.list(any())).willReturn(List.of());
         Henkilo existingDuplicateHenkilo = createHenkilo("Testi Henkilö", "Testi", "Sukunimi1", "hetu", "1.2.3.4.5", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo", LocalDate.of(1970, Month.OCTOBER, 10));
         existingDuplicateHenkilo.addHetu("hetu1", "hetu2");
         existingDuplicateHenkilo.setYksiloityVTJ(true);
@@ -184,7 +192,9 @@ public class DuplicateServiceImplTest {
     }
 
     @Test
+    @Transactional
     public void removeDuplicateHetuAndLinkShouldRemoveKotikuntaHistorias() {
+        given(koodistoService.list(any())).willReturn(List.of());
         Long duplicateId = 12345l;
         List<KotikuntaHistoria> kotikuntaHistoria = List.of(new KotikuntaHistoria(duplicateId, "091", LocalDate.now(), null));
         Henkilo existingDuplicateHenkilo = createHenkilo("Testi Henkilö", "Testi", "Sukunimi1", "hetu", "1.2.3.4.5", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo", LocalDate.of(1970, Month.OCTOBER, 10));
@@ -206,6 +216,7 @@ public class DuplicateServiceImplTest {
 
     @Test
     public void findDuplicates() {
+        given(koodistoService.list(any())).willReturn(List.of());
         Henkilo subject = mock(Henkilo.class);
         Henkilo duplicate = mock(Henkilo.class);
 
@@ -222,6 +233,7 @@ public class DuplicateServiceImplTest {
 
     @Test
     public void filterMasterFromDuplicates() {
+        given(koodistoService.list(any())).willReturn(List.of());
         Henkilo subject = mock(Henkilo.class);
         Henkilo duplicate = mock(Henkilo.class);
         HenkiloViite reference = mock(HenkiloViite.class);

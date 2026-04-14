@@ -8,7 +8,6 @@ import fi.vm.sade.oppijanumerorekisteri.clients.model.VtjMuutostietoResponse;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
-import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjMuutostieto;
 import fi.vm.sade.oppijanumerorekisteri.models.VtjMuutostietoKirjausavain;
@@ -18,6 +17,8 @@ import fi.vm.sade.oppijanumerorekisteri.services.vtj.*;
 import fi.vm.sade.oppijanumerorekisteri.validators.VtjMuutostietoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.MapperFacade;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -42,7 +43,7 @@ public class VtjMuutostietoService {
     private final KotikuntaHistoriaRepository kotikuntaHistoriaRepository;
     private final HenkiloRepository henkiloRepository;
     private final HenkiloModificationService henkiloModificationService;
-    private final OrikaConfiguration mapper;
+    private final MapperFacade mapper;
     private final KoodistoService koodistoService;
     private final SlackClient slackClient;
     private final PerustietoMapper perustietoMapper;

@@ -4,12 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.TuontiApi;
-import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.EmailService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
+import ma.glasnost.orika.MapperFacade;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -45,7 +46,7 @@ public class OppijaTuontiServiceImplTest {
     @Mock
     private HenkiloModificationService henkiloModificationService;
     @Mock
-    private OrikaConfiguration orikaConfiguration;
+    private MapperFacade orikaConfiguration;
     @Mock
     private YksilointiServiceImpl yksilointiService;
     @Mock

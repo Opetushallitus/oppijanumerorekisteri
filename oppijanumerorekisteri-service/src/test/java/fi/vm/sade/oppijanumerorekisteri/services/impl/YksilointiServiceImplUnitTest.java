@@ -2,13 +2,14 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
-import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
+import ma.glasnost.orika.MapperFacade;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -50,7 +51,7 @@ public class YksilointiServiceImplUnitTest {
     @Mock
     private YksilointivirheRepository yksilointivirheRepository;
     @Mock
-    private OrikaConfiguration mapper;
+    private MapperFacade mapper;
     @Mock
     private KayttooikeusClient kayttooikeusClient;
     @Mock

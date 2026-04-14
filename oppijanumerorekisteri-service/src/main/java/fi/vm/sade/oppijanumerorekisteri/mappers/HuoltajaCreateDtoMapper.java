@@ -3,38 +3,41 @@ package fi.vm.sade.oppijanumerorekisteri.mappers;
 import fi.vm.sade.oppijanumerorekisteri.dto.HuoltajaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
-import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
 import fi.vm.sade.oppijanumerorekisteri.utils.YhteystietoryhmaUtils;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
-import ma.glasnost.orika.metadata.ClassMap;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import dev.akkinoc.spring.boot.orika.OrikaMapperFactoryConfigurer;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Configuration
-public class HuoltajaCreateDtoMapper {
+@Component
+public class HuoltajaCreateDtoMapper implements OrikaMapperFactoryConfigurer {
+    @Autowired
+    KansalaisuusRepository kansalaisuusRepository;
 
-    @Bean
-    public ClassMap<HuoltajaCreateDto, Henkilo> huoltajaCreateDtoHenkiloClassMap(MapperFactory mapperFactory, KansalaisuusRepository kansalaisuusRepository, OrikaConfiguration mapper) {
-        return mapperFactory.classMap(HuoltajaCreateDto.class, Henkilo.class)
+    @Override
+    public void configure(MapperFactory orikaMapperFactory) {
+        orikaMapperFactory.classMap(HuoltajaCreateDto.class, Henkilo.class)
                 .exclude("yhteystiedotRyhma")
                 .byDefault()
                 .customize(new CustomMapper<HuoltajaCreateDto, Henkilo>() {
                     @Override
                     public void mapAtoB(HuoltajaCreateDto huoltajaCreateDto, Henkilo henkilo, MappingContext context) {
-                        YhteystietoryhmaUtils.updateYhteystiedot(huoltajaCreateDto.getYhteystiedotRyhma(), henkilo.getYhteystiedotRyhma(), true, mapper);
-
+                        YhteystietoryhmaUtils.updateYhteystiedot(huoltajaCreateDto.getYhteystiedotRyhma(), henkilo.getYhteystiedotRyhma(), true);
                         Optional.ofNullable(huoltajaCreateDto.getKansalaisuusKoodi())
                                 .map(kansalaisuusKoodis -> kansalaisuusKoodis.stream()
                                         .map(kansalaisuusKoodi -> kansalaisuusRepository.findByKansalaisuusKoodi(kansalaisuusKoodi)
-                                                .orElseGet(() -> kansalaisuusRepository.save(new Kansalaisuus(kansalaisuusKoodi))))
+                                                .orElse(null))
+                                        .filter((k) -> k != null)
                                         .collect(Collectors.toSet()))
                                 .ifPresent(henkilo::setKansalaisuus);
                         if ("".equals(huoltajaCreateDto.getHetu())) {
@@ -46,12 +49,9 @@ public class HuoltajaCreateDtoMapper {
                         }
                     }
                 })
-                .toClassMap();
-    }
+                .register();
 
-    @Bean
-    public ClassMap<HenkiloHuoltajaSuhde, HuoltajaCreateDto> henkiloHuoltajaSuhdeHuoltajaCreateDtoClassMap(MapperFactory mapperFactory) {
-        return mapperFactory.classMap(HenkiloHuoltajaSuhde.class, HuoltajaCreateDto.class)
+        orikaMapperFactory.classMap(HenkiloHuoltajaSuhde.class, HuoltajaCreateDto.class)
                 .byDefault()
                 .customize(new CustomMapper<HenkiloHuoltajaSuhde, HuoltajaCreateDto>() {
                     @Override
@@ -59,7 +59,6 @@ public class HuoltajaCreateDtoMapper {
                         mapperFacade.map(henkiloHuoltajaSuhde.getHuoltaja(), huoltajaCreateDto);
                     }
                 })
-                .toClassMap();
+                .register();
     }
-
 }

@@ -10,7 +10,6 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDuplikaattiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
-import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
@@ -21,6 +20,8 @@ import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.MapperFacade;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +45,7 @@ public class DuplicateServiceImpl implements DuplicateService {
     private final HakuappClient hakuappClient;
     private final AtaruClient ataruClient;
     private final UserDetailsHelper userDetailsHelper;
-    private final OrikaConfiguration mapper;
+    private final MapperFacade mapper;
     private final KayttooikeusClient kayttooikeusClient;
     private final AuditlogAspectHelper auditlogAspectHelper;
     private final KotikuntaHistoriaRepository kotikuntaHistoriaRepository;

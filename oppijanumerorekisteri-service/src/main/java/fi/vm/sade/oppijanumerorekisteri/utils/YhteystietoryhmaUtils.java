@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.utils;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotRyhmaDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
-import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 
@@ -50,7 +49,7 @@ public final class YhteystietoryhmaUtils {
         yhteystieto.setYhteystietoArvo(arvo);
     }
 
-    public static void updateYhteystiedot(Collection<YhteystiedotRyhmaDto> dtoCollection, Collection<YhteystiedotRyhma> yhteystiedotRyhmas, boolean overwriteReadOnly, OrikaConfiguration mapper) {
+    public static void updateYhteystiedot(Collection<YhteystiedotRyhmaDto> dtoCollection, Collection<YhteystiedotRyhma> yhteystiedotRyhmas, boolean overwriteReadOnly) {
         if (dtoCollection != null) {
             final Collection<YhteystiedotRyhma> readOnlyRyhmat;
             if (!overwriteReadOnly) {
@@ -67,7 +66,20 @@ public final class YhteystietoryhmaUtils {
             yhteystiedotRyhmas.addAll(Stream.concat(
                     // käyttäjän muokkaukset
                     dtoCollection.stream().map(yhteystiedotRyhmaDto -> {
-                        YhteystiedotRyhma yhteystiedotRyhma = mapper.map(yhteystiedotRyhmaDto, YhteystiedotRyhma.class);
+                        YhteystiedotRyhma yhteystiedotRyhma = new YhteystiedotRyhma();
+                        yhteystiedotRyhma.setRyhmaKuvaus(yhteystiedotRyhmaDto.getRyhmaKuvaus());
+                        yhteystiedotRyhma.setRyhmaAlkuperaTieto(yhteystiedotRyhmaDto.getRyhmaAlkuperaTieto());
+                        yhteystiedotRyhma.setReadOnly(yhteystiedotRyhmaDto.isReadOnly());
+                        yhteystiedotRyhma.setYhteystieto(
+                                yhteystiedotRyhmaDto.getYhteystieto().stream()
+                                        .map((y) -> {
+                                            Yhteystieto yhteystieto = new Yhteystieto();
+                                            yhteystieto.setId(null);
+                                            yhteystieto.setYhteystietoArvo(y.getYhteystietoArvo());
+                                            yhteystieto.setYhteystietoTyyppi(y.getYhteystietoTyyppi());
+                                            return yhteystieto;
+                                        })
+                                        .collect(toSet()));
                         yhteystiedotRyhma.setId(null);
                         return yhteystiedotRyhma;
                     }), readOnlyRyhmat.stream()) // lisätään read-only ryhmät takaisin
