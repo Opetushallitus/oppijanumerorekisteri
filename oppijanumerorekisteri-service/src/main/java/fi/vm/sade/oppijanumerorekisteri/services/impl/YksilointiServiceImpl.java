@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -45,6 +46,7 @@ import static java.util.stream.Collectors.*;
 
 @Slf4j
 @Service
+@Validated
 @RequiredArgsConstructor
 public class YksilointiServiceImpl implements YksilointiService {
     public static final String RYHMAALKUPERA_VTJ = "alkupera1";

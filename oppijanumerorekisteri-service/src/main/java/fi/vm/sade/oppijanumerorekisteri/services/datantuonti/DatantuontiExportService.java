@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.datantuonti;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +76,7 @@ public class DatantuontiExportService {
         jdbcTemplate.execute("ALTER SCHEMA datantuonti_export_new RENAME TO datantuonti_export");
     }
 
-    public void generateExportFiles() throws JsonProcessingException {
+    public void generateExportFiles() {
         var timestamp = new Date().getTime();
         var henkiloObjectKey = V1_PREFIX + "/csv/henkilo-" + timestamp + ".csv";
         exportQueryToS3(henkiloObjectKey, HENKILO_QUERY);
@@ -96,7 +95,7 @@ public class DatantuontiExportService {
         return properties.getTasks().getDatantuonti().getExport().getBucketName();
     }
 
-    private void writeManifest(String objectKey, DatantuontiManifest manifest) throws JsonProcessingException {
+    private void writeManifest(String objectKey, DatantuontiManifest manifest) {
         log.info("Writing manifest file {}/{}: {}", bucketName(), objectKey, manifest);
         var manifestJson = objectMapper.writeValueAsString(manifest);
         var response = onrS3Client.putObject(

@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Generated;
@@ -24,22 +25,22 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public class HenkiloExistenceCheckDto {
 
-    @Schema(required = true)
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     @NotEmpty(message = "Cannot be empty")
     @Pattern(message = "Invalid pattern. Must contain an alphabetic character.", regexp = "(?U)^\\p{Graph}+( \\p{Graph}+)*+$")
     private final String etunimet;
 
-    @Schema(required = true)
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     @NotEmpty(message = "Cannot be empty")
     @Pattern(message = "Invalid pattern. Must contain an alphabetic character", regexp = "(?U)^\\p{Graph}+$")
     private final String kutsumanimi;
 
-    @Schema(required = true)
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     @NotEmpty(message = "Cannot be empty")
     @Pattern(message = "Invalid pattern. Must contain an alphabetic character", regexp = "(?U)^\\p{Graph}+( \\p{Graph}+)*+$")
     private final String sukunimi;
 
-    @Schema(required = true)
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     @NotEmpty(message = "Cannot be empty")
     @ValidateHetu
     @Setter

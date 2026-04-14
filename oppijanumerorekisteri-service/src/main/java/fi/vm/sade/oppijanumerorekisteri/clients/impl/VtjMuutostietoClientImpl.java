@@ -13,12 +13,8 @@ import java.util.concurrent.ExecutionException;
 
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjMuutostietoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.model.VtjMuutostietoResponse;
@@ -49,14 +45,12 @@ import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
 @Slf4j
 public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
     private final OppijanumerorekisteriProperties properties;
-    private final ObjectMapper objectMapper = JsonMapper.builder()
-            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-            .addModule(new JavaTimeModule())
-            .build();
+    private final ObjectMapper objectMapper;
     private final StsAssumeRoleCredentialsProvider credentialsProvider;
 
-    public VtjMuutostietoClientImpl(OppijanumerorekisteriProperties properties, StsClient stsClient) {
+    public VtjMuutostietoClientImpl(OppijanumerorekisteriProperties properties, ObjectMapper objectMapper, StsClient stsClient) {
         this.properties = properties;
+        this.objectMapper = objectMapper;
         this.credentialsProvider = StsAssumeRoleCredentialsProvider.builder()
                     .stsClient(stsClient)
                     .refreshRequest(() -> AssumeRoleRequest.builder()
@@ -115,7 +109,7 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
         try {
             return objectMapper.readValue(content, new TypeReference<AvainResponse>() {
             });
-        } catch (IOException ioe) {
+        } catch (Exception ioe) {
             throw new CompletionException(ioe);
         }
     }
@@ -124,7 +118,7 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
         try {
             return objectMapper.readValue(content, new TypeReference<VtjMuutostietoResponse>() {
             });
-        } catch (IOException ioe) {
+        } catch (Exception ioe) {
             throw new CompletionException(ioe);
         }
     }
@@ -133,7 +127,7 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
         try {
             return objectMapper.readValue(content, new TypeReference<PerustietoResponse>() {
             });
-        } catch (IOException ioe) {
+        } catch (Exception ioe) {
             throw new CompletionException(ioe);
         }
     }
@@ -142,7 +136,7 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
         try {
             return objectMapper.readValue(content, new TypeReference<PerustietoViikkokantaResponse>() {
             });
-        } catch (IOException ioe) {
+        } catch (Exception ioe) {
             throw new CompletionException(ioe);
         }
     }
@@ -204,7 +198,7 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
         return signer.sign(request, signerParams);
     }
 
-    private SdkHttpFullRequest httpRequestBuilder(String path, SdkHttpMethod method, Object body) throws JsonProcessingException {
+    private SdkHttpFullRequest httpRequestBuilder(String path, SdkHttpMethod method, Object body) {
         URI uri = URI.create(getPalveluvaylaPathPrefix() + path);
         final SdkHttpFullRequest.Builder builder = SdkHttpFullRequest.builder()
                 .method(method)
@@ -231,7 +225,7 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
 
     @Override
     public VtjMuutostietoResponse fetchHenkiloMuutostieto(Long avain, List<String> allHetus)
-            throws InterruptedException, ExecutionException, JsonProcessingException, IOException {
+            throws InterruptedException, ExecutionException, IOException {
         MuutostietoRequestBody body = new MuutostietoRequestBody(avain, allHetus);
         SdkHttpFullRequest request = httpRequestBuilder("/api/v1/muutokset", SdkHttpMethod.POST, body);
         InputStream response = executeRequestWithRetry(request);
@@ -240,7 +234,7 @@ public class VtjMuutostietoClientImpl implements VtjMuutostietoClient {
 
     @Override
     public List<VtjPerustieto> fetchHenkiloPerustieto(List<String> hetus)
-            throws InterruptedException, ExecutionException, JsonProcessingException, IOException {
+            throws InterruptedException, ExecutionException, IOException {
         PerustietoRequestBody body = new PerustietoRequestBody(hetus);
         SdkHttpFullRequest request = httpRequestBuilder("/api/v1/perustiedot", SdkHttpMethod.POST, body);
         InputStream response = executeRequestWithRetry(request);

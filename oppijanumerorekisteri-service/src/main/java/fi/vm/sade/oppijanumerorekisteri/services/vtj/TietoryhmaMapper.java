@@ -8,7 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.KotikuntaHistoria;
 import org.springframework.util.StringUtils;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HuoltajaCreateDto;
@@ -147,9 +147,9 @@ public abstract class TietoryhmaMapper {
 
         JsonNode localized = tietoryhma.get(fieldName).get(locale);
         if (localized != null) {
-            return localized.asText();
+            return localized.asString();
         } else if (tietoryhma.get(fieldName).get("fi") != null) {
-            return tietoryhma.get(fieldName).get("fi").asText();
+            return tietoryhma.get(fieldName).get("fi").asString();
         } else {
             return null;
         }
@@ -160,7 +160,7 @@ public abstract class TietoryhmaMapper {
     }
 
     public static String getStringValue(JsonNode node, String fieldName) {
-        return node == null || node.get(fieldName) == null ? null : node.get(fieldName).asText();
+        return node == null || node.get(fieldName) == null ? null : node.get(fieldName).asString();
     }
 
     protected void setKotimainenPostiosoite(HenkiloForceUpdateDto update, JsonNode tietoryhma, String locale) {
