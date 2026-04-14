@@ -1,8 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations.security;
 
-import fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter;
-import fi.vm.sade.javautils.kayttooikeusclient.OphUserDetailsServiceImpl;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.CasProperties;
+import fi.vm.sade.oppijanumerorekisteri.configurations.security.cas.OpintopolkuCasAuthenticationFilter;
+import fi.vm.sade.oppijanumerorekisteri.configurations.security.cas.OpintopolkuUserDetailsService;
 import fi.vm.sade.properties.OphProperties;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -74,7 +74,7 @@ public class SecurityConfiguration {
     @Bean
     CasAuthenticationProvider casAuthenticationProvider(ServiceProperties serviceProperties, TicketValidator ticketValidator) {
         CasAuthenticationProvider casAuthenticationProvider = new CasAuthenticationProvider();
-        casAuthenticationProvider.setAuthenticationUserDetailsService(new OphUserDetailsServiceImpl());
+        casAuthenticationProvider.setAuthenticationUserDetailsService(new OpintopolkuUserDetailsService());
         casAuthenticationProvider.setServiceProperties(serviceProperties);
         casAuthenticationProvider.setTicketValidator(ticketValidator);
         casAuthenticationProvider.setKey(casProperties.getKey());
