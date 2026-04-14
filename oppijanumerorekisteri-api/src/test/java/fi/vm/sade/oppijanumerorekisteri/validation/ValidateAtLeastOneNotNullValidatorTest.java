@@ -6,12 +6,12 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.validator.internal.util.annotation.AnnotationDescriptor;
 import org.hibernate.validator.internal.util.annotation.AnnotationFactory;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
 import org.mockito.Mock;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import jakarta.validation.ConstraintValidatorContext;
 import java.util.Collection;
@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ValidateAtLeastOneNotNullValidatorTest {
 
     private ValidateAtLeastOneNotNullValidator validator;
@@ -32,7 +32,7 @@ public class ValidateAtLeastOneNotNullValidatorTest {
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private ConstraintValidatorContext contextMock;
 
-    @Before
+    @BeforeEach
     public void setup() {
         validator = new ValidateAtLeastOneNotNullValidator();
     }
