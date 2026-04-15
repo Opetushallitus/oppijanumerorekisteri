@@ -34,20 +34,20 @@ public abstract class CasAuthenticatedServiceClient {
 
         if (isLoginToCas(response)) {
             log.info("Was redirected to CAS login");
-            authenticateWithJSpringCasSecurityCheckEndpoint();
+            authenticate();
             return httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
         }
 
         if (response.statusCode() == 401) {
             log.info("Received HTTP 401 response");
-            authenticateWithJSpringCasSecurityCheckEndpoint();
+            authenticate();
             return httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
         } else {
             return response;
         }
     }
 
-    private void authenticateWithJSpringCasSecurityCheckEndpoint() throws IOException, InterruptedException {
+    private void authenticate() throws IOException, InterruptedException {
         var uri = URI.create(serviceUrl + casClient.getCasServletPath() + "?ticket=" + fetchCasServiceTicket());
         var authRequest = HttpRequest.newBuilder(uri)
                 .method("GET", HttpRequest.BodyPublishers.noBody())

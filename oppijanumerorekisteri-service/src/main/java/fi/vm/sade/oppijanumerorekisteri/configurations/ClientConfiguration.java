@@ -20,47 +20,39 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Configuration
 @RequiredArgsConstructor
 public class ClientConfiguration {
-    private final AuthenticationProperties authenticationProperties;
-
     @Value("${ataru.baseurl}")
     private String ataruBaseUrl;
+    @Value("${authentication.ataru.username}}")
+    private String ataruUsername;
+    @Value("${authentication.ataru.password}")
+    private String ataruPassword;
+
     @Value("${haku-app.baseurl}")
     private String hakuAppBaseurl;
+    @Value("${authentication.hakuapp.username}")
+    private String hakuAppUsername;
+    @Value("${authentication.hakuapp.password}")
+    private String hakuAppPassword;
 
     @Bean
     public AtaruClient ataruClient(OphProperties properties, ObjectMapper objectMapper) {
         var casBase = properties.require("cas.url");
-
         var httpClient = HttpClient.newBuilder()
                 .cookieHandler(new CookieManager())
                 .connectTimeout(Duration.ofSeconds(60))
                 .build();
-        var casClient = new CasClient(
-                httpClient,
-                casBase,
-                authenticationProperties.getAtaru().getUsername(),
-                authenticationProperties.getAtaru().getPassword(),
-                ""
-        );
-
+        var casClient = new CasClient(httpClient, casBase, ataruUsername, ataruPassword, "");
         return new AtaruClient(httpClient, casClient, ataruBaseUrl, objectMapper);
     }
 
     @Bean
     public HakuappClient hakuappClient(OphProperties properties, ObjectMapper objectMapper) {
         var casBase = properties.require("cas.url");
-
         var httpClient = HttpClient.newBuilder()
                 .cookieHandler(new CookieManager())
                 .connectTimeout(Duration.ofSeconds(60))
                 .build();
-        var casClient = new CasClient(
-                httpClient,
-                casBase,
-                authenticationProperties.getHakuapp().getUsername(),
-                authenticationProperties.getHakuapp().getPassword()
-        );
-
+        var casClient = new CasClient(httpClient, casBase, hakuAppUsername, hakuAppPassword);
         return new HakuappClient(httpClient, casClient, hakuAppBaseurl, objectMapper);
     }
 }

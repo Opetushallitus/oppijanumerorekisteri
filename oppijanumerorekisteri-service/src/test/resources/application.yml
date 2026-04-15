@@ -73,3 +73,7 @@ ataru.baseurl: http://localhost/lomake-editori
 haku-app.baseurl: http://localhost/haku-app
 authentication.viestintapalvelu.username: username
 authentication.viestintapalvelu.password: password
+authentication.ataru.username: username
+authentication.ataru.password: password
+authentication.hakuapp.username: username
+authentication.hakuapp.password: password
