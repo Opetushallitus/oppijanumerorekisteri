@@ -2,42 +2,32 @@ package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.sade.javautils.http.OphHttpClient;
-import fi.vm.sade.javautils.http.OphHttpEntity;
-import fi.vm.sade.javautils.http.OphHttpRequest;
 import fi.vm.sade.oppijanumerorekisteri.clients.SlackClient;
-import fi.vm.sade.oppijanumerorekisteri.configurations.ConfigEnums;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.SlackMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.entity.ContentType;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 
-import jakarta.annotation.PostConstruct;
-
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.util.Arrays;
-import java.util.Optional;
-
-import static org.apache.http.HttpStatus.*;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class SlackClientImpl implements SlackClient {
     private final OppijanumerorekisteriProperties properties;
-    private OphHttpClient ophHttpClient;
     private final ObjectMapper objectMapper;
 
     private static final String MESSAGE_HEADER_TEXT = ":wave: Oppijanumerorekisteri notification :wave:";
-
-    @PostConstruct
-    public void setup() {
-        ophHttpClient = new OphHttpClient.Builder(ConfigEnums.CALLER_ID.value()).build();
-    }
 
     private String sanitize(String message) {
         return message.replaceAll("\\b(\\d{6}[-+A])\\d{3}\\w(\\W|\\b)", "$1****$2");
@@ -74,20 +64,22 @@ public class SlackClientImpl implements SlackClient {
             return;
         }
 
-        OphHttpRequest ophHttpRequest = OphHttpRequest.Builder
-                .post(url)
-                .addHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                .setEntity(new OphHttpEntity.Builder()
-                        .content(content)
-                        .contentType(ContentType.APPLICATION_JSON)
-                        .build())
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .POST(BodyPublishers.ofString(content))
                 .build();
-        ophHttpClient.execute(ophHttpRequest)
-                .handleErrorStatus(SC_GONE).with(errorMessage -> {
-                    log.warn("Could not send Slack notification with error {}", errorMessage);
-                    return Optional.empty();
-                })
-                .expectedStatus(SC_OK, SC_ACCEPTED)
-                .ignoreResponse();
+        var client = HttpClient.newHttpClient();
+        try {
+            HttpResponse<String> res = client.send(request, BodyHandlers.ofString());
+            if (res.statusCode() != 200 || res.statusCode() != 202) {
+                throw new RuntimeException("Failed to send to slack with status " + res.statusCode() + ": " + res.body());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
+        }
     }
 }
