@@ -18,24 +18,34 @@ public class CasClient implements HttpFormEncoding {
     private final String baseUrl;
     private final String username;
     private final String password;
+    private final String casServletPath;
 
     public CasClient(HttpClient httpClient, String baseUrl, String username, String password) {
+        this(httpClient, baseUrl, username, password, "/j_spring_cas_security_check");
+    }
+
+    public CasClient(HttpClient httpClient, String baseUrl, String username, String password, String casServletPath) {
         log.info("Initializing CasClient for CAS server at {}", baseUrl);
         this.baseUrl = baseUrl;
         this.httpClient = httpClient;
         this.username = username;
         this.password = password;
+        this.casServletPath = casServletPath;
     }
 
     public String getTicket(String service) throws IOException, InterruptedException {
         return getServiceTicket(service);
     }
 
+    public String getCasServletPath() {
+        return casServletPath;
+    }
+
     private String getServiceTicket(String service) throws IOException, InterruptedException {
         log.info("Fetching service ticket for service {}...", service);
         var ticketGrantingTicket = getTicketGrantingTicket(username, password);
         var request = HttpRequest.newBuilder(URI.create(baseUrl + "/v1/tickets/" + ticketGrantingTicket))
-                .POST(encodeFormBody(Map.of("service", service + "/j_spring_cas_security_check")))
+                .POST(encodeFormBody(Map.of("service", service + casServletPath)))
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .timeout(Duration.ofSeconds(10))
                 .build();

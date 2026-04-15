@@ -48,7 +48,7 @@ public abstract class CasAuthenticatedServiceClient {
     }
 
     private void authenticateWithJSpringCasSecurityCheckEndpoint() throws IOException, InterruptedException {
-        var uri = URI.create(serviceUrl + "/j_spring_cas_security_check" + "?ticket=" + fetchCasServiceTicket());
+        var uri = URI.create(serviceUrl + casClient.getCasServletPath() + "?ticket=" + fetchCasServiceTicket());
         var authRequest = HttpRequest.newBuilder(uri)
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
