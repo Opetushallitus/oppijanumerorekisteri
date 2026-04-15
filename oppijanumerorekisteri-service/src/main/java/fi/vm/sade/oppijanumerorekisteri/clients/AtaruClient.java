@@ -39,7 +39,10 @@ public class AtaruClient extends CasAuthenticatedServiceClient {
             );
             return switch (response.getStatus()) {
                 case 200 -> fromJson(response.getBody());
-                default -> throw new HttpConnectionException();
+                default -> {
+                    log.warn("Failed to fetch ataru applications with status " + response.getStatus() + ": " + response.getBody());
+                    throw new HttpConnectionException();
+                }
             };
         } catch (IOException e) {
             throw new RuntimeException(e);

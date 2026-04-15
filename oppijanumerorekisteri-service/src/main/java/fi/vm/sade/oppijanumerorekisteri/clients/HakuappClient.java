@@ -35,7 +35,10 @@ public class HakuappClient extends CasAuthenticatedServiceClient {
             var response = post("/applications/byPersonOid", objectMapper.writeValueAsString(oids));
             Map<String, List<Map<String, Object>>> applicationsByPersonOid = switch (response.getStatus()) {
                 case 200 -> objectMapper.readValue(response.getBody(), new TypeReference<Map<String, List<Map<String, Object>>>>() {});
-                default -> throw new HttpConnectionException();
+                default -> {
+                    log.warn("Failed to fetch haku-app applications with status " + response.getStatus() + ": " + response.getBody());
+                    throw new HttpConnectionException();
+                }
             };
             Map<String, List<HakemusDto>> hakemuksetByHenkiloOid = new HashMap<>();
             applicationsByPersonOid.keySet().forEach(henkiloOid -> {
