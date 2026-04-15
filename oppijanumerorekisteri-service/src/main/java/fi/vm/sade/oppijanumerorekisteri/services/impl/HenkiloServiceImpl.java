@@ -107,9 +107,38 @@ public class HenkiloServiceImpl implements HenkiloService {
         if (criteria.getHenkiloOids().isEmpty()) {
             return emptyList();
         }
-        return mapper.map(henkiloDataRepository.findWithYhteystiedotBy(criteria),
-                new TypeBuilder<List<HenkiloYhteystietoDto>>() {}.build(),
-                new TypeBuilder<List<HenkiloYhteystiedotDto>>() {}.build());
+        List<HenkiloYhteystietoDto> yhteystiedot = henkiloDataRepository.findWithYhteystiedotBy(criteria);
+        return yhteystiedot.stream()
+                // ryhmitellään yhteystiedot henkilöittäin
+                .collect(Collectors.groupingBy(HenkiloYhteystietoDto::getOidHenkilo, LinkedHashMap::new, Collectors.toList()))
+                // palautetaan yksi rivi per henkilö + henkilön yhteystiedot
+                .values().stream().map(this::toHenkilo).collect(Collectors.toList());
+    }
+
+    private HenkiloYhteystiedotDto toHenkilo(List<HenkiloYhteystietoDto> source) {
+        if (source == null || source.size() < 1) {
+            return null;
+        }
+        HenkiloYhteystiedotDto destination = mapper.map(source.iterator().next(), HenkiloYhteystiedotDto.class);
+        destination.setYhteystiedotRyhma(source.stream()
+                .filter(t -> t.getYhteystietoRyhmaId() != null)
+                // ryhmitelläänn henkilön yhteystiedot yhteystietoryhmittäin
+                .collect(Collectors.groupingBy(HenkiloYhteystietoDto::getYhteystietoRyhmaId))
+                // palautetaan yksi rivi per yhteystietoryhmä
+                .values().stream().map(this::toYhteystietoRyhma).collect(Collectors.toList()));
+        return destination;
+    }
+
+    private YhteystiedotRyhmaDto toYhteystietoRyhma(List<HenkiloYhteystietoDto> source) {
+        if (source == null || source.size() < 1) {
+            return null;
+        }
+        YhteystiedotRyhmaDto destination = mapper.map(source.iterator().next(), YhteystiedotRyhmaDto.class);
+        destination.setId(source.iterator().next().getYhteystietoRyhmaId());
+        destination.setYhteystieto(mapper.mapAsSet(source.stream()
+                .filter(t -> t.getYhteystietoArvo() != null && !t.getYhteystietoArvo().isEmpty())
+                .collect(Collectors.toList()), YhteystietoDto.class));
+        return destination;
     }
 
     @Override
