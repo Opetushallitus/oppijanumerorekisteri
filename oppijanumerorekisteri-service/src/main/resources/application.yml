@@ -124,3 +124,4 @@ aws:
     enabled: false
     topicArn: disabled
 viestinvalitys.baseurl: https://viestinvalitys.hahtuvaopintopolku.fi/lahetys
+ataru.baseUrl: https://virkailija.hahtuvaopintopolku.fi/lomake-editori

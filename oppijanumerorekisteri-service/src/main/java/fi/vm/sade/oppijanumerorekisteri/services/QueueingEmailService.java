@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import fi.vm.sade.oppijanumerorekisteri.clients.cas.BadRequestException;
 import fi.vm.sade.oppijanumerorekisteri.clients.viestinvalitys.*;
 
 @Service

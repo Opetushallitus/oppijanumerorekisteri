@@ -69,5 +69,6 @@ oppijanumerorekisteri.scheduling.yksilointi.enabled: false
 oppijanumerorekisteri.allow-fake-ssn: true
 
 viestinvalitys.baseurl: http://localhost/lahetys
+ataru.baseUrl: http://localhost/lomake-editori
 authentication.viestintapalvelu.username: username
 authentication.viestintapalvelu.password: password

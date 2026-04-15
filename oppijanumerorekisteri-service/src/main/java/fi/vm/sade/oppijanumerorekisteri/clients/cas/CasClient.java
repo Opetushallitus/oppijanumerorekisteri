@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.clients.viestinvalitys;
+package fi.vm.sade.oppijanumerorekisteri.clients.cas;
 
 import java.io.IOException;
 import java.net.URI;

@@ -16,6 +16,7 @@ oppijanumerorekisteri.vtjkysely.certAlias: opintopolku.fi
 oppijanumerorekisteri.vtjkysely.truststoreUri: /app/vtjkysely-truststore
 
 viestinvalitys.baseurl: https://viestinvalitys.opintopolku.fi/lahetys
+ataru.baseUrl: https://virkailija.opintopolku.fi/lomake-editori
 
 oppijanumerorekisteri.scheduling.yksilointi.enabled: true
 oppijanumerorekisteri.allow-fake-ssn: false

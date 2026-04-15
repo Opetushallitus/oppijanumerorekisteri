@@ -1,36 +1,49 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations;
 
-import fi.vm.sade.javautils.http.OphHttpClient;
-import fi.vm.sade.javautils.http.auth.CasAuthenticator;
+import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
+import fi.vm.sade.oppijanumerorekisteri.clients.cas.CasClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.AuthenticationProperties;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
+import fi.vm.sade.properties.OphProperties;
 import lombok.RequiredArgsConstructor;
+
+import java.net.CookieManager;
+import java.net.http.HttpClient;
+import java.time.Duration;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Configuration
 @RequiredArgsConstructor
 public class ClientConfiguration {
-
-    private final UrlConfiguration urlConfiguration;
     private final AuthenticationProperties authenticationProperties;
 
-    @Bean(name = "ataruClient")
-    public OphHttpClient ataruHttpClient() {
-        CasAuthenticator authenticator = new CasAuthenticator.Builder()
-                .username(authenticationProperties.getAtaru().getUsername())
-                .password(authenticationProperties.getAtaru().getPassword())
-                .webCasUrl(urlConfiguration.url("cas.url"))
-                .casServiceUrl(urlConfiguration.url("cas.service.ataru"))
-                .casServiceSessionInitUrl(urlConfiguration.url("cas.service.ataru"))
-                .sessionCookieName("ring-session")
-                .addSpringSecSuffix(false)
-                .build();
+    @Value("${ataru.baseurl}")
+    private String ataruBaseUrl;
+    @Value("${authentication.viestintapalvelu.username}")
+    private String username;
+    @Value("${authentication.viestintapalvelu.password}")
+    private String password;
 
-        return new OphHttpClient
-                .Builder(ConfigEnums.CALLER_ID.value())
-                .timeoutMs(60000)
-                .setSocketTimeoutMs(60000)
-                .authenticator(authenticator).build();
+    @Bean
+    public AtaruClient ataruClient(OphProperties properties, ObjectMapper objectMapper) {
+        var casBase = properties.require("cas.url");
+
+        var httpClient = HttpClient.newBuilder()
+                .cookieHandler(new CookieManager())
+                .connectTimeout(Duration.ofSeconds(60))
+                .build();
+        var casClient = new CasClient(
+                httpClient,
+                casBase,
+                authenticationProperties.getAtaru().getUsername(),
+                authenticationProperties.getAtaru().getPassword()
+        );
+
+        return new AtaruClient(httpClient, casClient, ataruBaseUrl, objectMapper);
     }
 }

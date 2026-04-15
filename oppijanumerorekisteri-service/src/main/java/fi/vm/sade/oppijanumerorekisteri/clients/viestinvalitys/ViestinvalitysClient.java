@@ -1,6 +1,12 @@
 package fi.vm.sade.oppijanumerorekisteri.clients.viestinvalitys;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import fi.vm.sade.oppijanumerorekisteri.clients.cas.ApiResponse;
+import fi.vm.sade.oppijanumerorekisteri.clients.cas.BadRequestException;
+import fi.vm.sade.oppijanumerorekisteri.clients.cas.CasAuthenticatedServiceClient;
+import fi.vm.sade.oppijanumerorekisteri.clients.cas.CasClient;
+import fi.vm.sade.oppijanumerorekisteri.clients.cas.UnexpectedResponseException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
