@@ -17,6 +17,7 @@ oppijanumerorekisteri.vtjkysely.truststoreUri: /root/oph-environment/authenticat
 
 viestinvalitys.baseurl: https://viestinvalitys.untuvaopintopolku.fi/lahetys
 ataru.baseurl: https://virkailija.untuvaopintopolku.fi/lomake-editori
+haku-app.baseurl: https://virkailija.untuvaopintopolku.fi/haku-app
 
 oppijanumerorekisteri.scheduling.yksilointi.enabled: false
 oppijanumerorekisteri.allow-fake-ssn: true
