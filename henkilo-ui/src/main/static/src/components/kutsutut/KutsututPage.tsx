@@ -42,7 +42,7 @@ const getDefaultView = (isAdmin?: boolean, isVirkailija?: boolean): KutsuView =>
 export const KutsututPage = () => {
     const { L, locale } = useLocalisations();
     useTitle(L('TITLE_KUTSUTUT'));
-    useNavigation(virkailijaNavigation, false);
+    useNavigation(virkailijaNavigation);
     const { data } = useGetOmattiedotQuery();
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: ryhmat } = useGetOrganisaatioRyhmatQuery();

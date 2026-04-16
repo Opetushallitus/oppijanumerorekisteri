@@ -14,7 +14,7 @@ import { jarjestelmatunnusNavigation } from '../navigation/navigationconfigurati
 export const JarjestelmatunnusCreatePage = () => {
     const { L } = useLocalisations();
     useTitle(L('JARJESTELMATUNNUSTEN_LUONTI'));
-    useNavigation(jarjestelmatunnusNavigation, false);
+    useNavigation(jarjestelmatunnusNavigation);
     const [nimi, setNimi] = useState('');
     const [postPalvelukayttaja, { isLoading }] = usePostPalvelukayttajaMutation();
     const dispatch = useAppDispatch();

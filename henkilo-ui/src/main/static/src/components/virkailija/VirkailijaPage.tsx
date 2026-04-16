@@ -28,7 +28,7 @@ export const VirkailijaPage = () => {
     useRedirectByUser(oid, 'VIRKAILIJA');
     const { L } = useLocalisations();
     useTitle(L('TITLE_VIRKAILIJA'));
-    useNavigation(virkailijaNavigation, false);
+    useNavigation(virkailijaNavigation);
     const { isLoading, error } = useGetKayttajatiedotQuery(oid);
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
 

@@ -38,7 +38,7 @@ export const emptyOrganisation = (): KutsuOrganisaatio => ({
 const KutsuminenPage = () => {
     const { L, locale } = useLocalisations();
     useTitle(L('TITLE_KUTSULOMAKE'));
-    useNavigation(virkailijaNavigation, false);
+    useNavigation(virkailijaNavigation);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: henkilo, isLoading } = useGetHenkiloQuery(omattiedot?.oidHenkilo ?? skipToken);
     const { isLoading: ryhmatLoading } = useGetOrganisaatioRyhmatQuery();

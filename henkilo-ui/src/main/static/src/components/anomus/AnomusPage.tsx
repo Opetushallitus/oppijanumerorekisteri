@@ -17,7 +17,7 @@ import { virkailijaNavigation } from '../navigation/navigationconfigurations';
 const AnomusPage = () => {
     const { L } = useLocalisations();
     useTitle(L('TITLE_ANOMUKSET'));
-    useNavigation(virkailijaNavigation, false);
+    useNavigation(virkailijaNavigation);
     const [sorted, setSorted] = useState<SortingState>([{ id: 'ANOTTU_PVM', desc: true }]);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const [parameters, setParameters] = useState<GetHaetutKayttooikeusryhmatRequest>({

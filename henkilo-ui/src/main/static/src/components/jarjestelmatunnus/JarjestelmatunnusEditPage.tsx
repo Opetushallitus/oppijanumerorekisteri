@@ -24,7 +24,7 @@ export const JarjestelmatunnusEditPage = () => {
     useRedirectByUser(params.oid, 'PALVELU');
     const { L } = useLocalisations();
     useTitle(L('JARJESTELMATUNNUKSEN_HALLINTA'));
-    useNavigation(jarjestelmatunnusNavigation, false);
+    useNavigation(jarjestelmatunnusNavigation);
     const existingKayttooikeusRef = useRef<HTMLDivElement>(null);
 
     return (

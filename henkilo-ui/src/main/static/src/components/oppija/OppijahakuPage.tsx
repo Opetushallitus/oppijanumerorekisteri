@@ -24,7 +24,7 @@ export const OppijahakuPage = () => {
     const navigate = useNavigate();
     const { data: omattiedot } = useGetOmattiedotQuery();
     useTitle('Oppijahaku');
-    useNavigation(oppijaNavigation, false);
+    useNavigation(oppijaNavigation);
 
     const state = useSelector<RootState, OppijahakuCriteria>((state) => state.oppijahaku);
     const setState = (newState: OppijahakuCriteria) => useAppDispatch()(_setState(newState));

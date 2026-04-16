@@ -26,7 +26,7 @@ const defaultCriteria = {
 const OppijoidenTuontiContainer = () => {
     const { L } = useLocalisations();
     useTitle(L('TITLE_OPPIJOIDENTUONTI'));
-    useNavigation(oppijaNavigation, false);
+    useNavigation(oppijaNavigation);
     const [criteria, setCriteria] = useState<OppijoidenTuontiCriteria>(defaultCriteria);
     const [tuontikooste, setTuontikooste] = useState(false);
     const { data, isFetching } = useGetOppijoidenTuontiListausQuery(criteria);

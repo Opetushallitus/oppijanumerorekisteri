@@ -34,7 +34,7 @@ export const OppijaVtjVertailuPage = () => {
     const [yliajaYksiloimaton] = usePutYliajaYksiloimatonMutation();
 
     useTitle(L('TITLE_VTJ_VERTAILU'));
-    useNavigation(oppijaNavigation, false);
+    useNavigation(oppijaNavigation);
 
     async function overrideHenkiloInformation(oid: string): Promise<void> {
         await yliajaYksiloimaton(oid)

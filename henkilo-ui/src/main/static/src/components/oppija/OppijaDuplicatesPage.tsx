@@ -27,7 +27,7 @@ export const OppijaDuplicatesPage = () => {
     const { isLoading } = useGetHakemuksetQuery({ L, oid });
 
     useTitle(L('TITLE_DUPLIKAATTIHAKU'));
-    useNavigation(oppijaNavigation, false);
+    useNavigation(oppijaNavigation);
 
     return (
         <OphDsPage header={`${henkilo?.sukunimi}, ${henkilo?.etunimet}`} tabs={<OppijaTabs oid={oid} />}>

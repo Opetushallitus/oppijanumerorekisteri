@@ -27,7 +27,7 @@ export const Kayttooikeusraportti = () => {
     const ref = useRef<SelectInstance>(null);
     const { L } = useLocalisations();
     useTitle(L('KAYTTOOIKEUSRAPORTTI_TITLE'));
-    useNavigation(virkailijaNavigation, false);
+    useNavigation(virkailijaNavigation);
     const { data, isFetching } = useGetAccessRightReportQuery(oid ?? skipToken);
 
     useEffect(() => {

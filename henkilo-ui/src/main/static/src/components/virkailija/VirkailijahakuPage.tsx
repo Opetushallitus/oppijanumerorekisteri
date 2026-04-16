@@ -44,7 +44,7 @@ const mapFilters = (filters: VirkailijahakuFilters): PostHenkilohakuRequest => {
 export const VirkailijahakuPage = () => {
     const { L, locale } = useLocalisations();
     useTitle(L('VIRKAILIJAHAKU'));
-    useNavigation(virkailijaNavigation, false);
+    useNavigation(virkailijaNavigation);
     const filters = useSelector<RootState, VirkailijahakuFilters>((state) => state.virkailijahaku);
     const setFilters = (filters: VirkailijahakuFilters) => useAppDispatch()(_setFilters(filters));
     const { data: kayttooikeusryhmas } = useGetKayttooikeusryhmasQuery({ passiiviset: false });

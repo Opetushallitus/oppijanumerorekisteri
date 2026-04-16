@@ -26,7 +26,7 @@ export const OppijaPage = () => {
     const navigate = useNavigate();
     const { L } = useLocalisations();
     useTitle(L('TITLE_OPPIJA'));
-    useNavigation(oppijaNavigation, false);
+    useNavigation(oppijaNavigation);
     const { data: omattiedot, isLoading } = useGetOmattiedotQuery();
     const { data: henkilo, isLoading: isHenkiloLoading } = useGetHenkiloQuery(oid);
 

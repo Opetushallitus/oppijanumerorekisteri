@@ -14,7 +14,7 @@ type FormType = 'ssn' | 'anonymous';
 export const OppijaCreate = () => {
     const { L } = useLocalisations();
     useTitle(L('TITLE_OPPIJA_LUONTI'));
-    useNavigation(oppijaNavigation, false);
+    useNavigation(oppijaNavigation);
     const { data } = useGetOmattiedotQuery();
     const [formType, setFormType] = React.useState<FormType>();
     const goBack = () => setFormType(undefined);
