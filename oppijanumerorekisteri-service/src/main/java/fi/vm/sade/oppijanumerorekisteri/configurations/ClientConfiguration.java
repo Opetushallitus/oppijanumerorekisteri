@@ -3,7 +3,6 @@ package fi.vm.sade.oppijanumerorekisteri.configurations;
 import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.cas.CasClient;
-import fi.vm.sade.oppijanumerorekisteri.configurations.properties.AuthenticationProperties;
 import fi.vm.sade.properties.OphProperties;
 import lombok.RequiredArgsConstructor;
 
@@ -22,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ClientConfiguration {
     @Value("${ataru.baseurl}")
     private String ataruBaseUrl;
-    @Value("${authentication.ataru.username}}")
+    @Value("${authentication.ataru.username}")
     private String ataruUsername;
     @Value("${authentication.ataru.password}")
     private String ataruPassword;
