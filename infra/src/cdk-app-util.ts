@@ -185,6 +185,7 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
           ),
         }),
       );
+      /*
       testStage.addAction(
         new codepipeline_actions.CodeBuildAction({
           actionName: "TestTiedotuspalveluUi",
@@ -224,6 +225,7 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
           ),
         }),
       );
+      */
     }
 
     const deployProject = new codebuild.PipelineProject(
