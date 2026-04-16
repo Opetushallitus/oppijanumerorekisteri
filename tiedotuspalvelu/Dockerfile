@@ -13,7 +13,7 @@ RUN npm ci
 RUN npx webpack build
 
 WORKDIR /app
-RUN mvn --batch-mode clean package -DskipTests
+RUN mvn --batch-mode clean package -s codebuild-mvn-settings.xml -DskipTests
 
 FROM amazoncorretto:21.0.10@sha256:704f62cb32e0850ef3bc8d589eb926780bd3a51611df49cc0a0d432f90615372
 WORKDIR /app
