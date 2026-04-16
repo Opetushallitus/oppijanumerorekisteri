@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class UserInterfaceRedirectController {
   @GetMapping("/")
   public String redirectToUI() {
-    return "redirect:/henkilohaku";
+    return "redirect:/virkailijahaku";
   }
 }

@@ -24,6 +24,6 @@ public class HenkiloUiApplicationTests {
     mockMvc
         .perform(get("/"))
         .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/henkilohaku"));
+        .andExpect(redirectedUrl("/virkailijahaku"));
   }
 }
