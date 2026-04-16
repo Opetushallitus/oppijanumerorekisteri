@@ -2,7 +2,6 @@ import React from 'react';
 
 import { LocalNotification } from '../../components/common/Notification/LocalNotification';
 import { Localisations } from '../../types/localisation.type';
-import Salasana from '../../components/common/henkilo/labelvalues/Salasana';
 
 export type Values = {
     password: string;
@@ -52,10 +51,10 @@ const VahvaTunnistusLisatiedotInputs = (props: Props) => {
                     <label className="oph-label" htmlFor="password">
                         {props.L['UUDELLEENREKISTEROINTI_UUSI_SALASANA']}
                     </label>
-                    <Salasana
+                    <input
                         disabled={props.form.metadata.password.disabled}
-                        isError={hasError('password')}
-                        updateModelFieldAction={onInputChange}
+                        type="password"
+                        onChange={(e) => props.onChange(e.currentTarget.name, e.currentTarget.value)}
                     />
                     <LocalNotification
                         type="error"

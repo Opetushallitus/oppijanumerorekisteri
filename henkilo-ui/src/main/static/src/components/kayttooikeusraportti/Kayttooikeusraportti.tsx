@@ -9,12 +9,11 @@ import { useLocalisations } from '../../selectors';
 import { useGetAccessRightReportQuery } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
-import { mainNavigation, virkailijaNavigation } from '../navigation/navigationconfigurations';
+import { virkailijaNavigation } from '../navigation/navigationconfigurations';
 import { OphDsPage } from '../design-system/OphDsPage';
 import { SelectOption, selectStyles } from '../../utilities/select';
 import { OphDsOrganisaatioSelect } from '../design-system/OphDsOrganisaatioSelect';
 import { OphDsTable, PageProps, SortOrder } from '../design-system/OphDsTable';
-import { isNewNavi } from '../navigation/TopNavigation';
 
 const formatDate = (d: string) => format(parseISO(d), 'd.M.yyyy');
 
@@ -28,7 +27,7 @@ export const Kayttooikeusraportti = () => {
     const ref = useRef<SelectInstance>(null);
     const { L } = useLocalisations();
     useTitle(L('KAYTTOOIKEUSRAPORTTI_TITLE'));
-    useNavigation(!isNewNavi ? mainNavigation : virkailijaNavigation, false);
+    useNavigation(virkailijaNavigation, false);
     const { data, isFetching } = useGetAccessRightReportQuery(oid ?? skipToken);
 
     useEffect(() => {

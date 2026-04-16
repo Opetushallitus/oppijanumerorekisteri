@@ -5,12 +5,10 @@ import { NaviTab } from '../types/navigation.type';
 
 export type NavigationState = {
     tabs: NaviTab[];
-    backButton: boolean;
 };
 
 export const initialState: NavigationState = {
     tabs: [],
-    backButton: false,
 };
 
 export const navigationSlice = createSlice({

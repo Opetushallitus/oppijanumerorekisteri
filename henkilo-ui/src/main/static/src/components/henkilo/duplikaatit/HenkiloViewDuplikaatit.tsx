@@ -5,7 +5,6 @@ import { skipToken } from '@reduxjs/toolkit/query/react';
 import Button from '../../common/button/Button';
 import DuplikaatitPerson from './DuplikaatitPerson';
 import Loader from '../../common/icons/Loader';
-import { enabledDuplikaattiView } from '../../navigation/NavigationTabs';
 import { LocalNotification } from '../../common/Notification/LocalNotification';
 import type { HenkiloDuplicate } from '../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
@@ -19,6 +18,7 @@ import { isHenkiloValidForYksilointi } from '../../../validation/YksilointiValid
 import { useLocalisations } from '../../../selectors';
 import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
 import { HenkiloCreate } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
+import { enabledDuplikaattiView } from '../../oppija/OppijaTabs';
 
 import './HenkiloViewDuplikaatit.css';
 

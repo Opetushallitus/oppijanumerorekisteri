@@ -6,8 +6,6 @@ import { Omattiedot } from '../types/domain/kayttooikeus/Omattiedot.types';
 import { Locale } from '../types/locale.type';
 import { KutsuRead } from '../types/domain/kayttooikeus/Kutsu.types';
 import { Jarjestelmatunnus, PalvelukayttajaCreate } from '../types/domain/kayttooikeus/palvelukayttaja.types';
-import { HenkilohakuResult } from '../types/domain/kayttooikeus/HenkilohakuResult.types';
-import { Henkilohaku, HenkilohakuCriteria } from '../types/domain/kayttooikeus/HenkilohakuCriteria.types';
 import { HaettuKayttooikeusryhma } from '../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
 import { KutsututSearchParams } from '../components/kutsutut/KutsututPage';
 import { Kayttooikeusryhma, MyonnettyKayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
@@ -80,6 +78,17 @@ export type PostHenkilohakuRequest = {
     nameQuery?: string;
     organisaatioOids?: string[];
     kayttooikeusryhmaId?: number;
+};
+
+export type HenkilohakuResult = {
+    oidHenkilo: string;
+    nimi: string;
+    kayttajatunnus: string;
+    organisaatioNimiList: {
+        identifier: string;
+        tyypit: string[];
+        localisedLabels: Record<Locale, string>;
+    }[];
 };
 
 export type KayttooikeusraporttiRow = {
@@ -194,8 +203,6 @@ export const kayttooikeusApi = createApi({
         'kayttajatiedot',
         'hakatunnisteet',
         'palvelukayttaja',
-        'henkilohaku',
-        'henkilohakucount',
         'henkilohakuorganisaatiot',
         'henkilolinkitykset',
         'haetutKayttooikeusryhmat',
@@ -374,31 +381,6 @@ export const kayttooikeusApi = createApi({
                 body,
             }),
             providesTags: ['jarjestelmatunnushaku'],
-        }),
-        getHenkiloHaku: builder.infiniteQuery<HenkilohakuResult[], Henkilohaku, number>({
-            query: ({ queryArg: { criteria, parameters }, pageParam }) => ({
-                url: `henkilo/henkilohaku?${new URLSearchParams({
-                    ...parameters,
-                    offset: String(pageParam),
-                }).toString()}`,
-                method: 'POST',
-                body: { ...criteria, isCountSearch: false },
-            }),
-            infiniteQueryOptions: {
-                initialPageParam: 0,
-                getNextPageParam: (lastPage, _, lastPageParam) =>
-                    lastPage.length === 100 ? lastPageParam + 100 : undefined,
-            },
-            providesTags: ['henkilohaku'],
-        }),
-        getHenkiloHakuCount: builder.query<string, HenkilohakuCriteria>({
-            query: (criteria) => ({
-                url: 'henkilo/henkilohakucount',
-                method: 'POST',
-                body: { ...criteria, isCountSearch: true },
-                responseHandler: 'text',
-            }),
-            providesTags: ['henkilohakucount'],
         }),
         getHaetutKayttooikeusryhmat: builder.infiniteQuery<
             HaettuKayttooikeusryhma[],
@@ -658,8 +640,6 @@ export const {
     usePostPalvelukayttajaMutation,
     usePutPalvelukayttajaCasPasswordMutation,
     usePutPalvelukayttajaOauth2SecretMutation,
-    useGetHenkiloHakuInfiniteQuery,
-    useGetHenkiloHakuCountQuery,
     useGetHaetutKayttooikeusryhmatInfiniteQuery,
     usePutHaettuKayttooikeusryhmaMutation,
     usePostSalasananVaihtoMutation,

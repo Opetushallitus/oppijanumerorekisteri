@@ -7,11 +7,10 @@ import { useLocalisations } from '../../selectors';
 import { useGetOppijoidenTuontiListausQuery } from '../../api/oppijanumerorekisteri';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
-import { mainNavigation, oppijaNavigation } from '../navigation/navigationconfigurations';
+import { oppijaNavigation } from '../navigation/navigationconfigurations';
 import { OphDsRadioGroup } from '../design-system/OphDsRadioGroup';
 import { OphDsInput } from '../design-system/OphDsInput';
 import { useDebounce } from '../../useDebounce';
-import { isNewNavi } from '../navigation/TopNavigation';
 
 export type OppijoidenTuontiCriteria = {
     page: string;
@@ -27,7 +26,7 @@ const defaultCriteria = {
 const OppijoidenTuontiContainer = () => {
     const { L } = useLocalisations();
     useTitle(L('TITLE_OPPIJOIDENTUONTI'));
-    useNavigation(!isNewNavi ? mainNavigation : oppijaNavigation, false);
+    useNavigation(oppijaNavigation, false);
     const [criteria, setCriteria] = useState<OppijoidenTuontiCriteria>(defaultCriteria);
     const [tuontikooste, setTuontikooste] = useState(false);
     const { data, isFetching } = useGetOppijoidenTuontiListausQuery(criteria);

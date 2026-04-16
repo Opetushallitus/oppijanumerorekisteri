@@ -912,6 +912,7 @@
     font-size: 20px;
     line-height: 26px;
     padding: 2rem;
+    box-sizing: border-box;
 }
 
 .oph-ds-toasts {

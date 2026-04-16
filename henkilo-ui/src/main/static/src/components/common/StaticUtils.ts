@@ -59,7 +59,7 @@ export function isVahvastiYksiloity(henkilo?: Henkilo | HenkiloDuplicate) {
     return henkilo?.yksiloityVTJ || henkilo?.yksiloityEidas;
 }
 
-export function getOrganisaatiotyypitFlat(L: LocalisationFn, uppercase: boolean, tyypit?: string[]) {
+function getOrganisaatiotyypitFlat(L: LocalisationFn, uppercase: boolean, tyypit?: string[]) {
     return tyypit?.length
         ? '(' +
               tyypit

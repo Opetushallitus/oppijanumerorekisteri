@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router';
+
 import { useLocalisations } from '../../selectors';
 import {
     useGetHenkiloMasterQuery,
@@ -7,8 +8,22 @@ import {
     useGetYksilointitiedotQuery,
 } from '../../api/oppijanumerorekisteri';
 import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
-import { enabledDuplikaattiView, enabledVtjVertailuView, vtjDataAvailable } from '../navigation/NavigationTabs';
 import { parsePalveluRoolit } from '../../utilities/palvelurooli.util';
+import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
+import { Yksilointitieto } from '../../types/domain/oppijanumerorekisteri/yksilointitieto.types';
+
+export const enabledDuplikaattiView = (oidHenkilo: string | null | undefined, masterHenkiloOid?: string): boolean =>
+    masterHenkiloOid === undefined || masterHenkiloOid === oidHenkilo;
+
+export const enabledVtjVertailuView = (henkilo?: Henkilo): boolean =>
+    !!henkilo?.yksilointiYritetty && !henkilo?.yksiloityVTJ && !henkilo?.duplicate;
+
+export const vtjDataAvailable = (yksilointitieto: Yksilointitieto | null | undefined): boolean =>
+    !!yksilointitieto?.etunimet ||
+    !!yksilointitieto?.sukunimi ||
+    !!yksilointitieto?.kutsumanimi ||
+    !!yksilointitieto?.yhteystiedot ||
+    !!yksilointitieto?.sukupuoli;
 
 type OppijaTabsProps = {
     oid: string;

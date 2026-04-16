@@ -5,7 +5,6 @@ import { useAppDispatch } from '../../store';
 import VtjVertailuListaus from '../henkilo/vtjvertailu/VtjVertailuListaus';
 import Loader from '../common/icons/Loader';
 import Button from '../common/button/Button';
-import { enabledVtjVertailuView } from '../navigation/NavigationTabs';
 import { hasAnyPalveluRooli } from '../../utilities/palvelurooli.util';
 import { useLocalisations } from '../../selectors';
 import { useTitle } from '../../useTitle';
@@ -18,7 +17,7 @@ import {
 } from '../../api/oppijanumerorekisteri';
 import { add } from '../../slices/toastSlice';
 import { OphDsPage } from '../design-system/OphDsPage';
-import { OppijaTabs } from './OppijaTabs';
+import { enabledVtjVertailuView, OppijaTabs } from './OppijaTabs';
 import { oppijaNavigation } from '../navigation/navigationconfigurations';
 
 export const OppijaVtjVertailuPage = () => {

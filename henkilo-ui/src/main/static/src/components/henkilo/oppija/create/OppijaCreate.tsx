@@ -6,8 +6,7 @@ import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
 import { useLocalisations } from '../../../../selectors';
 import { useTitle } from '../../../../useTitle';
 import { useNavigation } from '../../../../useNavigation';
-import { mainNavigation, oppijaNavigation } from '../../../navigation/navigationconfigurations';
-import { isNewNavi } from '../../../navigation/TopNavigation';
+import { oppijaNavigation } from '../../../navigation/navigationconfigurations';
 import { useGetOmattiedotQuery } from '../../../../api/kayttooikeus';
 
 type FormType = 'ssn' | 'anonymous';
@@ -15,7 +14,7 @@ type FormType = 'ssn' | 'anonymous';
 export const OppijaCreate = () => {
     const { L } = useLocalisations();
     useTitle(L('TITLE_OPPIJA_LUONTI'));
-    useNavigation(!isNewNavi ? mainNavigation : oppijaNavigation, false);
+    useNavigation(oppijaNavigation, false);
     const { data } = useGetOmattiedotQuery();
     const [formType, setFormType] = React.useState<FormType>();
     const goBack = () => setFormType(undefined);

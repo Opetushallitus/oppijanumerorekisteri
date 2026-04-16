@@ -12,9 +12,8 @@ import { KutsuminenOrganisation } from './KutsuminenOrganisation';
 import { useGetOmattiedotQuery, useGetOrganisaatioRyhmatQuery } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
 import { useNavigation } from '../../useNavigation';
-import { mainNavigation, virkailijaNavigation } from '../navigation/navigationconfigurations';
+import { virkailijaNavigation } from '../navigation/navigationconfigurations';
 import { useGetHenkiloQuery } from '../../api/oppijanumerorekisteri';
-import { isNewNavi } from '../navigation/TopNavigation';
 import { OphDsPage } from '../design-system/OphDsPage';
 import { OphDsBanner } from '../design-system/OphDsBanner';
 import { OphDsSpinner } from '../design-system/OphDsSpinner';
@@ -39,7 +38,7 @@ export const emptyOrganisation = (): KutsuOrganisaatio => ({
 const KutsuminenPage = () => {
     const { L, locale } = useLocalisations();
     useTitle(L('TITLE_KUTSULOMAKE'));
-    useNavigation(!isNewNavi ? mainNavigation : virkailijaNavigation, false);
+    useNavigation(virkailijaNavigation, false);
     const { data: omattiedot } = useGetOmattiedotQuery();
     const { data: henkilo, isLoading } = useGetHenkiloQuery(omattiedot?.oidHenkilo ?? skipToken);
     const { isLoading: ryhmatLoading } = useGetOrganisaatioRyhmatQuery();
