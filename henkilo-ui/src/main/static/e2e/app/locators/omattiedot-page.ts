@@ -2,7 +2,7 @@ import { Page } from '@playwright/test';
 import { kayttooikeusryhmaSelectModal, selectLocator } from '../../locators';
 
 export async function gotoOmattiedot(page: Page) {
-    await page.goto('/henkilo-ui/omattiedot2');
+    await page.goto('/henkilo-ui/omattiedot');
     return {
         perustiedot: {
             sukunimi: page.getByTestId('sukunimi'),
