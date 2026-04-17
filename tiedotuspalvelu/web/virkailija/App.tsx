@@ -2,6 +2,7 @@ import React from "react";
 import { useGetMeQuery } from "./api";
 import { OphDsPage } from "./design-system/OphDsPage";
 import { OphDsButton } from "./design-system/OphDsButton";
+import { useLocalisations } from "./useLocalisations";
 export function App() {
   const meQuery = useGetMeQuery();
   return meQuery.isSuccess ? <RealApp /> : <LoginScreen />;
@@ -13,7 +14,7 @@ function LoginScreen() {
   );
   const casLoginUrl = `http://localhost:8888/realms/cas-virkailija/protocol/cas/login?service=${reutrnUrl}`;
   return (
-    <OphDsPage header="Tiedotuspalvelun rapsanäkymä">
+    <OphDsPage header="Tiedotuspalvelu">
       <OphDsButton
         variant="primary"
         onClick={() => (window.location.href = casLoginUrl)}
@@ -24,14 +25,16 @@ function LoginScreen() {
   );
 }
 function RealApp() {
+  const { t } = useLocalisations();
   return (
-    <OphDsPage header="Tiedotuspalvelun rapsanäkymä">
+    <OphDsPage header={t("TIEDOTUSPALVELU_OTSIKKO")}>
       <CsvButton />
     </OphDsPage>
   );
 }
 
 function CsvButton() {
+  const { t } = useLocalisations();
   return (
     <OphDsButton
       variant="primary"
@@ -39,7 +42,7 @@ function CsvButton() {
         (window.location.pathname = "/tiedotuspalvelu/ui/tiedotteet/csv")
       }
     >
-      Lataa kaikki tiedottet CSV:nä
+      {t("TIEDOTUSPALVELU_LATAA_CSV")}
     </OphDsButton>
   );
 }

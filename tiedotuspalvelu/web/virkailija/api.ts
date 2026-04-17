@@ -4,6 +4,12 @@ export type MeResponse = {
   nimi: string;
 };
 
+export type LocalisationDto = {
+  key: string;
+  locale: string;
+  value: string;
+};
+
 export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({ baseUrl: "/tiedotuspalvelu/ui" }),
@@ -13,7 +19,10 @@ export const api = createApi({
       query: () => "me",
       providesTags: ["me"],
     }),
+    getLocalisations: builder.query<LocalisationDto[], void>({
+      query: () => "localisations",
+    }),
   }),
 });
 
-export const { useGetMeQuery } = api;
+export const { useGetMeQuery, useGetLocalisationsQuery } = api;

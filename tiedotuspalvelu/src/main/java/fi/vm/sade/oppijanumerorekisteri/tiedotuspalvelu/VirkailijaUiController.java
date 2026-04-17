@@ -1,8 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
+import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.locale.LocalisationRepository;
 import fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu.security.CasVirkailijaUserDetailsService;
 import io.swagger.v3.oas.annotations.Hidden;
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.postgresql.PGConnection;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Hidden
 public class VirkailijaUiController {
   private final JdbcTemplate jdbcTemplate;
+  private final LocalisationRepository localisationRepository;
+
+  @GetMapping("/localisations")
+  @PreAuthorize("hasRole('APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD')")
+  List<LocalisationRepository.LocalisationDto> getLocalisations() {
+    return localisationRepository.findAllByCategoryWithFallback("tiedotuspalvelu");
+  }
 
   @GetMapping("/me")
   @PreAuthorize("hasRole('APP_TIEDOTUSPALVELU_KIELITUTKINTOTODISTUS_TIEDOTE_CRUD')")

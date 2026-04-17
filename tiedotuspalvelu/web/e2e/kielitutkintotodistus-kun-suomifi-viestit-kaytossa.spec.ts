@@ -32,7 +32,7 @@ test("Kielitutkintotodistus - Suomi.fi-viestit käytössä", async ({
     await page.goto("/tiedotuspalvelu/");
     await page.getByRole("button", { name: "Tiina Tiedottaja" }).click();
     await expect(
-      page.getByRole("button", { name: "Lataa kaikki tiedottet CSV:nä" }),
+      page.getByRole("button", { name: "Lataa kaikki tiedotteet CSV:nä" }),
     ).toBeVisible();
 
     const tiedoteLine = await downloadReportAndFindLine(

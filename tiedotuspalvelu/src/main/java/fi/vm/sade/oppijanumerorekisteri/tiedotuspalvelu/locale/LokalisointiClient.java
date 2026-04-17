@@ -26,11 +26,12 @@ public class LokalisointiClient {
   @JsonIgnoreProperties(ignoreUnknown = true)
   public record LokalisointiEntry(String key, String locale, String value) {}
 
-  public List<LokalisointiEntry> getLocalisations() {
+  public List<LokalisointiEntry> getLocalisations(String category) {
     var url =
         "https://virkailija."
             + properties.opintopolkuHost()
-            + "/lokalisointi/api/v1/localisation?category=omat-viestit";
+            + "/lokalisointi/api/v1/localisation?category="
+            + category;
     try {
       var httpRequest =
           HttpRequest.newBuilder()

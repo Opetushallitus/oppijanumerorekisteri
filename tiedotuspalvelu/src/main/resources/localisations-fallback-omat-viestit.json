@@ -1,0 +1,132 @@
+[
+  {
+    "key": "OMAT_VIESTIT_EI_TIEDOTTEITA",
+    "locale": "en",
+    "value": "You have no messages. You will only see messages on this tab, if an electronic Suomi.fi Message has been sent to you from My Studyinfo."
+  },
+  {
+    "key": "OMAT_VIESTIT_EI_TIEDOTTEITA",
+    "locale": "fi",
+    "value": "Sinulle ei ole viestejä. Näet viestejä tällä välilehdellä vain siinä tapauksessa, jos Oma Opintopolusta on lähetetty sinulle sähköinen Suomi.fi-viesti. "
+  },
+  {
+    "key": "OMAT_VIESTIT_EI_TIEDOTTEITA",
+    "locale": "sv",
+    "value": "Du har inga meddelanden. Du kommer endast att se meddelanden på den här fliken om ett elektroniskt Suomi.fi-meddelande har skickats till dig från Min Studieinfo."
+  },
+  {
+    "key": "OMAT_VIESTIT_KIELITUTKINTOTODISTUS_LINKKI",
+    "locale": "en",
+    "value": "https://opintopolku.fi/koski/omattiedot"
+  },
+  {
+    "key": "OMAT_VIESTIT_KIELITUTKINTOTODISTUS_LINKKI",
+    "locale": "fi",
+    "value": "https://opintopolku.fi/koski/omattiedot"
+  },
+  {
+    "key": "OMAT_VIESTIT_KIELITUTKINTOTODISTUS_LINKKI",
+    "locale": "sv",
+    "value": "https://opintopolku.fi/koski/omattiedot"
+  },
+  {
+    "key": "OMAT_VIESTIT_KIELITUTKINTOTODISTUS_VIESTI",
+    "locale": "en",
+    "value": "<strong> You have been issued a YKI certificate<strong> \n<br> \nThe Finnish National Agency for Education has issued you a National Certificate of Language Proficiency (YKI). You can view and download your certificate in the My Studyinfo service. For more detailed instructions, please see the end of this message.  \n<br> \n<strong>Information for the certificate recipient<strong> \n<br> \nYou get a separate grade, i.e. a proficiency level assessment, for each subtest in the YKI test. You can get the following grades for passed subtests in the YKI test:\n<br> \n- grade 1 or 2 at the basic level <br> \n- grade 3 or 4 at the intermediate level <br> \n- grade 5 or 6 at the advanced level. <br> \n<br> \nYou only receive a certificate for the level of the test that you took. The grades below 1, below 3 or below 5 mean that you did not have the required skills for the chosen level of the YKI test. \n<br> \nIf you are not satisfied with the assessment of your YKI test, you have two options:\n<br> \n1. Request an administrative review. This means that your YKI test will be reassessed.\n<br> \nYou have 30 days to request a reassessment. The time starts when you receive a Suomi.fi message from the Finnish National Agency for Education. You can request a reassessment on the YKI registration page at yki.opintopolku.fi/yki/tarkistusarviointi.\n<br> \n2. Ask for information on how the assessment criteria were applied to your test. This means requesting information on how your YKI test was assessed. Asking for information on the assessment criteria will not change your grades.\n<br> \nYou have 14 days to request information on the assessment criteria. The time starts when you receive a Suomi.fi message from the Finnish National Agency for Education. For more detailed instructions, please visit the Finnish National Agency for Education's website at www.oph.fi/en/yki/reassessment.\n<br> \nOnce you have received information on the assessment criteria, you can also request a reassessment. You have 14 days to request a reassessment. The time starts when you receive the information on the assessment criteria. \n<br> \nRead more about the results and reassessment of the YKI test on the Finnish National Agency for Education's website at www.oph.fi/en/yki. On the page, navigate to the section <strong>After the YKI test<strong>. \n<br> \nFor more information, please contact the Finnish National Agency for Education (Recognition of Qualifications and Language Proficiency Unit): kielitutkinnot@oph.fi and +358 29 533 1000 (switchboard).\n<br> \n<strong> Instructions for downloading the certificate<strong> \n<br> \n1. Go to the My studies page in My Studyinfo. <br> \n2. Open the details of the YKI test under the National Certificate of Language Proficiency section. <br> \n3. Download the certificate in Finnish, Swedish or English. <br> \n<br> \nIf you have taken the YKI test several times, you can download a certificate for each test. \n<br> \nGo to the My Studies page in My Studyinfo:"
+  },
+  {
+    "key": "OMAT_VIESTIT_KIELITUTKINTOTODISTUS_VIESTI",
+    "locale": "fi",
+    "value": "<strong> Sinulle on myönnetty YKI-todistus  <strong>\n<br>\nOpetushallitus on myöntänyt sinulle todistuksen yleisestä kielitutkinnosta (YKI). Voit katsoa ja ladata todistuksen Oma Opintopolku -palvelussa. Lue tarkemmat ohjeet viestin lopusta.  \n<br>\n<strong>Tietoa todistuksen saajalle<strong>\n<br>\nYKI-testissä saat jokaisesta osakokeesta oman arvosanan eli taitotasoarvion. Voit saada YKI-testin hyväksytyistä osakokeista \n<br>\n- perustasolla taitotasoarvion 1 tai 2 <br>\n- keskitasolla taitotasoarvion 3 tai 4 <br>\n- ylimmällä tasolla taitotasoarvion 5 tai 6. <br>\n<br>\nSaat todistuksen vain siitä tasosta, jonka testiin olet osallistunut. Arviot alle 1, alle 3 tai alle 5 tarkoittavat sitä, että sinulla ei ole tutkintotasolla vaadittavia taitoja. \n<br>\nJos et ole tyytyväinen YKI-testisi arviointiin, sinulla on kaksi vaihtoehtoa. <br> \n<br> \n1. Tee oikaisuvaatimus. Se tarkoittaa, että YKI-testisi arvioidaan uudelleen eli sille tehdään tarkistusarviointi.\n<br> \nSinulla on 30 vuorokautta aikaa pyytää tarkistusarviointia. Aika alkaa siitä, kun olet saanut Suomi.fi-viestin Opetushallitukselta. Voit pyytää tarkistusarviointia YKI-ilmoittautumissivulla osoitteessa yki.opintopolku.fi/yki/tarkistusarviointi.\n<br> \n2. Pyydä ensin tietoa arvosteluperusteiden soveltamisesta testiisi. Se tarkoittaa, että pyydät tietoa siitä, miten YKI-testisi on arvioitu. Arvosteluperusteiden pyytäminen ei muuta testisi arviointia.\n<br> \nSinulla on 14 vuorokautta aikaa pyytää tietoa arvosteluperusteista. Aika alkaa siitä, kun olet saanut Suomi.fi-viestin Opetushallitukselta. Lue tarkemmat ohjeet Opetushallituksen verkkosivuilta osoitteessa www.oph.fi/yki/tarkistusarviointi.\n<br> \nKun olet saanut tietoa arvosteluperusteita, voit pyytää myös tarkistusarviointia. Sinulla on 14 vuorokautta aikaa pyytää tarkistusarviointia. Aika alkaa siitä, kun saat tiedon arvosteluperusteista. \n<br> \nLue YKI-testin tuloksista ja tarkistusarvioinnista Opetushallituksen verkkosivuilta osoitteessa www.oph.fi/yki. Valitse sivuilta kohta <strong>YKI-testin jälkeen<strong>. \n<br>\nLisätietoja Opetushallitukselta (Tutkintojen ja kieliosaamisen tunnustaminen): kielitutkinnot@oph.fi ja +358 29 533 1000 (vaihde). \n<br>\n<strong>Ohjeet todistuksen lataamisesta <strong>\n<br>\n1. Siirry Opintoni-sivulle Oma Opintopolussa. <br>\n2. Avaa YKI-testin tiedot kohdasta <strong>Yleinen kielitutkinto<strong>.<br>  \n3. Lataa todistus suomeksi, ruotsiksi tai englanniksi. <br> \n<br> \nJos olet osallistunut YKI-testiin monta kertaa, voit ladata jokaisesta testistä oman todistuksen. \n<br> \nSiirry Opintoni-sivulle Oma Opintopolussa:"
+  },
+  {
+    "key": "OMAT_VIESTIT_KIELITUTKINTOTODISTUS_VIESTI",
+    "locale": "sv",
+    "value": "<strong> Du har beviljats ett YKI-intyg <strong> \n<br> \nUtbildningsstyrelsen har beviljat dig ett intyg över den allmänna språkexamen (YKI). Du kan se och ladda ner intyget i tjänsten Min Studieinfo. Mer detaljerade instruktioner finns i slutet av meddelandet.  \n<br> \n<strong> Information till mottagaren av intyget <strong> \n<br> \nI YKI-testet får du ett separat vitsord för varje delprov, det vill säga en bedömning av färdighetsnivån. För godkända delprov i YKI-testet kan du få följande vitsord för färdighetsnivån: \n<br> \n- 1 eller 2 på grundnivån <br> \n- 3 eller 4 på mellannivån <br> \n- 5 eller 6 på den högsta nivån. <br> \n<br> \nDu får bara ett intyg för testnivå som du deltog i. Vitsorden under 1, under 3 eller under 5 innebär att du inte har de färdigheter som krävs på examensnivån. \n<br> \nOm du inte är nöjd med bedömningen av ditt YKI-test, har du två alternativ.\n<br> \n1. Begär omprövning. Det betyder att ditt YKI-test bedöms på nytt, det vill säga att det görs en kontrollbedömning av testet.\n<br> \nDu har 30 dygn på dig att begära en kontrollbedömning. Tiden börjar löpa från det att du får ett Suomi.fi-meddelande från Utbildningsstyrelsen. Du kan begära en kontrollbedömning på YKI-anmälningssidan på yki.opintopolku.fi/yki/tarkistusarviointi.\n<br> \n2. Begär först information om hur bedömningskriterierna har tillämpats på ditt test. Det betyder att du begär information om hur ditt YKI-test har bedömts. Att begära information om bedömningskriterierna ändrar inte bedömningen av ditt test.\n<br> \nDu har 14 dygn på dig att begära information om bedömningskriterierna. Tiden börjar löpa från det att du får ett Suomi.fi-meddelande från Utbildningsstyrelsen. Mer detaljerade anvisningar finns på Utbildningsstyrelsens webbplats på www.oph.fi/sv/yki/kontrollbedömning.\n<br> \nNär du har fått information om bedömningskriterierna kan du även begära en kontrollbedömning. Du har 14  dygn på dig att begära en kontrollbedömning. Tiden börjar löpa från det att du får information om bedömningskriterierna. \n<br> \nInformation om YKI-testresultaten och kontrollbedömningen finns på Utbildningsstyrelsens webbplats på www.oph.fi/sv/yki. Gå till avsnittet <strong> Efter YKI-testet på webbplatsen<strong>. \n<br> \nMer information lämnas av Utbildningsstyrelsen (Erkännande av examina och språkkunskaper): kielitutkinnot@oph.fi och +358 29 533 1000 (växel). \n<br> \n<strong>Instruktioner för att ladda ner intyget<strong> \n<br> \n1. Gå till sidan Mina studier i Min Studieinfo. <br> \n2. Öppna uppgifterna om YKI-testet under punkten <strong>Allmän språkexamen<strong>. <br> \n3. Ladda ner intyget på finska, svenska eller engelska. \n<br> \nOm du har deltagit i YKI-testet flera gånger, kan du ladda ner ett separat intyg för varje test. \n<br> \nGå till sidan Mina studier i Min Studieinfo:"
+  },
+  {
+    "key": "OMAT_VIESTIT_LADATAAN",
+    "locale": "en",
+    "value": "Loading data..."
+  },
+  {
+    "key": "OMAT_VIESTIT_LADATAAN",
+    "locale": "fi",
+    "value": "Ladataan tietoja..."
+  },
+  {
+    "key": "OMAT_VIESTIT_LADATAAN",
+    "locale": "sv",
+    "value": "Laddar data..."
+  },
+  {
+    "key": "OMAT_VIESTIT_OTSIKKO",
+    "locale": "en",
+    "value": "My messages"
+  },
+  {
+    "key": "OMAT_VIESTIT_OTSIKKO",
+    "locale": "fi",
+    "value": "Viestini"
+  },
+  {
+    "key": "OMAT_VIESTIT_OTSIKKO",
+    "locale": "sv",
+    "value": "Mina meddelanden"
+  },
+  {
+    "key": "OMAT_VIESTIT_SUOMIFI_OTSIKKO",
+    "locale": "en",
+    "value": "New message in My Studyinfo | Uusi viesti Oma Opintopolussa | Nytt meddelande i Min Studieinfo"
+  },
+  {
+    "key": "OMAT_VIESTIT_SUOMIFI_OTSIKKO",
+    "locale": "fi",
+    "value": "Uusi viesti Oma Opintopolussa | Nytt meddelande i Min Studieinfo | New message in My Studyinfo"
+  },
+  {
+    "key": "OMAT_VIESTIT_SUOMIFI_OTSIKKO",
+    "locale": "sv",
+    "value": "Nytt meddelande i Min Studieinfo | Uusi viesti Oma Opintopolussa | New message in My Studyinfo | "
+  },
+  {
+    "key": "OMAT_VIESTIT_SUOMIFI_VIESTI",
+    "locale": "en",
+    "value": "Hi! \n\nYou have received a new message in My Studyinfo service. You can read the message by logging in to the My Studyinfo service. You find the message on the My Messages page. \n\nThe message concerns the following matter: \nCertificate (National Certificates of Language Proficiency, YKI)\n\nFor reasons of information security, this message does not contain a direct link to the service.\n\nBest regards,\nFinnish National Agency for Education’s (EDUFI)\n\n-\n\nHei! \n\nSinulle on saapunut Oma Opintopolkuun uusi viesti. Voit lukea viestin kirjautumalla Oma Opintopolku-palveluun. Löydät sinulle saapuneet viestit Viestini-sivulta. \n\nViesti koskee seuraavaa asiaa: \nTodistus (Yleiset kielitutkinnot, YKI) \n\nTietoturvan takia viestissä ei ole suoraa linkkiä palveluun.\n\nTerveisin, \nOpetushallitus\n\n-\n\nHej! \n\nDu har fått ett nytt meddelande i My Studyinfo. Du kan läsa meddelandet genom att logga in på Min Studieinfo-tjänsten. Du hittas de meddelanden du har fått på sidan Mina meddelanden.\n\nMeddelandet gäller den följande saken: \nExamensintyg (Allmänna språkexamina, YKI)\n\nFör att värna om informationssäkerheten finns det ingen direkt länk till tjänsten i meddelandet.\n\nHälsningar, \nUtbildningsstyrelsen"
+  },
+  {
+    "key": "OMAT_VIESTIT_SUOMIFI_VIESTI",
+    "locale": "fi",
+    "value": "Hei! \n\nSinulle on saapunut Oma Opintopolkuun uusi viesti. Voit lukea viestin kirjautumalla Oma Opintopolku-palveluun. Löydät sinulle saapuneet viestit Viestini-sivulta. \n\nViesti koskee seuraavaa asiaa: \nTodistus (Yleiset kielitutkinnot, YKI) \n\nTietoturvan takia viestissä ei ole suoraa linkkiä palveluun.\n\nTerveisin, \nOpetushallitus\n\n-\n\nHej! \n\nDu har fått ett nytt meddelande i My Studyinfo. Du kan läsa meddelandet genom att logga in på Min Studieinfo-tjänsten. Du hittas de meddelanden du har fått på sidan Mina meddelanden.\n\nMeddelandet gäller den följande saken: \nExamensintyg (Allmänna språkexamina, YKI)\n\nFör att värna om informationssäkerheten finns det ingen direkt länk till tjänsten i meddelandet.\n\nHälsningar, \nUtbildningsstyrelsen\n\n-\n\nHi! \n\nYou have received a new message in My Studyinfo service. You can read the message by logging in to the My Studyinfo service. You find the message on the My Messages page. \n\nThe message concerns the following matter: \nCertificate (National Certificates of Language Proficiency, YKI)\n\nFor reasons of information security, this message does not contain a direct link to the service.\n\nBest regards,\nFinnish National Agency for Education’s (EDUFI)"
+  },
+  {
+    "key": "OMAT_VIESTIT_SUOMIFI_VIESTI",
+    "locale": "sv",
+    "value": "Hej! \n\nDu har fått ett brev eller ett beslut i Min Studieinfo från Utbildningsstyrelsen. Ämne för brevet eller beslutet:\n\nExamensintyg, allmänna språkexamina (YKI)\n\nLäs dina meddelanden genom att logga in i Min Studieinfo. Efter att du har loggat in kan du läsa meddelandet på sidan ”Mina meddelanden”. \n\nAv dataskyddsskäl innehåller det här meddelandet ingen direkt länk till Min Studieinfo.\n\nHälsningar, \nUtbildningsstyrelsen\n\n\n-\n\nHei! \n\nSinulle on saapunut Oma Opintopolkuun uusi päätös tai kirje, jonka on lähettänyt Opetushallitus. \n\nViesti koskee seuraavaa asiaa: \nTodistus (Yleiset kielitutkinnot, YKI) \n\nVoit lukea viestin kirjautumalla Oma Opintopolku-palveluun. Kun olet kirjautunut sisään, löydät sinulle saapuneen viestin Viestini-sivulta. \n\nTietoturvan takia viestissä ei ole suoraa linkkiä palveluun.\n\nTerveisin, \nOpetushallitus\n\n-\n\nHi! \n\nYou have received a new message in My Studyinfo service. You can read the message by logging in to the My Studyinfo service. You find the message on the My Messages page. \n\nThe message concerns the following matter: \nCertificate (National Certificates of Language Proficiency, YKI)\n\nFor reasons of information security, this message does not contain a direct link to the service.\n\nBest regards,\nFinnish National Agency for Education’s (EDUFI)\n"
+  },
+  {
+    "key": "OMAT_VIESTIT_TIEDOTTEET",
+    "locale": "en",
+    "value": "Messages"
+  },
+  {
+    "key": "OMAT_VIESTIT_TIEDOTTEET",
+    "locale": "fi",
+    "value": "Viestit"
+  },
+  {
+    "key": "OMAT_VIESTIT_TIEDOTTEET",
+    "locale": "sv",
+    "value": "Meddelanden"
+  },
+  {
+    "key": "OMAT_VIESTIT_VIRHE",
+    "locale": "en",
+    "value": "Something went wrong. If the error continues, please try to refresh the page."
+  },
+  {
+    "key": "OMAT_VIESTIT_VIRHE",
+    "locale": "fi",
+    "value": "Jokin meni vikaan. Jos virhe aiheuttaa ongelmia, yritä päivittää sivu."
+  }
+]

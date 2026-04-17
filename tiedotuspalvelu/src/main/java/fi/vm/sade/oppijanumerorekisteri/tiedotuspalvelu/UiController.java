@@ -47,7 +47,7 @@ public class UiController {
 
   @GetMapping("/localisations")
   List<LocalisationRepository.LocalisationDto> getLocalisations() {
-    return localisationRepository.findAllWithFallback();
+    return localisationRepository.findAllByCategoryWithFallback("omat-viestit");
   }
 
   @GetMapping("/me")

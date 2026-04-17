@@ -42,8 +42,10 @@ public class SendSuomiFiViestitTask extends TiedoteProcessingTask {
   @Override
   protected void processTiedote(Tiedote tiedote) {
     var viesti = tiedote.getViesti();
-    var otsikko = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_OTSIKKO", "fi");
-    var sisalto = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_VIESTI", "fi");
+    var otsikko =
+        localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_OTSIKKO", "omat-viestit", "fi");
+    var sisalto =
+        localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_VIESTI", "omat-viestit", "fi");
     viesti.setOtsikko(otsikko);
     viesti.setSisalto(sisalto);
     var messageId = sendSuomiFiViesti(viesti);
@@ -120,8 +122,10 @@ public class SendSuomiFiViestitTask extends TiedoteProcessingTask {
   }
 
   private ElectronicPart createElectronicPart(SuomiFiViesti suomiFiViesti) {
-    var title = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_OTSIKKO", "fi");
-    var body = localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_VIESTI", "fi");
+    var title =
+        localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_OTSIKKO", "omat-viestit", "fi");
+    var body =
+        localisationRepository.translate("OMAT_VIESTIT_SUOMIFI_VIESTI", "omat-viestit", "fi");
     return ElectronicPart.builder()
         .attachments(List.of())
         .title(title)

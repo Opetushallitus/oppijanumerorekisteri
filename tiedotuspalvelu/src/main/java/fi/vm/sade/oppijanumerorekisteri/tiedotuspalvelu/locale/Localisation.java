@@ -31,6 +31,10 @@ public class Localisation {
   @Column(nullable = false)
   private String locale;
 
+  @Id
+  @Column(nullable = false)
+  private String category;
+
   @Column(nullable = false)
   private String value;
 
@@ -44,17 +48,18 @@ public class Localisation {
   public static class LocalisationId implements Serializable {
     private String key;
     private String locale;
+    private String category;
 
     @Override
     public boolean equals(Object o) {
       if (this == o) return true;
       if (!(o instanceof LocalisationId that)) return false;
-      return key.equals(that.key) && locale.equals(that.locale);
+      return key.equals(that.key) && locale.equals(that.locale) && category.equals(that.category);
     }
 
     @Override
     public int hashCode() {
-      return 31 * key.hashCode() + locale.hashCode();
+      return 31 * (31 * key.hashCode() + locale.hashCode()) + category.hashCode();
     }
   }
 }

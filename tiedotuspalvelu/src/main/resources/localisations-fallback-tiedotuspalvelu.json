@@ -1,0 +1,12 @@
+[
+  {
+    "key": "TIEDOTUSPALVELU_LATAA_CSV",
+    "locale": "fi",
+    "value": "Lataa kaikki tiedotteet CSV:nä"
+  },
+  {
+    "key": "TIEDOTUSPALVELU_OTSIKKO",
+    "locale": "fi",
+    "value": "Tiedotuspalvelu"
+  }
+]

@@ -75,7 +75,9 @@ export async function downloadReportAndFindLine(
 ): Promise<string> {
   const [download] = await Promise.all([
     page.waitForEvent("download"),
-    page.getByRole("button", { name: "Lataa kaikki tiedottet CSV:nä" }).click(),
+    page
+      .getByRole("button", { name: "Lataa kaikki tiedotteet CSV:nä" })
+      .click(),
   ]);
   const csv = await readFile(await download.path()!, "utf-8");
   const tiedoteLine = csv.split("\n").find((line) => line.includes(tiedoteId));
