@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 public class CasVirkailijaConfigurationTest extends TiedotuspalveluApiTest {
   @ParameterizedTest
-  @ValueSource(strings = {"/tiedotuspalvelu/ui/me", "/tiedotuspalvelu/ui/tiedotteet"})
+  @ValueSource(strings = {"/tiedotuspalvelu/ui/me", "/tiedotuspalvelu/ui/tiedotteet/csv"})
   public void endpointsRequireAuthentication(String endpoint) throws Exception {
     mockMvc
         .perform(get(endpoint))
