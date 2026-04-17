@@ -934,6 +934,7 @@ class TiedotuspalveluStack extends cdk.Stack {
         "spring.security.oauth2.resourceserver.jwt.issuer-uri": `https://${getEnvironment()}.otuva.opintopolku.fi/kayttooikeus-service`,
         "spring.security.oauth2.resourceserver.jwt.jwk-set-uri": `https://${getEnvironment()}.otuva.opintopolku.fi/kayttooikeus-service/oauth2/jwks`,
         "spring.datasource.url": `jdbc:postgresql://${props.database.clusterEndpoint.hostname}:${props.database.clusterEndpoint.port}/tiedotuspalvelu`,
+        "tiedotuspalvelu.fetch-kielitutkintotodistus.enabled": `${config.features["tiedotuspalvelu.fetch-kielitutkintotodistus.enabled"]}`,
         "tiedotuspalvelu.koski-role-arn": koskiRoleArn,
       },
       secrets: {

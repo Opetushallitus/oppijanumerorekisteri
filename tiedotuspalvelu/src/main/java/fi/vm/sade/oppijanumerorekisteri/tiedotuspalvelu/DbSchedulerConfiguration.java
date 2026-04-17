@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
 @AllArgsConstructor
 public class DbSchedulerConfiguration {
   private final FetchOppijaTask fetchOppijaTask;
-  private final FetchKielitutkintotodistusTask kielitutkintotodistuksenNoutoTask;
+  private final FetchKielitutkintotodistusTask fetchKielitutkintotodistusTask;
   private final SendSuomiFiViestitTask sendSuomiFiViestitTask;
   private final FetchSuomiFiViestitEventsTask fetchSuomiFiViestitEventsTask;
   private final FetchLocalisationsTask fetchLocalisationsTask;
@@ -44,12 +44,12 @@ public class DbSchedulerConfiguration {
 
   @Bean
   @ConditionalOnProperty(
-      name = "tiedotuspalvelu.kielitutkintotodistuksen-nouto.enabled",
+      name = "tiedotuspalvelu.fetch-kielitutkintotodistus.enabled",
       havingValue = "true")
-  public Task<Void> kielitutkintotodistuksenNoutoTaskBean() {
+  public Task<Void> fetchKielitutkintotodistusTaskBean() {
     return Tasks.recurring(
-            "kielitutkintotodistuksen-nouto-task", Schedules.fixedDelay(Duration.ofSeconds(10)))
-        .execute((inst, ctx) -> kielitutkintotodistuksenNoutoTask.execute());
+            "fetch-kielitutkintotoistus-task", Schedules.fixedDelay(Duration.ofSeconds(10)))
+        .execute((inst, ctx) -> fetchKielitutkintotodistusTask.execute());
   }
 
   @Bean

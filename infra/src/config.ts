@@ -21,6 +21,7 @@ export type Config = {
     "tiedotuspalvelu.fetch-oppija.enabled": boolean;
     "tiedotuspalvelu.suomifi-viestit.enabled": boolean;
     "tiedotuspalvelu.suomifi-viestit.base-url": string;
+    "tiedotuspalvelu.fetch-kielitutkintotodistus.enabled": boolean;
   };
   lampiExport?: {
     enabled: boolean;
@@ -40,6 +41,7 @@ const defaultConfig = {
     "tiedotuspalvelu.fetch-oppija.enabled": false,
     "tiedotuspalvelu.suomifi-viestit.enabled": false,
     "tiedotuspalvelu.suomifi-viestit.base-url": "http://localhost",
+    "tiedotuspalvelu.fetch-kielitutkintotodistus.enabled": true,
   },
 };
 
@@ -78,6 +80,7 @@ export const hahtuva: Config = {
     "tiedotuspalvelu.fetch-oppija.enabled": true,
     "tiedotuspalvelu.suomifi-viestit.enabled": false,
     "tiedotuspalvelu.suomifi-viestit.base-url": "http://localhost",
+    "tiedotuspalvelu.fetch-kielitutkintotodistus.enabled": false,
   },
 };
 
@@ -96,6 +99,7 @@ export const dev: Config = {
     "tiedotuspalvelu.fetch-oppija.enabled": true,
     "tiedotuspalvelu.suomifi-viestit.enabled": false,
     "tiedotuspalvelu.suomifi-viestit.base-url": "http://localhost",
+    "tiedotuspalvelu.fetch-kielitutkintotodistus.enabled": true,
   },
   lampiExport: {
     enabled: true,
@@ -119,6 +123,7 @@ export const qa: Config = {
     "tiedotuspalvelu.suomifi-viestit.enabled": true,
     "tiedotuspalvelu.suomifi-viestit.base-url":
       "https://api.messages-qa.suomi.fi",
+    "tiedotuspalvelu.fetch-kielitutkintotodistus.enabled": true,
   },
   lampiExport: {
     enabled: true,
