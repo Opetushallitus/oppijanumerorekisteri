@@ -936,6 +936,36 @@ class TiedotuspalveluStack extends cdk.Stack {
         "spring.datasource.url": `jdbc:postgresql://${props.database.clusterEndpoint.hostname}:${props.database.clusterEndpoint.port}/tiedotuspalvelu`,
         "tiedotuspalvelu.fetch-kielitutkintotodistus.enabled": `${config.features["tiedotuspalvelu.fetch-kielitutkintotodistus.enabled"]}`,
         "tiedotuspalvelu.koski-role-arn": koskiRoleArn,
+        "tiedotuspalvelu.suomifi-viestit.posti.contact-email":
+          ssm.StringParameter.valueForStringParameter(
+            this,
+            "/tiedotuspalvelu/suomifi-viestit/posti-contact-email",
+          ),
+        "tiedotuspalvelu.suomifi-viestit.sender-address.name":
+          ssm.StringParameter.valueForStringParameter(
+            this,
+            "/tiedotuspalvelu/suomifi-viestit/sender-address-name",
+          ),
+        "tiedotuspalvelu.suomifi-viestit.sender-address.street-address":
+          ssm.StringParameter.valueForStringParameter(
+            this,
+            "/tiedotuspalvelu/suomifi-viestit/sender-address-street-address",
+          ),
+        "tiedotuspalvelu.suomifi-viestit.sender-address.zip-code":
+          ssm.StringParameter.valueForStringParameter(
+            this,
+            "/tiedotuspalvelu/suomifi-viestit/sender-address-zip-code",
+          ),
+        "tiedotuspalvelu.suomifi-viestit.sender-address.city":
+          ssm.StringParameter.valueForStringParameter(
+            this,
+            "/tiedotuspalvelu/suomifi-viestit/sender-address-city",
+          ),
+        "tiedotuspalvelu.suomifi-viestit.sender-address.country-code":
+          ssm.StringParameter.valueForStringParameter(
+            this,
+            "/tiedotuspalvelu/suomifi-viestit/sender-address-country-code",
+          ),
       },
       secrets: {
         "tiedotuspalvelu.otuva.oauth2-client-id": ecs.Secret.fromSsmParameter(
@@ -975,6 +1005,28 @@ class TiedotuspalveluStack extends cdk.Stack {
               {
                 parameterName:
                   "/tiedotuspalvelu/suomifi-viestit/sender-service-id",
+              },
+            ),
+          ),
+        "tiedotuspalvelu.suomifi-viestit.posti.username":
+          ecs.Secret.fromSsmParameter(
+            ssm.StringParameter.fromSecureStringParameterAttributes(
+              this,
+              "TiedotuspalveluSuomifiViestitPostiUsername",
+              {
+                parameterName:
+                  "/tiedotuspalvelu/suomifi-viestit/posti-username",
+              },
+            ),
+          ),
+        "tiedotuspalvelu.suomifi-viestit.posti.password":
+          ecs.Secret.fromSsmParameter(
+            ssm.StringParameter.fromSecureStringParameterAttributes(
+              this,
+              "TiedotuspalveluSuomifiViestitPostiPassword",
+              {
+                parameterName:
+                  "/tiedotuspalvelu/suomifi-viestit/posti-password",
               },
             ),
           ),
