@@ -41,10 +41,6 @@
             <groupId>fi.vm.sade.kayttooikeus</groupId>
             <artifactId>kayttooikeus-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>fi.vm.sade.rajapinnat</groupId>
-            <artifactId>vtj-api</artifactId>
-        </dependency>
 
         <!-- Spring-boot -->
         <dependency>

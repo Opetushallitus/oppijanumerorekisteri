@@ -8,8 +8,9 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HetuRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
-import fi.vm.sade.rajapinnat.vtj.api.Huoltaja;
-import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
+import fi.vm.sade.oppijanumerorekisteri.vtjkysely.api.YksiloityHenkilo;
+import fi.vm.sade.oppijanumerorekisteri.vtjkysely.api.Huoltaja;
+
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;

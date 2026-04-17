@@ -16,7 +16,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.utils.TextUtils;
-import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
+import fi.vm.sade.oppijanumerorekisteri.vtjkysely.api.YksiloityHenkilo;
 import ma.glasnost.orika.MapperFacade;
 import nl.altindag.log.LogCaptor;
 import org.assertj.core.groups.Tuple;

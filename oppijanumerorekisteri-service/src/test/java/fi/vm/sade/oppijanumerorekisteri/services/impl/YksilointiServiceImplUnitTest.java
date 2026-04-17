@@ -7,7 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
-import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
+import fi.vm.sade.oppijanumerorekisteri.vtjkysely.api.YksiloityHenkilo;
 import ma.glasnost.orika.MapperFacade;
 
 import org.junit.jupiter.api.Test;

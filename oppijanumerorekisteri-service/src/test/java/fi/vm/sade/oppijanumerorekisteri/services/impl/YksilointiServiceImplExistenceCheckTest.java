@@ -6,7 +6,8 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.ConflictException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.VtjService;
-import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
+import fi.vm.sade.oppijanumerorekisteri.vtjkysely.api.YksiloityHenkilo;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

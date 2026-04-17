@@ -5,10 +5,10 @@ import fi.vm.sade.oppijanumerorekisteri.vtjkysely.jaxb.VTJHenkiloVastaussanoma;
 import fi.vm.sade.oppijanumerorekisteri.vtjkysely.jaxb.VTJHenkiloVastaussanoma.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.vtjkysely.jaxb.VTJHenkiloVastaussanoma.Henkilo.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.vtjkysely.VtjKyselyClient;
-import fi.vm.sade.rajapinnat.vtj.api.Huollettava;
-import fi.vm.sade.rajapinnat.vtj.api.Huoltaja;
-import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
-import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo.EntinenNimiTyyppi;
+import fi.vm.sade.oppijanumerorekisteri.vtjkysely.api.Huollettava;
+import fi.vm.sade.oppijanumerorekisteri.vtjkysely.api.Huoltaja;
+import fi.vm.sade.oppijanumerorekisteri.vtjkysely.api.YksiloityHenkilo;
+import fi.vm.sade.oppijanumerorekisteri.vtjkysely.api.YksiloityHenkilo.EntinenNimiTyyppi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

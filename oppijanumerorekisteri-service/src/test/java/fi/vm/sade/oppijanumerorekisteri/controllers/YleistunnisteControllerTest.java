@@ -15,7 +15,8 @@ import fi.vm.sade.oppijanumerorekisteri.dto.YleistunnisteDto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.VtjService;
 import fi.vm.sade.oppijanumerorekisteri.validators.OppijaTuontiCreatePostValidator;
-import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
+import fi.vm.sade.oppijanumerorekisteri.vtjkysely.api.YksiloityHenkilo;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
