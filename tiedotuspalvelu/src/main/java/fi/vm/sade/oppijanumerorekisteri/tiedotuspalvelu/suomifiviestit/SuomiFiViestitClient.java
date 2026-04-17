@@ -22,7 +22,7 @@ public class SuomiFiViestitClient {
 
   private final ObjectMapper objectMapper;
   private final TiedotuspalveluProperties properties;
-  private final LoggingHttpClient httpClient = new LoggingHttpClient("suomifi-viestit");
+  private final LoggingHttpClient httpClient = new LoggingHttpClient("suomifi-viestit", true);
 
   public String sendElectronicMessage(ElectronicMessageRequest request) {
     var token = fetchAccessToken();

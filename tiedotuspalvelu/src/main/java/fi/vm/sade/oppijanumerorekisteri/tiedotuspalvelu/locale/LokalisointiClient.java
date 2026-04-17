@@ -21,7 +21,7 @@ public class LokalisointiClient {
 
   private final ObjectMapper objectMapper;
   private final TiedotuspalveluProperties properties;
-  private final LoggingHttpClient httpClient = new LoggingHttpClient("lokalisointi");
+  private final LoggingHttpClient httpClient = new LoggingHttpClient("lokalisointi", false);
 
   @JsonIgnoreProperties(ignoreUnknown = true)
   public record LokalisointiEntry(String key, String locale, String value) {}

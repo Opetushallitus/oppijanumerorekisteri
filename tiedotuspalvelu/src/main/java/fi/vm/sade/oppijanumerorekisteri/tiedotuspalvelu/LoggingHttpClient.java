@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.tiedotuspalvelu;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -14,11 +15,13 @@ import lombok.extern.slf4j.Slf4j;
 public class LoggingHttpClient {
 
   private final String clientName;
+  private final boolean logResponseBody;
   private final ObjectMapper objectMapper;
   private final HttpClient delegate;
 
-  public LoggingHttpClient(String clientName) {
+  public LoggingHttpClient(String clientName, boolean logResponseBody) {
     this.clientName = clientName;
+    this.logResponseBody = logResponseBody;
     this.objectMapper = new ObjectMapper();
     this.delegate = HttpClient.newHttpClient();
   }
@@ -28,15 +31,19 @@ public class LoggingHttpClient {
     var requestTimestamp = Instant.now().toString();
     var startNanos = System.nanoTime();
     int statusCode = -1;
+    String body = null;
     try {
       var response = delegate.send(request, bodyHandler);
       statusCode = response.statusCode();
+      if (logResponseBody && response.body() instanceof String s) {
+        body = s;
+      }
       return response;
     } finally {
       var durationMs = Duration.ofNanos(System.nanoTime() - startNanos).toMillis();
       var logEntry =
           new OutgoingRequestLog(
-              clientName, request.uri().toString(), statusCode, durationMs, requestTimestamp);
+              clientName, request.uri().toString(), statusCode, durationMs, requestTimestamp, body);
       log.info(toJson(logEntry));
     }
   }
@@ -51,6 +58,7 @@ public class LoggingHttpClient {
     }
   }
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private record OutgoingRequestLog(
-      String client, String url, int httpCode, long duration, String timestamp) {}
+      String client, String url, int httpCode, long duration, String timestamp, String body) {}
 }
