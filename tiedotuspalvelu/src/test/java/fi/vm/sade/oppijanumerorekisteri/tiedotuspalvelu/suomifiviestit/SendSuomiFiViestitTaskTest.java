@@ -66,12 +66,14 @@ public class SendSuomiFiViestitTaskTest extends TiedotuspalveluApiTest implement
             .withRequestBody(matchingJsonPath("$.sender.serviceId", equalTo(SUOMIFI_SYSTEM_ID)))
             .withRequestBody(
                 matchingJsonPath(
-                    "$.electronic.title", equalTo("Sinulle on uusi viesti Oma Opintopolussa")))
+                    "$.electronic.title",
+                    equalTo(
+                        "Uusi viesti Oma Opintopolussa | Nytt meddelande i Min Studieinfo | New message in My Studyinfo")))
             .withRequestBody(
                 matchingJsonPath(
                     "$.electronic.body",
                     equalTo(
-                        "Hei!\n\nSinulle on saapunut uusi viesti Oma Opintopolku-palvelussa. \n\nVoit lukea viestin kirjautumalla Oma Opintopolku-palveluun. Kun olet kirjautunut sisään, voit lukea viestisi Viestini-sivulta.\n\nTietoturvasyistä tässä viestissä ei ole suoraa linkkiä palveluun. \n\nYstävällisin terveisin,\nOpetushallitus"))));
+                        "Hei! \n\nSinulle on saapunut Oma Opintopolkuun uusi viesti. Voit lukea viestin kirjautumalla Oma Opintopolku-palveluun. Löydät sinulle saapuneet viestit Viestini-sivulta. \n\nViesti koskee seuraavaa asiaa: \nTodistus (Yleiset kielitutkinnot, YKI) \n\nTietoturvan takia viestissä ei ole suoraa linkkiä palveluun.\n\nTerveisin, \nOpetushallitus\n\n-\n\nHej! \n\nDu har fått ett nytt meddelande i My Studyinfo. Du kan läsa meddelandet genom att logga in på Min Studieinfo-tjänsten. Du hittas de meddelanden du har fått på sidan Mina meddelanden.\n\nMeddelandet gäller den följande saken: \nExamensintyg (Allmänna språkexamina, YKI)\n\nFör att värna om informationssäkerheten finns det ingen direkt länk till tjänsten i meddelandet.\n\nHälsningar, \nUtbildningsstyrelsen\n\n-\n\nHi! \n\nYou have received a new message in My Studyinfo service. You can read the message by logging in to the My Studyinfo service. You find the message on the My Messages page. \n\nThe message concerns the following matter: \nCertificate (National Certificates of Language Proficiency, YKI)\n\nFor reasons of information security, this message does not contain a direct link to the service.\n\nBest regards,\nFinnish National Agency for Education’s (EDUFI)"))));
   }
 
   @Test
