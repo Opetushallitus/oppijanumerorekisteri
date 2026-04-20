@@ -14,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -32,9 +31,9 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ActiveProfiles("dev")
 @SpringBootTest
 @AutoConfigureMockMvc
 public class Service2ServiceControllerTest  {
@@ -139,7 +138,8 @@ public class Service2ServiceControllerTest  {
     @Test
     public void findByMunicipalAndDobNoAuth() throws Exception {
         this.mvc.perform(get("/s2s/henkilo/list/foo/2021-11-05").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("https://localhost/cas/login?service=http%3A%2F%2Flocalhost%2Foppijanumerorekisteri-service%2Fj_spring_cas_security_check"));
     }
 
     @Test

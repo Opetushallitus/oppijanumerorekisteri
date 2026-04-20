@@ -37,6 +37,7 @@ host:
 db-scheduler:
   enabled: false
 cas:
+  service: http://localhost/oppijanumerorekisteri-service
   send-renew: false
   key: oppijanumerorekisteri-service
 dev:

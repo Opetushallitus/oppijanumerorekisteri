@@ -18,7 +18,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,13 +30,13 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ActiveProfiles("dev")
 @Sql("/sql/truncate_data.sql")
 @Sql("/sql/henkilo-controller-test.sql")
 @SpringBootTest
@@ -90,6 +89,7 @@ public class HenkiloControllerUnmockedTest {
     @Test
     @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
     public void henkiloOidHetuNimiByHetu() throws Exception {
+        when(permissionChecker.isAllowedToReadPerson(any(), any(), any())).thenReturn(true);
         String content = """
 {
         "etunimet": "Teppo Taneli",
@@ -106,7 +106,7 @@ public class HenkiloControllerUnmockedTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void masterHenkilosByOidList() throws Exception {
         given(permissionChecker.filterUnpermittedHenkiloMap(any(), any(), any())).will(i -> i.getArguments()[0]);
 

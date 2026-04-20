@@ -26,7 +26,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.json.JsonCompareMode;
 import org.springframework.test.web.servlet.MockMvc;
@@ -50,9 +49,9 @@ import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ActiveProfiles("dev")
 @SpringBootTest
 @AutoConfigureMockMvc
 public class HenkiloControllerTest {
@@ -102,7 +101,8 @@ public class HenkiloControllerTest {
     public void unauthorized() throws Exception {
         this.mvc.perform(get("/henkilo/henkiloPerusByHetu/081296-967T")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("https://localhost/cas/login?service=http%3A%2F%2Flocalhost%2Foppijanumerorekisteri-service%2Fj_spring_cas_security_check"));
         verifyReadNoAudit();
     }
 
@@ -386,9 +386,10 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    public void existenceCheck401() throws Exception {
+    public void existenceCheckUnauthorized() throws Exception {
         mvc.perform(postRequest("/henkilo/exists", existenceCheckDto()))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("https://localhost/cas/login?service=http%3A%2F%2Flocalhost%2Foppijanumerorekisteri-service%2Fj_spring_cas_security_check"));
     }
 
     @Test
@@ -435,7 +436,8 @@ public class HenkiloControllerTest {
     @Test
     public void getPassinumerotRequiresAuthentication() throws Exception {
         mvc.perform(get("/henkilo/oid/passinumerot"))
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("https://localhost/cas/login?service=http%3A%2F%2Flocalhost%2Foppijanumerorekisteri-service%2Fj_spring_cas_security_check"));
     }
 
     @Test
@@ -459,7 +461,8 @@ public class HenkiloControllerTest {
     @Test
     public void setPassinumerotRequiresAuthentication() throws Exception {
         mvc.perform(postRequest("/henkilo/oid/passinumerot", Set.of()))
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("https://localhost/cas/login?service=http%3A%2F%2Flocalhost%2Foppijanumerorekisteri-service%2Fj_spring_cas_security_check"));
     }
 
     @Test
