@@ -1,44 +1,28 @@
 package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.models.KoodiType;
 
 import java.util.List;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.wiremock.spring.ConfigureWireMock;
+import org.wiremock.spring.EnableWireMock;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@EnableWireMock(@ConfigureWireMock(port = 8097))
 public class KoodistoClientImplTest {
-    private WireMockServer server;
-
     @Autowired
     private KoodistoClient client;
 
-    @BeforeEach
-    public void startServer() {
-        server = new WireMockServer(options().port(8097));
-        server.start();
-    }
-
-    @AfterEach
-    public void stopServer() {
-        server.resetAll();
-        server.stop();
-    }
-
     @Test
     public void getChildOids() {
-        server.stubFor(any(urlPathEqualTo("/koodisto-service/rest/json/koodistouri/koodi"))
+        stubFor(any(urlPathEqualTo("/koodisto-service/rest/json/koodistouri/koodi"))
             .willReturn(ok()
                 .withBody("""
                         [
@@ -137,7 +121,7 @@ public class KoodistoClientImplTest {
 
         assertThat(childOids.stream().map(k -> k.getKoodiUri()).toList())
             .containsExactlyInAnyOrder("yhteystietotyypit_yhteystietotyyppi4", "yhteystietotyypit_yhteystietotyyppi3");
-        server.verify(getRequestedFor(urlPathEqualTo("/koodisto-service/rest/json/koodistouri/koodi"))
+        verify(getRequestedFor(urlPathEqualTo("/koodisto-service/rest/json/koodistouri/koodi"))
             .withHeader("Caller-id", matching("1.2.246.562.10.00000000001.oppijanumerorekisteri-service"))
             .withHeader("CSRF", matching("CSRF"))
             .withHeader("Cookie", matching("CSRF=CSRF"))

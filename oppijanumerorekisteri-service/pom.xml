@@ -261,9 +261,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.wiremock</groupId>
-            <artifactId>wiremock-jetty12</artifactId>
-            <version>3.13.2</version>
+            <groupId>org.wiremock.integrations</groupId>
+            <artifactId>wiremock-spring-boot</artifactId>
+            <version>3.9.0</version>
             <scope>test</scope>
         </dependency>
 
