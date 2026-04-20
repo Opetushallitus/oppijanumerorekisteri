@@ -8,7 +8,6 @@ import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -49,8 +48,6 @@ public class HenkiloControllerUnmockedTest {
 
     @MockitoBean
     PermissionChecker permissionChecker;
-    @Captor
-    ArgumentCaptor<Target> auditCaptor;
     @MockitoBean
     private VirkailijaAuditLogger auditLogger;
 
@@ -133,6 +130,7 @@ public class HenkiloControllerUnmockedTest {
     }
 
     private void verifyReadAudit(String expected) {
+        ArgumentCaptor<Target> auditCaptor = ArgumentCaptor.forClass(Target.class);
         verify(auditLogger).log(eq(OnrOperation.READ), auditCaptor.capture(), any());
         assertThat(auditCaptor.getValue().asJson().toString()).contains(expected);
     }

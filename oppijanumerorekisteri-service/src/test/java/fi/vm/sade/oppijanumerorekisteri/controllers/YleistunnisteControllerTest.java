@@ -92,10 +92,6 @@ class YleistunnisteControllerTest {
     @MockitoBean
     private VirkailijaAuditLogger auditLogger;
 
-    @Captor
-    private ArgumentCaptor<Target> auditCaptor;
-
-
     private YleistunnisteController.YleistunnisteInput getValidYleistunnisteInput() {
         return YleistunnisteController.YleistunnisteInput.builder()
                 .sahkoposti("example@example.com")
@@ -545,6 +541,7 @@ class YleistunnisteControllerTest {
     }
 
     private Optional<JsonObject> findAuditEventForHenkiloOid(OnrOperation operation, String henkiloOid) {
+        ArgumentCaptor<Target> auditCaptor = ArgumentCaptor.forClass(Target.class);
         verify(auditLogger, atLeast(0)).log(eq(operation), auditCaptor.capture(), any());
         Stream<JsonObject> auditLogEvents = auditCaptor.getAllValues().stream().map(Target::asJson);
         return auditLogEvents.filter(e -> henkiloOid.equals(e.get("henkiloOid").getAsString())).findFirst();

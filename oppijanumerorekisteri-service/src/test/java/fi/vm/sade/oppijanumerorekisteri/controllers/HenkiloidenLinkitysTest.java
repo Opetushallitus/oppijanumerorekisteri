@@ -13,7 +13,6 @@ import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
 import org.joda.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MvcResult;
@@ -41,8 +40,6 @@ public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
     private OidGenerator oidGenerator;
     @MockitoBean
     private VirkailijaAuditLogger auditLogger;
-    @Captor
-    private ArgumentCaptor<Target> auditCaptor;
 
     @Test
     @UserRekisterinpitaja
@@ -239,6 +236,7 @@ public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
     }
 
     Optional<JsonObject> findAuditEventForHenkiloOid(OnrOperation operation, String henkiloOid) {
+        ArgumentCaptor<Target> auditCaptor = ArgumentCaptor.forClass(Target.class);
         verify(auditLogger, atLeast(0)).log(eq(operation), auditCaptor.capture(), any());
         Stream<JsonObject> auditLogEvents = auditCaptor.getAllValues().stream().map(Target::asJson);
         return auditLogEvents.filter(e -> henkiloOid.equals(e.get("henkiloOid").getAsString())).findFirst();

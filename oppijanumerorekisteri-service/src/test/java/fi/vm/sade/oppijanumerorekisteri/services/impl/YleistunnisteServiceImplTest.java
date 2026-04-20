@@ -12,9 +12,9 @@ import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.Optional;
 import java.util.Set;
@@ -31,22 +31,22 @@ class YleistunnisteServiceImplTest {
 
     private static final String OID = "1.2.3.4.5";
 
-    @InjectMocks
+    @Autowired
     YleistunnisteServiceImpl yleistunnisteService;
 
-    @Mock
+    @MockitoBean
     YksilointiService yksilointiService;
 
-    @Mock
+    @MockitoBean
     HenkiloService henkiloService;
 
-    @Mock
+    @MockitoBean
     HenkiloModificationService henkiloModificationService;
 
-    @Mock
+    @MockitoBean
     PermissionChecker permissionChecker;
 
-    @Mock
+    @MockitoBean
     OrganisaatioRepository organisaatioRepository;
 
     @Test

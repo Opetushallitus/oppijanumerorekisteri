@@ -2,22 +2,18 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.FilesystemHelper;
-import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
-import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
-import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
-import fi.vm.sade.oppijanumerorekisteri.services.impl.UserDetailsHelperImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.json.JsonCompareMode;
 import org.springframework.test.web.servlet.MockMvc;
@@ -32,6 +28,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -41,8 +38,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("dev")
-@WebMvcTest(OppijaController.class)
-@ContextConfiguration(classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, PermissionCheckerImpl.class, UserDetailsHelperImpl.class})
+@SpringBootTest
+@AutoConfigureMockMvc
 public class OppijaControllerTest {
 
     @MockitoBean

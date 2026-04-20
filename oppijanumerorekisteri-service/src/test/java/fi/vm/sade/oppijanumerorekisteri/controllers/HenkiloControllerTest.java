@@ -5,11 +5,9 @@ import com.google.common.collect.Sets;
 
 import fi.vm.sade.auditlog.Target;
 import fi.vm.sade.oppijanumerorekisteri.FilesystemHelper;
-import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.audit.OnrOperation;
 import fi.vm.sade.oppijanumerorekisteri.audit.VirkailijaAuditLogger;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
-import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ConflictException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
@@ -20,18 +18,15 @@ import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
-import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
-import fi.vm.sade.oppijanumerorekisteri.services.impl.UserDetailsHelperImpl;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.json.JsonCompareMode;
 import org.springframework.test.web.servlet.MockMvc;
@@ -58,11 +53,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("dev")
-@WebMvcTest(value = HenkiloController.class)
-@ContextConfiguration(classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, PermissionCheckerImpl.class, UserDetailsHelperImpl.class})
+@SpringBootTest
+@AutoConfigureMockMvc
 public class HenkiloControllerTest {
-    @Captor
-    ArgumentCaptor<Target> auditCaptor;
     @Autowired
     private MockMvc mvc;
     @MockitoBean
@@ -529,6 +522,7 @@ public class HenkiloControllerTest {
     }
 
     private void verifyReadAudit(String expected) {
+        ArgumentCaptor<Target> auditCaptor = ArgumentCaptor.forClass(Target.class);
         verify(auditLogger).log(eq(OnrOperation.READ), auditCaptor.capture(), any());
         assertThat(auditCaptor.getValue().asJson().toString(), containsString(expected));
     }

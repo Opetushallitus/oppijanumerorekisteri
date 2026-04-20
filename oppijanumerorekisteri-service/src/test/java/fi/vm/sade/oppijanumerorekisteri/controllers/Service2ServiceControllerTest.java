@@ -1,24 +1,20 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
-import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
-import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
-import fi.vm.sade.oppijanumerorekisteri.services.impl.UserDetailsHelperImpl;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -39,8 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("dev")
-@WebMvcTest(Service2ServiceController.class)
-@ContextConfiguration(classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, PermissionCheckerImpl.class, UserDetailsHelperImpl.class})
+@SpringBootTest
+@AutoConfigureMockMvc
 public class Service2ServiceControllerTest  {
     @Autowired
     private MockMvc mvc;

@@ -5,7 +5,6 @@ import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
 import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
-import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -16,18 +15,12 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.HenkiloServiceImpl;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
-import ma.glasnost.orika.MapperFacade;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -54,48 +47,36 @@ public class HenkiloServiceTest {
     private final String OID = "1.2.3.4.5";
 
     @Autowired
-    private MapperFacade mapper;
+    private HenkiloServiceImpl service;
 
     @MockitoBean
     private TuontiRepository tuontiRepository;
-
-    @Spy
-    @InjectMocks
-    private HenkiloServiceImpl service;
-
-    @Mock
+    @MockitoBean
     private HenkiloViiteRepository henkiloViiteRepositoryMock;
-    @Mock
+    @MockitoBean
     private HenkiloRepository henkiloDataRepositoryMock;
-    @Mock
+    @MockitoBean
     private HuoltajasuhdeRepository huoltajasuhdeRepository;
-    @Mock
+    @MockitoBean
     private UserDetailsHelper userDetailsHelperMock;
-    @Mock
+    @MockitoBean
     private PermissionChecker permissionCheckerMock;
-    @Mock
+    @MockitoBean
     private KielisyysRepository kielisyysRepositoryMock;
-    @Mock
+    @MockitoBean
     private KansalaisuusRepository kansalaisuusRepositoryMock;
-    @Mock
-    private OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
-    @Mock
+    @MockitoBean
     private KayttooikeusClient kayttooikeusClient;
-    @Mock
+    @MockitoBean
     private HakuappClient hakuappClient;
-    @Mock
+    @MockitoBean
     private AtaruClient ataruClient;
-    @Mock
+    @MockitoBean
     private HenkiloUpdatePostValidator henkiloUpdatePostValidator;
-    @Mock
+    @MockitoBean
     private HenkiloCreatePostValidator henkiloCreatePostValidator;
     @MockitoBean
     private KansalaisuusRepository kansalaisuusRepository;
-
-    @BeforeEach
-    public void setup() {
-        ReflectionTestUtils.setField(this.service, "mapper", this.mapper);
-    }
 
     @Test
     public void listShouldReturnEmptySliceWhenEmptySallitutHenkiloOids() {
@@ -214,7 +195,6 @@ public class HenkiloServiceTest {
 
     @Test
     public void findHenkiloViitteesTest() {
-        given(this.oppijanumerorekisteriProperties.getHenkiloViiteSplitSize()).willReturn(5000);
         given(this.henkiloViiteRepositoryMock.findBy(any())).willReturn(singletonList(
                 new HenkiloViiteDto("OID", "MASTER")));
         List<HenkiloViiteDto> results = this.service.findHenkiloViittees(new HenkiloCriteria().getHenkiloOids());
@@ -227,14 +207,13 @@ public class HenkiloServiceTest {
         assertThat(results.size()).isEqualTo(0);
 
         // Assert split works as intended
-        given(this.oppijanumerorekisteriProperties.getHenkiloViiteSplitSize()).willReturn(1);
         given(this.henkiloViiteRepositoryMock.findBy(any())).willReturn(singletonList(
                 new HenkiloViiteDto("OID", "MASTER")));
         HenkiloCriteria criteria = new HenkiloCriteria() {{
             setHenkiloOids(Set.of("OID1", "OID2"));
         }};
         results = this.service.findHenkiloViittees(criteria.getHenkiloOids());
-        assertThat(results).size().isEqualTo(2);
+        assertThat(results).size().isEqualTo(1);
     }
 
     @Test

@@ -13,7 +13,6 @@ import ma.glasnost.orika.MapperFacade;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,9 +53,6 @@ public class OppijaTuontiServiceImplTest {
     @Mock
     private TuontiRivi tuontiRivi;
 
-    @Captor
-    private ArgumentCaptor<Set<String>> emailCaptor;
-
     @Test
     public void handleOppijaTuontiIlmoitusTest() {
         Tuonti tuonti1 = Tuonti.builder().ilmoitustarveKasitelty(false).kasiteltavia(10).kasiteltyja(10).sahkoposti("testiposti1@mail.com").build();
@@ -70,6 +66,8 @@ public class OppijaTuontiServiceImplTest {
         oppijaTuontiServiceImpl.handleOppijaTuontiIlmoitus();
 
         assertThat(tuonti1.isIlmoitustarveKasitelty() && tuonti2.isIlmoitustarveKasitelty() && tuonti3.isIlmoitustarveKasitelty() && tuonti4.isIlmoitustarveKasitelty()).isTrue();
+
+        ArgumentCaptor<Set<String>> emailCaptor = ArgumentCaptor.forClass(Set.class);
         verify(emailService).sendTuontiKasiteltyWithErrorsEmail(emailCaptor.capture());
         assertThat(emailCaptor.getValue()).hasSize(3);
     }

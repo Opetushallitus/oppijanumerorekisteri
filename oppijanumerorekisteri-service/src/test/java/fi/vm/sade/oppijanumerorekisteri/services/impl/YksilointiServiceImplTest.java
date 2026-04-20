@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
-import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloExistenceCheckDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HuoltajaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KayttajaReadDto;
@@ -23,7 +22,9 @@ import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.io.InputStreamReader;
@@ -43,35 +44,32 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @Sql("/sql/truncate_data.sql")
 public class YksilointiServiceImplTest {
-
     private final String henkiloOid = "1.2.246.562.24.27470134096";
-    @InjectMocks
+    @Autowired
     private YksilointiServiceImpl yksilointiService;
-    @Mock
+    @MockitoBean
     private VtjService vtjService;
-    @Mock
+    @MockitoBean
     private HenkiloRepository henkiloRepository;
-    @Mock
+    @MockitoBean
     private HenkiloService henkiloService;
-    @Mock
+    @MockitoBean
     private HenkiloModificationService henkiloModificationService;
-    @Mock
+    @MockitoBean
     private KoodistoService koodistoService;
-    @Mock
+    @MockitoBean
     private YksilointitietoRepository yksilointitietoRepository;
-    @Mock
+    @MockitoBean
     private YksilointivirheRepository yksilointivirheRepository;
-    @Mock
+    @MockitoBean
     private KayttooikeusClient kayttooikeusClientMock;
-    @Mock
+    @MockitoBean
     private KielisyysRepository kielisyysRepository;
-    @Mock
+    @MockitoBean
     private KansalaisuusRepository kansalaisuusRepository;
-    @Spy
-    private OppijanumerorekisteriProperties oppijanumerorekisteriProperties = new OppijanumerorekisteriProperties();
-    @Mock
+    @MockitoBean
     private MapperFacade orikaConfiguration;
-    @Mock
+    @MockitoBean
     private DuplicateService duplicateService;
     private final Gson gson = new Gson();
     private Henkilo henkilo;
