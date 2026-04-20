@@ -1,13 +1,14 @@
 package fi.vm.sade.oppijanumerorekisteri.api;
 
-import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.json.JsonTest;
-import org.springframework.boot.test.json.JacksonTester;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
@@ -18,24 +19,23 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@JsonTest
-@ContextConfiguration(classes = OppijanumerorekisteriServiceApplication.class)
+@SpringBootTest
 public class HenkiloJsonTest {
     @Autowired
-    private JacksonTester<HenkiloDto> henkiloDtoJson;
+    private ObjectMapper henkiloDtoJson;
 
     @Test
     public void testHenkiloDtoSerialize() throws Exception {
         HenkiloDto henkiloDto = createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
-        assertThat(this.henkiloDtoJson.write(henkiloDto)).isEqualToJson("/henkilo/testHenkiloDto.json");
+        assertThat(henkiloDtoJson.writeValueAsString(henkiloDto)).isEqualTo(getFile("henkilo/testHenkiloDto.json"));
     }
 
     @Test
     public void testHenkiloDtoDeserialize() throws Exception {
         HenkiloDto henkiloDto = createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
-        assertThat(this.henkiloDtoJson.read("/henkilo/testHenkiloDto.json").getObject())
+        assertThat(henkiloDtoJson.readValue(getFile("henkilo/testHenkiloDto.json"), HenkiloDto.class))
                 .usingRecursiveComparison().isEqualTo(henkiloDto);
     }
 
@@ -45,7 +45,7 @@ public class HenkiloJsonTest {
                 false, "fi", "suomi", "246", "1.2.3.4.1", "+49 69 1234 5678");
         henkiloDto.setYksiloityEidas(true);
         henkiloDto.setEidasTunnisteet(List.of(EidasTunnisteDto.builder().tunniste("DE/FI/366193B0E55D436B494769486A9284D04E0A1DCFDBF8B9EDA63E5BF4C3CFE6F5").build()));
-        var parsed = this.henkiloDtoJson.read("/henkilo/testHenkiloDto-eidas.json").getObject();
+        var parsed = henkiloDtoJson.readValue(getFile("henkilo/testHenkiloDto-eidas.json"), HenkiloDto.class);
         assertThat(parsed).usingRecursiveComparison().isEqualTo(henkiloDto);
         assertThat(parsed.isYksiloityEidas()).isTrue();
         assertThat(parsed.getEidasTunnisteet()).hasSize(1);
@@ -55,10 +55,14 @@ public class HenkiloJsonTest {
     public void testHenkiloDtoDeserializePreEidas() throws Exception {
         HenkiloDto henkiloDto = createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
-        var parsed = this.henkiloDtoJson.read("/henkilo/testHenkiloDto-noeidas.json").getObject();
+        var parsed = henkiloDtoJson.readValue(getFile("henkilo/testHenkiloDto-noeidas.json"), HenkiloDto.class);
         assertThat(parsed).usingRecursiveComparison().isEqualTo(henkiloDto);
         assertThat(parsed.isYksiloityEidas()).isFalse();
         assertThat(parsed.getEidasTunnisteet()).isEmpty();
+    }
+
+    private String getFile(String path) throws Exception {
+        return Files.readString(Paths.get(getClass().getClassLoader().getResource(path).toURI()));
     }
 
     private HenkiloDto createHenkiloDto(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
