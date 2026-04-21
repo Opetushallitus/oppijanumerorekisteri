@@ -50,7 +50,7 @@ class ContinousDeploymentStack extends cdk.Stack {
       {
         owner: "Opetushallitus",
         name: "oppijanumerorekisteri",
-        branch: "master",
+        branch: "onr-sb-4",
       },
       dependencyManagement,
       props,
@@ -62,7 +62,7 @@ class ContinousDeploymentStack extends cdk.Stack {
       {
         owner: "Opetushallitus",
         name: "oppijanumerorekisteri",
-        branch: "green-hahtuva",
+        branch: "master",
       },
       dependencyManagement,
       props,
@@ -154,7 +154,7 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
     const sourceStage = pipeline.addStage({ stageName: "Source" });
     sourceStage.addAction(sourceAction);
 
-    const runTests = env === "hahtuva";
+    const runTests = env === "hahtuva" || env === "dev";
     if (runTests) {
       const testStage = pipeline.addStage({ stageName: "Test" });
       testStage.addAction(
