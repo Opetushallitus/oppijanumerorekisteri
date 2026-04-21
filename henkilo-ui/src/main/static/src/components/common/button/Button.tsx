@@ -36,6 +36,7 @@ const Button = (props: ButtonProps) => {
             onClick={props.action}
             className={props.isButton ? className : ''}
             data-test-id={props.dataTestId}
+            data-testid={props.dataTestId}
             style={props.style}
         >
             {props.children}
@@ -48,6 +49,7 @@ const Button = (props: ButtonProps) => {
             disabled={props.disabled || props.loading}
             onClick={props.action}
             data-test-id={props.dataTestId}
+            data-testid={props.dataTestId}
             style={props.style}
         >
             {props.loading && <Loader inButton={true} />}

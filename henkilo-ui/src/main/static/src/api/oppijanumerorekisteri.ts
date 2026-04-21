@@ -33,6 +33,10 @@ export type CreateHenkiloRequest = {
     sukunimi: string;
 };
 
+export type ExistenceCheckResult = {
+    oid: string;
+};
+
 export type OppijahakuCriteria = {
     query: string;
     passive: boolean;
@@ -58,7 +62,7 @@ export type SpringPage<T> = {
     page: SpringPageModel;
 };
 
-type GetDuplicatesRequest = {
+export type GetDuplicatesRequest = {
     etunimet?: string;
     kutsumanimi?: string;
     sukunimi?: string;

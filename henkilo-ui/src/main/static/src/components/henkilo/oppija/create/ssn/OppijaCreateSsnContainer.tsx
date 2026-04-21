@@ -114,7 +114,7 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
                     </>
                 )}
                 {createError && (
-                    <div className="create-result oph-alert-error">
+                    <div className="create-result oph-alert-error" data-testid="createPersonFailureError">
                         <ReactMarkdown>{L('CREATE_PERSON_FAILURE') ?? ''}</ReactMarkdown>
                     </div>
                 )}
@@ -132,8 +132,10 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
                             <input
                                 className={`oph-input ${!isHetu(form) ? 'oph-input-has-error' : ''}`}
                                 placeholder={L('HENKILO_HETU')}
+                                data-testid="personalIdentificationNumber"
                                 type="text"
                                 onChange={(e) => setForm({ ...form, hetu: e.target.value })}
+                                value={form.hetu}
                             />
                             {!isHetu(form) && (
                                 <div className="oph-field-text oph-error">{L('LOMAKE_KENTTA_SISALTAA_VIRHEITA')}</div>
@@ -144,8 +146,10 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
                             <input
                                 className={`oph-input ${!form.etunimet.trim() ? 'oph-input-has-error' : ''}`}
                                 placeholder={L('HENKILO_ETUNIMET')}
+                                data-testid="firstNames"
                                 type="text"
                                 onChange={(e) => setForm({ ...form, etunimet: e.target.value })}
+                                value={form.etunimet}
                             />
                             {!form.etunimet.trim() && (
                                 <div className="oph-field-text oph-error">{L('LOMAKE_PAKOLLINEN_TIETO')}</div>
@@ -156,8 +160,10 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
                             <input
                                 className={`oph-input ${!isValidKutsumanimi(form.etunimet, form.kutsumanimi) ? 'oph-input-has-error' : ''}`}
                                 placeholder={L('HENKILO_KUTSUMANIMI')}
+                                data-testid="displayName"
                                 type="text"
                                 onChange={(e) => setForm({ ...form, kutsumanimi: e.target.value })}
+                                value={form.kutsumanimi}
                             />
                             {!isValidKutsumanimi(form.etunimet, form.kutsumanimi) && (
                                 <div className="oph-field-text oph-error">{L('HENKILO_KUTSUMANIMI_VALIDOINTI')}</div>
@@ -168,22 +174,33 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
                             <input
                                 className={`oph-input ${!form.sukunimi.trim() ? 'oph-input-has-error' : ''}`}
                                 placeholder={L('HENKILO_SUKUNIMI')}
+                                data-testid="lastName"
                                 type="text"
                                 onChange={(e) => setForm({ ...form, sukunimi: e.target.value })}
+                                value={form.sukunimi}
                             />
                             {!form.sukunimi.trim() && (
                                 <div className="oph-field-text oph-error">{L('LOMAKE_PAKOLLINEN_TIETO')}</div>
                             )}
                         </div>
                         <div className="oph-field">
-                            <Button action={() => handleExists()} disabled={!isValid(form) || isLoading}>
+                            <Button
+                                dataTestId="submit"
+                                action={() => handleExists()}
+                                disabled={!isValid(form) || isLoading}
+                            >
                                 <SpinnerInButton show={isLoading} />
                                 {L('KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO')}
                             </Button>
-                            <Button className="margin-left" action={() => resetState()} disabled={isLoading}>
+                            <Button
+                                dataTestId="clear"
+                                className="margin-left"
+                                action={() => resetState()}
+                                disabled={isLoading}
+                            >
                                 {L('TYHJENNA')}
                             </Button>
-                            <Button className="margin-left" cancel={true} action={() => goBack()}>
+                            <Button dataTestId="cancel" className="margin-left" cancel={true} action={() => goBack()}>
                                 {L('PERUUTA')}
                             </Button>
                         </div>

@@ -34,6 +34,7 @@ export const OppijaCreate = () => {
                             ])) && (
                             <button
                                 className="oph-button oph-button-primary"
+                                data-testid="oppijan-luonti-hetullinen"
                                 type="button"
                                 onClick={() => setFormType('ssn')}
                             >
@@ -44,6 +45,7 @@ export const OppijaCreate = () => {
                             hasAnyPalveluRooli(data?.organisaatiot, ['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI'])) && (
                             <button
                                 className="oph-button oph-button-primary"
+                                data-testid="oppijan-luonti-hetuton"
                                 type="button"
                                 onClick={() => setFormType('anonymous')}
                             >
