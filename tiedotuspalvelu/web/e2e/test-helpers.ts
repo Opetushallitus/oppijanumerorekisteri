@@ -1,5 +1,6 @@
-import { APIRequestContext, expect, Page, test } from "@playwright/test";
+import { APIRequestContext, expect, Page } from "@playwright/test";
 import { readFile } from "fs/promises";
+import { parse } from "csv-parse/sync";
 
 export const OPPIJANUMERO_NORDEA_DEMO = "1.2.246.562.24.73833272757";
 export const OPPIJANUMERO_HELLIN_SEVILLANTES = "1.2.246.562.98.19783284870";
@@ -72,15 +73,25 @@ export async function generateOpiskeluoikeusOid(request: APIRequestContext) {
 export async function downloadReportAndFindLine(
   page: Page,
   tiedoteId: string,
-): Promise<string> {
+): Promise<Record<string, string>> {
   const [download] = await Promise.all([
     page.waitForEvent("download"),
     page
       .getByRole("button", { name: "Lataa kaikki tiedotteet CSV:nä" })
       .click(),
   ]);
-  const csv = await readFile(await download.path()!, "utf-8");
-  const tiedoteLine = csv.split("\n").find((line) => line.includes(tiedoteId));
-  expect(tiedoteLine).toBeDefined();
-  return tiedoteLine!;
+  const csvString = await readFile(await download.path()!, "utf-8");
+  const lines: Record<string, string>[] = parse(csvString, {
+    columns: true,
+    delimiter: ";",
+  });
+  const tiedoteLine = lines.find((_) => _["Tiedotteen ID"] === tiedoteId);
+  return expectDefined(tiedoteLine);
+}
+
+function expectDefined<T>(value: T): NonNullable<T> {
+  if (value === null || value === undefined) {
+    throw new Error("Value is not defined");
+  }
+  return value;
 }

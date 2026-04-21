@@ -18,12 +18,13 @@ test("Kielitutkintotodistus - Suomi.fi-viestit käytössä", async ({
   page,
   request,
 }) => {
+  const todistusUuid = randomUUID();
   const tiedoteApiResponse = await test.step("Tiedote luodaan", async () => {
     return await createTiedote(request, {
       oppijanumero: OPPIJANUMERO_NORDEA_DEMO,
       idempotencyKey: randomUUID(),
       todistusBucket: "bucket",
-      todistusKey: `${randomUUID()}/todistus.pdf`,
+      todistusKey: `${todistusUuid}/todistus.pdf`,
       opiskeluoikeusOid: await generateOpiskeluoikeusOid(request),
     });
   });
@@ -35,20 +36,26 @@ test("Kielitutkintotodistus - Suomi.fi-viestit käytössä", async ({
       page.getByRole("button", { name: "Lataa kaikki tiedotteet CSV:nä" }),
     ).toBeVisible();
 
-    const tiedoteLine = await downloadReportAndFindLine(
-      page,
-      tiedoteApiResponse.id,
-    );
-    expect(tiedoteLine).toContain(OPPIJANUMERO_NORDEA_DEMO);
-    expect(tiedoteLine).toContain("OPPIJAN_VALIDOINTI");
+    expect(
+      await downloadReportAndFindLine(page, tiedoteApiResponse.id),
+    ).toMatchObject({
+      "Tiedotteen vastaanottajan oppijanumero": OPPIJANUMERO_NORDEA_DEMO,
+      "Tiedotteen käsittelyn tila tiedotuspalvelussa": "OPPIJAN_VALIDOINTI",
+      "Kielitutkintotodistuksen S3 URL": `s3://bucket/${todistusUuid}/todistus.pdf`,
+    });
     await runFetchOppijaTask(request);
     expect(
       await downloadReportAndFindLine(page, tiedoteApiResponse.id),
-    ).toContain("SUOMIFI_VIESTIN_LÄHETYS");
+    ).toMatchObject({
+      "Tiedotteen käsittelyn tila tiedotuspalvelussa":
+        "SUOMIFI_VIESTIN_LÄHETYS",
+    });
     await runSendSuomiFiViestitTask(request);
     expect(
       await downloadReportAndFindLine(page, tiedoteApiResponse.id),
-    ).toContain("TIEDOTE_KÄSITELTY");
+    ).toMatchObject({
+      "Tiedotteen käsittelyn tila tiedotuspalvelussa": "TIEDOTE_KÄSITELTY",
+    });
   });
 
   await test.step("Oppija näkee tiedotteen omat-viestit sivulla", async () => {
