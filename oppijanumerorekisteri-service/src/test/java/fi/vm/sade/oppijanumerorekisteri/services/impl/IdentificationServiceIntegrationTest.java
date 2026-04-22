@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;

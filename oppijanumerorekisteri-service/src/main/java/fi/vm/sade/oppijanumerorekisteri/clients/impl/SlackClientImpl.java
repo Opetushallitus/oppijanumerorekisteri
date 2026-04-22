@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.clients.SlackClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.SlackMessage;
@@ -50,7 +49,7 @@ public class SlackClientImpl implements SlackClient {
 
         try {
             return objectMapper.writeValueAsString(slackMsgDto);
-        } catch (JsonProcessingException jpe) {
+        } catch (Exception jpe) {
             throw new RestClientException("Json processing failure", jpe);
         }
     }

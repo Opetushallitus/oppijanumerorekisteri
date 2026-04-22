@@ -5,8 +5,8 @@ import lombok.Setter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.lang.Nullable;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Min;
 
 @Getter

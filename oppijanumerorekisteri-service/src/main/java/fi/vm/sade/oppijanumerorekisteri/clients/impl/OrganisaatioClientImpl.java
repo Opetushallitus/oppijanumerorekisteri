@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import fi.vm.sade.oppijanumerorekisteri.clients.OrganisaatioClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
