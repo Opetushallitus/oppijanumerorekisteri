@@ -74,7 +74,7 @@ class ContinousDeploymentStack extends cdk.Stack {
       {
         owner: "Opetushallitus",
         name: "oppijanumerorekisteri",
-        branch: "green-dev",
+        branch: "green-hahtuva",
       },
       dependencyManagement,
       props,
@@ -86,7 +86,7 @@ class ContinousDeploymentStack extends cdk.Stack {
       {
         owner: "Opetushallitus",
         name: "oppijanumerorekisteri",
-        branch: "green-qa",
+        branch: "green-dev",
       },
       dependencyManagement,
       props,
