@@ -192,6 +192,7 @@ export const VoimassaolevatKayttooikeudet = (props: OwnProps) => {
                         L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA'),
                         L('HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS'),
                         L('HENKILO_KAYTTOOIKEUS_ALKUPVM'),
+                        L('HENKILO_KAYTTOOIKEUS_LOPPUPVM'),
                         L('HENKILO_KAYTTOOIKEUS_KASITTELIJA'),
                         L('HENKILO_KAYTTOOIKEUS_JATKOAIKA'),
                         L('HENKILO_KAYTTOOIKEUS_SULJE'),
@@ -206,6 +207,7 @@ export const VoimassaolevatKayttooikeudet = (props: OwnProps) => {
                             {k.ryhmaNimi}
                         </button>,
                         k.alkuPvm && format(parseISO(k.alkuPvm), 'd.M.yyyy'),
+                        k.voimassaPvm && format(parseISO(k.voimassaPvm), 'd.M.yyyy'),
                         k.kasittely,
                         <div key={`m-${k.ryhmaId}`} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             <OphDsDatepicker
