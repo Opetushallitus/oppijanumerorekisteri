@@ -1,33 +1,31 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeBuilder;
+import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriApiTest;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
-import fi.vm.sade.oppijanumerorekisteri.dto.KoodiUpdateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.EidasTunniste;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.KielisyysRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class HenkiloApiTest extends OppijanumerorekisteriApiTest {
@@ -35,6 +33,8 @@ public class HenkiloApiTest extends OppijanumerorekisteriApiTest {
     OidGenerator oidGenerator;
     @Autowired
     HenkiloRepository henkiloRepository;
+    @Autowired
+    KielisyysRepository kielisyysRepository;
     @MockitoBean
     KoodistoService koodistoService;
 
@@ -219,6 +219,9 @@ public class HenkiloApiTest extends OppijanumerorekisteriApiTest {
                         new KoodiTypeBuilder(Koodisto.HENKILON_TUNNISTETYYPIT, emailKoodi.getKoodi()).versio(1).build()
                 )
         );
+
+        when(koodistoService.list(Koodisto.SUKUPUOLI))
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.SUKUPUOLI).koodi("1").koodi("2").build());
     }
 
     private Henkilo createPerson(String eidasTunniste, Set<Identification> identifications) {
@@ -240,5 +243,48 @@ public class HenkiloApiTest extends OppijanumerorekisteriApiTest {
                 .created(Date.from(now.toInstant()))
                 .modified(Date.from(now.toInstant()))
                 .build();
+    }
+
+    @Test
+    @Transactional
+    @UserRekisterinpitaja
+    public void updateHenkiloAndGetOmattiedot() throws Exception {
+        initKoodistoMock();
+        String eidasTunniste = "FOO/BAR/" + UUID.randomUUID().toString();
+        var eidasTunnisteet = new ArrayList<EidasTunniste>();
+        eidasTunnisteet.add(EidasTunniste.builder().tunniste(eidasTunniste).createdBy(oidGenerator.generateOID()).build());
+        var now = ZonedDateTime.now();
+        var kielisyys = kielisyysRepository.findOrCreateByKoodi("fi");
+        var henkilo = Henkilo.builder()
+                .oidHenkilo(USER_REKISTERINPITAJA_OID)
+                .etunimet("Testi Testaaja")
+                .kutsumanimi("Testi")
+                .sukunimi("Testiläinen")
+                .sukupuoli("1")
+                .yksiloityEidas(eidasTunnisteet != null)
+                .eidasTunnisteet(eidasTunnisteet)
+                .asiointiKieli(kielisyys)
+                .created(Date.from(now.toInstant()))
+                .modified(Date.from(now.toInstant()))
+                .build();
+
+        this.henkiloRepository.save(henkilo);
+
+        var omattiedotResponse = getJson(HenkiloOmattiedotDto.class, "/henkilo/current/omattiedot");
+        assertThat(omattiedotResponse.getAsiointikieli()).isEqualTo("fi");
+
+        var henkiloUpdate = new HenkiloUpdateDto();
+        henkiloUpdate.setOidHenkilo(USER_REKISTERINPITAJA_OID);
+        // Set asiointikieli to swedish
+        henkiloUpdate.setAsiointiKieli(
+                KielisyysDto.builder()
+                        .kieliKoodi("sv")
+                        .kieliTyyppi("svenska")
+                        .build());
+        var henkiloUpdateRequest = createRequest(put("/henkilo"), henkiloUpdate);
+        mvc.perform(henkiloUpdateRequest).andExpect(status().isOk());
+
+        var omattiedotResponse2 = getJson(HenkiloOmattiedotDto.class, "/henkilo/current/omattiedot");
+        assertThat(omattiedotResponse2.getAsiointikieli()).isEqualTo("sv");
     }
 }

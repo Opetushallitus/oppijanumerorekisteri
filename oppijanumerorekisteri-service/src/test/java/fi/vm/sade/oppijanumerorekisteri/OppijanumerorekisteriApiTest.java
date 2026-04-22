@@ -44,6 +44,7 @@ public abstract class OppijanumerorekisteriApiTest {
     @Autowired
     protected HenkiloViiteRepository henkiloViiteRepository;
 
+    protected final static String USER_REKISTERINPITAJA_OID = "1.2.246.562.10.0345325221";
 
     protected void assertLinked(String masterOid, String slaveOid) {
         List<HenkiloViite> viitteet = henkiloViiteRepository.findByMasterOid(masterOid).stream().filter(viite -> viite.getSlaveOid().equals(slaveOid)).collect(Collectors.toList());
@@ -72,7 +73,7 @@ public abstract class OppijanumerorekisteriApiTest {
     @WithMockUser(roles = {
             "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA",
             "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001"
-    })
+    }, value = USER_REKISTERINPITAJA_OID)
     public @interface UserRekisterinpitaja {
     }
 

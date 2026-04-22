@@ -1,8 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.validators;
 
+import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,8 +13,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -154,4 +158,23 @@ public class HenkiloUpdatePostValidatorTest {
 
         verify(errors).rejectValue(eq("hetu"), eq("socialsecuritynr.already.exists"));
     }
+
+   @Test
+   public void validateSukupuoli() {
+        when(koodistoService.list(Koodisto.SUKUPUOLI))
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.SUKUPUOLI).koodi("1").koodi("2").build());
+        var henkiloUpdateDto = new HenkiloUpdateDto();
+        henkiloUpdateDto.setOidHenkilo("oid1");
+        henkiloUpdateDto.setSukupuoli("notAGender");
+        validator.validateWithoutHetu(henkiloUpdateDto, errors);
+        verify(errors).rejectValue(eq("sukupuoli"), eq("invalid.sukupuoli"), any(), eq("Tuntematon koodiston 'sukupuoli' koodi notAGender"));
+
+        henkiloUpdateDto.setSukupuoli("1");
+        validator.validateWithoutHetu(henkiloUpdateDto, errors);
+        verifyNoMoreInteractions(errors);
+
+        henkiloUpdateDto.setSukupuoli("2");
+        validator.validateWithoutHetu(henkiloUpdateDto, errors);
+        verifyNoMoreInteractions(errors);
+   }
 }
