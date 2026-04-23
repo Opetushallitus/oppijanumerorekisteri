@@ -21,7 +21,7 @@ import { VirkailijaPage } from './components/virkailija/VirkailijaPage';
 import { OppijaPage } from './components/oppija/OppijaPage';
 import { OppijaDuplicatesPage } from './components/oppija/OppijaDuplicatesPage';
 import { OppijaVtjVertailuPage } from './components/oppija/OppijaVtjVertailuPage';
-import { RekisteroityminenPage } from './kayttaja/RekisteroityminenPage';
+import { RekisteroityminenPage } from './components/RekisteroityminenPage';
 
 export const AppRoutes = () => (
     <Routes>

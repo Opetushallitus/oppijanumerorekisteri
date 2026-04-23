@@ -11,7 +11,6 @@ import EmailVerificationContainer from './sahkopostivarmennus/EmailVerificationC
 import EmailVerificationErrorContainer from './sahkopostivarmennus/EmailVerificationErrorContainer';
 import { EmailVerificationDonePage } from './sahkopostivarmennus/EmailVerificationDonePage';
 import { SalasananVaihtoPage } from './SalasananVaihtoPage';
-import { RekisteroityminenPage } from './RekisteroityminenPage';
 
 export const KayttajaAppRoutes = () => (
     <Routes>
@@ -34,7 +33,6 @@ export const KayttajaAppRoutes = () => (
             />
             <Route path="/kayttaja/rekisteroidy" element={<RekisteroidyContainer />} />
             <Route path="/kayttaja/rekisteroidy/valmis/:locale" element={<RekisteroidyValmisPage />} />
-            <Route path="/kayttaja/rekisteroityminen/:locale" element={<RekisteroityminenPage />} />
             <Route path="/kayttaja/salasananvaihto/:locale/:loginToken" element={<SalasananVaihtoPage />} />
         </Route>
     </Routes>
