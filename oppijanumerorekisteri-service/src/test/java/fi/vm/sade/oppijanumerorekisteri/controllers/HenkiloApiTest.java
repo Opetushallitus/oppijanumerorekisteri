@@ -222,6 +222,9 @@ public class HenkiloApiTest extends OppijanumerorekisteriApiTest {
 
         when(koodistoService.list(Koodisto.SUKUPUOLI))
                 .thenReturn(new KoodiTypeListBuilder(Koodisto.SUKUPUOLI).koodi("1").koodi("2").build());
+
+        when(koodistoService.list(Koodisto.KIELI))
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI).koodi("FI").koodi("SV").koodi("EN").build());
     }
 
     private Henkilo createPerson(String eidasTunniste, Set<Identification> identifications) {
@@ -250,24 +253,8 @@ public class HenkiloApiTest extends OppijanumerorekisteriApiTest {
     @UserRekisterinpitaja
     public void updateHenkiloAndGetOmattiedot() throws Exception {
         initKoodistoMock();
-        String eidasTunniste = "FOO/BAR/" + UUID.randomUUID().toString();
-        var eidasTunnisteet = new ArrayList<EidasTunniste>();
-        eidasTunnisteet.add(EidasTunniste.builder().tunniste(eidasTunniste).createdBy(oidGenerator.generateOID()).build());
-        var now = ZonedDateTime.now();
-        var kielisyys = kielisyysRepository.findOrCreateByKoodi("fi");
-        var henkilo = Henkilo.builder()
-                .oidHenkilo(USER_REKISTERINPITAJA_OID)
-                .etunimet("Testi Testaaja")
-                .kutsumanimi("Testi")
-                .sukunimi("Testiläinen")
-                .sukupuoli("1")
-                .yksiloityEidas(eidasTunnisteet != null)
-                .eidasTunnisteet(eidasTunnisteet)
-                .asiointiKieli(kielisyys)
-                .created(Date.from(now.toInstant()))
-                .modified(Date.from(now.toInstant()))
-                .build();
 
+        var henkilo = createRekisterinPitajaHenkilo("fi", "fi");
         this.henkiloRepository.save(henkilo);
 
         var omattiedotResponse = getJson(HenkiloOmattiedotDto.class, "/henkilo/current/omattiedot");
@@ -286,5 +273,72 @@ public class HenkiloApiTest extends OppijanumerorekisteriApiTest {
 
         var omattiedotResponse2 = getJson(HenkiloOmattiedotDto.class, "/henkilo/current/omattiedot");
         assertThat(omattiedotResponse2.getAsiointikieli()).isEqualTo("sv");
+    }
+
+    @Test
+    @Transactional
+    @UserRekisterinpitaja
+    public void currentOmattiedotReturnsUnmodifiedLanguage() throws Exception {
+        initKoodistoMock();
+        var rekisterinPitaja = createRekisterinPitajaHenkilo("FI", "fi");
+        henkiloRepository.save(rekisterinPitaja);
+
+        var omattiedotResponse = getJson(HenkiloOmattiedotDto.class, "/henkilo/current/omattiedot");
+        assertThat(omattiedotResponse.getAsiointikieli()).isEqualTo("FI");
+    }
+
+    @Test
+    @Transactional
+    @UserRekisterinpitaja
+    public void failsToUpdateHenkiloWhenAidinkieliIsInUppercase() throws Exception {
+        initKoodistoMock();
+        var aidinkieli = "FI";
+        var rekisterinPitaja = createRekisterinPitajaHenkilo("fi", aidinkieli);
+        henkiloRepository.save(rekisterinPitaja);
+
+        var henkiloUpdate = new HenkiloUpdateDto();
+        henkiloUpdate.setOidHenkilo(USER_REKISTERINPITAJA_OID);
+        henkiloUpdate.setAsiointiKieli(
+                KielisyysDto.builder()
+                        .kieliKoodi("sv")
+                        .kieliTyyppi("svenska")
+                        .build());
+        // Use the aidinkieli that the user already has, which is "FI", not "fi"
+        henkiloUpdate.setAidinkieli(
+                KielisyysDto.builder()
+                        .kieliKoodi(aidinkieli)
+                        .kieliTyyppi("suomi")
+                        .build());
+        var henkiloUpdateRequest = createRequest(put("/henkilo"), henkiloUpdate);
+        mvc.perform(henkiloUpdateRequest).andExpect(status().isBadRequest());
+    }
+
+    private Henkilo.builder createDefaultRekisterinPitajaBuilder() {
+        String eidasTunniste = "FOO/BAR/" + UUID.randomUUID().toString();
+        var eidasTunnisteet = new ArrayList<EidasTunniste>();
+        eidasTunnisteet.add(EidasTunniste.builder().tunniste(eidasTunniste).createdBy(oidGenerator.generateOID()).build());
+        var now = ZonedDateTime.now();
+        var henkiloBuilder = Henkilo.builder()
+                .oidHenkilo(USER_REKISTERINPITAJA_OID)
+                .etunimet("Testi Testaaja")
+                .kutsumanimi("Testi")
+                .sukunimi("Testiläinen")
+                .sukupuoli("1")
+                .yksiloityEidas(eidasTunnisteet != null)
+                .eidasTunnisteet(eidasTunnisteet)
+                .created(Date.from(now.toInstant()))
+                .modified(Date.from(now.toInstant()));
+
+        return henkiloBuilder;
+    }
+
+    private Henkilo createRekisterinPitajaHenkilo(String asiointikielikoodi, String aidinkielikoodi) {
+        var asiointikieliKielisyys = kielisyysRepository.findOrCreateByKoodi(asiointikielikoodi);
+        var aidinkieliKielisyys = kielisyysRepository.findOrCreateByKoodi(aidinkielikoodi);
+        var henkiloBuilder = createDefaultRekisterinPitajaBuilder();
+        henkiloBuilder.asiointiKieli(asiointikieliKielisyys);
+        henkiloBuilder.aidinkieli(aidinkieliKielisyys);
+
+        return henkiloBuilder.build();
     }
 }
