@@ -307,8 +307,32 @@ public class HenkiloApiTest extends OppijanumerorekisteriApiTest {
         henkiloUpdate.setAidinkieli(
                 KielisyysDto.builder()
                         .kieliKoodi(aidinkieli)
+                        .build());
+        var henkiloUpdateRequest = createRequest(put("/henkilo"), henkiloUpdate);
+        mvc.perform(henkiloUpdateRequest).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Transactional
+    @UserRekisterinpitaja
+    public void failsToUpdateHenkiloWhenAsiointikieliIsInUppercase() throws Exception {
+        initKoodistoMock();
+        var asiointikieli = "FI";
+        var rekisterinPitaja = createRekisterinPitajaHenkilo(asiointikieli, "fi");
+        henkiloRepository.save(rekisterinPitaja);
+
+        var henkiloUpdate = new HenkiloUpdateDto();
+        henkiloUpdate.setOidHenkilo(USER_REKISTERINPITAJA_OID);
+        henkiloUpdate.setAsiointiKieli(
+                KielisyysDto.builder()
+                        .kieliKoodi(asiointikieli)
                         .kieliTyyppi("suomi")
                         .build());
+        henkiloUpdate.setAidinkieli(
+                KielisyysDto.builder()
+                        .kieliKoodi(rekisterinPitaja.getAidinkieli().getKieliKoodi())
+                        .build());
+
         var henkiloUpdateRequest = createRequest(put("/henkilo"), henkiloUpdate);
         mvc.perform(henkiloUpdateRequest).andExpect(status().isBadRequest());
     }
