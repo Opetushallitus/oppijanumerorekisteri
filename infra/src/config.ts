@@ -72,6 +72,7 @@ export const hahtuva: Config = {
   opintopolkuHost: "hahtuvaopintopolku.fi",
   virkailijaHost: "virkailija.hahtuvaopintopolku.fi",
   apiCapacity: { min: 1, max: 2 },
+  tiedotuspalveluCapacity: { min: 0, max: 0 },
   features: {
     vtj: false,
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
@@ -91,6 +92,7 @@ export const dev: Config = {
   opintopolkuHost: "untuvaopintopolku.fi",
   virkailijaHost: "virkailija.untuvaopintopolku.fi",
   apiCapacity: { min: 1, max: 2 },
+  tiedotuspalveluCapacity: { min: 0, max: 0 },
   features: {
     vtj: false,
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
