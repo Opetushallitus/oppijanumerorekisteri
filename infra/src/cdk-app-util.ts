@@ -173,33 +173,6 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
       );
       testStage.addAction(
         new codepipeline_actions.CodeBuildAction({
-          actionName: "TestTiedotuspalvelu",
-          input: sourceOutput,
-          project: makeTestProject(
-            this,
-            env,
-            "TestTiedotuspalvelu",
-            ["scripts/ci/run-tiedotuspalvelu-tests.sh"],
-            "corretto21",
-            dependencyManagement,
-          ),
-        }),
-      );
-      testStage.addAction(
-        new codepipeline_actions.CodeBuildAction({
-          actionName: "TestTiedotuspalveluUi",
-          input: sourceOutput,
-          project: makeUbuntuTestProject(
-            this,
-            env,
-            "TestTiedotuspalveluUi",
-            ["scripts/ci/run-tiedotuspalvelu-ui-tests.sh"],
-            dependencyManagement,
-          ),
-        }),
-      );
-      testStage.addAction(
-        new codepipeline_actions.CodeBuildAction({
           actionName: "TestHenkiloUi",
           input: sourceOutput,
           project: makeUbuntuTestProject(

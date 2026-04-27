@@ -12,16 +12,11 @@ export type Config = {
   virkailijaHost: string;
   apiCapacity: AutoScalingLimits;
   batchCapacity: AutoScalingLimits;
-  tiedotuspalveluCapacity: AutoScalingLimits;
   features: {
     vtj: boolean;
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": boolean;
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": boolean;
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": boolean;
-    "tiedotuspalvelu.fetch-oppija.enabled": boolean;
-    "tiedotuspalvelu.suomifi-viestit.enabled": boolean;
-    "tiedotuspalvelu.suomifi-viestit.base-url": string;
-    "tiedotuspalvelu.fetch-kielitutkintotodistus.enabled": boolean;
   };
   lampiExport?: {
     enabled: boolean;
@@ -32,16 +27,11 @@ export type Config = {
 const defaultConfig = {
   apiCapacity: { min: 2, max: 8 },
   batchCapacity: { min: 1, max: 1 },
-  tiedotuspalveluCapacity: { min: 1, max: 1 },
   features: {
     vtj: true,
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": false,
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": false,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": false,
-    "tiedotuspalvelu.fetch-oppija.enabled": false,
-    "tiedotuspalvelu.suomifi-viestit.enabled": false,
-    "tiedotuspalvelu.suomifi-viestit.base-url": "http://localhost",
-    "tiedotuspalvelu.fetch-kielitutkintotodistus.enabled": true,
   },
 };
 
@@ -72,16 +62,11 @@ export const hahtuva: Config = {
   opintopolkuHost: "hahtuvaopintopolku.fi",
   virkailijaHost: "virkailija.hahtuvaopintopolku.fi",
   apiCapacity: { min: 1, max: 2 },
-  tiedotuspalveluCapacity: { min: 0, max: 0 },
   features: {
     vtj: false,
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
-    "tiedotuspalvelu.fetch-oppija.enabled": true,
-    "tiedotuspalvelu.suomifi-viestit.enabled": false,
-    "tiedotuspalvelu.suomifi-viestit.base-url": "http://localhost",
-    "tiedotuspalvelu.fetch-kielitutkintotodistus.enabled": false,
   },
 };
 
@@ -92,16 +77,11 @@ export const dev: Config = {
   opintopolkuHost: "untuvaopintopolku.fi",
   virkailijaHost: "virkailija.untuvaopintopolku.fi",
   apiCapacity: { min: 1, max: 2 },
-  tiedotuspalveluCapacity: { min: 0, max: 0 },
   features: {
     vtj: false,
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
-    "tiedotuspalvelu.fetch-oppija.enabled": true,
-    "tiedotuspalvelu.suomifi-viestit.enabled": false,
-    "tiedotuspalvelu.suomifi-viestit.base-url": "http://localhost",
-    "tiedotuspalvelu.fetch-kielitutkintotodistus.enabled": true,
   },
   lampiExport: {
     enabled: true,
@@ -116,17 +96,11 @@ export const qa: Config = {
   opintopolkuHost: "testiopintopolku.fi",
   virkailijaHost: "virkailija.testiopintopolku.fi",
   apiCapacity: { min: 1, max: 2 },
-  tiedotuspalveluCapacity: { min: 0, max: 0 },
   features: {
     vtj: false,
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
-    "tiedotuspalvelu.fetch-oppija.enabled": true,
-    "tiedotuspalvelu.suomifi-viestit.enabled": true,
-    "tiedotuspalvelu.suomifi-viestit.base-url":
-      "https://api.messages-qa.suomi.fi",
-    "tiedotuspalvelu.fetch-kielitutkintotodistus.enabled": true,
   },
   lampiExport: {
     enabled: true,
@@ -141,7 +115,6 @@ export const prod: Config = {
   opintopolkuHost: "opintopolku.fi",
   virkailijaHost: "virkailija.opintopolku.fi",
   apiCapacity: { min: 2, max: 8 },
-  tiedotuspalveluCapacity: { min: 0, max: 0 },
   features: {
     ...defaultConfig.features,
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
