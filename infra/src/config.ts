@@ -13,7 +13,6 @@ export type Config = {
   apiCapacity: AutoScalingLimits;
   batchCapacity: AutoScalingLimits;
   tiedotuspalveluCapacity: AutoScalingLimits;
-  tiedotuspalveluYliheitto: boolean;
   features: {
     vtj: boolean;
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": boolean;
@@ -34,7 +33,6 @@ const defaultConfig = {
   apiCapacity: { min: 2, max: 8 },
   batchCapacity: { min: 1, max: 1 },
   tiedotuspalveluCapacity: { min: 1, max: 1 },
-  tiedotuspalveluYliheitto: false,
   features: {
     vtj: true,
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": false,
@@ -75,7 +73,6 @@ export const hahtuva: Config = {
   virkailijaHost: "virkailija.hahtuvaopintopolku.fi",
   apiCapacity: { min: 1, max: 2 },
   tiedotuspalveluCapacity: { min: 0, max: 0 },
-  tiedotuspalveluYliheitto: true,
   features: {
     vtj: false,
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
@@ -96,7 +93,6 @@ export const dev: Config = {
   virkailijaHost: "virkailija.untuvaopintopolku.fi",
   apiCapacity: { min: 1, max: 2 },
   tiedotuspalveluCapacity: { min: 0, max: 0 },
-  tiedotuspalveluYliheitto: true,
   features: {
     vtj: false,
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,

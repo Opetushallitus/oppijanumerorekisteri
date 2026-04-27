@@ -1083,6 +1083,30 @@ class TiedotuspalveluStack extends cdk.Stack {
 
     service.connections.allowToDefaultPort(props.database);
 
+    const alb = new elasticloadbalancingv2.ApplicationLoadBalancer(
+      this,
+      "LoadBalancer",
+      {
+        vpc,
+        internetFacing: true,
+      },
+    );
+
+    new route53.ARecord(this, "ARecord", {
+      zone: props.hostedZone,
+      recordName: config.tiedotuspalveluDomain,
+      target: route53.RecordTarget.fromAlias(
+        new route53_targets.LoadBalancerTarget(alb),
+      ),
+    });
+    new route53.ARecord(this, "NginxARecord", {
+      zone: props.hostedZone,
+      recordName: domainForNginxForwarding,
+      target: route53.RecordTarget.fromAlias(
+        new route53_targets.LoadBalancerTarget(alb),
+      ),
+    });
+
     const nginxCertificate = new certificatemanager.Certificate(
       this,
       "AlbNginxCertificate",
@@ -1095,49 +1119,23 @@ class TiedotuspalveluStack extends cdk.Stack {
       },
     );
 
-    if (!config.tiedotuspalveluYliheitto) {
-      const alb = new elasticloadbalancingv2.ApplicationLoadBalancer(
-        this,
-        "LoadBalancer",
-        {
-          vpc,
-          internetFacing: true,
-        },
-      );
+    const listener = alb.addListener("Listener", {
+      protocol: elasticloadbalancingv2.ApplicationProtocol.HTTPS,
+      port: 443,
+      open: true,
+      certificates: [nginxCertificate],
+    });
 
-      new route53.ARecord(this, "ARecord", {
-        zone: props.hostedZone,
-        recordName: config.tiedotuspalveluDomain,
-        target: route53.RecordTarget.fromAlias(
-          new route53_targets.LoadBalancerTarget(alb),
-        ),
-      });
-      new route53.ARecord(this, "NginxARecord", {
-        zone: props.hostedZone,
-        recordName: domainForNginxForwarding,
-        target: route53.RecordTarget.fromAlias(
-          new route53_targets.LoadBalancerTarget(alb),
-        ),
-      });
-
-      const listener = alb.addListener("Listener", {
-        protocol: elasticloadbalancingv2.ApplicationProtocol.HTTPS,
-        port: 443,
-        open: true,
-        certificates: [nginxCertificate],
-      });
-
-      listener.addTargets("ServiceTarget", {
-        port: appPort,
-        targets: [service],
-        healthCheck: {
-          enabled: true,
-          interval: cdk.Duration.seconds(30),
-          path: "/omat-viestit/actuator/health",
-          port: appPort.toString(),
-        },
-      });
-    }
+    listener.addTargets("ServiceTarget", {
+      port: appPort,
+      targets: [service],
+      healthCheck: {
+        enabled: true,
+        interval: cdk.Duration.seconds(30),
+        path: "/omat-viestit/actuator/health",
+        port: appPort.toString(),
+      },
+    });
   }
 
   fetchOppijaAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
