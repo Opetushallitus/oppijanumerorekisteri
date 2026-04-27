@@ -14,8 +14,8 @@ export const TunnusVanhentunutPage = () => {
 
     return (
         <OphDsErrorPage header={L['TUNNUS_VANHENTUNUT_OTSIKKO']!}>
-            <p style={{ textAlign: 'center' }}>{L['TUNNUS_VANHENTUNUT_TEKSTI']}</p>
-            <p style={{ textAlign: 'center' }}>
+            <p>{L['TUNNUS_VANHENTUNUT_TEKSTI']}</p>
+            <p>
                 {L['TUNNUS_VANHENTUNUT_LINKKI']}
                 {': '}
                 <a href="https://wiki.eduuni.fi/x/IYRcCw">https://wiki.eduuni.fi/x/IYRcCw</a>

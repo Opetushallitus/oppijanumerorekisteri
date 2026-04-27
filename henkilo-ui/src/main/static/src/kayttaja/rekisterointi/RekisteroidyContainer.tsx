@@ -4,10 +4,10 @@ import { skipToken } from '@reduxjs/toolkit/query/react';
 
 import { RekisteroidyPage } from './RekisteroidyPage';
 import Loader from '../../components/common/icons/Loader';
-import VirhePage from '../VirhePage';
 import { toSupportedLocale, useLocalisations } from '../../selectors';
 import { useGetKutsuByTokenQuery } from '../../api/kayttooikeus';
 import { useTitle } from '../../useTitle';
+import { OphDsErrorPage } from '../../components/design-system/OphDsErrorPage';
 
 const RekisteroidyContainer = () => {
     const location = useLocation();
@@ -23,7 +23,11 @@ const RekisteroidyContainer = () => {
     if (isKutsuLoading) {
         return <Loader />;
     } else if (isError || !kutsu || temporaryToken === null) {
-        return <VirhePage text={'REKISTEROIDY_TEMP_TOKEN_INVALID'} />;
+        return (
+            <OphDsErrorPage header={L['VIRHE_PAGE_DEFAULT_OTSIKKO']!}>
+                <p>{L['REKISTEROIDY_TEMP_TOKEN_INVALID']!}</p>
+            </OphDsErrorPage>
+        );
     }
     return <RekisteroidyPage kutsu={{ ...kutsu, temporaryToken }} L={L} locale={locale} />;
 };

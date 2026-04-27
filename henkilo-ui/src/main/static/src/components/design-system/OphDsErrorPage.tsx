@@ -20,7 +20,7 @@ export const OphDsErrorPage = ({ header, children }: Props) => {
                     </svg>
                 </div>
                 <h1>{header}</h1>
-                {children}
+                <div className={styles.errorContent}>{children}</div>
             </div>
         </div>
     );
