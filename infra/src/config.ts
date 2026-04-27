@@ -116,6 +116,7 @@ export const qa: Config = {
   opintopolkuHost: "testiopintopolku.fi",
   virkailijaHost: "virkailija.testiopintopolku.fi",
   apiCapacity: { min: 1, max: 2 },
+  tiedotuspalveluCapacity: { min: 0, max: 0 },
   features: {
     vtj: false,
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
