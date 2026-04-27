@@ -1,24 +1,20 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloVahvaTunnistusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
-import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaTuontiService;
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
-import fi.vm.sade.oppijanumerorekisteri.utils.YhteystietoryhmaUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.KoodiValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +23,8 @@ import ma.glasnost.orika.MapperFacade;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -44,7 +38,6 @@ public class IdentificationServiceImpl implements IdentificationService {
     private final KoodistoService koodistoService;
     private final YksilointiService yksilointiService;
     private final HenkiloModificationService henkiloModificationService;
-    private final DuplicateService duplicateService;
     private final OppijaTuontiService oppijaTuontiService;
     private final OppijanumerorekisteriProperties properties;
     private final IdentificationRepository identificationRepository;
@@ -109,36 +102,6 @@ public class IdentificationServiceImpl implements IdentificationService {
                     log.info("Henkilo {} passed initial validation, trying to identify...", oid);
                     identifyHenkilo(oid);
                 });
-    }
-
-    @Override
-    @Transactional
-    public void setStrongIdentifiedHetu(String oidHenkilo, HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto) {
-        Henkilo henkiloToUpdate = this.henkiloRepository.findByOidHenkilo(oidHenkilo)
-                .orElseThrow(() -> new NotFoundException("Henkilo not found with oid " + oidHenkilo));
-
-        DuplicateService.LinkResult linked = this.duplicateService.removeDuplicateHetuAndLink(henkiloToUpdate, henkiloVahvaTunnistusDto.getHetu());
-
-        // No current hetu and hetu not already used => set hetu
-        this.setHetuIfMatchesToHenkilo(henkiloVahvaTunnistusDto, henkiloToUpdate);
-
-        if (StringUtils.hasLength(henkiloVahvaTunnistusDto.getTyosahkopostiosoite())) {
-            String alkupera = "alkupera2";
-            YhteystietoryhmaUtils.setTyosahkopostiosoite(henkiloToUpdate.getYhteystiedotRyhma(), henkiloVahvaTunnistusDto.getTyosahkopostiosoite(), alkupera);
-        }
-
-        linked.forEachModified(henkiloModificationService::update);
-    }
-
-    private void setHetuIfMatchesToHenkilo(HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto, Henkilo henkilo) {
-        // Do not allow replacing differing not empty hetu
-        Optional.ofNullable(henkilo.getHetu())
-                .filter(StringUtils::hasLength)
-                .filter((hetu) -> !hetu.equals(henkiloVahvaTunnistusDto.getHetu()))
-                .ifPresent((existingDifferentHetu) -> {
-                    throw new DataInconsistencyException("Hetu does not match with the existing one");
-                });
-        henkilo.setHetu(henkiloVahvaTunnistusDto.getHetu());
     }
 
     /**

@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloVahvaTunnistusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
 
@@ -32,8 +31,6 @@ public interface IdentificationService {
      *
      */
     void identifyHenkilos(List<String> unidentifiedOids, Long vtjRequestDelayInMillis);
-
-    void setStrongIdentifiedHetu(String oidHenkilo, HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto);
 
     void yksilointiTask();
 }
