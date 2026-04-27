@@ -22,7 +22,6 @@ import { PalveluRooliModify } from '../types/domain/kayttooikeus/PalveluRooliMod
 import { SallitutKayttajatyypit } from '../components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage';
 import { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
 import { Henkilo, HenkiloOrg } from '../types/domain/oppijanumerorekisteri/henkilo.types';
-import { Values } from '../kayttaja/vahvatunnistus/VahvaTunnistusLisatiedotInputs';
 import { VirkailijaCreate } from '../types/domain/kayttooikeus/virkailija.types';
 
 type MfaSetupResponse = {
@@ -166,12 +165,6 @@ type KutsututRequest = {
 export type HenkiloLinkitykset = {
     henkiloVarmentajas?: string[];
     henkiloVarmennettavas?: string[];
-};
-
-type PutUudelleenRekisterointiRequest = {
-    kielisyys: string;
-    loginToken: string;
-    body: Values & { salasana: string };
 };
 
 export type RekisteroidyRequest = {
@@ -576,13 +569,6 @@ export const kayttooikeusApi = createApi({
             query: () => 'organisaatio',
             providesTags: ['organisations'],
         }),
-        postUudelleenRekisterointi: builder.mutation<void, PutUudelleenRekisterointiRequest>({
-            query: ({ kielisyys, loginToken, body }) => ({
-                url: `cas/uudelleenrekisterointi?${new URLSearchParams({ kielisyys, loginToken }).toString()}`,
-                method: 'POST',
-                body,
-            }),
-        }),
         postCreateVirkailija: builder.mutation<string, VirkailijaCreate>({
             query: (body) => ({
                 url: 'virkailija',
@@ -669,7 +655,6 @@ export const {
     useGetRootOrganisationQuery,
     useGetOrganisationNamesQuery,
     useGetOrganisationsQuery,
-    usePostUudelleenRekisterointiMutation,
     usePostCreateVirkailijaMutation,
     usePostRekisteroidyMutation,
     useGetHenkiloByLoginTokenQuery,
