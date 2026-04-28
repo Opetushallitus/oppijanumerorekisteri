@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import ConfirmButton from '../../button/ConfirmButton';
 import { useLocalisations } from '../../../../selectors';
 import { useGetHenkiloQuery, usePutYliajaTiedotVtjMutation } from '../../../../api/oppijanumerorekisteri';
-import { ButtonNotification } from '../../button/NotificationButton';
+import { add } from '../../../../slices/toastSlice';
 
 type OwnProps = {
     henkiloOid: string;
@@ -14,7 +14,6 @@ type OwnProps = {
 const VtjOverrideButton = ({ henkiloOid, disabled, className }: OwnProps) => {
     const { data: henkilo } = useGetHenkiloQuery(henkiloOid);
     const { L } = useLocalisations();
-    const [notification, setNotification] = useState<ButtonNotification>();
     const [yliajaTiedotVtj] = usePutYliajaTiedotVtjMutation();
     return henkilo?.yksiloityVTJ && henkilo.hetu ? (
         <ConfirmButton
@@ -24,17 +23,17 @@ const VtjOverrideButton = ({ henkiloOid, disabled, className }: OwnProps) => {
                 yliajaTiedotVtj(henkilo.oidHenkilo)
                     .unwrap()
                     .catch(() =>
-                        setNotification({
-                            notL10nMessage: 'VTJ_OVERRIDE_ERROR_TOPIC',
-                            notL10nText: 'VTJ_OVERRIDE_ERROR_TEXT',
+                        add({
+                            id: `vtj-override-${henkiloOid}-${Math.random()}`,
+                            type: 'error',
+                            header: L('VTJ_OVERRIDE_ERROR_TOPIC'),
+                            body: L('VTJ_OVERRIDE_ERROR_TEXT'),
                         })
                     )
             }
             normalLabel={L('VTJ_OVERRIDE_LINKKI')}
             confirmLabel={L('VTJ_OVERRIDE_LINKKI_CONFIRM')}
             disabled={disabled}
-            notification={notification}
-            removeNotification={() => setNotification(undefined)}
         />
     ) : null;
 };

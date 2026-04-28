@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import ConfirmButton from '../../button/ConfirmButton';
 import Button from '../../button/Button';
 import { usePassivoiHenkiloMutation } from '../../../../api/oppijanumerorekisteri';
-import { ButtonNotification } from '../../button/NotificationButton';
 import { useLocalisations } from '../../../../selectors';
+import { add } from '../../../../slices/toastSlice';
 
 type OwnProps = {
     henkiloOid: string;
@@ -16,7 +16,7 @@ type OwnProps = {
 const PassivoiButton = (props: OwnProps) => {
     const { L } = useLocalisations();
     const [passivoiHenkilo] = usePassivoiHenkiloMutation();
-    const [notification, setNotification] = useState<ButtonNotification>();
+
     return props.passivoitu ? (
         <Button key="passivoi" disabled={!!props.passivoitu}>
             {L('PASSIVOI_PASSIVOITU')}
@@ -29,17 +29,17 @@ const PassivoiButton = (props: OwnProps) => {
                 passivoiHenkilo(props.henkiloOid)
                     .unwrap()
                     .catch(() =>
-                        setNotification({
-                            notL10nMessage: 'PASSIVOI_ERROR_TOPIC',
-                            notL10nText: 'PASSIVOI_ERROR_TEXT',
+                        add({
+                            id: `passivoi-${props.henkiloOid}-${Math.random()}`,
+                            type: 'error',
+                            header: L('PASSIVOI_ERROR_TOPIC'),
+                            body: L('PASSIVOI_ERROR_TEXT'),
                         })
                     )
             }
             normalLabel={L('PASSIVOI_LINKKI')}
             confirmLabel={L('PASSIVOI_LINKKI_CONFIRM')}
             disabled={!!props.disabled}
-            notification={notification}
-            removeNotification={() => setNotification(undefined)}
         />
     );
 };

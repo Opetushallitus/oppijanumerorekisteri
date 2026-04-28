@@ -1,7 +1,6 @@
-import './Button.css';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
-import NotificationButton, { ButtonNotification } from './NotificationButton';
+import Button from './Button';
 
 type OwnProps = {
     action: () => void;
@@ -9,46 +8,26 @@ type OwnProps = {
     confirmLabel?: string;
     disabled?: boolean;
     className?: string;
-    notification?: ButtonNotification;
     removeNotification?: () => void;
 };
 
-type Props = OwnProps;
-
-const ConfirmButton = (props: Props) => {
-    const { action, className, confirmLabel, disabled, normalLabel, notification } = props;
+const ConfirmButton = (props: OwnProps) => {
+    const { action, className, confirmLabel, disabled, normalLabel } = props;
     const [confirmState, setConfirmState] = useState(false);
-    const [disabledState, setDisabledState] = useState(false);
     const actionFunction = () => {
         setConfirmState(false);
         action();
     };
     const confirmProps = { ...props, cancel: false, action: actionFunction };
 
-    useEffect(() => {
-        if (notification) {
-            setConfirmState(false);
-            setDisabledState(true);
-        }
-        const timer = setTimeout(() => {
-            setDisabledState(false);
-        }, 2000);
-        return () => clearTimeout(timer);
-    }, [notification]);
-
     return !confirmState ? (
-        <NotificationButton
-            className={className}
-            {...props}
-            action={() => setConfirmState(true)}
-            disabled={disabledState || disabled}
-        >
+        <Button className={className} {...props} action={() => setConfirmState(true)} disabled={disabled}>
             {normalLabel}
-        </NotificationButton>
+        </Button>
     ) : (
-        <NotificationButton className={className} confirm {...confirmProps}>
+        <Button className={className} confirm {...confirmProps}>
             {confirmLabel}
-        </NotificationButton>
+        </Button>
     );
 };
 
