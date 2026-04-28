@@ -88,14 +88,6 @@ class CdkApp extends cdk.App {
       },
     );
 
-    new TiedotuspalveluStack(this, sharedAccount.prefix("Tiedotuspalvelu"), {
-      ...stackProps,
-      database: databaseStack.tiedotuspalveluDatabase,
-      ecsCluster: ecsStack.cluster,
-      hostedZone: dnsStack.tiedotuspalveluHostedZone,
-      alarmTopic,
-    });
-
     new HenkiloUiApplicationStack(
       this,
       sharedAccount.prefix("HenkiloUiApplication"),
@@ -849,23 +841,6 @@ class OppijanumerorekisteriService extends constructs.Construct {
         { parameterName: `/oppijanumerorekisteri/${name}` },
       ),
     );
-  }
-}
-
-type TiedotuspalveluStackProps = cdk.StackProps & {
-  ecsCluster: ecs.Cluster;
-  hostedZone: route53.IHostedZone;
-  database: rds.DatabaseCluster;
-  alarmTopic: sns.ITopic;
-};
-
-class TiedotuspalveluStack extends cdk.Stack {
-  constructor(
-    scope: constructs.Construct,
-    id: string,
-    props: TiedotuspalveluStackProps,
-  ) {
-    super(scope, id, props);
   }
 }
 

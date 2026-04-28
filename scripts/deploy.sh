@@ -48,7 +48,15 @@ function deploy_env {
     export CDK_DEPLOY_TARGET_REGION=${region}
   fi
   login_to_docker_if_possible
+  cdk_destroy_stack OppijanumerorekisteriTiedotuspalvelu
   ENV=${env} npx cdk --app "npx ts-node ${repo}/infra/src/cdk-app.ts" deploy --require-approval never --all
+}
+
+function cdk_destroy_stack {
+  local -r stack_name="$1"
+  info "Destroying stack ${stack_name}"
+  ENV=${env} npx cdk --app "npx ts-node ${repo}/infra/src/cdk-app.ts" destroy --force --exclusively "${stack_name}"
+  info "Destroyed ${stack_name}"
 }
 
 function login_to_docker_if_possible {
