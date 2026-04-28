@@ -42,6 +42,7 @@ import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types'
 import { SelectOption, selectStyles } from '../../utilities/select';
 import { OphDsDatepicker } from '../design-system/OphDsDatePicker';
 import { OphDsSpinner } from '../design-system/OphDsSpinner';
+import { OphDsBanner } from '../design-system/OphDsBanner';
 
 import styles from './OppijaPerustiedot.module.css';
 
@@ -412,6 +413,14 @@ const OppijaPerustiedotView = ({ oid, openForm }: { oid: string; openForm: () =>
     );
 };
 
+const yksilointivirheet = {
+    HETU_EI_OIKEA: 'HENKILO_YKSILOINTIVIRHE_HETU_EI_OIKEA',
+    HETU_EI_VTJ: 'HENKILO_YKSILOINTIVIRHE_HETU_EI_VTJ',
+    HETU_PASSIVOITU: 'HENKILO_YKSILOINTIVIRHE_HETU_PASSIVOITU',
+    MUU_UUDELLEENYRITETTAVA: 'HENKILO_YKSILOINTIVIRHE_MUU_UUDELLEENYRITETTAVA',
+    MUU: 'HENKILO_YKSILOINTIVIRHE_MUU',
+};
+
 export const OppijaPerustiedot = ({ oid }: { oid: string }) => {
     const { L } = useLocalisations();
     const { data: henkilo, isLoading } = useGetHenkiloQuery(oid);
@@ -454,6 +463,25 @@ export const OppijaPerustiedot = ({ oid }: { oid: string }) => {
                     <OppijaPerustiedotView oid={oid} openForm={() => setForm(true)} />
                 )}
             </div>
+            {henkilo?.yksilointivirheet?.length ? (
+                <OphDsBanner type="error">
+                    {henkilo?.yksilointivirheet.map((v) => {
+                        const t = yksilointivirheet[v.yksilointivirheTila] ?? 'HENKILO_YKSILOINTIVIRHE_OLETUS';
+                        return (
+                            <p key={v.yksilointivirheTila}>
+                                {v.uudelleenyritysAikaleima
+                                    ? `${L(t)} ${L('HENKILO_YKSILOINTIVIRHE_UUDELLEENYRITYS')} ${format(
+                                          new Date(v?.uudelleenyritysAikaleima),
+                                          'd.M.yyyy H:mm'
+                                      )}`
+                                    : L(t)}
+                            </p>
+                        );
+                    })}
+                </OphDsBanner>
+            ) : (
+                ''
+            )}
         </section>
     );
 };

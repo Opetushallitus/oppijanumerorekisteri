@@ -329,4 +329,23 @@ test.describe('oppijan perustiedot', () => {
 
         await expect(perustiedot.sukunimi).toHaveText('Garbonara');
     });
+
+    test('shows yksilointivirhe', async ({ page }) => {
+        await page.route(`/oppijanumerorekisteri-service/henkilo/${yksiloityHetutonOid}`, async (route) => {
+            await route.fulfill({
+                json: {
+                    ...yksiloityHetuton,
+                    yksilointiYritetty: true,
+                    yksilointivirheet: [{ uudelleenyritysAikaleima: null, yksilointivirheTila: 'HETU_EI_VTJ' }],
+                    yksiloity: false,
+                    yksiloityEidas: false,
+                    yksiloityVTJ: false,
+                },
+            });
+        });
+        const { yksilointivirhe } = await gotoOppija(page, yksiloityHetutonOid);
+        await expect(yksilointivirhe).toHaveText(
+            'Henkilön hetua ei löydy VTJ:stä. Yksilöintiä ei yritetä uudelleen ennen hetun vaihtamista.'
+        );
+    });
 });

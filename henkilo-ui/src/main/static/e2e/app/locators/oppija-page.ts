@@ -19,6 +19,7 @@ export async function gotoOppija(page: Page, oid: string) {
             oppijanumero: page.getByTestId('oppijanumero'),
             oid: page.getByTestId('oid'),
         },
+        yksilointivirhe: page.locator('.oph-ds-banner-error'),
         form: {
             kutsumanimi: page.getByLabel('Kutsumanimi'),
             kutsumanimiError: page.getByTestId('input-error-kutsumanimi'),
