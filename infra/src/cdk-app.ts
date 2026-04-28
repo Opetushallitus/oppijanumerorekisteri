@@ -202,7 +202,6 @@ class ECSStack extends cdk.Stack {
 class DatabaseStack extends cdk.Stack {
   readonly bastion: ec2.BastionHostLinux;
   readonly database: rds.DatabaseCluster;
-  readonly tiedotuspalveluDatabase: rds.DatabaseCluster;
   readonly exportBucket: s3.Bucket;
 
   constructor(
@@ -284,46 +283,11 @@ class DatabaseStack extends cdk.Stack {
       });
     }
 
-    this.tiedotuspalveluDatabase = new rds.DatabaseCluster(
-      this,
-      "TiedotuspalveluDatabase",
-      {
-        vpc,
-        vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
-        defaultDatabaseName: "tiedotuspalvelu",
-        engine: rds.DatabaseClusterEngine.auroraPostgres({
-          version: rds.AuroraPostgresEngineVersion.VER_16_4,
-        }),
-        credentials: rds.Credentials.fromGeneratedSecret("tiedotuspalvelu", {
-          secretName: sharedAccount.prefix("TiedotuspalveluDatabaseSecret"),
-        }),
-        storageType: rds.DBClusterStorageType.AURORA,
-        writer: rds.ClusterInstance.provisioned("writer", {
-          enablePerformanceInsights: true,
-          instanceType: ec2.InstanceType.of(
-            ec2.InstanceClass.T4G,
-            ec2.InstanceSize.MEDIUM,
-          ),
-        }),
-        storageEncrypted: true,
-        readers: [],
-      },
-    );
-
-    this.exportValue(this.tiedotuspalveluDatabase.clusterEndpoint.hostname);
-    this.exportValue(this.tiedotuspalveluDatabase.clusterEndpoint.port);
-    this.exportValue(this.tiedotuspalveluDatabase.secret!.secretArn);
-    this.exportValue(
-      this.tiedotuspalveluDatabase.connections.securityGroups[0]
-        .securityGroupId,
-    );
-
     this.bastion = new ec2.BastionHostLinux(this, "BastionHost", {
       vpc,
       instanceName: sharedAccount.prefix("Bastion"),
     });
     this.database.connections.allowDefaultPortFrom(this.bastion);
-    this.tiedotuspalveluDatabase.connections.allowDefaultPortFrom(this.bastion);
 
     const backup = new DatabaseBackupToS3(this, "DatabaseBackupToS3", {
       ecsCluster: ecsCluster,
