@@ -6,6 +6,7 @@ import { isHenkiloValidForYksilointi } from '../../../../validation/YksilointiVa
 import { useLocalisations } from '../../../../selectors';
 import { isVahvastiYksiloity } from '../../StaticUtils';
 import { add } from '../../../../slices/toastSlice';
+import { useAppDispatch } from '../../../../store';
 
 type OwnProps = {
     henkiloOid: string;
@@ -14,6 +15,7 @@ type OwnProps = {
 };
 
 const YksiloiHetutonButton = (props: OwnProps) => {
+    const dispatch = useAppDispatch();
     const { L } = useLocalisations();
     const { data: henkilo } = useGetHenkiloQuery(props.henkiloOid);
     const [yksiloiHetuton] = useYksiloiHetutonMutation();
@@ -30,19 +32,23 @@ const YksiloiHetutonButton = (props: OwnProps) => {
                     ? yksiloiHetuton(henkilo.oidHenkilo)
                           .unwrap()
                           .catch(() =>
-                              add({
-                                  id: `yksiloi-${props.henkiloOid}-${Math.random()}`,
-                                  type: 'error',
-                                  header: L('YKSILOI_ERROR_TOPIC'),
-                                  body: L('YKSILOI_ERROR_TEXT'),
-                              })
+                              dispatch(
+                                  add({
+                                      id: `yksiloi-${props.henkiloOid}-${Math.random()}`,
+                                      type: 'error',
+                                      header: L('YKSILOI_ERROR_TOPIC'),
+                                      body: L('YKSILOI_ERROR_TEXT'),
+                                  })
+                              )
                           )
-                    : add({
-                          id: `yksiloi-puuttuvat-${props.henkiloOid}-${Math.random()}`,
-                          type: 'error',
-                          header: L('YKSILOI_PUUTTUVAT_TIEDOT_TOPIC'),
-                          body: L('YKSILOI_PUUTTUVAT_TIEDOT_TEXT'),
-                      })
+                    : dispatch(
+                          add({
+                              id: `yksiloi-puuttuvat-${props.henkiloOid}-${Math.random()}`,
+                              type: 'error',
+                              header: L('YKSILOI_PUUTTUVAT_TIEDOT_TOPIC'),
+                              body: L('YKSILOI_PUUTTUVAT_TIEDOT_TEXT'),
+                          })
+                      )
             }
             normalLabel={L('YKSILOI_LINKKI')}
             confirmLabel={L('YKSILOI_LINKKI_CONFIRM')}

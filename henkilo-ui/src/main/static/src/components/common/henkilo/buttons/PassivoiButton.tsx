@@ -5,6 +5,7 @@ import Button from '../../button/Button';
 import { usePassivoiHenkiloMutation } from '../../../../api/oppijanumerorekisteri';
 import { useLocalisations } from '../../../../selectors';
 import { add } from '../../../../slices/toastSlice';
+import { useAppDispatch } from '../../../../store';
 
 type OwnProps = {
     henkiloOid: string;
@@ -14,6 +15,7 @@ type OwnProps = {
 };
 
 const PassivoiButton = (props: OwnProps) => {
+    const dispatch = useAppDispatch();
     const { L } = useLocalisations();
     const [passivoiHenkilo] = usePassivoiHenkiloMutation();
 
@@ -29,12 +31,14 @@ const PassivoiButton = (props: OwnProps) => {
                 passivoiHenkilo(props.henkiloOid)
                     .unwrap()
                     .catch(() =>
-                        add({
-                            id: `passivoi-${props.henkiloOid}-${Math.random()}`,
-                            type: 'error',
-                            header: L('PASSIVOI_ERROR_TOPIC'),
-                            body: L('PASSIVOI_ERROR_TEXT'),
-                        })
+                        dispatch(
+                            add({
+                                id: `passivoi-${props.henkiloOid}-${Math.random()}`,
+                                type: 'error',
+                                header: L('PASSIVOI_ERROR_TOPIC'),
+                                body: L('PASSIVOI_ERROR_TEXT'),
+                            })
+                        )
                     )
             }
             normalLabel={L('PASSIVOI_LINKKI')}

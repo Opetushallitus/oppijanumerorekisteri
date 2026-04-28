@@ -8,7 +8,6 @@ type OwnProps = {
     confirmLabel?: string;
     disabled?: boolean;
     className?: string;
-    removeNotification?: () => void;
 };
 
 const ConfirmButton = (props: OwnProps) => {

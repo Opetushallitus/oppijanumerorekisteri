@@ -4,6 +4,7 @@ import ConfirmButton from '../../button/ConfirmButton';
 import { useLocalisations } from '../../../../selectors';
 import { useGetHenkiloQuery, usePutYliajaTiedotVtjMutation } from '../../../../api/oppijanumerorekisteri';
 import { add } from '../../../../slices/toastSlice';
+import { useAppDispatch } from '../../../../store';
 
 type OwnProps = {
     henkiloOid: string;
@@ -12,6 +13,7 @@ type OwnProps = {
 };
 
 const VtjOverrideButton = ({ henkiloOid, disabled, className }: OwnProps) => {
+    const dispatch = useAppDispatch();
     const { data: henkilo } = useGetHenkiloQuery(henkiloOid);
     const { L } = useLocalisations();
     const [yliajaTiedotVtj] = usePutYliajaTiedotVtjMutation();
@@ -23,12 +25,14 @@ const VtjOverrideButton = ({ henkiloOid, disabled, className }: OwnProps) => {
                 yliajaTiedotVtj(henkilo.oidHenkilo)
                     .unwrap()
                     .catch(() =>
-                        add({
-                            id: `vtj-override-${henkiloOid}-${Math.random()}`,
-                            type: 'error',
-                            header: L('VTJ_OVERRIDE_ERROR_TOPIC'),
-                            body: L('VTJ_OVERRIDE_ERROR_TEXT'),
-                        })
+                        dispatch(
+                            add({
+                                id: `vtj-override-${henkiloOid}-${Math.random()}`,
+                                type: 'error',
+                                header: L('VTJ_OVERRIDE_ERROR_TOPIC'),
+                                body: L('VTJ_OVERRIDE_ERROR_TEXT'),
+                            })
+                        )
                     )
             }
             normalLabel={L('VTJ_OVERRIDE_LINKKI')}
