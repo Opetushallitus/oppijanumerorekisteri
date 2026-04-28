@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.aspects;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import fi.vm.sade.auditlog.Changes;
 import fi.vm.sade.auditlog.Target;
 import fi.vm.sade.oppijanumerorekisteri.audit.AuditMessageFields;
@@ -18,8 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class AuditlogAspectHelper {
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
+    private final ObjectMapper objectMapper;
     private final VirkailijaAuditLogger virkailijaLogger;
 
     public void logCreateHenkilo(Henkilo henkilo, Object returnHenkilo) {
@@ -176,7 +174,7 @@ public class AuditlogAspectHelper {
     private String getJson(Object object) {
         try {
             return objectMapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             return String.format("Failed to parse json value: %s", extrapolateStackTrace(e));
         }
     }

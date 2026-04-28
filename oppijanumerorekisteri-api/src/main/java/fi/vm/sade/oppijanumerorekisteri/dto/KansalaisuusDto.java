@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 import lombok.Setter;
 import lombok.*;
 
@@ -15,7 +16,7 @@ import java.io.Serializable;
 public class KansalaisuusDto implements Serializable {
     private static final long serialVersionUID = -1616181528688301217L;
 
-    @Schema(required = true)
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     @NotEmpty
     private String kansalaisuusKoodi;
 }

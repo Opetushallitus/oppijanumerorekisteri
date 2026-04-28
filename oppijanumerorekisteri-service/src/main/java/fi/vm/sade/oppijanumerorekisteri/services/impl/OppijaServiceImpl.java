@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
@@ -227,7 +226,7 @@ public class OppijaServiceImpl implements OppijaService {
     private OppijaTuontiCreateDto resolveTuontiData(final byte[] bytes) {
         try {
             return objectMapper.readValue(new String(bytes, StandardCharsets.UTF_8), OppijaTuontiCreateDto.class);
-        } catch (JsonProcessingException jpe) {
+        } catch (Exception jpe) {
             throw new DataInconsistencyException("Could not deserialize tuonti data", jpe);
         }
     }

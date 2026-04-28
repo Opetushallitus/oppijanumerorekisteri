@@ -1,15 +1,14 @@
 package fi.vm.sade.oppijanumerorekisteri;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.type.TypeFactory;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.impl.AwsSnsHenkiloModifiedTopic;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -57,12 +56,12 @@ public abstract class OppijanumerorekisteriApiTest {
     }
 
     protected <T> List<T> getJsonArray(Class<T> responseClass, String endpoint, Object... args) throws Exception {
-        var arrayType = TypeFactory.defaultInstance().constructCollectionType(List.class, responseClass);
+        var arrayType = TypeFactory.createDefaultInstance().constructCollectionType(List.class, responseClass);
         var result = mvc.perform(get(String.format(endpoint, args))).andExpect(status().is(200)).andReturn();
         return objectMapper.readValue(result.getResponse().getContentAsString(), arrayType);
     }
 
-    protected <RequestT> MockHttpServletRequestBuilder createRequest(MockHttpServletRequestBuilder builder, RequestT requestBody) throws JsonProcessingException {
+    protected <RequestT> MockHttpServletRequestBuilder createRequest(MockHttpServletRequestBuilder builder, RequestT requestBody) {
         return builder
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBody));

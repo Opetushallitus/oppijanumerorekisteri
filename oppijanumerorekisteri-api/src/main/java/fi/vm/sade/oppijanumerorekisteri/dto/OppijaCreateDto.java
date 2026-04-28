@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 
 @Getter
 @Setter
@@ -19,34 +20,34 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @AllArgsConstructor
 public class OppijaCreateDto {
 
-    @Schema(required = true)
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     @NotEmpty
     private String etunimet;
 
-    @Schema(required = true)
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     @NotEmpty
     private String kutsumanimi;
 
-    @Schema(required = true)
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     @NotEmpty
     private String sukunimi;
 
     // mahdollistaa hetuttoman yksilöinnin luonnin yhteydessä
     private boolean yksiloity;
 
-    @Schema(required = true)
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     @NotNull
     private LocalDate syntymaaika;
 
-    @Schema(description = "Koodisto: 'sukupuoli'", required = true)
+    @Schema(description = "Koodisto: 'sukupuoli'", requiredMode = RequiredMode.REQUIRED)
     @NotEmpty
     private String sukupuoli;
 
-    @Schema(required = true)
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     @Valid
     private KielisyysDto aidinkieli;
 
-    @Schema(required = true)
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     @Valid
     @NotEmpty
     private Set<KansalaisuusDto> kansalaisuus = new HashSet<>();

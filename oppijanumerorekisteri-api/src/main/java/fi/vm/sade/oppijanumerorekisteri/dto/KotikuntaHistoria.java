@@ -1,25 +1,17 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import java.sql.Date;
 import java.time.LocalDate;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class KotikuntaHistoria {
-    private String oid;
-    private String kotikunta;
-    private LocalDate kuntaanMuuttopv;
-    private LocalDate kunnastaPoisMuuttopv;
-
-    public KotikuntaHistoria(String oid, String kotikunta, Date kuntaanMuuttopv, Date kunnastaPoisMuuttopv) {
-        this.oid = oid;
-        this.kotikunta = kotikunta;
-        this.kuntaanMuuttopv = kuntaanMuuttopv != null ? kuntaanMuuttopv.toLocalDate() : null;
-        this.kunnastaPoisMuuttopv = kunnastaPoisMuuttopv != null ? kunnastaPoisMuuttopv.toLocalDate() : null;
-    }
+    private final String oid;
+    private final String kotikunta;
+    private final LocalDate kuntaanMuuttopv;
+    private final LocalDate kunnastaPoisMuuttopv;
 }
