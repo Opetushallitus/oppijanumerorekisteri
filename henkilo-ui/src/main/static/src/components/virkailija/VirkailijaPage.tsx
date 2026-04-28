@@ -14,10 +14,10 @@ import { SulkeutuneetKayttooikeudet } from './SulkeutuneetKayttooikeudet';
 import { VoimassaolevatKayttooikeudet } from './VoimassaolevatKayttooikeudet';
 import HenkiloViewCreateKayttooikeus from '../common/henkilo/HenkiloViewCreateKayttooikeus';
 import { HenkiloViewOrganisationContent } from '../common/henkilo/HenkiloViewOrganisationContent';
-import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
 import { OphDsCard } from '../design-system/OphDsCard';
 import { GenericErrorPage } from '../GenericErrorPage';
 import { OphDsSpinner } from '../design-system/OphDsSpinner';
+import { KayttoEstettyPage } from '../KayttoEstettyPage';
 
 export const VirkailijaPage = () => {
     const { oid } = useParams();
@@ -39,7 +39,7 @@ export const VirkailijaPage = () => {
     if (error) {
         if ('status' in error) {
             if (error.status === 401 || error.status === 403) {
-                return <VirheKayttoEstetty L={L} />;
+                return <KayttoEstettyPage />;
             }
         }
         return <GenericErrorPage link="/virkailijahaku" />;

@@ -10,12 +10,12 @@ import { OphDsCard } from '../design-system/OphDsCard';
 import { Identifications } from '../henkilo/Identifications';
 import { OppijaPerustiedot } from './OppijaPerustiedot';
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent';
-import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
 import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { useGetHenkiloQuery } from '../../api/oppijanumerorekisteri';
 import { isOnrRekisterinpitaja } from '../../utilities/palvelurooli.util';
 import { OppijaTabs } from './OppijaTabs';
 import { OphDsSpinner } from '../design-system/OphDsSpinner';
+import { KayttoEstettyPage } from '../KayttoEstettyPage';
 
 export const OppijaPage = () => {
     const { oid } = useParams();
@@ -39,7 +39,7 @@ export const OppijaPage = () => {
     if (isHenkiloLoading || isLoading) {
         return <OphDsSpinner />;
     } else if (henkilo?.henkiloKayttoEstetty) {
-        return <VirheKayttoEstetty L={L} />;
+        return <KayttoEstettyPage />;
     } else {
         return (
             <OphDsPage
