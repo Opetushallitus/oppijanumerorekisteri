@@ -453,16 +453,6 @@ export const OppijaPerustiedot = ({ oid }: { oid: string }) => {
 
     return (
         <section aria-labelledby={sectionId} className="henkiloViewUserContentWrapper" style={{ marginBottom: '2rem' }}>
-            <h2 id={sectionId}>{L('OPPIJAN_PERUSTIEDOT') + yksilointiTranslation}</h2>
-            <div className={styles.perustiedotContent}>
-                {isLoading ? (
-                    <OphDsSpinner />
-                ) : isForm && henkilo ? (
-                    <OppijaPerustiedotForm henkilo={henkilo} closeForm={() => setForm(false)} />
-                ) : (
-                    <OppijaPerustiedotView oid={oid} openForm={() => setForm(true)} />
-                )}
-            </div>
             {henkilo?.yksilointivirheet?.length ? (
                 <OphDsBanner type="error">
                     {henkilo?.yksilointivirheet.map((v) => {
@@ -482,6 +472,16 @@ export const OppijaPerustiedot = ({ oid }: { oid: string }) => {
             ) : (
                 ''
             )}
+            <h2 id={sectionId}>{L('OPPIJAN_PERUSTIEDOT') + yksilointiTranslation}</h2>
+            <div className={styles.perustiedotContent}>
+                {isLoading ? (
+                    <OphDsSpinner />
+                ) : isForm && henkilo ? (
+                    <OppijaPerustiedotForm henkilo={henkilo} closeForm={() => setForm(false)} />
+                ) : (
+                    <OppijaPerustiedotView oid={oid} openForm={() => setForm(true)} />
+                )}
+            </div>
         </section>
     );
 };
