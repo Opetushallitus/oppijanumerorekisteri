@@ -102,7 +102,6 @@ class CdkApp extends cdk.App {
 
 class DnsStack extends cdk.Stack {
   readonly oppijanumerorekisteriHostedZone: route53.IHostedZone;
-  readonly tiedotuspalveluHostedZone: route53.IHostedZone;
   constructor(scope: constructs.Construct, id: string, props: cdk.StackProps) {
     super(scope, id, props);
 
@@ -113,14 +112,6 @@ class DnsStack extends cdk.Stack {
         zoneName: config.oauthDomainName,
       },
     );
-    this.tiedotuspalveluHostedZone = new route53.HostedZone(
-      this,
-      "TiedotuspalveluHostedZone",
-      {
-        zoneName: config.tiedotuspalveluDomain,
-      },
-    );
-    this.exportValue(this.tiedotuspalveluHostedZone.hostedZoneId);
   }
 }
 
