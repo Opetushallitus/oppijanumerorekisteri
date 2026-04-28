@@ -4,9 +4,9 @@ import KayttooikeusryhmaSelect from '../select/KayttooikeusryhmaSelect';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { SallitutKayttajatyypit } from '../../kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage';
 import OphModal from '../modal/OphModal';
-import { SpinnerInButton } from '../icons/SpinnerInButton';
 import { useLocalisations } from '../../../selectors';
 import { OphDsBanner } from '../../design-system/OphDsBanner';
+import { OphDsButton } from '../../design-system/OphDsButton';
 
 type Props = {
     kayttooikeusryhmat: Kayttooikeusryhma[];
@@ -31,14 +31,14 @@ const KayttooikeusryhmaSelectModal = (props: Props) => {
     return (
         <>
             <div>
-                <button
-                    data-testid="valitseKayttooikeusOpenModal"
-                    className="oph-ds-button"
-                    disabled={props.disabled || !!props.loading || !isValid}
+                <OphDsButton
+                    dataTestid="valitseKayttooikeusOpenModal"
+                    disabled={props.disabled || !isValid}
+                    isLoading={props.loading}
                     onClick={() => setVisible(true)}
                 >
-                    <SpinnerInButton show={!!props.loading} /> {L('OMATTIEDOT_VALITSE_KAYTTOOIKEUSRYHMA')}
-                </button>
+                    {L('OMATTIEDOT_VALITSE_KAYTTOOIKEUSRYHMA')}
+                </OphDsButton>
             </div>
             {!isValid && (
                 <div style={{ marginTop: '1rem' }}>

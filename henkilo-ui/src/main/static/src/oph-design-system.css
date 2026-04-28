@@ -188,6 +188,20 @@
     animation: oph-ds-dash 1.4s ease-in-out infinite;
 }
 
+.oph-ds-spinner-in-button {
+    width: 20px;
+    height: 20px;
+    color: #FFFFFF;
+    animation: oph-ds-rotate 1.4s linear infinite;
+}
+
+.oph-ds-spinner-circle-in-button {
+    stroke-dasharray: 80, 200;
+    stroke-dashoffset: 0;
+    stroke-linecap: round;
+    animation: oph-ds-dash 1.4s ease-in-out infinite;
+}
+
 @keyframes oph-ds-rotate {
     100% { transform: rotate(360deg); }
 }

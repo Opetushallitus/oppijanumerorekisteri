@@ -9,7 +9,7 @@ import { usePutKutsuMutation } from '../../api/kayttooikeus';
 import { useAppDispatch } from '../../store';
 import { add } from '../../slices/toastSlice';
 import { getTextGroupLocalisation } from '../../utilities/localisation.util';
-import { OphDsSpinner } from '../design-system/OphDsSpinner';
+import { OphDsButton } from '../design-system/OphDsButton';
 
 type Props = {
     addedOrgs: readonly KutsuOrganisaatio[];
@@ -93,12 +93,9 @@ export const KutsuminenConfirmation = ({ addedOrgs, basicInfo, modalCloseFn, res
                             {L('VIRKAILIJAN_LISAYS_LAHETETTY')}
                         </button>
                     ) : (
-                        <>
-                            <button className="oph-ds-button" onClick={sendInvitation}>
-                                {L('VIRKAILIJAN_LISAYS_TALLENNA')}
-                            </button>
-                            {isLoading && <OphDsSpinner />}
-                        </>
+                        <OphDsButton isLoading={isLoading} onClick={sendInvitation}>
+                            {L('VIRKAILIJAN_LISAYS_TALLENNA')}
+                        </OphDsButton>
                     )}
                 </div>
             </div>
