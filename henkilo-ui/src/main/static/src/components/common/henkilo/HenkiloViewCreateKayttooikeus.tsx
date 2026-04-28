@@ -112,10 +112,12 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                 <div className="oph-ds-label">{L('HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE')}</div>
                 <div className={styles.kayttooikeusFormOrganisationSelection}>
                     <OphDsOrganisaatioSelect
+                        inputId="lisaaKayttooikeusValitseOrganisaatio"
                         disabled={!!ryhmaSelection || !!selectedList?.length}
                         onChange={selectOrganisation}
                     />
                     <OphDsRyhmaSelect
+                        inputId="lisaaKayttooikeusValitseRyhma"
                         selectOrganisaatio={selectRyhma}
                         selectedOrganisaatioOid={ryhmaSelection?.value}
                         disabled={!!organisationSelection || !!selectedList?.length}
@@ -173,9 +175,10 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                     </div>
                     <div className={styles.selectedKayttooikeus}>
                         {selectedList.map((selected, idx) => (
-                            <div key={idx}>
+                            <div data-testid={`kayttooikeusSelected-${selected.label.trim()}`} key={idx}>
                                 <span>{selected.label}</span>
                                 <button
+                                    data-testid={`kayttooikeusRemoveSelected-${selected.label.trim()}`}
                                     title={L('POISTA')}
                                     className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
                                     disabled={!oidOrganisaatio}
@@ -190,14 +193,18 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                 <div></div>
                 <div>
                     {((!organisationSelection && !ryhmaSelection) || !selectedList?.length) && (
-                        <div style={{ marginBottom: '1rem' }}>
+                        <div data-testid="kayttooikeusValidationWarningBanner" style={{ marginBottom: '1rem' }}>
                             <OphDsBanner type="warning">
                                 <ul>
                                     {!organisationSelection && !ryhmaSelection && (
-                                        <li>{L('HENKILO_LISAA_KAYTTOOIKEUDET_ORGANISAATIO_VALID')}</li>
+                                        <li data-testid="kayttooikeusOrgSelectionInvalid">
+                                            {L('HENKILO_LISAA_KAYTTOOIKEUDET_ORGANISAATIO_VALID')}
+                                        </li>
                                     )}
                                     {!selectedList?.length && (
-                                        <li>{L('HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID')}</li>
+                                        <li data-testid="kayttooikeusSelectedCountMinInvalid">
+                                            {L('HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID')}
+                                        </li>
                                     )}
                                 </ul>
                             </OphDsBanner>
@@ -205,6 +212,7 @@ const HenkiloViewCreateKayttooikeus = ({ existingKayttooikeusRef, isPalvelukaytt
                     )}
                     <div>
                         <button
+                            data-testid="kayttooikeusTallenna"
                             className="oph-ds-button"
                             disabled={(!organisationSelection && !ryhmaSelection) || !selectedList?.length}
                             onClick={() => createKayttooikeusAction()}

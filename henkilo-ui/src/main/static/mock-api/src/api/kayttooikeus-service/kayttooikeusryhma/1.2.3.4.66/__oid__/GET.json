@@ -1,0 +1,104 @@
+[
+    {
+        "ryhmaId": 68525071,
+        "myonnettyTapahtumaId": null,
+        "organisaatioOid": null,
+        "ryhmaTunniste": "Virkailijan kutsuminen_1566892524878",
+        "ryhmaNames": {
+            "id": 68525076,
+            "texts": [
+                {
+                    "text": "Virkailijan kutsuminen",
+                    "lang": "EN"
+                },
+                {
+                    "text": "Virkailijan kutsuminen",
+                    "lang": "FI"
+                },
+                {
+                    "text": "Virkailijan kutsuminen",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "ryhmaKuvaus": {
+            "id": 68525072,
+            "texts": [
+                {
+                    "text": "Virkailijan kutsuminen rajapinnan kautta ilman käyttöliittymälomaketta",
+                    "lang": "EN"
+                },
+                {
+                    "text": "Virkailijan kutsuminen rajapinnan kautta ilman käyttöliittymälomaketta",
+                    "lang": "FI"
+                },
+                {
+                    "text": "Virkailijan kutsuminen rajapinnan kautta ilman käyttöliittymälomaketta",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "tila": null,
+        "tyyppi": "KORyhma",
+        "alkuPvm": null,
+        "voimassaPvm": null,
+        "kasitelty": null,
+        "kasittelijaOid": null,
+        "kasittelijaNimi": null,
+        "selected": false,
+        "removed": false,
+        "muutosSyy": null,
+        "sallittuKayttajatyyppi": "PALVELU"
+    },
+    {
+        "ryhmaId": 69331052,
+        "myonnettyTapahtumaId": null,
+        "organisaatioOid": null,
+        "ryhmaTunniste": "ARVO-rajapintakäyttäjä (käyttöoikeus puuttuu)_1647607309056",
+        "ryhmaNames": {
+            "id": 69331057,
+            "texts": [
+                {
+                    "text": "ARVO-API user",
+                    "lang": "EN"
+                },
+                {
+                    "text": "ARVO-rajapintakäyttäjä ",
+                    "lang": "FI"
+                },
+                {
+                    "text": "ARVO-API användare",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "ryhmaKuvaus": {
+            "id": 69331053,
+            "texts": [
+                {
+                    "text": "The ARVO-API user is responsible for the API user account, technical implementation and use of the ArvoAPI in their own organization. Permissions are granted by CSC. Learn more about the ArvoAPI:  https://wiki.eduuni.fi/display/CscArvo/Arvon+rajapinnat\n",
+                    "lang": "EN"
+                },
+                {
+                    "text": "Arvo-rajapintakäyttäjä vastaa organisaationsa osalta ArvoAPI:n tunnuksista, teknisestä käyttöönotosta ja käytöstä. Käyttöoikeudet myöntää CSC. Lisätietoja ArvoAPIsta: https://wiki.eduuni.fi/display/CscArvo/Arvon+rajapinnat",
+                    "lang": "FI"
+                },
+                {
+                    "text": "ARVO-API användaren ansvarar för API-användarkontot, teknisk implementering och användning av ArvoAPI i sin egen organisation. Behörigheter ges av CSC. Läs mer om ArvoAPI: https://wiki.eduuni.fi/display/CscArvo/Arvon+rajapinnat",
+                    "lang": "SV"
+                }
+            ]
+        },
+        "tila": null,
+        "tyyppi": "KORyhma",
+        "alkuPvm": null,
+        "voimassaPvm": null,
+        "kasitelty": null,
+        "kasittelijaOid": null,
+        "kasittelijaNimi": null,
+        "selected": false,
+        "removed": false,
+        "muutosSyy": null,
+        "sallittuKayttajatyyppi": null
+    }
+]

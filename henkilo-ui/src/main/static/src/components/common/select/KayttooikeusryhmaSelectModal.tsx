@@ -32,6 +32,7 @@ const KayttooikeusryhmaSelectModal = (props: Props) => {
         <>
             <div>
                 <button
+                    data-testid="valitseKayttooikeusOpenModal"
                     className="oph-ds-button"
                     disabled={props.disabled || !!props.loading || !isValid}
                     onClick={() => setVisible(true)}

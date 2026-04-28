@@ -70,7 +70,7 @@ const KayttooikeusryhmaSelect = (props: Props) => {
     };
 
     return (
-        <div className={styles.kayttooikeusryhmaSelect}>
+        <div data-testid="kayttooikeusryhmaSelect" className={styles.kayttooikeusryhmaSelect}>
             <div>
                 <input
                     className="oph-ds-input"
@@ -83,6 +83,7 @@ const KayttooikeusryhmaSelect = (props: Props) => {
                     {naytettavat.map((n) => (
                         <button
                             key={n.id}
+                            data-testid={`valittavat-${n.nimi.trim()}`}
                             className={valittu === n ? styles.valittu : ''}
                             onClick={(event) => onSelect(event, n)}
                         >
@@ -95,12 +96,20 @@ const KayttooikeusryhmaSelect = (props: Props) => {
                 <div>
                     {valittu && (
                         <>
-                            <div style={{ fontWeight: 'bold' }}>{valittu.nimi}</div>
-                            <div>{valittu.kuvaus}</div>
+                            <div data-testid="kayttooikeusValittuNimi" style={{ fontWeight: 'bold' }}>
+                                {valittu.nimi}
+                            </div>
+                            <div data-testid="kayttooikeusValittuKuvaus">{valittu.kuvaus}</div>
                         </>
                     )}
                 </div>
-                <button type="button" className="oph-ds-button" onClick={onSubmit} disabled={!valittu}>
+                <button
+                    data-testid="kayttooikeusLisaaHaettaviin"
+                    type="button"
+                    className="oph-ds-button"
+                    onClick={onSubmit}
+                    disabled={!valittu}
+                >
                     {L('OMATTIEDOT_LISAA_HAETTAVIIN_KAYTTOOIKEUSRYHMIIN')}
                 </button>
             </div>

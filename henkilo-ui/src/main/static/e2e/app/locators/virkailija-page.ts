@@ -47,5 +47,24 @@ export async function gotoVirkailija(page: Page, oid: string) {
                 .getByRole('dialog', { name: 'Aseta salasana' })
                 .getByRole('button', { name: 'Aseta salasana' }),
         },
+        kayttooikeusForm: {
+            valitseOrganisaatio: page.locator('#lisaaKayttooikeusValitseOrganisaatio'),
+            valitseRyhma: page.locator('#lisaaKayttooikeusValitseRyhma'),
+            alkuPvm: page.getByLabel('Käyttöoikeus alkaa'),
+            paattymisPvm: page.getByLabel('Käyttöoikeus päättyy'),
+            valitseKayttooikeusOpenModal: page.getByTestId('valitseKayttooikeusOpenModal'),
+            valitseModal: page.getByTestId('kayttooikeusryhmaSelect'),
+            arvoRajapintakayttaja: page.getByTestId('valittavat-ARVO-rajapintakäyttäjä'),
+            valittuNimi: page.getByTestId('kayttooikeusValittuNimi'),
+            valittuKuvaus: page.getByTestId('kayttooikeusValittuKuvaus'),
+            lisaaHaettaviin: page.getByTestId('kayttooikeusLisaaHaettaviin'),
+            valitseModalClose: page.locator('button[title="Close"]'),
+            arvoRajapintakayttajaLisatty: page.getByTestId('kayttooikeusSelected-ARVO-rajapintakäyttäjä'),
+            arvoRajapintakayttajaPoistaLisatty: page.getByTestId('kayttooikeusRemoveSelected-ARVO-rajapintakäyttäjä'),
+            validationWarningBanner: page.getByTestId('kayttooikeusValidationWarningBanner'),
+            orgSelectionInvalid: page.getByTestId('kayttooikeusOrgSelectionInvalid'),
+            selectedCountMinInvalid: page.getByTestId('kayttooikeusSelectedCountMinInvalid'),
+            tallenna: page.getByTestId('kayttooikeusTallenna'),
+        },
     };
 }
