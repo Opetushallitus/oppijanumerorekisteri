@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.api;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -28,7 +29,7 @@ public class HenkiloJsonTest {
     public void testHenkiloDtoSerialize() throws Exception {
         HenkiloDto henkiloDto = createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
-        // assertThat(henkiloDtoJson.writeValueAsString(henkiloDto)).isEqualTo(getFile("henkilo/testHenkiloDto.json"));
+        JSONAssert.assertEquals(getFile("henkilo/testHenkiloDto.json"), henkiloDtoJson.writeValueAsString(henkiloDto), true);
     }
 
     @Test
