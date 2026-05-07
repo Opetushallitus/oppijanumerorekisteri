@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test';
+import { hakaTunnus } from '../../locators';
 
 export async function gotoVirkailija(page: Page, oid: string) {
     await page.goto(`/henkilo-ui/virkailija/${oid}`);
@@ -26,18 +27,7 @@ export async function gotoVirkailija(page: Page, oid: string) {
             poista: page.getByRole('button', { name: 'Poista käyttäjätunnus' }),
             vahvaistaPoisto: page.getByRole('button', { name: 'Vahvista käyttäjätunnuksen poistaminen' }),
         },
-        haka: {
-            tunnisteet: page.getByRole('dialog', { name: 'Haka-tunnisteet' }).locator('li'),
-            get: (i: number) => {
-                const row = page.getByLabel('Haka-tunnisteet').locator(`ul li:nth-child(${i})`);
-                return {
-                    tunniste: row.locator('span'),
-                    remove: row.locator('button'),
-                };
-            },
-            input: page.getByLabel('Lisää uusi tunnus'),
-            submit: page.getByRole('button', { name: 'Tallenna tunnus' }),
-        },
+        haka: hakaTunnus(page),
         password: {
             password: page.getByLabel('Uusi salasana'),
             passwordError: page.getByTestId('input-error-password'),

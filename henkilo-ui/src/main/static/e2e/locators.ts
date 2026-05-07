@@ -20,3 +20,18 @@ export const kayttooikeusryhmaSelectModal = (page: Page) => {
         lisaa: page.getByRole('button', { name: 'Lisää haettaviin käyttöoikeuksiin' }),
     };
 };
+
+export const hakaTunnus = (page: Page) => {
+    return {
+        tunnukset: page.getByRole('dialog', { name: 'Haka-tunnukset' }).getByTestId('haka-tunnukset').locator('div'),
+        get: (i: number) => {
+            const row = page.getByTestId('haka-tunnukset').locator(`div:nth-child(${i})`);
+            return {
+                tunniste: row.locator('span'),
+                remove: row.locator('button'),
+            };
+        },
+        input: page.getByLabel('Lisää uusi Haka-tunnus'),
+        submit: page.getByRole('button', { name: 'Tallenna tunnus' }),
+    };
+};

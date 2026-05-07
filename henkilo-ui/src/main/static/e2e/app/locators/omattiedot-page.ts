@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { kayttooikeusryhmaSelectModal, selectLocator } from '../../locators';
+import { hakaTunnus, kayttooikeusryhmaSelectModal, selectLocator } from '../../locators';
 
 export async function gotoOmattiedot(page: Page) {
     await page.goto('/henkilo-ui/omattiedot');
@@ -31,6 +31,7 @@ export async function gotoOmattiedot(page: Page) {
         buttons: {
             muokkaa: page.getByRole('button', { name: 'Muokkaa' }).first(),
             password: page.getByRole('button', { name: 'Aseta salasana' }),
+            haka: page.getByRole('button', { name: 'Lisää Haka-tunnus' }),
             anomusilmoitukset: page.getByRole('button', { name: 'Anomusilmoitukset' }),
         },
         password: {
@@ -42,6 +43,7 @@ export async function gotoOmattiedot(page: Page) {
                 .getByRole('dialog', { name: 'Aseta salasana' })
                 .getByRole('button', { name: 'Aseta salasana' }),
         },
+        haka: hakaTunnus(page),
         anomusilmoitukset: {
             anomusilmoituksetSelect: selectLocator(page, '#anomusilmoitusSelect'),
             rows: page.locator('.anomusilmoitus-rows'),

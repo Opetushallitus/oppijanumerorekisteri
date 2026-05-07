@@ -111,6 +111,40 @@ test.describe('omattiedot', () => {
             await expect(toastWithText(page, 'Salasanan tallennus onnistui.')).toBeVisible();
         });
 
+        test('edits haka-tunnus', async ({ page }) => {
+            const { buttons, haka } = await gotoOmattiedot(page);
+
+            await page.route('/kayttooikeus-service/henkilo/hakatunnus', async (route) => {
+                await route.fulfill({
+                    json: [],
+                });
+            });
+
+            await buttons.haka.click();
+            await expect(haka.tunnukset).toHaveCount(0);
+
+            await page.route('/kayttooikeus-service/henkilo/hakatunnus', async (route) => {
+                await route.fulfill({
+                    json: ['uusitunnus'],
+                });
+            });
+
+            await haka.input.fill('uusitunnus');
+            await haka.submit.click();
+
+            await expect(haka.tunnukset).toHaveCount(1);
+            await expect(haka.get(1).tunniste).toHaveText('uusitunnus');
+
+            await page.route('/kayttooikeus-service/henkilo/hakatunnus', async (route) => {
+                await route.fulfill({
+                    json: [],
+                });
+            });
+
+            await haka.get(1).remove.click();
+            await expect(haka.tunnukset).toHaveCount(0);
+        });
+
         test('anomusilmoitukset', async ({ page }) => {
             const { buttons, anomusilmoitukset } = await gotoOmattiedot(page);
 

@@ -79,7 +79,7 @@ test.describe('virkailijan perustiedot', () => {
         });
 
         await buttons.haka.click();
-        await expect(haka.tunnisteet).toHaveCount(0);
+        await expect(haka.tunnukset).toHaveCount(0);
 
         await page.route('/kayttooikeus-service/henkilo/1.2.3.4.66/hakatunnus', async (route) => {
             await route.fulfill({
@@ -90,7 +90,7 @@ test.describe('virkailijan perustiedot', () => {
         await haka.input.fill('uusitunnus');
         await haka.submit.click();
 
-        await expect(haka.tunnisteet).toHaveCount(1);
+        await expect(haka.tunnukset).toHaveCount(1);
         await expect(haka.get(1).tunniste).toHaveText('uusitunnus');
 
         await page.route('/kayttooikeus-service/henkilo/1.2.3.4.66/hakatunnus', async (route) => {
@@ -100,7 +100,7 @@ test.describe('virkailijan perustiedot', () => {
         });
 
         await haka.get(1).remove.click();
-        await expect(haka.tunnisteet).toHaveCount(0);
+        await expect(haka.tunnukset).toHaveCount(0);
     });
 
     test('changes password', async ({ page }) => {

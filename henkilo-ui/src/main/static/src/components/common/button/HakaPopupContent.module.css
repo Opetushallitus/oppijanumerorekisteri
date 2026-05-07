@@ -5,11 +5,11 @@
     margin-top: 24px;
 }
 
-.hakaTunnisteList > li:nth-child(odd) {
+.hakaTunnusList > div:nth-child(odd) {
     background-color: #F6F6F6;
 }
 
-.hakaTunnisteList > li {
+.hakaTunnusList > div {
     display: flex;
     justify-content: space-between;
     padding: 16px;

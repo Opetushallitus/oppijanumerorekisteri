@@ -27,6 +27,7 @@ import { SelectOption, selectStyles } from '../../utilities/select';
 import { hasAnyPalveluRooli } from '../../utilities/palvelurooli.util';
 import PasswordPopupContent from '../common/button/PasswordPopupContent';
 import { OmattiedotAnomusilmoitus } from './OmattiedotAnomusilmoitus';
+import { HakaTunnusPopupContent, isHakaOhjeEnabled } from '../common/button/HakaPopupContent';
 
 import styles from './OmattiedotPerustiedot.module.css';
 
@@ -119,6 +120,7 @@ const OmattiedotPerustiedotView = ({ oid, openForm }: { oid: string; openForm: (
     const { data: kayttajatiedot } = useGetKayttajatiedotQuery(oid);
     const [password, setPassword] = useState(false);
     const [anomusilmoitus, setAnomusilmoitus] = useState(false);
+    const [haka, setHaka] = useState(false);
 
     const showAnomusIlmoitus = useMemo(() => {
         return hasAnyPalveluRooli(omattiedot?.organisaatiot, ['KAYTTOOIKEUS_REKISTERINPITAJA']);
@@ -134,6 +136,11 @@ const OmattiedotPerustiedotView = ({ oid, openForm }: { oid: string; openForm: (
             {anomusilmoitus && (
                 <OphModal title={L('HENKILO_ANOMUSILMOITUKSET')} onClose={() => setAnomusilmoitus(false)}>
                     <OmattiedotAnomusilmoitus onClose={() => setAnomusilmoitus(false)} />
+                </OphModal>
+            )}
+            {haka && (
+                <OphModal title={L('HAKA_TUNNUS_OTSIKKO')} onClose={() => setHaka(false)}>
+                    <HakaTunnusPopupContent oid={oid} view="omattiedot" />
                 </OphModal>
             )}
             <div className={styles.perustiedotRows}>
@@ -213,6 +220,11 @@ const OmattiedotPerustiedotView = ({ oid, openForm }: { oid: string; openForm: (
                 <button className="oph-ds-button oph-ds-button-bordered" onClick={() => setPassword(true)}>
                     {L('SALASANA_ASETA')}
                 </button>
+                {isHakaOhjeEnabled && (
+                    <button className="oph-ds-button oph-ds-button-bordered" onClick={() => setHaka(true)}>
+                        {L('LISAA_HAKA_LINKKI')}
+                    </button>
+                )}
                 {showAnomusIlmoitus && (
                     <button className="oph-ds-button oph-ds-button-bordered" onClick={() => setAnomusilmoitus(true)}>
                         {L('HENKILO_ANOMUSILMOITUKSET')}

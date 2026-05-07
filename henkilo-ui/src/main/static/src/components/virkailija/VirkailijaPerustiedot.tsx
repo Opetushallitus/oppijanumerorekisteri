@@ -16,7 +16,7 @@ import { isOnrRekisterinpitaja } from '../../utilities/palvelurooli.util';
 import { isApiError } from '../../api/common';
 import { isValidKayttajatunnus } from '../../validation/KayttajatunnusValidator';
 import OphModal from '../common/modal/OphModal';
-import HakatunnistePopupContent from '../common/button/HakaPopupContent';
+import { HakaTunnusPopupContent } from '../common/button/HakaPopupContent';
 import PasswordPopupContent from '../common/button/PasswordPopupContent';
 import { useGetHenkiloQuery } from '../../api/oppijanumerorekisteri';
 import { parseWorkEmails } from '../../utilities/henkilo.util';
@@ -104,8 +104,8 @@ export const VirkailijaPerustiedot = ({ oid }: { oid: string }) => {
     return (
         <section aria-labelledby={sectionId} className="henkiloViewUserContentWrapper" style={{ marginBottom: '2rem' }}>
             {haka && (
-                <OphModal title={L('HAKATUNNISTEET')} onClose={() => setHaka(false)}>
-                    <HakatunnistePopupContent henkiloOid={oid} />
+                <OphModal title={L('HAKA_TUNNUS_OTSIKKO')} onClose={() => setHaka(false)}>
+                    <HakaTunnusPopupContent oid={oid} view="virkailija" />
                 </OphModal>
             )}
             {password && (

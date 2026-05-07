@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 
-import { useGetHakatunnisteetQuery, usePutHakatunnisteetMutation } from '../../../api/kayttooikeus';
+import {
+    useGetHakaTunnuksetQuery,
+    useGetOmatHakaTunnuksetQuery,
+    usePutHakaTunnuksetMutation,
+    usePutOmatHakaTunnuksetMutation,
+} from '../../../api/kayttooikeus';
 import { useLocalisations } from '../../../selectors';
 import { useAppDispatch } from '../../../store';
 import { add } from '../../../slices/toastSlice';
@@ -9,32 +14,44 @@ import { OphDsInput } from '../../design-system/OphDsInput';
 import styles from './HakaPopupContent.module.css';
 
 type OwnProps = {
-    henkiloOid: string;
+    oid: string;
+    view: 'virkailija' | 'omattiedot';
 };
 
-const HakatunnistePopupContent = ({ henkiloOid }: OwnProps) => {
+export const isHakaOhjeEnabled =
+    window.location.hostname.includes('virkailija.hahtuvaopintopolku.fi') ||
+    window.location.hostname.includes('virkailija.untuvaopintopolku.fi') ||
+    window.location.hostname.includes('virkailija.testiopintopolku.fi') ||
+    window.location.host.includes('localhost:8080') ||
+    window.location.host.includes('localhost:8686');
+
+export const HakaTunnusPopupContent = ({ oid, view }: OwnProps) => {
     const dispatch = useAppDispatch();
     const { L } = useLocalisations();
-    const { data: hakatunnisteet } = useGetHakatunnisteetQuery(henkiloOid);
-    const [putHakatunnisteet] = usePutHakatunnisteetMutation();
-    const [newTunniste, setNewTunniste] = useState('');
+    const { data: tunnukset } = view === 'omattiedot' ? useGetOmatHakaTunnuksetQuery() : useGetHakaTunnuksetQuery(oid);
+    const [putHakaTunnukset] = usePutHakaTunnuksetMutation();
+    const [putOmatHakaTunnukset] = usePutOmatHakaTunnuksetMutation();
+    const [newTunnus, setNewTunnus] = useState('');
+    const ohjeUrl = view === 'omattiedot' ? 'https://wiki.eduuni.fi/x/H4ZcCw' : 'https://wiki.eduuni.fi/x/NrGmFg';
+    const ohjeText = view === 'omattiedot' ? 'HAKA_TUNNUS_OHJE_OMATTIEDOT' : 'HAKA_TUNNUS_OHJE_VIRKAILIJA';
+    const eiTunnuksiaText =
+        view === 'omattiedot' ? 'HAKA_TUNNUS_EI_TUNNUKSIA_OMATTIEDOT' : 'HAKA_TUNNUS_EI_TUNNUKSIA_VIRKAILIJA';
 
-    async function addHakatunniste() {
-        if (newTunniste.length > 0 && hakatunnisteet) {
-            await saveHakatunnisteet([...hakatunnisteet, newTunniste]);
-            setNewTunniste('');
+    async function addTunnus() {
+        if (newTunnus.length > 0 && tunnukset) {
+            await saveTunnukset([...tunnukset, newTunnus]);
+            setNewTunnus('');
         }
     }
 
-    async function removeHakatunniste(tunniste: string) {
-        if (hakatunnisteet) {
-            const filteredTunnisteet = hakatunnisteet?.filter((t) => t !== tunniste);
-            await saveHakatunnisteet(filteredTunnisteet);
+    async function removeTunnus(tunnus: string) {
+        if (tunnukset) {
+            await saveTunnukset(tunnukset.filter((t) => t !== tunnus));
         }
     }
 
-    async function saveHakatunnisteet(tunnisteet: string[]) {
-        await putHakatunnisteet({ oid: henkiloOid, tunnisteet: tunnisteet })
+    async function saveTunnukset(tunnukset: string[]) {
+        await (view === 'omattiedot' ? putOmatHakaTunnukset(tunnukset) : putHakaTunnukset({ oid, tunnukset }))
             .unwrap()
             .catch(({ data }) => {
                 if (data?.errorType === 'ValidationException' && data?.message.indexOf('ovat jo käytössä') !== -1) {
@@ -42,7 +59,7 @@ const HakatunnistePopupContent = ({ henkiloOid }: OwnProps) => {
                         add({
                             id: `DUPLICATE_HAKA_KEY-${Math.random()}`,
                             type: 'error',
-                            header: `${L('HAKATUNNISTEET_VIRHE_KAYTOSSA_ALKU')} (${newTunniste}) ${L('HAKATUNNISTEET_VIRHE_KAYTOSSA_LOPPU')}`,
+                            header: `${L('HAKA_TUNNUS_VIRHE_KAYTOSSA')} (${newTunnus})`,
                         })
                     );
                 }
@@ -51,33 +68,41 @@ const HakatunnistePopupContent = ({ henkiloOid }: OwnProps) => {
 
     return (
         <div className={styles.hakaPopupContent}>
-            {hakatunnisteet && hakatunnisteet?.length > 0 ? (
-                <ul className={styles.hakaTunnisteList}>
-                    {hakatunnisteet.map((hakatunniste) => (
-                        <li key={hakatunniste}>
-                            <span>{hakatunniste}</span>
+            {isHakaOhjeEnabled && (
+                <p>
+                    {L(ohjeText)}{' '}
+                    <a href={ohjeUrl} target="_blank" rel="noreferrer">
+                        {ohjeUrl}
+                    </a>
+                </p>
+            )}
+            {tunnukset && tunnukset?.length > 0 ? (
+                <div className={styles.hakaTunnusList} data-testid="haka-tunnukset">
+                    {tunnukset.map((tunnus) => (
+                        <div key={tunnus}>
+                            <span>{tunnus}</span>
                             <button
                                 className="oph-ds-button oph-ds-button-bordered oph-ds-icon-button oph-ds-icon-button-delete"
                                 title={L('POISTA')}
-                                onClick={() => removeHakatunniste(hakatunniste)}
+                                onClick={() => removeTunnus(tunnus)}
                             />
-                        </li>
+                        </div>
                     ))}
-                </ul>
+                </div>
             ) : (
-                <div>{L('EI_HAKATUNNUKSIA')}</div>
+                <div>{L(eiTunnuksiaText)}</div>
             )}
             <OphDsInput
-                id="hakatunniste"
-                label="Lisää uusi tunnus"
-                defaultValue={newTunniste}
-                onChange={(t) => setNewTunniste(t)}
+                id="tunnus"
+                label={L('HAKA_TUNNUS_LISAA_TUNNUS')}
+                defaultValue={newTunnus}
+                onChange={setNewTunnus}
             />
             <div>
                 <button
                     className="oph-ds-button"
-                    disabled={!newTunniste || !!hakatunnisteet?.includes(newTunniste)}
-                    onClick={() => addHakatunniste()}
+                    disabled={!newTunnus || !!tunnukset?.includes(newTunnus)}
+                    onClick={() => addTunnus()}
                 >
                     {L('TALLENNA_TUNNUS')}
                 </button>
@@ -85,5 +110,3 @@ const HakatunnistePopupContent = ({ henkiloOid }: OwnProps) => {
         </div>
     );
 };
-
-export default HakatunnistePopupContent;

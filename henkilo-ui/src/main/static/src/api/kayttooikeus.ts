@@ -188,13 +188,14 @@ export const kayttooikeusApi = createApi({
     }),
     tagTypes: [
         'omattiedot',
+        'omathakatunnus',
         'omatkayttooikeusryhmat',
         'omatorganisaatiot',
         'henkiloorganisaatiot',
         'kutsuByToken',
         'kayttooikeusraportti',
         'kayttajatiedot',
-        'hakatunnisteet',
+        'hakatunnus',
         'palvelukayttaja',
         'henkilohakuorganisaatiot',
         'henkilolinkitykset',
@@ -321,17 +322,29 @@ export const kayttooikeusApi = createApi({
                 body: `"${password}"`,
             }),
         }),
-        getHakatunnisteet: builder.query<string[], string>({
+        getHakaTunnukset: builder.query<string[], string>({
             query: (oid) => `henkilo/${oid}/hakatunnus`,
-            providesTags: ['hakatunnisteet'],
+            providesTags: ['hakatunnus'],
         }),
-        putHakatunnisteet: builder.mutation<string[], { oid: string; tunnisteet: string[] }>({
-            query: ({ oid, tunnisteet }) => ({
+        putHakaTunnukset: builder.mutation<string[], { oid: string; tunnukset: string[] }>({
+            query: ({ oid, tunnukset }) => ({
                 url: `henkilo/${oid}/hakatunnus`,
                 method: 'PUT',
-                body: tunnisteet,
+                body: tunnukset,
             }),
-            invalidatesTags: ['hakatunnisteet'],
+            invalidatesTags: ['hakatunnus'],
+        }),
+        getOmatHakaTunnukset: builder.query<string[], void>({
+            query: () => 'henkilo/hakatunnus',
+            providesTags: ['omathakatunnus'],
+        }),
+        putOmatHakaTunnukset: builder.mutation<string[], string[]>({
+            query: (body) => ({
+                url: 'henkilo/hakatunnus',
+                method: 'PUT',
+                body,
+            }),
+            invalidatesTags: ['omathakatunnus'],
         }),
         getPalvelukayttaja: builder.query<Jarjestelmatunnus, string>({
             query: (oid) => `palvelukayttaja/${oid}`,
@@ -618,8 +631,10 @@ export const {
     useGetKutsuByTokenQuery,
     useGetAccessRightReportQuery,
     useGetKayttajatiedotQuery,
-    useGetHakatunnisteetQuery,
-    usePutHakatunnisteetMutation,
+    useGetHakaTunnuksetQuery,
+    usePutHakaTunnuksetMutation,
+    useGetOmatHakaTunnuksetQuery,
+    usePutOmatHakaTunnuksetMutation,
     usePutKayttajatiedotMutation,
     usePutPasswordMutation,
     useGetPalvelukayttajaQuery,
