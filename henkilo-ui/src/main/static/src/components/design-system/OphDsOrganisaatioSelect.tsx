@@ -1,5 +1,5 @@
 import React, { Children, useMemo, useState } from 'react';
-import { FixedSizeList } from 'react-window';
+import { List, RowComponentProps } from 'react-window';
 import Select, { components, MenuListProps, OptionProps, SingleValue, SingleValueProps } from 'react-select';
 import { skipToken } from '@reduxjs/toolkit/query';
 
@@ -28,17 +28,31 @@ type OwnProps = {
     inputId?: string;
 };
 
+type OrganisationMenuListRowProps = {
+    childrenOptions: React.ReactNode[];
+};
+
+const OrganisationMenuListRow = ({
+    index,
+    style,
+    childrenOptions,
+}: RowComponentProps<OrganisationMenuListRowProps>) => (
+    <div style={style} className="oph-ds-select-menu-item">
+        {childrenOptions[index]}
+    </div>
+);
+
 const OrganisationMenuList = (props: MenuListProps<OrganisaatioSelectObject, false>) => {
     const { children, maxHeight } = props;
     const childrenOptions = Children.toArray(children);
     return (
-        <FixedSizeList itemSize={70} height={maxHeight} width="100%" itemCount={childrenOptions.length}>
-            {({ index, style }) => (
-                <div style={style} key={index} className="oph-ds-select-menu-item">
-                    {childrenOptions[index]}
-                </div>
-            )}
-        </FixedSizeList>
+        <List
+            rowComponent={OrganisationMenuListRow}
+            rowCount={childrenOptions.length}
+            rowHeight={70}
+            rowProps={{ childrenOptions }}
+            style={{ height: maxHeight, width: '100%' }}
+        />
     );
 };
 

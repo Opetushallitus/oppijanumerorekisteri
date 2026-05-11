@@ -1,21 +1,78 @@
 import React, { useMemo, useState } from 'react';
-import { FixedSizeList, ListChildComponentProps } from 'react-window';
+import { List, RowComponentProps } from 'react-window';
 
 import type { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import type { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
+import type { LocalisationFn } from '../../../types/localisation.type';
 import { useLocalisations, useOmatOrganisaatiot } from '../../../selectors';
 import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../../utilities/organisaatio.util';
 import { SpinnerInButton } from '../icons/SpinnerInButton';
 import OphModal from '../modal/OphModal';
 import { useGetOrganisationNamesQuery } from '../../../api/kayttooikeus';
+import Button from '../button/Button';
 
 import './OrganisaatioSelect.css';
-import Button from '../button/Button';
 
 type OwnProps = {
     organisaatiot?: OrganisaatioHenkilo[];
     onSelect: (organisaatio: OrganisaatioSelectObject) => void;
     disabled?: boolean;
+};
+
+type OrganisaatioRowProps = {
+    organisations: OrganisaatioSelectObject[];
+    onSelect: (organisaatio: OrganisaatioSelectObject) => void;
+    closeModal: () => void;
+    L: LocalisationFn;
+};
+
+const OrganisaatioRow = ({
+    index,
+    style,
+    organisations,
+    onSelect,
+    closeModal,
+    L,
+}: RowComponentProps<OrganisaatioRowProps>) => {
+    const organisaatio = organisations[index];
+    if (!organisaatio) {
+        return null;
+    }
+    return (
+        <div
+            className="organisaatio"
+            onClick={() => {
+                onSelect(organisaatio);
+                closeModal();
+            }}
+            onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    onSelect(organisaatio);
+                    closeModal();
+                }
+            }}
+            style={style}
+            role="button"
+            tabIndex={0}
+        >
+            {organisaatio.parentNames.map((name, i) => (
+                <span className="parent" key={i}>
+                    {name} &gt;{' '}
+                </span>
+            ))}
+            <div className="organisaatio-nimi">
+                {organisaatio.name}{' '}
+                {organisaatio.organisaatiotyypit?.length > 0 && `(${organisaatio.organisaatiotyypit.toString()})`}
+            </div>
+            {organisaatio.status === 'SUUNNITELTU' && (
+                <div className="suunniteltu">{L('ORGANISAATIONVALINTA_SUUNNITELTU')}</div>
+            )}
+            {organisaatio.status === 'PASSIIVINEN' && (
+                <div className="passiivinen">{L('ORGANISAATIONVALINTA_PASSIIVINEN')}</div>
+            )}
+        </div>
+    );
 };
 
 const OrganisaatioSelectModal = (props: OwnProps) => {
@@ -37,42 +94,6 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
         }
     }, [props.organisaatiot, omattiedotOrganisations, organisationNames, locale]);
     const isDisabled = props.disabled || !(props.organisaatiot ?? omattiedotOrganisations)?.length;
-
-    const _renderRow = (renderParams: ListChildComponentProps) => {
-        const organisaatio = organisations[renderParams.index];
-        if (!organisaatio) {
-            return;
-        }
-        return (
-            <div
-                className="organisaatio"
-                onClick={() => {
-                    props.onSelect(organisaatio);
-                    setModalVisible(false);
-                }}
-                style={renderParams.style}
-                key={organisaatio.oid}
-                role="button"
-                tabIndex={0}
-            >
-                {organisaatio.parentNames.map((name, i) => (
-                    <span className="parent" key={i}>
-                        {name} &gt;{' '}
-                    </span>
-                ))}
-                <div className="organisaatio-nimi">
-                    {organisaatio.name}{' '}
-                    {organisaatio.organisaatiotyypit?.length > 0 && `(${organisaatio.organisaatiotyypit.toString()})`}
-                </div>
-                {organisaatio.status === 'SUUNNITELTU' && (
-                    <div className="suunniteltu">{L('ORGANISAATIONVALINTA_SUUNNITELTU')}</div>
-                )}
-                {organisaatio.status === 'PASSIIVINEN' && (
-                    <div className="passiivinen">{L('ORGANISAATIONVALINTA_PASSIIVINEN')}</div>
-                )}
-            </div>
-        );
-    };
 
     function onFilter(event: React.SyntheticEvent<HTMLInputElement>) {
         const currentSearchWord: string = event.currentTarget.value;
@@ -112,15 +133,19 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
                             value={searchWord}
                             onChange={onFilter}
                         />
-                        <FixedSizeList
+                        <List
                             className="organisaatio-select-list"
-                            itemCount={organisations.length}
-                            width={656}
-                            height={700}
-                            itemSize={70}
-                        >
-                            {_renderRow}
-                        </FixedSizeList>
+                            rowComponent={OrganisaatioRow}
+                            rowCount={organisations.length}
+                            rowHeight={70}
+                            rowProps={{
+                                organisations,
+                                onSelect: props.onSelect,
+                                closeModal: () => setModalVisible(false),
+                                L,
+                            }}
+                            style={{ height: 700 }}
+                        />
                     </div>
                 </OphModal>
             )}

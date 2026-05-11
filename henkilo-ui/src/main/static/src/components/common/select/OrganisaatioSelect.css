@@ -7,17 +7,14 @@
     margin-top: 15px;
     outline: none;
     border: 1px solid #eee;
-    width: 100% !important;
-}
-
-.organisaatio-select-list>div {
-    width: 100% !important;
+    width: 100%;
 }
 
 .organisaatio-select-list .organisaatio {
     padding-left: 10px;
     border-bottom: 1px solid #eee;
     cursor: pointer;
+    box-sizing: border-box;
 }
 
 .organisaatio-select-list .organisaatio .wrapper {

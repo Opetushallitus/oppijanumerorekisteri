@@ -1,6 +1,6 @@
 import React, { Children } from 'react';
 import { createFilter, MenuListProps } from 'react-select';
-import { FixedSizeList } from 'react-window';
+import { List, RowComponentProps } from 'react-window';
 
 export type SelectOption = {
     label: string;
@@ -19,17 +19,27 @@ export type NamedMultiSelectOption = MultiSelectOption & {
     optionsName: string;
 };
 
+type FastMenuListRowProps = {
+    childrenOptions: React.ReactNode[];
+};
+
+const FastMenuListRow = ({ index, style, childrenOptions }: RowComponentProps<FastMenuListRowProps>) => (
+    <div style={style} className="oph-ds-select-menu-item">
+        {childrenOptions[index]}
+    </div>
+);
+
 export const FastMenuList = (props: MenuListProps<SelectOption, false>) => {
     const { children, maxHeight } = props;
     const childrenOptions = Children.toArray(children);
     return (
-        <FixedSizeList itemSize={40} height={maxHeight} width="100%" itemCount={childrenOptions.length}>
-            {({ index, style }) => (
-                <div style={style} key={index} className="oph-ds-select-menu-item">
-                    {childrenOptions[index]}
-                </div>
-            )}
-        </FixedSizeList>
+        <List
+            rowComponent={FastMenuListRow}
+            rowCount={childrenOptions.length}
+            rowHeight={40}
+            rowProps={{ childrenOptions }}
+            style={{ height: maxHeight, width: '100%' }}
+        />
     );
 };
 
