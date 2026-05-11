@@ -18,13 +18,6 @@ type OwnProps = {
     view: 'virkailija' | 'omattiedot';
 };
 
-export const isHakaOhjeEnabled =
-    window.location.hostname.includes('virkailija.hahtuvaopintopolku.fi') ||
-    window.location.hostname.includes('virkailija.untuvaopintopolku.fi') ||
-    window.location.hostname.includes('virkailija.testiopintopolku.fi') ||
-    window.location.host.includes('localhost:8080') ||
-    window.location.host.includes('localhost:8686');
-
 export const HakaTunnusPopupContent = ({ oid, view }: OwnProps) => {
     const dispatch = useAppDispatch();
     const { L } = useLocalisations();
@@ -68,14 +61,12 @@ export const HakaTunnusPopupContent = ({ oid, view }: OwnProps) => {
 
     return (
         <div className={styles.hakaPopupContent}>
-            {isHakaOhjeEnabled && (
-                <p>
-                    {L(ohjeText)}{' '}
-                    <a href={ohjeUrl} target="_blank" rel="noreferrer">
-                        {ohjeUrl}
-                    </a>
-                </p>
-            )}
+            <p>
+                {L(ohjeText)}{' '}
+                <a href={ohjeUrl} target="_blank" rel="noreferrer">
+                    {ohjeUrl}
+                </a>
+            </p>
             {tunnukset && tunnukset?.length > 0 ? (
                 <div className={styles.hakaTunnusList} data-testid="haka-tunnukset">
                     {tunnukset.map((tunnus) => (

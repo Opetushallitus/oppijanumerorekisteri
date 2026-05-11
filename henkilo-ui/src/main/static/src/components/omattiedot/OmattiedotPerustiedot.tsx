@@ -27,7 +27,7 @@ import { SelectOption, selectStyles } from '../../utilities/select';
 import { hasAnyPalveluRooli } from '../../utilities/palvelurooli.util';
 import PasswordPopupContent from '../common/button/PasswordPopupContent';
 import { OmattiedotAnomusilmoitus } from './OmattiedotAnomusilmoitus';
-import { HakaTunnusPopupContent, isHakaOhjeEnabled } from '../common/button/HakaPopupContent';
+import { HakaTunnusPopupContent } from '../common/button/HakaPopupContent';
 
 import styles from './OmattiedotPerustiedot.module.css';
 
@@ -220,11 +220,9 @@ const OmattiedotPerustiedotView = ({ oid, openForm }: { oid: string; openForm: (
                 <button className="oph-ds-button oph-ds-button-bordered" onClick={() => setPassword(true)}>
                     {L('SALASANA_ASETA')}
                 </button>
-                {isHakaOhjeEnabled && (
-                    <button className="oph-ds-button oph-ds-button-bordered" onClick={() => setHaka(true)}>
-                        {L('LISAA_HAKA_LINKKI')}
-                    </button>
-                )}
+                <button className="oph-ds-button oph-ds-button-bordered" onClick={() => setHaka(true)}>
+                    {L('LISAA_HAKA_LINKKI')}
+                </button>
                 {showAnomusIlmoitus && (
                     <button className="oph-ds-button oph-ds-button-bordered" onClick={() => setAnomusilmoitus(true)}>
                         {L('HENKILO_ANOMUSILMOITUKSET')}
