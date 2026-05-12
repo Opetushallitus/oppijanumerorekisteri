@@ -36,6 +36,7 @@ public class ExportService {
     private final JdbcTemplate jdbcTemplate;
     private static final String S3_PREFIX_V2 = "fulldump/oppijanumerorekisteri/v2";
     private static final String S3_PREFIX_V3 = "fulldump/oppijanumerorekisteri/v3";
+    private static final String S3_PREFIX_V4 = "fulldump/oppijanumerorekisteri/v4";
     private final OppijanumerorekisteriProperties properties;
     private final S3AsyncClient onrS3Client;
     private final S3AsyncClient lampiS3Client;
@@ -55,6 +56,10 @@ public class ExportService {
             SELECT
               h.oidhenkilo AS henkilo_oid,
               h.hetu,
+              (SELECT string_agg(tunniste, ',')
+               FROM eidastunniste
+               WHERE henkilo_id = h.id
+              ) AS eidas_tunnisteet,
               h.sukupuoli,
               h.syntymaaika,
               h.sukunimi,
@@ -135,14 +140,36 @@ public class ExportService {
                 created,
                 updated
             FROM export.henkilo""";
+    private static final String HENKILO_QUERY_V4 = """
+            SELECT
+                henkilo_oid,
+                hetu,
+                eidas_tunnisteet,
+                sukupuoli,
+                syntymaaika,
+                sukunimi,
+                etunimet,
+                aidinkieli,
+                turvakielto,
+                kotikunta,
+                yksiloityvtj,
+                kansalaisuus,
+                master_oid,
+                linkitetyt_oidit,
+                created,
+                updated
+            FROM export.henkilo""";
     private static final String YHTEYSTIETO_QUERY_V2 = "SELECT * FROM export.yhteystieto";
     private static final String YHTEYSTIETO_QUERY_V3 = YHTEYSTIETO_QUERY_V2;
+    private static final String YHTEYSTIETO_QUERY_V4 = YHTEYSTIETO_QUERY_V2;
 
     public void generateExportFiles() throws IOException {
         generateCsvExportsV2();
         generateCsvExportsV3();
+        generateCsvExportsV4();
         generateJsonExportsV2();
         generateJsonExportsV3();
+        generateJsonExportsV4();
     }
 
     List<File> generateJsonExportsV2() throws IOException {
@@ -197,6 +224,39 @@ public class ExportService {
         ));
         var yhteystietoFile = exportQueryToS3AsJson(YHTEYSTIETO_QUERY_V3, S3_PREFIX_V3 + "/json/yhteystieto.json", unchecked(rs ->
                 new ExportedYhteystietoV3(
+                        rs.getString("henkilo_oid"),
+                        rs.getString("yhteystietotyyppi"),
+                        rs.getString("yhteystieto_arvo"),
+                        rs.getString("yhteystieto_arvo_tyyppi"),
+                        rs.getString("alkupera")
+                )
+        ));
+        return List.of(henkiloFile, yhteystietoFile);
+    }
+
+    List<File> generateJsonExportsV4() throws IOException {
+        var henkiloFile = exportQueryToS3AsJson(HENKILO_QUERY_V4, S3_PREFIX_V4 + "/json/henkilo.json", unchecked(rs ->
+                new ExportedHenkiloV4(
+                        rs.getString("henkilo_oid"),
+                        rs.getString("hetu"),
+                        rs.getString("eidas_tunnisteet"),
+                        rs.getString("sukupuoli"),
+                        rs.getString("syntymaaika"),
+                        rs.getString("sukunimi"),
+                        rs.getString("etunimet"),
+                        rs.getString("aidinkieli"),
+                        rs.getBoolean("turvakielto"),
+                        rs.getString("kotikunta"),
+                        rs.getBoolean("yksiloityvtj"),
+                        rs.getString("kansalaisuus"),
+                        rs.getString("master_oid"),
+                        rs.getString("linkitetyt_oidit"),
+                        rs.getTimestamp("created"),
+                        rs.getTimestamp("updated")
+                )
+        ));
+        var yhteystietoFile = exportQueryToS3AsJson(YHTEYSTIETO_QUERY_V4, S3_PREFIX_V4 + "/json/yhteystieto.json", unchecked(rs ->
+                new ExportedYhteystietoV4(
                         rs.getString("henkilo_oid"),
                         rs.getString("yhteystietotyyppi"),
                         rs.getString("yhteystieto_arvo"),
@@ -266,6 +326,11 @@ public class ExportService {
         exportQueryToS3(S3_PREFIX_V3 + "/csv/yhteystieto.csv", YHTEYSTIETO_QUERY_V3);
     }
 
+    public void generateCsvExportsV4() {
+        exportQueryToS3(S3_PREFIX_V4 + "/csv/henkilo.csv", HENKILO_QUERY_V4);
+        exportQueryToS3(S3_PREFIX_V4 + "/csv/yhteystieto.csv", YHTEYSTIETO_QUERY_V4);
+    }
+
     private void exportQueryToS3(String objectKey, String query) {
         var bucketName = properties.getTasks().getExport().getBucketName();
 
@@ -278,6 +343,7 @@ public class ExportService {
     public void copyExportFilesToLampi() throws IOException {
         copyExportFilesToLampiV2();
         copyExportFilesToLampiV3();
+        copyExportFilesToLampiV4();
     }
 
     private void copyExportFilesToLampiV2() throws IOException {
@@ -302,6 +368,18 @@ public class ExportService {
         jsonManifest.add(copyFileToLampi(S3_PREFIX_V3 + "/json/henkilo.json"));
         jsonManifest.add(copyFileToLampi(S3_PREFIX_V3 + "/json/yhteystieto.json"));
         writeManifest(S3_PREFIX_V3 + "/json/manifest.json", new ExportManifest(jsonManifest));
+    }
+
+    private void copyExportFilesToLampiV4() throws IOException {
+        var csvManifest = new ArrayList<ExportFileDetails>();
+        csvManifest.add(copyFileToLampi(S3_PREFIX_V4 + "/csv/henkilo.csv"));
+        csvManifest.add(copyFileToLampi(S3_PREFIX_V4 + "/csv/yhteystieto.csv"));
+        writeManifest(S3_PREFIX_V4 + "/csv/manifest.json", new ExportManifest(csvManifest));
+
+        var jsonManifest = new ArrayList<ExportFileDetails>();
+        jsonManifest.add(copyFileToLampi(S3_PREFIX_V4 + "/json/henkilo.json"));
+        jsonManifest.add(copyFileToLampi(S3_PREFIX_V4 + "/json/yhteystieto.json"));
+        writeManifest(S3_PREFIX_V4 + "/json/manifest.json", new ExportManifest(jsonManifest));
     }
 
     private ExportFileDetails copyFileToLampi(String objectKey) throws IOException {
@@ -377,14 +455,34 @@ public class ExportService {
                              String master_oid,
                              String linkitetyt_oidit,
                              Timestamp created,
-                             Timestamp updated) {
-    }
+                             Timestamp updated) {}
+    record ExportedHenkiloV4(String henkilo_oid,
+                             String hetu,
+                             String eidas_tunnisteet,
+                             String sukupuoli,
+                             String syntymaaika,
+                             String sukunimi,
+                             String etunimet,
+                             String aidinkieli,
+                             boolean turvakielto,
+                             String kotikunta,
+                             boolean yksiloityvtj,
+                             String kansalaisuus,
+                             String master_oid,
+                             String linkitetyt_oidit,
+                             Timestamp created,
+                             Timestamp updated) {}
     public record ExportedYhteystietoV2(String henkilo_oid,
                                         String yhteystietotyyppi,
                                         String yhteystieto_arvo,
                                         String yhteystieto_arvo_tyyppi,
                                         String alkupera) {}
     public record ExportedYhteystietoV3(String henkilo_oid,
+                                        String yhteystietotyyppi,
+                                        String yhteystieto_arvo,
+                                        String yhteystieto_arvo_tyyppi,
+                                        String alkupera) {}
+    public record ExportedYhteystietoV4(String henkilo_oid,
                                         String yhteystietotyyppi,
                                         String yhteystieto_arvo,
                                         String yhteystieto_arvo_tyyppi,
