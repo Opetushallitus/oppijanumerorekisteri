@@ -51,6 +51,8 @@ oppijanumerorekisteri.vtjkysely.username: username
 oppijanumerorekisteri.vtjkysely.password: password
 oppijanumerorekisteri.vtjkysely.keystorePassword: dummydummy
 oppijanumerorekisteri.vtjkysely.truststorePassword: dummydummy
+oppijanumerorekisteri.tasks.henkilo-export.enabled: false
+oppijanumerorekisteri.tasks.henkilo-export.bucket-name: none
 oppijanumerorekisteri.tasks.datantuonti.export.enabled: false
 oppijanumerorekisteri.tasks.datantuonti.export.bucket-name: none
 oppijanumerorekisteri.tasks.datantuonti.import.enabled: false

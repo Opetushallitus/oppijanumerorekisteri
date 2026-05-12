@@ -5,7 +5,6 @@ import com.github.kagkarlsson.scheduler.task.TaskDescriptor;
 import com.github.kagkarlsson.scheduler.task.helper.Tasks;
 import com.github.kagkarlsson.scheduler.task.schedule.Daily;
 import com.github.kagkarlsson.scheduler.task.schedule.FixedDelay;
-
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.configurations.security.OphSessionMappingStorage;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
@@ -16,16 +15,15 @@ import fi.vm.sade.oppijanumerorekisteri.services.datantuonti.DatantuontiImportSe
 import fi.vm.sade.oppijanumerorekisteri.services.datantuonti.TestidatantuontiImportService;
 import fi.vm.sade.oppijanumerorekisteri.services.death.CleanupService;
 import fi.vm.sade.oppijanumerorekisteri.services.export.ExportService;
+import fi.vm.sade.oppijanumerorekisteri.services.export.HenkiloExportService;
 import fi.vm.sade.oppijanumerorekisteri.vtjkysely.VtjKyselyCertificationCheck;
+import java.io.IOException;
+import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.io.IOException;
-import java.time.LocalTime;
 
 /**
  * Ajastuksen aktivointi.
@@ -40,6 +38,7 @@ public class SchedulingConfiguration {
     private final IdentificationService identificationService;
     private final VtjMuutostietoService vtjMuutostietoService;
     private final ExportService exportService;
+    private final HenkiloExportService henkiloExportService;
     private final DatantuontiExportService datantuontiExportService;
     private final DatantuontiImportService datantuontiImportService;
     private final TestidatantuontiImportService testidatantuontiImportService;
@@ -119,6 +118,22 @@ public class SchedulingConfiguration {
                             log.info("Copying export files to Lampi is disabled");
                         }
                         log.info("Oppijanumerorekisteri export task completed");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "oppijanumerorekisteri.tasks.henkilo-export.enabled", matchIfMissing = false)
+    Task<Void> henkiloExportTask() {
+        log.info("Creating oppijanumerorekisteri henkilo export task");
+        return Tasks.recurring(TaskDescriptor.of("HenkiloExport"), FixedDelay.ofHours(1))
+                .execute((taskInstance, executionContext) -> {
+                    try {
+                        log.info("Running oppijanumerorekisteri henkilo export task");
+                        henkiloExportService.generateExport();
+                        log.info("Oppijanumerorekisteri henkilo export task completed");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

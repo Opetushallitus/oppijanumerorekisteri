@@ -194,7 +194,6 @@ class DatabaseStack extends cdk.Stack {
   readonly bastion: ec2.BastionHostLinux;
   readonly database: rds.DatabaseCluster;
   readonly exportBucket: s3.Bucket;
-
   constructor(
     scope: constructs.Construct,
     id: string,
@@ -218,6 +217,7 @@ class DatabaseStack extends cdk.Stack {
       .forEach((statement) => datantuontiImportRole.addToPolicy(statement));
 
     this.exportBucket = new s3.Bucket(this, "ExportBucket", {});
+    this.grantTiedotuspalveluAccessToHenkiloExport();
 
     if (getEnvironment() == "hahtuva" || getEnvironment() == "dev") {
       this.database = new rds.DatabaseCluster(this, "Database", {
@@ -288,6 +288,32 @@ class DatabaseStack extends cdk.Stack {
     });
     this.database.connections.allowDefaultPortFrom(backup);
   }
+
+  private grantTiedotuspalveluAccessToHenkiloExport() {
+    const tiedotuspalvelu = new iam.AccountPrincipal(
+      ssm.StringParameter.valueFromLookup(this, "tiedotuspalvelu-account-id"),
+    );
+
+    this.exportBucket.addToResourcePolicy(
+      new iam.PolicyStatement({
+        principals: [tiedotuspalvelu],
+        actions: ["s3:GetObject"],
+        resources: [this.exportBucket.arnForObjects("fulldump/henkilo/v1/*")],
+      }),
+    );
+    this.exportBucket.addToResourcePolicy(
+      new iam.PolicyStatement({
+        principals: [tiedotuspalvelu],
+        actions: ["s3:ListBucket"],
+        resources: [this.exportBucket.bucketArn],
+        conditions: { StringLike: { "s3:prefix": ["fulldump/henkilo/v1/*"] } },
+      }),
+    );
+
+    new cdk.CfnOutput(this, "HenkiloExportBucketName", {
+      value: this.exportBucket.bucketName,
+    });
+  }
 }
 
 type OppijanumerorekisteriApplicationStackProperties = cdk.StackProps & {
@@ -323,6 +349,9 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       this.exportFailureAlarm(logGroup, props.alarmTopic);
     }
     this.datantuontiExportFailureAlarm(logGroup, props.alarmTopic);
+    if (config.features["oppijanumerorekisteri.tasks.henkilo-export.enabled"]) {
+      this.henkiloExportFailureAlarm(logGroup, props.alarmTopic);
+    }
     if (
       config.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]
     ) {
@@ -472,6 +501,20 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
     );
   }
 
+  henkiloExportFailureAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
+    alarms.alarmIfExpectedLogLineIsMissing(
+      this,
+      sharedAccount.prefix("HenkiloExportTask"),
+      logGroup,
+      alarmTopic,
+      logs.FilterPattern.literal(
+        '"Oppijanumerorekisteri henkilo export task completed"',
+      ),
+      cdk.Duration.hours(25),
+      1,
+    );
+  }
+
   datantuontiImportFailureAlarm(
     logGroup: logs.LogGroup,
     alarmTopic: sns.ITopic,
@@ -601,6 +644,9 @@ class OppijanumerorekisteriService extends constructs.Construct {
         postgresql_db: "oppijanumerorekisteri",
         aws_region: props.awsRegion,
         export_bucket_name: props.exportBucket.bucketName,
+        "oppijanumerorekisteri.tasks.henkilo-export.enabled": `${config.features["oppijanumerorekisteri.tasks.henkilo-export.enabled"]}`,
+        "oppijanumerorekisteri.tasks.henkilo-export.bucket-name":
+          props.exportBucket.bucketName,
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": `${config.features["oppijanumerorekisteri.tasks.datantuonti.export.enabled"]}`,
         "oppijanumerorekisteri.tasks.datantuonti.export.bucket-name":
           props.datantuontiExportBucket.bucketName,
