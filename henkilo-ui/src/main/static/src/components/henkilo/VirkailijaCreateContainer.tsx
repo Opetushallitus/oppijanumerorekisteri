@@ -5,10 +5,10 @@ import { VirkailijaCreate } from '../../types/domain/kayttooikeus/virkailija.typ
 import VirkailijaCreateForm from './VirkailijaCreateForm';
 import { isValidKutsumanimi } from '../../validation/KutsumanimiValidator';
 import { isValidPassword } from '../../validation/PasswordValidator';
-import { LocalNotification } from '../common/Notification/LocalNotification';
 import { isValidKayttajatunnus } from '../../validation/KayttajatunnusValidator';
 import { useLocalisations } from '../../selectors';
 import { usePostCreateVirkailijaMutation } from '../../api/kayttooikeus';
+import { OphDsBanner } from '../design-system/OphDsBanner';
 
 const initialVirkailija: VirkailijaCreate = {
     etunimet: '',
@@ -87,17 +87,15 @@ export const VirkailijaCreateContainer = () => {
         <div className="mainContent wrapper">
             <span className="oph-h2 oph-bold">{L('VIRKAILIJAN_LUONTI_OTSIKKO')}</span>
             <VirkailijaCreateForm virkailija={virkailija} disabled={disabled} onChange={onChange} onSubmit={onSubmit} />
-            <LocalNotification
-                title={L('NOTIFICATION_HENKILOTIEDOT_VIRHE_OTSIKKO')}
-                toggle={virheet.length > 0}
-                type="error"
-            >
-                <ul>
-                    {virheet.map((virhe, index) => (
-                        <li key={index}>{virhe}</li>
-                    ))}
-                </ul>
-            </LocalNotification>
+            {virheet.length > 0 && (
+                <OphDsBanner type="error">
+                    <ul>
+                        {virheet.map((virhe, index) => (
+                            <li key={index}>{virhe}</li>
+                        ))}
+                    </ul>
+                </OphDsBanner>
+            )}
         </div>
     );
 };

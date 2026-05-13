@@ -5,7 +5,6 @@ import { skipToken } from '@reduxjs/toolkit/query/react';
 import Button from '../../common/button/Button';
 import DuplikaatitPerson from './DuplikaatitPerson';
 import Loader from '../../common/icons/Loader';
-import { LocalNotification } from '../../common/Notification/LocalNotification';
 import type { HenkiloDuplicate } from '../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import OphModal from '../../common/modal/OphModal';
@@ -19,6 +18,7 @@ import { useLocalisations } from '../../../selectors';
 import { useGetOmattiedotQuery } from '../../../api/kayttooikeus';
 import { HenkiloCreate } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { enabledDuplikaattiView } from '../../oppija/OppijaTabs';
+import { OphDsBanner } from '../../design-system/OphDsBanner';
 
 import './HenkiloViewDuplikaatit.css';
 
@@ -128,11 +128,11 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, duplicates, oi
                     setLink={setLink}
                 />
             ))}
-            <LocalNotification
-                title={L('DUPLIKAATIT_NOTIFICATION_EI_LOYTYNYT')}
-                type="info"
-                toggle={duplicates?.length === 0}
-            />
+            {duplicates?.length === 0 && (
+                <OphDsBanner type="info">
+                    <p>{L('DUPLIKAATIT_NOTIFICATION_EI_LOYTYNYT')}</p>
+                </OphDsBanner>
+            )}
             {linkObj && linkingEnabled && (
                 <OphModal
                     onClose={() => setLink(undefined)}

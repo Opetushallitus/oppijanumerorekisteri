@@ -4,7 +4,6 @@ import { format } from 'date-fns';
 
 import Loader from '../common/icons/Loader';
 import './AnojaKayttoooikeusryhma.css';
-import { LocalNotification } from '../common/Notification/LocalNotification';
 import { useLocalisations } from '../../selectors';
 import OphTable from '../OphTable';
 import { useGetKayttooikeusryhmasForHenkiloQuery, useGetOrganisationsQuery } from '../../api/kayttooikeus';
@@ -13,6 +12,7 @@ import {
     MyonnettyKayttooikeusryhma,
 } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { getLocalization, getTextGroupLocalisation } from '../../utilities/localisation.util';
+import { OphDsBanner } from '../design-system/OphDsBanner';
 
 type KayttooikeusryhmaData = {
     voimassaPvm?: string;
@@ -117,16 +117,16 @@ export const AnojaKayttooikeusryhmat = ({ henkiloOid }: Props) => {
         );
     } else if (isError) {
         return (
-            <LocalNotification
-                type="error"
-                title={L('NOTIFICATION_ANOMUKSEN_ANOJAN_OIKEUKSIEN_HAKU_VIRHE')}
-                toggle={true}
-            />
+            <OphDsBanner type="error">
+                <p>{L('NOTIFICATION_ANOMUKSEN_ANOJAN_OIKEUKSIEN_HAKU_VIRHE')}</p>
+            </OphDsBanner>
         );
     } else if (memoizedData && memoizedData.length > 0) {
         return <OphTable table={table} isLoading={false} />;
     }
     return (
-        <LocalNotification type="info" title={L('NOTIFICATION_ANOMUKSEN_ANOJAN_KAYTTOOIKEUDET_TYHJA')} toggle={true} />
+        <OphDsBanner type="info">
+            <p>{L('NOTIFICATION_ANOMUKSEN_ANOJAN_KAYTTOOIKEUDET_TYHJA')}</p>
+        </OphDsBanner>
     );
 };

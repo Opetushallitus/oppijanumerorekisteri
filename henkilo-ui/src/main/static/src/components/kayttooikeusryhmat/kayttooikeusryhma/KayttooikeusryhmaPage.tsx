@@ -13,7 +13,6 @@ import KayttooikeusryhmatPalvelutJaKayttooikeudet from './KayttooikeusryhmatPalv
 import { Text, TextGroupModify } from '../../../types/domain/kayttooikeus/textgroup.types';
 import { PalveluRooliModify } from '../../../types/domain/kayttooikeus/PalveluRooliModify.types';
 import { SpinnerInButton } from '../../common/icons/SpinnerInButton';
-import { LocalNotification } from '../../common/Notification/LocalNotification';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import { getLocalization } from '../../../utilities/localisation.util';
 import KayttooikeusryhmatSallittuKayttajatyyppi from './KayttooikeusryhmatSallittuKayttajatyyppi';
@@ -33,6 +32,7 @@ import {
 import { useAppDispatch } from '../../../store';
 import { useGetOppilaitostyypitQuery, useGetOrganisaatiotyypitQuery } from '../../../api/koodisto';
 import { add } from '../../../slices/toastSlice';
+import { OphDsBanner } from '../../design-system/OphDsBanner';
 
 type Locales = 'FI' | 'SV' | 'EN';
 
@@ -593,29 +593,26 @@ export const KayttooikeusryhmaPage = ({ kayttooikeusryhmaId }: { kayttooikeusryh
                 </span>
             </div>
 
-            <LocalNotification
-                toggle={!_validateKayttooikeusryhmaInputs()}
-                type={'info'}
-                title={L('KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVA_TIETO_OTSIKKO')}
-            >
-                <ul>
-                    {_validateKayttooikeusryhmaNimet() ? null : (
-                        <li>{L('KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_NIMI')}</li>
-                    )}
-                    {_validateKayttooikeusryhmaDescriptions() ? null : (
-                        <li>{L('KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_KUVAUS')}</li>
-                    )}
-                    {_validateKayttooikeusryhmaPalveluKayttooikeusryhmaSelections() ? null : (
-                        <li>{L('KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_PALVELUKAYTTOOIKEUS')}</li>
-                    )}
-                </ul>
-            </LocalNotification>
-
-            <LocalNotification
-                toggle={_hasPassiveOrganisaatioRajoite.call(this)}
-                type="warning"
-                title={L('KAYTTOOIKEUSRYHMAT_PASSIVOITU_VAROITUS')}
-            />
+            {!_validateKayttooikeusryhmaInputs() && (
+                <OphDsBanner type="info">
+                    <ul>
+                        {_validateKayttooikeusryhmaNimet() ? null : (
+                            <li>{L('KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_NIMI')}</li>
+                        )}
+                        {_validateKayttooikeusryhmaDescriptions() ? null : (
+                            <li>{L('KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_KUVAUS')}</li>
+                        )}
+                        {_validateKayttooikeusryhmaPalveluKayttooikeusryhmaSelections() ? null : (
+                            <li>{L('KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_PALVELUKAYTTOOIKEUS')}</li>
+                        )}
+                    </ul>
+                </OphDsBanner>
+            )}
+            {_hasPassiveOrganisaatioRajoite() && (
+                <OphDsBanner type="warning">
+                    <p>{L('KAYTTOOIKEUSRYHMAT_PASSIVOITU_VAROITUS')}</p>
+                </OphDsBanner>
+            )}
         </div>
     );
 };
