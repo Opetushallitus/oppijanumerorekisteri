@@ -5,7 +5,6 @@ import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, Row, Sort
 
 import { getOrganisationNameWithType } from '../StaticUtils';
 import Button from '../button/Button';
-import PopupButton from '../button/PopupButton';
 import AnomusHylkaysPopup from '../../anomus/AnomusHylkaysPopup';
 import { AnojaKayttooikeusryhmat } from '../../anomus/AnojaKayttooikeusryhmat';
 import { getTextGroupLocalisation } from '../../../utilities/localisation.util';
@@ -68,6 +67,7 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     );
     const [accessRight, setAccessRight] = useState<AccessRight>();
     const [hylkaaAnomus, setHylkaaAnomus] = useState<number>();
+    const [perusteluModal, setPerusteluModal] = useState<string | undefined>();
 
     useEffect(() => {
         const currentDates = { ...dates };
@@ -86,22 +86,6 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
     }, [props.anomukset]);
 
     useEffect(() => (props.onSortingChange && sorting.length ? props.onSortingChange(sorting) : undefined), [sorting]);
-
-    function createSelitePopupButton(perustelut: string) {
-        return (
-            <PopupButton
-                popupClass={'oph-popup-default oph-popup-bottom'}
-                popupButtonWrapperPositioning="relative"
-                popupArrowStyles={{ marginLeft: '10px' }}
-                popupButtonClasses={'oph-button oph-button-ghost anomuslistaus-avaabutton'}
-                simple={true}
-                disabled={!perustelut}
-                popupContent={<p>{perustelut}</p>}
-            >
-                {L('AVAA')}
-            </PopupButton>
-        );
-    }
 
     function anomusHandlingButtonsForOmattiedot(haettuKayttooikeusRyhma: HaettuKayttooikeusryhma) {
         return (
@@ -278,7 +262,18 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                 id: 'HENKILO_KAYTTOOIKEUSANOMUS_PERUSTELU',
                 header: () => L('HENKILO_KAYTTOOIKEUSANOMUS_PERUSTELU'),
                 accessorFn: (row) => row,
-                cell: ({ getValue }) => createSelitePopupButton(getValue().anomus.perustelut),
+                cell: ({ getValue }) =>
+                    getValue().anomus.perustelut ? (
+                        <button
+                            className="oph-ds-button oph-ds-button-transparent oph-ds-button-text-link"
+                            style={{ color: '#159ecb' }}
+                            onClick={() => setPerusteluModal(getValue().anomus.perustelut)}
+                        >
+                            {L('AVAA')}
+                        </button>
+                    ) : (
+                        ''
+                    ),
                 enableSorting: false,
             },
             {
@@ -384,6 +379,15 @@ const HenkiloViewOpenKayttooikeusanomus = (props: OwnProps) => {
                     onOverlayClick={() => setHylkaaAnomus(undefined)}
                 >
                     <AnomusHylkaysPopup anomus={hylattyKayttooikeusryhma} handleAnomus={handleAnomus} />
+                </OphModal>
+            )}
+            {perusteluModal && (
+                <OphModal
+                    title={L('HENKILO_KAYTTOOIKEUSANOMUS_PERUSTELU')}
+                    onClose={() => setPerusteluModal(undefined)}
+                    onOverlayClick={() => setPerusteluModal(undefined)}
+                >
+                    <p>{perusteluModal}</p>
                 </OphModal>
             )}
             {accessRight && <AccessRightDetails {...accessRight} />}

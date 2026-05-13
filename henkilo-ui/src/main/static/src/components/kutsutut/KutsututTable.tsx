@@ -3,7 +3,6 @@ import { useReactTable, getCoreRowModel, getSortedRowModel, ColumnDef, Row, Sort
 import { addMonths, format, isBefore, parseISO } from 'date-fns';
 
 import Button from '../common/button/Button';
-import PopupButton from '../common/button/PopupButton';
 import KutsuDetails from './KutsuDetails';
 import { KutsuRead } from '../../types/domain/kayttooikeus/Kutsu.types';
 import { useLocalisations } from '../../selectors';
@@ -14,6 +13,7 @@ import { KutsututSearchParams } from './KutsututPage';
 import { KutsututSortBy, useGetKutsututInfiniteQuery, usePutRenewKutsuMutation } from '../../api/kayttooikeus';
 import { add } from '../../slices/toastSlice';
 import { getLocalization } from '../../utilities/localisation.util';
+import OphModal from '../common/modal/OphModal';
 
 type OwnProps = {
     params: KutsututSearchParams;
@@ -34,6 +34,7 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
         direction: sorting[0]?.desc ? 'DESC' : 'ASC',
         amount: String(40),
     });
+    const [saateModal, setSaateModal] = useState<string | undefined>();
 
     const resendAction = async (id: number) => {
         renewKutsu(id)
@@ -101,16 +102,13 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
                 accessorFn: (row) => row,
                 cell: ({ getValue }) =>
                     getValue().saate ? (
-                        <PopupButton
-                            popupClass={'oph-popup-default oph-popup-bottom'}
-                            popupButtonWrapperPositioning="relative"
-                            popupArrowStyles={{ marginLeft: '10px' }}
-                            popupButtonClasses={'oph-button oph-button-ghost'}
-                            simple={true}
-                            popupContent={<p>{getValue().saate}</p>}
+                        <button
+                            className="oph-ds-button oph-ds-button-transparent oph-ds-button-text-link"
+                            style={{ color: '#159ecb' }}
+                            onClick={() => setSaateModal(getValue().saate)}
                         >
                             {L('AVAA')}
-                        </PopupButton>
+                        </button>
                     ) : (
                         ''
                     ),
@@ -166,6 +164,15 @@ const KutsututTable = ({ params, cancelInvitation }: OwnProps) => {
 
     return (
         <div className="kutsututTableWrapper">
+            {saateModal && (
+                <OphModal
+                    title={L('HENKILO_KAYTTOOIKEUSANOMUS_PERUSTELU')}
+                    onClose={() => setSaateModal(undefined)}
+                    onOverlayClick={() => setSaateModal(undefined)}
+                >
+                    <p>{saateModal}</p>
+                </OphModal>
+            )}
             <OphTableWithInfiniteScroll<KutsuRead>
                 table={table}
                 isLoading={isFetching}
