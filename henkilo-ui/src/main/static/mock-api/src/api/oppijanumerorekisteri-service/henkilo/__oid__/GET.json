@@ -32,7 +32,7 @@
             "readOnly": false,
             "yhteystieto": [
                 {
-                    "yhteystietotyyppi": "YHTEYSTIETO_SAHKOPOSTI",
+                    "yhteystietoTyyppi": "YHTEYSTIETO_SAHKOPOSTI",
                     "yhteystietoArvo": "e@mail.fi"
                 }
             ]
@@ -46,6 +46,26 @@
                 {
                     "yhteystietoTyyppi": "YHTEYSTIETO_SAHKOPOSTI",
                     "yhteystietoArvo": "etu@suku.fi"
+                },
+                {
+                    "yhteystietoTyyppi": "YHTEYSTIETO_PUHELINNUMERO",
+                    "yhteystietoArvo": "0201023212"
+                },
+                {
+                    "yhteystietoTyyppi": "YHTEYSTIETO_MATKAPUHELINNUMERO",
+                    "yhteystietoArvo": "+123"
+                }
+            ]
+        },
+        {
+            "id": 234651551,
+            "ryhmaKuvaus": "yhteystietotyyppi2",
+            "ryhmaAlkuperaTieto": "alkupera2",
+            "readOnly": false,
+            "yhteystieto": [
+                {
+                    "yhteystietoTyyppi": "YHTEYSTIETO_MATKAPUHELINNUMERO",
+                    "yhteystietoArvo": "04055663"
                 }
             ]
         }

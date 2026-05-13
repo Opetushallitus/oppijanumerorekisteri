@@ -10,9 +10,12 @@ test.describe('virkailijan perustiedot', () => {
         const { perustiedot } = await gotoVirkailija(page, oid);
         await expect(perustiedot.sukunimi).toHaveText('suku-nimi');
         await expect(perustiedot.etunimet).toHaveText('etu nimi');
+        await expect(perustiedot.kutsumanimi).toHaveText('Testi');
         await expect(perustiedot.oid).toHaveText(oid);
         await expect(perustiedot.username).toHaveText('username');
         await expect(perustiedot.email).toHaveText('etu@suku.fi');
+        await expect(perustiedot.puhelin).toHaveText('0201023212');
+        await expect(perustiedot.matkapuhelin).toHaveText('+123, 04055663');
         await expect(perustiedot.varmennettava.locator('a')).toHaveAttribute(
             'href',
             '/henkilo-ui/virkailija/1.2.246.562.24.17520645815'

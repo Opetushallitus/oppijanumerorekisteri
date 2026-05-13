@@ -8,9 +8,12 @@ export async function gotoVirkailija(page: Page, oid: string) {
         perustiedot: {
             sukunimi: page.getByTestId('sukunimi'),
             etunimet: page.getByTestId('etunimet'),
+            kutsumanimi: page.getByTestId('kutsumanimi'),
             oid: page.getByTestId('oid'),
             username: page.getByTestId('username'),
             email: page.getByTestId('email'),
+            puhelin: page.getByTestId('puhelin'),
+            matkapuhelin: page.getByTestId('matkapuhelin'),
             varmennettava: page.getByTestId('varmennettava'),
             varmentaja: page.getByTestId('varmentaja'),
         },

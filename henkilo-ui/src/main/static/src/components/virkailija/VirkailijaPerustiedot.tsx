@@ -19,7 +19,7 @@ import OphModal from '../common/modal/OphModal';
 import { HakaTunnusPopupContent } from '../common/button/HakaPopupContent';
 import PasswordPopupContent from '../common/button/PasswordPopupContent';
 import { useGetHenkiloQuery } from '../../api/oppijanumerorekisteri';
-import { parseWorkEmails } from '../../utilities/henkilo.util';
+import { parseTyosoiteYhteystietoByType, parseWorkEmails } from '../../utilities/henkilo.util';
 import { OphDsSpinner } from '../design-system/OphDsSpinner';
 
 import styles from './VirkailijaPerustiedot.module.css';
@@ -95,9 +95,19 @@ export const VirkailijaPerustiedot = ({ oid }: { oid: string }) => {
     const [haka, setHaka] = useState(false);
     const [password, setPassword] = useState(false);
 
-    const emails = useMemo(() => {
-        return parseWorkEmails(henkilo?.yhteystiedotRyhma).join(', ');
-    }, [henkilo]);
+    const { emails, puhelins, matkapuhelins } = useMemo(
+        () => ({
+            emails: parseWorkEmails(henkilo?.yhteystiedotRyhma).join(', '),
+            puhelins: parseTyosoiteYhteystietoByType('YHTEYSTIETO_PUHELINNUMERO', henkilo?.yhteystiedotRyhma).join(
+                ', '
+            ),
+            matkapuhelins: parseTyosoiteYhteystietoByType(
+                'YHTEYSTIETO_MATKAPUHELINNUMERO',
+                henkilo?.yhteystiedotRyhma
+            ).join(', '),
+        }),
+        [henkilo]
+    );
 
     const sectionId = useId();
 
@@ -121,49 +131,59 @@ export const VirkailijaPerustiedot = ({ oid }: { oid: string }) => {
                     <VirkailijaPerustiedotForm oid={oid} closeForm={() => setMuokkaa(false)} />
                 ) : (
                     <>
-                        <div className={styles.perustiedotGrid}>
-                            <div>{L('HENKILO_SUKUNIMI')}</div>
-                            <div data-testid="sukunimi">{kayttajatiedot?.sukunimi}</div>
-                            <div>{L('HENKILO_ETUNIMET')}</div>
-                            <div data-testid="etunimet">{kayttajatiedot?.etunimet}</div>
-                            <div>{L('HENKILO_OPPIJANUMERO')}</div>
-                            <div data-testid="oid">{oid}</div>
-                            <div>{L('HENKILO_KAYTTAJANIMI')}</div>
-                            <div data-testid="username">{kayttajatiedot?.username}</div>
-                            <div>{L('HENKILO_TYOSAHKOPOSTI')}</div>
-                            <div data-testid="email">{emails}</div>
-                            {(linkitykset?.henkiloVarmennettavas ?? []).length > 0 && (
-                                <>
-                                    <div>{L('HENKILO_VARMENNETTAVA')}</div>
-                                    <div className={styles.linkitetyt} data-testid="varmennettava">
-                                        {linkitykset?.henkiloVarmennettavas?.map((h) => (
-                                            <Link
-                                                className="oph-ds-link"
-                                                key={`varmennettava-${h}`}
-                                                to={`/virkailija/${h}`}
-                                            >
-                                                {h}
-                                            </Link>
-                                        ))}
-                                    </div>
-                                </>
-                            )}
-                            {(linkitykset?.henkiloVarmentajas ?? []).length > 0 && (
-                                <>
-                                    <div>{L('HENKILO_VARMENTAJA')}</div>
-                                    <div className={styles.linkitetyt} data-testid="varmentaja">
-                                        {linkitykset?.henkiloVarmentajas?.map((h) => (
-                                            <Link
-                                                className="oph-ds-link"
-                                                key={`varmentaja-${h}`}
-                                                to={`/virkailija/${h}`}
-                                            >
-                                                {h}
-                                            </Link>
-                                        ))}
-                                    </div>
-                                </>
-                            )}
+                        <div className={styles.perustiedotRows}>
+                            <div className={styles.perustiedotGrid}>
+                                <div>{L('HENKILO_SUKUNIMI')}</div>
+                                <div data-testid="sukunimi">{kayttajatiedot?.sukunimi}</div>
+                                <div>{L('HENKILO_ETUNIMET')}</div>
+                                <div data-testid="etunimet">{kayttajatiedot?.etunimet}</div>
+                                <div>{L('HENKILO_KUTSUMANIMI')}</div>
+                                <div data-testid="kutsumanimi">{henkilo?.kutsumanimi}</div>
+                                <div>{L('HENKILO_OPPIJANUMERO')}</div>
+                                <div data-testid="oid">{oid}</div>
+                                <div>{L('HENKILO_KAYTTAJANIMI')}</div>
+                                <div data-testid="username">{kayttajatiedot?.username}</div>
+                                {(linkitykset?.henkiloVarmennettavas ?? []).length > 0 && (
+                                    <>
+                                        <div>{L('HENKILO_VARMENNETTAVA')}</div>
+                                        <div className={styles.linkitetyt} data-testid="varmennettava">
+                                            {linkitykset?.henkiloVarmennettavas?.map((h) => (
+                                                <Link
+                                                    className="oph-ds-link"
+                                                    key={`varmennettava-${h}`}
+                                                    to={`/virkailija/${h}`}
+                                                >
+                                                    {h}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
+                                {(linkitykset?.henkiloVarmentajas ?? []).length > 0 && (
+                                    <>
+                                        <div>{L('HENKILO_VARMENTAJA')}</div>
+                                        <div className={styles.linkitetyt} data-testid="varmentaja">
+                                            {linkitykset?.henkiloVarmentajas?.map((h) => (
+                                                <Link
+                                                    className="oph-ds-link"
+                                                    key={`varmentaja-${h}`}
+                                                    to={`/virkailija/${h}`}
+                                                >
+                                                    {h}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                            <div className={styles.perustiedotGrid}>
+                                <div>{L('HENKILO_TYOSAHKOPOSTI')}</div>
+                                <div data-testid="email">{emails}</div>
+                                <div>{L('YHTEYSTIETO_PUHELINNUMERO')}</div>
+                                <div data-testid="puhelin">{puhelins}</div>
+                                <div>{L('YHTEYSTIETO_MATKAPUHELINNUMERO')}</div>
+                                <div data-testid="matkapuhelin">{matkapuhelins}</div>
+                            </div>
                         </div>
                         <div className={styles.buttonRow}>
                             <button className="oph-ds-button oph-ds-button-bordered" onClick={() => setMuokkaa(true)}>

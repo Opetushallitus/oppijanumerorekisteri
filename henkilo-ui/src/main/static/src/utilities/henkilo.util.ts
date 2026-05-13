@@ -60,13 +60,16 @@ export const createEmailOptions = (
 };
 
 export const parseWorkEmails = (yhteystiedot?: YhteystietoRyhma[]) =>
+    parseTyosoiteYhteystietoByType(EMAIL, yhteystiedot);
+
+export const parseTyosoiteYhteystietoByType = (type: string, yhteystiedot?: YhteystietoRyhma[]) =>
     (yhteystiedot || [])
         .filter((yhteystietoRyhma) => yhteystietoRyhma.ryhmaKuvaus === WORK_ADDRESS)
         .flatMap((yhteystietoRyhma) => yhteystietoRyhma.yhteystieto)
-        .filter((yhteystieto) => yhteystieto.yhteystietoTyyppi === EMAIL)
+        .filter((yhteystieto) => yhteystieto.yhteystietoTyyppi === type)
         .map((yhteystieto) => yhteystieto.yhteystietoArvo)
         .filter((value) => !!value)
         .sort((a, b) => (a && b ? a.localeCompare(b) : 1));
 
 export const parseEmailOptions = (yhteystiedot?: YhteystietoRyhma[]): SelectOption[] =>
-    parseWorkEmails(yhteystiedot).map((email) => ({ value: email, label: email }));
+    parseTyosoiteYhteystietoByType(EMAIL, yhteystiedot).map((email) => ({ value: email, label: email }));
