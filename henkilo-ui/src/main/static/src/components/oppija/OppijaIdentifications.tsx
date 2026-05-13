@@ -21,7 +21,7 @@ type Props = {
     oid: string;
 };
 
-export const Identifications = ({ oid }: Props) => {
+export const OppijaIdentifications = ({ oid }: Props) => {
     const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
     const [showAddModal, setShowAddModal] = useState(false);

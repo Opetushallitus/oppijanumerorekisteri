@@ -7,7 +7,7 @@ import { oppijaNavigation } from '../navigation/navigationconfigurations';
 import { useLocalisations } from '../../selectors';
 import { OphDsPage } from '../design-system/OphDsPage';
 import { OphDsCard } from '../design-system/OphDsCard';
-import { Identifications } from '../henkilo/Identifications';
+import { OppijaIdentifications } from './OppijaIdentifications';
 import { OppijaPerustiedot } from './OppijaPerustiedot';
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent';
 import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
@@ -49,7 +49,7 @@ export const OppijaPage = () => {
                 <OppijaPerustiedot oid={oid} />
                 {isOnrRekisterinpitaja(omattiedot?.organisaatiot) && (
                     <OphDsCard>
-                        <Identifications oid={oid} />
+                        <OppijaIdentifications oid={oid} />
                     </OphDsCard>
                 )}
                 <OphDsCard>
