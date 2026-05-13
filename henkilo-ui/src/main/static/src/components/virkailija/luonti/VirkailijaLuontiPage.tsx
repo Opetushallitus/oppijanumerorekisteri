@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import { VirkailijaCreate } from '../../types/domain/kayttooikeus/virkailija.types';
-import { isValidKutsumanimi } from '../../validation/KutsumanimiValidator';
-import { isValidPassword } from '../../validation/PasswordValidator';
-import { isValidKayttajatunnus } from '../../validation/KayttajatunnusValidator';
-import { useLocalisations } from '../../selectors';
-import { usePostCreateVirkailijaMutation } from '../../api/kayttooikeus';
-import { OphDsPage } from '../design-system/OphDsPage';
-import { OphDsInput } from '../design-system/OphDsInput';
-import { add } from '../../slices/toastSlice';
-import { useAppDispatch } from '../../store';
+import { VirkailijaCreate } from '../../../types/domain/kayttooikeus/virkailija.types';
+import { isValidKutsumanimi } from '../../../validation/KutsumanimiValidator';
+import { isValidPassword } from '../../../validation/PasswordValidator';
+import { isValidKayttajatunnus } from '../../../validation/KayttajatunnusValidator';
+import { useLocalisations } from '../../../selectors';
+import { usePostCreateVirkailijaMutation } from '../../../api/kayttooikeus';
+import { OphDsPage } from '../../design-system/OphDsPage';
+import { OphDsInput } from '../../design-system/OphDsInput';
+import { add } from '../../../slices/toastSlice';
+import { useAppDispatch } from '../../../store';
 
 const initialVirkailija: VirkailijaCreate = {
     etunimet: '',
@@ -22,7 +22,7 @@ const initialVirkailija: VirkailijaCreate = {
     vahvastiTunnistettu: true,
 };
 
-export const VirkailijaCreateContainer = () => {
+export const VirkailijaLuontiPage = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const [virheet, setVirheet] = useState<VirkailijaCreate>(initialVirkailija);

@@ -10,7 +10,7 @@ import OppijoidenTuontiContainer from './components/oppijoidentuonti/OppijoidenT
 import { KayttooikeusryhmaPageContainer } from './components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPageContainer';
 import { KayttooikeusryhmatPage } from './components/kayttooikeusryhmat/listaus/KayttooikeusryhmatPage';
 import { OppijaCreate } from './components/henkilo/oppija/create/OppijaCreate';
-import { VirkailijaCreateContainer } from './components/henkilo/VirkailijaCreateContainer';
+import { VirkailijaLuontiPage } from './components/virkailija/luonti/VirkailijaLuontiPage';
 import { PalvelukayttajaInfo } from './containers/PalvelukayttajaInfo';
 import { JarjestelmatunnusCreatePage } from './components/jarjestelmatunnus/JarjestelmatunnusCreatePage';
 import { JarjestelmatunnusListPage } from './components/jarjestelmatunnus/JarjestelmatunnusListPage';
@@ -37,7 +37,7 @@ export const AppRoutes = () => (
             <Route path="/oppija/:oid/vtjvertailu" element={<OppijaVtjVertailuPage />} />
             <Route path="/oppija/:oid/duplikaatit" element={<OppijaDuplicatesPage />} />
             <Route path="/virkailijahaku" element={<VirkailijahakuPage />} />
-            <Route path="/virkailija/luonti" element={<VirkailijaCreateContainer />} />
+            <Route path="/virkailija/luonti" element={<VirkailijaLuontiPage />} />
             <Route path="/virkailija/:oid" element={<VirkailijaPage />} />
             <Route path="/omattiedot" element={<Omattiedot2Page />} />
             <Route path="/oppijoidentuonti" element={<OppijoidenTuontiContainer />} />
