@@ -115,7 +115,7 @@ export const SalasananVaihtoPage = () => {
                                 aria-describedby="passwordIsInvalid passwordHint"
                                 aria-required="true"
                             />
-                            <span id="passwordIsInvalid" className="error-txt" aria-live="assertive">
+                            <span id="passwordIsInvalid" style={{ color: '#E44E4E' }} aria-live="assertive">
                                 {newPasswordError && L['SALASANA_EI_TAYTA_VAATIMUKSIA'] + ' '}
                                 {samePasswordError && L['SALASANA_VANHA_UUDELLEENREKISTEROINTI'] + ' '}
                             </span>
@@ -136,7 +136,7 @@ export const SalasananVaihtoPage = () => {
                                 aria-describedby="passwordsDoNotMatch passwordHint"
                                 aria-required="true"
                             />
-                            <span id="passwordsDoNotMatch" className="error-txt" aria-live="assertive">
+                            <span id="passwordsDoNotMatch" style={{ color: '#E44E4E' }} aria-live="assertive">
                                 {passwordsDoNotMatch && L['SALASANA_EI_TASMAA'] + ' '}
                             </span>
                         </div>

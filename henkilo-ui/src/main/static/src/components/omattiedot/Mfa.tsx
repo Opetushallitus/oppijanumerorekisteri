@@ -115,7 +115,7 @@ const MfaRegistered = ({ idpEntityId }: MfaRegisteredProps) => {
                             >
                                 {L('MFA_POISTA_KAYTOSTA')}
                             </button>
-                            {setupError && <span className="error-txt">{setupError}</span>}
+                            {setupError && <span className="oph-ds-error">{setupError}</span>}
                         </>
                     ) : (
                         <>
@@ -210,7 +210,7 @@ const MfaSetup = ({ setMfaSetup }: MfaSetupProps) => {
     }
     if (!isSuccess) {
         return (
-            <div className="error-txt" data-test-id="setup-error">
+            <div className="oph-ds-error" data-test-id="setup-error">
                 {L('MFA_TIETOJEN_HAKU_EPAONNISTUI')}
             </div>
         );

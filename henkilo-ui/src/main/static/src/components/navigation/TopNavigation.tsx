@@ -7,8 +7,6 @@ import { useLocalisations } from '../../selectors';
 import { useGetOmattiedotQuery } from '../../api/kayttooikeus';
 import { RootState } from '../../store';
 
-import './TopNavigation.css';
-
 export const TopNavigation = () => {
     const { L } = useLocalisations();
     const { data: omattiedot } = useGetOmattiedotQuery();

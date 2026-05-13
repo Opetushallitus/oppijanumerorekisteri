@@ -2,11 +2,6 @@ body {
     background-color: #f6f4f0;
 }
 
-.error-txt {
-    font-size: 15px;
-    color: #E44E4E;
-}
-
 a {
     color: #159ECB;
     line-height: 16px;
@@ -17,29 +12,12 @@ a {
     padding: 5px 0;
 }
 
-.eidasTruncated {
-    display: inline-block;
-    max-width: 213px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-.nowrap {
-    white-space: nowrap;
-}
-
 .header {
     margin-bottom: 20px;
 }
 
 .oph-label-short {
     width: 50px;
-}
-
-.row label{
-    font-weight: bold;
-    padding-top: 20px;
 }
 
 .mainContainer {
@@ -63,10 +41,6 @@ a {
     margin-bottom: 40px;
 }
 
-.clear {
-    clear: both;
-}
-
 h1 {
     font-size: 34px;
     font-weight: 700;
@@ -80,11 +54,6 @@ h2 {
 h3 {
     font-size: 20px;
     font-weight: 700;
-}
-
-.clear {
-    clear:both;
-    margin-bottom:10px;
 }
 
 .pincode-input-container {
