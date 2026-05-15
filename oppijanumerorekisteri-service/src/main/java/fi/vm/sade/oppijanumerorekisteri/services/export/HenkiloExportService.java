@@ -37,7 +37,8 @@ public class HenkiloExportService {
     var exportFiles = new ArrayList<ExportFileDetails>();
     exportFiles.add(
         exportQueryToCsv(
-            key("henkilo.csv"), "SELECT h.oidhenkilo AS henkilo_oid ORDER BY h.oidhenkilo"));
+            key("henkilo.csv"),
+            "SELECT oidhenkilo AS henkilo_oid FROM henkilo ORDER BY oidhenkilo"));
     writeManifest(new ExportManifest(exportFiles));
   }
 
