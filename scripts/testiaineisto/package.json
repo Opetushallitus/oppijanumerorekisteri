@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "quicktype": "23.2.6",
-    "tsx": "4.21.0",
+    "tsx": "4.21.1",
     "typescript": "6.0.3"
   }
 }
