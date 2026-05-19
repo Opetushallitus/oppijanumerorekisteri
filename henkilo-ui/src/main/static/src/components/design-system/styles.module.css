@@ -1,20 +1,29 @@
-.errorPage {
+.infoPage {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 24px;
 }
 
-.errorContainer {
+.infoContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 24px;
     background-color: #FFFFFF;
-    padding: 24px;
+    padding: 48px;
     border: 1px solid #DFDFDF;
     width: 80vw;
+    max-width: 1200px;
     margin-top: 32px;
+}
+
+.infoContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    text-align: center;
 }
 
 .errorIcon {
@@ -24,10 +33,9 @@
     line-height: 12px;
 }
 
-.errorContent {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-    text-align: center;
+.successIcon {
+    background-color: #378703;
+    border: 16px solid #378703;
+    border-radius: 100%;
+    line-height: 12px;
 }

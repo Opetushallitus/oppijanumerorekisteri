@@ -18,6 +18,7 @@ import { OphDsPage } from '../design-system/OphDsPage';
 import { OphDsBanner } from '../design-system/OphDsBanner';
 import { OphDsSpinner } from '../design-system/OphDsSpinner';
 import { OphDsInput } from '../design-system/OphDsInput';
+import { OphDsSuccessPage } from '../design-system/OphDsSuccessPage';
 import { selectStyles } from '../../utilities/select';
 
 const initialBasicInfo = {
@@ -49,6 +50,7 @@ const KutsuminenPage = () => {
     const [allFilled, setAllFilled] = useState(false);
     const [validEmail, setValidEmail] = useState(false);
     const [validKayttooikeus, setValidKayttooikeus] = useState(false);
+    const [success, setSuccess] = useState(false);
 
     useEffect(() => {
         setValidKayttooikeus(
@@ -68,6 +70,7 @@ const KutsuminenPage = () => {
     function resetFormValues() {
         setBasicInfo({ ...initialBasicInfo });
         setKutsuOrganisaatios([]);
+        setSuccess(false);
     }
 
     function addEmptyOrganization() {
@@ -94,6 +97,14 @@ const KutsuminenPage = () => {
                 <h2>{L('KUTSU_ESTETTY')}</h2>
                 <p>{L('KUTSU_ESTETTY_SYY')}</p>
             </OphDsBanner>
+        );
+    } else if (success) {
+        return (
+            <OphDsSuccessPage header={`${L('KUTSU_LAHETETTY_OSOITTEESEEN')} ${basicInfo.email}`}>
+                <button className="oph-ds-button" onClick={resetFormValues}>
+                    {L('LAHETA_UUSI_KUTSU')}
+                </button>
+            </OphDsSuccessPage>
         );
     } else {
         return (
@@ -192,7 +203,10 @@ const KutsuminenPage = () => {
                         addedOrgs={kutsuOrganisaatios}
                         modalCloseFn={() => setModalOpen(false)}
                         basicInfo={basicInfo}
-                        resetFormValues={resetFormValues}
+                        onSuccess={() => {
+                            setSuccess(true);
+                            setModalOpen(false);
+                        }}
                     />
                 )}
             </OphDsPage>

@@ -33,5 +33,8 @@ export async function gotoKutsuminen(page: Page) {
                 .locator('.oph-modal-content')
                 .getByRole('button', { name: 'Tallenna ja lähetä itserekisteröitymissähköposti' }),
         },
+        success: {
+            createNewButton: page.getByRole('button', { name: 'Lähetä uusi kutsu' }),
+        },
     };
 }

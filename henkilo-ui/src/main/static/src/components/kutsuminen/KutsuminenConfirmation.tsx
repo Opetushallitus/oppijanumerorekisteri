@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { addYears, format } from 'date-fns';
 
 import { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
@@ -15,20 +15,13 @@ type Props = {
     addedOrgs: readonly KutsuOrganisaatio[];
     modalCloseFn: (arg0: React.SyntheticEvent<EventTarget>) => void;
     basicInfo: KutsuBasicInfo;
-    resetFormValues: () => void;
+    onSuccess: () => void;
 };
 
-export const KutsuminenConfirmation = ({ addedOrgs, basicInfo, modalCloseFn, resetFormValues }: Props) => {
+export const KutsuminenConfirmation = ({ addedOrgs, basicInfo, modalCloseFn, onSuccess }: Props) => {
     const dispatch = useAppDispatch();
     const { L, locale } = useLocalisations();
-    const [sent, setSent] = useState(false);
     const [putKutsu, { isLoading }] = usePutKutsuMutation();
-
-    function onClose(e: React.SyntheticEvent<HTMLElement>) {
-        resetFormValues();
-        modalCloseFn(e);
-        setSent(false);
-    }
 
     async function sendInvitation() {
         const payload = {
@@ -56,7 +49,7 @@ export const KutsuminenConfirmation = ({ addedOrgs, basicInfo, modalCloseFn, res
                         header: L('VIRKAILIJAN_LISAYS_LAHETETTY'),
                     })
                 );
-                setSent(true);
+                onSuccess();
             })
             .catch(() => {
                 dispatch(
@@ -88,15 +81,9 @@ export const KutsuminenConfirmation = ({ addedOrgs, basicInfo, modalCloseFn, res
                     </div>
                 ))}
                 <div style={{ display: 'flex', gap: '1rem' }}>
-                    {sent ? (
-                        <button className="oph-ds-button" onClick={onClose}>
-                            {L('VIRKAILIJAN_LISAYS_LAHETETTY')}
-                        </button>
-                    ) : (
-                        <OphDsButton isLoading={isLoading} onClick={sendInvitation}>
-                            {L('VIRKAILIJAN_LISAYS_TALLENNA')}
-                        </OphDsButton>
-                    )}
+                    <OphDsButton isLoading={isLoading} onClick={sendInvitation}>
+                        {L('VIRKAILIJAN_LISAYS_TALLENNA')}
+                    </OphDsButton>
                 </div>
             </div>
         </OphModal>

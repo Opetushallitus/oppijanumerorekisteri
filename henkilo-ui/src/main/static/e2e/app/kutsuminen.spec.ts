@@ -19,7 +19,7 @@ test.describe('kutsuminen', () => {
     });
 
     test('happy path', async ({ page }) => {
-        const { confirmation, form, organisations, submit, validationBanner } = await gotoKutsuminen(page);
+        const { confirmation, form, organisations, submit, validationBanner, success } = await gotoKutsuminen(page);
 
         await expect(validationBanner).toContainText('Täytä kaikki kentät');
         await expect(validationBanner).toContainText('Valitse organisaatio sekä vähintään yksi käyttöoikeusryhmä');
@@ -71,5 +71,8 @@ test.describe('kutsuminen', () => {
 
         await confirmation.submit.click();
         await expect(toastWithText(page, 'Kutsu lähetetty')).toBeVisible();
+        await expect(page.locator('h1')).toContainText('Kutsu lähetetty osoitteeseen email@email.fi');
+        await success.createNewButton.click();
+        await expect(form.etunimi).toHaveValue('');
     });
 });
