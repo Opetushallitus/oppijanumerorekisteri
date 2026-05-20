@@ -226,6 +226,13 @@ class DatabaseStack extends cdk.Stack {
     });
     this.grantTiedotuspalveluAccessToHenkiloExport();
 
+    const s3ExportRole = new iam.Role(this, "S3ExportRole", {
+      assumedBy: new iam.ServicePrincipal("rds.amazonaws.com"),
+    });
+    datantuontiExportBucket.grantReadWrite(s3ExportRole);
+    this.exportBucket.grantReadWrite(s3ExportRole);
+    this.exportKmsKey.grantEncryptDecrypt(s3ExportRole);
+
     if (getEnvironment() == "hahtuva" || getEnvironment() == "dev") {
       this.database = new rds.DatabaseCluster(this, "Database", {
         vpc,
@@ -249,7 +256,7 @@ class DatabaseStack extends cdk.Stack {
           ),
         }),
         readers: [],
-        s3ExportBuckets: [this.exportBucket, datantuontiExportBucket],
+        s3ExportRole,
         s3ImportRole: datantuontiImportRole,
       });
     } else {
