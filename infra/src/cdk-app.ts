@@ -80,6 +80,7 @@ class CdkApp extends cdk.App {
         database: databaseStack.database,
         bastion: databaseStack.bastion,
         exportBucket: databaseStack.exportBucket,
+        exportKmsKey: databaseStack.exportKmsKey,
         ecsCluster: ecsStack.cluster,
         datantuontiExportBucket: datantuontiExportStack.bucket,
         datantuontiExportEncryptionKey: datantuontiExportStack.encryptionKey,
@@ -194,6 +195,8 @@ class DatabaseStack extends cdk.Stack {
   readonly bastion: ec2.BastionHostLinux;
   readonly database: rds.DatabaseCluster;
   readonly exportBucket: s3.Bucket;
+  readonly exportKmsKey: kms.Key;
+
   constructor(
     scope: constructs.Construct,
     id: string,
@@ -217,6 +220,10 @@ class DatabaseStack extends cdk.Stack {
       .forEach((statement) => datantuontiImportRole.addToPolicy(statement));
 
     this.exportBucket = new s3.Bucket(this, "ExportBucket", {});
+    this.exportKmsKey = new kms.Key(this, "ExportKey", {
+      alias: "export-key",
+      enableKeyRotation: true,
+    });
     this.grantTiedotuspalveluAccessToHenkiloExport();
 
     if (getEnvironment() == "hahtuva" || getEnvironment() == "dev") {
@@ -290,12 +297,14 @@ class DatabaseStack extends cdk.Stack {
   }
 
   private grantTiedotuspalveluAccessToHenkiloExport() {
+    const tiedotuspalveluAccountPrincipal = new iam.AccountPrincipal(
+      ssm.StringParameter.valueFromLookup(this, "tiedotuspalvelu-account-id"),
+    );
     this.exportBucket.grantRead(
-      new iam.AccountPrincipal(
-        ssm.StringParameter.valueFromLookup(this, "tiedotuspalvelu-account-id"),
-      ),
+      tiedotuspalveluAccountPrincipal,
       "fulldump/henkilo/v1/*",
     );
+    this.exportKmsKey.grantDecrypt(tiedotuspalveluAccountPrincipal);
 
     new cdk.CfnOutput(this, "HenkiloExportBucketName", {
       value: this.exportBucket.bucketName,
@@ -308,6 +317,7 @@ type OppijanumerorekisteriApplicationStackProperties = cdk.StackProps & {
   ecsCluster: ecs.Cluster;
   bastion: ec2.BastionHostLinux;
   exportBucket: s3.Bucket;
+  exportKmsKey: kms.Key;
   datantuontiExportBucket: s3.Bucket;
   datantuontiExportEncryptionKey: kms.IKey;
   alarmTopic: sns.ITopic;
@@ -366,6 +376,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       datantuontiExportBucket: props.datantuontiExportBucket,
       datantuontiExportEncryptionKey: props.datantuontiExportEncryptionKey,
       exportBucket: props.exportBucket,
+      exportKmsKey: props.exportKmsKey,
       awsRegion: this.region,
     });
 
@@ -379,6 +390,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       datantuontiExportBucket: props.datantuontiExportBucket,
       datantuontiExportEncryptionKey: props.datantuontiExportEncryptionKey,
       exportBucket: props.exportBucket,
+      exportKmsKey: props.exportKmsKey,
       awsRegion: this.region,
       extraEnvironment: {
         "db-scheduler.enabled": "false",
@@ -574,6 +586,7 @@ class OppijanumerorekisteriService extends constructs.Construct {
       streamPrefix: string;
       database: rds.DatabaseCluster;
       exportBucket: s3.Bucket;
+      exportKmsKey: kms.Key;
       datantuontiExportBucket: s3.Bucket;
       datantuontiExportEncryptionKey: kms.IKey;
       awsRegion: string;
@@ -634,6 +647,8 @@ class OppijanumerorekisteriService extends constructs.Construct {
         "oppijanumerorekisteri.tasks.henkilo-export.enabled": `${config.features["oppijanumerorekisteri.tasks.henkilo-export.enabled"]}`,
         "oppijanumerorekisteri.tasks.henkilo-export.bucket-name":
           props.exportBucket.bucketName,
+        "oppijanumerorekisteri.tasks.henkilo-export.kms-key-arn":
+          props.exportKmsKey.keyArn,
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": `${config.features["oppijanumerorekisteri.tasks.datantuonti.export.enabled"]}`,
         "oppijanumerorekisteri.tasks.datantuonti.export.bucket-name":
           props.datantuontiExportBucket.bucketName,

@@ -115,6 +115,7 @@ oppijanumerorekisteri.tasks.datantuonti.import.bucket-name: none
 oppijanumerorekisteri.tasks.testidatantuonti.import.enabled: false
 oppijanumerorekisteri.tasks.henkilo-export.enabled: false
 oppijanumerorekisteri.tasks.henkilo-export.bucket-name: none
+oppijanumerorekisteri.tasks.henkilo-export.kms-key-arn: none
 aws:
   region: eu-west-1
   opintopolkuRoleArn: "none"
