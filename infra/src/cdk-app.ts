@@ -290,24 +290,11 @@ class DatabaseStack extends cdk.Stack {
   }
 
   private grantTiedotuspalveluAccessToHenkiloExport() {
-    const tiedotuspalvelu = new iam.AccountPrincipal(
-      ssm.StringParameter.valueFromLookup(this, "tiedotuspalvelu-account-id"),
-    );
-
-    this.exportBucket.addToResourcePolicy(
-      new iam.PolicyStatement({
-        principals: [tiedotuspalvelu],
-        actions: ["s3:GetObject"],
-        resources: [this.exportBucket.arnForObjects("fulldump/henkilo/v1/*")],
-      }),
-    );
-    this.exportBucket.addToResourcePolicy(
-      new iam.PolicyStatement({
-        principals: [tiedotuspalvelu],
-        actions: ["s3:ListBucket"],
-        resources: [this.exportBucket.bucketArn],
-        conditions: { StringLike: { "s3:prefix": ["fulldump/henkilo/v1/*"] } },
-      }),
+    this.exportBucket.grantRead(
+      new iam.AccountPrincipal(
+        ssm.StringParameter.valueFromLookup(this, "tiedotuspalvelu-account-id"),
+      ),
+      "fulldump/henkilo/v1/*",
     );
 
     new cdk.CfnOutput(this, "HenkiloExportBucketName", {
