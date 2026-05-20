@@ -53,11 +53,11 @@ oppijanumerorekisteri.vtjkysely.keystorePassword: dummydummy
 oppijanumerorekisteri.vtjkysely.truststorePassword: dummydummy
 oppijanumerorekisteri.tasks.henkilo-export.enabled: false
 oppijanumerorekisteri.tasks.henkilo-export.bucket-name: none
+oppijanumerorekisteri.tasks.henkilo-export.kms-key-arn: none
 oppijanumerorekisteri.tasks.datantuonti.export.enabled: false
 oppijanumerorekisteri.tasks.datantuonti.export.bucket-name: none
 oppijanumerorekisteri.tasks.datantuonti.import.enabled: false
 oppijanumerorekisteri.tasks.datantuonti.import.bucket-name: none
-oppijanumerorekisteri.tasks.datantuonti.import.kms-key-arn: none
 
 oppijanumerorekisteri.scheduling.yksilointi.enabled: false
 oppijanumerorekisteri.allow-fake-ssn: true
