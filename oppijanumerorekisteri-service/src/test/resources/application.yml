@@ -56,6 +56,7 @@ oppijanumerorekisteri.tasks.henkilo-export.bucket-name: none
 oppijanumerorekisteri.tasks.henkilo-export.kms-key-arn: none
 oppijanumerorekisteri.tasks.datantuonti.export.enabled: false
 oppijanumerorekisteri.tasks.datantuonti.export.bucket-name: none
+oppijanumerorekisteri.tasks.datantuonti.export.encryption-key-arn: none
 oppijanumerorekisteri.tasks.datantuonti.import.enabled: false
 oppijanumerorekisteri.tasks.datantuonti.import.bucket-name: none
 

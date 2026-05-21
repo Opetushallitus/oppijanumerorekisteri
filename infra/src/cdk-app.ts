@@ -50,7 +50,7 @@ class CdkApp extends cdk.App {
       sharedAccount.prefix("ECSStack"),
       stackProps,
     );
-    const datantuontiExportStack = new datantuonti.ExportStack(
+    const datantuontiExport = new datantuonti.ExportStack(
       this,
       sharedAccount.prefix("DatantuontiExport"),
       stackProps,
@@ -59,8 +59,7 @@ class CdkApp extends cdk.App {
       this,
       sharedAccount.prefix("Database"),
       ecsStack.cluster,
-      datantuontiExportStack.bucket,
-      { ...stackProps, alarmTopic },
+      { ...stackProps, alarmTopic, datantuontiExport },
     );
 
     createHealthCheckStacks(this, alarmsToSlackLambda, [
@@ -82,9 +81,8 @@ class CdkApp extends cdk.App {
         exportBucket: databaseStack.exportBucket,
         exportKmsKey: databaseStack.exportKmsKey,
         ecsCluster: ecsStack.cluster,
-        datantuontiExportBucket: datantuontiExportStack.bucket,
-        datantuontiExportEncryptionKey: datantuontiExportStack.encryptionKey,
         oauthHostedZone: dnsStack.oppijanumerorekisteriHostedZone,
+        datantuontiExport,
         ...stackProps,
       },
     );
@@ -201,9 +199,9 @@ class DatabaseStack extends cdk.Stack {
     scope: constructs.Construct,
     id: string,
     ecsCluster: ecs.Cluster,
-    datantuontiExportBucket: s3.Bucket,
     props: cdk.StackProps & {
       alarmTopic: sns.ITopic;
+      datantuontiExport: datantuonti.ExportStack;
     },
   ) {
     super(scope, id, props);
@@ -229,7 +227,7 @@ class DatabaseStack extends cdk.Stack {
     const s3ExportRole = new iam.Role(this, "S3ExportRole", {
       assumedBy: new iam.ServicePrincipal("rds.amazonaws.com"),
     });
-    datantuontiExportBucket.grantReadWrite(s3ExportRole);
+    props.datantuontiExport.grantReadWrite(s3ExportRole);
     this.exportBucket.grantReadWrite(s3ExportRole);
     this.exportKmsKey.grantEncryptDecrypt(s3ExportRole);
 
@@ -325,10 +323,9 @@ type OppijanumerorekisteriApplicationStackProperties = cdk.StackProps & {
   bastion: ec2.BastionHostLinux;
   exportBucket: s3.Bucket;
   exportKmsKey: kms.Key;
-  datantuontiExportBucket: s3.Bucket;
-  datantuontiExportEncryptionKey: kms.IKey;
   alarmTopic: sns.ITopic;
   oauthHostedZone: route53.IHostedZone;
+  datantuontiExport: datantuonti.ExportStack;
 };
 
 class OppijanumerorekisteriApplicationStack extends cdk.Stack {
@@ -380,8 +377,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       logGroup,
       streamPrefix: "batch",
       database: props.database,
-      datantuontiExportBucket: props.datantuontiExportBucket,
-      datantuontiExportEncryptionKey: props.datantuontiExportEncryptionKey,
+      datantuontiExport: props.datantuontiExport,
       exportBucket: props.exportBucket,
       exportKmsKey: props.exportKmsKey,
       awsRegion: this.region,
@@ -394,8 +390,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       logGroup,
       streamPrefix: "api",
       database: props.database,
-      datantuontiExportBucket: props.datantuontiExportBucket,
-      datantuontiExportEncryptionKey: props.datantuontiExportEncryptionKey,
+      datantuontiExport: props.datantuontiExport,
       exportBucket: props.exportBucket,
       exportKmsKey: props.exportKmsKey,
       awsRegion: this.region,
@@ -594,8 +589,7 @@ class OppijanumerorekisteriService extends constructs.Construct {
       database: rds.DatabaseCluster;
       exportBucket: s3.Bucket;
       exportKmsKey: kms.Key;
-      datantuontiExportBucket: s3.Bucket;
-      datantuontiExportEncryptionKey: kms.IKey;
+      datantuontiExport: datantuonti.ExportStack;
       awsRegion: string;
       extraEnvironment?: ecs.ContainerDefinitionProps["environment"];
     },
@@ -658,9 +652,9 @@ class OppijanumerorekisteriService extends constructs.Construct {
           props.exportKmsKey.keyArn,
         "oppijanumerorekisteri.tasks.datantuonti.export.enabled": `${config.features["oppijanumerorekisteri.tasks.datantuonti.export.enabled"]}`,
         "oppijanumerorekisteri.tasks.datantuonti.export.bucket-name":
-          props.datantuontiExportBucket.bucketName,
+          props.datantuontiExport.bucket.bucketName,
         "oppijanumerorekisteri.tasks.datantuonti.export.encryption-key-arn":
-          props.datantuontiExportEncryptionKey.keyArn,
+          props.datantuontiExport.encryptionKey.keyArn,
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": `${config.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]}`,
         "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": `${config.features["oppijanumerorekisteri.tasks.testidatantuonti.import.enabled"]}`,
         ...lampiProperties,
@@ -760,13 +754,8 @@ class OppijanumerorekisteriService extends constructs.Construct {
     });
 
     props.exportBucket.grantReadWrite(taskDefinition.taskRole);
-    props.datantuontiExportBucket.grantReadWrite(taskDefinition.taskRole);
-    props.datantuontiExportEncryptionKey.grantEncryptDecrypt(
-      taskDefinition.taskRole,
-    );
-    datantuonti
-      .createS3ImporPolicyStatements(this)
-      .forEach((statement) => taskDefinition.addToTaskRolePolicy(statement));
+    props.datantuontiExport.grantReadWrite(taskDefinition.taskRole);
+    datantuonti.grantImportPermissions(this, taskDefinition.taskRole);
     if (config.lampiExport) {
       taskDefinition.addToTaskRolePolicy(
         new iam.PolicyStatement({

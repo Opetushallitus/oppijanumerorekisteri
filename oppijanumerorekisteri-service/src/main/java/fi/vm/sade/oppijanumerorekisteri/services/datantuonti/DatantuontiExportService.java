@@ -1,19 +1,17 @@
 package fi.vm.sade.oppijanumerorekisteri.services.datantuonti;
 
-import tools.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
+import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
-import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
-import software.amazon.awssdk.services.s3.model.ServerSideEncryption;
-
-import java.util.Date;
+import tools.jackson.databind.ObjectMapper;
 
 @Slf4j
 @Service
@@ -26,6 +24,11 @@ public class DatantuontiExportService {
     private ObjectMapper objectMapper;
     @Autowired
     private OppijanumerorekisteriProperties properties;
+
+    @Value("${oppijanumerorekisteri.tasks.datantuonti.export.bucket-name}")
+    private String bucketName;
+    @Value("${oppijanumerorekisteri.tasks.datantuonti.export.encryption-key-arn}")
+    private String kmsKeyArn;
 
     private final static String V1_PREFIX = "oppijanumerorekisteri/v1";
     public final static String MANIFEST_OBJECT_KEY = V1_PREFIX + "/manifest.json";
@@ -80,46 +83,23 @@ public class DatantuontiExportService {
         var timestamp = new Date().getTime();
         var henkiloObjectKey = V1_PREFIX + "/csv/henkilo-" + timestamp + ".csv";
         exportQueryToS3(henkiloObjectKey, HENKILO_QUERY);
-        reEncryptFile(henkiloObjectKey);
         writeManifest(MANIFEST_OBJECT_KEY, new DatantuontiManifest(henkiloObjectKey));
     }
 
     private void exportQueryToS3(String objectKey, String query) {
-        log.info("Exporting table to S3: {}/{}", bucketName(), objectKey);
-        var sql = "SELECT rows_uploaded FROM aws_s3.query_export_to_s3(?, aws_commons.create_s3_uri(?, ?, ?), options := 'FORMAT CSV, HEADER TRUE')";
-        var rowsUploaded = jdbcTemplate.queryForObject(sql, Long.class, query, bucketName(), objectKey, Region.EU_WEST_1.id());
+        log.info("Exporting table to S3: {}/{}", bucketName, objectKey);
+        var sql = "SELECT rows_uploaded FROM aws_s3.query_export_to_s3(?, aws_commons.create_s3_uri(?, ?, ?), options := 'FORMAT CSV, HEADER TRUE', kms_key := ?)";
+        var rowsUploaded = jdbcTemplate.queryForObject(sql, Long.class, query, bucketName, objectKey, Region.EU_WEST_1.id() , kmsKeyArn);
         log.info("Exported {} rows to S3 object {}", rowsUploaded, objectKey);
     }
 
-    private String bucketName() {
-        return properties.getTasks().getDatantuonti().getExport().getBucketName();
-    }
-
     private void writeManifest(String objectKey, DatantuontiManifest manifest) {
-        log.info("Writing manifest file {}/{}: {}", bucketName(), objectKey, manifest);
+        log.info("Writing manifest file {}/{}: {}", bucketName, objectKey, manifest);
         var manifestJson = objectMapper.writeValueAsString(manifest);
         var response = onrS3Client.putObject(
-                b -> b.bucket(bucketName()).key(objectKey),
+                b -> b.bucket(bucketName).key(objectKey),
                 AsyncRequestBody.fromString(manifestJson)
         ).join();
         log.info("Wrote manifest to S3: {}", response);
-    }
-
-    private void reEncryptFile(String objectKey) {
-        log.info("Re-encrypting {}/{} with custom key {}", bucketName(), objectKey, encryptionKeyArn());
-        CopyObjectRequest request = CopyObjectRequest.builder()
-                .sourceBucket(bucketName())
-                .destinationBucket(bucketName())
-                .sourceKey(objectKey)
-                .destinationKey(objectKey)
-                .ssekmsKeyId(encryptionKeyArn())
-                .serverSideEncryption(ServerSideEncryption.AWS_KMS)
-                .build();
-        onrS3Client.copyObject(request).join();
-        log.info("{}/{} re-encrypted with custom key {}", bucketName(), objectKey, encryptionKeyArn());
-    }
-
-    private String encryptionKeyArn() {
-        return properties.getTasks().getDatantuonti().getExport().getEncryptionKeyArn();
     }
 }

@@ -17,6 +17,16 @@ export class ExportStack extends cdk.Stack {
     this.encryptionKey = this.createEncryptionKey(targetAccountPrincipal);
   }
 
+  public grantReadWrite(grantee: iam.IGrantable): void {
+    this.encryptionKey.grantEncryptDecrypt(grantee);
+    this.bucket.grantReadWrite(grantee);
+  }
+
+  public grantRead(grantee: iam.IGrantable): void {
+    this.encryptionKey.grantDecrypt(grantee);
+    this.bucket.grantRead(grantee);
+  }
+
   private createEncryptionKey(targetAccountPrincipal: iam.AccountPrincipal) {
     const key = new kms.Key(this, "S3EncryptionKey", {
       enableKeyRotation: true,
@@ -49,6 +59,15 @@ export class ExportStack extends cdk.Stack {
 
     return bucket;
   }
+}
+
+export function grantImportPermissions(
+  scope: constructs.Construct,
+  grantee: iam.IGrantable,
+): void {
+  createS3ImporPolicyStatements(scope).forEach((statement) =>
+    grantee.grantPrincipal.addToPrincipalPolicy(statement),
+  );
 }
 
 export function createS3ImporPolicyStatements(scope: constructs.Construct) {
