@@ -283,7 +283,7 @@ class DatabaseStack extends cdk.Stack {
         }),
         storageEncrypted: true,
         readers: [],
-        s3ExportBuckets: [this.exportBucket, datantuontiExportBucket],
+        s3ExportRole,
         s3ImportRole: datantuontiImportRole,
       });
     }
