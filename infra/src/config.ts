@@ -33,7 +33,7 @@ const defaultConfig = {
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": false,
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": false,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": false,
-    "oppijanumerorekisteri.tasks.henkilo-export.enabled": false,
+    "oppijanumerorekisteri.tasks.henkilo-export.enabled": true,
   },
 };
 
