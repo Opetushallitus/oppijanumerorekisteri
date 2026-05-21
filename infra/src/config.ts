@@ -65,11 +65,11 @@ export const hahtuva: Config = {
   virkailijaHost: "virkailija.hahtuvaopintopolku.fi",
   apiCapacity: { min: 1, max: 2 },
   features: {
+    ...defaultConfig.features,
     vtj: false,
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
-    "oppijanumerorekisteri.tasks.henkilo-export.enabled": true,
   },
 };
 
@@ -81,11 +81,11 @@ export const dev: Config = {
   virkailijaHost: "virkailija.untuvaopintopolku.fi",
   apiCapacity: { min: 1, max: 2 },
   features: {
+    ...defaultConfig.features,
     vtj: false,
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
-    "oppijanumerorekisteri.tasks.henkilo-export.enabled": true,
   },
   lampiExport: {
     enabled: true,
@@ -101,11 +101,11 @@ export const qa: Config = {
   virkailijaHost: "virkailija.testiopintopolku.fi",
   apiCapacity: { min: 1, max: 2 },
   features: {
+    ...defaultConfig.features,
     vtj: false,
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
-    "oppijanumerorekisteri.tasks.henkilo-export.enabled": true,
   },
   lampiExport: {
     enabled: true,
