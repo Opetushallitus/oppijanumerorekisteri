@@ -22,12 +22,14 @@ import { OppijaPage } from './components/oppija/OppijaPage';
 import { OppijaDuplicatesPage } from './components/oppija/OppijaDuplicatesPage';
 import { OppijaVtjVertailuPage } from './components/oppija/OppijaVtjVertailuPage';
 import { RekisteroityminenPage } from './components/RekisteroityminenPage';
+import { RajapintaoikeudetPage } from './components/rajapintaoikeudet/RajapintaoikeudetPage';
 
 export const AppRoutes = () => (
     <Routes>
         <Route element={<App />}>
             <Route path="/palvelukayttajainfo" element={<PalvelukayttajaInfo />} />
             <Route path="/raportit/kayttooikeudet" element={<Kayttooikeusraportti />} />
+            <Route path="/raportit/rajapintaoikeudet" element={<RajapintaoikeudetPage />} />
             <Route path="/anomukset" element={<AnomusPage />} />
             <Route path="/kutsutut" element={<KutsututPage />} />
             <Route path="/kutsulomake" element={<KutsuminenPage />} />

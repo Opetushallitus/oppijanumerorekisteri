@@ -1,0 +1,53 @@
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 16px;
+}
+
+.summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+}
+
+.summaryItem {
+    border-left: 4px solid var(--blue);
+    padding-left: 12px;
+}
+
+.summaryValue {
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 26px;
+}
+
+.summaryLabel {
+    display: block;
+    color: #454545;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.path {
+    font-family: monospace;
+    overflow-wrap: anywhere;
+}
+
+.expression {
+    display: block;
+    max-width: 760px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-family: monospace;
+    font-size: 13px;
+    line-height: 18px;
+}
+
+.empty {
+    padding: 24px;
+    border: 1px solid var(--gray-border);
+    background: #f6f6f6;
+}

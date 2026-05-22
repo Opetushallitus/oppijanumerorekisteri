@@ -16,6 +16,7 @@ import { HenkiloDuplicate } from '../types/domain/oppijanumerorekisteri/HenkiloD
 import { Yksilointitieto } from '../types/domain/oppijanumerorekisteri/yksilointitieto.types';
 import { kayttooikeusApi } from './kayttooikeus';
 import { Hakemus } from '../types/domain/oppijanumerorekisteri/Hakemus.type';
+import { OpenApiDocument } from '../types/openapi.types';
 
 type Passinumerot = string[];
 
@@ -109,6 +110,10 @@ export const oppijanumerorekisteriApi = createApi({
                 url: 'cas/prequel',
                 responseHandler: 'text',
             }),
+        }),
+        getOppijanumerorekisteriApiDocs: builder.query<OpenApiDocument, void>({
+            query: () => 'v3/api-docs',
+            extraOptions: { maxRetries: 0 },
         }),
         getHenkilo: builder.query<GetHenkiloResponse, string>({
             query: (oid) => `henkilo/${oid}`,
@@ -460,6 +465,7 @@ export const oppijanumerorekisteriApi = createApi({
 
 export const {
     useGetOnrPrequelQuery,
+    useGetOppijanumerorekisteriApiDocsQuery,
     useGetHenkiloQuery,
     usePostOppijahakuQuery,
     useDeleteAccessMutation,

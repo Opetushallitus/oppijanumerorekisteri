@@ -10,7 +10,7 @@ import { HaettuKayttooikeusryhma } from '../types/domain/kayttooikeus/HaettuKayt
 import { KutsututSearchParams } from '../components/kutsutut/KutsututPage';
 import { Kayttooikeusryhma, MyonnettyKayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { Palvelu } from '../types/domain/kayttooikeus/palvelu.types';
-import { PalveluKayttooikeus } from '../types/domain/kayttooikeus/palvelukayttooikeus.types';
+import { Kayttooikeus, PalveluKayttooikeus } from '../types/domain/kayttooikeus/palvelukayttooikeus.types';
 import {
     Organisaatio,
     OrganisaatioNameLookup,
@@ -23,6 +23,7 @@ import { SallitutKayttajatyypit } from '../components/kayttooikeusryhmat/kayttoo
 import { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
 import { Henkilo, HenkiloOrg } from '../types/domain/oppijanumerorekisteri/henkilo.types';
 import { VirkailijaCreate } from '../types/domain/kayttooikeus/virkailija.types';
+import { OpenApiDocument } from '../types/openapi.types';
 
 type MfaSetupResponse = {
     secretKey: string;
@@ -223,6 +224,9 @@ export const kayttooikeusApi = createApi({
     endpoints: (builder) => ({
         getOtuvaPrequel: builder.query<void, void>({
             query: () => 'cas/prequel',
+        }),
+        getKayttooikeusApiDocs: builder.query<OpenApiDocument, void>({
+            query: () => 'v3/api-docs',
         }),
         getKayttooikeusryhmasForHenkilo: builder.query<MyonnettyKayttooikeusryhma[], string>({
             query: (henkiloOid: string) => `kayttooikeusryhma/henkilo/${henkiloOid}`,
@@ -467,6 +471,10 @@ export const kayttooikeusApi = createApi({
             query: () => 'palvelu',
             providesTags: ['palvelut'],
         }),
+        getKayttooikeudet: builder.query<Kayttooikeus[], void>({
+            query: () => 'kayttooikeus',
+            providesTags: ['palvelukayttoooikeudet'],
+        }),
         getPalveluKayttooikeudet: builder.query<PalveluKayttooikeus[], string>({
             query: (palvelu) => `kayttooikeus/${palvelu}`,
             providesTags: ['palvelukayttoooikeudet'],
@@ -616,6 +624,7 @@ export const kayttooikeusApi = createApi({
 
 export const {
     useGetOtuvaPrequelQuery,
+    useGetKayttooikeusApiDocsQuery,
     useDeleteHenkiloOrganisationMutation,
     useDeleteKayttooikeusryhmaForHenkiloMutation,
     usePutKayttooikeusryhmaForHenkiloMutation,
@@ -652,6 +661,7 @@ export const {
     useGetHenkiloLinkityksetQuery,
     useGetAllowedKayttooikeusryhmasForOrganisationQuery,
     useGetPalvelutQuery,
+    useGetKayttooikeudetQuery,
     useGetPalveluKayttooikeudetQuery,
     usePostKayttooikeusAnomusMutation,
     usePutPeruKayttooikeusAnomusMutation,

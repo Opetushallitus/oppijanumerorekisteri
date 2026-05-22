@@ -7,14 +7,15 @@ type AccordionItem = {
 
 type PageProps = {
     items: AccordionItem[];
+    openAll?: boolean;
 };
 
-export const OphDsAccordion = ({ items }: PageProps) => {
+export const OphDsAccordion = ({ items, openAll = false }: PageProps) => {
     const [showItems, setShowItems] = React.useState<number[]>([]);
 
     useEffect(() => {
-        setShowItems([]);
-    }, [items]);
+        setShowItems(openAll ? items.map((_, index) => index) : []);
+    }, [items, openAll]);
 
     const onToggle = (index: number) => {
         if (showItems.includes(index)) {
