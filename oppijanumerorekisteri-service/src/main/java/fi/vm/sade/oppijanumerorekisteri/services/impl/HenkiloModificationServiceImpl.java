@@ -31,8 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 
-import com.google.common.collect.Lists;
-
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -83,7 +81,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     @Transactional
     public HenkiloUpdateDto updateHenkilo(HenkiloUpdateDto henkiloUpdateDto) {
         Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkiloIsIn(
-                Lists.newArrayList(henkiloUpdateDto.getOidHenkilo()))
+                Collections.singletonList(henkiloUpdateDto.getOidHenkilo()))
                 .stream().findFirst().orElseThrow(NotFoundException::new);
 
         if (henkiloUpdateDto.getEtunimet() != null || henkiloUpdateDto.getKutsumanimi() != null) {

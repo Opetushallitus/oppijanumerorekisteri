@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 import fi.vm.sade.oppijanumerorekisteri.clients.SlackClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjMuutostietoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.model.VtjMuutostietoResponse;
@@ -231,8 +230,8 @@ public class VtjMuutostietoService {
         }
 
         log.info("found " + hetusWithoutBucket.size() + " hetus without vtj bucket");
-        List<List<String>> partitioned = Lists.partition(hetusWithoutBucket, 100);
-        for (List<String> partition : partitioned) {
+        for (int i = 0; i < hetusWithoutBucket.size(); i += 100) {
+            List<String> partition = hetusWithoutBucket.subList(i, Math.min(i + 100, hetusWithoutBucket.size()));
             try {
                 List<VtjPerustieto> perustietoList = muutostietoClient.fetchHenkiloPerustieto(partition);
                 reportMissingPerustieto(partition, perustietoList);

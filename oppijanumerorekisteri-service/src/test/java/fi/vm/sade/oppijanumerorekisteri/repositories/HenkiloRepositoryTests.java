@@ -21,8 +21,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import com.google.common.collect.Sets;
-
 import jakarta.persistence.PersistenceException;
 import java.time.LocalDate;
 import java.time.Month;
@@ -490,12 +488,12 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
                 .modified(luontiMuokkausSyncedPvm)
                 .vtjsynced(lastVtjSynced)
                 .passivoitu(passivoitu)
-                .kansalaisuus(Sets.newHashSet(kansalaisuuskoodi != null ? new Kansalaisuus(kansalaisuuskoodi) : null))
-                .yhteystiedotRyhma(Sets.newHashSet(new YhteystiedotRyhma(
+                .kansalaisuus(new HashSet<>(Collections.singleton(kansalaisuuskoodi != null ? new Kansalaisuus(kansalaisuuskoodi) : null)))
+                .yhteystiedotRyhma(new HashSet<>(Set.of(new YhteystiedotRyhma(
                         "yhteystietotyyppi2",
                         "alkupera2",
                         false,
-                        Collections.singleton(new Yhteystieto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo)))))
+                        Collections.singleton(new Yhteystieto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo))))))
                 .kasittelijaOid(kasittelija)
                 .syntymaaika(syntymaAika)
                 .build();

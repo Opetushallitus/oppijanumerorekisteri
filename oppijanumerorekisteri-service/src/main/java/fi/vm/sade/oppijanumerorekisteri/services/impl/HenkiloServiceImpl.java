@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import com.google.common.collect.Lists;
 import com.querydsl.core.types.Predicate;
 import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
@@ -261,10 +260,15 @@ public class HenkiloServiceImpl implements HenkiloService {
     public List<HenkiloViiteDto> findHenkiloViittees(Set<String> oids) {
         List<HenkiloViiteDto> henkiloViiteDtoList = new ArrayList<>();
         if (oids != null) {
-            Lists.partition(
-                            new ArrayList<>(oids),
-                            oppijanumerorekisteriProperties.getHenkiloViiteSplitSize())
-                    .forEach(henkiloOidList -> henkiloViiteDtoList.addAll(this.henkiloViiteRepository.findBy(new HashSet<>(henkiloOidList))));
+            List<String> oidList = new ArrayList<>(oids);
+            int splitSize = oppijanumerorekisteriProperties.getHenkiloViiteSplitSize();
+            if (splitSize <= 0) {
+                throw new IllegalArgumentException("splitSize must be positive");
+            }
+            for (int i = 0; i < oidList.size(); i += splitSize) {
+                List<String> henkiloOidList = oidList.subList(i, Math.min(i + splitSize, oidList.size()));
+                henkiloViiteDtoList.addAll(this.henkiloViiteRepository.findBy(new HashSet<>(henkiloOidList)));
+            }
         } else {
             henkiloViiteDtoList.addAll(this.henkiloViiteRepository.findBy(Set.of()));
         }

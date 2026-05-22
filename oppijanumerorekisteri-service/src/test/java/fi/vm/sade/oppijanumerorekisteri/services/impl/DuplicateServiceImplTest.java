@@ -32,8 +32,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Sets;
-
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
@@ -265,12 +263,12 @@ public class DuplicateServiceImplTest {
                 .modified(luontiMuokkausSyncedPvm)
                 .vtjsynced(lastVtjSynced)
                 .passivoitu(passivoitu)
-                .kansalaisuus(Sets.newHashSet(kansalaisuuskoodi != null ? new Kansalaisuus(kansalaisuuskoodi) : null))
-                .yhteystiedotRyhma(Sets.newHashSet(new YhteystiedotRyhma(
+                .kansalaisuus(new HashSet<>(Collections.singleton(kansalaisuuskoodi != null ? new Kansalaisuus(kansalaisuuskoodi) : null)))
+                .yhteystiedotRyhma(new HashSet<>(Set.of(new YhteystiedotRyhma(
                         "yhteystietotyyppi2",
                         "alkupera2",
                         false,
-                        Collections.singleton(new Yhteystieto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo)))))
+                        Collections.singleton(new Yhteystieto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo))))))
                 .kasittelijaOid(kasittelija)
                 .syntymaaika(syntymaAika)
                 .build();

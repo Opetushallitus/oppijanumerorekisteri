@@ -4,10 +4,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
-
-import com.google.common.base.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.RowMapper;
@@ -129,8 +128,8 @@ public class TestidatantuontiImportService {
     private Henkilo mapToHenkilo(TestidatantuontiHenkilo d) {
         return Henkilo.builder()
             .oidHenkilo(getFreePersonOid())
-            .aidinkieli(Optional.fromNullable(d.aidinkieli()).transform(k -> new Kielisyys(k)).orNull())
-            .asiointiKieli(Optional.fromNullable(d.aidinkieli()).transform(k -> new Kielisyys(k)).orNull())
+            .aidinkieli(Optional.ofNullable(d.aidinkieli()).map(Kielisyys::new).orElse(null))
+            .asiointiKieli(Optional.ofNullable(d.aidinkieli()).map(Kielisyys::new).orElse(null))
             .yksiloityVTJ(true)
             .yksilointiYritetty(true)
             .yksiloity(false)

@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
@@ -30,6 +29,7 @@ import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -582,12 +582,12 @@ public class YksilointiServiceImplTest {
                 .modified(luontiMuokkausSyncedPvm)
                 .vtjsynced(lastVtjSynced)
                 .passivoitu(passivoitu)
-                .kansalaisuus(Sets.newHashSet(kansalaisuuskoodi != null ? new Kansalaisuus(kansalaisuuskoodi) : null))
-                .yhteystiedotRyhma(Sets.newHashSet(new YhteystiedotRyhma(
+                .kansalaisuus(new HashSet<>(Collections.singleton(kansalaisuuskoodi != null ? new Kansalaisuus(kansalaisuuskoodi) : null)))
+                .yhteystiedotRyhma(new HashSet<>(Set.of(new YhteystiedotRyhma(
                         "yhteystietotyyppi2",
                         "alkupera2",
                         false,
-                        Collections.singleton(new Yhteystieto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo)))))
+                        Collections.singleton(new Yhteystieto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo))))))
                 .kasittelijaOid(kasittelija)
                 .syntymaaika(syntymaAika)
                 .build();

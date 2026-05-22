@@ -26,8 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
-
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -143,7 +141,7 @@ public class DuplicateServiceImpl implements DuplicateService {
                     this.henkiloDataRepository.saveAndFlush(oppijaWithSameHetu);
                     henkilo.addHetu(oppijaWithSameHetuHetuhistoria);
                     return this.linkHenkilos(henkilo.getOidHenkilo(),
-                            Lists.newArrayList(oppijaWithSameHetu.getOidHenkilo()));
+                            Collections.singletonList(oppijaWithSameHetu.getOidHenkilo()));
                 })
                 .orElse(new LinkResult(henkilo, Collections.singletonList(henkilo), Collections.emptyList()));
     }
@@ -168,7 +166,7 @@ public class DuplicateServiceImpl implements DuplicateService {
                         slave = henkilo;
                     }
                     slave.setHetu(null);
-                    return this.linkHenkilos(master.getOidHenkilo(), Lists.newArrayList(slave.getOidHenkilo()));
+                    return this.linkHenkilos(master.getOidHenkilo(), Collections.singletonList(slave.getOidHenkilo()));
                 })
                 .orElse(new LinkResult(henkilo, Collections.singletonList(henkilo), new ArrayList<>()));
     }
@@ -338,7 +336,7 @@ public class DuplicateServiceImpl implements DuplicateService {
         slave.setPassivoitu(false);
         this.henkiloViiteRepository.removeByMasterOidAndSlaveOid(oid, slaveOid);
         auditlogAspectHelper.logUnlinkHenkilos(oid, slaveOid);
-        return new LinkResult(master, Lists.newArrayList(master, slave), new ArrayList<>());
+        return new LinkResult(master, new ArrayList<>(Arrays.asList(master, slave)), new ArrayList<>());
     }
 
 }

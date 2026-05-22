@@ -21,8 +21,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.google.common.collect.Lists;
-
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
@@ -94,7 +92,7 @@ public class HenkiloModificationServiceImplTest {
     @Test
     public void updateHenkiloShouldSetEmptyHetuToNull() {
         when(henkiloDataRepositoryMock.findByOidHenkiloIsIn(any()))
-                .thenReturn(Lists.newArrayList(new Henkilo()));
+                .thenReturn(List.of(new Henkilo()));
         when(henkiloDataRepositoryMock.save(any(Henkilo.class)))
                 .thenAnswer(returnsFirstArg());
         HenkiloUpdateDto input = new HenkiloUpdateDto();
@@ -112,7 +110,7 @@ public class HenkiloModificationServiceImplTest {
     @Test
     public void updateHenkiloShouldSaveHetu() {
         when(henkiloDataRepositoryMock.findByOidHenkiloIsIn(any()))
-                .thenReturn(Lists.newArrayList(new Henkilo()));
+                .thenReturn(List.of(new Henkilo()));
         when(henkiloDataRepositoryMock.save(any(Henkilo.class)))
                 .thenAnswer(returnsFirstArg());
         HenkiloUpdateDto input = new HenkiloUpdateDto();
@@ -134,7 +132,7 @@ public class HenkiloModificationServiceImplTest {
     @Test
     public void updateHenkiloShouldNullifyEmptyHetu() {
         when(henkiloDataRepositoryMock.findByOidHenkiloIsIn(any()))
-                .thenReturn(Lists.newArrayList(new Henkilo()));
+                .thenReturn(List.of(new Henkilo()));
         when(henkiloDataRepositoryMock.save(any(Henkilo.class)))
                 .thenAnswer(returnsFirstArg());
         HenkiloUpdateDto input = new HenkiloUpdateDto();
@@ -152,7 +150,7 @@ public class HenkiloModificationServiceImplTest {
     @Test
     public void updateHenkiloShouldSaveSyntymaaika() {
         when(henkiloDataRepositoryMock.findByOidHenkiloIsIn(any()))
-                .thenReturn(Lists.newArrayList(new Henkilo()));
+                .thenReturn(List.of(new Henkilo()));
         when(henkiloDataRepositoryMock.save(any(Henkilo.class)))
                 .thenAnswer(returnsFirstArg());
         HenkiloUpdateDto input = new HenkiloUpdateDto();
@@ -170,7 +168,7 @@ public class HenkiloModificationServiceImplTest {
     @Test
     public void updateHenkiloShouldSaveSukupuoli() {
         when(henkiloDataRepositoryMock.findByOidHenkiloIsIn(any()))
-                .thenReturn(Lists.newArrayList(new Henkilo()));
+                .thenReturn(List.of(new Henkilo()));
         when(henkiloDataRepositoryMock.save(any(Henkilo.class)))
                 .thenAnswer(returnsFirstArg());
         HenkiloUpdateDto input = new HenkiloUpdateDto();

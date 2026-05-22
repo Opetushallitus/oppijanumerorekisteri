@@ -6,9 +6,9 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
-import com.google.common.base.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -121,8 +121,8 @@ public class DatantuontiImportService {
         GeneratedHenkilo generated = generateHenkiloWithUniqueHetu(d.yksiloityvtj(), generator);
         return Henkilo.builder()
             .oidHenkilo(d.oid())
-            .aidinkieli(Optional.fromNullable(d.aidinkieli()).transform(k -> new Kielisyys(k)).orNull())
-            .asiointiKieli(Optional.fromNullable(d.asiointikieli()).transform(k -> new Kielisyys(k)).orNull())
+            .aidinkieli(Optional.ofNullable(d.aidinkieli()).map(Kielisyys::new).orElse(null))
+            .asiointiKieli(Optional.ofNullable(d.asiointikieli()).map(Kielisyys::new).orElse(null))
             .yksiloityVTJ(d.yksiloityvtj())
             .yksilointiYritetty(d.yksiloityvtj())
             .yksiloity(!d.yksiloityvtj() && d.masterOid() == null)

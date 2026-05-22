@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import tools.jackson.databind.ObjectMapper;
-import com.google.common.collect.Sets;
 
 import fi.vm.sade.auditlog.Target;
 import fi.vm.sade.oppijanumerorekisteri.FilesystemHelper;
@@ -237,11 +236,11 @@ public class HenkiloControllerTest {
                 .asiointiKieli(new Kielisyys("fi", "suomi"))
                 .passivoitu(false)
                 .kansalaisuus(Set.of(new Kansalaisuus("246")))
-                .yhteystiedotRyhma(Sets.newHashSet(new YhteystiedotRyhma(
+                .yhteystiedotRyhma(new HashSet<>(Set.of(new YhteystiedotRyhma(
                         "yhteystietotyyppi2",
                         "alkupera2",
                         false,
-                        Collections.singleton(new Yhteystieto(YhteystietoTyyppi.YHTEYSTIETO_SAHKOPOSTI, "arpa@kuutio.fi")))))
+                        Collections.singleton(new Yhteystieto(YhteystietoTyyppi.YHTEYSTIETO_SAHKOPOSTI, "arpa@kuutio.fi"))))))
                 .build();
         given(this.henkiloModificationService.createAndYksiloiHenkilo(any(HenkiloCreateDto.class))).willReturn(henkiloDtoOutput);
         this.mvc.perform(post("/henkilo").content(this.objectMapper.writeValueAsString(henkiloDtoInput))
