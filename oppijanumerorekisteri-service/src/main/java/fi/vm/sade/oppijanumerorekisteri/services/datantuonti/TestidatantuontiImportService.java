@@ -14,7 +14,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import fi.vm.sade.oidgenerator.OIDGenerator;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HuoltajaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
@@ -26,6 +25,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
+import fi.vm.sade.oppijanumerorekisteri.utils.OIDGenerator;
 import fi.vm.sade.oppijanumerorekisteri.utils.VtjYhteystiedotRyhma;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

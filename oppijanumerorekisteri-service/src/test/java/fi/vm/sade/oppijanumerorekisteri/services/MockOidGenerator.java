@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import fi.vm.sade.oidgenerator.OIDGenerator;
+import fi.vm.sade.oppijanumerorekisteri.utils.OIDGenerator;
 
 public class MockOidGenerator implements OidGenerator {
     private static long number = 1000000000L;
