@@ -1,6 +1,6 @@
 services:
   nginx:
-    image: nginx:1.31.0-alpine@sha256:2f07d83bf561b506400dc183b1b2003803e39efbd22451f848adaba14d28c7c7
+    image: nginx:1.31.1-alpine@sha256:b346dbebfeb7fb415da73a4a1789a06c20d0a5faba2fd5711631e2cf253891f9
     ports:
       - 8080:8080
     volumes:
