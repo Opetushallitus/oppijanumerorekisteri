@@ -5,6 +5,7 @@ import { kayttooikeusApi } from './api/kayttooikeus';
 import { oppijanumerorekisteriApi } from './api/oppijanumerorekisteri';
 import { lokalisointiApi } from './api/lokalisointi';
 import { koodistoApi } from './api/koodisto';
+import { organisaatioApi } from './api/organisaatio';
 import oppijahakuReducer from './slices/oppijahakuSlice';
 import virkailijahakuReducer from './slices/virkailijahakuSlice';
 import navigationReducer from './slices/navigationSlice';
@@ -24,6 +25,7 @@ export const store = configureStore({
         [oppijanumerorekisteriApi.reducerPath]: oppijanumerorekisteriApi.reducer,
         [lokalisointiApi.reducerPath]: lokalisointiApi.reducer,
         [koodistoApi.reducerPath]: koodistoApi.reducer,
+        [organisaatioApi.reducerPath]: organisaatioApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
@@ -35,7 +37,8 @@ export const store = configureStore({
             .concat(kayttooikeusApi.middleware)
             .concat(oppijanumerorekisteriApi.middleware)
             .concat(lokalisointiApi.middleware)
-            .concat(koodistoApi.middleware),
+            .concat(koodistoApi.middleware)
+            .concat(organisaatioApi.middleware),
     devTools: isDev && isClient,
 });
 

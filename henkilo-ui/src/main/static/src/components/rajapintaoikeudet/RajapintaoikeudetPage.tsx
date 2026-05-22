@@ -1,6 +1,8 @@
 import React, { ReactNode, useMemo, useState } from 'react';
 
 import { useGetKayttooikeudetQuery, useGetKayttooikeusApiDocsQuery } from '../../api/kayttooikeus';
+import { useGetKoodistoApiDocsQuery } from '../../api/koodisto';
+import { useGetOrganisaatioApiDocsQuery } from '../../api/organisaatio';
 import { useGetOppijanumerorekisteriApiDocsQuery } from '../../api/oppijanumerorekisteri';
 import { useLocalisations } from '../../selectors';
 import { Kayttooikeus } from '../../types/domain/kayttooikeus/palvelukayttooikeus.types';
@@ -17,7 +19,7 @@ import styles from './RajapintaoikeudetPage.module.css';
 
 type AuthorizationPhase = 'PreAuthorize' | 'PostAuthorize';
 
-type ServiceId = 'oppijanumerorekisteri' | 'kayttooikeus';
+type ServiceId = 'oppijanumerorekisteri' | 'kayttooikeus' | 'koodisto' | 'organisaatio';
 
 type ServiceDocumentation = {
     id: ServiceId;
@@ -76,6 +78,7 @@ type RoleDocumentation = {
 type TranslationMaps = {
     palveluLabels: Map<string, string>;
     kayttooikeusLabels: Map<string, string>;
+    palveluNames: string[];
 };
 
 type LocalizedText = {
@@ -95,12 +98,24 @@ const KAYTTOOIKEUS_SERVICE_DOCUMENTATION: ServiceDocumentation = {
     label: 'Käyttöoikeus',
     swaggerUiUrl: '/kayttooikeus-service/swagger-ui/index.html',
 };
+const KOODISTO_SERVICE_DOCUMENTATION: ServiceDocumentation = {
+    id: 'koodisto',
+    label: 'Koodisto',
+    swaggerUiUrl: '/koodisto-service/swagger-ui/index.html',
+};
+const ORGANISAATIO_SERVICE_DOCUMENTATION: ServiceDocumentation = {
+    id: 'organisaatio',
+    label: 'Organisaatio',
+    swaggerUiUrl: '/organisaatio-service/swagger-ui/index.html',
+};
 
 export const RajapintaoikeudetPage = () => {
     const [filter, setFilter] = useState('');
     const { locale } = useLocalisations();
     const oppijanumerorekisteriApiDocs = useGetOppijanumerorekisteriApiDocsQuery();
     const kayttooikeusApiDocs = useGetKayttooikeusApiDocsQuery();
+    const koodistoApiDocs = useGetKoodistoApiDocsQuery();
+    const organisaatioApiDocs = useGetOrganisaatioApiDocsQuery();
     const kayttooikeudet = useGetKayttooikeudetQuery();
 
     useTitle('Rajapintaoikeudet');
@@ -115,8 +130,16 @@ export const RajapintaoikeudetPage = () => {
                 apiDocs: kayttooikeusApiDocs.data,
                 service: KAYTTOOIKEUS_SERVICE_DOCUMENTATION,
             },
+            {
+                apiDocs: koodistoApiDocs.data,
+                service: KOODISTO_SERVICE_DOCUMENTATION,
+            },
+            {
+                apiDocs: organisaatioApiDocs.data,
+                service: ORGANISAATIO_SERVICE_DOCUMENTATION,
+            },
         ],
-        [kayttooikeusApiDocs.data, oppijanumerorekisteriApiDocs.data]
+        [kayttooikeusApiDocs.data, koodistoApiDocs.data, oppijanumerorekisteriApiDocs.data, organisaatioApiDocs.data]
     );
     const translationMaps = useMemo(
         () => buildTranslationMaps(kayttooikeudet.data, locale),
@@ -135,18 +158,28 @@ export const RajapintaoikeudetPage = () => {
     const accordionItems = useMemo(() => toAccordionItems(visiblePalvelut), [visiblePalvelut]);
 
     const hasAnyApiDocs = apiDocsSources.some(({ apiDocs }) => apiDocs);
+    const apiDocsCount = apiDocsSources.length;
+    const loadedApiDocsCount = apiDocsSources.filter(({ apiDocs }) => apiDocs).length;
     const isFetching =
-        oppijanumerorekisteriApiDocs.isFetching || kayttooikeusApiDocs.isFetching || kayttooikeudet.isFetching;
-    const isApiDocsError = oppijanumerorekisteriApiDocs.isError || kayttooikeusApiDocs.isError;
+        oppijanumerorekisteriApiDocs.isFetching ||
+        kayttooikeusApiDocs.isFetching ||
+        koodistoApiDocs.isFetching ||
+        organisaatioApiDocs.isFetching ||
+        kayttooikeudet.isFetching;
+    const isApiDocsError =
+        oppijanumerorekisteriApiDocs.isError ||
+        kayttooikeusApiDocs.isError ||
+        koodistoApiDocs.isError ||
+        organisaatioApiDocs.isError;
 
     return (
         <OphDsPage header="Rajapintaoikeudet">
             <div className={styles.toolbar}>
                 <OphDsInput
                     id="endpoint-filter"
-                    label="Suodata polkua tai rajapintaa"
+                    label="Hae rajapinnoista tai kuvauksista"
                     onChange={setFilter}
-                    placeholder="/henkilo tai haeHenkilo"
+                    placeholder="Hae..."
                     icon="search"
                     isClearable
                     debounceTimeout={200}
@@ -166,6 +199,14 @@ export const RajapintaoikeudetPage = () => {
                 <div className="oph-ds-error">Rajapintadokumentaation haku epäonnistui.</div>
             ) : (
                 <>
+                    {isFetching ? (
+                        <div className={styles.loadingNotice} aria-live="polite">
+                            <span className={styles.loadingSpinner}>
+                                <OphDsSpinner />
+                            </span>
+                            <span>{getLoadingStatusText(loadedApiDocsCount, apiDocsCount)}</span>
+                        </div>
+                    ) : null}
                     {isApiDocsError ? (
                         <div className="oph-ds-error">Osa rajapintadokumentaatioista jäi hakematta.</div>
                     ) : null}
@@ -190,6 +231,12 @@ export const RajapintaoikeudetPage = () => {
     );
 };
 
+function getLoadingStatusText(loadedApiDocsCount: number, apiDocsCount: number): string {
+    return loadedApiDocsCount < apiDocsCount
+        ? `Haetaan ja käsitellään rajapintadokumentaatioita (${loadedApiDocsCount}/${apiDocsCount}).`
+        : 'Käsitellään käyttöoikeustietoja.';
+}
+
 const SummaryItem = ({ label, value }: { label: string; value: number }) => (
     <div className={styles.summaryItem}>
         <span className={styles.summaryValue}>{value}</span>
@@ -206,7 +253,10 @@ function buildRoleDocumentation(apiDocsSources: OpenApiSource[], translations: T
             const authorizationChecks = getAuthorizationChecks(endpoint);
 
             authorizationChecks.forEach((authorizationCheck) => {
-                const permissionRoles = extractPermissionRoles(authorizationCheck.expression);
+                const permissionRoles = extractPermissionRoles(
+                    authorizationCheck.expression,
+                    translations.palveluNames
+                );
                 if (permissionRoles.length === 0) {
                     return;
                 }
@@ -252,11 +302,15 @@ function buildRoleDocumentation(apiDocsSources: OpenApiSource[], translations: T
 function buildTranslationMaps(kayttooikeudet: Kayttooikeus[] | undefined, locale: Locale): TranslationMaps {
     const palveluLabels = new Map<string, string>();
     const kayttooikeusLabels = new Map<string, string>();
+    const palveluNames = new Set<string>();
 
     kayttooikeudet?.forEach((kayttooikeus) => {
         const palveluLabel = localizeTexts(kayttooikeus.palveluTexts, locale);
         const kayttooikeusLabel = localizeTexts(kayttooikeus.rooliTexts, locale);
 
+        if (kayttooikeus.palveluName) {
+            palveluNames.add(kayttooikeus.palveluName);
+        }
         setTranslation(palveluLabels, kayttooikeus.palveluName, palveluLabel);
         setTranslation(
             kayttooikeusLabels,
@@ -265,7 +319,11 @@ function buildTranslationMaps(kayttooikeudet: Kayttooikeus[] | undefined, locale
         );
     });
 
-    return { palveluLabels, kayttooikeusLabels };
+    return {
+        palveluLabels,
+        kayttooikeusLabels,
+        palveluNames: Array.from(palveluNames).sort((a, b) => b.length - a.length || a.localeCompare(b)),
+    };
 }
 
 function setTranslation(map: Map<string, string>, key: string, value?: string) {
@@ -392,11 +450,24 @@ function toEndpointAccess(
         serviceLabel: endpoint.service.label,
         path: endpoint.path,
         method: endpoint.method,
-        summary: endpoint.operation.summary ?? endpoint.operation.operationId ?? '',
+        summary:
+            endpoint.operation.summary ??
+            sanitizeDescription(endpoint.operation.description) ??
+            endpoint.operation.operationId ??
+            '',
         phase,
         expression,
         swaggerUrl: getSwaggerUrl(endpoint.operation, endpoint.service),
     };
+}
+
+function sanitizeDescription(description: string | undefined): string | undefined {
+    const sanitizedDescription = description
+        ?.split(/\r?\n\r?\n/)
+        .filter((paragraph) => !paragraph.trim().match(/^\*\*(?:PreAuthorize|PostAuthorize):\*\*/))
+        .join('\n\n')
+        .trim();
+    return sanitizedDescription ? sanitizedDescription : undefined;
 }
 
 function getSwaggerUrl(operation: OpenApiOperation, service: ServiceDocumentation): string {
@@ -407,10 +478,10 @@ function getSwaggerUrl(operation: OpenApiOperation, service: ServiceDocumentatio
     return `${service.swaggerUiUrl}#/${encodeURIComponent(tag)}/${encodeURIComponent(operation.operationId)}`;
 }
 
-function extractPermissionRoles(expression: string): PermissionRole[] {
+function extractPermissionRoles(expression: string, palveluNames: string[]): PermissionRole[] {
     const permissionRoles = new Map<string, PermissionRole>();
     extractRoles(expression).forEach((role) => {
-        const permissionRole = splitRole(role);
+        const permissionRole = splitRole(role, palveluNames);
         if (permissionRole) {
             permissionRoles.set(permissionRole.fullRole, permissionRole);
         }
@@ -423,16 +494,17 @@ function extractPermissionRoles(expression: string): PermissionRole[] {
     );
 }
 
-function splitRole(role: string): PermissionRole | undefined {
-    const separatorIndex = role.indexOf('_');
-    if (separatorIndex <= 0 || separatorIndex === role.length - 1) {
+function splitRole(role: string, palveluNames: string[]): PermissionRole | undefined {
+    const normalizedRole = role.toUpperCase();
+    const palvelu = palveluNames.find((palveluName) => normalizedRole.startsWith(`${palveluName.toUpperCase()}_`));
+    if (!palvelu) {
         return undefined;
     }
 
     return {
         fullRole: role,
-        palvelu: role.slice(0, separatorIndex),
-        kayttooikeus: role.slice(separatorIndex + 1),
+        palvelu,
+        kayttooikeus: role.slice(palvelu.length + 1),
     };
 }
 
@@ -459,6 +531,7 @@ function extractRoleFunctionRoles(expression: string): string[] {
             const argumentString = readParenthesizedContent(expression, openParenthesisIndex);
             if (argumentString) {
                 roles.push(...extractQuotedStrings(argumentString));
+                roles.push(...extractStaticRoleReferences(argumentString));
             }
             searchIndex = openParenthesisIndex + 1;
         }
@@ -467,8 +540,14 @@ function extractRoleFunctionRoles(expression: string): string[] {
     return roles;
 }
 
+function extractStaticRoleReferences(expression: string): string[] {
+    return Array.from(expression.matchAll(/\b(?:ROLE_)?APP_[A-Za-z0-9_-]+\b/g))
+        .map((match) => match[0])
+        .filter((value): value is string => value !== undefined && value.length > 0);
+}
+
 function extractPermissionMapRoles(expression: string): string[] {
-    return Array.from(expression.matchAll(/'([A-Z0-9_]+)'\s*:\s*\{([^}]+)\}/g)).flatMap((match) => {
+    return Array.from(expression.matchAll(/'([A-Za-z0-9_-]+)'\s*:\s*\{([^}]+)\}/g)).flatMap((match) => {
         const palvelu = match[1];
         const kayttooikeudet = match[2];
         if (!palvelu || !kayttooikeudet) {
@@ -574,7 +653,7 @@ function toTableRows(endpoints: EndpointAccess[]): ReactNode[][] {
             target="_blank"
             rel="noreferrer"
         >
-            {endpoint.path}
+            {endpoint.method} {endpoint.path}
         </a>,
         <span key="summary">{endpoint.summary}</span>,
         <code key="expression" className={styles.expression}>

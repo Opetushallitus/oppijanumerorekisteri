@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { getCommonOptions } from './common';
 import { Locale } from '../types/locale.type';
+import { OpenApiDocument } from '../types/openapi.types';
 
 export type Koodi = {
     koodiArvo: string;
@@ -34,6 +35,9 @@ export const koodistoApi = createApi({
     }),
     tagTypes: ['henkilotunnistetyypit'],
     endpoints: (builder) => ({
+        getKoodistoApiDocs: builder.query<OpenApiDocument, void>({
+            query: () => 'api-docs',
+        }),
         getHenkilontunnistetyypit: builder.query<Koodisto, void>({
             query: () => 'rest/json/henkilontunnistetyypit/koodi',
         }),
@@ -59,6 +63,7 @@ export const koodistoApi = createApi({
 });
 
 export const {
+    useGetKoodistoApiDocsQuery,
     useGetHenkilontunnistetyypitQuery,
     useGetKansalaisuudetQuery,
     useGetKieletQuery,
