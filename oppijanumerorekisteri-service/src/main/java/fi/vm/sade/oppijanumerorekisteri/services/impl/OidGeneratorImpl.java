@@ -1,7 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import fi.vm.sade.oidgenerator.OIDGenerator;
 import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
+import fi.vm.sade.oppijanumerorekisteri.utils.OIDGenerator;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

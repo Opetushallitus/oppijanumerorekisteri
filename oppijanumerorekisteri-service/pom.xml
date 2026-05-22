@@ -34,10 +34,6 @@
             <artifactId>auditlogger</artifactId>
         </dependency>
         <dependency>
-            <groupId>fi.vm.sade.java-utils</groupId>
-            <artifactId>oid-generator</artifactId>
-        </dependency>
-        <dependency>
             <groupId>fi.vm.sade.kayttooikeus</groupId>
             <artifactId>kayttooikeus-api</artifactId>
         </dependency>
