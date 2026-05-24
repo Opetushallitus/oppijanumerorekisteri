@@ -113,6 +113,7 @@ oppijanumerorekisteri.tasks.datantuonti.export.bucket-name: none
 oppijanumerorekisteri.tasks.datantuonti.import.enabled: false
 oppijanumerorekisteri.tasks.datantuonti.import.bucket-name: none
 oppijanumerorekisteri.tasks.testidatantuonti.import.enabled: false
+oppijanumerorekisteri.tasks.koski-datantuonnin-muokkaus.enabled: false
 oppijanumerorekisteri.tasks.henkilo-export.enabled: false
 oppijanumerorekisteri.tasks.henkilo-export.bucket-name: none
 oppijanumerorekisteri.tasks.henkilo-export.kms-key-arn: none

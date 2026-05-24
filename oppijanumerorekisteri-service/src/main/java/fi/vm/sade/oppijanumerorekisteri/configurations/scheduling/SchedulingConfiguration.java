@@ -12,6 +12,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.QueueingEmailService;
 import fi.vm.sade.oppijanumerorekisteri.services.VtjMuutostietoService;
 import fi.vm.sade.oppijanumerorekisteri.services.datantuonti.DatantuontiExportService;
 import fi.vm.sade.oppijanumerorekisteri.services.datantuonti.DatantuontiImportService;
+import fi.vm.sade.oppijanumerorekisteri.services.datantuonti.KoskiDatantuonninMuokkausService;
 import fi.vm.sade.oppijanumerorekisteri.services.datantuonti.TestidatantuontiImportService;
 import fi.vm.sade.oppijanumerorekisteri.services.death.CleanupService;
 import fi.vm.sade.oppijanumerorekisteri.services.export.ExportService;
@@ -42,6 +43,7 @@ public class SchedulingConfiguration {
     private final DatantuontiExportService datantuontiExportService;
     private final DatantuontiImportService datantuontiImportService;
     private final TestidatantuontiImportService testidatantuontiImportService;
+    private final KoskiDatantuonninMuokkausService koskiDatantuonninMuokkausService;
     private final QueueingEmailService queueingEmailService;
     private final VtjKyselyCertificationCheck vtjKyselyCertificationCheck;
 
@@ -172,6 +174,14 @@ public class SchedulingConfiguration {
                         throw new RuntimeException(e);
                     }
                 });
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "oppijanumerorekisteri.tasks.koski-datantuonnin-muokkaus.enabled", matchIfMissing = false)
+    Task<Void> koskiDatantuonninMuokkausTask() {
+        log.info("Creating koski datantuonnin muokkaus task");
+        return Tasks.recurring(TaskDescriptor.of("KoskiDatantuonninMuokkaus"), FixedDelay.ofMinutes(15))
+                .execute((taskInstance, executionContext) -> koskiDatantuonninMuokkausService.run());
     }
 
     @Bean
