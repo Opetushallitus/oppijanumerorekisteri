@@ -657,6 +657,7 @@ class OppijanumerorekisteriService extends constructs.Construct {
           props.datantuontiExport.encryptionKey.keyArn,
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": `${config.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]}`,
         "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": `${config.features["oppijanumerorekisteri.tasks.testidatantuonti.import.enabled"]}`,
+        "oppijanumerorekisteri.tasks.koski-datantuonnin-muokkaus.enabled": `${config.features["oppijanumerorekisteri.tasks.koski-datantuonnin-muokkaus.enabled"]}`,
         ...lampiProperties,
         ...props.extraEnvironment,
       },
