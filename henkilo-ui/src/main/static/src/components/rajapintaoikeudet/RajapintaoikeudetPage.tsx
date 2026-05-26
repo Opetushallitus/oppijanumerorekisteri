@@ -45,9 +45,14 @@ type EndpointAccess = {
     path: string;
     method: string;
     summary: string;
-    phase: AuthorizationPhase;
+    authorizationChecks: AuthorizationCheck[];
     expression: string;
     swaggerUrl: string;
+};
+
+type AuthorizationCheck = {
+    phase: AuthorizationPhase;
+    expression: string;
 };
 
 type PermissionRole = {
@@ -79,6 +84,7 @@ type TranslationMaps = {
     palveluLabels: Map<string, string>;
     kayttooikeusLabels: Map<string, string>;
     palveluNames: string[];
+    kayttooikeudetByPalvelu: Map<string, string[]>;
 };
 
 type LocalizedText = {
@@ -86,8 +92,30 @@ type LocalizedText = {
     lang: string;
 };
 
+type AccordionItem = {
+    header: string;
+    children: (show: boolean) => ReactNode;
+};
+
+type AccordionItemGroups = {
+    withEndpoints: AccordionItem[];
+    withoutEndpoints: AccordionItem[];
+};
+
 const OPEN_API_METHODS: OpenApiHttpMethod[] = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'];
 const ROLE_FUNCTIONS = ['hasRole', 'hasAnyRole', 'hasAuthority', 'hasAnyAuthority'];
+const RELEVANT_PALVELUT = new Set([
+    'KOODISTO',
+    'ORGANISAATIOHALLINTA',
+    'OMATTIEDOT',
+    'OSOITE',
+    'KAYTTOOIKEUS',
+    'OPPIJANUMEROREKISTERI',
+    'HENKILOTIETOMUUTOS',
+    'YKSITYISTEN_REKISTEROITYMINEN',
+    'ORGANISAATIOIDEN_REKISTEROITYMINEN',
+    'VIESTINVALITYS',
+]);
 const OPPIJANUMEROREKISTERI_SERVICE_DOCUMENTATION: ServiceDocumentation = {
     id: 'oppijanumerorekisteri',
     label: 'Oppijanumerorekisteri',
@@ -155,7 +183,7 @@ export const RajapintaoikeudetPage = () => {
         () => (isFilterActive ? filterPalvelut(documentation.palvelut, normalizedFilter) : documentation.palvelut),
         [documentation.palvelut, isFilterActive, normalizedFilter]
     );
-    const accordionItems = useMemo(() => toAccordionItems(visiblePalvelut), [visiblePalvelut]);
+    const accordionItemGroups = useMemo(() => toAccordionItemGroups(visiblePalvelut), [visiblePalvelut]);
 
     const hasAnyApiDocs = apiDocsSources.some(({ apiDocs }) => apiDocs);
     const apiDocsCount = apiDocsSources.length;
@@ -215,13 +243,29 @@ export const RajapintaoikeudetPage = () => {
                             Käyttöoikeuksien nimien haku epäonnistui. Näytetään tekniset tunnisteet.
                         </div>
                     ) : null}
-                    {documentation.kayttooikeusCount === 0 ? (
+                    {documentation.kayttooikeusCount === 0 && isFetching ? null : documentation.kayttooikeusCount ===
+                      0 ? (
                         <div className={styles.empty}>
                             OpenAPI-dokumentaatioista ei löytynyt rooleihin kohdistuvaa x-preauthorize- tai
                             x-postauthorize-tietoa.
                         </div>
                     ) : visiblePalvelut.length > 0 ? (
-                        <OphDsAccordion items={accordionItems} openAll={isFilterActive} />
+                        <>
+                            {accordionItemGroups.withEndpoints.length > 0 ? (
+                                <OphDsAccordion items={accordionItemGroups.withEndpoints} openAll={isFilterActive} />
+                            ) : null}
+                            {accordionItemGroups.withoutEndpoints.length > 0 ? (
+                                <>
+                                    <h2 className={styles.unusedKayttooikeudetTitle}>
+                                        Käyttöoikeudet, joita ei suoraan käytetä rajapinnoissa
+                                    </h2>
+                                    <OphDsAccordion
+                                        items={accordionItemGroups.withoutEndpoints}
+                                        openAll={isFilterActive}
+                                    />
+                                </>
+                            ) : null}
+                        </>
                     ) : (
                         <div className={styles.empty}>Hakuehdolla ei löytynyt palveluja tai käyttöoikeuksia.</div>
                     )}
@@ -265,12 +309,29 @@ function buildRoleDocumentation(apiDocsSources: OpenApiSource[], translations: T
                 permissionRoles.forEach((permissionRole) => {
                     const kayttooikeusMap = palveluMap.get(permissionRole.palvelu) ?? new Map();
                     const endpointMap = kayttooikeusMap.get(permissionRole.kayttooikeus) ?? new Map();
-                    endpointMap.set(getEndpointKey(authorizationCheck), authorizationCheck);
+                    const endpointKey = getEndpointKey(authorizationCheck);
+                    const existingEndpoint = endpointMap.get(endpointKey);
+                    endpointMap.set(
+                        endpointKey,
+                        existingEndpoint
+                            ? mergeEndpointAccess(existingEndpoint, authorizationCheck)
+                            : authorizationCheck
+                    );
                     kayttooikeusMap.set(permissionRole.kayttooikeus, endpointMap);
                     palveluMap.set(permissionRole.palvelu, kayttooikeusMap);
                 });
             });
         });
+    });
+
+    translations.kayttooikeudetByPalvelu.forEach((kayttooikeudet, palvelu) => {
+        const kayttooikeusMap = palveluMap.get(palvelu) ?? new Map<string, Map<string, EndpointAccess>>();
+        kayttooikeudet.forEach((kayttooikeus) => {
+            if (!kayttooikeusMap.has(kayttooikeus)) {
+                kayttooikeusMap.set(kayttooikeus, new Map());
+            }
+        });
+        palveluMap.set(palvelu, kayttooikeusMap);
     });
 
     const palvelut = Array.from(palveluMap.entries())
@@ -303,13 +364,23 @@ function buildTranslationMaps(kayttooikeudet: Kayttooikeus[] | undefined, locale
     const palveluLabels = new Map<string, string>();
     const kayttooikeusLabels = new Map<string, string>();
     const palveluNames = new Set<string>();
+    const kayttooikeudetByPalvelu = new Map<string, Set<string>>();
 
     kayttooikeudet?.forEach((kayttooikeus) => {
+        if (!isRelevantPalvelu(kayttooikeus.palveluName)) {
+            return;
+        }
+
         const palveluLabel = localizeTexts(kayttooikeus.palveluTexts, locale);
         const kayttooikeusLabel = localizeTexts(kayttooikeus.rooliTexts, locale);
 
         if (kayttooikeus.palveluName) {
             palveluNames.add(kayttooikeus.palveluName);
+        }
+        if (kayttooikeus.rooli) {
+            const palvelunKayttooikeudet = kayttooikeudetByPalvelu.get(kayttooikeus.palveluName) ?? new Set<string>();
+            palvelunKayttooikeudet.add(kayttooikeus.rooli);
+            kayttooikeudetByPalvelu.set(kayttooikeus.palveluName, palvelunKayttooikeudet);
         }
         setTranslation(palveluLabels, kayttooikeus.palveluName, palveluLabel);
         setTranslation(
@@ -323,7 +394,17 @@ function buildTranslationMaps(kayttooikeudet: Kayttooikeus[] | undefined, locale
         palveluLabels,
         kayttooikeusLabels,
         palveluNames: Array.from(palveluNames).sort((a, b) => b.length - a.length || a.localeCompare(b)),
+        kayttooikeudetByPalvelu: new Map(
+            Array.from(kayttooikeudetByPalvelu.entries()).map(([palvelu, palvelunKayttooikeudet]) => [
+                palvelu,
+                Array.from(palvelunKayttooikeudet).sort((a, b) => a.localeCompare(b)),
+            ])
+        ),
     };
+}
+
+function isRelevantPalvelu(palveluName?: string): boolean {
+    return palveluName ? RELEVANT_PALVELUT.has(palveluName.toUpperCase()) : false;
 }
 
 function setTranslation(map: Map<string, string>, key: string, value?: string) {
@@ -455,10 +536,43 @@ function toEndpointAccess(
             sanitizeDescription(endpoint.operation.description) ??
             endpoint.operation.operationId ??
             '',
-        phase,
-        expression,
+        authorizationChecks: [{ phase, expression }],
+        expression: formatAuthorizationChecks([{ phase, expression }]),
         swaggerUrl: getSwaggerUrl(endpoint.operation, endpoint.service),
     };
+}
+
+function mergeEndpointAccess(existingEndpoint: EndpointAccess, endpoint: EndpointAccess): EndpointAccess {
+    const authorizationChecks = [...existingEndpoint.authorizationChecks];
+    endpoint.authorizationChecks.forEach((authorizationCheck) => {
+        if (
+            !authorizationChecks.some(
+                (existingAuthorizationCheck) =>
+                    existingAuthorizationCheck.phase === authorizationCheck.phase &&
+                    existingAuthorizationCheck.expression === authorizationCheck.expression
+            )
+        ) {
+            authorizationChecks.push(authorizationCheck);
+        }
+    });
+
+    return {
+        ...existingEndpoint,
+        authorizationChecks,
+        expression: formatAuthorizationChecks(authorizationChecks),
+    };
+}
+
+function formatAuthorizationChecks(authorizationChecks: AuthorizationCheck[]): string {
+    return [...authorizationChecks]
+        .sort((a, b) => compareAuthorizationPhase(a.phase, b.phase) || a.expression.localeCompare(b.expression))
+        .map((authorizationCheck) => `${authorizationCheck.phase}: ${authorizationCheck.expression}`)
+        .join('\n\n');
+}
+
+function compareAuthorizationPhase(a: AuthorizationPhase, b: AuthorizationPhase): number {
+    const order: Record<AuthorizationPhase, number> = { PreAuthorize: 0, PostAuthorize: 1 };
+    return order[a] - order[b];
 }
 
 function sanitizeDescription(description: string | undefined): string | undefined {
@@ -598,7 +712,7 @@ function normalizeRole(role: string): string {
 }
 
 function getEndpointKey(endpoint: EndpointAccess): string {
-    return `${getEndpointIdentity(endpoint)} ${endpoint.phase} ${endpoint.expression}`;
+    return getEndpointIdentity(endpoint);
 }
 
 function getEndpointIdentity(endpoint: EndpointAccess): string {
@@ -614,7 +728,6 @@ function compareEndpointAccess(a: EndpointAccess, b: EndpointAccess): number {
         a.serviceLabel.localeCompare(b.serviceLabel) ||
         a.path.localeCompare(b.path) ||
         a.method.localeCompare(b.method) ||
-        a.phase.localeCompare(b.phase) ||
         a.expression.localeCompare(b.expression)
     );
 }
@@ -627,20 +740,50 @@ function compareKayttooikeusGroups(a: KayttooikeusGroup, b: KayttooikeusGroup): 
     return a.kayttooikeusLabel.localeCompare(b.kayttooikeusLabel) || a.kayttooikeus.localeCompare(b.kayttooikeus);
 }
 
-function toAccordionItems(palvelut: PalveluGroup[]) {
-    return palvelut.flatMap((palvelu) =>
-        palvelu.kayttooikeudet.map((kayttooikeus) => ({
-            header: `${palvelu.palveluLabel} / ${kayttooikeus.kayttooikeusLabel} (${palvelu.palvelu}_${kayttooikeus.kayttooikeus}) - ${countUniqueEndpoints(kayttooikeus.endpoints)} rajapintaa`,
-            children: (show: boolean): ReactNode =>
-                show ? (
-                    <OphDsTable
-                        headers={['API', 'Rajapinta', 'Kuvaus', 'Ehto']}
-                        isFetching={false}
-                        rows={toTableRows(kayttooikeus.endpoints)}
-                    />
-                ) : null,
-        }))
+function toAccordionItemGroups(palvelut: PalveluGroup[]): AccordionItemGroups {
+    const items = palvelut.flatMap((palvelu) =>
+        palvelu.kayttooikeudet.map((kayttooikeus) => ({ palvelu, kayttooikeus }))
     );
+
+    return {
+        withEndpoints: items
+            .filter(({ kayttooikeus }) => kayttooikeus.endpoints.length > 0)
+            .sort(compareAccordionItems)
+            .map(toAccordionItem),
+        withoutEndpoints: items
+            .filter(({ kayttooikeus }) => kayttooikeus.endpoints.length === 0)
+            .sort(compareAccordionItems)
+            .map(toAccordionItem),
+    };
+}
+
+function toAccordionItem({
+    palvelu,
+    kayttooikeus,
+}: {
+    palvelu: PalveluGroup;
+    kayttooikeus: KayttooikeusGroup;
+}): AccordionItem {
+    return {
+        header: `${palvelu.palveluLabel} / ${kayttooikeus.kayttooikeusLabel} (${palvelu.palvelu}_${kayttooikeus.kayttooikeus}) - ${countUniqueEndpoints(kayttooikeus.endpoints)} rajapintaa`,
+        children: (show: boolean): ReactNode =>
+            show && kayttooikeus.endpoints.length > 0 ? (
+                <OphDsTable
+                    headers={['API', 'Rajapinta', 'Kuvaus', 'Ehto']}
+                    isFetching={false}
+                    rows={toTableRows(kayttooikeus.endpoints)}
+                />
+            ) : show ? (
+                <div className={styles.empty}>Käyttöoikeutta ei käytetä rajapinnoissa.</div>
+            ) : null,
+    };
+}
+
+function compareAccordionItems(
+    a: { palvelu: PalveluGroup; kayttooikeus: KayttooikeusGroup },
+    b: { palvelu: PalveluGroup; kayttooikeus: KayttooikeusGroup }
+): number {
+    return comparePalveluGroups(a.palvelu, b.palvelu) || compareKayttooikeusGroups(a.kayttooikeus, b.kayttooikeus);
 }
 
 function toTableRows(endpoints: EndpointAccess[]): ReactNode[][] {
