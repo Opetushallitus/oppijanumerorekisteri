@@ -46,7 +46,7 @@
         "ts-loader": "9.5.7",
         "typescript": "6.0.3",
         "typescript-eslint": "8.59.4",
-        "webpack": "5.107.1",
+        "webpack": "5.107.2",
         "webpack-cli": "7.0.2",
         "webpack-dev-server": "5.2.4",
         "webpack-manifest-plugin": "5.0.1"
