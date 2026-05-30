@@ -4,7 +4,7 @@ WORKDIR /app
 COPY . .
 RUN mvn --batch-mode clean package -s codebuild-mvn-settings.xml -DskipTests
 
-FROM amazoncorretto:21.0.11@sha256:e5c1419310bfcdf5a176c9b3297bc1abadf469ebffdefbe66fe3ffc91f236fe9
+FROM amazoncorretto:21.0.11@sha256:87fcf464bc909d6e5ce03d11587cf8ad41a9c740df1b5827e990572dedfd5c15
 WORKDIR /app
 
 COPY --from=build /app/oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-*SNAPSHOT.jar oppijanumerorekisteri.jar
