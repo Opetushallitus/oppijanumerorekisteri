@@ -69,43 +69,43 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(org.hibernate.exception.ConstraintViolationException.class)
     public ResponseEntity<Map<String, Object>> badRequestHibernateConstraintViolatingRequest(ConstraintViolationException e, HttpServletRequest request) {
-        logger.error(e.getMessage(), e);
+        logger.warn(e.getMessage(), e);
         return constructErrorResponse(e, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Map<String, Object>> badRequestJpaConstraintViolationException(ConstraintViolationException e, HttpServletRequest request) {
-        logger.error(e.getMessage(), e);
+        logger.warn(e.getMessage(), e);
         return constructErrorResponse(e, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Map<String, Object>> badRequestDataIntegrityViolationException(DataIntegrityViolationException e, HttpServletRequest request) {
-        logger.error(e.getMessage(), e);
+        logger.warn(e.getMessage(), e);
         return constructErrorResponse(e, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> badRequestMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
-        logger.error(e.getMessage(), e);
+        logger.warn(e.getMessage(), e);
         return constructErrorResponse(e, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> badRequestIllegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
-        logger.error(e.getMessage(), e);
+        logger.warn(e.getMessage(), e);
         return constructErrorResponse(e, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<Map<String, Object>> badRequestValidationException(ValidationException e, HttpServletRequest request) {
-        logger.error(e.getMessage(), e);
+        logger.warn(e.getMessage(), e);
         return constructErrorResponse(e, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException.class)
     public ResponseEntity<Map<String, Object>> badRequestServiceValidationException(fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException ve, HttpServletRequest request) {
-        logger.error(ve.getMessage(), ve);
+        logger.warn(ve.getMessage(), ve);
         return constructErrorResponse(ve, HttpStatus.BAD_REQUEST, request);
     }
 
@@ -120,7 +120,7 @@ public class GlobalExceptionHandler {
         body.put("fieldErrors", errors.getFieldErrors().stream()
                 .map(this::constructFieldError)
                 .collect(toList()));
-        logger.error(body.toString(), exception);
+        logger.warn(body.toString(), exception);
 
         return ResponseEntity.status(status).body(body);
     }

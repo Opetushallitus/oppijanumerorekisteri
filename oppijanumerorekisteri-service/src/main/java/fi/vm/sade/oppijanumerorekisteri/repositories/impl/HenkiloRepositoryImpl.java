@@ -297,7 +297,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
             if (henkilot.containsKey(masterOid)) {
                 res.put(oid, henkilot.get(masterOid));
             } else {
-                logger.error(String.format("No master henkilo found for oid %s", oid));
+                logger.info(String.format("No master henkilo found for oid %s", oid));
             }
         });
 
