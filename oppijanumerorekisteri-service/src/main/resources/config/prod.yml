@@ -21,3 +21,15 @@ haku-app.baseurl: https://virkailija.opintopolku.fi/haku-app
 
 oppijanumerorekisteri.scheduling.yksilointi.enabled: true
 oppijanumerorekisteri.allow-fake-ssn: false
+
+henkilo-ui.oppijoidentuonti: https://virkailija.opintopolku.fi/henkilo-ui/oppijoidentuonti
+
+kayttooikeus-service.henkilo.byOid: https://virkailija.opintopolku.fi/kayttooikeus-service/henkilo/{henkiloOid}
+kayttooikeus-service.s2s-checkUserPermissionToUser: https://virkailija.opintopolku.fi/kayttooikeus-service/s2s/canUserAccessUser
+kayttooikeus-service.henkilo-passivoi: https://virkailija.opintopolku.fi/kayttooikeus-service/henkilo/{henkiloOid}/passivoi
+kayttooikeus-service.henkilo.sallitut: https://virkailija.opintopolku.fi/kayttooikeus-service/henkilo/{henkiloOid}/kayttooikeudet
+
+koodisto-service.koodi: https://virkailija.opintopolku.fi/koodisto-service/rest/json/{koodistoUri}/koodi
+
+organisaatio-service.organisaatio.byOid: https://virkailija.opintopolku.fi/organisaatio-service/rest/organisaatio/{organisaatioOid}
+organisaatio-service.organisaatio.byOid.childoids: https://virkailija.opintopolku.fi/organisaatio-service/rest/organisaatio/{organisaatioOid}/childoids

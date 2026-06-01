@@ -69,8 +69,8 @@ host.host-cas: localhost:${server.port}
 cas.service: http://localhost:${server.port}/oppijanumerorekisteri-service
 cas.send-renew: false
 cas.key: oppijanumerorekisteri-service
-cas.url: https://${host.host-cas}/cas
-cas.login: https://${host.host-cas}/cas/login
+cas.url: http://localhost:${server.port}/cas
+cas.login: http://localhost:${server.port}/cas/login
 authentication:
   default:
     username: oppijanumerorekisteri
@@ -129,14 +129,14 @@ viestinvalitys.baseurl: https://viestinvalitys.hahtuvaopintopolku.fi/lahetys
 ataru.baseurl: https://virkailija.hahtuvaopintopolku.fi/lomake-editori
 haku-app.baseurl: https://virkailija.hahtuvaopintopolku.fi/haku-app
 
-henkilo-ui.oppijoidentuonti: https://${host.host-virkailija}/henkilo-ui/oppijoidentuonti
+henkilo-ui.oppijoidentuonti: https://virkailija.hahtuvaopintopolku.fi/henkilo-ui/oppijoidentuonti
 
-kayttooikeus-service.henkilo.byOid: https://${host.host-virkailija}/kayttooikeus-service/henkilo/{henkiloOid}
-kayttooikeus-service.s2s-checkUserPermissionToUser: https://${host.host-virkailija}/kayttooikeus-service/s2s/canUserAccessUser
-kayttooikeus-service.henkilo-passivoi: https://${host.host-virkailija}/kayttooikeus-service/henkilo/{henkiloOid}/passivoi
-kayttooikeus-service.henkilo.sallitut: https://${host.host-virkailija}/kayttooikeus-service/henkilo/{henkiloOid}/kayttooikeudet
+kayttooikeus-service.henkilo.byOid: https://virkailija.hahtuvaopintopolku.fi/kayttooikeus-service/henkilo/{henkiloOid}
+kayttooikeus-service.s2s-checkUserPermissionToUser: https://virkailija.hahtuvaopintopolku.fi/kayttooikeus-service/s2s/canUserAccessUser
+kayttooikeus-service.henkilo-passivoi: https://virkailija.hahtuvaopintopolku.fi/kayttooikeus-service/henkilo/{henkiloOid}/passivoi
+kayttooikeus-service.henkilo.sallitut: https://virkailija.hahtuvaopintopolku.fi/kayttooikeus-service/henkilo/{henkiloOid}/kayttooikeudet
 
-koodisto-service.koodi: https://${host.host-virkailija}/koodisto-service/rest/json/{koodistoUri}/koodi
+koodisto-service.koodi: https://virkailija.hahtuvaopintopolku.fi/koodisto-service/rest/json/{koodistoUri}/koodi
 
-organisaatio-service.organisaatio.byOid: https://${host.host-virkailija}/organisaatio-service/rest/organisaatio/{organisaatioOid}
-organisaatio-service.organisaatio.byOid.childoids: https://${host.host-virkailija}/organisaatio-service/rest/organisaatio/{organisaatioOid}/childoids
+organisaatio-service.organisaatio.byOid: https://virkailija.hahtuvaopintopolku.fi/organisaatio-service/rest/organisaatio/{organisaatioOid}
+organisaatio-service.organisaatio.byOid.childoids: https://virkailija.hahtuvaopintopolku.fi/organisaatio-service/rest/organisaatio/{organisaatioOid}/childoids
