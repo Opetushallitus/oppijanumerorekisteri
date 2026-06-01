@@ -1,5 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.util.UriComponentsBuilder;
 import tools.jackson.databind.ObjectMapper;
 
 import fi.vm.sade.oppijanumerorekisteri.clients.OrganisaatioClient;
@@ -24,9 +26,18 @@ import java.net.http.HttpResponse;
 @Transactional
 @RequiredArgsConstructor
 public class OrganisaatioClientImpl implements OrganisaatioClient {
-    private final UrlConfiguration urlConfiguration;
     private final RetryingAnonymousOphClient httpClient;
     private final ObjectMapper objectMapper;
+
+    private static final String ORG_OID_URI_KEY = "organisaatioOid";
+
+    private static final String RECURSIVELY_PARAM = "rekursiivisesti";
+
+    @Value("${organisaatio-service.organisaatio.byOid}")
+    private String organisaatioByOidUriTemplate;
+
+    @Value("${organisaatio-service.organisaatio.byOid.childoids}")
+    private String childOidsByOrgOidUriTemplate;
 
     @Override
     public boolean exists(String oid) {
@@ -36,7 +47,9 @@ public class OrganisaatioClientImpl implements OrganisaatioClient {
     @Override
     public Optional<OrganisaatioDto> getByOid(String oid) {
         try {
-            String url = urlConfiguration.url("organisaatio-service.organisaatio.byOid", oid);
+            var url = UriComponentsBuilder.fromUriString(organisaatioByOidUriTemplate)
+                    .buildAndExpand(Map.of(ORG_OID_URI_KEY, oid))
+                    .toUriString();
             var requestBuilder = HttpRequest.newBuilder()
                 .uri(new URI(url))
                 .GET();
@@ -53,9 +66,11 @@ public class OrganisaatioClientImpl implements OrganisaatioClient {
     @Override
     public Set<String> getChildOids(String oid, boolean rekursiivisesti, OrganisaatioTilat tilat) {
         try {
-            Map<String, Boolean> queryParams = tilat.asMap();
-            queryParams.put("rekursiivisesti", rekursiivisesti);
-            String url = urlConfiguration.url("organisaatio-service.organisaatio.byOid.childoids", oid, queryParams);
+            var url = UriComponentsBuilder.fromUriString(childOidsByOrgOidUriTemplate)
+                    .queryParams(tilat.asMultiValueMap())
+                    .queryParam(RECURSIVELY_PARAM, rekursiivisesti)
+                    .buildAndExpand(Map.of(ORG_OID_URI_KEY, oid))
+                    .toUriString();
             var requestBuilder = HttpRequest.newBuilder()
                 .uri(new URI(url))
                 .GET();

@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -20,9 +21,11 @@ import static org.springframework.ui.freemarker.FreeMarkerTemplateUtils.processT
 @Service
 @RequiredArgsConstructor
 public class EmailService {
-    private final OphProperties urlProperties;
     private final Configuration freemarker;
     private final QueueingEmailService queueingEmailService;
+
+    @Value("${henkilo-ui.oppijoidentuonti}")
+    private String oppijoidentuontiUrl;
 
     @Data
     @Builder
@@ -35,7 +38,7 @@ public class EmailService {
         try {
             String subject = "Virkailijan opintopolku: oppijoiden tuonti suoritettu";
             TuontiKasiteltyWithErrors tuontiKasiteltyWithErrors = TuontiKasiteltyWithErrors.builder()
-                .linkki(urlProperties.url("henkilo-ui.oppijoidentuonti"))
+                .linkki(oppijoidentuontiUrl)
                 .subject(subject)
                 .build();
 

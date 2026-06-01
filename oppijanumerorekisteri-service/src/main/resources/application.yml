@@ -64,13 +64,13 @@ orika.map-nulls: false
 dev:
   username: user
   password: password
-cas:
-  service: http://localhost:${server.port}/oppijanumerorekisteri-service
-  send-renew: false
-  key: oppijanumerorekisteri-service
-host:
-  host-virkailija: localhost:${server.port}
-  host-cas: localhost:${server.port}
+host.host-virkailija: localhost:${server.port}
+host.host-cas: localhost:${server.port}
+cas.service: http://localhost:${server.port}/oppijanumerorekisteri-service
+cas.send-renew: false
+cas.key: oppijanumerorekisteri-service
+cas.url: https://${host.host-cas}/cas
+cas.login: https://${host.host-cas}/cas/login
 authentication:
   default:
     username: oppijanumerorekisteri
@@ -118,6 +118,7 @@ oppijanumerorekisteri.tasks.koski-datantuonnin-muokkaus.enabled: false
 oppijanumerorekisteri.tasks.henkilo-export.enabled: false
 oppijanumerorekisteri.tasks.henkilo-export.bucket-name: none
 oppijanumerorekisteri.tasks.henkilo-export.kms-key-arn: none
+
 aws:
   region: eu-west-1
   opintopolkuRoleArn: "none"
@@ -127,3 +128,15 @@ aws:
 viestinvalitys.baseurl: https://viestinvalitys.hahtuvaopintopolku.fi/lahetys
 ataru.baseurl: https://virkailija.hahtuvaopintopolku.fi/lomake-editori
 haku-app.baseurl: https://virkailija.hahtuvaopintopolku.fi/haku-app
+
+henkilo-ui.oppijoidentuonti: https://${host.host-virkailija}/henkilo-ui/oppijoidentuonti
+
+kayttooikeus-service.henkilo.byOid: https://${host.host-virkailija}/kayttooikeus-service/henkilo/{henkiloOid}
+kayttooikeus-service.s2s-checkUserPermissionToUser: https://${host.host-virkailija}/kayttooikeus-service/s2s/canUserAccessUser
+kayttooikeus-service.henkilo-passivoi: https://${host.host-virkailija}/kayttooikeus-service/henkilo/{henkiloOid}/passivoi
+kayttooikeus-service.henkilo.sallitut: https://${host.host-virkailija}/kayttooikeus-service/henkilo/{henkiloOid}/kayttooikeudet
+
+koodisto-service.koodi: https://${host.host-virkailija}/koodisto-service/rest/json/{koodistoUri}/koodi
+
+organisaatio-service.organisaatio.byOid: https://${host.host-virkailija}/organisaatio-service/rest/organisaatio/{organisaatioOid}
+organisaatio-service.organisaatio.byOid.childoids: https://${host.host-virkailija}/organisaatio-service/rest/organisaatio/{organisaatioOid}/childoids

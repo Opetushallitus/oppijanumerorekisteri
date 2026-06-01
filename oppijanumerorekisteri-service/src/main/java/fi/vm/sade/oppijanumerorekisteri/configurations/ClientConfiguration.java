@@ -32,26 +32,26 @@ public class ClientConfiguration {
     private String hakuAppUsername;
     @Value("${authentication.hakuapp.password}")
     private String hakuAppPassword;
+    @Value("${cas.url}")
+    private String casBaseUrl;
 
     @Bean
-    public AtaruClient ataruClient(OphProperties properties, ObjectMapper objectMapper) {
-        var casBase = properties.require("cas.url");
+    public AtaruClient ataruClient(ObjectMapper objectMapper) {
         var httpClient = HttpClient.newBuilder()
                 .cookieHandler(new CookieManager())
                 .connectTimeout(Duration.ofSeconds(60))
                 .build();
-        var casClient = new CasClient(httpClient, casBase, ataruUsername, ataruPassword, "");
+        var casClient = new CasClient(httpClient, casBaseUrl, ataruUsername, ataruPassword, "");
         return new AtaruClient(httpClient, casClient, ataruBaseUrl, objectMapper);
     }
 
     @Bean
-    public HakuappClient hakuappClient(OphProperties properties, ObjectMapper objectMapper) {
-        var casBase = properties.require("cas.url");
+    public HakuappClient hakuappClient(ObjectMapper objectMapper) {
         var httpClient = HttpClient.newBuilder()
                 .cookieHandler(new CookieManager())
                 .connectTimeout(Duration.ofSeconds(60))
                 .build();
-        var casClient = new CasClient(httpClient, casBase, hakuAppUsername, hakuAppPassword);
+        var casClient = new CasClient(httpClient, casBaseUrl, hakuAppUsername, hakuAppPassword);
         return new HakuappClient(httpClient, casClient, hakuAppBaseurl, objectMapper);
     }
 }
