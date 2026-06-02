@@ -6,7 +6,7 @@
         "@reduxjs/toolkit": "2.12.0",
         "@tanstack/react-table": "^8.21.3",
         "classnames": "^2.5.1",
-        "date-fns": "4.3.0",
+        "date-fns": "4.4.0",
         "oph-virkailija-style-guide": "github:Opetushallitus/virkailija-styles#master",
         "papaparse": "^5.4.1",
         "react": "18.3.1",
