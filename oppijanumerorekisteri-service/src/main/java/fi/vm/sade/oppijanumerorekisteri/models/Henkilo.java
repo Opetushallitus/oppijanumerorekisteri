@@ -68,6 +68,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
             foreignKey = @ForeignKey(name = "fk_henkilo_hetu_henkilo"),
             uniqueConstraints = @UniqueConstraint(name = "uk_henkilo_hetu_01", columnNames = "hetu"))
     @Column(name = "hetu", nullable = false)
+    @BatchSize(size = 1000)
     @NotAudited
     private Set<String> kaikkiHetut;
 
@@ -166,6 +167,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     private String kasittelijaOid;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "henkilo", orphanRemoval = true, cascade = CascadeType.PERSIST)
+    @BatchSize(size = 1000)
     @NotAudited
     Set<Yksilointivirhe> yksilointivirheet = new HashSet<>();
 
@@ -183,11 +185,13 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE}, orphanRemoval = true)
     @JoinColumn(name = "henkilo_id", nullable = false)
+    @BatchSize(size = 1000)
     @NotAudited
     private Set<Identification> identifications = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE}, orphanRemoval = true)
     @JoinColumn(name = "henkilo_id", nullable = false)
+    @BatchSize(size = 1000)
     @NotAudited
     private List<EidasTunniste> eidasTunnisteet;
 
@@ -213,6 +217,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
             foreignKey = @ForeignKey(name = "fk_henkilo_passinumero"),
             uniqueConstraints = @UniqueConstraint(name = "uk_passinumero_01", columnNames = "passinumero"))
     @Column(name = "passinumero", nullable = false)
+    @BatchSize(size = 1000)
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Set<String> passinumerot;
 
