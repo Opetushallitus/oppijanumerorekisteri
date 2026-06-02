@@ -12,6 +12,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
+      registry.addViewController("/swagger-ui")
+          .setViewName("forward:/swagger-ui/index.html");
       registry.addViewController("/swagger-ui/")
           .setViewName("forward:/swagger-ui/index.html");
     }

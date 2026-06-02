@@ -209,7 +209,13 @@ public class SecurityConfiguration {
             })
             .authorizeHttpRequests(authz -> authz
                     .requestMatchers("/actuator/**").permitAll()
-                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                    .requestMatchers(
+                            "/swagger-ui",
+                            "/swagger-ui/",
+                            "/swagger-ui.html",
+                            "/swagger-ui/**",
+                            "/v3/api-docs",
+                            "/v3/api-docs/**").permitAll()
                     .anyRequest().authenticated())
             .addFilterAt(casAuthenticationFilter, CasAuthenticationFilter.class)
             .addFilterBefore(singleSignOutFilter(), CasAuthenticationFilter.class)
