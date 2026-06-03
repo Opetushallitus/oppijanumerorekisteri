@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.regions.Region;
@@ -45,7 +46,7 @@ public class ExportService {
             .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
             .build();
 
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void createSchema() {
         jdbcTemplate.execute("DROP SCHEMA IF EXISTS exportnew CASCADE");
         jdbcTemplate.execute("CREATE SCHEMA exportnew");
