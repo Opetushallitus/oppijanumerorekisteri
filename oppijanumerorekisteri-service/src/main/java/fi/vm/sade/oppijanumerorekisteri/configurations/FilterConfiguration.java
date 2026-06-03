@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations;
 
+import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import fi.vm.sade.RequestIdFilter;
 
 @Configuration
 public class FilterConfiguration {
+
     @Bean
     FilterRegistrationBean<RequestIdFilter> requestIdFilter() {
         var filter = new RequestIdFilter();
@@ -23,7 +25,7 @@ public class FilterConfiguration {
     FilterRegistrationBean<RequestCallerFilter> requestCallerFilter() {
         var filter = new RequestCallerFilter();
         var bean = new FilterRegistrationBean<>(filter);
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
+        bean.setOrder(SecurityFilterProperties.DEFAULT_FILTER_ORDER + 1);
         return bean;
     }
 
