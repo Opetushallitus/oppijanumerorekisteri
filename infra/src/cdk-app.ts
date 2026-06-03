@@ -250,7 +250,7 @@ class DatabaseStack extends cdk.Stack {
           enablePerformanceInsights: true,
           instanceType: ec2.InstanceType.of(
             ec2.InstanceClass.R6G,
-            ec2.InstanceSize.XLARGE,
+            ec2.InstanceSize.XLARGE2,
           ),
         }),
         readers: [],
@@ -276,7 +276,7 @@ class DatabaseStack extends cdk.Stack {
           enablePerformanceInsights: true,
           instanceType: ec2.InstanceType.of(
             ec2.InstanceClass.R6G,
-            ec2.InstanceSize.XLARGE,
+            ec2.InstanceSize.XLARGE2,
           ),
         }),
         storageEncrypted: true,
