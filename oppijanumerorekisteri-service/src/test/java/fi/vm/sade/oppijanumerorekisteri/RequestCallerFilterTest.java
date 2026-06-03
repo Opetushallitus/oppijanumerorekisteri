@@ -1,27 +1,20 @@
 package fi.vm.sade.oppijanumerorekisteri;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.EidasTunniste;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
-import fi.vm.sade.properties.OphProperties;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,15 +25,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
-import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -115,7 +101,6 @@ public class RequestCallerFilterTest {
                     .willReturn(aResponse()
                             .withStatus(200)
                             .withHeader("Content-Type", "application/json")
-                            // .withBody(buildTokenResponse("1.2.246.562.24.43006465835"))));
                             .withBody(buildTokenResponse(token))));
     wireMock.stubFor(
             post(urlEqualTo("/kayttooikeus-service/s2s/canUserAccessUser"))
@@ -137,26 +122,7 @@ public class RequestCallerFilterTest {
 
     var createdPersonOid = createHenkilo();
 
-    var userAgent = UUID.randomUUID().toString();
-    var xForwardedFor = UUID.randomUUID().toString();
-    var referer = UUID.randomUUID().toString();
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.add("User-Agent", userAgent);
-    headers.add("X-Forwarded-For", xForwardedFor);
-    headers.add("Referer", referer);
-
     var client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build();
-
-    var healthRequest = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:" + port + "/actuator/health"))
-            .header("Accept", "application/json")
-            .GET()
-            .build();
-
-    var healthResponse = client.send(healthRequest, HttpResponse.BodyHandlers.ofString());
-
-    System.out.println("health response: " + healthResponse);
 
     var request = HttpRequest.newBuilder()
             .uri(URI.create("http://localhost:" + port + "/henkilo/" + createdPersonOid + "/hakemukset"))
@@ -164,9 +130,7 @@ public class RequestCallerFilterTest {
             .GET()
             .build();
 
-    var response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-    System.out.println("response: " + response);
+    client.send(request, HttpResponse.BodyHandlers.ofString());
 
     assertThat(output).contains("\"callerHenkiloOid\": \"1.2.246.562.24.43006465835\"");
   }
@@ -231,7 +195,7 @@ public class RequestCallerFilterTest {
     JWTClaimsSet claims = new JWTClaimsSet.Builder()
             .subject(subject)
             .issuer("http://localhost:" + wireMock.getPort())
-            .audience("oppijanumerorekisteri")
+            .audience("oppijanumerorekisteri-service")
             .expirationTime(Date.from(Instant.now().plusSeconds(3600)))
             .issueTime(Date.from(Instant.now()))
             .claim(
@@ -239,6 +203,7 @@ public class RequestCallerFilterTest {
                     Map.of(
                             "1.2.246.562.10.00000000001",
                             List.of("APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA", "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")))
+            .claim("sub", subject)
             .build();
 
     SignedJWT jwt = new SignedJWT(
