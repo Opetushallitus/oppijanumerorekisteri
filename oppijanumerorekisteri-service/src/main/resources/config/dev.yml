@@ -21,16 +21,3 @@ haku-app.baseurl: https://virkailija.untuvaopintopolku.fi/haku-app
 
 oppijanumerorekisteri.scheduling.yksilointi.enabled: false
 oppijanumerorekisteri.allow-fake-ssn: true
-
-henkilo-ui.oppijoidentuonti: https://virkailija.untuvaopintopolku.fi/henkilo-ui/oppijoidentuonti
-
-kayttooikeus-service.henkilo.byOid: https://virkailija.untuvaopintopolku.fi/kayttooikeus-service/henkilo/{henkiloOid}
-kayttooikeus-service.s2s-checkUserPermissionToUser: https://virkailija.untuvaopintopolku.fi/kayttooikeus-service/s2s/canUserAccessUser
-kayttooikeus-service.henkilo-passivoi: https://virkailija.untuvaopintopolku.fi/kayttooikeus-service/henkilo/{henkiloOid}/passivoi
-kayttooikeus-service.henkilo.sallitut: https://virkailija.untuvaopintopolku.fi/kayttooikeus-service/henkilo/{henkiloOid}/kayttooikeudet
-
-koodisto-service.koodi: https://virkailija.untuvaopintopolku.fi/koodisto-service/rest/json/{koodistoUri}/koodi
-
-organisaatio-service.organisaatio.byOid: https://virkailija.untuvaopintopolku.fi/organisaatio-service/rest/organisaatio/{organisaatioOid}
-organisaatio-service.organisaatio.byOid.childoids: https://virkailija.untuvaopintopolku.fi/organisaatio-service/rest/organisaatio/{organisaatioOid}/childoids
-
