@@ -26,11 +26,10 @@ host:
   host-virkailija: localhost
 db-scheduler:
   enabled: false
-cas.service: http://localhost/oppijanumerorekisteri-service
-cas.send-renew: false
-cas.key: oppijanumerorekisteri-service
-cas.url: https://${host.host-cas}/cas
-cas.login: https://${host.host-cas}/cas/login
+cas:
+  service: http://localhost/oppijanumerorekisteri-service
+  send-renew: false
+  key: oppijanumerorekisteri-service
 dev:
   username: username
   password: password
@@ -73,15 +72,3 @@ authentication.ataru.username: username
 authentication.ataru.password: password
 authentication.hakuapp.username: username
 authentication.hakuapp.password: password
-
-henkilo-ui.oppijoidentuonti: https://${host.host-virkailija}/henkilo-ui/oppijoidentuonti
-
-kayttooikeus-service.henkilo.byOid: https://${host.host-virkailija}/kayttooikeus-service/henkilo/{henkiloOid}
-kayttooikeus-service.s2s-checkUserPermissionToUser: https://${host.host-virkailija}/kayttooikeus-service/s2s/canUserAccessUser
-kayttooikeus-service.henkilo-passivoi: https://${host.host-virkailija}/kayttooikeus-service/henkilo/{henkiloOid}/passivoi
-kayttooikeus-service.henkilo.sallitut: https://${host.host-virkailija}/kayttooikeus-service/henkilo/{henkiloOid}/kayttooikeudet
-
-koodisto-service.koodi: http://localhost:8097/koodisto-service/rest/json/{koodistoUri}/koodi
-
-organisaatio-service.organisaatio.byOid: http://localhost:8097/organisaatio-service/rest/organisaatio/{organisaatioOid}
-organisaatio-service.organisaatio.byOid.childoids: http://localhost:8097/organisaatio-service/rest/organisaatio/{organisaatioOid}/childoids

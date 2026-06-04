@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.configurations.security;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.CasProperties;
 import fi.vm.sade.oppijanumerorekisteri.configurations.security.cas.OpintopolkuCasAuthenticationFilter;
 import fi.vm.sade.oppijanumerorekisteri.configurations.security.cas.OpintopolkuUserDetailsService;
+import fi.vm.sade.properties.OphProperties;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
@@ -44,12 +45,14 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 @EnableWebSecurity
 public class SecurityConfiguration {
     private CasProperties casProperties;
+    private OphProperties ophProperties;
     private SessionMappingStorage sessionMappingStorage;
 
     public static final String SPRING_CAS_SECURITY_CHECK_PATH = "/j_spring_cas_security_check";
 
-    public SecurityConfiguration(CasProperties casProperties, SessionMappingStorage sessionMappingStorage) {
+    public SecurityConfiguration(CasProperties casProperties, OphProperties ophProperties, SessionMappingStorage sessionMappingStorage) {
         this.casProperties = casProperties;
+        this.ophProperties = ophProperties;
         this.sessionMappingStorage = sessionMappingStorage;
     }
 
@@ -78,7 +81,7 @@ public class SecurityConfiguration {
 
     @Bean
     TicketValidator ticketValidator() {
-        var validator = new Cas30ProxyTicketValidator(casProperties.getUrl());
+        var validator = new Cas30ProxyTicketValidator(ophProperties.url("cas.url"));
         validator.setAcceptAnyProxy(true);
         return validator;
     }
@@ -123,7 +126,7 @@ public class SecurityConfiguration {
     @Bean
     CasAuthenticationEntryPoint casAuthenticationEntryPoint() {
         CasAuthenticationEntryPoint casAuthenticationEntryPoint = new CasAuthenticationEntryPoint();
-        casAuthenticationEntryPoint.setLoginUrl(casProperties.getLogin());
+        casAuthenticationEntryPoint.setLoginUrl(ophProperties.url("cas.login"));
         casAuthenticationEntryPoint.setServiceProperties(serviceProperties());
         return casAuthenticationEntryPoint;
     }

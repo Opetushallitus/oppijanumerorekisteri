@@ -1,7 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.util.UriComponentsBuilder;
 import tools.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
@@ -22,18 +20,17 @@ import java.util.Map;
 public class KoodistoClientImpl implements KoodistoClient {
     private final ObjectMapper objectMapper;
     private final RetryingAnonymousOphClient httpClient;
-
-    @Value("${koodisto-service.koodi}")
-    private String getKoodiUriTemplate;
+    private final UrlConfiguration urlConfiguration;
 
     @Override
     public List<KoodiType> getKoodisForKoodisto(String koodistoUri, int koodistoVersio, boolean onlyValidKoodis) {
         try {
-            var url = UriComponentsBuilder.fromUriString(getKoodiUriTemplate)
-                    .queryParam("onlyValidKoodis", onlyValidKoodis)
-                    .queryParam("koodistoVersio", koodistoVersio)
-                    .buildAndExpand(Map.of("koodistoUri", koodistoUri))
-                    .toUriString();
+            Map<String, String> queryParams = new HashMap<>();
+            queryParams.put("onlyValidKoodis", String.valueOf(onlyValidKoodis));
+            if (koodistoVersio > 0) {
+                queryParams.put("koodistoVersio", String.valueOf(koodistoVersio));
+            }
+            String url = urlConfiguration.url("koodisto-service.koodi", koodistoUri, queryParams);
             var requestBuilder = HttpRequest.newBuilder()
                 .uri(new URI(url))
                 .GET();

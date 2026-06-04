@@ -11,10 +11,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import org.springframework.web.util.UriComponentsBuilder;
 import tools.jackson.databind.ObjectMapper;
 
 import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
@@ -33,26 +31,13 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @RequiredArgsConstructor
 public class KayttooikeusOauth2ClientImpl implements KayttooikeusClient {
+    private final UrlConfiguration urlConfiguration;
     private final ObjectMapper objectMapper;
     private final Oauth2Client httpClient;
 
-    @Value("${kayttooikeus-service.s2s-checkUserPermissionToUser}")
-    private String checkUserPermissionToUserUrl;
-
-    @Value("${kayttooikeus-service.henkilo.byOid}")
-    private String henkiloByOidUrlTemplate;
-
-    @Value("${kayttooikeus-service.henkilo-passivoi}")
-    private String henkiloPassivoiByOidUrlTemplate;
-
-    @Value("${kayttooikeus-service.henkilo.sallitut}")
-    private String henkiloSallitutUrlTemplate;
-
     @Override
     public Optional<KayttajaReadDto> getKayttajaByOid(String oid) {
-        var url = UriComponentsBuilder.fromUriString(henkiloByOidUrlTemplate)
-                .buildAndExpand(Map.of("henkiloOid", oid))
-                .toUriString();
+        String url = urlConfiguration.url("kayttooikeus-service.henkilo.byOid", oid);
         var request = HttpRequest.newBuilder().uri(URI.create(url)).GET();
         String body = httpClient.executeRequest(request).body();
         return Optional.of(ioExceptionToRestClientException(() -> objectMapper.readValue(body, KayttajaReadDto.class)));
@@ -67,8 +52,9 @@ public class KayttooikeusOauth2ClientImpl implements KayttooikeusClient {
         permissionCheckDto.setCallingUserRoles(callingUserRoles);
         permissionCheckDto.setExternalPermissionService(externalPermissionService);
         permissionCheckDto.setUserOid(userOid);
+        String url = this.urlConfiguration.url("kayttooikeus-service.s2s-checkUserPermissionToUser");
         var request = HttpRequest.newBuilder()
-            .uri(URI.create(checkUserPermissionToUserUrl))
+            .uri(URI.create(url))
             .header("Content-Type", "application/json")
             .POST(BodyPublishers.ofString(ioExceptionToRestClientException(() -> objectMapper.writeValueAsString(permissionCheckDto))));
         String body = httpClient.executeRequest(request).body();
@@ -89,17 +75,14 @@ public class KayttooikeusOauth2ClientImpl implements KayttooikeusClient {
     }
 
     protected String getPassivoiHenkiloUrl(String oidHenkilo, String kasittelijaOid) {
-        return UriComponentsBuilder.fromUriString(henkiloPassivoiByOidUrlTemplate)
-                .queryParam("kasittelijaOid", kasittelijaOid)
-                .buildAndExpand(Map.of("henkiloOid", oidHenkilo))
-                .toUriString();
+        Map<String, Object> queryParameters = new LinkedHashMap<>();
+        queryParameters.put("kasittelijaOid", kasittelijaOid);
+        return this.urlConfiguration.url("kayttooikeus-service.henkilo-passivoi", oidHenkilo, queryParameters);
     }
 
     @Override
     public KayttooikeudetDto getHenkiloKayttooikeudet(String henkiloOid, OrganisaatioCriteria criteria) {
-        var url = UriComponentsBuilder.fromUriString(henkiloSallitutUrlTemplate)
-                .buildAndExpand(Map.of("henkiloOid", henkiloOid))
-                .toUriString();
+        String url = urlConfiguration.url("kayttooikeus-service.henkilo.sallitut", henkiloOid);
         return getHenkiloKayttooikeudetByUrl(url, criteria);
     }
 

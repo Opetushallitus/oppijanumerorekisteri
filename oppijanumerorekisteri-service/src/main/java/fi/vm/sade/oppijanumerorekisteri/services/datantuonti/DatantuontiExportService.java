@@ -22,6 +22,8 @@ public class DatantuontiExportService {
     private S3AsyncClient onrS3Client;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private OppijanumerorekisteriProperties properties;
 
     @Value("${oppijanumerorekisteri.tasks.datantuonti.export.bucket-name}")
     private String bucketName;

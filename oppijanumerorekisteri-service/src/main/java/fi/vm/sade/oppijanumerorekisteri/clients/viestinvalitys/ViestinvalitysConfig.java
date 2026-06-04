@@ -22,16 +22,16 @@ public class ViestinvalitysConfig {
     private String username;
     @Value("${authentication.viestintapalvelu.password}")
     private String password;
-    @Value("${cas.url}")
-    private String casBaseUrl;
 
     @Bean
-    public ViestinvalitysClient viestinvalitysClient(ObjectMapper objectMapper) {
+    public ViestinvalitysClient viestinvalitysClient(OphProperties properties, ObjectMapper objectMapper) {
+        var casBase = properties.require("cas.url");
+
         var httpClient = HttpClient.newBuilder()
                 .cookieHandler(new CookieManager())
                 .connectTimeout(Duration.ofSeconds(10))
                 .build();
-        var casClient = new CasClient(httpClient, casBaseUrl, username, password);
+        var casClient = new CasClient(httpClient, casBase, username, password);
 
         return new ViestinvalitysClient(httpClient, casClient, viestinvalitysUrl, objectMapper);
     }
