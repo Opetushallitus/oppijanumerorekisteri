@@ -15,24 +15,42 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.security.cas.OpintopolkuU
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @Slf4j
 public class RequestCallerFilter extends GenericFilterBean {
     public static final String CALLER_HENKILO_OID_ATTRIBUTE = RequestCallerFilter.class.getName() + ".callerHenkiloOid";
+    public static final String PROTOCOL_ATTRIBUTE = RequestCallerFilter.class.getName() + ".protocol";
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         try {
-            var callerOid = getJwtToken(servletRequest).map(token -> token.getToken().getSubject())
-                    .or(() -> getUserDetails(servletRequest).map(userDetails -> userDetails.getUsername()));
-            callerOid.ifPresent(oid -> {
-                MDC.put(CALLER_HENKILO_OID_ATTRIBUTE, oid);
-                servletRequest.setAttribute(CALLER_HENKILO_OID_ATTRIBUTE, oid);
-            });
+            getJwtToken(servletRequest).ifPresentOrElse(
+                    setOauthAttributes(servletRequest),
+                    setCasAttributes(servletRequest));
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {
             MDC.remove(CALLER_HENKILO_OID_ATTRIBUTE);
         }
+    }
+
+    private Runnable setCasAttributes(ServletRequest servletRequest) {
+        return () -> getUserDetails(servletRequest).ifPresent(userDetails -> {
+            setCallerOid(servletRequest, userDetails.getUsername());
+            servletRequest.setAttribute(PROTOCOL_ATTRIBUTE, "cas");
+        });
+    }
+
+    private Consumer<JwtAuthenticationToken> setOauthAttributes(ServletRequest servletRequest) {
+        return token -> {
+            setCallerOid(servletRequest, token.getToken().getSubject());
+            servletRequest.setAttribute(PROTOCOL_ATTRIBUTE, "oauth");
+        };
+    }
+
+    private void setCallerOid(ServletRequest servletRequest, String oid) {
+        MDC.put(CALLER_HENKILO_OID_ATTRIBUTE, oid);
+        servletRequest.setAttribute(CALLER_HENKILO_OID_ATTRIBUTE, oid);
     }
 
     private Optional<JwtAuthenticationToken> getJwtToken(ServletRequest servletRequest) {
