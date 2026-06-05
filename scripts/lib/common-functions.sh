@@ -36,6 +36,12 @@ function select_java_version {
     JAVA_HOME="$(/usr/libexec/java_home -v "${java_version}")"
     export JAVA_HOME
   fi
+
+  local actual_version=$(java -version 2>&1 | head -n 1 | sed -E 's/.*version "([^"]+)".*/\1/')
+  if [[ ! "$actual_version" =~ ^$1 ]]; then
+    fatal "Java version mismatch: expected version starting with $1, but got $actual_version"
+  fi
+
   java -version
 }
 
