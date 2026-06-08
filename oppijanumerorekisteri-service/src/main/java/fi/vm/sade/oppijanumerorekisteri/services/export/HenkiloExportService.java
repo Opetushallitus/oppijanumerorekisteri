@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.export;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +35,7 @@ public class HenkiloExportService {
           .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
           .build();
 
-  public void generateExport() throws JsonProcessingException {
+  public void generateExport() {
     var exportFiles = new ArrayList<ExportFileDetails>();
     exportFiles.add(
         exportQueryToCsv(
@@ -60,7 +59,7 @@ public class HenkiloExportService {
     return onrS3Client.headObject(b -> b.bucket(bucketName).key(objectKey)).join().versionId();
   }
 
-  private void writeManifest(ExportManifest manifest) throws JsonProcessingException {
+  private void writeManifest(ExportManifest manifest) {
     var manifestKey = key("manifest.json");
     log.info("Writing manifest file {}/{}: {}", bucketName, manifestKey, manifest);
     var manifestJson = objectMapper.writeValueAsString(manifest);
