@@ -136,7 +136,7 @@ public class SchedulingConfiguration {
                         log.info("Running oppijanumerorekisteri henkilo export task");
                         henkiloExportService.generateExport();
                         log.info("Oppijanumerorekisteri henkilo export task completed");
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 });
