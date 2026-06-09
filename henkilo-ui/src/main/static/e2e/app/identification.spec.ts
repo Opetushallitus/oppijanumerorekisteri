@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/current/omattiedot/GET.json';
-import identifications from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/identification/GET.json';
+import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/current/omattiedot/GET.json' with { type: 'json' };
+import identifications from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/identification/GET.json' with { type: 'json' };
 import { gotoOppijaView } from './locators/henkilo-page';
 
 test.describe('identifications', () => {

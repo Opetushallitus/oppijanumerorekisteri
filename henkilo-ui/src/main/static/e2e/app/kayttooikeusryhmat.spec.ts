@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-import kayttooikeusryhmat from '../../mock-api/src/api/kayttooikeus-service/kayttooikeusryhma/GET.json';
+import kayttooikeusryhmat from '../../mock-api/src/api/kayttooikeus-service/kayttooikeusryhma/GET.json' with { type: 'json' };
 import { gotoKayttooikeusryhmat } from './locators/kayttooikeusryhmat-page';
 
 test.describe('kayttooikeusryhmat list', () => {

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 import { gotoKutsuminen } from './locators/kutsuminen-page';
 
-import henkilo from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/1.2.246.562.24.00000000007/GET.json';
+import henkilo from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/1.2.246.562.24.00000000007/GET.json' with { type: 'json' };
 import { toastWithText } from '../locators';
 
 test.describe('kutsuminen', () => {

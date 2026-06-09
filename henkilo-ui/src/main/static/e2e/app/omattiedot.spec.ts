@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test';
 
 import { toastWithText } from '../locators';
 import { gotoOmattiedot } from './locators/omattiedot-page';
-import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/current/omattiedot/GET.json';
-import henkilo from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/1.2.246.562.24.00000000007/GET.json';
+import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/current/omattiedot/GET.json' with { type: 'json' };
+import henkilo from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/1.2.246.562.24.00000000007/GET.json' with { type: 'json' };
 
 test.describe('omattiedot', () => {
     const oid = '1.2.246.562.24.00000000007';

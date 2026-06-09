@@ -1,7 +1,7 @@
 import { test, expect, Page } from '@playwright/test';
 
-import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/current/omattiedot/GET.json';
-import mfasetup from '../../mock-api/src/api/kayttooikeus-service/mfasetup/gauth/setup/GET.json';
+import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/current/omattiedot/GET.json' with { type: 'json' };
+import mfasetup from '../../mock-api/src/api/kayttooikeus-service/mfasetup/gauth/setup/GET.json' with { type: 'json' };
 import { toastWithText } from '../locators';
 
 const inputToken = async (page: Page, token: string) => {

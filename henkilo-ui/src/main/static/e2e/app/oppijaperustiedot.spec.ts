@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test';
 
 import { gotoOppija } from './locators/oppija-page';
 
-import vahvastiYksiloity from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/1.2.246.562.98.24707445854/GET.json';
-import yksiloityHetuton from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/1.2.246.562.24.00000007357/GET.json';
+import vahvastiYksiloity from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/1.2.246.562.98.24707445854/GET.json' with { type: 'json' };
+import yksiloityHetuton from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/1.2.246.562.24.00000007357/GET.json' with { type: 'json' };
 import { Kansalaisuus } from '../../src/types/domain/oppijanumerorekisteri/kansalaisuus.types';
 
 test.describe('oppijan perustiedot', () => {

@@ -1,6 +1,7 @@
 {
     "name": "henkilo-ui",
     "version": "0.1.0",
+    "type": "module",
     "homepage": "/henkilo-ui",
     "dependencies": {
         "@reduxjs/toolkit": "2.12.0",

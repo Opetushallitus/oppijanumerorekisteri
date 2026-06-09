@@ -1,9 +1,9 @@
 import { test, expect, Page } from '@playwright/test';
 
-import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/current/omattiedot/GET.json';
-import duplicates from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/duplicates/GET.json';
-import link from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/link/POST.json';
-import main from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/GET.json';
+import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/current/omattiedot/GET.json' with { type: 'json' };
+import duplicates from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/duplicates/GET.json' with { type: 'json' };
+import link from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/link/POST.json' with { type: 'json' };
+import main from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/GET.json' with { type: 'json' };
 import type { HenkiloDuplicate } from '../../src/types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 
 type Grouped = {

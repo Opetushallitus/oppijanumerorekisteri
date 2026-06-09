@@ -1,6 +1,6 @@
 import { expect, test, Page } from '@playwright/test';
 
-import henkilo from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/GET.json';
+import henkilo from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/__oid__/GET.json' with { type: 'json' };
 
 test.describe('hetuttoman yksilointi', () => {
     const hetuttomanYksilointiTest = async (page: Page, henkiloData: Record<string, unknown>) => {
