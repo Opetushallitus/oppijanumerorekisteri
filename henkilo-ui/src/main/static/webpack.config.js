@@ -1,15 +1,11 @@
-import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import webpack from 'webpack';
-import WebpackManifestPluginPackage from 'webpack-manifest-plugin';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const { WebpackManifestPlugin } = WebpackManifestPluginPackage;
 
 const isEnvDevelopment = process.env.NODE_ENV === 'development';
 const isEnvProduction = process.env.NODE_ENV === 'production';
@@ -17,26 +13,13 @@ const isPlaywright = process.env.PLAYWRIGHT === 'true';
 
 const cssModuleRegex = /\.module\.css$/;
 
-const createEnvironmentHash = () => {
-    const hash = createHash('md5');
-    hash.update(JSON.stringify({ NODE_ENV: process.env.NODE_ENV }));
-    return hash.digest('hex');
-};
-
 export default function () {
     return {
-        target: ['browserslist'],
         stats: 'errors-warnings',
         bail: isEnvProduction,
         devtool: isEnvProduction ? false : 'eval-source-map',
         devServer: {
-            allowedHosts: 'all',
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': '*',
-                'Access-Control-Allow-Headers': '*',
-            },
-            compress: true,
+            allowedHosts: ['localhost'],
             static: {
                 directory: path.resolve(__dirname, 'public'),
                 publicPath: ['/henkilo-ui/'],
@@ -50,7 +33,6 @@ export default function () {
                 publicPath: '/henkilo-ui',
             },
             host: '127.0.0.1',
-            hot: true,
             historyApiFallback: {
                 disableDotRule: true,
                 index: '/henkilo-ui/',
@@ -64,6 +46,7 @@ export default function () {
                 {
                     target: `http://localhost:${isPlaywright ? '8585' : '8080'}`,
                     context: (pathname) => !/^\/henkilo-ui/.test(pathname),
+                    changeOrigin: true,
                 },
             ],
         },
@@ -73,44 +56,19 @@ export default function () {
         },
         output: {
             path: path.resolve(__dirname, 'build'),
-            pathinfo: isEnvDevelopment,
-            filename: isEnvProduction
-                ? 'static/js/[name].[contenthash:8].js'
-                : isEnvDevelopment && 'static/js/[name].bundle.js',
-            chunkFilename: isEnvProduction
-                ? 'static/js/[name].[contenthash:8].chunk.js'
-                : isEnvDevelopment && 'static/js/[name].chunk.js',
+            filename: isEnvProduction ? 'static/js/[name].[contenthash:8].js' : 'static/js/[name].bundle.js',
+            chunkFilename: isEnvProduction ? 'static/js/[name].[contenthash:8].chunk.js' : 'static/js/[name].chunk.js',
             assetModuleFilename: 'static/media/[name].[hash][ext]',
             publicPath: '/henkilo-ui/',
-            devtoolModuleFilenameTemplate: isEnvProduction
-                ? (info) => path.relative(path.resolve(__dirname, 'src'), info.absoluteResourcePath).replace(/\\/g, '/')
-                : isEnvDevelopment && ((info) => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
         },
         cache: {
             type: 'filesystem',
-            version: createEnvironmentHash(),
-            cacheDirectory: path.resolve(__dirname, 'node_modules', '.cache'),
-            store: 'pack',
             buildDependencies: {
-                defaultWebpack: ['webpack/lib/'],
-                config: [__filename],
                 tsconfig: [path.resolve(__dirname, 'tsconfig.json')],
             },
         },
         resolve: {
-            extensions: [
-                '.web.mjs',
-                '.mjs',
-                '.web.js',
-                '.js',
-                '.web.ts',
-                '.ts',
-                '.web.tsx',
-                '.tsx',
-                '.json',
-                '.web.jsx',
-                '.jsx',
-            ],
+            extensions: ['.mjs', '.js', '.ts', '.tsx', '.json'],
         },
         module: {
             strictExportPresence: true,
@@ -126,7 +84,7 @@ export default function () {
                             test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
                             type: 'asset',
                         },
-                        { test: /\.svg/, type: 'asset/inline' },
+                        { test: /\.svg$/, type: 'asset/inline' },
                         {
                             test: /\.(js|mjs|jsx|ts|tsx)?$/,
                             exclude: /node_modules/,
@@ -178,36 +136,6 @@ export default function () {
                 favicon: path.resolve(__dirname, 'public', 'favicon.ico'),
                 chunks: ['kayttaja'],
             }),
-            new webpack.DefinePlugin({
-                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-            }),
-            isEnvProduction &&
-                new MiniCssExtractPlugin({
-                    filename: 'static/css/[name].[contenthash:8].css',
-                    chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
-                }),
-            new WebpackManifestPlugin({
-                fileName: 'asset-manifest.json',
-                publicPath: '/henkilo-ui/',
-                generate: (seed, files, entrypoints) => {
-                    const manifestFiles = files.reduce((manifest, file) => {
-                        manifest[file.name] = file.path;
-                        return manifest;
-                    }, seed);
-                    const entrypointFiles = entrypoints.main
-                        .filter((fileName) => !fileName.endsWith('.map'))
-                        .concat(entrypoints.kayttaja.filter((fileName) => !fileName.endsWith('.map')));
-
-                    return {
-                        files: manifestFiles,
-                        entrypoints: entrypointFiles,
-                    };
-                },
-            }),
-            new webpack.IgnorePlugin({
-                resourceRegExp: /^\.\/locale$/,
-                contextRegExp: /moment$/,
-            }),
             new ForkTsCheckerWebpackPlugin({
                 typescript: {
                     configOverwrite: {
@@ -224,6 +152,6 @@ export default function () {
                     mode: 'write-references',
                 },
             }),
-        ].filter(Boolean),
+        ],
     };
-};
+}
