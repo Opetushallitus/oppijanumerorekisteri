@@ -2,7 +2,7 @@ import { test, expect, Page } from '@playwright/test';
 
 import { gotoVirkailijahaku } from './locators/virkailijahaku-page';
 
-import { type HenkilohakuResult } from '../../src/types/domain/kayttooikeus/HenkilohakuResult.types';
+import { type HenkilohakuResult } from '../../src/api/kayttooikeus';
 
 test.describe('virkailijahaku', () => {
     const mockVirkailijahaku = async (
@@ -110,7 +110,17 @@ test.describe('virkailijahaku', () => {
                     {
                         oidHenkilo: '1.2.246.562.99.64354357473',
                         kayttajatunnus: 'username4',
-                        organisaatioNimiList: [],
+                        organisaatioNimiList: [
+                            {
+                                identifier: '1.2.246.562.98.2341452346',
+                                tyypit: null,
+                                localisedLabels: {
+                                    sv: 'Koulun kannatusyhdistys',
+                                    fi: 'Koulun kannatusyhdistys',
+                                    en: 'Koulun kannatusyhdistys',
+                                },
+                            },
+                        ],
                         nimi: 'Sorsa, Roope',
                     },
                 ]
@@ -135,7 +145,7 @@ test.describe('virkailijahaku', () => {
                 '/henkilo-ui/virkailija/1.2.246.562.99.64354357473'
             );
             await expect(results.get(2).username).toHaveText('username4');
-            await expect(results.get(2).organisations).toHaveText('');
+            await expect(results.get(2).organisations).toHaveText('Koulun kannatusyhdistys');
         });
     });
 

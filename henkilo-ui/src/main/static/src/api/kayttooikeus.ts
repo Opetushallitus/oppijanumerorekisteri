@@ -80,15 +80,17 @@ export type PostHenkilohakuRequest = {
     kayttooikeusryhmaId?: number;
 };
 
+export type OrganisaatioNimi = {
+    identifier: string;
+    tyypit: string[] | null;
+    localisedLabels: Record<Locale, string>;
+};
+
 export type HenkilohakuResult = {
     oidHenkilo: string;
     nimi: string;
     kayttajatunnus: string;
-    organisaatioNimiList: {
-        identifier: string;
-        tyypit: string[];
-        localisedLabels: Record<Locale, string>;
-    }[];
+    organisaatioNimiList: OrganisaatioNimi[];
 };
 
 export type KayttooikeusraporttiRow = {

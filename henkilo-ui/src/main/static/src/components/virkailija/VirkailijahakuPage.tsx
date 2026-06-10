@@ -8,6 +8,7 @@ import { RootState, useAppDispatch } from '../../store';
 import { setFilters as _setFilters, VirkailijahakuFilters } from '../../slices/virkailijahakuSlice';
 import { useLocalisations } from '../../selectors';
 import {
+    OrganisaatioNimi,
     PostHenkilohakuRequest,
     useGetKayttooikeusryhmasQuery,
     usePostVirkailijahakuQuery,
@@ -24,9 +25,9 @@ import { OphDsRyhmaSelect } from '../design-system/OphDsRyhmaSelect';
 import { selectProps } from '../../utilities/select';
 import { Koodi, koodiLabel, useGetOrganisaatiotyypitQuery } from '../../api/koodisto';
 import { getLocalization, getTextGroupLocalisation } from '../../utilities/localisation.util';
+import { ROOT_ORGANISATION_OID } from '../../utilities/organisaatio.util';
 
 import styles from './VirkailijahakuPage.module.css';
-import { ROOT_ORGANISATION_OID } from '../../utilities/organisaatio.util';
 
 const mapFilters = (filters: VirkailijahakuFilters): PostHenkilohakuRequest => {
     return {
@@ -64,6 +65,17 @@ export const VirkailijahakuPage = () => {
     const organisaatiotyyppiMap: Record<string, Koodi> = useMemo(() => {
         return organisaatiotyypit?.reduce((acc, t) => ({ ...acc, [String(t.koodiUri)]: t }), {}) ?? {};
     }, [organisaatiotyypit]);
+
+    const getOrganisationNameAndTypes = (o: OrganisaatioNimi): string => {
+        const name = getLocalization(o.localisedLabels) || o.identifier;
+        const types = o.tyypit
+            ? `(${o.tyypit
+                  ?.map((t) => koodiLabel(organisaatiotyyppiMap[t], locale))
+                  .join(',')
+                  .toUpperCase()})`
+            : '';
+        return `${name} ${types}`;
+    };
 
     const kayttooikeusryhmaOptions = useMemo(() => {
         return (kayttooikeusryhmas ?? [])
@@ -157,12 +169,7 @@ export const VirkailijahakuPage = () => {
                     <span key={`nimi-${d.kayttajatunnus}`}>{d.kayttajatunnus}</span>,
                     <ul key={`orgs-${d.kayttajatunnus}`} className="oph-ds-ul">
                         {d.organisaatioNimiList.map((o) => (
-                            <li key={o.identifier}>
-                                {`${getLocalization(o.localisedLabels) || o.identifier} (${o.tyypit
-                                    .map((t) => koodiLabel(organisaatiotyyppiMap[t], locale))
-                                    .join(',')
-                                    .toUpperCase()})`}
-                            </li>
+                            <li key={o.identifier}>{getOrganisationNameAndTypes(o)}</li>
                         ))}
                     </ul>,
                 ])}

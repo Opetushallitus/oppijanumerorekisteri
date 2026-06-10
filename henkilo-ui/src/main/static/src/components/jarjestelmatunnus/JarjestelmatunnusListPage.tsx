@@ -4,6 +4,7 @@ import Select, { SingleValue } from 'react-select';
 
 import { useLocalisations } from '../../selectors';
 import {
+    OrganisaatioNimi,
     PostHenkilohakuRequest,
     useGetKayttooikeusryhmasQuery,
     usePostJarjestelmatunnushakuQuery,
@@ -20,9 +21,9 @@ import { jarjestelmatunnusNavigation } from '../navigation/navigationconfigurati
 import { Koodi, koodiLabel, useGetOrganisaatiotyypitQuery } from '../../api/koodisto';
 import { selectProps } from '../../utilities/select';
 import { getLocalization, getTextGroupLocalisation } from '../../utilities/localisation.util';
+import { ROOT_ORGANISATION_OID } from '../../utilities/organisaatio.util';
 
 import styles from './JarjestelmatunnusListPage.module.css';
-import { ROOT_ORGANISATION_OID } from '../../utilities/organisaatio.util';
 
 const defaultCriteria: PostHenkilohakuRequest = {
     nameQuery: undefined,
@@ -56,6 +57,17 @@ export const JarjestelmatunnusListPage = () => {
     const organisaatiotyyppiMap: Record<string, Koodi> = useMemo(() => {
         return organisaatiotyypit?.reduce((acc, t) => ({ ...acc, [String(t.koodiUri)]: t }), {}) ?? {};
     }, [organisaatiotyypit]);
+
+    const getOrganisationNameAndTypes = (o: OrganisaatioNimi): string => {
+        const name = getLocalization(o.localisedLabels) || o.identifier;
+        const types = o.tyypit
+            ? `(${o.tyypit
+                  ?.map((t) => koodiLabel(organisaatiotyyppiMap[t], locale))
+                  .join(',')
+                  .toUpperCase()})`
+            : '';
+        return `${name} ${types}`;
+    };
 
     return (
         <OphDsPage header={L('JARJESTELMATUNNUSTEN_HAKU')}>
@@ -114,12 +126,7 @@ export const JarjestelmatunnusListPage = () => {
                     <span key={`nimi-${d.kayttajatunnus}`}>{d.kayttajatunnus}</span>,
                     <ul key={`orgs-${d.kayttajatunnus}`} className="oph-ds-ul">
                         {d.organisaatioNimiList.map((o) => (
-                            <li key={o.identifier}>
-                                {`${getLocalization(o.localisedLabels) || o.identifier} (${o.tyypit
-                                    .map((t) => koodiLabel(organisaatiotyyppiMap[t], locale))
-                                    .join(',')
-                                    .toUpperCase()})`}
-                            </li>
+                            <li key={o.identifier}>{getOrganisationNameAndTypes(o)}</li>
                         ))}
                     </ul>,
                 ])}
