@@ -295,9 +295,9 @@ export const RekisteroidyPage = (props: OwnProps) => {
             ) : (
                 <div className="wrapper notranslate">
                     <div className="rekisteroidy-organisaatiot-wrapper" style={{ marginBottom: '2em' }}>
-                        <ReactMarkdown linkTarget="_blank" className="privacy-policy">
-                            {L['REKISTEROIDY_PRIVACY_POLICY'] ?? ''}
-                        </ReactMarkdown>
+                        <div className="privacy-policy">
+                            <ReactMarkdown>{L['REKISTEROIDY_PRIVACY_POLICY'] ?? ''}</ReactMarkdown>
+                        </div>
                     </div>
                     <NotificationButton action={() => setPrivacyPolicySeen(true)}>
                         {L['REKISTEROIDY_ACCEPT_PRIVACY_POLICY']}
