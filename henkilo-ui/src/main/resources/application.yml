@@ -1,14 +1,6 @@
-spring:
-  main:
-    banner-mode: "off"
-server:
-  servlet:
-    context-path: /henkilo-ui
-management:
-  health:
-    diskspace:
-      enabled: false
-henkiloui.url: https://virkailija.hahtuvaopintopolku.fi/henkilo-ui
+spring.main.banner-mode: "off"
+server.servlet.context-path: /henkilo-ui
 cas.url: https://virkailija.hahtuvaopintopolku.fi/cas
 cas.login: https://virkailija.hahtuvaopintopolku.fi/cas/login
+henkiloui.url: https://virkailija.hahtuvaopintopolku.fi/henkilo-ui
 henkiloui.uses-ssl-proxy: true
