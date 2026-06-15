@@ -20,8 +20,8 @@ import java.net.URI;
 @Component
 @Slf4j
 public class PalvelukayttajaRedirectFilter extends GenericFilterBean {
-    @Value("${host.host-virkailija}")
-    private String hostVirkailija;
+    @Value("${cas.service}")
+    private String casService;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -31,7 +31,7 @@ public class PalvelukayttajaRedirectFilter extends GenericFilterBean {
                 var userDetails = token.getUserDetails();
                 if (userDetails instanceof CasUserDetailsService.CasUserDetails casUserDetails && (casUserDetails.isPalvelukayttaja())) {
                     log.info("Redirecting palvelukäyttäjä '{}' to palvelukäyttäjä info page", casUserDetails.getCasKayttajatunnus());
-                    response.sendRedirect(hostVirkailija + "/henkilo-ui/palvelukayttajainfo");
+                    response.sendRedirect(casService + "/palvelukayttajainfo");
                     return;
                 }
             }

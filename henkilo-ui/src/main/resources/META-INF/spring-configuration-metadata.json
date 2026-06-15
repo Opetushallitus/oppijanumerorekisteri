@@ -1,0 +1,24 @@
+{
+  "properties": [
+    {
+      "name": "cas.service",
+      "type": "java.lang.String",
+      "description": "henkilo-ui location (used as CAS service prefix for return URL)"
+    },
+    {
+      "name": "cas.url",
+      "type": "java.lang.String",
+      "description": "CAS location"
+    },
+    {
+      "name": "cas.login",
+      "type": "java.lang.String",
+      "description": "CAS login URL"
+    },
+    {
+      "name": "henkiloui.uses-ssl-proxy",
+      "type": "java.lang.Boolean",
+      "description": "Is henkilo-ui run behind a proxy that terminates HTTPS"
+    }
+  ]
+}
