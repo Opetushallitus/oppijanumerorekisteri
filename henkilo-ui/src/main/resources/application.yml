@@ -8,7 +8,7 @@ management:
   health:
     diskspace:
       enabled: false
-cas.service: https://virkailija.hahtuvaopintopolku.fi/henkilo-ui
+henkiloui.url: https://virkailija.hahtuvaopintopolku.fi/henkilo-ui
 cas.url: https://virkailija.hahtuvaopintopolku.fi/cas
 cas.login: https://virkailija.hahtuvaopintopolku.fi/cas/login
 henkiloui.uses-ssl-proxy: true

@@ -1,4 +1,4 @@
-cas.service: https://virkailija.opintopolku.fi/henkilo-ui
 cas.url: https://virkailija.opintopolku.fi/cas
 cas.login: https://virkailija.opintopolku.fi/cas/login
+henkiloui.url: https://virkailija.opintopolku.fi/henkilo-ui
 henkiloui.uses-ssl-proxy: true
