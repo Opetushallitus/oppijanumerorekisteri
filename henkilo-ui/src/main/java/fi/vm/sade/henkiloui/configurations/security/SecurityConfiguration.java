@@ -1,11 +1,9 @@
 package fi.vm.sade.henkiloui.configurations.security;
 
-import fi.vm.sade.henkiloui.configurations.properties.CasProperties;
-import fi.vm.sade.properties.OphProperties;
-
 import org.apereo.cas.client.session.SingleSignOutFilter;
 import org.apereo.cas.client.validation.Cas30ServiceTicketValidator;
 import org.apereo.cas.client.validation.TicketValidator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -25,20 +23,21 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
-    private final CasProperties casProperties;
-    private final OphProperties ophProperties;
     public static final String SPRING_CAS_SECURITY_CHECK_PATH = "/j_spring_cas_security_check";
 
-    public SecurityConfiguration(CasProperties casProperties,
-                                 OphProperties ophProperties) {
-        this.casProperties = casProperties;
-        this.ophProperties = ophProperties;
-    }
+    @Value("${cas.service}")
+    private String casService;
+
+    @Value("${cas.url}")
+    private String casUrl;
+
+    @Value("${cas.login}")
+    private String casLogin;
 
     @Bean
     ServiceProperties serviceProperties() {
         ServiceProperties serviceProperties = new ServiceProperties();
-        serviceProperties.setService(casProperties.getService() + SPRING_CAS_SECURITY_CHECK_PATH);
+        serviceProperties.setService(casService + SPRING_CAS_SECURITY_CHECK_PATH);
         serviceProperties.setSendRenew(false);
         serviceProperties.setAuthenticateAllArtifacts(false);
         return serviceProperties;
@@ -56,7 +55,7 @@ public class SecurityConfiguration {
 
     @Bean
     TicketValidator casTicketValidator() {
-        return new Cas30ServiceTicketValidator(ophProperties.url("cas.url"));
+        return new Cas30ServiceTicketValidator(casUrl);
     }
 
     @Bean
@@ -74,7 +73,7 @@ public class SecurityConfiguration {
     @Bean
     AuthenticationEntryPoint casAuthenticationEntryPoint() {
         CasAuthenticationEntryPoint casAuthenticationEntryPoint = new CasAuthenticationEntryPoint();
-        casAuthenticationEntryPoint.setLoginUrl(ophProperties.url("cas.login"));
+        casAuthenticationEntryPoint.setLoginUrl(casLogin);
         casAuthenticationEntryPoint.setServiceProperties(serviceProperties());
         return casAuthenticationEntryPoint;
     }
