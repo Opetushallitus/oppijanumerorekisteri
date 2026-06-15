@@ -25,8 +25,8 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 public class SecurityConfiguration {
     public static final String SPRING_CAS_SECURITY_CHECK_PATH = "/j_spring_cas_security_check";
 
-    @Value("${cas.service}")
-    private String casService;
+    @Value("${henkiloui.url}")
+    private String henkilouiUrl;
 
     @Value("${cas.url}")
     private String casUrl;
@@ -37,7 +37,7 @@ public class SecurityConfiguration {
     @Bean
     ServiceProperties serviceProperties() {
         ServiceProperties serviceProperties = new ServiceProperties();
-        serviceProperties.setService(casService + SPRING_CAS_SECURITY_CHECK_PATH);
+        serviceProperties.setService(henkilouiUrl + SPRING_CAS_SECURITY_CHECK_PATH);
         serviceProperties.setSendRenew(false);
         serviceProperties.setAuthenticateAllArtifacts(false);
         return serviceProperties;
