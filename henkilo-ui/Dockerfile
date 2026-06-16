@@ -15,7 +15,7 @@ RUN npm run build
 WORKDIR /app
 RUN mvn --batch-mode clean package -s codebuild-mvn-settings.xml -DskipTests
 
-FROM amazoncorretto:21.0.11@sha256:0bee3cd54b789bb54b9f6bfbf2d89615e225e587e6eada2c7ca0a191d4689332
+FROM amazoncorretto:21.0.11@sha256:a7dfa8e261dc533623e107d33b233a6ba6a339ddd1c748facad0330d6d49415f
 WORKDIR /app
 
 COPY --from=build /app/target/henkiloui.jar henkiloui.jar
