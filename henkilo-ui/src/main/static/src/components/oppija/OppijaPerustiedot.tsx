@@ -318,7 +318,7 @@ const OppijaPerustiedotView = ({ oid, openForm }: { oid: string; openForm: () =>
                         {koodiLabelByKoodiarvo(sukupuoliKoodisto, henkilo?.sukupuoli, locale)}
                     </div>
                     <div>{L('HENKILO_OPPIJANUMERO')}</div>
-                    <div data-testid="oppijanumero">{master?.oidHenkilo}</div>
+                    <div data-testid="oppijanumero">{master?.oppijanumero}</div>
                     <div>{L('HENKILO_OID')}</div>
                     <div data-testid="oid">{oid}</div>
                     {duplicates?.length ? (

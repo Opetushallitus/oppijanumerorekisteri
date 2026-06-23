@@ -24,6 +24,34 @@ test.describe('oppijan perustiedot', () => {
         await expect(perustiedot.oid).toHaveText(vahvastiYksiloityOid);
     });
 
+    test('shows oppijanumero for yksilöity oppija', async ({ page }) => {
+        const { perustiedot } = await gotoOppija(page, yksiloityHetutonOid);
+        await expect(perustiedot.oppijanumero).toHaveText(yksiloityHetutonOid);
+    });
+
+    test('hides oppijanumero for yksilöimätön oppija', async ({ page }) => {
+        await page.route(`/oppijanumerorekisteri-service/henkilo/${yksiloityHetutonOid}`, async (route) => {
+            await route.fulfill({
+                json: { ...yksiloityHetuton, yksiloity: false, yksiloityVTJ: false, yksiloityEidas: false },
+            });
+        });
+        await page.route(`/oppijanumerorekisteri-service/henkilo/${yksiloityHetutonOid}/master`, async (route) => {
+            await route.fulfill({
+                json: {
+                    ...yksiloityHetuton,
+                    oppijanumero: null,
+                    yksiloity: false,
+                    yksiloityVTJ: false,
+                    yksiloityEidas: false,
+                },
+            });
+        });
+
+        const { perustiedot } = await gotoOppija(page, yksiloityHetutonOid);
+        await expect(perustiedot.oid).toHaveText(yksiloityHetutonOid);
+        await expect(perustiedot.oppijanumero).toBeEmpty();
+    });
+
     test('edits vahvasti yksilöity oppija', async ({ page }) => {
         const { buttons, form, perustiedot } = await gotoOppija(page, vahvastiYksiloityOid);
         await expect(perustiedot.kutsumanimi).toHaveText('Greta');
