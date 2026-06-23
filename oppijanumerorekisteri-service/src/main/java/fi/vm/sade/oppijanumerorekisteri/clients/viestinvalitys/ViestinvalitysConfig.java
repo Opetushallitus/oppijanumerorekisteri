@@ -3,7 +3,6 @@ package fi.vm.sade.oppijanumerorekisteri.clients.viestinvalitys;
 import tools.jackson.databind.ObjectMapper;
 
 import fi.vm.sade.oppijanumerorekisteri.clients.cas.CasClient;
-import fi.vm.sade.properties.OphProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +15,9 @@ import java.time.Duration;
 @Configuration
 @Slf4j
 public class ViestinvalitysConfig {
+    @Value("${cas.url}")
+    private String casBase;
+
     @Value("${viestinvalitys.baseurl}")
     private String viestinvalitysUrl;
     @Value("${authentication.viestintapalvelu.username}")
@@ -24,9 +26,7 @@ public class ViestinvalitysConfig {
     private String password;
 
     @Bean
-    public ViestinvalitysClient viestinvalitysClient(OphProperties properties, ObjectMapper objectMapper) {
-        var casBase = properties.require("cas.url");
-
+    public ViestinvalitysClient viestinvalitysClient(ObjectMapper objectMapper) {
         var httpClient = HttpClient.newBuilder()
                 .cookieHandler(new CookieManager())
                 .connectTimeout(Duration.ofSeconds(10))

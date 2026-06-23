@@ -64,13 +64,12 @@ orika.map-nulls: false
 dev:
   username: user
   password: password
-cas:
-  service: http://localhost:${server.port}/oppijanumerorekisteri-service
-  send-renew: false
-  key: oppijanumerorekisteri-service
-host:
-  host-virkailija: localhost:${server.port}
-  host-cas: localhost:${server.port}
+virkailija.baseurl: http://localhost:${server.port}
+cas.service: ${virkailija.baseurl}/oppijanumerorekisteri-service
+cas.send-renew: false
+cas.key: oppijanumerorekisteri-service
+cas.url: ${virkailija.baseurl}/cas
+cas.login: ${virkailija.baseurl}/cas/login
 authentication:
   default:
     username: oppijanumerorekisteri

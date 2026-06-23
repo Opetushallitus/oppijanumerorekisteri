@@ -138,7 +138,7 @@ public class Service2ServiceControllerTest  {
     public void findByMunicipalAndDobNoAuth() throws Exception {
         this.mvc.perform(get("/s2s/henkilo/list/foo/2021-11-05").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("https://localhost/cas/login?service=http%3A%2F%2Flocalhost%2Foppijanumerorekisteri-service%2Fj_spring_cas_security_check"));
+                .andExpect(redirectedUrl("http://localhost/cas/login?service=http%3A%2F%2Flocalhost%2Foppijanumerorekisteri-service%2Fj_spring_cas_security_check"));
     }
 
     @Test

@@ -101,7 +101,7 @@ public class HenkiloControllerTest {
         this.mvc.perform(get("/henkilo/henkiloPerusByHetu/081296-967T")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("https://localhost/cas/login?service=http%3A%2F%2Flocalhost%2Foppijanumerorekisteri-service%2Fj_spring_cas_security_check"));
+                .andExpect(redirectedUrl("http://localhost/cas/login?service=http%3A%2F%2Flocalhost%2Foppijanumerorekisteri-service%2Fj_spring_cas_security_check"));
         verifyReadNoAudit();
     }
 
@@ -388,7 +388,7 @@ public class HenkiloControllerTest {
     public void existenceCheckUnauthorized() throws Exception {
         mvc.perform(postRequest("/henkilo/exists", existenceCheckDto()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("https://localhost/cas/login?service=http%3A%2F%2Flocalhost%2Foppijanumerorekisteri-service%2Fj_spring_cas_security_check"));
+                .andExpect(redirectedUrl("http://localhost/cas/login?service=http%3A%2F%2Flocalhost%2Foppijanumerorekisteri-service%2Fj_spring_cas_security_check"));
     }
 
     @Test
@@ -436,7 +436,7 @@ public class HenkiloControllerTest {
     public void getPassinumerotRequiresAuthentication() throws Exception {
         mvc.perform(get("/henkilo/oid/passinumerot"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("https://localhost/cas/login?service=http%3A%2F%2Flocalhost%2Foppijanumerorekisteri-service%2Fj_spring_cas_security_check"));
+                .andExpect(redirectedUrl("http://localhost/cas/login?service=http%3A%2F%2Flocalhost%2Foppijanumerorekisteri-service%2Fj_spring_cas_security_check"));
     }
 
     @Test
@@ -461,7 +461,7 @@ public class HenkiloControllerTest {
     public void setPassinumerotRequiresAuthentication() throws Exception {
         mvc.perform(postRequest("/henkilo/oid/passinumerot", Set.of()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("https://localhost/cas/login?service=http%3A%2F%2Flocalhost%2Foppijanumerorekisteri-service%2Fj_spring_cas_security_check"));
+                .andExpect(redirectedUrl("http://localhost/cas/login?service=http%3A%2F%2Flocalhost%2Foppijanumerorekisteri-service%2Fj_spring_cas_security_check"));
     }
 
     @Test

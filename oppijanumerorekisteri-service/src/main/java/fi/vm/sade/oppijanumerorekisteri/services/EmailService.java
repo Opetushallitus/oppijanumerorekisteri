@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.services.EmailService;
 import fi.vm.sade.oppijanumerorekisteri.services.QueueingEmailService.QueuedEmail;
-import fi.vm.sade.properties.OphProperties;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import lombok.Builder;
@@ -10,6 +9,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -20,9 +20,11 @@ import static org.springframework.ui.freemarker.FreeMarkerTemplateUtils.processT
 @Service
 @RequiredArgsConstructor
 public class EmailService {
-    private final OphProperties urlProperties;
     private final Configuration freemarker;
     private final QueueingEmailService queueingEmailService;
+
+    @Value("${virkailija.baseurl}")
+    private String virkailijaUrl;
 
     @Data
     @Builder
@@ -35,7 +37,7 @@ public class EmailService {
         try {
             String subject = "Virkailijan opintopolku: oppijoiden tuonti suoritettu";
             TuontiKasiteltyWithErrors tuontiKasiteltyWithErrors = TuontiKasiteltyWithErrors.builder()
-                .linkki(urlProperties.url("henkilo-ui.oppijoidentuonti"))
+                .linkki(virkailijaUrl + "/henkilo-ui/oppijoidentuonti")
                 .subject(subject)
                 .build();
 

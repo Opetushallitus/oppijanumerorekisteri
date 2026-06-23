@@ -3,8 +3,8 @@ package fi.vm.sade.oppijanumerorekisteri.configurations.security;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.CasProperties;
 import fi.vm.sade.oppijanumerorekisteri.configurations.security.cas.OpintopolkuCasAuthenticationFilter;
 import fi.vm.sade.oppijanumerorekisteri.configurations.security.cas.OpintopolkuUserDetailsService;
-import fi.vm.sade.properties.OphProperties;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
@@ -14,6 +14,7 @@ import org.apereo.cas.client.session.SessionMappingStorage;
 import org.apereo.cas.client.session.SingleSignOutFilter;
 import org.apereo.cas.client.validation.Cas30ProxyTicketValidator;
 import org.apereo.cas.client.validation.TicketValidator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -41,20 +42,19 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @Configuration
+@RequiredArgsConstructor
 @EnableMethodSecurity(jsr250Enabled = false, prePostEnabled = true, securedEnabled = true)
 @EnableWebSecurity
 public class SecurityConfiguration {
-    private CasProperties casProperties;
-    private OphProperties ophProperties;
-    private SessionMappingStorage sessionMappingStorage;
+    private final CasProperties casProperties;
+    private final SessionMappingStorage sessionMappingStorage;
 
     public static final String SPRING_CAS_SECURITY_CHECK_PATH = "/j_spring_cas_security_check";
 
-    public SecurityConfiguration(CasProperties casProperties, OphProperties ophProperties, SessionMappingStorage sessionMappingStorage) {
-        this.casProperties = casProperties;
-        this.ophProperties = ophProperties;
-        this.sessionMappingStorage = sessionMappingStorage;
-    }
+    @Value("${cas.url}")
+    private String casUrl;
+    @Value("${cas.login}")
+    private String casLogin;
 
     @Bean
     ServiceProperties serviceProperties() {
@@ -81,7 +81,7 @@ public class SecurityConfiguration {
 
     @Bean
     TicketValidator ticketValidator() {
-        var validator = new Cas30ProxyTicketValidator(ophProperties.url("cas.url"));
+        var validator = new Cas30ProxyTicketValidator(casUrl);
         validator.setAcceptAnyProxy(true);
         return validator;
     }
@@ -126,7 +126,7 @@ public class SecurityConfiguration {
     @Bean
     CasAuthenticationEntryPoint casAuthenticationEntryPoint() {
         CasAuthenticationEntryPoint casAuthenticationEntryPoint = new CasAuthenticationEntryPoint();
-        casAuthenticationEntryPoint.setLoginUrl(ophProperties.url("cas.login"));
+        casAuthenticationEntryPoint.setLoginUrl(casLogin);
         casAuthenticationEntryPoint.setServiceProperties(serviceProperties());
         return casAuthenticationEntryPoint;
     }

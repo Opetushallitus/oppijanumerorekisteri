@@ -3,14 +3,15 @@ package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 import tools.jackson.databind.ObjectMapper;
 
 import fi.vm.sade.oppijanumerorekisteri.clients.OrganisaatioClient;
-import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioTilat;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Map;
 import java.util.Optional;
@@ -24,9 +25,11 @@ import java.net.http.HttpResponse;
 @Transactional
 @RequiredArgsConstructor
 public class OrganisaatioClientImpl implements OrganisaatioClient {
-    private final UrlConfiguration urlConfiguration;
     private final RetryingAnonymousOphClient httpClient;
     private final ObjectMapper objectMapper;
+
+    @Value("${virkailija.baseurl}")
+    private String virkailijaBaseUrl;
 
     @Override
     public boolean exists(String oid) {
@@ -36,7 +39,7 @@ public class OrganisaatioClientImpl implements OrganisaatioClient {
     @Override
     public Optional<OrganisaatioDto> getByOid(String oid) {
         try {
-            String url = urlConfiguration.url("organisaatio-service.organisaatio.byOid", oid);
+            String url = virkailijaBaseUrl + "/organisaatio-service/rest/organisaatio/" + oid;
             var requestBuilder = HttpRequest.newBuilder()
                 .uri(new URI(url))
                 .GET();
@@ -55,9 +58,11 @@ public class OrganisaatioClientImpl implements OrganisaatioClient {
         try {
             Map<String, Boolean> queryParams = tilat.asMap();
             queryParams.put("rekursiivisesti", rekursiivisesti);
-            String url = urlConfiguration.url("organisaatio-service.organisaatio.byOid.childoids", oid, queryParams);
+            UriComponentsBuilder url = UriComponentsBuilder.fromUriString(virkailijaBaseUrl)
+                .pathSegment("organisaatio-service", "rest", "organisaatio", oid, "childoids");
+            queryParams.forEach(url::queryParam);
             var requestBuilder = HttpRequest.newBuilder()
-                .uri(new URI(url))
+                .uri(new URI(url.toUriString()))
                 .GET();
             HttpResponse<String> response = httpClient.sendRequestWithRetry(requestBuilder);
             if (response.statusCode() == 200) {

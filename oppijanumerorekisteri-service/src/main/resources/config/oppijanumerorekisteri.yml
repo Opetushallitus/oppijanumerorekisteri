@@ -10,11 +10,10 @@ spring:
       maximum-pool-size: 20
       connection-timeout: 10000
       max-lifetime: 900000
-cas:
-  service: https://${host_virkailija}/oppijanumerorekisteri-service
-host:
-  host-virkailija: ${host_virkailija}
-  host-cas: ${host_cas}
+virkailija.baseurl: https://${host_virkailija}
+cas.service: https://${host_virkailija}/oppijanumerorekisteri-service
+cas.url: https://${host_virkailija}/cas
+cas.login: https://${host_virkailija}/cas/login
 authentication:
   kayttooikeus:
     username: ${kayttooikeus_username}

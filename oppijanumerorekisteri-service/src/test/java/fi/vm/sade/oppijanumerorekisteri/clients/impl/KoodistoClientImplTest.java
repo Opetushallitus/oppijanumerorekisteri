@@ -14,7 +14,7 @@ import org.wiremock.spring.EnableWireMock;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest(properties = "virkailija.baseurl=http://localhost:8097")
 @EnableWireMock(@ConfigureWireMock(port = 8097))
 public class KoodistoClientImplTest {
     @Autowired

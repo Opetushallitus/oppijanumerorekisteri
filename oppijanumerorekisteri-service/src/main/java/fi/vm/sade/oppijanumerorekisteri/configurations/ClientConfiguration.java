@@ -3,7 +3,6 @@ package fi.vm.sade.oppijanumerorekisteri.configurations;
 import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.cas.CasClient;
-import fi.vm.sade.properties.OphProperties;
 import lombok.RequiredArgsConstructor;
 
 import java.net.CookieManager;
@@ -19,6 +18,9 @@ import tools.jackson.databind.ObjectMapper;
 @Configuration
 @RequiredArgsConstructor
 public class ClientConfiguration {
+    @Value("${cas.url}")
+    private String casBase;
+
     @Value("${ataru.baseurl}")
     private String ataruBaseUrl;
     @Value("${authentication.ataru.username}")
@@ -34,8 +36,7 @@ public class ClientConfiguration {
     private String hakuAppPassword;
 
     @Bean
-    public AtaruClient ataruClient(OphProperties properties, ObjectMapper objectMapper) {
-        var casBase = properties.require("cas.url");
+    public AtaruClient ataruClient(ObjectMapper objectMapper) {
         var httpClient = HttpClient.newBuilder()
                 .cookieHandler(new CookieManager())
                 .connectTimeout(Duration.ofSeconds(60))
@@ -45,8 +46,7 @@ public class ClientConfiguration {
     }
 
     @Bean
-    public HakuappClient hakuappClient(OphProperties properties, ObjectMapper objectMapper) {
-        var casBase = properties.require("cas.url");
+    public HakuappClient hakuappClient(ObjectMapper objectMapper) {
         var httpClient = HttpClient.newBuilder()
                 .cookieHandler(new CookieManager())
                 .connectTimeout(Duration.ofSeconds(60))

@@ -21,15 +21,15 @@ spring.security.oauth2.resourceserver.jwt.issuer-uri: "http://localhost/issuer-u
 spring.security.oauth2.resourceserver.jwt.jwk-set-uri: "http://localhost/jwk-set-uri"
 orika.enabled: true
 orika.map-nulls: false
-host:
-  host-cas: localhost
-  host-virkailija: localhost
 db-scheduler:
   enabled: false
 cas:
   service: http://localhost/oppijanumerorekisteri-service
   send-renew: false
   key: oppijanumerorekisteri-service
+  url: http://localhost/cas
+  login: http://localhost/cas/login
+virkailija.baseurl: https://localhost
 dev:
   username: username
   password: password
