@@ -24,7 +24,7 @@
     },
     "devDependencies": {
         "@eslint/js": "9.39.4",
-        "@playwright/test": "1.61.0",
+        "@playwright/test": "1.61.1",
         "@types/isomorphic-fetch": "0.0.39",
         "@types/node": "24.13.2",
         "@types/papaparse": "5.5.2",
