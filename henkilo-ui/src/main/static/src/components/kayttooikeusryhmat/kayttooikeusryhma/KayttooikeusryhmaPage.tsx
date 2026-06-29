@@ -146,37 +146,25 @@ export const KayttooikeusryhmaPage = ({ kayttooikeusryhmaId }: { kayttooikeusryh
         if (!organisations || organisations.length === 0 || !kayttooikeusryhma?.organisaatioViite) {
             return [];
         }
-        const organisaatioViittees = kayttooikeusryhma.organisaatioViite.filter((organisaatioViite) =>
-            _isOrganisaatioOid(organisaatioViite.organisaatioTyyppi)
-        );
-        const organisaatioOids = organisaatioViittees.map((organisaatioViite) => organisaatioViite.organisaatioTyyppi);
+        const organisaatioOids = kayttooikeusryhma.organisaatioViite
+            .filter((o) => o.organisaatioTyyppi.startsWith('1.2.246.562') && !_isRyhmaOid(o.organisaatioTyyppi))
+            .map((o) => o.organisaatioTyyppi);
         return organisaatioOids
             .map((oid) => organisations.find((o) => o.oid === oid))
-            .map((organisaatio) => {
-                const localizedName = getLocalization(organisaatio?.nimi, locale);
-                const name =
+            .map((organisaatio) => ({
+                oid: organisaatio?.oid ?? '',
+                name:
                     organisaatio?.status === 'AKTIIVINEN'
-                        ? localizedName
-                        : `${localizedName} (${L('KAYTTOOIKEUSRYHMAT_PASSIVOITU')})`;
-                const orgData: OrganisaatioSelectObject = {
-                    oid: organisaatio?.oid ?? '',
-                    name,
-                    parentNames: [],
-                    organisaatiotyypit: [],
-                    oidPath: undefined,
-                    status: undefined,
-                };
-                return orgData;
-            });
+                        ? getLocalization(organisaatio?.nimi, locale)
+                        : `${getLocalization(organisaatio?.nimi, locale)} (${L('KAYTTOOIKEUSRYHMAT_PASSIVOITU')})`,
+                parentNames: [],
+                organisaatiotyypit: [],
+                oidPath: undefined,
+                status: undefined,
+            }));
     };
 
-    const _isOrganisaatioOid = (input: string): boolean => {
-        return input.split('.')[4] !== undefined && input.split('.')[4] === '10';
-    };
-
-    const _isRyhmaOid = (input: string): boolean => {
-        return input.split('.')[4] !== undefined && input.split('.')[4] !== '10';
-    };
+    const _isRyhmaOid = (input: string) => input.startsWith('1.2.246.562.28.');
 
     const _parseExistingOppilaitostyyppiData = (): string[] => {
         if (!kayttooikeusryhma?.organisaatioViite || !organisaatiotyyppiKoodisto) {
