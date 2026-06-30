@@ -54,7 +54,9 @@ public class AuditCleanupService {
         do {
             deleted = jdbcTemplate.update(sql, cutoffRev, batchSize);
             total += deleted;
+            log.info("Audit cleanup deleted batch of {} rows from {} for a total of {}", deleted, table, total);
         } while (deleted == batchSize);
+
         return total;
     }
 }
