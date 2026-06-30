@@ -362,6 +362,9 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       this.vtjKyselyCertificationAlarm(logGroup, props.alarmTopic);
       this.muutostietorajapintaAlarms(logGroup, props.alarmTopic);
     }
+    if (config.features["oppijanumerorekisteri.tasks.audit-cleanup.enabled"]) {
+      this.auditCleanupFailureAlarm(logGroup, props.alarmTopic);
+    }
 
     const dockerImage = new ecr_assets.DockerImageAsset(this, "AppImage", {
       directory: path.join(__dirname, "../../"),
@@ -547,6 +550,20 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
     );
   }
 
+  auditCleanupFailureAlarm(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
+    alarms.alarmIfExpectedLogLineIsMissing(
+      this,
+      "AuditCleanupTask",
+      logGroup,
+      alarmTopic,
+      logs.FilterPattern.literal(
+        '"Oppijanumerorekisteri audit cleanup task completed"',
+      ),
+      cdk.Duration.hours(25),
+      1,
+    );
+  }
+
   muutostietorajapintaAlarms(logGroup: logs.LogGroup, alarmTopic: sns.ITopic) {
     alarms.alarmIfExpectedLogLineIsMissing(
       this,
@@ -658,6 +675,7 @@ class OppijanumerorekisteriService extends constructs.Construct {
         "oppijanumerorekisteri.tasks.datantuonti.import.enabled": `${config.features["oppijanumerorekisteri.tasks.datantuonti.import.enabled"]}`,
         "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": `${config.features["oppijanumerorekisteri.tasks.testidatantuonti.import.enabled"]}`,
         "oppijanumerorekisteri.tasks.koski-datantuonnin-muokkaus.enabled": `${config.features["oppijanumerorekisteri.tasks.koski-datantuonnin-muokkaus.enabled"]}`,
+        "oppijanumerorekisteri.tasks.audit-cleanup.enabled": `${config.features["oppijanumerorekisteri.tasks.audit-cleanup.enabled"]}`,
         ...lampiProperties,
         ...props.extraEnvironment,
       },

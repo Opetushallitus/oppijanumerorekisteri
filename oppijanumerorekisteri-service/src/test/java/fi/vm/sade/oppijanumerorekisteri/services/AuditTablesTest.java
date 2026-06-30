@@ -9,6 +9,8 @@ import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
 import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
@@ -27,7 +29,10 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 @Sql("/sql/truncate_data.sql")
 @SpringBootTest
-class AuditTablesPopulationTest {
+class AuditTablesTest {
+  private static final int FIVE_YEARS_IN_DAYS = 5 * 365;
+
+  @Autowired private AuditCleanupService auditCleanupService;
   @Autowired private JdbcTemplate jdbcTemplate;
   @Autowired private PlatformTransactionManager transactionManager;
   @PersistenceContext private EntityManager em;
@@ -56,6 +61,35 @@ class AuditTablesPopulationTest {
     assertThatHenkiloAuditTablesContainUpdateFor(revision, updatedEntities.huoltajaHenkilo());
     assertThatHenkiloHuoltajaSuhdeAuditTableContainsUpdateFor(
         revision, updatedEntities.henkiloHuoltajaSuhde());
+  }
+
+  @Test
+  void auditTablesArePrunedOfDataOlderThanFiveYears() {
+    createHuollettavaHenkiloAndHuoltajaHenkilo();
+    var oldRevision = latestRevision();
+    createHuollettavaHenkiloAndHuoltajaHenkilo();
+    var newRevision = latestRevision();
+
+    assertThat(oldRevision).isLessThan(newRevision);
+    assertThatHenkiloAuditTablesContainRowsForRevision(oldRevision);
+    assertThatHenkiloAuditTablesContainRowsForRevision(newRevision);
+
+    ageRevision(oldRevision, Duration.ofDays(FIVE_YEARS_IN_DAYS + 1));
+    auditCleanupService.cleanup();
+
+    assertThatHenkiloAuditTablesAreEmptyForRevision(oldRevision);
+    assertThatHenkiloAuditTablesContainRowsForRevision(newRevision);
+  }
+
+  @Test
+  void auditTablesRetainDataLessThanFiveYearsOld() {
+    createHuollettavaHenkiloAndHuoltajaHenkilo();
+    var revision = latestRevision();
+
+    ageRevision(revision, Duration.ofDays(FIVE_YEARS_IN_DAYS - 1));
+    auditCleanupService.cleanup();
+
+    assertThatHenkiloAuditTablesContainRowsForRevision(revision);
   }
 
   private void assertThatHenkiloAuditTablesAreEmpty() {
@@ -266,7 +300,10 @@ class AuditTablesPopulationTest {
       Collection<?> currentValues) {
     var rows =
         jdbcTemplate.queryForList(
-            "SELECT " + valueColumn + ", revtype FROM " + table
+            "SELECT "
+                + valueColumn
+                + ", revtype FROM "
+                + table
                 + " WHERE henkilo_id = ? AND rev = ?",
             henkiloId,
             revision);
@@ -304,6 +341,39 @@ class AuditTablesPopulationTest {
 
   private RevisionType revisionTypeOf(java.util.Map<String, Object> row) {
     return RevisionType.fromRepresentation(((Number) row.get("revtype")).byteValue());
+  }
+
+  private void assertThatHenkiloAuditTablesContainRowsForRevision(long revision) {
+    assertThat(countAuditRows("henkilo_aud", revision)).isPositive();
+    assertThat(countAuditRows("henkilo_kansalaisuus_aud", revision)).isPositive();
+    assertThat(countAuditRows("henkilo_organisaatio_aud", revision)).isPositive();
+    assertThat(countAuditRows("henkilo_passinumero_aud", revision)).isPositive();
+    assertThat(countAuditRows("henkilo_huoltaja_suhde_aud", revision)).isPositive();
+    assertThat(countRevinfoRows(revision)).isEqualTo(1);
+  }
+
+  private void assertThatHenkiloAuditTablesAreEmptyForRevision(long revision) {
+    assertThat(countAuditRows("henkilo_aud", revision)).isZero();
+    assertThat(countAuditRows("henkilo_kansalaisuus_aud", revision)).isZero();
+    assertThat(countAuditRows("henkilo_organisaatio_aud", revision)).isZero();
+    assertThat(countAuditRows("henkilo_passinumero_aud", revision)).isZero();
+    assertThat(countAuditRows("henkilo_huoltaja_suhde_aud", revision)).isZero();
+    assertThat(countRevinfoRows(revision)).isZero();
+  }
+
+  private void ageRevision(long revision, Duration age) {
+    var agedMillis = Instant.now().minus(age).toEpochMilli();
+    jdbcTemplate.update("UPDATE revinfo SET revtstmp = ? WHERE rev = ?", agedMillis, revision);
+  }
+
+  private int countAuditRows(String table, long revision) {
+    return jdbcTemplate.queryForObject(
+        "SELECT count(*) FROM " + table + " WHERE rev = ?", Integer.class, revision);
+  }
+
+  private int countRevinfoRows(long revision) {
+    return jdbcTemplate.queryForObject(
+        "SELECT count(*) FROM revinfo WHERE rev = ?", Integer.class, revision);
   }
 
   private record PersistedEntities(

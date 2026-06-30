@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "oppijanumerorekisteri")
 public class OppijanumerorekisteriProperties {
+    public static final int FIVE_YEARS_IN_DAYS = 365 * 5;
     private int henkiloViiteSplitSize = 5000;
     private float etunimiThreshold = 0.85f;
     private float sukunimiThreshold = 0.85f;
@@ -30,6 +31,17 @@ public class OppijanumerorekisteriProperties {
     public static class Tasks {
         private final Export export = new Export();
         private final Datantuonti datantuonti = new Datantuonti();
+        private final AuditCleanup auditCleanup = new AuditCleanup();
+    }
+
+    @Getter
+    @Setter
+    public static class AuditCleanup {
+        private boolean enabled = false;
+        private int retentionDays = FIVE_YEARS_IN_DAYS;
+        private int batchSize = 10_000;
+        private int hour = 3;
+        private int minute = 30;
     }
 
     @Getter

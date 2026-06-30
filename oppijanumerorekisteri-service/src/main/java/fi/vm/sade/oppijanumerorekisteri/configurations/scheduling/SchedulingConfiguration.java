@@ -7,6 +7,7 @@ import com.github.kagkarlsson.scheduler.task.schedule.Daily;
 import com.github.kagkarlsson.scheduler.task.schedule.FixedDelay;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.configurations.security.OphSessionMappingStorage;
+import fi.vm.sade.oppijanumerorekisteri.services.AuditCleanupService;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.QueueingEmailService;
 import fi.vm.sade.oppijanumerorekisteri.services.VtjMuutostietoService;
@@ -46,6 +47,7 @@ public class SchedulingConfiguration {
     private final KoskiDatantuonninMuokkausService koskiDatantuonninMuokkausService;
     private final QueueingEmailService queueingEmailService;
     private final VtjKyselyCertificationCheck vtjKyselyCertificationCheck;
+    private final AuditCleanupService auditCleanupService;
 
     @Bean
     Task<Void> casClientSessionCleanerTask() {
@@ -208,5 +210,18 @@ public class SchedulingConfiguration {
         return Tasks
                 .recurring(TaskDescriptor.of("vtjkyselyCertificationCheck"), new Daily(LocalTime.of(10, 10)))
                 .execute((instance, ctx) -> vtjKyselyCertificationCheck.checkCertificationValidity());
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "oppijanumerorekisteri.tasks.audit-cleanup.enabled", matchIfMissing = false)
+    Task<Void> auditCleanupTask() {
+        var config = properties.getTasks().getAuditCleanup();
+        return Tasks
+                .recurring(TaskDescriptor.of("AuditCleanupTask"),
+                        new Daily(LocalTime.of(config.getHour(), config.getMinute())))
+                .execute((instance, ctx) -> {
+                    auditCleanupService.cleanup();
+                    log.info("Oppijanumerorekisteri audit cleanup task completed");
+                });
     }
 }
