@@ -58,8 +58,8 @@ test.describe('kayttooikeusryhmat add', () => {
         await description.sv.fill('testiryhmä kuvaus sv');
         await description.en.fill('testiryhmä kuvaus en');
 
-        await palvelutJaKayttooikeudet.palveluSelect.clickAndSelect('palvelu1');
-        await palvelutJaKayttooikeudet.kayttooikeudetSelect.clickAndSelect('jotain');
+        await palvelutJaKayttooikeudet.palveluSelect.clickAndSelectNoWait('palvelu1');
+        await palvelutJaKayttooikeudet.kayttooikeudetSelect.clickAndSelectNoWait('jotain');
         await palvelutJaKayttooikeudet.addKayttooikeusButton.click();
 
         await save.click();

@@ -9,15 +9,16 @@ export const selectLocator = (page: Page, selector: string) => {
         await page.keyboard.press('Enter');
     };
 
-    const clickAndSelect = async (s: string) => {
+    const clickAndSelectNoWait = async (s: string) => {
         await page.locator(selector).click();
-        select(s);
+        await page.locator(selector).pressSequentially(s);
+        await page.keyboard.press('Enter');
     };
 
     return {
         locator: page.locator(selector),
         select,
-        clickAndSelect,
+        clickAndSelectNoWait,
     };
 };
 
