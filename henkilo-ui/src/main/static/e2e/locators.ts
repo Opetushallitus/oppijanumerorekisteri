@@ -3,14 +3,21 @@ import { Page } from '@playwright/test';
 export const toastWithText = (page: Page, text: string) => page.locator('.oph-ds-toast').filter({ hasText: text });
 
 export const selectLocator = (page: Page, selector: string) => {
+    const select = async (s: string) => {
+        await page.locator(selector).pressSequentially(s);
+        await page.waitForTimeout(400);
+        await page.keyboard.press('Enter');
+    };
+
+    const clickAndSelect = async (s: string) => {
+        await page.locator(selector).click();
+        select(s);
+    };
+
     return {
         locator: page.locator(selector),
-        select: async (s: string) => {
-            await page.locator(selector).click();
-            await page.locator(selector).pressSequentially(s);
-            await page.waitForTimeout(400);
-            await page.keyboard.press('Enter');
-        },
+        select,
+        clickAndSelect,
     };
 };
 
