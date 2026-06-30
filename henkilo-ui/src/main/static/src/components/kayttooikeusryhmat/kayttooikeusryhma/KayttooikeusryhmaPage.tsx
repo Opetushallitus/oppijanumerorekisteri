@@ -561,6 +561,7 @@ export const KayttooikeusryhmaPage = ({ kayttooikeusryhmaId }: { kayttooikeusryh
                 <button
                     disabled={!_validateKayttooikeusryhmaInputs()}
                     className="oph-button oph-button-primary"
+                    id="kayttooikeusRyhmatSaveGroupButton"
                     onClick={() => {
                         return kayttooikeusryhmaId ? updateKayttooikeusryhma() : createNewKayttooikeusryhma();
                     }}

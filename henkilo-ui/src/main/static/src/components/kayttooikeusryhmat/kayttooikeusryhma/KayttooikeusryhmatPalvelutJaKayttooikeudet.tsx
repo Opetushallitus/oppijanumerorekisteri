@@ -76,6 +76,7 @@ const KayttooikeusryhmatPalvelutJaKayttooikeudet = (props: Props) => {
                                 props.palvelutSelection === undefined ||
                                 props.palveluKayttooikeusSelection === undefined
                             }
+                            id="addPalveluAndKayttooikeusButton"
                             onClick={() => props.lisaaPalveluJaKayttooikeusAction()}
                         >
                             {L('LISAA')}

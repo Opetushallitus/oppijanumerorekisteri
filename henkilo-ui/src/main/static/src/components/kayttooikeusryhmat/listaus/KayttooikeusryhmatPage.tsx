@@ -184,7 +184,7 @@ export const KayttooikeusryhmatPage = () => {
             <div>
                 {muokkausoikeus && (
                     <div>
-                        <Link className="oph-ds-link" to="/kayttooikeusryhmat/lisaa">
+                        <Link id="addKayttooikeusryhma" className="oph-ds-link" to="/kayttooikeusryhmat/lisaa">
                             {L('KAYTTOOIKEUSRYHMAT_LISAA')}
                         </Link>
                     </div>

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 
 import kayttooikeusryhmat from '../../mock-api/src/api/kayttooikeus-service/kayttooikeusryhma/GET.json' with { type: 'json' };
 import { gotoKayttooikeusryhmat } from './locators/kayttooikeusryhmat-page';
@@ -27,5 +27,44 @@ test.describe('kayttooikeusryhmat list', () => {
 
         await page.click('.oph-ds-select-clearIndicator:first-child');
         await expect(page.locator('.oph-ds-accordion-header')).toHaveCount(3);
+    });
+});
+
+test.describe('kayttooikeusryhmat add', () => {
+    const usePostKayttooikeusryhma = (page: Page) =>
+        page.route('/kayttooikeus-service/kayttooikeusryhma', async (route) => {
+            if (route.request().method() !== 'POST') {
+                await route.fallback();
+                return;
+            }
+            route.fulfill({
+                body: '123333',
+            });
+        });
+
+    test('adds kayttooikeusryhma with minimal information', async ({ page }) => {
+        await usePostKayttooikeusryhma(page);
+        const { addKayttooikeusryhmaLink, lisaaKayttooikeusPage } = await gotoKayttooikeusryhmat(page);
+        await expect(addKayttooikeusryhmaLink).toBeVisible();
+
+        const { name, description, palvelutJaKayttooikeudet, save } = await lisaaKayttooikeusPage(page);
+        await expect(name.fi).toBeVisible();
+
+        await name.fi.fill('testiryhmä fi');
+        await name.sv.fill('testiryhmä sv');
+        await name.en.fill('testiryhmä en');
+
+        await description.fi.fill('testiryhmä kuvaus fi');
+        await description.sv.fill('testiryhmä kuvaus sv');
+        await description.en.fill('testiryhmä kuvaus en');
+
+        await palvelutJaKayttooikeudet.palveluSelect.select('palvelu1');
+        await palvelutJaKayttooikeudet.kayttooikeudetSelect.select('jotain');
+        await palvelutJaKayttooikeudet.addKayttooikeusButton.click();
+
+        await save.click();
+
+        // the kayttooikeusryhmät list should be visible again
+        await expect(addKayttooikeusryhmaLink).toBeVisible();
     });
 });
