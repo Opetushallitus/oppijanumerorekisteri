@@ -2,11 +2,12 @@ import { Page } from '@playwright/test';
 
 export const toastWithText = (page: Page, text: string) => page.locator('.oph-ds-toast').filter({ hasText: text });
 
-export const selectLocator = (page: Page, id: string) => {
+export const selectLocator = (page: Page, selector: string) => {
     return {
-        locator: page.locator(id),
+        locator: page.locator(selector),
         select: async (s: string) => {
-            await page.locator(id).type(s);
+            await page.locator(selector).click();
+            await page.locator(selector).pressSequentially(s);
             await page.waitForTimeout(400);
             await page.keyboard.press('Enter');
         },
