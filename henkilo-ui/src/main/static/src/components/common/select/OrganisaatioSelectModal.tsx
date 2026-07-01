@@ -117,7 +117,11 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
 
     return (
         <>
-            <Button disabled={isDisabled} action={() => setModalVisible(true)}>
+            <Button
+                className="organisaatio-select-modal-button"
+                disabled={isDisabled}
+                action={() => setModalVisible(true)}
+            >
                 <SpinnerInButton show={!(props.organisaatiot ?? omattiedotOrganisations)?.length} />{' '}
                 {L('OMATTIEDOT_VALITSE_ORGANISAATIO')}
             </Button>
@@ -127,7 +131,7 @@ const OrganisaatioSelectModal = (props: OwnProps) => {
                         <p className="oph-h3">{L('OMATTIEDOT_ORGANISAATIO_VALINTA')}</p>
                         <input
                             name="org"
-                            className="oph-input"
+                            className="oph-input organisaatio-select-filter-input"
                             placeholder={L('OMATTIEDOT_RAJAA_LISTAUSTA')}
                             type="text"
                             value={searchWord}

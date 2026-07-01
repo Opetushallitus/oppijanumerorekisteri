@@ -27,6 +27,18 @@ export async function gotoKayttooikeusryhmat(page: Page) {
                     sv: page.locator('#kayttooikeusryhma-kuvaus-sv'),
                     en: page.locator('#kayttooikeusryhma-kuvaus-en'),
                 },
+                onlyPalveluKayttajaAllowed: page.locator('#kayttooikeusryhmaKayttajatyyppi'),
+                membershipCanBeGrantedToRyhma: page.locator('#ryhmarestriction'),
+                organisaatioSelect: {
+                    openButton: page.locator('button.organisaatio-select-modal-button'),
+                    filterTextInput: page.locator('input.organisaatio-select-filter-input'),
+                    list: page.locator('.organisaatio-select-list'),
+                    aliorgButton: page.getByText('aliorg (OPPILAITOS)'),
+                    orgButton: page.locator('.organisaatio[role="button"]'),
+                },
+                oppilaitosTyyppiKansalaisopistot: page.getByText('Kansalaisopistot'),
+                organisaatioTyyppiOppilaitos: page.getByText('oppilaitos', { exact: true }),
+                memberGrantableKayttooikeusRyhmat: selectLocator(page, '#kayttooikeusryhma-myontooikeudet'),
                 palvelutJaKayttooikeudet: {
                     palveluSelect: selectLocator(page, '#kayttooikeusryhmat-palvelut'),
                     kayttooikeudetSelect: selectLocator(page, '#kayttooikeusryhmat-palvelu-kayttooikeudet'),

@@ -1,0 +1,46 @@
+[
+    {
+        "koodiArvo": "28",
+        "koodiUri": "oppilaitostyyppi_28",
+        "metadata": [
+            {
+                "kieli": "FI",
+                "lyhytNimi": "Palo-, poliisi- ja vartiointialojen oppilaitokset",
+                "nimi": "Palo-, poliisi- ja vartiointialojen oppilaitokset"
+            },
+            {
+                "kieli": "SV",
+                "lyhytNimi": "Läroanstalter inom brand-, polis- och bevakningsväsendet",
+                "nimi": "Läroanstalter inom brand-, polis- och bevakningsväsendet"
+            },
+            {
+                "kieli": "EN",
+                "lyhytNimi": "Fire, police and security service institutesitokset",
+                "nimi": "Fire, police and security service institutes"
+            }
+        ],
+        "versio": 1
+    },
+    {
+        "koodiArvo": "64",
+        "koodiUri": "oppilaitostyyppi_64",
+        "metadata": [
+            {
+                "kieli": "FI",
+                "lyhytNimi": "Kansalaisopistot",
+                "nimi": "Kansalaisopistot"
+            },
+            {
+                "kieli": "SV",
+                "lyhytNimi": "Medborgarinstitut",
+                "nimi": "Medborgarinstitut"
+            },
+            {
+                "kieli": "EN",
+                "lyhytNimi": "Adult education centres",
+                "nimi": "Adult education centres"
+            }
+        ],
+        "versio": 1
+    }
+]
