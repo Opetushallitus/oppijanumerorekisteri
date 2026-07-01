@@ -93,6 +93,7 @@ export const dev: Config = {
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.koski-datantuonnin-muokkaus.enabled": true,
+    "oppijanumerorekisteri.tasks.audit-cleanup.enabled": true,
   },
   lampiExport: {
     enabled: true,
