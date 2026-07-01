@@ -67,4 +67,26 @@ test.describe('kayttooikeusryhmat add', () => {
         // the kayttooikeusryhmät list should be visible again
         await expect(addKayttooikeusryhmaLink).toBeVisible();
     });
+
+    test('does not allow adding new ryhma without required fields', async ({ page }) => {
+        await usePostKayttooikeusryhma(page);
+        const { addKayttooikeusryhmaLink, lisaaKayttooikeusPage } = await gotoKayttooikeusryhmat(page);
+        await expect(addKayttooikeusryhmaLink).toBeVisible();
+
+        const { name, description, palvelutJaKayttooikeudet, save } = await lisaaKayttooikeusPage(page);
+        await expect(name.fi).toBeVisible();
+
+        await name.fi.fill('testiryhmä fi');
+        await name.sv.fill('testiryhmä sv');
+        await name.en.fill('testiryhmä en');
+
+        await description.fi.fill('testiryhmä kuvaus fi');
+        await description.sv.fill('testiryhmä kuvaus sv');
+        await description.en.fill('testiryhmä kuvaus en');
+
+        await palvelutJaKayttooikeudet.palveluSelect.clickAndSelectNoWait('palvelu1');
+        await palvelutJaKayttooikeudet.kayttooikeudetSelect.clickAndSelectNoWait('jotain');
+
+        expect(save).toBeDisabled();
+    });
 });
