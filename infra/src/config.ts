@@ -37,7 +37,7 @@ const defaultConfig = {
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": false,
     "oppijanumerorekisteri.tasks.henkilo-export.enabled": true,
     "oppijanumerorekisteri.tasks.koski-datantuonnin-muokkaus.enabled": false,
-    "oppijanumerorekisteri.tasks.audit-cleanup.enabled": false,
+    "oppijanumerorekisteri.tasks.audit-cleanup.enabled": true,
   },
 };
 
@@ -75,7 +75,6 @@ export const hahtuva: Config = {
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.koski-datantuonnin-muokkaus.enabled": true,
-    "oppijanumerorekisteri.tasks.audit-cleanup.enabled": true,
   },
 };
 
@@ -93,7 +92,6 @@ export const dev: Config = {
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.koski-datantuonnin-muokkaus.enabled": true,
-    "oppijanumerorekisteri.tasks.audit-cleanup.enabled": true,
   },
   lampiExport: {
     enabled: true,
@@ -115,7 +113,6 @@ export const qa: Config = {
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.koski-datantuonnin-muokkaus.enabled": true,
-    "oppijanumerorekisteri.tasks.audit-cleanup.enabled": true,
   },
   lampiExport: {
     enabled: true,
