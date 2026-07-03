@@ -1,4 +1,3 @@
-import { unparse } from 'papaparse';
 import { format, parseISO } from 'date-fns';
 
 import { LocalisationFn } from '../../types/localisation.type';
@@ -9,32 +8,40 @@ const DELIMITER = ';';
 
 const formatDate = (date: string) => format(parseISO(date), 'd.M.yyyy');
 
-export const createCSV = (data: KayttooikeusraporttiRow[], L: LocalisationFn) =>
-    unparse(
-        {
-            data: data.map((row) => ({
-                [L('HENKILO_NIMI')]: row.personName,
-                [L('HENKILO_OPPIJANUMERO')]: row.personOid,
-                [L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA')]: row.organisationName,
-                [L('OID')]: row.organisationOid,
-                [L('HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS')]: row.accessRightName,
-                [L('HENKILO_KAYTTOOIKEUS_ALKUPVM')]: row.startDate && formatDate(row.startDate),
-                [L('HENKILO_KAYTTOOIKEUS_LOPPUPVM')]: row.endDate && formatDate(row.endDate),
-            })),
-            fields: [
-                L('HENKILO_NIMI'),
-                L('HENKILO_OPPIJANUMERO'),
-                L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA'),
-                L('OID'),
-                L('HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS'),
-                L('HENKILO_KAYTTOOIKEUS_ALKUPVM'),
-                L('HENKILO_KAYTTOOIKEUS_LOPPUPVM'),
-            ],
-        },
-        {
-            delimiter: DELIMITER,
-        }
-    );
+const escapeCSVValue = (value: unknown) => {
+    const stringValue = value == null ? '' : String(value);
+    const shouldQuote =
+        stringValue.includes(DELIMITER) ||
+        stringValue.includes('"') ||
+        stringValue.includes('\n') ||
+        stringValue.includes('\r');
+
+    return shouldQuote ? `"${stringValue.replace(/"/g, '""')}"` : stringValue;
+};
+
+export const createCSV = (data: KayttooikeusraporttiRow[], L: LocalisationFn) => {
+    const fields = [
+        L('HENKILO_NIMI'),
+        L('HENKILO_OPPIJANUMERO'),
+        L('HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA'),
+        L('OID'),
+        L('HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS'),
+        L('HENKILO_KAYTTOOIKEUS_ALKUPVM'),
+        L('HENKILO_KAYTTOOIKEUS_LOPPUPVM'),
+    ];
+
+    const rows = data.map((row) => [
+        row.personName,
+        row.personOid,
+        row.organisationName,
+        row.organisationOid,
+        row.accessRightName,
+        row.startDate && formatDate(row.startDate),
+        row.endDate && formatDate(row.endDate),
+    ]);
+
+    return [fields, ...rows].map((row) => row.map(escapeCSVValue).join(DELIMITER)).join('\r\n');
+};
 
 const createBlob = (csv: string) => new Blob([`${BOM}${csv}`], { type: 'text/csv' });
 
