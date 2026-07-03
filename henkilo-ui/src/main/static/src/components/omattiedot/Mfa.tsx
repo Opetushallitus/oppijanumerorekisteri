@@ -1,5 +1,4 @@
-import React, { ReactNode, useId, useRef, useState } from 'react';
-import PinInput from 'react-pin-input';
+import React, { ReactNode, useId, useImperativeHandle, useRef, useState } from 'react';
 
 import {
     useGetMfaSetupQuery,
@@ -54,6 +53,110 @@ const StepThreeIcon = () => (
         />
     </svg>
 );
+
+const MFA_TOKEN_LENGTH = 6;
+
+type MfaTokenInputHandle = {
+    clear: () => void;
+    focus: () => void;
+};
+
+type MfaTokenInputProps = {
+    disabled: boolean;
+    onComplete: (token: string) => void;
+};
+
+const MfaTokenInput = React.forwardRef<MfaTokenInputHandle, MfaTokenInputProps>(({ disabled, onComplete }, ref) => {
+    const [token, setToken] = useState('');
+    const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+    useImperativeHandle(ref, () => ({
+        clear: () => setToken(''),
+        focus: () => inputRefs.current[0]?.focus(),
+    }));
+
+    const commitToken = (nextToken: string) => {
+        setToken(nextToken);
+        if (nextToken.length === MFA_TOKEN_LENGTH) {
+            onComplete(nextToken);
+        }
+    };
+
+    const focusInput = (index: number) => inputRefs.current[index]?.focus();
+
+    const handleChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+        const digits = event.target.value.replace(/\D/g, '');
+        if (!digits) {
+            commitToken(`${token.slice(0, index)}${token.slice(index + 1)}`);
+            return;
+        }
+
+        const nextToken = `${token.slice(0, index)}${digits}${token.slice(index + digits.length)}`.slice(
+            0,
+            MFA_TOKEN_LENGTH
+        );
+        commitToken(nextToken);
+        focusInput(Math.min(index + digits.length, MFA_TOKEN_LENGTH - 1));
+    };
+
+    const handleKeyDown = (index: number, event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Backspace' && !token[index] && index > 0) {
+            event.preventDefault();
+            commitToken(`${token.slice(0, index - 1)}${token.slice(index)}`);
+            focusInput(index - 1);
+        } else if (event.key === 'ArrowLeft' && index > 0) {
+            event.preventDefault();
+            focusInput(index - 1);
+        } else if (event.key === 'ArrowRight' && index < MFA_TOKEN_LENGTH - 1) {
+            event.preventDefault();
+            focusInput(index + 1);
+        }
+    };
+
+    const handlePaste = (index: number, event: React.ClipboardEvent<HTMLInputElement>) => {
+        const digits = event.clipboardData.getData('text').replace(/\D/g, '');
+        if (!digits) {
+            return;
+        }
+
+        event.preventDefault();
+        const nextToken = `${token.slice(0, index)}${digits}${token.slice(index + digits.length)}`.slice(
+            0,
+            MFA_TOKEN_LENGTH
+        );
+        commitToken(nextToken);
+        focusInput(Math.min(index + digits.length, MFA_TOKEN_LENGTH - 1));
+    };
+
+    return (
+        <div className={styles.mfaTokenInput}>
+            {Array.from({ length: MFA_TOKEN_LENGTH }).map((_, index) => (
+                <input
+                    key={index}
+                    ref={(input) => {
+                        inputRefs.current[index] = input;
+                    }}
+                    className={styles.mfaTokenDigit}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={1}
+                    autoComplete={index === 0 ? 'one-time-code' : undefined}
+                    aria-label={`MFA ${index + 1}`}
+                    data-test-id="mfa-token-digit"
+                    value={token[index] ?? ''}
+                    disabled={disabled}
+                    onChange={(event) => handleChange(index, event)}
+                    onFocus={(event) => event.target.select()}
+                    onKeyDown={(event) => handleKeyDown(index, event)}
+                    onPaste={(event) => handlePaste(index, event)}
+                />
+            ))}
+        </div>
+    );
+});
+
+MfaTokenInput.displayName = 'MfaTokenInput';
 
 const isMfaSetupEnabled = (idpEntityId?: string) => {
     return (
@@ -203,7 +306,7 @@ const MfaSetup = ({ setMfaSetup }: MfaSetupProps) => {
     const { L } = useLocalisations();
     const { data, isLoading: isGetLoading, isSuccess } = useGetMfaSetupQuery();
     const [postMfaEnable, { isLoading: isPostLoading }] = usePostMfaEnableMutation();
-    const pinInput = useRef<PinInput>(null);
+    const pinInput = useRef<MfaTokenInputHandle>(null);
 
     if (isGetLoading) {
         return <OphDsSpinner />;
@@ -290,33 +393,7 @@ const MfaSetup = ({ setMfaSetup }: MfaSetupProps) => {
                     <img src={data.qrCodeDataUri} alt={data.secretKey} width="180" height="180" />
                 </MfaSetupStep>
                 <MfaSetupStep icon={<StepThreeIcon />} info={L('MFA_SYOTA_KOODI_INFO')}>
-                    <PinInput
-                        length={6}
-                        initialValue=""
-                        type="numeric"
-                        inputMode="number"
-                        style={{
-                            padding: '12px',
-                            background: '#F8F8F8',
-                            border: '1px solid #E1DEDE',
-                            borderRadius: '4px',
-                        }}
-                        inputStyle={{
-                            backgroundColor: '#FFF',
-                            borderColor: '#137CA0',
-                            borderRadius: '3px',
-                            fontSize: '24px',
-                            width: '34px',
-                            height: '34px',
-                            fontWeight: 600,
-                            margin: 0,
-                        }}
-                        inputFocusStyle={{ borderColor: '#137CA0' }}
-                        onComplete={handleMfaEnable}
-                        regexCriteria={/^\d*$/}
-                        disabled={isPostLoading}
-                        ref={pinInput}
-                    />
+                    <MfaTokenInput onComplete={handleMfaEnable} disabled={isPostLoading} ref={pinInput} />
                     {isPostLoading && <div>{L('MFA_OTETAAN_KAYTTOON')}</div>}
                 </MfaSetupStep>
             </div>

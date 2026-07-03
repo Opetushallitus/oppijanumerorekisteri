@@ -5,12 +5,13 @@ import mfasetup from '../../mock-api/src/api/kayttooikeus-service/mfasetup/gauth
 import { toastWithText } from '../locators';
 
 const inputToken = async (page: Page, token: string) => {
-    await page.locator('input[class="pincode-input-text"]').first().type(token[0]);
-    await page.locator('input[class="pincode-input-text"]').nth(1).type(token[1]);
-    await page.locator('input[class="pincode-input-text"]').nth(2).type(token[2]);
-    await page.locator('input[class="pincode-input-text"]').nth(3).type(token[3]);
-    await page.locator('input[class="pincode-input-text"]').nth(4).type(token[4]);
-    await page.locator('input[class="pincode-input-text"]').nth(5).type(token[5]);
+    const digits = page.locator('[data-test-id="mfa-token-digit"]');
+    await digits.first().type(token[0]);
+    await digits.nth(1).type(token[1]);
+    await digits.nth(2).type(token[2]);
+    await digits.nth(3).type(token[3]);
+    await digits.nth(4).type(token[4]);
+    await digits.nth(5).type(token[5]);
 };
 
 test.describe('mfa setup', () => {

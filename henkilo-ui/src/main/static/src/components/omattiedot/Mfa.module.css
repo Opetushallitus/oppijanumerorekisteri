@@ -53,6 +53,33 @@
   max-width: 220px;
 }
 
+.mfaTokenInput {
+  display: flex;
+  gap: 4px;
+  padding: 12px;
+  background: #F8F8F8;
+  border: 1px solid #E1DEDE;
+  border-radius: 4px;
+}
+
+.mfaTokenDigit {
+  box-sizing: border-box;
+  width: 34px;
+  height: 34px;
+  margin: 0;
+  border: 1px solid #137CA0;
+  border-radius: 3px;
+  background: #FFF;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.mfaTokenDigit:focus {
+  border-color: #137CA0;
+  outline: 1px solid #137CA0;
+}
+
 .secretKey {
   word-wrap: unset;
   cursor: copy;
