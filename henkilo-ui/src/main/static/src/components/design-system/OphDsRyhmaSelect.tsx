@@ -37,9 +37,10 @@ export const OphDsRyhmaSelect = (props: OwnProps) => {
         const ryhmat =
             props.type === 'HENKILOHAKU'
                 ? henkilohakuOrganisaatiot
-                      ?.reduce<
-                          OrganisaatioWithChildren[]
-                      >((acc, o) => acc.concat([o.organisaatio], o.organisaatio.children), [])
+                      ?.reduce<OrganisaatioWithChildren[]>(
+                          (acc, o) => acc.concat([o.organisaatio], o.organisaatio.children),
+                          []
+                      )
                       .filter((o) => o.tyypit.some((t) => t === 'Ryhma'))
                 : props.type === 'ROOT_ORGANISATION'
                   ? rootRyhmat
