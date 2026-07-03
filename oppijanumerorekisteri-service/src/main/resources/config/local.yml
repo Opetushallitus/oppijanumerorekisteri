@@ -1,3 +1,4 @@
+spring.flyway.postgresql.transactional-lock: false
 spring.security.oauth2.resourceserver.jwt.issuer-uri: https://hahtuva.otuva.opintopolku.fi/kayttooikeus-service
 spring.security.oauth2.resourceserver.jwt.jwk-set-uri: https://hahtuva.otuva.opintopolku.fi/kayttooikeus-service/oauth2/jwks
 

@@ -16,6 +16,7 @@ spring.flyway.enabled: true
 spring.flyway.locations: classpath:db/migration
 spring.flyway.baseline-version: 20241112112233000
 spring.flyway.table: schema_table_onr
+spring.flyway.postgresql.transactional-lock: false
 
 spring.security.oauth2.resourceserver.jwt.issuer-uri: "http://localhost/issuer-uri"
 spring.security.oauth2.resourceserver.jwt.jwk-set-uri: "http://localhost/jwk-set-uri"
