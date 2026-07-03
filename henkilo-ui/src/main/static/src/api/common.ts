@@ -1,6 +1,3 @@
-import Cookies from 'universal-cookie';
-
-const cookies = new Cookies();
 const queryParameters = new URLSearchParams(window.location.search);
 const externalPermissionService = queryParameters.get('permissionCheckService');
 
@@ -8,11 +5,28 @@ export const permissionServiceHeaders = externalPermissionService
     ? { 'External-Permission-Service': externalPermissionService }
     : {};
 
+const getCookie = (name: string) => {
+    const cookie = document.cookie
+        .split('; ')
+        .find((cookie) => cookie.startsWith(`${name}=`))
+        ?.substring(name.length + 1);
+
+    if (!cookie) {
+        return undefined;
+    }
+
+    try {
+        return decodeURIComponent(cookie);
+    } catch {
+        return cookie;
+    }
+};
+
 export const getCommonOptions: () => RequestInit = () => ({
     mode: 'cors',
     headers: {
         'Caller-Id': '1.2.246.562.10.00000000001.henkilo-ui',
-        CSRF: cookies.get('CSRF'),
+        CSRF: getCookie('CSRF'),
         ...permissionServiceHeaders,
     } as HeadersInit,
     credentials: 'include',
