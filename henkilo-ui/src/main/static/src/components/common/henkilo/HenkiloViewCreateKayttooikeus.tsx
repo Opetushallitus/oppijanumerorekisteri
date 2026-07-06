@@ -23,7 +23,7 @@ import { getTextGroupLocalisation } from '../../../utilities/localisation.util';
 import styles from './HenkiloViewCreateKayttooikeus.module.css';
 
 type OwnProps = {
-    existingKayttooikeusRef: React.RefObject<HTMLDivElement>;
+    existingKayttooikeusRef: React.RefObject<HTMLDivElement | null>;
     oidHenkilo: string;
     isPalvelukayttaja?: boolean;
 };

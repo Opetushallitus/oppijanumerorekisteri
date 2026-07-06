@@ -34,7 +34,7 @@ export function expanderColumn<T, U>(): ColumnDef<T, U> {
 
 const OphTable = <T,>({ table, isLoading, renderSubComponent }: OphTableProps<T>) => {
     const { L } = useLocalisations();
-    const pageRef = useRef<HTMLInputElement>();
+    const pageRef = useRef<HTMLInputElement>(null);
     return (
         <div className={`react-table ${renderSubComponent ? 'expandable-table' : ''}`}>
             <table>
