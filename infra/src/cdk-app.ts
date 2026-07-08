@@ -344,7 +344,7 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
 
     const logGroup = new logs.LogGroup(this, "AppLogGroup", {
       logGroupName: sharedAccount.prefix("/oppijanumerorekisteri"),
-      retention: logs.RetentionDays.INFINITE,
+      retention: logs.RetentionDays.FIVE_YEARS,
     });
     if (config.lampiExport) {
       this.exportFailureAlarm(logGroup, props.alarmTopic);
@@ -880,7 +880,7 @@ class HenkiloUiApplicationStack extends cdk.Stack {
     });
     const logGroup = new logs.LogGroup(this, "AppLogGroup", {
       logGroupName: sharedAccount.prefix("/henkilo-ui"),
-      retention: logs.RetentionDays.INFINITE,
+      retention: logs.RetentionDays.FIVE_YEARS,
     });
 
     const dockerImage = new ecr_assets.DockerImageAsset(this, "AppImage", {
