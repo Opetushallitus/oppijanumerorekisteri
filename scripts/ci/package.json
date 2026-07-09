@@ -1,5 +1,6 @@
 {
   "name": "oppijanumerorekisteri-ci",
+  "type": "module",
   "devDependencies": {
     "@types/node": "24.13.2"
   }
