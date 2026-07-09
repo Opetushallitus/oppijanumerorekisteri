@@ -170,18 +170,6 @@ export type HenkiloLinkitykset = {
     henkiloVarmennettavas?: string[];
 };
 
-export type RekisteroidyRequest = {
-    etunimet: string;
-    sukunimi: string;
-    kutsumanimi: string;
-    asiointiKieli: {
-        kieliKoodi: string;
-    };
-    kayttajanimi: string;
-    password: string;
-    passwordAgain: string;
-};
-
 export const kayttooikeusApi = createApi({
     reducerPath: 'kayttooikeusApi',
     baseQuery: fetchBaseQuery({
@@ -195,7 +183,6 @@ export const kayttooikeusApi = createApi({
         'omatkayttooikeusryhmat',
         'omatorganisaatiot',
         'henkiloorganisaatiot',
-        'kutsuByToken',
         'kayttooikeusraportti',
         'kayttajatiedot',
         'hakatunnus',
@@ -300,10 +287,6 @@ export const kayttooikeusApi = createApi({
             }),
             extraOptions: { maxRetries: 0 },
             invalidatesTags: ['omattiedot'],
-        }),
-        getKutsuByToken: builder.query<KutsuRead, string>({
-            query: (token) => `kutsu/token/${token}`,
-            providesTags: ['kutsuByToken'],
         }),
         getAccessRightReport: builder.query<KayttooikeusraporttiRow[], string>({
             query: (oid) => `reports/accessrights/${oid}`,
@@ -599,14 +582,6 @@ export const kayttooikeusApi = createApi({
                 body,
             }),
         }),
-        postRekisteroidy: builder.mutation<void, { token: string; body: RekisteroidyRequest }>({
-            query: ({ token, body }) => ({
-                url: `kutsu/token/${token}`,
-                method: 'POST',
-                body,
-                responseHandler: 'text',
-            }),
-        }),
         getHenkiloByLoginToken: builder.query<Henkilo, string>({
             query: (loginToken) => `cas/henkilo/loginToken/${loginToken}`,
             providesTags: ['henkiloByLoginToken'],
@@ -639,7 +614,6 @@ export const {
     useGetMfaSetupQuery,
     usePostMfaEnableMutation,
     usePostMfaDisableMutation,
-    useGetKutsuByTokenQuery,
     useGetAccessRightReportQuery,
     useGetKayttajatiedotQuery,
     useGetHakaTunnuksetQuery,
@@ -683,7 +657,6 @@ export const {
     useGetOrganisationNamesQuery,
     useGetOrganisationsQuery,
     usePostCreateVirkailijaMutation,
-    usePostRekisteroidyMutation,
     useGetHenkiloByLoginTokenQuery,
     useLazyGetEmailVerificationLoginTokenValidationQuery,
     usePostEmailVerificationMutation,

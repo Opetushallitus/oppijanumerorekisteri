@@ -2,13 +2,10 @@ import * as React from 'react';
 import { Route, Routes } from 'react-router';
 
 import KirjautumatonApp from './KirjautumatonApp';
-import RekisteroidyContainer from './rekisterointi/RekisteroidyContainer';
-import { RekisteroidyValmisPage } from './rekisterointi/RekisteroidyValmisPage';
 import EmailVerificationContainer from './sahkopostivarmennus/EmailVerificationContainer';
 import EmailVerificationErrorContainer from './sahkopostivarmennus/EmailVerificationErrorContainer';
 import { EmailVerificationDonePage } from './sahkopostivarmennus/EmailVerificationDonePage';
 import { SalasananVaihtoPage } from './SalasananVaihtoPage';
-import { KutsuVanhentunutPage } from './KutsuVanhentunutPage';
 import { TunnusVanhentunutPage } from './TunnusVanhentunutPage';
 
 export const KayttajaAppRoutes = () => (
@@ -21,9 +18,6 @@ export const KayttajaAppRoutes = () => (
                 path="/kayttaja/sahkopostivarmistus/virhe/:locale/:loginToken/:virhekoodi"
                 element={<EmailVerificationErrorContainer />}
             />
-            <Route path="/kayttaja/rekisteroidy" element={<RekisteroidyContainer />} />
-            <Route path="/kayttaja/rekisteroidy/valmis/:locale" element={<RekisteroidyValmisPage />} />
-            <Route path="/kayttaja/kutsu/vanhentunut/:locale" element={<KutsuVanhentunutPage />} />
             <Route path="/kayttaja/salasananvaihto/:locale/:loginToken" element={<SalasananVaihtoPage />} />
             <Route path="/kayttaja/vanhentunut/:locale" element={<TunnusVanhentunutPage />} />
         </Route>

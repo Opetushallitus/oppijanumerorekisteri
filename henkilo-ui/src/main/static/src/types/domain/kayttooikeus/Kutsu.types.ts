@@ -25,5 +25,3 @@ export type KutsuRead = {
     hakaIdentifier: string;
     saate?: string;
 };
-
-export type KutsuByToken = KutsuRead & { temporaryToken: string };
