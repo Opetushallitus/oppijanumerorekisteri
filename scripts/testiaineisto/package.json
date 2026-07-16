@@ -7,7 +7,7 @@
     "quicktype": "npx quicktype testiaineisto.json -o Henkilo.ts"
   },
   "devDependencies": {
-    "quicktype": "23.3.25",
+    "quicktype": "24.0.2",
     "tsx": "4.23.1",
     "typescript": "6.0.3"
   }
