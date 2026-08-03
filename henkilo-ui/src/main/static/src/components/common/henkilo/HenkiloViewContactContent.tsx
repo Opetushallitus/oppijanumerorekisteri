@@ -47,6 +47,16 @@ const newYhteystiedotRyhma: YhteystietoRyhma = {
     id: null,
 };
 
+const mergeContactInfoTemplate = (ryhma: YhteystietoRyhma): YhteystietoRyhma => ({
+    ...ryhma,
+    yhteystieto: [
+        ...ryhma.yhteystieto,
+        ...contactInfoTemplate
+            .filter((template) => !ryhma.yhteystieto.some((y) => y.yhteystietoTyyppi === template.yhteystietoTyyppi))
+            .map((template) => ({ yhteystietoTyyppi: template.yhteystietoTyyppi, yhteystietoArvo: '' })),
+    ],
+});
+
 const sortYhteystietoByTyyppi = (r: YhteystietoRyhma) => {
     const y = [...r.yhteystieto];
     y.sort((a, b) => a.yhteystietoTyyppi.localeCompare(b.yhteystietoTyyppi));
@@ -231,7 +241,14 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
                             <button
                                 className="oph-ds-button oph-ds-button-bordered"
                                 disabled={henkilo?.passivoitu || henkilo?.duplicate}
-                                onClick={() => setEditing(true)}
+                                onClick={() => {
+                                    setYhteystiedot(
+                                        yhteystiedot.map((r) =>
+                                            isFromVTJ(r) ? r : sortYhteystietoByTyyppi(mergeContactInfoTemplate(r))
+                                        )
+                                    );
+                                    setEditing(true);
+                                }}
                             >
                                 {L('MUOKKAA_LINKKI')}
                             </button>
