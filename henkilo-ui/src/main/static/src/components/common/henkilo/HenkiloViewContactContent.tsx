@@ -233,8 +233,11 @@ export function HenkiloViewContactContentComponent(props: OwnProps) {
                 <>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
                         {yhteystiedot
-                            .filter((c) => omattiedot?.isAdmin || !isVirkailija(kayttajatiedot) || !isFromVTJ(c))
-                            .map((ryhma, idx) => renderYhteystieto(ryhma, idx))}
+                            .map((ryhma, idx) => ({ ryhma, idx }))
+                            .filter(
+                                ({ ryhma }) => omattiedot?.isAdmin || !isVirkailija(kayttajatiedot) || !isFromVTJ(ryhma)
+                            )
+                            .map(({ ryhma, idx }) => renderYhteystieto(ryhma, idx))}
                     </div>
                     <div>
                         {!editing && hasHenkiloReadUpdateRights && (
