@@ -234,13 +234,7 @@ test.describe('oppijan perustiedot', () => {
 
         await expect(page.locator('h2').first()).toContainText('(yksilöity hetuton)');
 
-        await buttons.passivoi.click();
-        await buttons.passivoiConfirm.click();
-
         await page.route(`/oppijanumerorekisteri-service/henkilo/${yksiloityHetutonOid}`, async (route, request) => {
-            if (request.method() === 'DELETE' && !request.postDataJSON().passivoitu) {
-                throw new Error('Invalid request!');
-            }
             if (request.method() === 'DELETE') {
                 await route.fulfill({
                     status: 200,
@@ -254,6 +248,9 @@ test.describe('oppijan perustiedot', () => {
                 });
             }
         });
+
+        await buttons.passivoi.click();
+        await buttons.passivoiConfirm.click();
 
         await expect(page.locator('h2').first()).toContainText('(yksilöity hetuton, Henkilö on passivoitu)');
 
@@ -285,9 +282,6 @@ test.describe('oppijan perustiedot', () => {
 
         await expect(page.locator('h2').first()).toContainText('(yksilöity hetuton)');
 
-        await buttons.puraYksilointi.click();
-        await buttons.puraYksilointiConfirm.click();
-
         await page.route(
             `/oppijanumerorekisteri-service/henkilo/${yksiloityHetutonOid}/purayksilointi`,
             async (route) => {
@@ -304,6 +298,9 @@ test.describe('oppijan perustiedot', () => {
                 },
             });
         });
+
+        await buttons.puraYksilointi.click();
+        await buttons.puraYksilointiConfirm.click();
 
         await expect(page.locator('h2').first()).toContainText('(yksilöimätön)');
 
