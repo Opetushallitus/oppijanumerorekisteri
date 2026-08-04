@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 
 import { toastWithText } from '../locators';
 import { gotoOmattiedot } from './locators/omattiedot-page';
@@ -175,6 +175,138 @@ test.describe('omattiedot', () => {
             await anomusilmoitukset.tallenna.click();
             await buttons.anomusilmoitukset.click();
             await expect(anomusilmoitukset.rows).toHaveText('nimi2');
+        });
+    });
+
+    test.describe('Yhteystiedot', () => {
+        type MockYhteystietoRyhma = {
+            id: number | null;
+            ryhmaKuvaus: string;
+            ryhmaAlkuperaTieto: string;
+            readOnly: boolean;
+            yhteystieto: { yhteystietoTyyppi: string; yhteystietoArvo: string }[];
+        };
+
+        const vtjSahkoinenOsoite: MockYhteystietoRyhma = {
+            id: 100,
+            ryhmaKuvaus: 'yhteystietotyyppi8',
+            ryhmaAlkuperaTieto: 'alkupera1',
+            readOnly: true,
+            yhteystieto: [{ yhteystietoTyyppi: 'YHTEYSTIETO_SAHKOPOSTI', yhteystietoArvo: 'vtj.posti@example.com' }],
+        };
+        const vtjKotimainenOsoite: MockYhteystietoRyhma = {
+            id: 101,
+            ryhmaKuvaus: 'yhteystietotyyppi4',
+            ryhmaAlkuperaTieto: 'alkupera1',
+            readOnly: true,
+            yhteystieto: [
+                { yhteystietoTyyppi: 'YHTEYSTIETO_KATUOSOITE', yhteystietoArvo: 'Kissakatu 1' },
+                { yhteystietoTyyppi: 'YHTEYSTIETO_POSTINUMERO', yhteystietoArvo: '00100' },
+            ],
+        };
+        const tyoosoiteWithoutEmail: MockYhteystietoRyhma = {
+            id: 102,
+            ryhmaKuvaus: 'yhteystietotyyppi2',
+            ryhmaAlkuperaTieto: 'alkupera6',
+            readOnly: false,
+            yhteystieto: [{ yhteystietoTyyppi: 'YHTEYSTIETO_PUHELINNUMERO', yhteystietoArvo: '0501234567' }],
+        };
+
+        const gotoYhteystiedot = async (page: Page) => {
+            await page.route('/kayttooikeus-service/henkilo/current/omattiedot', async (route) => {
+                await route.fulfill({ json: { ...omattiedot, isAdmin: false } });
+            });
+            await page.route(`/kayttooikeus-service/henkilo/${oid}/kayttajatiedot`, async (route) => {
+                await route.fulfill({ json: { username: 'testi', kayttajaTyyppi: 'VIRKAILIJA' } });
+            });
+            await page.route(`/oppijanumerorekisteri-service/henkilo/${oid}`, async (route) => {
+                await route.fulfill({
+                    json: {
+                        ...henkilo,
+                        yhteystiedotRyhma: [vtjSahkoinenOsoite, vtjKotimainenOsoite, tyoosoiteWithoutEmail],
+                    },
+                });
+            });
+            await gotoOmattiedot(page);
+            const section = page.getByRole('region', { name: 'Yhteystiedot' });
+            return {
+                section,
+                muokkaa: section.getByRole('button', { name: 'Muokkaa' }),
+                tallenna: section.getByRole('button', { name: 'Tallenna' }),
+                lisaaUusi: section.getByRole('button', { name: 'Lisää uusi' }),
+                poista: section.getByRole('button', { name: 'Poista' }),
+                sahkoposti: section.getByLabel('Sähköposti'),
+            };
+        };
+
+        const routeHenkiloUpdate = async (
+            page: Page,
+            validate: (yhteystiedotRyhma: MockYhteystietoRyhma[]) => boolean
+        ) => {
+            await page.route('/oppijanumerorekisteri-service/henkilo', async (route, request) => {
+                if (!validate(request.postDataJSON().yhteystiedotRyhma)) {
+                    throw new Error('Invalid request!');
+                }
+                await route.fulfill({ body: oid });
+            });
+        };
+
+        const sahkopostiArvo = (ryhma?: MockYhteystietoRyhma) =>
+            ryhma?.yhteystieto.find((y) => y.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI')?.yhteystietoArvo;
+
+        test('adds sähköposti to työosoite that was saved without one', async ({ page }) => {
+            const yhteystiedot = await gotoYhteystiedot(page);
+            await expect(yhteystiedot.section.getByText('Työosoite')).toBeVisible();
+            await expect(yhteystiedot.section.getByText('VTJ Sähköinen osoite')).not.toBeVisible();
+
+            await yhteystiedot.muokkaa.click();
+            await yhteystiedot.sahkoposti.fill('virkailija@example.com');
+
+            await routeHenkiloUpdate(
+                page,
+                (ryhmat) =>
+                    sahkopostiArvo(ryhmat.find((r) => r.id === 102)) === 'virkailija@example.com' &&
+                    sahkopostiArvo(ryhmat.find((r) => r.id === 100)) === 'vtj.posti@example.com'
+            );
+
+            await yhteystiedot.tallenna.click();
+            await expect(toastWithText(page, 'Yhteystiedot')).toBeVisible();
+        });
+
+        test('adds a new työosoite with sähköposti', async ({ page }) => {
+            const yhteystiedot = await gotoYhteystiedot(page);
+            await yhteystiedot.muokkaa.click();
+            await yhteystiedot.lisaaUusi.click();
+            await yhteystiedot.sahkoposti.nth(1).fill('uusi.posti@example.com');
+
+            await routeHenkiloUpdate(
+                page,
+                (ryhmat) =>
+                    sahkopostiArvo(ryhmat.find((r) => !r.id)) === 'uusi.posti@example.com' &&
+                    sahkopostiArvo(ryhmat.find((r) => r.id === 100)) === 'vtj.posti@example.com' &&
+                    ryhmat.some((r) => r.id === 102)
+            );
+
+            await yhteystiedot.tallenna.click();
+            await expect(toastWithText(page, 'Yhteystiedot')).toBeVisible();
+        });
+
+        test('removes työosoite without sähköposti', async ({ page }) => {
+            const yhteystiedot = await gotoYhteystiedot(page);
+            await yhteystiedot.muokkaa.click();
+            await yhteystiedot.poista.click();
+            await expect(yhteystiedot.section.getByText('Työosoite')).not.toBeVisible();
+
+            await routeHenkiloUpdate(
+                page,
+                (ryhmat) =>
+                    !ryhmat.some((r) => r.id === 102) &&
+                    ryhmat.some((r) => r.id === 100) &&
+                    ryhmat.some((r) => r.id === 101)
+            );
+
+            await yhteystiedot.tallenna.click();
+            await expect(toastWithText(page, 'Yhteystiedot')).toBeVisible();
         });
     });
 
