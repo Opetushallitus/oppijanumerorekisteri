@@ -21,7 +21,7 @@ type OwnProps = {
 };
 
 const isWorkMail = (y?: YhteystietoRyhma) =>
-    y?.ryhmaKuvaus === WORK_ADDRESS && !!y.yhteystieto.find((t) => t.yhteystietoTyyppi === EMAIL);
+    y?.ryhmaKuvaus === WORK_ADDRESS && !!y.yhteystieto.find((t) => t.yhteystietoTyyppi === EMAIL && t.yhteystietoArvo);
 const isLastWorkEmail = (yhteystiedot: YhteystietoRyhma[], idx: number): boolean =>
     isWorkMail(yhteystiedot[idx]) && yhteystiedot.filter((y) => !!y.id && isWorkMail(y)).length < 2;
 const isVirkailija = (kayttaja?: KayttajatiedotRead): boolean => kayttaja?.kayttajaTyyppi === 'VIRKAILIJA';
