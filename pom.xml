@@ -43,11 +43,6 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>fi.vm.sade</groupId>
-                <artifactId>auditlogger</artifactId>
-                <version>9.2.6-SNAPSHOT</version>
-            </dependency>
-            <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>3.1.0</version>
