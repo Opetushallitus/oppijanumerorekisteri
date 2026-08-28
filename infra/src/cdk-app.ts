@@ -249,7 +249,9 @@ class DatabaseStack extends cdk.Stack {
         writer: rds.ClusterInstance.provisioned("writer", {
           enablePerformanceInsights: true,
           instanceType: ec2.InstanceType.of(
-            ec2.InstanceClass.R6G,
+            getEnvironment() === "prod"
+              ? ec2.InstanceClass.R6G
+              : ec2.InstanceClass.R8G,
             ec2.InstanceSize.XLARGE2,
           ),
         }),
@@ -275,7 +277,9 @@ class DatabaseStack extends cdk.Stack {
         writer: rds.ClusterInstance.provisioned("writer", {
           enablePerformanceInsights: true,
           instanceType: ec2.InstanceType.of(
-            ec2.InstanceClass.R6G,
+            getEnvironment() === "prod"
+              ? ec2.InstanceClass.R6G
+              : ec2.InstanceClass.R8G,
             ec2.InstanceSize.XLARGE2,
           ),
         }),
@@ -377,6 +381,8 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       ecsCluster: props.ecsCluster,
       dockerImage,
       autoScaling: config.batchCapacity,
+      taskCpu: config.batchTaskCpu,
+      taskMemoryMiB: config.serviceTaskMemoryMiB,
       logGroup,
       streamPrefix: "batch",
       database: props.database,
@@ -390,6 +396,8 @@ class OppijanumerorekisteriApplicationStack extends cdk.Stack {
       ecsCluster: props.ecsCluster,
       dockerImage,
       autoScaling: config.apiCapacity,
+      taskCpu: config.apiTaskCpu,
+      taskMemoryMiB: config.serviceTaskMemoryMiB,
       logGroup,
       streamPrefix: "api",
       database: props.database,
@@ -600,6 +608,8 @@ class OppijanumerorekisteriService extends constructs.Construct {
     props: {
       ecsCluster: ecs.Cluster;
       dockerImage: ecr_assets.DockerImageAsset;
+      taskCpu: number;
+      taskMemoryMiB: number;
       autoScaling: AutoScalingLimits;
       logGroup: logs.LogGroup;
       streamPrefix: string;
@@ -616,8 +626,8 @@ class OppijanumerorekisteriService extends constructs.Construct {
       this,
       "TaskDefinition",
       {
-        cpu: 1024,
-        memoryLimitMiB: 8192,
+        cpu: props.taskCpu,
+        memoryLimitMiB: props.taskMemoryMiB,
         runtimePlatform: {
           operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
           cpuArchitecture: ecs.CpuArchitecture.ARM64,
@@ -893,8 +903,8 @@ class HenkiloUiApplicationStack extends cdk.Stack {
       this,
       "TaskDefinition",
       {
-        cpu: 2048,
-        memoryLimitMiB: 5120,
+        cpu: config.henkiloUiTaskCpu,
+        memoryLimitMiB: config.henkiloUiTaskMemoryMiB,
         runtimePlatform: {
           operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
           cpuArchitecture: ecs.CpuArchitecture.ARM64,
