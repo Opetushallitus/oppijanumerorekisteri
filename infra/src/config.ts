@@ -6,6 +6,11 @@ export type AutoScalingLimits = {
   max: number;
 };
 export type Config = {
+  apiTaskCpu: number;
+  batchTaskCpu: number;
+  serviceTaskMemoryMiB: number;
+  henkiloUiTaskCpu: number;
+  henkiloUiTaskMemoryMiB: number;
   oauthDomainName: string;
   tiedotuspalveluDomain: string;
   opintopolkuHost: string;
@@ -28,6 +33,11 @@ export type Config = {
 };
 
 const defaultConfig = {
+  apiTaskCpu: 512,
+  batchTaskCpu: 1024,
+  serviceTaskMemoryMiB: 8192,
+  henkiloUiTaskCpu: 512,
+  henkiloUiTaskMemoryMiB: 1024,
   apiCapacity: { min: 2, max: 8 },
   batchCapacity: { min: 1, max: 1 },
   features: {
@@ -63,6 +73,7 @@ export function getConfig(): Config {
 
 export const hahtuva: Config = {
   ...defaultConfig,
+  apiTaskCpu: 1024,
   oauthDomainName: "hahtuva.oppijanumerorekisteri.opintopolku.fi",
   tiedotuspalveluDomain: "hahtuva.tiedotuspalvelu.opintopolku.fi",
   opintopolkuHost: "hahtuvaopintopolku.fi",
@@ -101,6 +112,7 @@ export const dev: Config = {
 
 export const qa: Config = {
   ...defaultConfig,
+  apiTaskCpu: 1024,
   oauthDomainName: "qa.oppijanumerorekisteri.opintopolku.fi",
   tiedotuspalveluDomain: "qa.tiedotuspalvelu.opintopolku.fi",
   opintopolkuHost: "testiopintopolku.fi",
@@ -122,6 +134,11 @@ export const qa: Config = {
 
 export const prod: Config = {
   ...defaultConfig,
+  apiTaskCpu: 1024,
+  batchTaskCpu: 1024,
+  serviceTaskMemoryMiB: 8192,
+  henkiloUiTaskCpu: 2048,
+  henkiloUiTaskMemoryMiB: 5120,
   oauthDomainName: "prod.oppijanumerorekisteri.opintopolku.fi",
   tiedotuspalveluDomain: "prod.tiedotuspalvelu.opintopolku.fi",
   opintopolkuHost: "opintopolku.fi",

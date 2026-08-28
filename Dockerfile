@@ -24,8 +24,8 @@ exec java \
   -XX:+UnlockDiagnosticVMOptions \
   -XX:NativeMemoryTracking=summary \
   -XX:+PrintNMTStatistics \
-  -Xms6g \
-  -Xmx6g \
+  -XX:InitialRAMPercentage=80.0 \
+  -XX:MaxRAMPercentage=80.0 \
   -Dspring.config.additional-location=classpath:/config/oppijanumerorekisteri.yml,classpath:/config/$ENV.yml \
   -Denv.name=$ENV \
   -Dlogging.config=classpath:/config/logback.xml \
