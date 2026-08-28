@@ -91,6 +91,7 @@ export const hahtuva: Config = {
 
 export const dev: Config = {
   ...defaultConfig,
+  apiTaskCpu: 1024,
   oauthDomainName: "dev.oppijanumerorekisteri.opintopolku.fi",
   tiedotuspalveluDomain: "dev.tiedotuspalvelu.opintopolku.fi",
   opintopolkuHost: "untuvaopintopolku.fi",
