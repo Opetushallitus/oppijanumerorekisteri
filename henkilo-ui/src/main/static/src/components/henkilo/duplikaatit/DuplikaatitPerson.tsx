@@ -94,7 +94,7 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
             <DataCell>{henkilo.etunimet}</DataCell>
             <DataCell>{henkilo.sukunimi}</DataCell>
 
-            <DataCell>{henkilo?.sukupuoli ? L(sukupuolet[henkilo.sukupuoli]) : ""}</DataCell>
+            <DataCell>{henkilo?.sukupuoli ? L(sukupuolet[henkilo.sukupuoli]) : ''}</DataCell>
             <DataCell>{henkilo.syntymaaika}</DataCell>
             <DataCell>
                 <Link className="oph-link" to={`/${henkiloType}/${henkilo.oidHenkilo}`}>
