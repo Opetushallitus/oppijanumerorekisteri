@@ -1,5 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
+import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
+import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
+import org.springframework.security.test.context.support.WithMockUser;
 import tools.jackson.databind.type.TypeFactory;
 import com.google.gson.JsonObject;
 import fi.vm.sade.auditlog.Target;
@@ -29,8 +32,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
@@ -40,6 +42,8 @@ public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
     private OidGenerator oidGenerator;
     @MockitoBean
     private VirkailijaAuditLogger auditLogger;
+    @Autowired
+    private OrganisaatioRepository organisaatioRepository;
 
     @Test
     @UserRekisterinpitaja
@@ -240,5 +244,68 @@ public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
         verify(auditLogger, atLeast(0)).log(eq(operation), auditCaptor.capture(), any());
         Stream<JsonObject> auditLogEvents = auditCaptor.getAllValues().stream().map(Target::asJson);
         return auditLogEvents.filter(e -> henkiloOid.equals(e.get("henkiloOid").getAsString())).findFirst();
+    }
+
+    @Test
+    @WithMockUser(value = "virkailija2", roles = {"APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI",
+            "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_1.2.246.562.10.22222222222"
+    })
+    public void linkingDuplicateFromAnotherOrganisationPreservesReadAccess() throws Exception {
+        String organisationAOid = "1.2.246.562.10.11111111111";
+        String organisationBOid = "1.2.246.562.10.22222222222";
+
+        String masterOid = "1.2.246.562.24.11111111111";
+        String slaveOid = "1.2.246.562.24.22222222222";
+
+        LocalDateTime now = new LocalDateTime();
+
+        //Virkailija 1 / organisaatio A luo henkilön A1
+        Henkilo master = henkiloRepository.save(Henkilo.builder()
+                .oidHenkilo(masterOid)
+                .etunimet("Testi")
+                .kutsumanimi("Testi")
+                .sukunimi("Henkilö")
+                .created(now.toDate())
+                .modified(now.toDate())
+                .organisaatiot(Set.of(
+                        Organisaatio.builder()
+                                .oid(organisationAOid)
+                                .build()))
+                .build());
+
+        //Virkailija 2 / organisaatio B on luonut henkilön B2
+        Henkilo slave = henkiloRepository.save(Henkilo.builder()
+                .oidHenkilo(slaveOid)
+                .etunimet("Testi")
+                .kutsumanimi("Testi")
+                .sukunimi("Henkilö")
+                .created(now.toDate())
+                .modified(now.toDate())
+                .organisaatiot(Set.of(
+                        Organisaatio.builder()
+                                .oid(organisationBOid)
+                                .build()))
+                .build());
+
+        // Virkailija 2 voi käsitellä henkilöä B2
+        mvc.perform(get("/henkilo/"+ slave.getOidHenkilo()))
+                .andExpect(status().isOk());
+
+        mvc.perform(createRequest(
+                post("/henkilo/" + master.getOidHenkilo() + "/link"),
+                List.of(slave.getOidHenkilo())
+        )).andExpect(status().isOk());
+
+        assertLinked(master.getOidHenkilo(), slave.getOidHenkilo());
+
+        assertFalse(
+                henkiloRepository.findByOidHenkilo(masterOid).orElseThrow().isDuplicate()
+        );
+        assertTrue(
+          henkiloRepository.findByOidHenkilo(slaveOid).orElseThrow().isDuplicate()
+        );
+
+        mvc.perform(get("/henkilo" + master.getOidHenkilo()))
+                .andExpect(status().isOk());
     }
 }
