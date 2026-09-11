@@ -1,7 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
+import fi.vm.sade.oppijanumerorekisteri.clients.OrganisaatioClient;
 import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
+import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.security.test.context.support.WithMockUser;
 import tools.jackson.databind.type.TypeFactory;
 import com.google.gson.JsonObject;
@@ -30,8 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,6 +46,16 @@ public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
     private VirkailijaAuditLogger auditLogger;
     @Autowired
     private OrganisaatioRepository organisaatioRepository;
+    // Oikeaa PermissionCheckeriä käytetään tarkoituksella, koska testi varmistaa juuri sen
+    // organisaatiopohjaisen käyttöoikeuslogiikan. Vain organisaatiopalvelun kutsut mockataan.
+    @MockitoBean
+    private OrganisaatioClient organisaatioClient;
+
+    @BeforeEach
+    void setupOrganisaatioClient() {
+        // TODO: Tähän palautettavat arvot. Tässä on homman pihvi mitä testata!
+        when(organisaatioClient.getChildOids(any(), anyBoolean(), any())).thenReturn(Set.of());
+    }
 
     @Test
     @UserRekisterinpitaja
@@ -260,7 +272,7 @@ public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
         LocalDateTime now = new LocalDateTime();
 
         //Virkailija 1 / organisaatio A luo henkilön A1
-        Henkilo master = henkiloRepository.save(Henkilo.builder()
+        Henkilo master = Henkilo.builder()
                 .oidHenkilo(masterOid)
                 .etunimet("Testi")
                 .kutsumanimi("Testi")
@@ -271,10 +283,10 @@ public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
                         Organisaatio.builder()
                                 .oid(organisationAOid)
                                 .build()))
-                .build());
+                .build();
 
         //Virkailija 2 / organisaatio B on luonut henkilön B2
-        Henkilo slave = henkiloRepository.save(Henkilo.builder()
+        Henkilo slave = Henkilo.builder()
                 .oidHenkilo(slaveOid)
                 .etunimet("Testi")
                 .kutsumanimi("Testi")
@@ -285,7 +297,9 @@ public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
                         Organisaatio.builder()
                                 .oid(organisationBOid)
                                 .build()))
-                .build());
+                .build();
+
+        henkiloRepository.saveAll(List.of(master, slave));
 
         // Virkailija 2 voi käsitellä henkilöä B2
         mvc.perform(get("/henkilo/"+ slave.getOidHenkilo()))
@@ -306,6 +320,70 @@ public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
         );
 
         mvc.perform(get("/henkilo" + master.getOidHenkilo()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(value = "virkailija2", roles = {"APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI",
+            "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_1.2.246.562.10.22222222222"
+    })
+    public void linkingDuplicateFromSameOrganisationPreservesReadAccess() throws Exception {
+        String organisationOid1 = "1.2.246.562.10.22222222222";
+
+        String masterOid = "1.2.246.562.24.11111111114";
+        String slaveOid = "1.2.246.562.24.22222222225";
+
+        LocalDateTime now = new LocalDateTime();
+
+        // Sama (vielä tallentamaton) organisaatio molemmille henkilöille. Henkilöt tallennetaan
+        // yhdessä transaktiossa, jolloin cascade tallentaa organisaation täsmälleen kerran.
+        Organisaatio org = Organisaatio.builder()
+                .oid(organisationOid1)
+                .build();
+
+        //Virkailija 1 / organisaatio A luo henkilön A1
+        Henkilo master = Henkilo.builder()
+                .oidHenkilo(masterOid)
+                .etunimet("Testi")
+                .kutsumanimi("Testi")
+                .sukunimi("Henkilö")
+                .created(now.toDate())
+                .modified(now.toDate())
+                .organisaatiot(Set.of(org))
+                .build();
+
+        //Virkailija 1 / organisaatio A on luonut henkilön B2
+        Henkilo slave = Henkilo.builder()
+                .oidHenkilo(slaveOid)
+                .etunimet("Testi")
+                .kutsumanimi("Testi")
+                .sukunimi("Henkilö")
+                .created(now.toDate())
+                .modified(now.toDate())
+                .organisaatiot(Set.of(org))
+                .build();
+
+        henkiloRepository.saveAll(List.of(master, slave));
+
+        // Virkailija 2 voi käsitellä henkilöä B2
+        mvc.perform(get("/henkilo/"+ slave.getOidHenkilo()))
+                .andExpect(status().isOk());
+
+        mvc.perform(createRequest(
+                post("/henkilo/" + master.getOidHenkilo() + "/link"),
+                List.of(slave.getOidHenkilo())
+        )).andExpect(status().isOk());
+
+        assertLinked(master.getOidHenkilo(), slave.getOidHenkilo());
+
+        assertFalse(
+                henkiloRepository.findByOidHenkilo(masterOid).orElseThrow().isDuplicate()
+        );
+        assertTrue(
+                henkiloRepository.findByOidHenkilo(slaveOid).orElseThrow().isDuplicate()
+        );
+
+        mvc.perform(get("/henkilo/" + master.getOidHenkilo()))
                 .andExpect(status().isOk());
     }
 }
