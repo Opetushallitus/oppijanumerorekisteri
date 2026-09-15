@@ -242,14 +242,30 @@ const OppijaPerustiedotForm = ({ henkilo, closeForm }: { henkilo: Henkilo; close
 
 const OppijaPerustiedotView = ({ oid, openForm }: { oid: string; openForm: () => void }) => {
     const { L, locale } = useLocalisations();
-    const { data: omattiedot } = useGetOmattiedotQuery();
-    const { data: henkilo } = useGetHenkiloQuery(oid);
-    const { data: master } = useGetHenkiloMasterQuery(oid);
-    const { data: duplicates } = useGetHenkiloSlavesQuery(oid);
-    const { data: sukupuoliKoodisto } = useGetSukupuoletQuery();
-    const { data: kieliKoodisto } = useGetKieletQuery();
-    const { data: kansalaisuusKoodisto } = useGetKansalaisuudetQuery();
-    const [unlinkHenkilo] = useUnlinkHenkiloMutation();
+    const { data: omattiedot } = useGetOmattiedotQuery({
+        refetchOnMountOrArgChange: true,
+    });
+    const { data: henkilo } = useGetHenkiloQuery(oid, {
+        refetchOnMountOrArgChange: true,
+    });
+    const { data: master } = useGetHenkiloMasterQuery(oid, {
+        refetchOnMountOrArgChange: true,
+    });
+    const { data: duplicates } = useGetHenkiloSlavesQuery(oid, {
+        refetchOnMountOrArgChange: true,
+    });
+    const { data: sukupuoliKoodisto } = useGetSukupuoletQuery({
+        refetchOnMountOrArgChange: true,
+    });
+    const { data: kieliKoodisto } = useGetKieletQuery({
+        refetchOnMountOrArgChange: true,
+    });
+    const { data: kansalaisuusKoodisto } = useGetKansalaisuudetQuery({
+        refetchOnMountOrArgChange: true,
+    });
+    const [unlinkHenkilo] = useUnlinkHenkiloMutation({
+        refetchOnMountOrArgChange: true,
+    });
     const [passport, setPassport] = useState(false);
 
     const hasLinkitetytPermission = useMemo(() => {
