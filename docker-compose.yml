@@ -30,6 +30,9 @@ services:
       timeout: 5s
       retries: 5
   nginx:
+    # docker host can be reached from inside the container with this host name. WSL and Linux need this, MacOS does not.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     image: nginx:1.31.4-alpine@sha256:db35bfc6b2951e7f8a72db5db120288c127ffaeeb4a6d4b95a26fead017d5913
     ports:
       - 8080:8080
