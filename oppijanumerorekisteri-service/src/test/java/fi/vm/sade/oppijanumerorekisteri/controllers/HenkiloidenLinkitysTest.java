@@ -319,16 +319,16 @@ public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
           henkiloRepository.findByOidHenkilo(slaveOid).orElseThrow().isDuplicate()
         );
 
-        mvc.perform(get("/henkilo" + master.getOidHenkilo()))
+        mvc.perform(get("/henkilo/" + master.getOidHenkilo()))
                 .andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser(value = "virkailija2", roles = {"APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI",
-            "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_1.2.246.562.10.22222222222"
+            "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_1.2.246.562.10.22222222223"
     })
     public void linkingDuplicateFromSameOrganisationPreservesReadAccess() throws Exception {
-        String organisationOid1 = "1.2.246.562.10.22222222222";
+        String organisationOid1 = "1.2.246.562.10.22222222223";
 
         String masterOid = "1.2.246.562.24.11111111114";
         String slaveOid = "1.2.246.562.24.22222222225";
