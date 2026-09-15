@@ -66,7 +66,7 @@ const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, duplicates, oi
             .unwrap()
             .then(() => {
                 setLink(undefined);
-                navigate(`/${henkiloType}/${oidHenkilo}`);
+                navigate(`/${henkiloType}/${oidHenkilo}`, { replace: true });
             })
             .catch(() => {
                 setLink(undefined);
