@@ -301,6 +301,10 @@ public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
 
         henkiloRepository.saveAll(List.of(master, slave));
 
+        // Katsotaan ensin, että master henkilöön ei ole oikeutta.
+        mvc.perform(get("/henkilo/" + master.getOidHenkilo()))
+                .andExpect(status().isUnauthorized());
+
         // Virkailija 2 voi käsitellä henkilöä B2
         mvc.perform(get("/henkilo/"+ slave.getOidHenkilo()))
                 .andExpect(status().isOk());
@@ -319,6 +323,7 @@ public class HenkiloidenLinkitysTest extends OppijanumerorekisteriApiTest {
           henkiloRepository.findByOidHenkilo(slaveOid).orElseThrow().isDuplicate()
         );
 
+        // Nyt pitää olla oikeus master henkilöön.
         mvc.perform(get("/henkilo/" + master.getOidHenkilo()))
                 .andExpect(status().isOk());
     }
