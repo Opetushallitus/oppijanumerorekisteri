@@ -205,7 +205,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             throw new UnprocessableEntityException(errors);
         }
 
-        DuplicateService.LinkResult linked = this.updateHetuAndLinkDuplicate(henkiloUpdateDto, henkiloSaved);
+        DuplicateService.LinkResult linked = this.updateHetuAndLinkDuplicate(henkiloUpdateDto, henkiloSaved, kaikkiHetut);
 
         henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved, true);
 
@@ -271,21 +271,21 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     }
 
     private DuplicateService.LinkResult updateHetuAndLinkDuplicate(HenkiloForceUpdateDto henkiloUpdateDto,
-            Henkilo henkiloSaved) {
+            Henkilo henkiloSaved, Set<String> kaikkiHetut) {
         // Only if hetu has changed
         if (StringUtils.hasLength(henkiloUpdateDto.getHetu())
                 && !henkiloUpdateDto.getHetu().equals(henkiloSaved.getHetu())) {
             log.info("Hetu has changed for henkilo {}", henkiloUpdateDto.getOidHenkilo());
+            String newHetu = henkiloUpdateDto.getHetu();
             if (henkiloSaved.isYksiloityVTJ()) {
                 henkiloDataRepository.findByHetu(henkiloUpdateDto.getHetu()).ifPresent(henkiloByUusiHetu -> {
                     henkiloByUusiHetu.clearHetut();
                     henkiloDataRepository.saveAndFlush(henkiloByUusiHetu);
                 });
-                henkiloSaved.addHetu(henkiloUpdateDto.getHetu());
+                kaikkiHetut.add(henkiloUpdateDto.getHetu());
+                henkiloSaved.addHetu(kaikkiHetut.toArray(new String[0]));
             }
-            String newHetu = henkiloUpdateDto.getHetu();
-            DuplicateService.LinkResult linked = this.duplicateService.removeDuplicateHetuAndLink(henkiloSaved,
-                    newHetu);
+            DuplicateService.LinkResult linked = this.duplicateService.removeDuplicateHetuAndLink(henkiloSaved, newHetu);
             henkiloSaved.setHetu(newHetu);
             // re-fetch perustieto to ensure no VTJ changes were lost due to hetu change
             henkiloSaved.setVtjBucket(null);
@@ -397,6 +397,20 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
                 });
     }
 
+    /**
+     * Finds an existing person using the supplied identifiers in priority order:
+     * person OID, identifications, current hetu, hetu history, and eIDAS identifier.
+     * Null identifiers and empty identification collections are skipped. Hetu history
+     * is searched only when the current-hetu lookup returns no match.
+     *
+     * Lookups stop at the first match; remaining identifiers are not checked for
+     * consistency. Lookup exceptions propagate rather than triggering a fallback.
+     *
+     * @param henkiloPerustietoDto non-null DTO containing the identifiers to search by
+     * @return the first matching person, or an empty optional if no match is found
+     * @throws IllegalArgumentException if the identifications lookup is reached and
+     * matches multiple people
+     */
     private Optional<Henkilo> findHenkilo(HenkiloPerustietoCreateDto henkiloPerustietoDto) {
         return Stream.<Function<HenkiloPerustietoCreateDto, Optional<Henkilo>>>of(
                 dto -> Optional.ofNullable(dto.getOidHenkilo())
@@ -407,6 +421,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
                                 henkiloDataRepository.findByIdentifications(identifications))),
                 dto -> Optional.ofNullable(dto.getHetu())
                         .flatMap(hetu -> henkiloDataRepository.findByHetu(hetu)
+                                // Find  by either kaikki hetut history or by eidas tunniste
                                 .or(() -> henkiloDataRepository.findByKaikkiHetut(hetu))),
                 dto -> Optional.ofNullable(dto.getEidasTunniste())
                         .flatMap(eidasTunniste -> henkiloDataRepository.findByEidasTunniste(eidasTunniste)))

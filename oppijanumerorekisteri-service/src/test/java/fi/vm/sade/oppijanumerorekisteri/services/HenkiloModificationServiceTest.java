@@ -5,6 +5,7 @@ import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.Oauth2Client;
 import fi.vm.sade.oppijanumerorekisteri.clients.impl.NoContentOrNotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdpEntityId;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -14,18 +15,20 @@ import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
 import fi.vm.sade.oppijanumerorekisteri.utils.YhteystietoryhmaUtils;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import software.amazon.awssdk.services.sns.SnsClient;
 
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithMockUser;
-
 import java.net.http.HttpRequest;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
@@ -301,5 +304,95 @@ public class HenkiloModificationServiceTest {
         List<String> slaves = henkiloModificationService.forceLinkHenkilos(master.getOidHenkilo(), asList(slave.getOidHenkilo()));
 
         assertThat(slaves).containsExactly(slave.getOidHenkilo());
+    }
+
+    @Test
+    @WithMockUser
+    public void forceUpdateHenkiloUpdatesHetuAndReturnsUpdatedHenkiloWithAllHetus() {
+        Henkilo masterCreated = Henkilo.builder()
+                .etunimet("master")
+                .kutsumanimi("master")
+                .sukunimi("master")
+                .sukupuoli(null)
+                .hetu("010101-123N")
+                .yksiloityVTJ(true)
+                .kaikkiHetut(Set.of("010101-123N", "020202-234M"))
+                .created(Date.from(Instant.now().minus(1, java.time.temporal.ChronoUnit.DAYS)))
+                .build();
+        masterCreated = henkiloModificationService.createHenkilo(masterCreated);
+
+        final String masterOid = masterCreated.getOidHenkilo();
+        HenkiloForceUpdateDto input = new HenkiloForceUpdateDto();
+        input.setOidHenkilo(masterOid);
+        input.setHetu("030303-345P");
+        input.setEtunimet("masternew");
+        input.setKutsumanimi("masternew");
+        input.setSukunimi("master_new3");
+
+        var result = henkiloModificationService.forceUpdateHenkilo(input);
+
+        assertThat(result.getOidHenkilo()).isEqualTo(masterOid);
+        assertThat(result.getHetu()).isEqualTo("030303-345P");
+
+        databaseService.runInTransaction(() -> {
+            Henkilo updated = henkiloRepository.findByOidHenkilo(masterOid).orElseThrow();
+            assertThat(updated.getHetu()).isEqualTo("030303-345P");
+            assertThat(updated.getEtunimet()).isEqualTo("masternew");
+            assertThat(updated.getKutsumanimi()).isEqualTo("masternew");
+            assertThat(updated.getSukunimi()).isEqualTo("master_new3");
+            assertThat(updated.getKaikkiHetut()).contains("010101-123N", "020202-234M", "030303-345P");
+        });
+    }
+
+    @Test
+    @WithMockUser
+    public void forceUpdateHenkiloUpdatesWithSlaveHetu_ReturnsUpdatedMasterHenkiloWithAllHetus() {
+        Henkilo masterCreated = Henkilo.builder()
+                .etunimet("master")
+                .kutsumanimi("master")
+                .sukunimi("master")
+                .sukupuoli(null)
+                .hetu("010101-123A")
+                .yksiloityVTJ(true)
+                .kaikkiHetut(Set.of("010101-123A", "020202-234B"))
+                .created(Date.from(Instant.now().minus(1, java.time.temporal.ChronoUnit.DAYS)))
+                .build();
+        masterCreated = henkiloModificationService.createHenkilo(masterCreated);
+
+        Henkilo slaveCreated = Henkilo.builder()
+                .etunimet("slave")
+                .kutsumanimi("slave")
+                .sukunimi("slave")
+                .sukupuoli(null)
+                .hetu("030303-345C")
+                .duplicate(false)
+                .passivoitu(false)
+                .created(Date.from(Instant.now()))
+                .build();
+        slaveCreated = henkiloModificationService.createHenkilo(slaveCreated);
+
+        final String masterOid = masterCreated.getOidHenkilo();
+        final String slaveOid = slaveCreated.getOidHenkilo();
+
+        HenkiloForceUpdateDto input = new HenkiloForceUpdateDto();
+        input.setOidHenkilo(slaveOid);
+        input.setHetu("020202-234B");
+        input.setEtunimet("master");
+        input.setKutsumanimi("master");
+        input.setSukunimi("master_new3");
+
+        var result = henkiloModificationService.forceUpdateHenkilo(input);
+
+        assertThat(result.getOidHenkilo()).isEqualTo(masterOid);
+        assertThat(result.getHetu()).isEqualTo("020202-234B");
+
+        databaseService.runInTransaction(() -> {
+            Henkilo updated = henkiloRepository.findByOidHenkilo(masterOid).orElseThrow();
+            assertThat(updated.getHetu()).isEqualTo("020202-234B");
+            assertThat(updated.getEtunimet()).isEqualTo("master");
+            assertThat(updated.getKutsumanimi()).isEqualTo("master");
+            assertThat(updated.getSukunimi()).isEqualTo("master_new3");
+            assertThat(updated.getKaikkiHetut()).contains("010101-123A", "020202-234B");
+        });
     }
 }
