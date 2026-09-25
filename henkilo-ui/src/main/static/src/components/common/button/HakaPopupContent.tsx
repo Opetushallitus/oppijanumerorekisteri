@@ -25,7 +25,7 @@ export const HakaTunnusPopupContent = ({ oid, view }: OwnProps) => {
     const [putHakaTunnukset] = usePutHakaTunnuksetMutation();
     const [putOmatHakaTunnukset] = usePutOmatHakaTunnuksetMutation();
     const [newTunnus, setNewTunnus] = useState('');
-    const ohjeUrl = view === 'omattiedot' ? 'https://wiki.eduuni.fi/x/9BY5Lg' : 'https://wiki.eduuni.fi/x/9BY5Lg';
+    const ohjeUrl = view === 'omattiedot' ? 'https://wiki.eduuni.fi/x/9BY5Lg' : 'https://wiki.eduuni.fi/x/SJIZM';
     const ohjeText = view === 'omattiedot' ? 'HAKA_TUNNUS_OHJE_OMATTIEDOT' : 'HAKA_TUNNUS_OHJE_VIRKAILIJA';
     const eiTunnuksiaText =
         view === 'omattiedot' ? 'HAKA_TUNNUS_EI_TUNNUKSIA_OMATTIEDOT' : 'HAKA_TUNNUS_EI_TUNNUKSIA_VIRKAILIJA';
