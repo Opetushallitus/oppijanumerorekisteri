@@ -36,8 +36,8 @@ const defaultConfig = {
   apiTaskCpu: 512,
   batchTaskCpu: 1024,
   serviceTaskMemoryMiB: 8192,
-  henkiloUiTaskCpu: 512,
-  henkiloUiTaskMemoryMiB: 1024,
+  henkiloUiTaskCpu: 256,
+  henkiloUiTaskMemoryMiB: 512,
   apiCapacity: { min: 2, max: 8 },
   batchCapacity: { min: 1, max: 1 },
   features: {
