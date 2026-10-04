@@ -7,7 +7,7 @@
     "aws-cdk-lib": "2.265.0",
     "constructs": "10.8.1",
     "ts-node": "10.9.2",
-    "prettier": "3.9.6",
+    "prettier": "3.9.9",
     "typescript": "6.0.3"
   }
 }
