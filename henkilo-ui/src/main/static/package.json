@@ -27,7 +27,7 @@
         "@types/react-dom": "19.2.4",
         "browserslist": "4.28.8",
         "concurrently": "10.0.5",
-        "css-loader": "7.1.4",
+        "css-loader": "7.1.5",
         "eslint": "9.39.5",
         "eslint-config-prettier": "10.1.8",
         "eslint-plugin-jsx-a11y": "6.10.2",
