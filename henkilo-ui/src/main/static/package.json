@@ -4,7 +4,7 @@
     "type": "module",
     "homepage": "/henkilo-ui",
     "dependencies": {
-        "@reduxjs/toolkit": "2.12.0",
+        "@reduxjs/toolkit": "2.13.0",
         "@tanstack/react-table": "^8.21.3",
         "classnames": "^2.5.1",
         "date-fns": "4.4.0",
