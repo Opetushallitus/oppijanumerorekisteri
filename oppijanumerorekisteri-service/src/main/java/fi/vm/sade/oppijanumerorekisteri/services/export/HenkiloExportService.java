@@ -1,13 +1,21 @@
 package fi.vm.sade.oppijanumerorekisteri.services.export;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UncheckedIOException;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HexFormat;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.async.AsyncRequestBody;
+import software.amazon.awssdk.core.async.AsyncResponseTransformer;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import tools.jackson.databind.ObjectMapper;
@@ -52,11 +60,28 @@ public class HenkiloExportService {
         jdbcTemplate.queryForObject(
             sql, Long.class, query, bucketName, objectKey, Region.EU_WEST_1.id(), kmsKeyArn);
     log.info("Exported {} rows to S3 object {}", rowsUploaded, objectKey);
-    return new ExportFileDetails(objectKey, objectVersion(objectKey));
+    return new ExportFileDetails(objectKey, null, objectSha256(objectKey));
   }
 
-  private String objectVersion(String objectKey) {
-    return onrS3Client.headObject(b -> b.bucket(bucketName).key(objectKey)).join().versionId();
+  private String objectSha256(String objectKey) {
+    try {
+      var digest = MessageDigest.getInstance("SHA-256");
+      try (var input =
+          new DigestInputStream(
+              onrS3Client
+                  .getObject(
+                      b -> b.bucket(bucketName).key(objectKey),
+                      AsyncResponseTransformer.toBlockingInputStream())
+                  .join(),
+              digest)) {
+        input.transferTo(OutputStream.nullOutputStream());
+      }
+      return HexFormat.of().formatHex(digest.digest());
+    } catch (IOException e) {
+      throw new UncheckedIOException("Failed to checksum S3 object " + objectKey, e);
+    } catch (NoSuchAlgorithmException e) {
+      throw new IllegalStateException("SHA-256 is unavailable", e);
+    }
   }
 
   private void writeManifest(ExportManifest manifest) {

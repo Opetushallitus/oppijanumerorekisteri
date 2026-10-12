@@ -783,6 +783,7 @@ class OppijanumerorekisteriService extends constructs.Construct {
     });
 
     props.exportBucket.grantReadWrite(taskDefinition.taskRole);
+    props.exportKmsKey.grantDecrypt(taskDefinition.taskRole);
     props.datantuontiExport.grantReadWrite(taskDefinition.taskRole);
     datantuonti.grantImportPermissions(this, taskDefinition.taskRole);
     if (config.lampiExport) {
