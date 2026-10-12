@@ -330,7 +330,7 @@ public class ExportService {
             }
 
             var response = uploadFile(lampiS3Client, lampiBucketName, objectKey, temporaryFile);
-            return new ExportFileDetails(objectKey, response.versionId());
+            return new ExportFileDetails(objectKey, response.versionId(), null);
         } finally {
             Files.deleteIfExists(temporaryFile.toPath());
         }
