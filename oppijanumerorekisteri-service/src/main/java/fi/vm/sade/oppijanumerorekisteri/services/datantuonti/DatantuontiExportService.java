@@ -37,6 +37,8 @@ public class DatantuontiExportService {
           SELECT
             h.oidhenkilo AS oid,
             h.yksiloityvtj,
+            h.yksiloity,
+            h.yksiloityeidas,
             aidinkieli.kielikoodi AS aidinkieli,
             asiointikieli.kielikoodi AS asiointikieli,
             (SELECT string_agg(cast (kansalaisuuskoodi as varchar), ',')
@@ -62,6 +64,8 @@ public class DatantuontiExportService {
         SELECT
           oid,
           yksiloityvtj,
+          yksiloity,
+          yksiloityeidas,
           aidinkieli,
           asiointikieli,
           kansalaisuus,
