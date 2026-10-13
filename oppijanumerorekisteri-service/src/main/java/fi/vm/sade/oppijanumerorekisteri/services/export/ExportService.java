@@ -67,6 +67,8 @@ public class ExportService {
               h.turvakielto,
               CASE WHEN h.turvakielto THEN NULL ELSE h.kotikunta END AS kotikunta,
               h.yksiloityvtj,
+              h.yksiloity,
+              h.yksiloityeidas,
               (SELECT string_agg(cast (kansalaisuuskoodi as varchar), ',')
                FROM henkilo_kansalaisuus
                JOIN kansalaisuus ON kansalaisuus.id = henkilo_kansalaisuus.kansalaisuus_id
@@ -117,6 +119,8 @@ public class ExportService {
                 turvakielto,
                 kotikunta,
                 yksiloityvtj,
+                yksiloity,
+                yksiloityeidas,
                 kansalaisuus,
                 master_oid,
                 linkitetyt_oidit,
@@ -136,6 +140,8 @@ public class ExportService {
                 turvakielto,
                 kotikunta,
                 yksiloityvtj,
+                yksiloity,
+                yksiloityeidas,
                 kansalaisuus,
                 master_oid,
                 linkitetyt_oidit,
