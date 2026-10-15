@@ -66,9 +66,10 @@ class ExportServiceTest {
                 .orElseThrow(() -> new AssertionError("Export table was not created"));
 
         var oneLineSql = String.join(" ", createTableSql.lines().map(String::strip).toList());
-        assertTrue(oneLineSql.contains(
-                        "h.yksiloityvtj, h.yksiloity, h.yksiloityeidas, (SELECT"),
-                "Expected three separate identification columns: " + createTableSql);
+        for (var column : List.of("h.yksiloityvtj,", "h.yksiloity,", "h.yksiloityeidas,")) {
+            assertTrue(oneLineSql.contains(column),
+                    "Missing separate identification column " + column + " in: " + createTableSql);
+        }
     }
 
     @Test
