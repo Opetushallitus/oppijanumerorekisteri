@@ -895,8 +895,8 @@ class HenkiloUiApplicationStack extends cdk.Stack {
     });
 
     const dockerImage = new ecr_assets.DockerImageAsset(this, "AppImage", {
-      directory: path.join(__dirname, "../../henkilo-ui"),
-      file: "Dockerfile",
+      directory: path.join(__dirname, "../../"),
+      file: "henkilo-ui/Dockerfile",
       platform: ecr_assets.Platform.LINUX_ARM64,
     });
 
