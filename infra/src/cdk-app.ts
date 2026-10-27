@@ -898,6 +898,7 @@ class HenkiloUiApplicationStack extends cdk.Stack {
       directory: path.join(__dirname, "../../"),
       file: "henkilo-ui/Dockerfile",
       platform: ecr_assets.Platform.LINUX_ARM64,
+      exclude: ["infra/cdk.out"],
     });
 
     const taskDefinition = new ecs.FargateTaskDefinition(
