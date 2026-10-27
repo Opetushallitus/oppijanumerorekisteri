@@ -1,16 +1,22 @@
 FROM maven:3.10.0-amazoncorretto-21-al2023@sha256:9b868ffa88a46d8b4e605fa14db1e0debe2edb798b3b5890156e92d55a17b11b AS build
 WORKDIR /app
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-RUN dnf install -y nodejs24 \
-  && alternatives --install /usr/bin/node node /usr/bin/node-24 90 \
-  && alternatives --install /usr/bin/npm npm /usr/bin/npm-24 90 \
-  && alternatives --install /usr/bin/npx npx /usr/bin/npx-24 90
+ENV NVM_DIR=/opt/nvm
 
-COPY . .
+COPY .nvmrc /app/.nvmrc
+COPY scripts/lib/nvm.sh ${NVM_DIR}/nvm.sh
+
+RUN source "$NVM_DIR/nvm.sh" --no-use \
+  && nvm install
+
+COPY henkilo-ui/ .
 
 WORKDIR /app/src/main/static
-RUN npm ci
-RUN npm run build
+RUN source "$NVM_DIR/nvm.sh" --no-use \
+  && nvm use \
+  && npm ci \
+  && npm run build
 
 WORKDIR /app
 RUN mvn --batch-mode clean package -s codebuild-mvn-settings.xml -DskipTests
