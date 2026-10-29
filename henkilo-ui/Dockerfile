@@ -21,7 +21,7 @@ RUN source "$NVM_DIR/nvm.sh" --no-use \
 WORKDIR /app
 RUN mvn --batch-mode clean package -s codebuild-mvn-settings.xml -DskipTests
 
-FROM amazoncorretto:21.0.12@sha256:d965a0725293a57ea781ba3712d4f024f338aefa249af83b5c1f3981d0e21556
+FROM amazoncorretto:21.0.12@sha256:c8611b74b21325e39e28eca5fd284d828e8528caaf6ce2f60c0132425607d66e
 WORKDIR /app
 
 COPY --from=build /app/target/henkiloui.jar henkiloui.jar
