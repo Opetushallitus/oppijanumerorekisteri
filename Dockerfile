@@ -1,10 +1,10 @@
-FROM maven:3.10.0-amazoncorretto-21@sha256:9b868ffa88a46d8b4e605fa14db1e0debe2edb798b3b5890156e92d55a17b11b AS build
+FROM maven:3.10.0-amazoncorretto-21@sha256:4afe14b2d5f5f9449c3109c6b71ec7585ac31b1f578d057c3cd81354af604ee0 AS build
 WORKDIR /app
 
 COPY . .
 RUN mvn --batch-mode clean package -s codebuild-mvn-settings.xml -DskipTests
 
-FROM amazoncorretto:21.0.12@sha256:c8611b74b21325e39e28eca5fd284d828e8528caaf6ce2f60c0132425607d66e
+FROM amazoncorretto:21@sha256:e1190de49fc07a399060e58c1d40145ce83ac2d15671405376b8fe0c2694c1fd
 WORKDIR /app
 
 COPY --from=build /app/oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-*SNAPSHOT.jar oppijanumerorekisteri.jar
