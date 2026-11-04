@@ -32,7 +32,8 @@ export default function () {
             devMiddleware: {
                 publicPath: '/henkilo-ui',
             },
-            host: '127.0.0.1',
+            // nginx runs in Docker and connects through host.docker.internal.
+            host: isPlaywright ? '127.0.0.1' : '0.0.0.0',
             historyApiFallback: {
                 disableDotRule: true,
                 index: '/henkilo-ui/',
