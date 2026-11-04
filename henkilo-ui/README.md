@@ -23,6 +23,7 @@ Install npm dependencies e.g. `cd src/main/static; nvm install; npm install`
 
 1. Run `./start-local-env.sh` in project root
 2. Login at http://localhost:8080
+3. Open henkilo-ui endpoints from raamit. Keep using port 8080 so the UI, API requests, and CAS redirects share the same origin. Port 3000 serves Webpack directly and can cause CORS errors when CAS redirects to port 8080.
 
 ### Approach
 
