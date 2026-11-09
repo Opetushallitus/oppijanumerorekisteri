@@ -62,6 +62,7 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
     const [henkiloExists, { isLoading }] = useHenkiloExistsMutation({});
     const [createHenkilo] = useCreateHenkiloMutation();
     const [form, setForm] = useState<CreateHenkiloRequest>(initialForm);
+    const [showValidation, setShowValidation] = useState(false);
     const [existingOid, setExistingOid] = useState<string>();
     const [existingStatus, setExistingStatus] = useState<number>();
     const [existingMessage, setExistingMessage] = useState<string>();
@@ -69,6 +70,11 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
     const [createError, setCreateError] = useState(false);
 
     const handleExists = async () => {
+        setShowValidation(true);
+        if (!isValid(form)) {
+            return;
+        }
+
         await henkiloExists(form)
             .unwrap()
             .then(({ oid, status }) => {
@@ -98,6 +104,7 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
         setCreateOid(undefined);
         setCreateError(false);
         setForm(initialForm);
+        setShowValidation(false);
     };
 
     return (
@@ -130,65 +137,61 @@ export const OppijaCreateSsnContainer = ({ goBack }: OwnProps) => {
                         <div className="oph-field oph-field-is-required">
                             <label className="oph-label">{L('HENKILO_HETU')}</label>
                             <input
-                                className={`oph-input ${!isHetu(form) ? 'oph-input-has-error' : ''}`}
+                                className={`oph-input ${showValidation && !isHetu(form) ? 'oph-input-has-error' : ''}`}
                                 placeholder={L('HENKILO_HETU')}
                                 data-testid="personalIdentificationNumber"
                                 type="text"
                                 onChange={(e) => setForm({ ...form, hetu: e.target.value })}
                                 value={form.hetu}
                             />
-                            {!isHetu(form) && (
+                            {showValidation && !isHetu(form) && (
                                 <div className="oph-field-text oph-error">{L('LOMAKE_KENTTA_SISALTAA_VIRHEITA')}</div>
                             )}
                         </div>
                         <div className="oph-field oph-field-is-required">
                             <label className="oph-label">{L('HENKILO_ETUNIMET')}</label>
                             <input
-                                className={`oph-input ${!form.etunimet.trim() ? 'oph-input-has-error' : ''}`}
+                                className={`oph-input ${showValidation && !form.etunimet.trim() ? 'oph-input-has-error' : ''}`}
                                 placeholder={L('HENKILO_ETUNIMET')}
                                 data-testid="firstNames"
                                 type="text"
                                 onChange={(e) => setForm({ ...form, etunimet: e.target.value })}
                                 value={form.etunimet}
                             />
-                            {!form.etunimet.trim() && (
+                            {showValidation && !form.etunimet.trim() && (
                                 <div className="oph-field-text oph-error">{L('LOMAKE_PAKOLLINEN_TIETO')}</div>
                             )}
                         </div>
                         <div className="oph-field oph-field-is-required">
                             <label className="oph-label">{L('HENKILO_KUTSUMANIMI')}</label>
                             <input
-                                className={`oph-input ${!isValidKutsumanimi(form.etunimet, form.kutsumanimi) ? 'oph-input-has-error' : ''}`}
+                                className={`oph-input ${showValidation && !isValidKutsumanimi(form.etunimet, form.kutsumanimi) ? 'oph-input-has-error' : ''}`}
                                 placeholder={L('HENKILO_KUTSUMANIMI')}
                                 data-testid="displayName"
                                 type="text"
                                 onChange={(e) => setForm({ ...form, kutsumanimi: e.target.value })}
                                 value={form.kutsumanimi}
                             />
-                            {!isValidKutsumanimi(form.etunimet, form.kutsumanimi) && (
+                            {showValidation && !isValidKutsumanimi(form.etunimet, form.kutsumanimi) && (
                                 <div className="oph-field-text oph-error">{L('HENKILO_KUTSUMANIMI_VALIDOINTI')}</div>
                             )}
                         </div>
                         <div className="oph-field oph-field-is-required">
                             <label className="oph-label">{L('HENKILO_SUKUNIMI')}</label>
                             <input
-                                className={`oph-input ${!form.sukunimi.trim() ? 'oph-input-has-error' : ''}`}
+                                className={`oph-input ${showValidation && !form.sukunimi.trim() ? 'oph-input-has-error' : ''}`}
                                 placeholder={L('HENKILO_SUKUNIMI')}
                                 data-testid="lastName"
                                 type="text"
                                 onChange={(e) => setForm({ ...form, sukunimi: e.target.value })}
                                 value={form.sukunimi}
                             />
-                            {!form.sukunimi.trim() && (
+                            {showValidation && !form.sukunimi.trim() && (
                                 <div className="oph-field-text oph-error">{L('LOMAKE_PAKOLLINEN_TIETO')}</div>
                             )}
                         </div>
                         <div className="oph-field">
-                            <Button
-                                dataTestId="submit"
-                                action={() => handleExists()}
-                                disabled={!isValid(form) || isLoading}
-                            >
+                            <Button dataTestId="submit" action={() => handleExists()} disabled={isLoading}>
                                 <SpinnerInButton show={isLoading} />
                                 {L('KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO')}
                             </Button>
