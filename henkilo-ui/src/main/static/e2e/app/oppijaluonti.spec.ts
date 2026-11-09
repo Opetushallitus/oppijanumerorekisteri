@@ -25,7 +25,7 @@ test.describe('oppija/luonti', () => {
             await expect(form.displayName).toBeVisible();
             await expect(form.lastName).toBeVisible();
             await expect(form.submit).toBeVisible();
-            await expect(form.submit).toBeDisabled();
+            await expect(form.submit).toBeEnabled();
             await expect(form.clear).toBeVisible();
             await expect(form.cancel).toBeVisible();
         });
