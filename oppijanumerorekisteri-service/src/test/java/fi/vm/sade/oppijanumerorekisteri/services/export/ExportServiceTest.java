@@ -33,7 +33,6 @@ import static org.mockito.Mockito.when;
 class ExportServiceTest {
     private static final String BUCKET = "lampi-test-bucket";
     private static final String LAMPI_BUCKET = "lampi-destination-bucket";
-    private static final String PREFIX_V3 = "fulldump/oppijanumerorekisteri/v3";
     private static final String PREFIX_V4 = "fulldump/oppijanumerorekisteri/v4";
 
     @Mock
@@ -73,24 +72,21 @@ class ExportServiceTest {
     }
 
     @Test
-    void csvExportsSelectIdentificationColumnsInBothVersions() {
+    void csvExportsSelectIdentificationColumns() {
         when(properties.getTasks().getExport().getBucketName()).thenReturn(BUCKET);
         when(jdbcTemplate.queryForObject(anyString(), eq(Long.class),
                 anyString(), anyString(), anyString(), anyString())).thenReturn(2L);
 
-        service.generateCsvExportsV3();
         service.generateCsvExportsV4();
 
         var exportSql = ArgumentCaptor.forClass(String.class);
         var queries = ArgumentCaptor.forClass(String.class);
         var keys = ArgumentCaptor.forClass(String.class);
-        verify(jdbcTemplate, times(4)).queryForObject(
+        verify(jdbcTemplate, times(2)).queryForObject(
                 exportSql.capture(), eq(Long.class), queries.capture(),
                 eq(BUCKET), keys.capture(), eq("eu-west-1"));
 
         assertEquals(List.of(
-                PREFIX_V3 + "/csv/henkilo.csv",
-                PREFIX_V3 + "/csv/yhteystieto.csv",
                 PREFIX_V4 + "/csv/henkilo.csv",
                 PREFIX_V4 + "/csv/yhteystieto.csv"
         ), keys.getAllValues());
@@ -101,12 +97,6 @@ class ExportServiceTest {
                 "yksiloity", "yksiloityeidas", "kansalaisuus", "master_oid",
                 "linkitetyt_oidit", "created", "updated"));
         assertEquals("SELECT * FROM export.yhteystieto", queries.getAllValues().get(1));
-        assertColumns(queries.getAllValues().get(2), List.of(
-                "henkilo_oid", "hetu", "eidas_tunnisteet", "sukupuoli", "syntymaaika",
-                "sukunimi", "etunimet", "aidinkieli", "turvakielto", "kotikunta",
-                "yksiloityvtj", "yksiloity", "yksiloityeidas", "kansalaisuus",
-                "master_oid", "linkitetyt_oidit", "created", "updated"));
-        assertEquals("SELECT * FROM export.yhteystieto", queries.getAllValues().get(3));
 
         for (var sql : exportSql.getAllValues()) {
             assertTrue(sql.contains("aws_s3.query_export_to_s3"));
