@@ -80,19 +80,8 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
             ...state,
             henkilo: henkilo,
         };
-        const errors = [...newState.errors];
         if (newState.submitted) {
             newState.errors = validate(henkilo);
-        } else {
-            if (!hasError('kutsumanimi') && !isValidKutsumanimi(henkilo.etunimet, henkilo.kutsumanimi)) {
-                errors.push({
-                    name: 'kutsumanimi',
-                    value: L('HENKILO_KUTSUMANIMI_VALIDOINTI'),
-                });
-                newState.errors = errors;
-            } else if (hasError('kutsumanimi') && isValidKutsumanimi(henkilo.etunimet, henkilo.kutsumanimi)) {
-                newState.errors = errors.filter((error) => error.name !== 'kutsumanimi');
-            }
         }
         setState(newState);
     };
@@ -168,8 +157,6 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
         return state.submitted && state.errors.findIndex((error) => error.name === name) !== -1;
     };
 
-    const hasError = (name: string): boolean => state.errors.findIndex((error) => error.name === name) !== -1;
-
     const renderErrors = (name: string) => {
         return state.errors.filter((error) => error.name === name).map(renderError);
     };
@@ -239,7 +226,7 @@ const OppijaCreateForm = (props: OppijaCreateFormProps) => {
                 <label className="oph-label">{L('HENKILO_KUTSUMANIMI')}</label>
                 <input
                     className={classNames('oph-input', {
-                        'oph-input-has-error': hasError('kutsumanimi'),
+                        'oph-input-has-error': isSubmittedAndHasError('kutsumanimi'),
                     })}
                     placeholder={L('HENKILO_KUTSUMANIMI')}
                     type="text"
