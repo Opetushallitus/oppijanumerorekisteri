@@ -11,6 +11,11 @@ import java.util.Map;
 import fi.vm.sade.oppijanumerorekisteri.clients.HttpFormEncoding;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * CasClient talks directly to the CAS server. It uses a service account’s username and password to get a
+ * ticket-granting ticket, then requests a service ticket for a target service. It does not send your
+ * application’s API requests.
+ */
 @Slf4j
 public class CasClient implements HttpFormEncoding {
     public static final String CAS_SECURITY_TICKET = "CasSecurityTicket";

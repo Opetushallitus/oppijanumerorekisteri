@@ -11,6 +11,11 @@ import java.time.Duration;
 
 import fi.vm.sade.oppijanumerorekisteri.configurations.ConfigEnums;
 
+/**
+ * CasAuthenticatedServiceClient is a base class for clients that call another service. It sends those API requests and,
+ * if it sees a CAS login redirect or HTTP 401, uses CasClient to get a new ticket, establish a session with the target
+ * service, and retry the API request.
+ */
 @Slf4j
 public abstract class CasAuthenticatedServiceClient {
     protected final HttpClient httpClient;
@@ -24,6 +29,14 @@ public abstract class CasAuthenticatedServiceClient {
         this.serviceUrl = serviceUrl;
     }
 
+    /**
+     * Sends an HTTP request to the target service. If the response is a CAS login redirect or HTTP 401, it will
+     * authenticate with the target service and retry the request.
+     * @param requestBuilder Build's the request to send to the target service.
+     * @return The HTTP response from the target service.
+     * @throws IOException IOException
+     * @throws InterruptedException InterruptedException
+     */
     protected HttpResponse<String> sendRequest(HttpRequest.Builder requestBuilder) throws IOException, InterruptedException {
         log.info("Sending CAS authenticated request");
         requestBuilder.timeout(Duration.ofSeconds(35))
@@ -47,6 +60,12 @@ public abstract class CasAuthenticatedServiceClient {
         }
     }
 
+    /**
+     * Authenticates with the target service by fetching a new CAS service ticket and sending it to the target service's
+     * /j_spring_cas_security_check endpoint.
+     * @throws IOException IOException
+     * @throws InterruptedException InterruptedException
+     */
     private void authenticate() throws IOException, InterruptedException {
         var uri = URI.create(serviceUrl + casClient.getCasServletPath() + "?ticket=" + fetchCasServiceTicket());
         var authRequest = HttpRequest.newBuilder(uri)
@@ -61,6 +80,12 @@ public abstract class CasAuthenticatedServiceClient {
         return casClient.getTicket(serviceUrl);
     }
 
+    /**
+     * Checks if the given HTTP response is a redirection to a CAS login page.
+     *
+     * @param response The HTTP response to evaluate.
+     * @return {@code true} if the response is a redirection to a CAS login page, {@code false} otherwise.
+     */
     private boolean isLoginToCas(HttpResponse<?> response) {
         if (response.statusCode() == 302) {
             var header = response.headers().firstValue("Location");
