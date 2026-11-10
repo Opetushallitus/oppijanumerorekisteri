@@ -92,10 +92,10 @@ class ExportServiceTest {
         ), keys.getAllValues());
 
         assertColumns(queries.getAllValues().get(0), List.of(
-                "henkilo_oid", "hetu", "sukupuoli", "syntymaaika", "sukunimi",
-                "etunimet", "aidinkieli", "turvakielto", "kotikunta", "yksiloityvtj",
-                "yksiloity", "yksiloityeidas", "kansalaisuus", "master_oid",
-                "linkitetyt_oidit", "created", "updated"));
+                "henkilo_oid", "hetu", "eidas_tunnisteet", "sukupuoli", "syntymaaika",
+                "sukunimi", "etunimet", "aidinkieli", "turvakielto", "kotikunta",
+                "yksiloityvtj", "yksiloity", "yksiloityeidas", "kansalaisuus",
+                "master_oid", "linkitetyt_oidit", "created", "updated"));
         assertEquals("SELECT * FROM export.yhteystieto", queries.getAllValues().get(1));
 
         for (var sql : exportSql.getAllValues()) {
