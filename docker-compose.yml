@@ -1,7 +1,7 @@
 services:
   database:
     container_name: oph-oppijanumerorekisteri-db
-    image: postgres:16.15@sha256:1beaa3084eee2676f20a9cd9928f0bf2c5bf674f8e49f81017912183d377c61c
+    image: postgres:16.15@sha256:f9a7b9ebf6f56201f949db745e47bc423c0f0f8294bafe991cc10bf74b029657
     environment:
       - POSTGRES_USER=oph
       - POSTGRES_DB=oppijanumerorekisteri
@@ -16,7 +16,7 @@ services:
       retries: 5
   test-database:
     container_name: oph-oppijanumerorekisteri-test-db
-    image: postgres:16.15@sha256:1beaa3084eee2676f20a9cd9928f0bf2c5bf674f8e49f81017912183d377c61c
+    image: postgres:16.15@sha256:f9a7b9ebf6f56201f949db745e47bc423c0f0f8294bafe991cc10bf74b029657
     environment:
       - POSTGRES_USER=oph
       - POSTGRES_DB=oppijanumerorekisteri
