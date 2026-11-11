@@ -3,7 +3,7 @@
     flex-direction: column;
     gap: 16px;
     padding: 16px;
-    border-bottom: 1px solid var(--Table-cell-Background-Even-row, #F6F6F6);
+    border-bottom: 1px solid var(--Table-cell-Background-Even-row, #f6f6f6);
 }
 
 .kayttooikeusryhma-tiedot-palvelutroolit-header {
@@ -23,7 +23,7 @@
 
 .kayttooikeusryhma-tiedot-roolit > div:nth-child(4n),
 .kayttooikeusryhma-tiedot-roolit > div:nth-child(4n - 1) {
-    background: #F6F6F6;
+    background: #f6f6f6;
 }
 
 .kayttooikeusryhma-tiedot-roolit > div:nth-child(3n) {

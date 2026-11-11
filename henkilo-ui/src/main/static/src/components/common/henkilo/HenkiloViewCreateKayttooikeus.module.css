@@ -38,9 +38,9 @@
 }
 
 .selectedKayttooikeus > div:nth-child(even) {
-    background-color: rgba(0,0,0,0.03);
+    background-color: rgba(0, 0, 0, 0.03);
 }
 
 .selectedKayttooikeus > div:hover {
-    background: var(--Table-cell-Background-Hover-or-selected, #C1EAFF);
+    background: var(--Table-cell-Background-Hover-or-selected, #c1eaff);
 }

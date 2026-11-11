@@ -19,7 +19,7 @@
 }
 
 .react-table tbody tr:nth-child(even) {
-    background-color: rgba(0,0,0,0.03);
+    background-color: rgba(0, 0, 0, 0.03);
 }
 
 .react-table thead th:last-child,
@@ -52,7 +52,7 @@
 }
 
 .react-table .expander-button.open::after {
-    transform: translate(-50%,-50%) rotate(0);
+    transform: translate(-50%, -50%) rotate(0);
 }
 
 .react-table .expander-button::after {
@@ -62,12 +62,12 @@
     height: 0;
     top: 50%;
     left: 50%;
-    -webkit-transform: translate(-50%,-50%) rotate(-90deg);
-    transform: translate(-50%,-50%) rotate(-90deg);
+    -webkit-transform: translate(-50%, -50%) rotate(-90deg);
+    transform: translate(-50%, -50%) rotate(-90deg);
     border-left: 5.04px solid transparent;
     border-right: 5.04px solid transparent;
-    border-top: 7px solid rgba(0,0,0,0.8);
-    transition: all .3s cubic-bezier(.175,.885,.32,1.275);
+    border-top: 7px solid rgba(0, 0, 0, 0.8);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     cursor: pointer;
 }
 
@@ -111,8 +111,8 @@
     align-items: stretch;
     flex-wrap: wrap;
     padding: 3px;
-    box-shadow: 0 0 15px 0 rgba(0,0,0,0.1);
-    border-top: 2px solid rgba(0,0,0,0.1);
+    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.1);
+    border-top: 2px solid rgba(0, 0, 0, 0.1);
 }
 
 .react-table .pagination .previous,
@@ -122,7 +122,7 @@
 }
 
 .react-table .pagination button:disabled {
-    opacity: .5;
+    opacity: 0.5;
     cursor: default;
 }
 
@@ -135,15 +135,15 @@
     border-radius: 3px;
     padding: 6px;
     font-size: 1em;
-    color: rgba(0,0,0,0.6);
-    background: rgba(0,0,0,0.1);
-    transition: all .1s ease;
+    color: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.1);
+    transition: all 0.1s ease;
     cursor: pointer;
     outline: none;
 }
 
 .react-table .pagination button:not(:disabled):hover {
-    background: rgba(0,0,0,0.3);
+    background: rgba(0, 0, 0, 0.3);
     color: #fff;
 }
 
@@ -174,7 +174,7 @@
 }
 
 .react-table .pagination input {
-    border: 1px solid rgba(0,0,0,0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     background: #fff;
     padding: 5px 7px;
     font-size: inherit;
@@ -198,11 +198,11 @@
 .fa-stack > .fa-sort-desc,
 .fa-stack > .fa-sort-asc {
     font-size: 0.7em;
-    width: 0.7em
+    width: 0.7em;
 }
 
 .fa-stack {
-     width: 0 !important;
+    width: 0 !important;
 }
 
 .oph-sort-asc > .fa-sort-asc {

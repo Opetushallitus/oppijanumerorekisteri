@@ -42,6 +42,6 @@
     margin: 24px 0;
 }
 
-.jarjestelmatunnus-edit-oauth2-grid > div:nth-child(-n+3) {
+.jarjestelmatunnus-edit-oauth2-grid > div:nth-child(-n + 3) {
     font-weight: bold;
 }
