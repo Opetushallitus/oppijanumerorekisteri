@@ -1,100 +1,100 @@
 .infoTitle {
-  display: flex;
-  justify-content: space-between;
-  max-width: 380px;
+    display: flex;
+    justify-content: space-between;
+    max-width: 380px;
 }
 
 .infoBody {
-  display: flex;
-  font-size: 14px;
+    display: flex;
+    font-size: 14px;
 }
 
 .mfaTitle {
-  font-size: 15px;
-  font-weight: 600;
+    font-size: 15px;
+    font-weight: 600;
 }
 
 .mfaEnabled {
-  font-size: 15px;
-  text-transform: uppercase;
+    font-size: 15px;
+    text-transform: uppercase;
 }
 
 .icon {
-  margin-right: 1rem;
+    margin-right: 1rem;
 }
 
 .infoText {
-  margin-bottom: 2rem;
-  max-width: 480px;
+    margin-bottom: 2rem;
+    max-width: 480px;
 }
 
 .hr {
-  border: 0;
-  border-top: 2px solid #ECECEC;
+    border: 0;
+    border-top: 2px solid #ececec;
 }
 
 .greyInfo {
-  font-size: 15px;
-  color: #9A9A9A;
+    font-size: 15px;
+    color: #9a9a9a;
 }
 
 .setupContainer {
-  display: flex;
+    display: flex;
 }
 
 .setupStep {
-  display: flex;
-  margin: 0 2rem 2rem 0;
+    display: flex;
+    margin: 0 2rem 2rem 0;
 }
 
 .setupStepInfo {
-  padding-top: 8px;
-  margin-bottom: 2rem;
-  max-width: 220px;
+    padding-top: 8px;
+    margin-bottom: 2rem;
+    max-width: 220px;
 }
 
 .mfaTokenInput {
-  display: flex;
-  gap: 4px;
-  padding: 12px;
-  background: #F8F8F8;
-  border: 1px solid #E1DEDE;
-  border-radius: 4px;
+    display: flex;
+    gap: 4px;
+    padding: 12px;
+    background: #f8f8f8;
+    border: 1px solid #e1dede;
+    border-radius: 4px;
 }
 
 .mfaTokenDigit {
-  box-sizing: border-box;
-  width: 34px;
-  height: 34px;
-  margin: 0;
-  border: 1px solid #137CA0;
-  border-radius: 3px;
-  background: #FFF;
-  font-size: 24px;
-  font-weight: 600;
-  text-align: center;
+    box-sizing: border-box;
+    width: 34px;
+    height: 34px;
+    margin: 0;
+    border: 1px solid #137ca0;
+    border-radius: 3px;
+    background: #fff;
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
 }
 
 .mfaTokenDigit:focus {
-  border-color: #137CA0;
-  outline: 1px solid #137CA0;
+    border-color: #137ca0;
+    outline: 1px solid #137ca0;
 }
 
 .secretKey {
-  word-wrap: unset;
-  cursor: copy;
+    word-wrap: unset;
+    cursor: copy;
 }
 
 .secretKeyChunk {
-  margin-right: 4px;
+    margin-right: 4px;
 }
 
 .setupSuccessContainer {
-  margin-bottom: 28px;
+    margin-bottom: 28px;
 }
 
 @media (max-width: 940px) {
-  .setupContainer {
-    flex-direction: column;
-  }
+    .setupContainer {
+        flex-direction: column;
+    }
 }
