@@ -1,4 +1,4 @@
-FROM maven:3.10.0-amazoncorretto-21-al2023@sha256:acc191eb1b0b8cc3fe9b88ae662a0ce7e15f6dd09e4b998a7b9c1a16e517ceaa AS build
+FROM maven:3.10.0-amazoncorretto-21-al2023@sha256:9f817dbf24e058d433223e72d59c4f89cc9ca4634f053a9e40debfe09a234ffa AS build
 WORKDIR /app
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -21,7 +21,7 @@ RUN source "$NVM_DIR/nvm.sh" --no-use \
 WORKDIR /app
 RUN mvn --batch-mode clean package -s codebuild-mvn-settings.xml -DskipTests
 
-FROM amazoncorretto:21.0.13@sha256:3f2da8fd79b0a7275506eb5a828a62dae7eaa984a6a1b0542a897a85cf74baa7
+FROM amazoncorretto:21.0.13@sha256:a02f509af88bd1544d5bb42be83a20d9022dc15f388a0007e2c7d0d87170b9f4
 WORKDIR /app
 
 COPY --from=build /app/target/henkiloui.jar henkiloui.jar
