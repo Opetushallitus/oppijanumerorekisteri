@@ -113,12 +113,13 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
   ) {
     super(scope, id, props);
     const capitalizedEnv = capitalize(env);
+    const pipelineName = sharedAccount.prefix(`Deploy${capitalizedEnv}`);
 
     const pipeline = new codepipeline.Pipeline(
       this,
       `Deploy${capitalizedEnv}Pipeline`,
       {
-        pipelineName: sharedAccount.prefix(`Deploy${capitalizedEnv}`),
+        pipelineName,
         pipelineType: PipelineType.V1,
       },
     );
@@ -287,9 +288,91 @@ class ContinousDeploymentPipelineStack extends cdk.Stack {
       input: sourceOutput,
       project: deployProject,
     });
+    if (env === "prod") {
+      addProductionApprovalGate(
+        this,
+        pipeline,
+        sourceOutput,
+        repository,
+        pipelineName,
+      );
+    }
     const deployStage = pipeline.addStage({ stageName: "Deploy" });
     deployStage.addAction(deployAction);
   }
+}
+
+function addProductionApprovalGate(
+  scope: constructs.Construct,
+  pipeline: codepipeline.Pipeline,
+  sourceOutput: codepipeline.Artifact,
+  repository: Repository,
+  pipelineName: string,
+) {
+  const approvalWebhookParameter =
+    "/env/prod/slack-production-approval-webhook";
+  const reportProject = new codebuild.PipelineProject(
+    scope,
+    "ProductionCommitReportProject",
+    {
+      projectName: sharedAccount.prefix("ProductionCommitReport"),
+      environment: {
+        buildImage: codebuild.LinuxBuildImage.STANDARD_7_0,
+        computeType: codebuild.ComputeType.SMALL,
+      },
+      environmentVariables: {
+        SLACK_PRODUCTION_APPROVAL_WEBHOOK_URL: {
+          type: codebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
+          value: approvalWebhookParameter,
+        },
+        PIPELINE_NAME: {
+          type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
+          value: pipelineName,
+        },
+        PIPELINE_REGION: {
+          type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
+          value: cdk.Stack.of(scope).region,
+        },
+      },
+      buildSpec: codebuild.BuildSpec.fromObject({
+        version: "0.2",
+        env: {
+          "git-credential-helper": "yes",
+        },
+        phases: {
+          install: {
+            "runtime-versions": {
+              nodejs: "20",
+            },
+          },
+          build: {
+            commands: ["node scripts/ci/notify-production-approval.mjs"],
+          },
+        },
+      }),
+    },
+  );
+  ssm.StringParameter.fromStringParameterName(
+    scope,
+    "ProductionApprovalSlackWebhook",
+    approvalWebhookParameter,
+  ).grantRead(reportProject);
+
+  pipeline.addStage({ stageName: "ProductionCommitReport" }).addAction(
+    new codepipeline_actions.CodeBuildAction({
+      actionName: "SendCommitReport",
+      input: sourceOutput,
+      project: reportProject,
+    }),
+  );
+
+  pipeline.addStage({ stageName: "ProductionApproval" }).addAction(
+    new codepipeline_actions.ManualApprovalAction({
+      actionName: "ApproveProductionDeployment",
+      additionalInformation:
+        "Review the commit list in Slack before approving this production deployment.",
+    }),
+  );
 }
 
 function makeTestProject(
