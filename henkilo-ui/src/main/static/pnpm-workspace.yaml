@@ -1,0 +1,7 @@
+packages:
+    - mock-api
+
+saveExact: true
+engineStrict: true
+ignoreScripts: true
+
