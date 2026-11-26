@@ -24,7 +24,7 @@ function deploy {
   require_docker
   init_nodejs
   cd "$repo/infra"
-  npm_ci_if_needed
+  pnpm_ci
   if [ "${env}" == "util" ]; then
     deploy_util
   else
@@ -35,7 +35,7 @@ function deploy {
 function deploy_util {
   bootstrap_cdk
   export_aws_credentials "util"
-  npx cdk --app "npx ts-node ${repo}/infra/src/cdk-app-util.ts" deploy --require-approval never --all
+  pnpm exec cdk --app "pnpm exec ts-node ${repo}/infra/src/cdk-app-util.ts" deploy --require-approval never --all
 }
 
 function deploy_env {
@@ -48,7 +48,7 @@ function deploy_env {
     export CDK_DEPLOY_TARGET_REGION=${region}
   fi
   login_to_docker_if_possible
-  ENV=${env} npx cdk --app "npx ts-node ${repo}/infra/src/cdk-app.ts" deploy --require-approval never --all
+  ENV=${env} pnpm exec cdk --app "pnpm exec ts-node ${repo}/infra/src/cdk-app.ts" deploy --require-approval never --all
 }
 
 function login_to_docker_if_possible {
@@ -82,16 +82,16 @@ function bootstrap_cdk_for_env {
   info "Bootstrapping CDK for env ${env} at ${account_id}/${region}"
 
   if [ "${env}" == "util" ]; then
-      npx cdk bootstrap "aws://${account_id}/${region}" \
+      pnpm exec cdk bootstrap "aws://${account_id}/${region}" \
           --qualifier ${qualifier} --toolkit-stack-name "${toolkit_stack_name}"
   else
       setup_cdk_deployment_target_policy "${policy_name}"
-      npx cdk bootstrap "aws://${account_id}/${region}" \
+      pnpm exec cdk bootstrap "aws://${account_id}/${region}" \
           --qualifier ${qualifier} --toolkit-stack-name "${toolkit_stack_name}" \
           --trust "${util_account_id}" \
           --trust-for-lookup "${util_account_id}" \
           --cloudformation-execution-policies "arn:aws:iam::${account_id}:policy/${policy_name}"
-      npx cdk bootstrap "aws://${account_id}/us-east-1" \
+      pnpm exec cdk bootstrap "aws://${account_id}/us-east-1" \
           --qualifier ${qualifier} --toolkit-stack-name "${toolkit_stack_name}" \
           --trust "${util_account_id}" \
           --trust-for-lookup "${util_account_id}" \
@@ -103,7 +103,7 @@ function bootstrap_cdk_for_env {
 
 function setup_cdk_deployment_target_policy {
   local -r policyName=$1
-  POLICY_NAME=${policyName} npx ts-node "${repo}/infra/src/setup-cdk-deployment-target-policy.ts"
+  POLICY_NAME=${policyName} pnpm exec ts-node "${repo}/infra/src/setup-cdk-deployment-target-policy.ts"
 }
 
 function export_aws_credentials {

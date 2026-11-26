@@ -46,10 +46,10 @@
         "webpack-dev-server": "6.0.0"
     },
     "scripts": {
-        "start": "NODE_ENV=development npx webpack serve --mode development",
-        "build": "GENERATE_SOURCEMAP=false NODE_ENV=production npx webpack --mode production",
+        "start": "NODE_ENV=development webpack serve --mode development",
+        "build": "GENERATE_SOURCEMAP=false NODE_ENV=production webpack --mode production",
         "lint": "eslint -c eslint.config.mjs --fix",
-        "test": "concurrently -s first -k 'npm:mock-api' 'playwright test'",
+        "test": "concurrently -s first -k 'pnpm run mock-api' 'pnpm exec playwright test'",
         "mock-api": "pnpm --filter mock-api run mock-api",
         "ci:install-deps": "playwright install-deps",
         "ci:chromium": "playwright install chromium"

@@ -7,7 +7,7 @@ function main {
 
   cd "$repo/scripts/ci"
   init_nodejs
-  npm_ci_if_needed
+  pnpm_ci
   ENVIRONMENT_NAME=${env} node publish-release-notes.ts
 }
 

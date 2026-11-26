@@ -12,12 +12,13 @@ function run_prettier_write {
   for dir in "$repo/infra" "$repo/henkilo-ui/src/main/static"; do
     cd "$dir"
     init_nodejs
-    npm_ci_if_needed
+    pnpm_ci
     local -a ignore_args=("--ignore-path=$repo/.gitignore")
+    ignore_args+=("--ignore-path=$repo/.prettierignore")
     if [ -f ".gitignore" ]; then
       ignore_args+=("--ignore-path=.gitignore")
     fi
-    npx prettier . --write "${ignore_args[@]}"
+    pnpm exec prettier . --write "${ignore_args[@]}"
   done
 }
 

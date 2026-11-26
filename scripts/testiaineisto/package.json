@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "main": "generate-henkilot.ts",
   "scripts": {
-    "start": "npx tsx generate-henkilot.ts",
-    "quicktype": "npx quicktype testiaineisto.json -o Henkilo.ts"
+    "start": "tsx generate-henkilot.ts",
+    "quicktype": "quicktype testiaineisto.json -o Henkilo.ts"
   },
   "devDependencies": {
     "quicktype": "26.0.0",
     "tsx": "4.23.15",
     "typescript": "6.0.3"
-  }
+  },
+  "packageManager": "pnpm@12.21.0"
 }

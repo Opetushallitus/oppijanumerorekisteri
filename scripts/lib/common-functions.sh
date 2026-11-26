@@ -148,32 +148,13 @@ function init_nodejs {
   source "$repo/scripts/lib/nvm.sh"
   nvm use "${node_version}" || nvm install -b "${node_version}"
   set -o errexit
+  corepack enable
 }
 
-function npm_ci_if_needed {
-  require_command shasum
-
+function pnpm_ci {
+  require_command pnpm
   if [ ! -f "package.json" ]; then
     fatal "package.json is missing"
-  elif [ ! -f "package-lock.json" ]; then
-    info "package-lock.json is missing"
-    npm install
-  elif [ ! -f "./node_modules/package.json.checksum" ]; then
-    info "package.json checksum missing"
-    npm ci
-  elif [ ! -f "./node_modules/package-lock.json.checksum" ]; then
-    info "package-lock.json checksum missing"
-    npm ci
-  elif ! shasum --check "./node_modules/package.json.checksum"; then
-    info "package.json changed"
-    npm install
-  elif ! shasum --check "./node_modules/package-lock.json.checksum"; then
-    info "package-lock.json changed"
-    npm ci
-  else
-    info "No changes in package.json or package-lock.json"
   fi
-
-  shasum package-lock.json > "./node_modules/package-lock.json.checksum"
-  shasum package.json > "./node_modules/package.json.checksum"
+  pnpm ci
 }

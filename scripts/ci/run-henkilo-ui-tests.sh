@@ -7,12 +7,12 @@ source "${repo}/scripts/lib/common-functions.sh"
 function main {
   cd "${repo}/henkilo-ui/src/main/static"
   init_nodejs
-  npm_ci_if_needed
+  pnpm_ci
 
-  npm run lint
-  npm run ci:install-deps
-  npm run ci:chromium
-  npm run test
+  pnpm run lint
+  pnpm run ci:install-deps
+  pnpm run ci:chromium
+  pnpm run test
 }
 
 main "$@"
