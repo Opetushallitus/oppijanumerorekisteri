@@ -55,7 +55,7 @@ test.describe('mfa setup', () => {
         await expect(page.locator('[data-test-id="start-mfa-setup"]')).toBeHidden();
         await expect(page.locator('[data-test-id="login-suomifi"]')).toHaveAttribute(
             'href',
-            '/service-provider-app/saml/logout'
+            `/cas/logout?service=${encodeURIComponent(new URL(page.url()).origin)}`
         );
     });
 
@@ -117,7 +117,7 @@ test.describe('mfa setup', () => {
         await expect(page.locator('[data-test-id="disable-mfa"]')).toBeHidden();
         await expect(page.locator('[data-test-id="login-suomifi"]')).toHaveAttribute(
             'href',
-            '/service-provider-app/saml/logout'
+            `/cas/logout?service=${encodeURIComponent(new URL(page.url()).origin)}`
         );
     });
 

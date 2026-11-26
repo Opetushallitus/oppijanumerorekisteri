@@ -224,7 +224,7 @@ const MfaRegistered = ({ idpEntityId }: MfaRegisteredProps) => {
                         <>
                             <a
                                 className="oph-ds-button"
-                                href="/service-provider-app/saml/logout"
+                                href={`/cas/logout?service=${encodeURIComponent(window.location.origin)}`}
                                 data-test-id="login-suomifi"
                             >
                                 {L('MFA_KIRJAUDU_ULOS_SUOMIFI_TUNNISTUKSEEN')}
@@ -265,7 +265,7 @@ const MfaUnregistered = ({ setMfaSetup, idpEntityId }: MfaUnregisteredProps) => 
                         <>
                             <a
                                 className="oph-ds-button"
-                                href="/service-provider-app/saml/logout"
+                                href={`/cas/logout?service=${encodeURIComponent(window.location.origin)}`}
                                 data-test-id="login-suomifi"
                             >
                                 {L('MFA_KIRJAUDU_ULOS_SUOMIFI_TUNNISTUKSEEN')}

@@ -70,7 +70,9 @@ export const SalasananVaihtoPage = () => {
                     <p style={{ textAlign: 'left' }}>{L['SALASANA_VANHENTUNEEN_VAIHTO_OHJE']}</p>
                     <p style={{ textAlign: 'left' }}>
                         {L['SALASANA_UNOHTUNUT_SALASANA']}{' '}
-                        <a href="/service-provider-app/saml/logout">{L['SALASANA_PALAA_KIRJAUTUMISEEN']}</a>
+                        <a href={`/cas/logout?service=${encodeURIComponent(window.location.origin)}`}>
+                            {L['SALASANA_PALAA_KIRJAUTUMISEEN']}
+                        </a>
                     </p>
                     <p id="passwordHint" style={{ textAlign: 'left' }}>
                         {L['SALASANA_SAANTO']}
