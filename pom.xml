@@ -37,7 +37,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.release>21</maven.compiler.release>
 
-        <aws.java.sdk.version>2.59.5</aws.java.sdk.version>
+        <aws.java.sdk.version>2.59.10</aws.java.sdk.version>
     </properties>
 
     <dependencyManagement>
@@ -45,12 +45,12 @@
             <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-                <version>3.2.0</version>
+                <version>3.2.1</version>
             </dependency>
             <dependency>
                 <groupId>dev.akkinoc.spring.boot</groupId>
                 <artifactId>orika-spring-boot-starter</artifactId>
-                <version>4.1.0</version>
+                <version>4.2.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.lucene</groupId>
@@ -70,7 +70,7 @@
             <dependency>
                 <groupId>com.github.kagkarlsson</groupId>
                 <artifactId>db-scheduler-spring-boot-4-starter</artifactId>
-                <version>17.1.0</version>
+                <version>17.2.0</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>

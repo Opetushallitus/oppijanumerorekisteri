@@ -1,7 +1,7 @@
 services:
   database:
     container_name: oph-oppijanumerorekisteri-db
-    image: postgres:18.7@sha256:e754b839f447639b7004895f4d8a4bfcb4e9dbe3a1bc035f27f646562a16fd61
+    image: postgres:18.7@sha256:64c8b0d31e4ab6ea665e8426ea406a94bf52de3c05b3a4a8bf713704eefa9328
     environment:
       - POSTGRES_USER=oph
       - POSTGRES_DB=oppijanumerorekisteri
@@ -16,7 +16,7 @@ services:
       retries: 5
   test-database:
     container_name: oph-oppijanumerorekisteri-test-db
-    image: postgres:18.7@sha256:e754b839f447639b7004895f4d8a4bfcb4e9dbe3a1bc035f27f646562a16fd61
+    image: postgres:18.7@sha256:64c8b0d31e4ab6ea665e8426ea406a94bf52de3c05b3a4a8bf713704eefa9328
     environment:
       - POSTGRES_USER=oph
       - POSTGRES_DB=oppijanumerorekisteri
@@ -33,7 +33,7 @@ services:
     # docker host can be reached from inside the container with this host name. WSL and Linux need this, MacOS does not.
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    image: nginx:1.31.9-alpine@sha256:fb4658584bd9a916ffb6f6e365f97c25cfdb2923801f551ea08356e695f14ff7
+    image: nginx:1.31.10-alpine@sha256:7fc0fb4af7bf006aeb31aea88069976060f8f0a0a86b667126742cc17f4e31ae
     ports:
       - 8080:8080
     volumes:
