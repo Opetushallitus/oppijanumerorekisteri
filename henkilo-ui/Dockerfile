@@ -15,8 +15,9 @@ COPY henkilo-ui/ .
 WORKDIR /app/src/main/static
 RUN source "$NVM_DIR/nvm.sh" --no-use \
   && nvm use \
-  && npm ci \
-  && npm run build
+  && corepack enable \
+  && pnpm ci \
+  && pnpm run build
 
 WORKDIR /app
 RUN mvn --batch-mode clean package -s codebuild-mvn-settings.xml -DskipTests

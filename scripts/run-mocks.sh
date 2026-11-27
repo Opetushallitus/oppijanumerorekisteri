@@ -8,7 +8,7 @@ function main {
 
   cd "$repo/henkilo-ui/src/main/static/mock-api"
   init_nodejs
-  npm_ci_if_needed
+  pnpm_ci
 
   export PORT=8484
   node ./src/app.js

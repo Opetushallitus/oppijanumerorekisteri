@@ -57,7 +57,7 @@ const config: PlaywrightTestConfig = {
     outputDir: 'playwright-results/',
 
     webServer: {
-        command: 'PLAYWRIGHT=true NODE_ENV=development npx webpack serve',
+        command: 'PLAYWRIGHT=true NODE_ENV=development pnpm exec webpack serve',
         port: 8686,
         timeout: 120 * 1000,
         reuseExistingServer: false,

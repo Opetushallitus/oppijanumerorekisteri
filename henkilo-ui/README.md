@@ -17,7 +17,7 @@ Install
 - docker
 - tmux
 
-Install npm dependencies e.g. `cd src/main/static; nvm install; npm install`
+Install frontend dependencies with `cd src/main/static; nvm install; nvm use; corepack enable; pnpm ci`
 
 ### Setup
 

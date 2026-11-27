@@ -8,9 +8,9 @@ function main {
 
   cd "$repo/henkilo-ui/src/main/static"
   init_nodejs
-  npm_ci_if_needed
+  pnpm_ci
 
-  npm start
+  pnpm start
 }
 
 main "$@"
