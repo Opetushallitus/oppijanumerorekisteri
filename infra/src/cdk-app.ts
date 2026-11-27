@@ -899,6 +899,9 @@ class HenkiloUiApplicationStack extends cdk.Stack {
       file: "henkilo-ui/Dockerfile",
       platform: ecr_assets.Platform.LINUX_ARM64,
       exclude: ["infra/cdk.out"],
+      buildArgs: {
+        CAS_LOGOUT_ENABLED: String(config.features.henkiloUiCasLogout),
+      },
     });
 
     const taskDefinition = new ecs.FargateTaskDefinition(

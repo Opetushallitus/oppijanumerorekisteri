@@ -11,6 +11,7 @@ import googlePlay from '../../img/google_play.svg';
 import { useLocalisations } from '../../selectors';
 import { useAppDispatch } from '../../store';
 import { add } from '../../slices/toastSlice';
+import { getSamlLogoutUrl } from '../../utilities/logout.util';
 import { OphDsSpinner } from '../design-system/OphDsSpinner';
 
 import styles from './Mfa.module.css';
@@ -222,11 +223,7 @@ const MfaRegistered = ({ idpEntityId }: MfaRegisteredProps) => {
                         </>
                     ) : (
                         <>
-                            <a
-                                className="oph-ds-button"
-                                href={`/cas/logout?service=${encodeURIComponent(window.location.origin)}`}
-                                data-test-id="login-suomifi"
-                            >
+                            <a className="oph-ds-button" href={getSamlLogoutUrl()} data-test-id="login-suomifi">
                                 {L('MFA_KIRJAUDU_ULOS_SUOMIFI_TUNNISTUKSEEN')}
                             </a>
                             <span className={styles.greyInfo}>{L('MFA_SUOMIFI_DISABLE')}</span>
@@ -263,11 +260,7 @@ const MfaUnregistered = ({ setMfaSetup, idpEntityId }: MfaUnregisteredProps) => 
                         </button>
                     ) : (
                         <>
-                            <a
-                                className="oph-ds-button"
-                                href={`/cas/logout?service=${encodeURIComponent(window.location.origin)}`}
-                                data-test-id="login-suomifi"
-                            >
+                            <a className="oph-ds-button" href={getSamlLogoutUrl()} data-test-id="login-suomifi">
                                 {L('MFA_KIRJAUDU_ULOS_SUOMIFI_TUNNISTUKSEEN')}
                             </a>
                             <span className={styles.greyInfo}>{L('MFA_SUOMIFI')}</span>

@@ -19,6 +19,7 @@ export type Config = {
   batchCapacity: AutoScalingLimits;
   features: {
     vtj: boolean;
+    henkiloUiCasLogout: boolean;
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": boolean;
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": boolean;
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": boolean;
@@ -42,6 +43,7 @@ const defaultConfig = {
   batchCapacity: { min: 1, max: 1 },
   features: {
     vtj: true,
+    henkiloUiCasLogout: false,
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": false,
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": false,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": false,
@@ -82,6 +84,7 @@ export const hahtuva: Config = {
   features: {
     ...defaultConfig.features,
     vtj: false,
+    henkiloUiCasLogout: true,
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,
@@ -100,6 +103,7 @@ export const dev: Config = {
   features: {
     ...defaultConfig.features,
     vtj: false,
+    henkiloUiCasLogout: true,
     "oppijanumerorekisteri.tasks.datantuonti.export.enabled": true,
     "oppijanumerorekisteri.tasks.datantuonti.import.enabled": true,
     "oppijanumerorekisteri.tasks.testidatantuonti.import.enabled": true,

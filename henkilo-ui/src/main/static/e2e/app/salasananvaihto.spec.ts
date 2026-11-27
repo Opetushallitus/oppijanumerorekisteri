@@ -7,6 +7,14 @@ test.describe('salasanan vaihto', () => {
         });
 
         await page.goto('/henkilo-ui/kayttaja/salasananvaihto/fi/loginToken');
+        const logoutUrl =
+            process.env.CAS_LOGOUT_ENABLED === 'true'
+                ? `/cas/logout?service=${encodeURIComponent(new URL(page.url()).origin)}`
+                : '/service-provider-app/saml/logout';
+        await expect(page.getByRole('link', { name: 'Palaa tästä linkistä takaisin kirjautumiseen.' })).toHaveAttribute(
+            'href',
+            logoutUrl
+        );
         await page.fill('#currentPassword', 'currentPassword123!');
 
         await page.fill('#newPassword', 'newPassword123!');
