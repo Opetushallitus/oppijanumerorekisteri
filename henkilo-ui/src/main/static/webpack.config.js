@@ -126,6 +126,7 @@ export default function () {
             ].filter(Boolean),
         },
         plugins: [
+            new webpack.EnvironmentPlugin({ CAS_LOGOUT_ENABLED: 'false' }),
             new HtmlWebpackPlugin({
                 filename: 'main.html',
                 template: path.resolve(__dirname, 'public', 'index.html'),

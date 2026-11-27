@@ -9,6 +9,7 @@ import { useAppDispatch } from './store';
 import Loader from '../components/common/icons/Loader';
 import { useTitle } from '../useTitle';
 import { add } from '../slices/toastSlice';
+import { getSamlLogoutUrl } from '../utilities/logout.util';
 
 export const SalasananVaihtoPage = () => {
     const params = useParams();
@@ -70,7 +71,7 @@ export const SalasananVaihtoPage = () => {
                     <p style={{ textAlign: 'left' }}>{L['SALASANA_VANHENTUNEEN_VAIHTO_OHJE']}</p>
                     <p style={{ textAlign: 'left' }}>
                         {L['SALASANA_UNOHTUNUT_SALASANA']}{' '}
-                        <a href="/service-provider-app/saml/logout">{L['SALASANA_PALAA_KIRJAUTUMISEEN']}</a>
+                        <a href={getSamlLogoutUrl()}>{L['SALASANA_PALAA_KIRJAUTUMISEEN']}</a>
                     </p>
                     <p id="passwordHint" style={{ textAlign: 'left' }}>
                         {L['SALASANA_SAANTO']}

@@ -13,6 +13,7 @@ RUN source "$NVM_DIR/nvm.sh" --no-use \
 COPY henkilo-ui/ .
 
 WORKDIR /app/src/main/static
+ARG CAS_LOGOUT_ENABLED=false
 RUN source "$NVM_DIR/nvm.sh" --no-use \
   && nvm use \
   && npm ci \

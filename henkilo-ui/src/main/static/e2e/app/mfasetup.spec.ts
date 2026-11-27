@@ -4,6 +4,11 @@ import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/curr
 import mfasetup from '../../mock-api/src/api/kayttooikeus-service/mfasetup/gauth/setup/GET.json' with { type: 'json' };
 import { toastWithText } from '../locators';
 
+const expectedLogoutUrl = (page: Page) =>
+    process.env.CAS_LOGOUT_ENABLED === 'true'
+        ? `/cas/logout?service=${encodeURIComponent(new URL(page.url()).origin)}`
+        : '/service-provider-app/saml/logout';
+
 const inputToken = async (page: Page, token: string) => {
     const digits = page.locator('[data-test-id="mfa-token-digit"]');
     await digits.first().type(token[0]);
@@ -53,10 +58,7 @@ test.describe('mfa setup', () => {
         await page.goto('/henkilo-ui/omattiedot');
         await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Ei käytössä');
         await expect(page.locator('[data-test-id="start-mfa-setup"]')).toBeHidden();
-        await expect(page.locator('[data-test-id="login-suomifi"]')).toHaveAttribute(
-            'href',
-            '/service-provider-app/saml/logout'
-        );
+        await expect(page.locator('[data-test-id="login-suomifi"]')).toHaveAttribute('href', expectedLogoutUrl(page));
     });
 
     test('shows error when secret key retrieval fails', async ({ page }) => {
@@ -106,19 +108,13 @@ test.describe('mfa setup', () => {
 
     test('requires suomifi to be able to disable', async ({ page }) => {
         await page.route('/kayttooikeus-service/henkilo/current/omattiedot', async (route) => {
-            await route.fulfill({ json: { ...omattiedot, mfaProvider: 'GAUTH' } });
-        });
-        await page.route('/kayttooikeus-service/henkilo/current/omattiedot', async (route) => {
-            await route.fulfill({ json: { ...omattiedot, idpEntityId: 'haka' } });
+            await route.fulfill({ json: { ...omattiedot, mfaProvider: 'GAUTH', idpEntityId: 'haka' } });
         });
 
         await page.goto('/henkilo-ui/omattiedot');
-        await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Ei käytössä');
+        await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Käytössä');
         await expect(page.locator('[data-test-id="disable-mfa"]')).toBeHidden();
-        await expect(page.locator('[data-test-id="login-suomifi"]')).toHaveAttribute(
-            'href',
-            '/service-provider-app/saml/logout'
-        );
+        await expect(page.locator('[data-test-id="login-suomifi"]')).toHaveAttribute('href', expectedLogoutUrl(page));
     });
 
     test('disables gauth', async ({ page }) => {
